@@ -33,6 +33,8 @@ const envSchema = z.object({
    * there is none yet). Ignored in production, where e-mails are not verified: use admin-cli.
    */
   PLATFORM_BOOTSTRAP_EMAIL: z.string().email().optional(),
+  /** GitHub "owner/repo" whose public Releases carry the desktop installers ('' disables). */
+  DESKTOP_RELEASES_REPO: z.string().default('fernandinhomartins40/bipae'),
   /** Bipaê staff must enable 2FA before using the admin panel (always true in production). */
   PLATFORM_REQUIRE_TOTP: z
     .enum(['true', 'false'])

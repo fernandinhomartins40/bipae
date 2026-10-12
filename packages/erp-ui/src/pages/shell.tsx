@@ -5,6 +5,7 @@ import {
   BarChart3,
   Building2,
   CreditCard,
+  Download,
   Home,
   LifeBuoy,
   LogOut,
@@ -34,6 +35,7 @@ const NAV = [
   { to: '/equipe', label: 'Equipe', icon: Users, permission: 'admin.users' },
   { to: '/auditoria', label: 'Auditoria', icon: ShieldCheck, permission: 'audit.read' },
   { to: '/perifericos', label: 'Periféricos', icon: Printer, permission: 'pos.sell' },
+  { to: '/baixar', label: 'Baixar o desktop', icon: Download, permission: null },
   { to: '/assinatura', label: 'Minha assinatura', icon: CreditCard, permission: 'admin.users' },
   { to: '/configuracoes', label: 'Configurações', icon: Settings, permission: null },
 ] as const;
@@ -45,7 +47,11 @@ export function Shell() {
   const me = useMe();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const items = NAV.filter((n) => !n.permission || me.permissions.includes(n.permission));
+  const items = NAV.filter(
+    (n) =>
+      (!n.permission || me.permissions.includes(n.permission)) &&
+      !(n.to === '/baixar' && platform.kind === 'desktop'),
+  );
   const support = me.support ? readSupportSession() : null;
 
   const account = useQuery({

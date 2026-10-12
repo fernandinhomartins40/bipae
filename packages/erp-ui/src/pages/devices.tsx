@@ -1,7 +1,17 @@
 import { encodeReceipt, type ReceiptBlock } from '@bipae/pdv-core';
 import type { DeviceConfig, PrinterConfig } from '@bipae/platform';
-import { Alert, Badge, Button, Card, Checkbox, PageHeader, SelectField, TextField } from '@bipae/ui';
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  PageHeader,
+  SelectField,
+  TextField,
+} from '@bipae/ui';
 import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router';
 import { useApp } from '../context';
 
 const TEST_PAGE: ReceiptBlock[] = [
@@ -53,7 +63,10 @@ function NativeDevices() {
   };
   const setPrinter = (patch: Partial<PrinterConfig>) =>
     setConfig({ ...config, printer: { ...printer, ...patch } as PrinterConfig });
-  const portOptions = [{ value: '', label: 'Escolha a porta' }, ...ports.map((p) => ({ value: p, label: p }))];
+  const portOptions = [
+    { value: '', label: 'Escolha a porta' },
+    ...ports.map((p) => ({ value: p, label: p })),
+  ];
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
@@ -85,8 +98,20 @@ function NativeDevices() {
                   ...config,
                   printer:
                     e.target.value === 'tcp'
-                      ? { transport: 'tcp', host: '', port: 9100, columns: printer.columns, codePage: printer.codePage }
-                      : { transport: 'serial', port: '', baudRate: 9600, columns: printer.columns, codePage: printer.codePage },
+                      ? {
+                          transport: 'tcp',
+                          host: '',
+                          port: 9100,
+                          columns: printer.columns,
+                          codePage: printer.codePage,
+                        }
+                      : {
+                          transport: 'serial',
+                          port: '',
+                          baudRate: 9600,
+                          columns: printer.columns,
+                          codePage: printer.codePage,
+                        },
                 })
               }
               options={[
@@ -96,13 +121,33 @@ function NativeDevices() {
             />
             {printer.transport === 'tcp' ? (
               <div className="grid gap-4 sm:grid-cols-2">
-                <TextField label="IP da impressora" placeholder="192.168.0.50" value={printer.host} onChange={(e) => setPrinter({ host: e.target.value })} />
-                <TextField label="Porta" inputMode="numeric" value={String(printer.port)} onChange={(e) => setPrinter({ port: Number(e.target.value) || 9100 })} />
+                <TextField
+                  label="IP da impressora"
+                  placeholder="192.168.0.50"
+                  value={printer.host}
+                  onChange={(e) => setPrinter({ host: e.target.value })}
+                />
+                <TextField
+                  label="Porta"
+                  inputMode="numeric"
+                  value={String(printer.port)}
+                  onChange={(e) => setPrinter({ port: Number(e.target.value) || 9100 })}
+                />
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
-                <SelectField label="Porta da impressora" value={printer.port} onChange={(e) => setPrinter({ port: e.target.value })} options={portOptions} />
-                <SelectField label="Velocidade" value={String(printer.baudRate)} onChange={(e) => setPrinter({ baudRate: Number(e.target.value) })} options={BAUD_RATES.map((b) => ({ value: b, label: b }))} />
+                <SelectField
+                  label="Porta da impressora"
+                  value={printer.port}
+                  onChange={(e) => setPrinter({ port: e.target.value })}
+                  options={portOptions}
+                />
+                <SelectField
+                  label="Velocidade"
+                  value={String(printer.baudRate)}
+                  onChange={(e) => setPrinter({ baudRate: Number(e.target.value) })}
+                  options={BAUD_RATES.map((b) => ({ value: b, label: b }))}
+                />
               </div>
             )}
             <SelectField
@@ -125,12 +170,31 @@ function NativeDevices() {
           label="Usar balança"
           hint="Balanças Toledo e Filizola por cabo serial/USB."
           checked={Boolean(config.scale)}
-          onChange={(v) => setConfig({ ...config, scale: v ? { port: '', baudRate: 9600 } : undefined })}
+          onChange={(v) =>
+            setConfig({ ...config, scale: v ? { port: '', baudRate: 9600 } : undefined })
+          }
         />
         {config.scale && (
           <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField label="Porta da balança" value={config.scale.port} onChange={(e) => setConfig({ ...config, scale: { ...config.scale!, port: e.target.value } })} options={portOptions} />
-            <SelectField label="Velocidade da balança" value={String(config.scale.baudRate)} onChange={(e) => setConfig({ ...config, scale: { ...config.scale!, baudRate: Number(e.target.value) } })} options={BAUD_RATES.map((b) => ({ value: b, label: b }))} />
+            <SelectField
+              label="Porta da balança"
+              value={config.scale.port}
+              onChange={(e) =>
+                setConfig({ ...config, scale: { ...config.scale!, port: e.target.value } })
+              }
+              options={portOptions}
+            />
+            <SelectField
+              label="Velocidade da balança"
+              value={String(config.scale.baudRate)}
+              onChange={(e) =>
+                setConfig({
+                  ...config,
+                  scale: { ...config.scale!, baudRate: Number(e.target.value) },
+                })
+              }
+              options={BAUD_RATES.map((b) => ({ value: b, label: b }))}
+            />
           </div>
         )}
         <Button type="submit">Salvar periféricos</Button>
@@ -150,16 +214,23 @@ function ConnectorHost() {
     <Card>
       <h2 className="text-lg font-bold">Bipaê Conector</h2>
       <p className="mt-1 text-muted">
-        Permite que o caixa no navegador deste computador use a impressora, a balança e a gaveta configuradas aqui.
+        Permite que o caixa no navegador deste computador use a impressora, a balança e a gaveta
+        configuradas aqui.
       </p>
       <div className="mt-4 flex items-center gap-3">
-        {status.running ? <Badge tone="success">Ligado (porta {status.port})</Badge> : <Badge tone="warning">Desligado</Badge>}
+        {status.running ? (
+          <Badge tone="success">Ligado (porta {status.port})</Badge>
+        ) : (
+          <Badge tone="warning">Desligado</Badge>
+        )}
       </div>
       <p className="mt-4 text-sm font-semibold">Código de pareamento</p>
       <p className="font-mono text-4xl font-bold tracking-widest" data-testid="connector-code">
         {status.code}
       </p>
-      <p className="text-sm text-muted">No navegador, abra Configurações → Periféricos e digite este código.</p>
+      <p className="text-sm text-muted">
+        No navegador, abra Configurações → Periféricos e digite este código.
+      </p>
       <Button variant="secondary" className="mt-3" onClick={() => void host.newCode().then(reload)}>
         Gerar novo código
       </Button>
@@ -192,7 +263,10 @@ function ConnectorPairing() {
   const pair = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await connector.pair(code, navigator.userAgent.includes('Edg') ? 'Microsoft Edge' : 'Navegador');
+      await connector.pair(
+        code,
+        navigator.userAgent.includes('Edg') ? 'Microsoft Edge' : 'Navegador',
+      );
       setPaired(true);
       setMessage({ ok: true, text: 'Pareado! Agora o caixa usa os periféricos deste computador.' });
     } catch (error) {
@@ -204,14 +278,24 @@ function ConnectorPairing() {
     <Card>
       <h2 className="text-lg font-bold">Bipaê Conector</h2>
       <p className="mt-1 text-muted">
-        O navegador não fala direto com impressora, balança e gaveta. Instale o Bipaê Desktop neste computador; ele traz o
-        Conector, que faz essa ponte com segurança.
+        O navegador não fala direto com impressora, balança e gaveta. Instale o Bipaê Desktop neste
+        computador; ele traz o Conector, que faz essa ponte com segurança.{' '}
+        <Link to="/baixar" className="font-semibold text-primary underline">
+          Baixar o Bipaê Desktop
+        </Link>
       </p>
-      {message && <div className="mt-3"><Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert></div>}
+      {message && (
+        <div className="mt-3">
+          <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
+        </div>
+      )}
       {paired ? (
         <div className="mt-4 flex items-center gap-3">
           <Badge tone="success">Pareado</Badge>
-          <Button variant="ghost" onClick={() => void connector.unpair().then(() => setPaired(false))}>
+          <Button
+            variant="ghost"
+            onClick={() => void connector.unpair().then(() => setPaired(false))}
+          >
             Desparear
           </Button>
         </div>
@@ -226,7 +310,8 @@ function ConnectorPairing() {
           />
           <Button type="submit">Parear este navegador</Button>
           <p className="text-sm text-muted">
-            Se o navegador pedir permissão para acessar "apps neste dispositivo", clique em Permitir.
+            Se o navegador pedir permissão para acessar "apps neste dispositivo", clique em
+            Permitir.
           </p>
         </form>
       )}
@@ -247,7 +332,11 @@ function DeviceTests() {
   return (
     <Card>
       <h2 className="text-lg font-bold">Testar</h2>
-      {message && <div className="mt-3"><Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert></div>}
+      {message && (
+        <div className="mt-3">
+          <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
+        </div>
+      )}
       <div className="mt-4 flex flex-wrap gap-2">
         <Button
           variant="secondary"

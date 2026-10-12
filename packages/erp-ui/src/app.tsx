@@ -13,6 +13,7 @@ import { PartiesPage } from './pages/parties';
 import { DevicesPage } from './pages/devices';
 import { PosPage } from './pages/pos';
 import { AccountPage } from './pages/account';
+import { DownloadsPage, PublicDownloadsPage } from './pages/downloads';
 import { CompaniesPage } from './pages/companies';
 import { AdminApp } from './admin/admin-app';
 import { captureSupportHandoff, endSupportSession, readSupportSession } from './support';
@@ -97,6 +98,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
       <AppContextProvider value={{ platform, api, me, setMe }}>
         <Router {...(router === 'browser' && basename && basename !== '/' && { basename })}>
           <Routes>
+            <Route path="/download" element={<PublicDownloadsPage />} />
             <Route
               path="/admin/*"
               element={<AdminApp platform={platform} apiUrl={apiUrl} appBase={basename ?? ''} />}
@@ -144,6 +146,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="auditoria" element={<AuditPage />} />
               <Route path="configuracoes" element={<SettingsPage />} />
               <Route path="perifericos" element={<DevicesPage />} />
+              <Route path="baixar" element={<DownloadsPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

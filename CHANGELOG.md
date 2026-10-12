@@ -1,5 +1,15 @@
 # Changelog
 
+## [Download do Bipaê Desktop] — 12/10/2026
+
+### Adicionado
+- Página **Baixar o Bipaê Desktop**:
+  - pública em https://www.bipae.com.br/app/download, com links na landing;
+  - item "Baixar o desktop" no menu da retaguarda e link na tela de Periféricos.
+- Mostra a versão mais recente com o instalador certo para o sistema do visitante, as outras opções (MSI, .deb, AppImage), o passo a passo de instalação e o aviso do SmartScreen. Sem versão publicada, diz isso com clareza.
+- API `GET /v1/downloads/desktop`, que lê a última Release estável do GitHub, com cache.
+- O workflow **Release desktop** agora publica uma Release pública com instaladores de nome fixo a cada tag `vX.Y.Z`.
+
 ## [Plataforma SaaS e painel super admin] — 12/10/2026
 
 ### Adicionado

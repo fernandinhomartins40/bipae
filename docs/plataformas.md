@@ -80,6 +80,14 @@ Segurança do Conector:
 3. Linux: `sudo apt install libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libudev-dev`.
 4. `pnpm --filter @bipae/desktop tauri:build`.
 
+### Baixar e publicar versões
+
+- Clientes baixam em **https://www.bipae.com.br/app/download** (página pública, também no menu "Baixar o desktop" da retaguarda e na landing).
+- A página lê `GET /v1/downloads/desktop`. A API consulta a última Release **estável** pública do GitHub (`DESKTOP_RELEASES_REPO`, padrão `fernandinhomartins40/bipae`), guarda por 10 minutos e, sem Release, mostra "O instalador está quase pronto".
+- Para publicar uma versão: crie e envie uma tag `vX.Y.Z` (`git tag v0.4.0 && git push origin v0.4.0`). O workflow **Release desktop** compila Windows e Linux, dá nomes fixos aos instaladores (`Bipae-X.Y.Z-windows-x64-setup.exe`, `...-windows-x64.msi`, `bipae_X.Y.Z_amd64.deb`, `...-linux-x86_64.AppImage`) e cria a Release. Em até 10 minutos a página mostra a versão nova.
+- Tags com hífen (`v0.4.0-beta.1`) viram pré-release e **não** aparecem na página.
+- Enquanto o atualizador não estiver configurado (abaixo), quem já tem o app atualiza baixando e instalando por cima; os dados do caixa ficam.
+
 ### Atualização automática (o que o dono do projeto precisa fazer)
 
 O atualizador só entra nos builds de **release** (`.github/workflows/release-desktop.yml`, disparado por tag `v1.2.3`; tags com hífen, como `v1.2.3-beta.1`, vão para o canal **beta**).

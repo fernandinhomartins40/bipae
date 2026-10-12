@@ -26,6 +26,16 @@ const VARIANTS: Record<Variant, string> = {
   danger: 'bg-danger text-white hover:opacity-90',
 };
 
+/** Button look for links (`<a className={buttonClass('primary', 'lg')}>`). */
+export function buttonClass(variant: Variant = 'primary', size: 'md' | 'lg' = 'md') {
+  return cx(
+    'inline-flex items-center justify-center gap-2 rounded-ui font-semibold transition-colors',
+    'disabled:cursor-not-allowed disabled:opacity-60',
+    size === 'lg' ? 'min-h-14 px-6 text-lg' : 'min-h-11 px-4 text-base',
+    VARIANTS[variant],
+  );
+}
+
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: 'md' | 'lg';
@@ -41,13 +51,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     <button
       ref={ref}
       type="button"
-      className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-ui font-semibold transition-colors',
-        'disabled:cursor-not-allowed disabled:opacity-60',
-        size === 'lg' ? 'min-h-14 px-6 text-lg' : 'min-h-11 px-4 text-base',
-        VARIANTS[variant],
-        className,
-      )}
+      className={cx(buttonClass(variant, size), className)}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...props}

@@ -27,6 +27,7 @@ import { AdminTenantsService } from './modules/admin/admin-tenants.service';
 import { PlatformAuditService } from './modules/admin/platform-audit.service';
 import { PlatformGuard } from './modules/admin/platform.guard';
 import { LimitsService } from './modules/account/limits.service';
+import { DownloadsController, DownloadsService } from './modules/downloads/downloads.controller';
 import { AuditController } from './modules/audit/audit.controller';
 import { AuditService } from './modules/audit/audit.service';
 import { AuthController } from './modules/auth/auth.controller';
@@ -80,6 +81,7 @@ class AppModule {
         AccountController,
         AdminAuthController,
         AdminController,
+        DownloadsController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -99,6 +101,7 @@ class AppModule {
         AdminAuthService,
         AdminTenantsService,
         AdminPlatformService,
+        DownloadsService,
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_FILTER, useClass: ApiExceptionFilter },
       ],

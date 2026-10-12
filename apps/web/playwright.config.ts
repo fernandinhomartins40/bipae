@@ -36,7 +36,11 @@ export default defineConfig({
       url: 'http://127.0.0.1:47811/state',
       reuseExistingServer: false,
       timeout: 60_000,
-      env: { CONNECTOR_PORT: '47810', CONNECTOR_CODE: '123456', CONNECTOR_ORIGINS: `http://localhost:${WEB_PORT}` },
+      env: {
+        CONNECTOR_PORT: '47810',
+        CONNECTOR_CODE: '123456',
+        CONNECTOR_ORIGINS: `http://localhost:${WEB_PORT}`,
+      },
     },
     {
       command: 'pnpm --filter @bipae/api exec tsx src/main.ts',
@@ -50,6 +54,7 @@ export default defineConfig({
         LOGIN_RATE_LIMIT_PER_MINUTE: '1000',
         // Test-only: this sign-up becomes the first Bipaê staff owner (ignored in production).
         PLATFORM_BOOTSTRAP_EMAIL: 'admin-e2e@exemplo.com.br',
+        DESKTOP_RELEASES_REPO: '',
       },
     },
     {
@@ -57,7 +62,10 @@ export default defineConfig({
       url: `http://localhost:${WEB_PORT}`,
       reuseExistingServer: false,
       timeout: 120_000,
-      env: { VITE_API_URL: `http://localhost:${API_PORT}`, VITE_CONNECTOR_URL: 'ws://127.0.0.1:47810' },
+      env: {
+        VITE_API_URL: `http://localhost:${API_PORT}`,
+        VITE_CONNECTOR_URL: 'ws://127.0.0.1:47810',
+      },
     },
     {
       command: `pnpm --filter @bipae/desktop exec vite --port ${DESKTOP_UI_PORT} --strictPort`,

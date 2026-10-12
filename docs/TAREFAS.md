@@ -33,7 +33,8 @@ Entregue: caixa completo nas duas cascas, banco local, sincronização, estoque 
 - [ ] Impressoras USB sem porta COM virtual (spooler do Windows em modo RAW)
 - [ ] Balança direto no navegador por WebSerial (hoje só pelo Conector)
 - [ ] Fallback IndexedDB para navegadores sem OPFS (hoje: banco em memória com aviso)
-- [ ] Conector: atalho do instalador, iniciar com o sistema, página `bipae.com.br/download`
+- [x] Página de download do desktop: `www.bipae.com.br/app/download` e menu "Baixar o desktop" (12/10/2026)
+- [ ] Conector: atalho do instalador e iniciar com o sistema
 - [ ] Desconto por item na tela do caixa (o núcleo já suporta; a tela tem só desconto na venda)
 - [ ] Crediário/convênio no pagamento (forma `store_credit` existe; falta limite por cliente)
 - [ ] Troca de operador no mesmo caixa sem sair da conta
@@ -43,7 +44,7 @@ Entregue: caixa completo nas duas cascas, banco local, sincronização, estoque 
 
 Entregue: planos e limites, ciclo de vida da conta, multi-empresas, painel `/app/admin`, acesso de suporte, auditoria da plataforma. Ver ADR-0013 e `docs/saas/plano.md`.
 
-- [ ] Promover o primeiro super admin em produção (`admin-cli grant`, ver `docs/deploy.md`) e ativar o 2FA
+- [x] Primeiro super admin promovido em produção (12/10/2026); falta ele ativar o 2FA no primeiro acesso
 - [ ] Definir preços dos planos pagos no painel (hoje "no lançamento")
 - [ ] Cobrança automática e troca de plano pelo próprio cliente (entra com o PSP, Fase 6)
 - [ ] Permissões por loja dentro do cliente (`memberships.store_ids`)
