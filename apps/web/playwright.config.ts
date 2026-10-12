@@ -31,6 +31,14 @@ export default defineConfig({
   ],
   webServer: [
     {
+      // Bipaê Conector simulator on a test port, so it never clashes with a real Conector.
+      command: 'pnpm exec tsx scripts/connector-simulator.ts',
+      url: 'http://127.0.0.1:47811/state',
+      reuseExistingServer: false,
+      timeout: 60_000,
+      env: { CONNECTOR_PORT: '47810', CONNECTOR_CODE: '123456', CONNECTOR_ORIGINS: `http://localhost:${WEB_PORT}` },
+    },
+    {
       command: 'pnpm --filter @bipae/api exec tsx src/main.ts',
       url: `http://localhost:${API_PORT}/v1/health`,
       reuseExistingServer: false,
@@ -47,7 +55,7 @@ export default defineConfig({
       url: `http://localhost:${WEB_PORT}`,
       reuseExistingServer: false,
       timeout: 120_000,
-      env: { VITE_API_URL: `http://localhost:${API_PORT}` },
+      env: { VITE_API_URL: `http://localhost:${API_PORT}`, VITE_CONNECTOR_URL: 'ws://127.0.0.1:47810' },
     },
     {
       command: `pnpm --filter @bipae/desktop exec vite --port ${DESKTOP_UI_PORT} --strictPort`,

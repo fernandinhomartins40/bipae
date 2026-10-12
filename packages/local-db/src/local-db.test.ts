@@ -64,6 +64,12 @@ describe('local database', () => {
     await second.close();
   });
 
+  it('refuses a database created by a newer app version', async () => {
+    const storage = createStorage(nodeSqliteDriver());
+    await migrateLocal(storage, ['CREATE TABLE a (x)', 'CREATE TABLE b (x)']);
+    await expect(migrateLocal(storage, ['CREATE TABLE a (x)'])).rejects.toThrow('versão mais nova');
+  });
+
   it('builds accent-insensitive search keys', () => {
     expect(searchKey('  Café com AÇÚCAR ')).toBe('cafe com acucar');
   });

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "__BIPAE_UPDATER_PUBKEY__",
+      "endpoints": [
+        "https://releases.bipae.com.br/desktop/__BIPAE_CHANNEL__/{{target}}/{{arch}}/{{current_version}}"
+      ],
+      "windows": { "installMode": "passive" }
+    }
+  },
+  "app": {
+    "security": {
+      "capabilities": [
+        "default",
+        {
+          "identifier": "updater",
+          "description": "Atualização automática assinada (só em builds de release)",
+          "windows": ["main"],
+          "permissions": ["updater:default", "process:allow-restart"]
+        }
+      ]
+    }
+  }
+}

@@ -1,18 +1,26 @@
-import { isTauri } from '@tauri-apps/api/core';
+import { invoke, isTauri } from '@tauri-apps/api/core';
 import { openWasmDatabase } from '@bipae/local-db/wasm';
-import { openNativeDatabase } from './sqlite';
 import {
   baselineCapabilities,
   implementedCapabilities,
+  SaleInProgressError,
+  type CapabilityName,
+  type CapabilityStatus,
+  type DeviceConfig,
+  type DeviceManager,
   type NotificationPort,
   type Platform,
   type PreferencesPort,
+  type PrintJob,
+  type UpdateInfo,
+  type UpdaterPort,
 } from '@bipae/platform';
+import { openNativeDatabase } from './sqlite';
 
 /**
  * Bipaê Desktop: implementations of the platform ports for the Tauri shell (ADR-0012).
- * Native drivers (ESC/POS printer, scale, drawer, TEF, A1/A3 signing, signed auto-update)
- * arrive in Phases 2–3 as Tauri commands; until then they are reported as "coming soon".
+ * Outside Tauri (dev server, E2E in Chromium) native features report "coming soon" honestly
+ * and the local database falls back to SQLite WASM.
  */
 
 /** WebView storage persists inside the app's data folder, separate from any browser. */
@@ -36,23 +44,101 @@ class WebViewNotifications implements NotificationPort {
   }
 }
 
+/** Config lives in the app data folder (Rust), so the Conector uses the same devices. */
+const nativeDevices: DeviceManager = {
+  listSerialPorts: () => invoke<string[]>('devices_list_ports'),
+  getConfig: () => invoke<DeviceConfig>('devices_get_config'),
+  setConfig: (config) => invoke<void>('devices_set_config', { config }),
+};
+
+/**
+ * Signed auto-update (only in release builds compiled with the updater feature).
+ * Never installs during a sale; pending sales stay in the local database, which lives
+ * outside the app bundle, so an update never loses them.
+ */
+class TauriUpdater implements UpdaterPort {
+  private pending: { version: string; downloadAndInstall: () => Promise<void> } | null = null;
+  async check(): Promise<UpdateInfo | null> {
+    try {
+      const { check } = await import('@tauri-apps/plugin-updater');
+      const update = await check();
+      this.pending = update;
+      return update
+        ? { version: update.version, channel: 'stable', ...(update.body && { notes: update.body }) }
+        : null;
+    } catch {
+      return null; // offline or no release server yet
+    }
+  }
+  async install(context: { saleInProgress: boolean }) {
+    if (context.saleInProgress) throw new SaleInProgressError();
+    if (!this.pending) return;
+    await this.pending.downloadAndInstall();
+    const { relaunch } = await import('@tauri-apps/plugin-process');
+    await relaunch();
+  }
+}
+
 export async function createDesktopPlatform(): Promise<Platform> {
+  const native = isTauri();
   let version = __APP_VERSION__;
-  if (isTauri()) {
+  let updaterBuilt = false;
+  if (native) {
     const { getVersion } = await import('@tauri-apps/api/app');
     version = await getVersion();
+    updaterBuilt = (await invoke<{ updater: boolean }>('platform_info')).updater;
   }
+
+  const capabilities = async (): Promise<Record<CapabilityName, CapabilityStatus>> => {
+    const implemented: CapabilityName[] = ['storage', 'notifications'];
+    if (native) implemented.push('printer', 'cashDrawer', 'scale');
+    if (updaterBuilt) implemented.push('updater');
+    const caps = implementedCapabilities(
+      baselineCapabilities('desktop', { connectorPaired: false, webSerial: false }),
+      implemented,
+    );
+    if (native) {
+      const config = await nativeDevices.getConfig();
+      const notConfigured: CapabilityStatus = { available: false, reason: 'not-configured' };
+      if (!config.printer) caps.printer = notConfigured;
+      if (!config.printer || config.drawerViaPrinter === false) caps.cashDrawer = notConfigured;
+      if (!config.scale) caps.scale = notConfigured;
+    }
+    return caps;
+  };
+
   return {
     kind: 'desktop',
     version,
     preferences: new WebViewPreferences(),
     // Native SQLite inside the app; the WASM driver only when the UI runs outside Tauri (dev/E2E).
-    openLocalDatabase: isTauri() ? openNativeDatabase : openWasmDatabase,
-    capabilities: async () =>
-      implementedCapabilities(
-        baselineCapabilities('desktop', { connectorPaired: false, webSerial: false }),
-        ['storage', 'notifications'],
-      ),
+    openLocalDatabase: native ? openNativeDatabase : openWasmDatabase,
+    capabilities,
     notifications: new WebViewNotifications(),
+    ...(native && {
+      devices: nativeDevices,
+      printer: {
+        print: async (job: PrintJob) => {
+          if (job.kind !== 'escpos') throw new Error('A impressora térmica imprime ESC/POS.');
+          await invoke('devices_print', { data: Array.from(job.data as Uint8Array) });
+        },
+      },
+      cashDrawer: { open: () => invoke<void>('devices_open_drawer') },
+      scale: {
+        read: async () => ({ grams: await invoke<number>('devices_read_scale'), stable: true }),
+      },
+      connectorHost: {
+        status: () =>
+          invoke<{
+            running: boolean;
+            port: number;
+            code: string;
+            clients: { id: string; name: string }[];
+          }>('connector_status'),
+        newCode: () => invoke<string>('connector_new_code'),
+        revoke: (id: string) => invoke<void>('connector_revoke', { id }),
+      },
+    }),
+    ...(updaterBuilt && { updater: new TauriUpdater() }),
   };
 }

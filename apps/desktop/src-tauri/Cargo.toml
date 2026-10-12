@@ -13,11 +13,25 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
+[features]
+default = []
+# Signed auto-update. Enabled only in release builds that have the signing key (CI secrets),
+# together with tauri.updater.conf.json. See docs/plataformas.md.
+updater = ["dep:tauri-plugin-updater", "dep:tauri-plugin-process"]
+
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["tray-icon"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "0.40", features = ["bundled"] }
+serialport = "4"
+tokio = { version = "1", features = ["net"] }
+tokio-tungstenite = "0.30"
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
+base64 = "0.22"
+getrandom = "0.3"
+tauri-plugin-updater = { version = "2", optional = true }
+tauri-plugin-process = { version = "2", optional = true }
 
 [profile.release]
 codegen-units = 1

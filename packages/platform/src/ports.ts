@@ -3,6 +3,8 @@
  * Bipaê Desktop lives behind these interfaces. Screens and business rules only see the ports.
  */
 
+import type { DeviceManager } from './devices';
+
 export type PlatformKind = 'web' | 'desktop';
 
 /** How a capability is provided on the current platform. */
@@ -148,6 +150,16 @@ export interface Platform {
   certificate?: CertificatePort;
   updater?: UpdaterPort;
   notifications?: NotificationPort;
+  /** Desktop: configure printer/scale on this computer (also used by the Conector). */
+  devices?: DeviceManager;
+  /** Web: pair this browser with the Bipaê Conector. */
+  connector?: { isPaired(): Promise<boolean>; pair(code: string, clientName: string): Promise<void>; unpair(): Promise<void> };
+  /** Desktop: the Conector this app serves to browsers on this computer. */
+  connectorHost?: {
+    status(): Promise<{ running: boolean; port: number; code: string; clients: { id: string; name: string }[] }>;
+    newCode(): Promise<string>;
+    revoke(id: string): Promise<void>;
+  };
 }
 
 export class SaleInProgressError extends Error {

@@ -85,16 +85,27 @@ export const LOCAL_MIGRATIONS: string[] = [
   `,
 ];
 
-export async function migrateLocal(storage: LocalStorage): Promise<number> {
+/**
+ * Brings the terminal database up to date, one transaction per migration. Runs on every app
+ * start, so after an update new migrations apply on top of the existing data (pending sales
+ * included). `migrations` is injectable for tests.
+ */
+export async function migrateLocal(
+  storage: LocalStorage,
+  migrations: readonly string[] = LOCAL_MIGRATIONS,
+): Promise<number> {
   const [row] = await storage.query<{ user_version: number }>('PRAGMA user_version');
   const current = Number(row?.user_version ?? 0);
-  for (let version = current; version < LOCAL_MIGRATIONS.length; version++) {
+  if (current > migrations.length) {
+    throw new Error('Este banco local é de uma versão mais nova do Bipaê. Atualize o aplicativo.');
+  }
+  for (let version = current; version < migrations.length; version++) {
     await storage.transaction(async () => {
-      await storage.driver.exec(LOCAL_MIGRATIONS[version]!);
+      await storage.driver.exec(migrations[version]!);
       await storage.driver.run(`PRAGMA user_version = ${version + 1}`);
     });
   }
-  return LOCAL_MIGRATIONS.length;
+  return migrations.length;
 }
 
 export async function getMeta(storage: Pick<LocalStorage, 'query'>, key: string) {

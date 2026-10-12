@@ -10,6 +10,7 @@ import { AuditPage, TeamPage, TerminalsPage } from './pages/admin';
 import { LoginPage, SignupPage } from './pages/auth';
 import { HomePage } from './pages/home';
 import { PartiesPage } from './pages/parties';
+import { DevicesPage } from './pages/devices';
 import { PosPage } from './pages/pos';
 import { SalesPage } from './pages/sales';
 import { ProductsPage } from './pages/products';
@@ -123,6 +124,7 @@ export function BipaeApp({ platform, apiUrl, router }: BipaeAppProps) {
               <Route path="equipe" element={<TeamPage />} />
               <Route path="auditoria" element={<AuditPage />} />
               <Route path="configuracoes" element={<SettingsPage />} />
+              <Route path="perifericos" element={<DevicesPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -1,0 +1,98 @@
+name: Release desktop
+
+# Builds signed installers and auto-update artifacts for a version tag:
+#   v1.2.3        → stable channel
+#   v1.2.3-beta.1 → beta channel
+#
+# Required secrets (the owner creates them; see docs/plataformas.md):
+#   TAURI_SIGNING_PRIVATE_KEY, TAURI_SIGNING_PRIVATE_KEY_PASSWORD, BIPAE_UPDATER_PUBKEY
+#     → updater signature (generated with `pnpm --filter @bipae/desktop tauri signer generate`)
+# Optional (code signing; installers are unsigned without them):
+#   WINDOWS_CERTIFICATE (base64 .pfx), WINDOWS_CERTIFICATE_PASSWORD
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    name: Desktop ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    env:
+      HAS_UPDATER_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY != '' }}
+      HAS_WINDOWS_CERT: ${{ secrets.WINDOWS_CERTIFICATE != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+      - name: Dependências do WebKitGTK (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libudev-dev
+      - run: pnpm install --frozen-lockfile
+
+      - name: Versão e canal a partir da tag
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          CHANNEL=$([[ "$VERSION" == *-* ]] && echo beta || echo stable)
+          echo "CHANNEL=$CHANNEL" >> "$GITHUB_ENV"
+          cd apps/desktop/src-tauri
+          node -e "const f='tauri.conf.json';const c=require('./'+f);c.version='$VERSION';require('fs').writeFileSync(f,JSON.stringify(c,null,2))"
+
+      - name: Configuração do atualizador
+        if: env.HAS_UPDATER_KEY == 'true'
+        shell: bash
+        env:
+          PUBKEY: ${{ secrets.BIPAE_UPDATER_PUBKEY }}
+        run: |
+          cd apps/desktop/src-tauri
+          node -e "const fs=require('fs');let t=fs.readFileSync('tauri.updater.conf.json','utf8');t=t.replace('__BIPAE_UPDATER_PUBKEY__',process.env.PUBKEY).replace('__BIPAE_CHANNEL__',process.env.CHANNEL);fs.writeFileSync('tauri.updater.conf.json',t)"
+
+      - name: Certificado de assinatura do Windows
+        if: runner.os == 'Windows' && env.HAS_WINDOWS_CERT == 'true'
+        shell: pwsh
+        env:
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        run: |
+          $bytes = [Convert]::FromBase64String($env:WINDOWS_CERTIFICATE)
+          [IO.File]::WriteAllBytes("cert.pfx", $bytes)
+          $cert = Import-PfxCertificate -FilePath cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString $env:WINDOWS_CERTIFICATE_PASSWORD -AsPlainText -Force)
+          Remove-Item cert.pfx
+          $conf = Get-Content apps/desktop/src-tauri/tauri.conf.json -Raw | ConvertFrom-Json
+          $conf.bundle.windows | Add-Member -NotePropertyName certificateThumbprint -NotePropertyValue $cert.Thumbprint -Force
+          $conf.bundle.windows | Add-Member -NotePropertyName timestampUrl -NotePropertyValue "http://timestamp.digicert.com" -Force
+          $conf | ConvertTo-Json -Depth 20 | Set-Content apps/desktop/src-tauri/tauri.conf.json
+
+      - name: Build (com atualizador assinado)
+        if: env.HAS_UPDATER_KEY == 'true'
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: pnpm --filter @bipae/desktop tauri build --features updater --config src-tauri/tauri.updater.conf.json
+
+      - name: Build (sem atualizador — segredos ainda não configurados)
+        if: env.HAS_UPDATER_KEY != 'true'
+        run: pnpm --filter @bipae/desktop tauri build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bipae-desktop-${{ env.CHANNEL }}-${{ runner.os }}
+          path: |
+            apps/desktop/src-tauri/target/release/bundle/msi/*
+            apps/desktop/src-tauri/target/release/bundle/nsis/*
+            apps/desktop/src-tauri/target/release/bundle/deb/*
+            apps/desktop/src-tauri/target/release/bundle/appimage/*

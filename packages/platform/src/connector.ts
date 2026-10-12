@@ -1,0 +1,138 @@
+/**
+ * Bipaê Conector protocol (ADR-0012 §3). The desktop app, in tray mode, listens on a local
+ * WebSocket so the web register can use peripherals. This file is the specification:
+ * the Rust server implements the same rules, and `ConnectorCore` is the reference
+ * implementation used by the simulator and the tests.
+ *
+ * Security rules:
+ * 1. Only the official origins may connect (checked on the WebSocket handshake).
+ * 2. A browser must pair once by typing the 6-digit code shown by the Conector; it then
+ *    gets a token (stored by the browser, revocable in the Conector).
+ * 3. Only a closed list of commands exists; nothing reads files or runs programs.
+ */
+
+export const CONNECTOR_PORT = 47800;
+export const CONNECTOR_URL = `ws://127.0.0.1:${CONNECTOR_PORT}`;
+export const CONNECTOR_ORIGINS = ['https://app.bipae.com.br', 'https://homolog.bipae.com.br'];
+/** Development origins, accepted only by development builds of the Conector. */
+export const CONNECTOR_DEV_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:4173',
+];
+
+export const CONNECTOR_COMMANDS = ['print', 'drawer', 'scale', 'ports'] as const;
+export type ConnectorCommand = (typeof CONNECTOR_COMMANDS)[number];
+
+export type ConnectorRequest =
+  | { id: number; type: 'pair'; code: string; clientName: string }
+  | { id: number; type: 'auth'; token: string }
+  | { id: number; type: 'print'; data: string /* base64 ESC/POS */ }
+  | { id: number; type: 'drawer' }
+  | { id: number; type: 'scale' }
+  | { id: number; type: 'ports' };
+
+export type ConnectorResponse =
+  | { id: number; ok: true; result?: unknown }
+  | { id: number; ok: false; error: string; code: 'unpaired' | 'bad_code' | 'unknown_command' | 'device' | 'locked' };
+
+/** What the Conector does with the real hardware (Rust in the app; simulators in tests). */
+export interface ConnectorDevices {
+  print(bytes: Uint8Array): Promise<void>;
+  openDrawer(): Promise<void>;
+  /** Weight in grams; throws with a pt-BR message when the scale is not ready. */
+  readScale(): Promise<number>;
+  listPorts(): Promise<string[]>;
+}
+
+export function isAllowedOrigin(origin: string | undefined, dev: boolean): boolean {
+  if (!origin) return false;
+  return CONNECTOR_ORIGINS.includes(origin) || (dev && CONNECTOR_DEV_ORIGINS.includes(origin));
+}
+
+export function randomPairingCode(random: () => number = Math.random): string {
+  return String(Math.floor(random() * 1_000_000)).padStart(6, '0');
+}
+
+export function toBase64(bytes: Uint8Array): string {
+  let binary = '';
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary);
+}
+
+export function fromBase64(text: string): Uint8Array {
+  return Uint8Array.from(atob(text), (c) => c.charCodeAt(0));
+}
+
+/**
+ * Per-connection state machine of the Conector. Wrong pairing codes are limited
+ * (5 attempts, then the code must be regenerated on the Conector) to stop guessing.
+ */
+export class ConnectorCore {
+  private attempts = 0;
+  readonly tokens = new Map<string, string>(); // token → client name
+
+  constructor(
+    private pairingCode: string,
+    private readonly devices: ConnectorDevices,
+    private readonly newToken: () => string = () => crypto.randomUUID(),
+  ) {}
+
+  regenerateCode(code: string) {
+    this.pairingCode = code;
+    this.attempts = 0;
+  }
+
+  revoke(token: string) {
+    this.tokens.delete(token);
+  }
+
+  /** Handles one request; `session.authed` is per WebSocket connection. */
+  async handle(session: { authed: boolean }, request: ConnectorRequest): Promise<ConnectorResponse> {
+    const { id } = request;
+    try {
+      switch (request.type) {
+        case 'pair': {
+          if (this.attempts >= 5) {
+            return { id, ok: false, code: 'locked', error: 'Muitas tentativas. Gere um novo código no Bipaê Conector.' };
+          }
+          if (request.code !== this.pairingCode) {
+            this.attempts++;
+            return { id, ok: false, code: 'bad_code', error: 'Código incorreto. Confira o código mostrado no Bipaê Conector.' };
+          }
+          const token = this.newToken();
+          this.tokens.set(token, request.clientName.slice(0, 60));
+          session.authed = true;
+          return { id, ok: true, result: { token } };
+        }
+        case 'auth':
+          if (!this.tokens.has(request.token)) {
+            return { id, ok: false, code: 'unpaired', error: 'Este navegador precisa ser pareado de novo com o Bipaê Conector.' };
+          }
+          session.authed = true;
+          return { id, ok: true };
+        default:
+          break;
+      }
+      if (!session.authed) {
+        return { id, ok: false, code: 'unpaired', error: 'Pareie este navegador com o Bipaê Conector primeiro.' };
+      }
+      switch (request.type) {
+        case 'print':
+          await this.devices.print(fromBase64(request.data));
+          return { id, ok: true };
+        case 'drawer':
+          await this.devices.openDrawer();
+          return { id, ok: true };
+        case 'scale':
+          return { id, ok: true, result: { grams: await this.devices.readScale() } };
+        case 'ports':
+          return { id, ok: true, result: { ports: await this.devices.listPorts() } };
+        default:
+          return { id, ok: false, code: 'unknown_command', error: 'Comando não permitido.' };
+      }
+    } catch (error) {
+      return { id, ok: false, code: 'device', error: (error as Error).message };
+    }
+  }
+}

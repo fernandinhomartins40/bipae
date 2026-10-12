@@ -6,6 +6,7 @@ import {
   LogOut,
   Monitor,
   Package,
+  Printer,
   Settings,
   ShieldCheck,
   Truck,
@@ -25,6 +26,7 @@ const NAV = [
   { to: '/caixas', label: 'Caixas', icon: Monitor, permission: 'admin.terminals' },
   { to: '/equipe', label: 'Equipe', icon: Users, permission: 'admin.users' },
   { to: '/auditoria', label: 'Auditoria', icon: ShieldCheck, permission: 'audit.read' },
+  { to: '/perifericos', label: 'Periféricos', icon: Printer, permission: 'pos.sell' },
   { to: '/configuracoes', label: 'Configurações', icon: Settings, permission: null },
 ] as const;
 

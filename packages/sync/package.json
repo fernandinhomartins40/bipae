@@ -13,7 +13,8 @@
   "dependencies": {
     "@bipae/domain": "workspace:*",
     "@bipae/local-db": "workspace:*",
-    "@bipae/pdv-core": "workspace:*"
+    "@bipae/pdv-core": "workspace:*",
+    "@bipae/platform": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

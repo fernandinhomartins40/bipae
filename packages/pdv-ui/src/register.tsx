@@ -23,7 +23,7 @@ import type { Platform } from '@bipae/platform';
 import { describeLastSync, type SyncStatus } from '@bipae/sync';
 import { Alert, Button, cx, Logo, parseDisplayPreferences, playBeep } from '@bipae/ui';
 import { CloudOff, RefreshCw } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { AuthorizablePermission, PosBackend, PosUser } from './backend';
 import {
   AuthorizeDialog,
@@ -89,7 +89,14 @@ export function Register({
   onExit: () => void;
 }) {
   const { pdv, context } = handle;
-  const [cart, setCart] = useState<Cart>(EMPTY_CART);
+  const [cart, setCartState] = useState<Cart>(EMPTY_CART);
+  // Mirror updated synchronously on every change, so keyboard shortcuts always see the
+  // latest cart even if React has not re-rendered yet (fast "scan + F-key").
+  const cartRef = useRef<Cart>(EMPTY_CART);
+  const setCart = useCallback((next: Cart | ((c: Cart) => Cart)) => {
+    cartRef.current = typeof next === 'function' ? next(cartRef.current) : next;
+    setCartState(cartRef.current);
+  }, []);
   const [selected, setSelected] = useState<number | null>(null);
   const [input, setInput] = useState('');
   const [results, setResults] = useState<CatalogProduct[]>([]);
@@ -103,8 +110,10 @@ export function Register({
   const t = useMemo(() => totals(cart), [cart]);
   const can = (p: string) => user.permissions.includes(p);
 
+  const [caps, setCaps] = useState<Awaited<ReturnType<Platform['capabilities']>> | null>(null);
   useEffect(() => {
     void platform.preferences.get('bipae.display').then((raw) => setBeep(parseDisplayPreferences(raw).beep));
+    void platform.capabilities().then(setCaps);
   }, [platform]);
 
   const focusInput = () => setTimeout(() => inputRef.current?.focus(), 0);
@@ -118,7 +127,7 @@ export function Register({
 
   const add = (product: CatalogProduct, quantityMilli: number) => {
     try {
-      const next = addItem(cart, product, quantityMilli);
+      const next = addItem(cartRef.current, product, quantityMilli);
       setCart(next);
       setSelected(next.lines.at(-1)?.line ?? null);
       setMessage(null);
@@ -129,13 +138,23 @@ export function Register({
     }
   };
 
-  const readScale = platform.scale
+  const readScale = platform.scale && caps?.scale.available
     ? async () => {
         const reading = await platform.scale!.read();
         if (!reading.stable) throw new Error(SCALE_MESSAGES.unstable);
         return reading.grams;
       }
     : undefined;
+
+  // A scan is async (local database lookup). Shortcuts pressed meanwhile wait for it.
+  const pendingScan = useRef<Promise<void> | null>(null);
+  const scanNow = () => {
+    const run = handleScan().finally(() => {
+      if (pendingScan.current === run) pendingScan.current = null;
+    });
+    pendingScan.current = run;
+    return run;
+  };
 
   const handleScan = async () => {
     const text = input;
@@ -170,7 +189,7 @@ export function Register({
 
   const applyDiscount = async (cents: number) => {
     try {
-      const next = setSaleDiscount(cart, cents);
+      const next = setSaleDiscount(cartRef.current, cents);
       let by: string | null = null;
       if (discountNeedsAuthorization(next, DISCOUNT_LIMIT_PERCENT)) {
         by = can('pos.discount.above_limit') ? user.id : await requestAuthorization('pos.discount.above_limit');
@@ -220,7 +239,7 @@ export function Register({
       tone: 'success',
       text: `Bipaê! Venda nº ${sale.terminalSeq} concluída.${change > 0 ? ` Troco: ${brl(change)}.` : ''}`,
     });
-    if (platform.cashDrawer && sale.payments.some((p) => p.method === 'cash')) {
+    if (platform.cashDrawer && caps?.cashDrawer.available && sale.payments.some((p) => p.method === 'cash')) {
       void platform.cashDrawer.open().catch(() => undefined);
     }
     onSyncNow();
@@ -228,6 +247,7 @@ export function Register({
   };
 
   const onKeyDown = (e: globalThis.KeyboardEvent) => {
+    const cart = cartRef.current;
     if (dialog.kind !== 'none' || auth) return;
     const actions: Record<string, () => void> = {
       F2: () => inputRef.current?.focus(),
@@ -274,12 +294,23 @@ export function Register({
   };
 
   // Shortcuts work wherever the focus is (e.g. after a dialog closes), not only inside the screen.
+  // Layout effect: updated right after each render, before the next key can arrive, so a
+  // fast "scan + F10" never sees the previous (empty) cart.
   const keyHandler = useRef(onKeyDown);
-  useEffect(() => {
+  useLayoutEffect(() => {
     keyHandler.current = onKeyDown;
   });
   useEffect(() => {
-    const listener = (e: globalThis.KeyboardEvent) => keyHandler.current(e);
+    const listener = (e: globalThis.KeyboardEvent) => {
+      const pending = pendingScan.current;
+      if (pending && /^Fd+$/.test(e.key)) {
+        e.preventDefault();
+        // The cart ref is updated synchronously by the scan, so the key sees the new item.
+        void pending.then(() => keyHandler.current(e));
+        return;
+      }
+      keyHandler.current(e);
+    };
     window.addEventListener('keydown', listener);
     return () => window.removeEventListener('keydown', listener);
   }, []);
@@ -315,7 +346,7 @@ export function Register({
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              void handleScan();
+              void scanNow();
             }}
           >
             <label htmlFor="pdv-input" className="sr-only">

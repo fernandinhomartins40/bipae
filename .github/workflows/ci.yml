@@ -112,13 +112,18 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libudev-dev
       - run: pnpm install --frozen-lockfile
-      - name: Testes Rust
+      # generate_context! embeds the frontend at compile time, so it must exist before cargo test.
+      - name: Build do frontend desktop
+        run: pnpm --filter @bipae/desktop build:web
+      - name: Testes Rust (banco local, periféricos, Conector)
         working-directory: apps/desktop/src-tauri
         run: cargo test
-      # Installers are unsigned until the owner buys a code-signing certificate (Adendo 01 §7).
-      # Signing and the signed updater are wired in Phase 2 and run only when the secrets exist.
+      - name: Testes Rust com o atualizador
+        working-directory: apps/desktop/src-tauri
+        run: cargo check --features updater
+      # Unsigned installers; signed builds and update channels come from release-desktop.yml.
       - name: Build do app desktop (instaladores sem assinatura)
         run: pnpm --filter @bipae/desktop tauri build
       - uses: actions/upload-artifact@v4

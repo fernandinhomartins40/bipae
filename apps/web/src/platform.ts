@@ -2,6 +2,9 @@ import { openWasmDatabase } from '@bipae/local-db/wasm';
 import {
   baselineCapabilities,
   implementedCapabilities,
+  ConnectorClient,
+  CONNECTOR_URL,
+  type CapabilityName,
   SaleInProgressError,
   type NotificationPort,
   type Platform,
@@ -87,22 +90,37 @@ export function createWebPlatform(updates: {
   applyUpdate: () => Promise<void>;
   waiting: () => boolean;
 }): Platform {
+  const preferences = new LocalStoragePreferences();
+  const connector = new ConnectorClient(
+    preferences,
+    undefined,
+    import.meta.env.VITE_CONNECTOR_URL ?? CONNECTOR_URL,
+  );
+  const browserPrinter = new BrowserPrinter();
+
   return {
     kind: 'web',
     version: __APP_VERSION__,
-    preferences: new LocalStoragePreferences(),
-    // Only what is built is reported as available. Until the Conector is paired,
-    // peripherals ask for it.
-    capabilities: async () =>
-      implementedCapabilities(
-        baselineCapabilities('web', {
-          connectorPaired: false,
-          webSerial: typeof navigator !== 'undefined' && 'serial' in navigator,
-        }),
-        ['storage', 'printer', 'certificateA1', 'updater', 'notifications'],
-      ),
+    preferences,
+    // Only what is built is reported as available. Peripherals go through the Bipaê Conector;
+    // direct WebSerial access is not built yet, so the scale asks for the Conector too.
+    capabilities: async () => {
+      const paired = await connector.isPaired();
+      const implemented: CapabilityName[] = ['storage', 'printer', 'certificateA1', 'updater', 'notifications'];
+      if (paired) implemented.push('cashDrawer', 'scale');
+      return implementedCapabilities(
+        baselineCapabilities('web', { connectorPaired: paired, webSerial: false }),
+        implemented,
+      );
+    },
     openLocalDatabase: openWasmDatabase,
-    printer: new BrowserPrinter(),
+    // ESC/POS goes to the thermal printer through the Conector; text uses the print dialog.
+    printer: {
+      print: (job: PrintJob) => (job.kind === 'escpos' ? connector.print(job) : browserPrinter.print(job)),
+    },
+    cashDrawer: connector,
+    scale: connector,
+    connector,
     notifications: new BrowserNotifications(),
     updater: new ServiceWorkerUpdater(updates.applyUpdate, updates.waiting),
   };
