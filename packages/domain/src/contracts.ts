@@ -121,6 +121,8 @@ export interface Me {
   tenant: { id: string; name: string };
   permissions: string[];
   tenants: { id: string; name: string }[];
+  /** Present when a Bipaê staff member is in a support session as this client. */
+  support?: { readOnly: boolean };
 }
 
 // ---------- Catalog ----------

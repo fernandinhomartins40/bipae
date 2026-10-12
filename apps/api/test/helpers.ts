@@ -2,7 +2,8 @@ import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { sql } from 'drizzle-orm';
 import { createApp } from '../src/app';
 import { loadConfig } from '../src/config';
-import { openDatabase, type Database } from '../src/db/client';
+import { DB } from '../src/common/di';
+import { asPlatform, openDatabase, type Database, type Db } from '../src/db/client';
 import { migrate } from '../src/db/migrate';
 
 export interface TestApp {
@@ -41,7 +42,14 @@ export async function createTestApp(env: Record<string, string> = {}): Promise<T
 
 let counter = 0;
 
-export async function signup(app: NestFastifyApplication, overrides: Record<string, unknown> = {}) {
+/**
+ * Signs up a client. Existing tests run on the unlimited "rede" plan so plan limits do not
+ * interfere; pass `plan: 'gratis'` (or any plan) to test limits. `plan: null` keeps the default.
+ */
+export async function signup(
+  app: NestFastifyApplication,
+  { plan = 'rede', ...overrides }: Record<string, unknown> & { plan?: string | null } = {},
+) {
   counter++;
   const res = await app.inject({
     method: 'POST',
@@ -60,6 +68,11 @@ export async function signup(app: NestFastifyApplication, overrides: Record<stri
     refreshToken: string;
     me: { user: { id: string; email: string }; tenant: { id: string }; permissions: string[] };
   };
+  if (plan) {
+    await asPlatform(app.get<Db>(DB), (tx) =>
+      tx.execute(sql`update tenants set plan_id = ${plan} where id = ${body.me.tenant.id}`),
+    );
+  }
   return { ...body, auth: { authorization: `Bearer ${body.accessToken}` } };
 }
 

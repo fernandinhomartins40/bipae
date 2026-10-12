@@ -25,6 +25,7 @@ import {
   roles,
   sessions,
   stores,
+  tenantEvents,
   tenants,
   units,
   users,
@@ -101,6 +102,9 @@ export class AuthService {
         name: 'Revenda — Simples Nacional',
         data: { origem: 0, cfopInterna: '5102', cfopInterestadual: '6102', csosn: '102' },
       });
+      await tx
+        .insert(tenantEvents)
+        .values({ id: uuidv7(), tenantId, kind: 'created', data: { planId: 'gratis' } });
       await this.audit.record(
         tx,
         { tenantId, userId },

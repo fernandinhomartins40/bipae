@@ -14,6 +14,7 @@ import { DB } from '../../common/di';
 import { notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
 import { companies, stores, terminals } from '../../db/schema';
+import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 
 function toTerminal(row: typeof terminals.$inferSelect): Terminal {
@@ -33,6 +34,7 @@ export class OrganizationService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(LimitsService) private readonly limits: LimitsService,
   ) {}
 
   listCompanies(ctx: RequestContext) {
@@ -61,6 +63,7 @@ export class OrganizationService {
 
   async createCompany(ctx: RequestContext, input: z.output<typeof companyInput>) {
     return withTenant(this.db, ctx, async (tx) => {
+      await this.limits.assertCanAdd(tx, 'companies');
       const [row] = await tx
         .insert(companies)
         .values({ id: uuidv7(), tenantId: ctx.tenantId, ...input })
@@ -83,6 +86,7 @@ export class OrganizationService {
 
   async createStore(ctx: RequestContext, input: z.output<typeof storeInput>) {
     return withTenant(this.db, ctx, async (tx) => {
+      await this.limits.assertCanAdd(tx, 'stores');
       const [row] = await tx
         .insert(stores)
         .values({ id: uuidv7(), tenantId: ctx.tenantId, ...input })
@@ -110,6 +114,7 @@ export class OrganizationService {
    */
   async createTerminal(ctx: RequestContext, input: z.output<typeof terminalInput>) {
     return withTenant(this.db, ctx, async (tx) => {
+      await this.limits.assertCanAdd(tx, 'terminals');
       const [store] = await tx.select().from(stores).where(eq(stores.id, input.storeId));
       if (!store) throw notFound('Loja');
       await tx.execute(

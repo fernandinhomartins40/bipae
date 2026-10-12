@@ -14,6 +14,9 @@ afterAll(async () => {
   await t.close();
 });
 
+/** Platform (super admin) tables: no RLS, and the client role has no privileges on them. */
+const PLATFORM_TABLES = ['plans', 'platform_admins', 'admin_sessions', 'platform_audit_log', 'announcements'];
+
 /** Every table protected by tenant RLS (must match the list in 0001_init.sql). */
 const TENANT_TABLES = [
   'roles',
@@ -39,6 +42,7 @@ const TENANT_TABLES = [
   'sale_items',
   'sale_payments',
   'stock_movements',
+  'tenant_events',
 ];
 
 describe('row-level security (ADR-0003)', () => {
@@ -48,12 +52,38 @@ describe('row-level security (ADR-0003)', () => {
     );
     const rows = rowsOf<{ relname: string; relrowsecurity: boolean }>(result);
     const unprotected = rows
-      .filter((r) => !r.relrowsecurity && r.relname !== 'schema_migrations')
+      .filter(
+        (r) => !r.relrowsecurity && r.relname !== 'schema_migrations' && !PLATFORM_TABLES.includes(r.relname),
+      )
       .map((r) => r.relname);
     expect(unprotected).toEqual([]);
     for (const table of TENANT_TABLES) {
       expect(rows.find((r) => r.relname === table)?.relrowsecurity).toBe(true);
     }
+  });
+
+  it('client code has no access at all to platform tables (no RLS needed there)', async () => {
+    const owner = await signup(t.app);
+    for (const table of PLATFORM_TABLES.filter((t) => t !== 'plans')) {
+      await expect(
+        withTenant(t.database.db, { tenantId: owner.me.tenant.id }, (tx) =>
+          tx.execute(sql.raw(`select 1 from ${table} limit 1`)),
+        ),
+        table,
+      ).rejects.toThrow();
+    }
+    // The plan catalog is readable (pricing page), but not writable.
+    await expect(
+      withTenant(t.database.db, { tenantId: owner.me.tenant.id }, (tx) =>
+        tx.execute(sql`update plans set price_cents = 0`),
+      ),
+    ).rejects.toThrow();
+    // A client can never change its own status or plan.
+    await expect(
+      withTenant(t.database.db, { tenantId: owner.me.tenant.id }, (tx) =>
+        tx.execute(sql`update tenants set plan_id = 'rede', status = 'active'`),
+      ),
+    ).rejects.toThrow();
   });
 
   it('a tenant sees zero rows of another tenant in every table, and cannot write into it', async () => {

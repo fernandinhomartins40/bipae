@@ -22,6 +22,15 @@ export const tenants = pgTable('tenants', {
   id: uuid('id').primaryKey(),
   name: text('name').notNull(),
   createdAt: ts('created_at').notNull().defaultNow(),
+  status: text('status', { enum: ['active', 'trial', 'suspended', 'cancelled'] })
+    .notNull()
+    .default('active'),
+  planId: text('plan_id').notNull().default('gratis'),
+  trialEndsAt: ts('trial_ends_at'),
+  statusReason: text('status_reason'),
+  statusChangedAt: ts('status_changed_at'),
+  limitOverrides: jsonb('limit_overrides').$type<Partial<PlanLimits>>(),
+  notes: text('notes'),
 });
 
 export const users = pgTable('users', {
@@ -329,4 +338,85 @@ export const stockMovements = pgTable('stock_movements', {
   note: text('note'),
   actorId: uuid('actor_id'),
   occurredAt: ts('occurred_at').notNull(),
+});
+
+// ---------------------------------------------------------------- SaaS platform (0003)
+
+export interface PlanLimits {
+  companies: number | null;
+  stores: number | null;
+  terminals: number | null;
+  users: number | null;
+  products: number | null;
+}
+
+export const plans = pgTable('plans', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description'),
+  priceCents: money('price_cents'),
+  limits: jsonb('limits').$type<PlanLimits>().notNull(),
+  features: text('features').array().notNull(),
+  public: boolean('public').notNull().default(true),
+  active: boolean('active').notNull().default(true),
+  sort: integer('sort').notNull().default(0),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+export const tenantEvents = pgTable('tenant_events', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  kind: text('kind').notNull(),
+  data: jsonb('data'),
+  adminId: uuid('admin_id'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+export const platformAdmins = pgTable('platform_admins', {
+  userId: uuid('user_id').primaryKey(),
+  role: text('role', { enum: ['owner', 'support', 'viewer'] }).notNull(),
+  active: boolean('active').notNull().default(true),
+  totpSecret: text('totp_secret'),
+  totpEnabled: boolean('totp_enabled').notNull().default(false),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+export const adminSessions = pgTable('admin_sessions', {
+  id: uuid('id').primaryKey(),
+  userId: uuid('user_id').notNull(),
+  tokenHash: text('token_hash').notNull(),
+  userAgent: text('user_agent'),
+  ip: text('ip'),
+  expiresAt: ts('expires_at').notNull(),
+  revokedAt: ts('revoked_at'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+export const platformAuditLog = pgTable('platform_audit_log', {
+  id: uuid('id').primaryKey(),
+  seq: bigint('seq', { mode: 'number' }).notNull(),
+  actorId: uuid('actor_id'),
+  action: text('action').notNull(),
+  tenantId: uuid('tenant_id'),
+  target: text('target'),
+  data: jsonb('data'),
+  ip: text('ip'),
+  prevHash: text('prev_hash').notNull(),
+  hash: text('hash').notNull(),
+  createdAt: ts('created_at').notNull(),
+});
+
+export const announcements = pgTable('announcements', {
+  id: uuid('id').primaryKey(),
+  title: text('title').notNull(),
+  body: text('body').notNull(),
+  level: text('level', { enum: ['info', 'warning', 'critical'] }).notNull().default('info'),
+  planIds: text('plan_ids').array(),
+  startsAt: ts('starts_at').notNull().defaultNow(),
+  endsAt: ts('ends_at'),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
 });

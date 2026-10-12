@@ -7,3 +7,4 @@ export * from './terminals';
 export * from './client-version';
 export * from './contracts';
 export * from './events';
+export * from './platform';

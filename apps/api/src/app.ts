@@ -18,6 +18,15 @@ import { ApiExceptionFilter } from './common/errors';
 import { TokenService } from './common/tokens';
 import type { Config } from './config';
 import type { Database } from './db/client';
+import { AccountController } from './modules/account/account.controller';
+import { AdminAuthController } from './modules/admin/admin-auth.controller';
+import { AdminAuthService } from './modules/admin/admin-auth.service';
+import { AdminController } from './modules/admin/admin.controller';
+import { AdminPlatformService } from './modules/admin/admin-platform.service';
+import { AdminTenantsService } from './modules/admin/admin-tenants.service';
+import { PlatformAuditService } from './modules/admin/platform-audit.service';
+import { PlatformGuard } from './modules/admin/platform.guard';
+import { LimitsService } from './modules/account/limits.service';
 import { AuditController } from './modules/audit/audit.controller';
 import { AuditService } from './modules/audit/audit.service';
 import { AuthController } from './modules/auth/auth.controller';
@@ -35,7 +44,8 @@ import { SalesService } from './modules/sales/sales.service';
 import { SyncController } from './modules/sync/sync.controller';
 import { SyncService } from './modules/sync/sync.service';
 
-export const API_VERSION = '0.2.0';
+export { API_VERSION } from './version';
+import { API_VERSION } from './version';
 
 @Controller('health')
 class HealthController {
@@ -67,6 +77,9 @@ class AppModule {
         AuditController,
         SyncController,
         SalesController,
+        AccountController,
+        AdminAuthController,
+        AdminController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -80,6 +93,12 @@ class AppModule {
         PartiesService,
         SyncService,
         SalesService,
+        LimitsService,
+        PlatformAuditService,
+        PlatformGuard,
+        AdminAuthService,
+        AdminTenantsService,
+        AdminPlatformService,
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_FILTER, useClass: ApiExceptionFilter },
       ],

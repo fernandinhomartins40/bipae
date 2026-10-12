@@ -7,6 +7,7 @@ import { DB } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
 import { memberships, roles, users } from '../../db/schema';
+import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 import { AuthService } from '../auth/auth.service';
 
@@ -16,6 +17,7 @@ export class TeamService {
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(AuthService) private readonly auth: AuthService,
+    @Inject(LimitsService) private readonly limits: LimitsService,
   ) {}
 
   listRoles(ctx: RequestContext) {
@@ -88,6 +90,7 @@ export class TeamService {
     const userId = existing?.id ?? uuidv7();
 
     return withTenant(this.db, ctx, async (tx) => {
+      await this.limits.assertCanAdd(tx, 'users');
       const [role] = await tx.select().from(roles).where(eq(roles.id, input.roleId));
       if (!role) throw notFound('Papel');
       if (!existing) {

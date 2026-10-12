@@ -8,7 +8,8 @@
 import { cnpjCheckDigits, completeGtin, cpfCheckDigits } from '@bipae/domain';
 import { createApp } from './app';
 import { loadConfig } from './config';
-import { openDatabase } from './db/client';
+import { sql } from 'drizzle-orm';
+import { asPlatform, openDatabase } from './db/client';
 import { migrate } from './db/migrate';
 
 export const DEMO = {
@@ -109,6 +110,10 @@ export async function seed(url: string) {
       taxId: fakeCnpj(1),
     });
     const token = owner.accessToken as string;
+    // The demo market shows several registers and users: it runs on the Profissional plan.
+    await asPlatform(database.db, (tx) =>
+      tx.execute(sql`update tenants set plan_id = 'profissional' where id = ${owner.me.tenant.id}`),
+    );
 
     const roles = (await call('GET', '/roles', token)) as { id: string; systemKey: string }[];
     await call('POST', '/members', token, {

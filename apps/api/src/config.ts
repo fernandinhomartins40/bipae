@@ -23,6 +23,16 @@ const envSchema = z.object({
   MIN_CLIENT_VERSION_DESKTOP: z.string().optional(),
   MIN_CLIENT_VERSION_CONNECTOR: z.string().optional(),
   LOGIN_RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().default(10),
+  /** Encryption key for secrets at rest (2FA seeds). Defaults to a key derived from JWT_SECRET. */
+  SECRETS_KEY: z.string().min(32).optional(),
+  ADMIN_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
+  ADMIN_SESSION_HOURS: z.coerce.number().int().positive().default(12),
+  SUPPORT_SESSION_MINUTES: z.coerce.number().int().positive().default(30),
+  /** Bipaê staff must enable 2FA before using the admin panel (always true in production). */
+  PLATFORM_REQUIRE_TOTP: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
 });
 
 export type Config = z.output<typeof envSchema> & {

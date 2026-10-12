@@ -18,6 +18,13 @@ export interface AuditInput {
   authorizedBy?: string | null;
 }
 
+/** During a Bipaê support session, every audited action carries who really did it. */
+function withSupportMark(data: unknown, impersonatedBy: string | undefined) {
+  const plain = data === undefined ? null : JSON.parse(JSON.stringify(data));
+  if (!impersonatedBy) return plain;
+  return { ...(plain && typeof plain === 'object' ? plain : { value: plain }), suporteBipae: impersonatedBy };
+}
+
 /** Deterministic JSON (sorted keys) so hashes are reproducible. */
 export function canonicalJson(value: unknown): string {
   if (value === null || value === undefined) return 'null';
@@ -57,7 +64,11 @@ export function auditHash(
 export class AuditService {
   constructor(@Inject(DB) private readonly db: Db) {}
 
-  async record(tx: Tx, ctx: Pick<RequestContext, 'tenantId' | 'userId'>, input: AuditInput) {
+  async record(
+    tx: Tx,
+    ctx: Pick<RequestContext, 'tenantId' | 'userId' | 'impersonatedBy'>,
+    input: AuditInput,
+  ) {
     // Serializes writers per tenant so sequence numbers and the hash chain never fork.
     await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${ctx.tenantId}, 0))`);
     const [last] = await tx
@@ -75,7 +86,7 @@ export class AuditService {
       entityId: input.entityId ?? null,
       actorId: ctx.userId,
       authorizedBy: input.authorizedBy ?? null,
-      data: input.data === undefined ? null : JSON.parse(JSON.stringify(input.data)),
+      data: withSupportMark(input.data, ctx.impersonatedBy),
       createdAt: new Date(),
     };
     await tx.insert(auditLog).values({

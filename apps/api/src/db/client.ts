@@ -72,6 +72,17 @@ export async function withTenant<T>(db: Db, scope: TenantScope, fn: (tx: Tx) => 
   });
 }
 
+/**
+ * Platform (super admin) scope: role bipae_platform, which bypasses RLS to see every tenant.
+ * Only the admin module may call this, after PlatformGuard authenticated a Bipaê staff member.
+ */
+export async function asPlatform<T>(db: Db, fn: (tx: Tx) => Promise<T>) {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`set local role bipae_platform`);
+    return fn(tx);
+  });
+}
+
 /** Same as withTenant but without a tenant (only the SECURITY DEFINER auth functions work). */
 export async function asApp<T>(db: Db, fn: (tx: Tx) => Promise<T>) {
   return db.transaction(async (tx) => {

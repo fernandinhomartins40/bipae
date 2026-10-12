@@ -24,6 +24,7 @@ import {
   products,
   units,
 } from '../../db/schema';
+import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 
 type ProductData = z.output<typeof productInput>;
@@ -33,6 +34,7 @@ export class CatalogService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(LimitsService) private readonly limits: LimitsService,
   ) {}
 
   // ---------------------------------------------------------------- products
@@ -73,6 +75,7 @@ export class CatalogService {
 
   async createProduct(ctx: RequestContext, input: ProductData): Promise<Product> {
     return withTenant(this.db, ctx, async (tx) => {
+      await this.limits.assertCanAdd(tx, 'products');
       const id = uuidv7();
       await tx.insert(products).values({ id, tenantId: ctx.tenantId, ...this.columns(input) });
       await this.replaceChildren(tx, ctx.tenantId, id, input);

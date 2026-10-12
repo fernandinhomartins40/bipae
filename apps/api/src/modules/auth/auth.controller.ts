@@ -69,7 +69,8 @@ export class AuthController {
   }
 
   @Get('me')
-  me(@Ctx() ctx: RequestContext) {
-    return this.auth.me(ctx.tenantId, ctx.userId, ctx.permissions);
+  async me(@Ctx() ctx: RequestContext) {
+    const me = await this.auth.me(ctx.tenantId, ctx.userId, ctx.permissions);
+    return ctx.impersonatedBy ? { ...me, support: { readOnly: Boolean(ctx.readOnly) } } : me;
   }
 }
