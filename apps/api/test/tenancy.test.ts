@@ -32,6 +32,13 @@ const TENANT_TABLES = [
   'suppliers',
   'audit_log',
   'memberships',
+  'sync_events',
+  'cash_sessions',
+  'cash_movements',
+  'sales',
+  'sale_items',
+  'sale_payments',
+  'stock_movements',
 ];
 
 describe('row-level security (ADR-0003)', () => {

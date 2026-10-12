@@ -34,6 +34,9 @@
     "@types/pg": "^8.23.1",
     "esbuild": "^0.27.0",
     "tsx": "^4.23.15",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.3",
+    "@bipae/local-db": "workspace:*",
+    "@bipae/pdv-core": "workspace:*",
+    "@bipae/sync": "workspace:*"
   }
 }

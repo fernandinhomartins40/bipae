@@ -1,0 +1,22 @@
+{
+  "name": "@bipae/sync",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@bipae/domain": "workspace:*",
+    "@bipae/local-db": "workspace:*",
+    "@bipae/pdv-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "vitest": "^5.0.3"
+  }
+}

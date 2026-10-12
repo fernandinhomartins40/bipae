@@ -30,8 +30,12 @@ import { PartiesController } from './modules/parties/parties.controller';
 import { PartiesService } from './modules/parties/parties.service';
 import { TeamController } from './modules/team/team.controller';
 import { TeamService } from './modules/team/team.service';
+import { SalesController } from './modules/sales/sales.controller';
+import { SalesService } from './modules/sales/sales.service';
+import { SyncController } from './modules/sync/sync.controller';
+import { SyncService } from './modules/sync/sync.service';
 
-export const API_VERSION = '0.1.0';
+export const API_VERSION = '0.2.0';
 
 @Controller('health')
 class HealthController {
@@ -61,6 +65,8 @@ class AppModule {
         CatalogController,
         PartiesController,
         AuditController,
+        SyncController,
+        SalesController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -72,6 +78,8 @@ class AppModule {
         TeamService,
         CatalogService,
         PartiesService,
+        SyncService,
+        SalesService,
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_FILTER, useClass: ApiExceptionFilter },
       ],

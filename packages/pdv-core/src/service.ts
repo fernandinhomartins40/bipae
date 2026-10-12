@@ -540,6 +540,22 @@ export class PdvService {
     });
   }
 
+  /** The server will never accept these; keep them (sent_at set) for support, stop retrying. */
+  async markRejected(rejections: { id: string; reason: string }[]) {
+    if (rejections.length === 0) return;
+    const at = this.now().toISOString();
+    await this.storage.transaction(async (tx) => {
+      for (const r of rejections) {
+        await tx.execute("UPDATE outbox SET sent_at = ?, last_error = 'REJEITADO: ' || ? WHERE id = ?", [at, r.reason, r.id]);
+      }
+    });
+  }
+
+  async rejectedEvents(): Promise<{ id: string; type: string; reason: string }[]> {
+    const rows = await this.storage.query<Row>("SELECT id, type, last_error FROM outbox WHERE last_error LIKE 'REJEITADO:%' ORDER BY seq");
+    return rows.map((r) => ({ id: r.id as string, type: r.type as string, reason: String(r.last_error).replace('REJEITADO: ', '') }));
+  }
+
   async markFailed(id: string, error: string) {
     await this.storage.execute('UPDATE outbox SET attempts = attempts + 1, last_error = ? WHERE id = ?', [error, id]);
   }

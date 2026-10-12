@@ -220,3 +220,113 @@ export const auditLog = pgTable('audit_log', {
   hash: text('hash').notNull(),
   createdAt: ts('created_at').notNull(),
 });
+
+// ---------------------------------------------------------------- Phase 2: sales and sync
+
+export const syncEvents = pgTable('sync_events', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  terminalId: uuid('terminal_id').notNull(),
+  type: text('type').notNull(),
+  deviceSeq: bigint('device_seq', { mode: 'number' }).notNull(),
+  operatorId: uuid('operator_id').notNull(),
+  occurredAt: ts('occurred_at').notNull(),
+  receivedAt: ts('received_at').notNull().defaultNow(),
+  payload: jsonb('payload').notNull(),
+});
+
+export const cashSessions = pgTable('cash_sessions', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  terminalId: uuid('terminal_id').notNull(),
+  operatorId: uuid('operator_id').notNull(),
+  openedAt: ts('opened_at').notNull(),
+  openingCents: money('opening_cents').notNull(),
+  closedAt: ts('closed_at'),
+  declared: jsonb('declared'),
+  expected: jsonb('expected'),
+  differenceCents: money('difference_cents'),
+});
+
+export const cashMovements = pgTable('cash_movements', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  sessionId: uuid('session_id').notNull(),
+  kind: text('kind', { enum: ['withdrawal', 'supply'] }).notNull(),
+  amountCents: money('amount_cents').notNull(),
+  reason: text('reason'),
+  operatorId: uuid('operator_id').notNull(),
+  authorizedBy: uuid('authorized_by'),
+  occurredAt: ts('occurred_at').notNull(),
+});
+
+export const sales = pgTable('sales', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  terminalId: uuid('terminal_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  terminalSeq: integer('terminal_seq').notNull(),
+  sessionId: uuid('session_id').notNull(),
+  kind: text('kind', { enum: ['sale', 'return'] }).notNull(),
+  status: text('status', { enum: ['completed', 'cancelled'] }).notNull(),
+  originalSaleId: uuid('original_sale_id'),
+  subtotalCents: money('subtotal_cents').notNull(),
+  discountCents: money('discount_cents').notNull(),
+  totalCents: money('total_cents').notNull(),
+  customerTaxId: text('customer_tax_id'),
+  operatorId: uuid('operator_id').notNull(),
+  discountAuthorizedBy: uuid('discount_authorized_by'),
+  occurredAt: ts('occurred_at').notNull(),
+  cancelledAt: ts('cancelled_at'),
+  cancelReason: text('cancel_reason'),
+  data: jsonb('data').notNull(),
+});
+
+export const saleItems = pgTable(
+  'sale_items',
+  {
+    tenantId: uuid('tenant_id').notNull(),
+    saleId: uuid('sale_id').notNull(),
+    line: integer('line').notNull(),
+    productId: uuid('product_id').notNull(),
+    name: text('name').notNull(),
+    unit: text('unit').notNull(),
+    quantityMilli: bigint('quantity_milli', { mode: 'number' }).notNull(),
+    unitPriceCents: money('unit_price_cents').notNull(),
+    grossCents: money('gross_cents').notNull(),
+    discountCents: money('discount_cents').notNull(),
+    totalCents: money('total_cents').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.saleId, t.line] })],
+);
+
+export const salePayments = pgTable(
+  'sale_payments',
+  {
+    tenantId: uuid('tenant_id').notNull(),
+    saleId: uuid('sale_id').notNull(),
+    idx: integer('idx').notNull(),
+    method: text('method').notNull(),
+    amountCents: money('amount_cents').notNull(),
+    changeCents: money('change_cents').notNull().default(0),
+    nsu: text('nsu'),
+    authorizationCode: text('authorization_code'),
+    provider: text('provider'),
+  },
+  (t) => [primaryKey({ columns: [t.saleId, t.idx] })],
+);
+
+export const stockMovements = pgTable('stock_movements', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  productId: uuid('product_id').notNull(),
+  deltaMilli: bigint('delta_milli', { mode: 'number' }).notNull(),
+  reason: text('reason', {
+    enum: ['sale', 'sale_cancelled', 'return', 'adjustment', 'count'],
+  }).notNull(),
+  refId: uuid('ref_id'),
+  note: text('note'),
+  actorId: uuid('actor_id'),
+  occurredAt: ts('occurred_at').notNull(),
+});
