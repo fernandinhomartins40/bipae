@@ -23,12 +23,10 @@ Pendências (não bloqueiam):
 Entregue: caixa completo nas duas cascas, banco local, sincronização, estoque por livro de movimentações, periféricos, Bipaê Conector, atualizador, testes do Adendo 01. Ver CHANGELOG e `docs/fase-2/plano.md`.
 
 ### Bloqueios que dependem de ação externa
-- [ ] **Rodar a CI pela primeira vez** (o repositório não tem remoto). Até lá, nunca foram compilados nem executados:
-  - todo o código Rust (banco nativo, periféricos, Conector, bandeja, atualizador);
-  - as imagens Docker;
-  - a suíte da API contra PostgreSQL real.
+- [x] CI e deploy rodando no GitHub (12/10/2026): testes Rust compilaram e passaram em Windows e Linux; API testada contra PostgreSQL real; site no ar em https://www.bipae.com.br
 - [ ] Testar com hardware real: impressora térmica (rede e USB/serial), gaveta, balança Toledo/Filizola.
 - [ ] Chaves do atualizador, hospedagem de `releases.bipae.com.br` e certificado de assinatura de código (ver `docs/plataformas.md`).
+- [ ] Landing: definir preços dos planos pagos, contato (e-mail/WhatsApp), política de privacidade e termos de uso (LGPD) antes de divulgar.
 
 ### Pendências técnicas
 - [ ] E2E dentro do WebView real com `tauri-driver` (Windows e Linux) na CI

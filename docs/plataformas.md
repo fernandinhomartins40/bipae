@@ -47,7 +47,7 @@ Sem internet, o caixa continua vendendo. O selo no topo mostra "Sem conexão · 
 
 ## Bipaê Online
 
-- Endereço: `app.bipae.com.br` (homologação: `homolog.bipae.com.br`). *A hospedagem ainda será contratada.*
+- Endereço: **https://www.bipae.com.br/app/** (a landing page fica em https://www.bipae.com.br). Detalhes de produção em [deploy.md](deploy.md).
 - Navegadores: Google Chrome e Microsoft Edge atuais (recomendados). Firefox e Safari funcionam para retaguarda e vendas.
 - Pode ser **instalado** como aplicativo (PWA): no Chrome/Edge, ícone "Instalar" na barra de endereço; no celular, "Adicionar à tela inicial".
 

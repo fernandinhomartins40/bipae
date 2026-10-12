@@ -14,6 +14,12 @@ Um código, dois alvos: **Bipaê Online** (navegador, `app.bipae.com.br`) e **Bi
 | **2 — PDV offline-first** | ✅ **entregue** (ver [CHANGELOG](CHANGELOG.md) e pendências em [docs/TAREFAS.md](docs/TAREFAS.md)) |
 | 3 — Fiscal (NFC-e/NF-e, IBS/CBS) | próxima |
 
+## Produção
+
+- Site: https://www.bipae.com.br
+- App: https://www.bipae.com.br/app/
+- Como é publicado e operado: [docs/deploy.md](docs/deploy.md)
+
 ## Rodando localmente
 
 Pré-requisitos: **Node.js 24** e **pnpm 10** (`corepack enable`). Docker **não** é necessário: sem `DATABASE_URL`, a API usa PostgreSQL embutido (PGlite) gravado em `apps/api/.data`.
@@ -34,7 +40,7 @@ Para testar periféricos no navegador sem hardware: `pnpm --filter @bipae/web co
 docker compose up --build
 ```
 
-Web em <http://localhost:8080>, API em <http://localhost:3333/v1/health>, já com os dados de demonstração.
+Site em <http://localhost:8080>, app em <http://localhost:8080/app/>, API em <http://localhost:8080/v1/health>, já com os dados de demonstração.
 
 ### App desktop (Tauri)
 

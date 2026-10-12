@@ -168,7 +168,8 @@ jobs:
 
       - name: Enviar arquivos de deploy
         run: |
-          rsync -az --delete -e ssh deploy/ vps:${VPS_APP_DIR}/deploy/
+          # --no-owner/--no-group: files belong to root on the VPS, not to the runner user.
+          rsync -az --delete --no-owner --no-group -e ssh deploy/ vps:${VPS_APP_DIR}/deploy/
 
       - name: Executar o deploy na VPS
         run: |
