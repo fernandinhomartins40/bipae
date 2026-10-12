@@ -1,0 +1,6 @@
+pnpm-lock.yaml
+dist
+coverage
+docs
+*.md
+apps/desktop/src-tauri/target
