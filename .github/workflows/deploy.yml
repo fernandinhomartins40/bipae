@@ -1,0 +1,191 @@
+name: Deploy (www.bipae.com.br)
+
+# Publica o Bipaê na VPS compartilhada (72.60.10.112): landing em /, app em /app/, API em /v1/.
+# Adaptado do deploy do MercadoFlow, mantendo o que foi aprendido lá:
+#   - imagens no GHCR, sempre por digest (o que foi testado é o que sobe);
+#   - chave de host da VPS fixada (.github/vps_known_hosts), nada de StrictHostKeyChecking=no;
+#   - uma única tentativa curta de conexão (a Hostinger filtra alguns IPs de runner; refazer o job
+#     sorteia outro IP, insistir do mesmo runner não adianta);
+#   - keepalive no SSH (o backup do banco pode ficar minutos sem saída);
+#   - migrações já versionadas não podem ser editadas (o banco recusaria/divergiria);
+#   - verificação pública no fim: o job só fica verde se o site novo estiver no ar.
+# Diferente do MercadoFlow: entra com uma chave SSH só do deploy do Bipaê (sem senha de root)
+# e só toca no projeto compose "bipae" e em /root/bipae.
+#
+# Segredos: BIPAE_DEPLOY_SSH_KEY (chave privada do deploy). O GITHUB_TOKEN do próprio job
+# autentica no GHCR, na VPS, só durante o deploy.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'apps/desktop/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-bipae
+  cancel-in-progress: false # nunca interromper um deploy no meio
+
+env:
+  NODE_VERSION: 24
+  VPS_HOST: 72.60.10.112
+  VPS_APP_DIR: /root/bipae
+
+jobs:
+  validate-migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Migrações já versionadas não podem mudar
+        run: |
+          set -euo pipefail
+          DIR=apps/api/src/db/migrations
+          if ! git rev-parse HEAD~1 >/dev/null 2>&1; then echo "Sem commit anterior."; exit 0; fi
+          alteradas=$(git diff --name-only --diff-filter=MD HEAD~1 HEAD -- "$DIR" || true)
+          if [ -z "$alteradas" ]; then echo "Nenhuma migração existente foi alterada."; exit 0; fi
+          if git log -1 --pretty=%B | grep -qiE '\[migracao-revertida\]'; then
+            echo "AVISO: migração alterada, liberada por [migracao-revertida]:"; echo "$alteradas"; exit 0
+          fi
+          echo "ERRO: migração já versionada foi alterada ou removida:"; echo "$alteradas"
+          echo "Crie uma migração nova em vez de editar a antiga."
+          exit 1
+
+  test:
+    needs: validate-migrations
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: bipae_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: API contra PostgreSQL 16 real
+        run: pnpm --filter @bipae/api test
+        env:
+          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/bipae_test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - name: api
+            dockerfile: apps/api/Dockerfile
+          - name: web
+            dockerfile: apps/web/Dockerfile
+    outputs:
+      api: ${{ steps.ref.outputs.api }}
+      web: ${{ steps.ref.outputs.web }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - id: image
+        run: echo "name=ghcr.io/$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/bipae-${{ matrix.name }}" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          cache-from: type=gha,scope=bipae-${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=bipae-${{ matrix.name }}
+          tags: ${{ steps.image.outputs.name }}:sha-${{ github.sha }}
+      - id: ref
+        run: echo "${{ matrix.name }}=${{ steps.image.outputs.name }}@${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: producao
+      url: https://www.bipae.com.br
+    permissions:
+      contents: read
+      packages: read
+    env:
+      BIPAE_API_IMAGE: ${{ needs.build.outputs.api }}
+      BIPAE_WEB_IMAGE: ${{ needs.build.outputs.web }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Chave do deploy e chave de host fixada
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          install -m 600 .github/vps_known_hosts ~/.ssh/known_hosts
+          ssh-keygen -lf ~/.ssh/known_hosts -E sha256 | awk '$2 == "SHA256:6ZU1oyYcSKKrodyE2uYKme3ciSkCWFxfniTKCGn7NW8" { found=1 } END { exit !found }'
+          printf '%s\n' "${{ secrets.BIPAE_DEPLOY_SSH_KEY }}" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          cat > ~/.ssh/config <<EOF
+          Host vps
+            HostName ${VPS_HOST}
+            User root
+            IdentityFile ~/.ssh/deploy
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+            ConnectTimeout 30
+            ServerAliveInterval 30
+            ServerAliveCountMax 120
+          EOF
+
+      - name: Primeiro contato com a VPS
+        timeout-minutes: 3
+        run: |
+          if ! ssh vps "mkdir -p ${VPS_APP_DIR}"; then
+            echo "Este runner não alcança a porta 22 da VPS (filtro da Hostinger por IP)."
+            echo "IP de saída: $(curl -s --max-time 10 ifconfig.me || echo indisponível)"
+            echo "Solução: 'Re-run all jobs' (outro runner, outro IP)."
+            exit 1
+          fi
+
+      - name: Enviar arquivos de deploy
+        run: |
+          rsync -az --delete -e ssh deploy/ vps:${VPS_APP_DIR}/deploy/
+
+      - name: Executar o deploy na VPS
+        run: |
+          ssh vps \
+            "BIPAE_API_IMAGE='${BIPAE_API_IMAGE}' BIPAE_WEB_IMAGE='${BIPAE_WEB_IMAGE}' bash -s" <<'EOF'
+          set -euo pipefail
+          printf '%s' '${{ github.token }}' | docker login ghcr.io -u '${{ github.actor }}' --password-stdin
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
+          bash /root/bipae/deploy/deploy.sh
+          EOF
+
+      - name: Verificar no domínio público
+        run: |
+          set -euo pipefail
+          for path in / /app/ /v1/health; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "https://www.bipae.com.br$path")
+            echo "https://www.bipae.com.br$path -> $code"
+            [ "$code" = "200" ] || { echo "ERRO: $path não respondeu 200."; exit 1; }
+          done
+          curl -fsS https://www.bipae.com.br/v1/health

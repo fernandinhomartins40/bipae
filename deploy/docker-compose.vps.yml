@@ -1,0 +1,86 @@
+# Bipaê em produção na VPS compartilhada (72.60.10.112), projeto compose "bipae".
+#
+# Só o contêiner web escuta no host, e apenas em 127.0.0.1:3400. O nginx do HOST
+# (deploy/nginx/bipae.com.br.conf) termina o HTTPS de www.bipae.com.br e encaminha para cá.
+# API e banco ficam numa rede interna, sem porta no host.
+#
+# Imagens: sempre por digest, vindas do GHCR (BIPAE_API_IMAGE / BIPAE_WEB_IMAGE),
+# definidas pelo workflow de deploy. Segredos: /root/bipae/.env (criado pelo deploy.sh,
+# nunca versionado).
+#
+# A VPS não tem swap e é dividida com outras aplicações: limites de memória explícitos.
+
+name: bipae
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bipae
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+      POSTGRES_DB: bipae
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [internal]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U bipae -d bipae']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  api:
+    image: ${BIPAE_API_IMAGE:?defina BIPAE_API_IMAGE}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: '3333'
+      DATABASE_URL: postgres://bipae:${POSTGRES_PASSWORD}@postgres:5432/bipae
+      JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no .env}
+      # O web é servido na mesma origem (sem CORS). O app desktop chama a API direto.
+      CORS_ORIGINS: https://www.bipae.com.br,http://tauri.localhost,tauri://localhost
+      MIN_CLIENT_VERSION_DESKTOP: ${MIN_CLIENT_VERSION_DESKTOP:-}
+      MIN_CLIENT_VERSION_WEB: ${MIN_CLIENT_VERSION_WEB:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [internal]
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3333/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  web:
+    image: ${BIPAE_WEB_IMAGE:?defina BIPAE_WEB_IMAGE}
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:3400:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    networks: [internal]
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1/v1/health >/dev/null || exit 1']
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+networks:
+  internal:
+
+volumes:
+  pgdata:

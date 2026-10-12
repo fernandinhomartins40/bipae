@@ -13,7 +13,12 @@
 
 export const CONNECTOR_PORT = 47800;
 export const CONNECTOR_URL = `ws://127.0.0.1:${CONNECTOR_PORT}`;
-export const CONNECTOR_ORIGINS = ['https://app.bipae.com.br', 'https://homolog.bipae.com.br'];
+/** www.bipae.com.br/app is production today; app./homolog. are reserved for later. */
+export const CONNECTOR_ORIGINS = [
+  'https://www.bipae.com.br',
+  'https://app.bipae.com.br',
+  'https://homolog.bipae.com.br',
+];
 /** Development origins, accepted only by development builds of the Conector. */
 export const CONNECTOR_DEV_ORIGINS = [
   'http://localhost:5173',

@@ -48,6 +48,8 @@ function socketTo(core: ConnectorCore) {
 
 describe('Bipaê Conector', () => {
   it('only accepts official origins (dev origins only in dev builds)', () => {
+    expect(isAllowedOrigin('https://www.bipae.com.br', false)).toBe(true);
+    expect(isAllowedOrigin('https://bipae.com.br', false)).toBe(false);
     expect(isAllowedOrigin('https://app.bipae.com.br', false)).toBe(true);
     expect(isAllowedOrigin('https://homolog.bipae.com.br', false)).toBe(true);
     expect(isAllowedOrigin('https://evil.example', false)).toBe(false);

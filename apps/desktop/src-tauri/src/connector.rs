@@ -21,7 +21,8 @@ use tokio_tungstenite::tungstenite::Message;
 use crate::peripherals;
 
 pub const PORT: u16 = 47800;
-const ORIGINS: [&str; 2] = ["https://app.bipae.com.br", "https://homolog.bipae.com.br"];
+/// www.bipae.com.br/app is production today; app./homolog. are reserved for later.
+const ORIGINS: [&str; 3] = ["https://www.bipae.com.br", "https://app.bipae.com.br", "https://homolog.bipae.com.br"];
 const DEV_ORIGINS: [&str; 3] = ["http://localhost:5173", "http://localhost:5174", "http://localhost:4173"];
 const MAX_ATTEMPTS: u32 = 5;
 
@@ -251,6 +252,7 @@ mod tests {
 
     #[test]
     fn origins_follow_the_specification() {
+        assert!(origin_allowed(Some("https://www.bipae.com.br"), false));
         assert!(origin_allowed(Some("https://app.bipae.com.br"), false));
         assert!(!origin_allowed(Some("https://evil.example"), true));
         assert!(!origin_allowed(Some("http://localhost:5173"), false));

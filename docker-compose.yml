@@ -1,5 +1,5 @@
 # Sobe tudo com dados de demonstração: docker compose up --build
-# Web: http://localhost:8080 · API: http://localhost:3333/v1/health
+# Site: http://localhost:8080 · App: http://localhost:8080/app/ · API: http://localhost:8080/v1/health
 # Entre com demo@bipae.com.br / bipae123
 services:
   postgres:
@@ -24,7 +24,7 @@ services:
       NODE_ENV: development
       DATABASE_URL: postgres://bipae:bipae@postgres:5432/bipae
       JWT_SECRET: troque-este-segredo-em-producao-0123456789
-      CORS_ORIGINS: http://localhost:8080
+      CORS_ORIGINS: http://localhost:8080,http://tauri.localhost,tauri://localhost
     # Migrations run on start; the demo seed is idempotent.
     command: sh -c "node dist/seed-cli.js && node dist/main.js"
     ports: ['3333:3333']
@@ -37,7 +37,8 @@ services:
       context: .
       dockerfile: apps/web/Dockerfile
       args:
-        VITE_API_URL: http://localhost:3333
+        # Empty: the app calls the API on the same origin (/v1), proxied by the web container.
+        VITE_API_URL: ''
     ports: ['8080:80']
     depends_on: [api]
 

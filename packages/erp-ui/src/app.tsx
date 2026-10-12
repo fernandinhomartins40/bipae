@@ -22,13 +22,15 @@ export interface BipaeAppProps {
   apiUrl: string;
   /** Web uses browser history; the desktop shell uses hash routing (no server fallback). */
   router: 'browser' | 'hash';
+  /** Path the web app is served under, e.g. "/app" in production (browser routing only). */
+  basename?: string;
 }
 
 /**
  * The whole Bipaê UI. Both shells (apps/web and apps/desktop) render exactly this
  * component; only the injected Platform differs (ADR-0012).
  */
-export function BipaeApp({ platform, apiUrl, router }: BipaeAppProps) {
+export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) {
   const [me, setMe] = useState<Me | null>(null);
   const [restoring, setRestoring] = useState(true);
   const queryClient = useMemo(
@@ -82,7 +84,7 @@ export function BipaeApp({ platform, apiUrl, router }: BipaeAppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <AppContextProvider value={{ platform, api, me, setMe }}>
-        <Router>
+        <Router {...(router === 'browser' && basename && basename !== '/' && { basename })}>
           <Routes>
             <Route
               path="/entrar"

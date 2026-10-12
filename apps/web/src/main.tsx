@@ -21,6 +21,11 @@ const apiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3333';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BipaeApp platform={platform} apiUrl={apiUrl} router="browser" />
+    <BipaeApp
+      platform={platform}
+      apiUrl={apiUrl}
+      router="browser"
+      basename={import.meta.env.BASE_URL.slice(0, -1)}
+    />
   </StrictMode>,
 );

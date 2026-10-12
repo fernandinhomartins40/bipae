@@ -80,12 +80,15 @@ jobs:
       - name: Build (com atualizador assinado)
         if: env.HAS_UPDATER_KEY == 'true'
         env:
+          VITE_API_URL: https://www.bipae.com.br
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: pnpm --filter @bipae/desktop tauri build --features updater --config src-tauri/tauri.updater.conf.json
 
       - name: Build (sem atualizador — segredos ainda não configurados)
         if: env.HAS_UPDATER_KEY != 'true'
+        env:
+          VITE_API_URL: https://www.bipae.com.br
         run: pnpm --filter @bipae/desktop tauri build
 
       - uses: actions/upload-artifact@v4

@@ -11,3 +11,6 @@ playwright-report/
 test-results/
 apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/gen/
+
+# Claude Code: permissões locais desta máquina (nunca versionar)
+.claude/settings.local.json

@@ -125,6 +125,8 @@ jobs:
         run: cargo check --features updater
       # Unsigned installers; signed builds and update channels come from release-desktop.yml.
       - name: Build do app desktop (instaladores sem assinatura)
+        env:
+          VITE_API_URL: https://www.bipae.com.br
         run: pnpm --filter @bipae/desktop tauri build
       - uses: actions/upload-artifact@v4
         with:
