@@ -439,6 +439,43 @@ export function Drawer({
   );
 }
 
+export function Modal({
+  open,
+  onOpenChange,
+  title,
+  children,
+  wide,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  children: ReactNode;
+  wide?: boolean;
+}) {
+  return (
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/50" />
+        <DialogPrimitive.Content
+          aria-describedby={undefined}
+          className={cx(
+            'fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-ui bg-surface p-6 shadow-2xl',
+            wide ? 'max-w-3xl' : 'max-w-lg',
+          )}
+        >
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <DialogPrimitive.Title className="text-xl font-bold">{title}</DialogPrimitive.Title>
+            <DialogPrimitive.Close asChild>
+              <Button variant="ghost" aria-label="Fechar" icon={<X className="size-5" />} />
+            </DialogPrimitive.Close>
+          </div>
+          {children}
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
+  );
+}
+
 export function Logo({ className }: { className?: string }) {
   return (
     <span className={cx('inline-flex items-center gap-2 font-extrabold tracking-tight', className)}>

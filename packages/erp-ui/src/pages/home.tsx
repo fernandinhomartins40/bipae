@@ -43,7 +43,7 @@ export function HomePage() {
   const steps = [
     { done: true, label: 'Criar sua conta', to: null },
     { done: hasProducts, label: 'Cadastrar seus primeiros produtos', to: '/produtos' },
-    { done: false, label: 'Fazer uma venda de teste (chega na Fase 2)', to: null },
+    { done: false, label: 'Fazer uma venda de teste', to: '/caixa' },
   ];
 
   return (

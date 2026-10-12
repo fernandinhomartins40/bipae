@@ -8,6 +8,9 @@ const { version } = JSON.parse(readFileSync(new URL('./package.json', import.met
 
 export default defineConfig({
   define: { __APP_VERSION__: JSON.stringify(version) },
+  // SQLite WASM ships its own .wasm and must not be pre-bundled; the worker is an ES module.
+  optimizeDeps: { exclude: ['@sqlite.org/sqlite-wasm'] },
+  worker: { format: 'es' },
   plugins: [
     react(),
     tailwindcss(),

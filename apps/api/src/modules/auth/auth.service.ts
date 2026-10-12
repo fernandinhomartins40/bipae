@@ -212,6 +212,28 @@ export class AuthService {
     return { user, tenant, permissions, tenants: await this.userTenants(userId) };
   }
 
+  /**
+   * A supervisor approves a sensitive register action (discount above the limit, cancel,
+   * cash withdrawal) by typing their own credentials on the operator's screen.
+   */
+  async authorize(tenantId: string, email: string, password: string, permission: string) {
+    const found = await this.findUserByEmail(email);
+    const valid = await verify(found?.password_hash ?? (await this.dummyHash), password);
+    if (!found || !valid) throw new AppError(401, 'invalid_login', INVALID_LOGIN);
+    const granted = await withTenant(this.db, { tenantId, userId: found.id }, async (tx) => {
+      const [row] = await tx
+        .select({ permissions: roles.permissions, active: memberships.active })
+        .from(memberships)
+        .innerJoin(roles, eq(roles.id, memberships.roleId))
+        .where(eq(memberships.userId, found.id));
+      return Boolean(row?.active && row.permissions.includes(permission));
+    });
+    if (!granted) {
+      throw new AppError(403, 'forbidden', 'Esta pessoa não tem permissão para autorizar isso.');
+    }
+    return { userId: found.id, name: found.name };
+  }
+
   async findUserByEmail(email: string) {
     return asApp(this.db, async (tx) => {
       const result = await tx.execute(sql`select * from auth_find_user(${email})`);

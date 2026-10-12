@@ -53,6 +53,21 @@ export class AuthController {
     return this.auth.switchTenant(ctx.userId, tenantId, userAgent);
   }
 
+  @Post('authorize')
+  @HttpCode(200)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  authorize(@Ctx() ctx: RequestContext, @Body() body: unknown) {
+    const input = parse(
+      z.object({
+        email: z.string().trim().toLowerCase().email('E-mail inválido'),
+        password: z.string().min(1, 'Informe a senha'),
+        permission: z.enum(['pos.discount.above_limit', 'pos.sale.cancel', 'pos.cash.withdrawal']),
+      }),
+      body,
+    );
+    return this.auth.authorize(ctx.tenantId, input.email, input.password, input.permission);
+  }
+
   @Get('me')
   me(@Ctx() ctx: RequestContext) {
     return this.auth.me(ctx.tenantId, ctx.userId, ctx.permissions);

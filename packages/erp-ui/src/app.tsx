@@ -10,6 +10,8 @@ import { AuditPage, TeamPage, TerminalsPage } from './pages/admin';
 import { LoginPage, SignupPage } from './pages/auth';
 import { HomePage } from './pages/home';
 import { PartiesPage } from './pages/parties';
+import { PosPage } from './pages/pos';
+import { SalesPage } from './pages/sales';
 import { ProductsPage } from './pages/products';
 import { loadDisplayPreferences, SettingsPage } from './pages/settings';
 import { Shell } from './pages/shell';
@@ -98,6 +100,14 @@ export function BipaeApp({ platform, apiUrl, router }: BipaeAppProps) {
               }
             />
             <Route
+              path="/caixa"
+              element={
+                <RequireAuth>
+                  <PosPage />
+                </RequireAuth>
+              }
+            />
+            <Route
               element={
                 <RequireAuth>
                   <Shell />
@@ -105,6 +115,7 @@ export function BipaeApp({ platform, apiUrl, router }: BipaeAppProps) {
               }
             >
               <Route index element={<HomePage />} />
+              <Route path="vendas" element={<SalesPage />} />
               <Route path="produtos" element={<ProductsPage />} />
               <Route path="clientes" element={<PartiesPage kind="customer" />} />
               <Route path="fornecedores" element={<PartiesPage kind="supplier" />} />

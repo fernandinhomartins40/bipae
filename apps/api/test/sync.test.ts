@@ -207,6 +207,46 @@ describe('offline sync with two terminals (Adendo 01 §8)', () => {
   });
 });
 
+describe('supervisor authorization', () => {
+  it('approves only people with the permission in this business', async () => {
+    const owner = await signup(t.app);
+    const admin = api(t.app, owner.auth);
+    const roles = (await admin.get('/roles')).json() as { id: string; systemKey: string }[];
+    const cashierEmail = `caixa-auth-${Date.now()}@exemplo.com.br`;
+    await admin.post('/members', {
+      name: 'Operadora',
+      email: cashierEmail,
+      password: 'senha-forte-123',
+      roleId: roles.find((r) => r.systemKey === 'cashier')!.id,
+    });
+    const ok = await admin.post('/auth/authorize', {
+      email: owner.me.user.email,
+      password: 'senha-forte-123',
+      permission: 'pos.sale.cancel',
+    });
+    expect(ok.json()).toEqual({ userId: owner.me.user.id, name: expect.any(String) });
+    const cashier = await admin.post('/auth/authorize', {
+      email: cashierEmail,
+      password: 'senha-forte-123',
+      permission: 'pos.sale.cancel',
+    });
+    expect(cashier.statusCode).toBe(403);
+    const wrong = await admin.post('/auth/authorize', {
+      email: owner.me.user.email,
+      password: 'errada',
+      permission: 'pos.sale.cancel',
+    });
+    expect(wrong.statusCode).toBe(401);
+    const otherBusiness = await signup(t.app);
+    const outsider = await admin.post('/auth/authorize', {
+      email: otherBusiness.me.user.email,
+      password: 'senha-forte-123',
+      permission: 'pos.sale.cancel',
+    });
+    expect(outsider.statusCode).toBe(403);
+  });
+});
+
 describe('stock adjustments', () => {
   it('counts and adjusts with audit', async () => {
     const owner = await signup(t.app);

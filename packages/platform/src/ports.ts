@@ -37,6 +37,19 @@ export interface StoragePort {
   transaction<T>(fn: (tx: Omit<StoragePort, 'transaction'>) => Promise<T>): Promise<T>;
 }
 
+/**
+ * Low-level SQLite connection a shell provides (web: SQLite WASM + OPFS in a worker;
+ * desktop: rusqlite via Tauri commands; tests: node:sqlite). `@bipae/local-db` builds the
+ * serialized StoragePort and the schema on top of it.
+ */
+export interface SqlDriver {
+  run(sql: string, params?: unknown[]): Promise<Record<string, unknown>[]>;
+  exec(script: string): Promise<void>;
+  close(): Promise<void>;
+  /** false when data only lives in memory (browser without OPFS): selling offline is unsafe. */
+  readonly persistent: boolean;
+}
+
 /** Small persistent preferences (session, last store, theme). Not for business data. */
 export interface PreferencesPort {
   get(key: string): Promise<string | null>;
@@ -125,6 +138,8 @@ export interface Platform {
   version: string;
   preferences: PreferencesPort;
   capabilities(): Promise<Record<CapabilityName, CapabilityStatus>>;
+  /** Opens (or creates) the terminal's local database file `name`. */
+  openLocalDatabase?: (name: string) => Promise<SqlDriver>;
   storage?: StoragePort;
   printer?: PrinterPort;
   cashDrawer?: CashDrawerPort;

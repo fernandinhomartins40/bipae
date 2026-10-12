@@ -1,18 +1,6 @@
-import type { StoragePort } from '@bipae/platform';
+import type { SqlDriver, StoragePort } from '@bipae/platform';
 
-/**
- * Minimal driver each platform provides (ADR-0012): one connection, statements run in order.
- * - tests/Node: node:sqlite
- * - web: SQLite WASM in a worker (OPFS)
- * - desktop: rusqlite behind Tauri commands
- */
-export interface SqlDriver {
-  /** Runs one statement; returns rows for statements that produce them. */
-  run(sql: string, params?: unknown[]): Promise<Record<string, unknown>[]>;
-  /** Runs a multi-statement script (migrations). */
-  exec(script: string): Promise<void>;
-  close(): Promise<void>;
-}
+export type { SqlDriver };
 
 /** FIFO mutex so a transaction never interleaves with other statements on the one connection. */
 class Mutex {

@@ -4,3 +4,4 @@
 /* Shared packages hold all screens (ADR-0012); Tailwind must scan them. */
 @source '../../../packages/ui/src';
 @source '../../../packages/erp-ui/src';
+@source '../../../packages/pdv-ui/src';

@@ -1,3 +1,4 @@
+import { openWasmDatabase } from '@bipae/local-db/wasm';
 import {
   baselineCapabilities,
   implementedCapabilities,
@@ -90,16 +91,17 @@ export function createWebPlatform(updates: {
     kind: 'web',
     version: __APP_VERSION__,
     preferences: new LocalStoragePreferences(),
-    // Only what is built is reported as available (local SQLite, WebSerial scale and the
-    // Conector arrive in Phase 2). The Conector is not paired yet, so peripherals ask for it.
+    // Only what is built is reported as available. Until the Conector is paired,
+    // peripherals ask for it.
     capabilities: async () =>
       implementedCapabilities(
         baselineCapabilities('web', {
           connectorPaired: false,
           webSerial: typeof navigator !== 'undefined' && 'serial' in navigator,
         }),
-        ['printer', 'certificateA1', 'updater', 'notifications'],
+        ['storage', 'printer', 'certificateA1', 'updater', 'notifications'],
       ),
+    openLocalDatabase: openWasmDatabase,
     printer: new BrowserPrinter(),
     notifications: new BrowserNotifications(),
     updater: new ServiceWorkerUpdater(updates.applyUpdate, updates.waiting),

@@ -43,9 +43,6 @@ test('signup, register a product, find it by barcode, add a terminal, log out an
       page.getByText('Para usar a gaveta de dinheiro no navegador, instale o Bipaê Conector'),
     ).toBeVisible();
   }
-  await expect(
-    page.getByText('O suporte para o banco local chega numa próxima atualização do Bipaê.'),
-  ).toBeVisible();
 
   // Product with price in BRL notation and a barcode.
   await page.getByRole('link', { name: 'Produtos', exact: true }).click();

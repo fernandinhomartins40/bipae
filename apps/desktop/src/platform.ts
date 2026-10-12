@@ -1,4 +1,6 @@
 import { isTauri } from '@tauri-apps/api/core';
+import { openWasmDatabase } from '@bipae/local-db/wasm';
+import { openNativeDatabase } from './sqlite';
 import {
   baselineCapabilities,
   implementedCapabilities,
@@ -44,10 +46,12 @@ export async function createDesktopPlatform(): Promise<Platform> {
     kind: 'desktop',
     version,
     preferences: new WebViewPreferences(),
+    // Native SQLite inside the app; the WASM driver only when the UI runs outside Tauri (dev/E2E).
+    openLocalDatabase: isTauri() ? openNativeDatabase : openWasmDatabase,
     capabilities: async () =>
       implementedCapabilities(
         baselineCapabilities('desktop', { connectorPaired: false, webSerial: false }),
-        ['notifications'],
+        ['storage', 'notifications'],
       ),
     notifications: new WebViewNotifications(),
   };

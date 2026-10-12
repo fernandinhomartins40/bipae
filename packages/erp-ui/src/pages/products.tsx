@@ -35,6 +35,15 @@ export function ProductsPage() {
     queryKey: ['products', deferred],
     queryFn: () => api.get<Page<Product>>(`/products?limit=100&q=${encodeURIComponent(deferred)}`),
   });
+  const stock = useQuery({
+    queryKey: ['stock'],
+    staleTime: 0,
+    queryFn: () => api.get<{ productId: string; quantityMilli: number }[]>('/stock'),
+  });
+  const stockOf = (productId: string) => {
+    const rows = stock.data?.filter((s) => s.productId === productId) ?? [];
+    return rows.length ? rows.reduce((a, s) => a + s.quantityMilli, 0) : null;
+  };
 
   return (
     <>
@@ -98,6 +107,16 @@ export function ProductsPage() {
                 header: 'Situação',
                 cell: (p) =>
                   p.active ? <Badge tone="success">Ativo</Badge> : <Badge>Inativo</Badge>,
+              },
+              {
+                header: 'Estoque',
+                align: 'right',
+                cell: (p) => {
+                  const q = stockOf(p.id);
+                  if (q === null) return <span className="text-muted">—</span>;
+                  const text = (q / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 3 });
+                  return <span className={q < 0 ? 'font-semibold text-danger' : ''}>{text}</span>;
+                },
               },
               { header: 'Preço', align: 'right', cell: (p) => formatBRL(p.priceCents as Cents) },
             ]}
@@ -240,7 +259,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           label="Vendido por peso"
           hint="Lido na balança ou pela etiqueta de peso."
           checked={form.values.isWeighable}
-          onChange={(v) => form.set('isWeighable', v)}
+          onChange={(v) => {
+            form.set('isWeighable', v);
+            // Weighed items are sold by the kilo; switching back restores units.
+            if (v && form.values.unit === 'UN') form.set('unit', 'KG');
+            if (!v && form.values.unit === 'KG') form.set('unit', 'UN');
+          }}
         />
         <Checkbox
           label="Ativo"
@@ -257,6 +281,50 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           </Button>
         </div>
       </form>
+      {product && <StockCount product={product} />}
     </Drawer>
+  );
+}
+
+/** Inventory count: the counted quantity becomes the balance (difference goes to the ledger). */
+function StockCount({ product }: { product: Product }) {
+  const { api } = useApp();
+  const queryClient = useQueryClient();
+  const [text, setText] = useState('');
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const save = async (e: FormEvent) => {
+    e.preventDefault();
+    const value = Number(text.replace(',', '.'));
+    if (!Number.isFinite(value) || value < 0) return setMessage({ ok: false, text: 'Quantidade inválida.' });
+    try {
+      const [store] = await api.get<{ id: string }[]>('/stores');
+      await api.post('/stock/adjustments', {
+        productId: product.id,
+        storeId: store!.id,
+        mode: 'count',
+        quantityMilli: Math.round(value * 1000),
+        note: 'Contagem pelo cadastro',
+      });
+      await queryClient.invalidateQueries({ queryKey: ['stock'] });
+      setMessage({ ok: true, text: 'Estoque atualizado.' });
+      setText('');
+    } catch (error) {
+      setMessage({ ok: false, text: (error as Error).message });
+    }
+  };
+  return (
+    <form onSubmit={save} className="mt-8 flex flex-col gap-3 border-t border-border pt-5">
+      <h3 className="font-bold">Contagem de estoque</h3>
+      {message && <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>}
+      <TextField
+        label={`Quantidade contada (${product.unit})`}
+        inputMode="decimal"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <Button type="submit" variant="secondary">
+        Salvar contagem
+      </Button>
+    </form>
   );
 }

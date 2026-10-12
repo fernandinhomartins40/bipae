@@ -2,6 +2,8 @@
 //! ports. Peripheral drivers (ESC/POS, scale, drawer, TEF, PKCS#11) and the Conector mode
 //! are added in Phase 2 as Tauri commands behind the same port interfaces.
 
+mod db;
+
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -24,7 +26,14 @@ fn platform_info() -> PlatformInfo {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![platform_info])
+        .manage(db::DbState::default())
+        .invoke_handler(tauri::generate_handler![
+            platform_info,
+            db::db_open,
+            db::db_run,
+            db::db_exec,
+            db::db_close
+        ])
         .run(tauri::generate_context!())
         .expect("erro ao iniciar o Bipaê Desktop");
 }

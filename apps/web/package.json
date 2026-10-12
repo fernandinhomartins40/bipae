@@ -15,7 +15,8 @@
     "@bipae/platform": "workspace:*",
     "@bipae/ui": "workspace:*",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "@bipae/local-db": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",

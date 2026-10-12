@@ -1,6 +1,8 @@
 import { Button, cx, Logo } from '@bipae/ui';
 import {
+  BarChart3,
   Home,
+  ScanBarcode,
   LogOut,
   Monitor,
   Package,
@@ -15,6 +17,8 @@ import { useApp, useMe } from '../context';
 
 const NAV = [
   { to: '/', label: 'Início', icon: Home, permission: null },
+  { to: '/caixa', label: 'Abrir o caixa', icon: ScanBarcode, permission: 'pos.sell' },
+  { to: '/vendas', label: 'Vendas', icon: BarChart3, permission: 'catalog.read' },
   { to: '/produtos', label: 'Produtos', icon: Package, permission: 'catalog.read' },
   { to: '/clientes', label: 'Clientes', icon: UserRound, permission: 'parties.read' },
   { to: '/fornecedores', label: 'Fornecedores', icon: Truck, permission: 'parties.read' },

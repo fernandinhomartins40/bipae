@@ -18,7 +18,8 @@
     "@bipae/ui": "workspace:*",
     "@tauri-apps/api": "^2.12.3",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "@bipae/local-db": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
