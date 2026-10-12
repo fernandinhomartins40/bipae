@@ -4,7 +4,7 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 
 ## Estado atual
 
-- Fase 0 e Adendo 01 aprovados; **Fase 1 (fundação) entregue em 12/10/2026**. Próxima: Fase 2 (PDV offline-first).
+- Fases 0, 1 e 2 entregues (12/10/2026). Próxima: **Fase 3 — Fiscal** (revalidar `docs/fiscal/versoes.md` antes de codificar).
 - Tarefas da fase atual e das próximas: [docs/TAREFAS.md](docs/TAREFAS.md). Mantenha esse arquivo atualizado.
 
 ## Nomes e idioma
@@ -42,6 +42,15 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 - `pnpm install`, `pnpm db:seed`, `pnpm dev` (API :3333 + web :5173). Sem `DATABASE_URL` a API usa PGlite em `apps/api/.data`.
 - `pnpm lint && pnpm typecheck && pnpm test`; `pnpm test:e2e` (Playwright, projetos `web` e `desktop-ui`).
 - Desktop: `pnpm --filter @bipae/desktop tauri:dev` (requer Rust).
+- Simulador do Bipaê Conector: `pnpm --filter @bipae/web connector:sim`.
+- E2E roda com 1 worker (API única com PGlite). A primeira execução após mudar dependências pode falhar por recarga do Vite; rode de novo antes de investigar.
+
+## Padrões do caixa (PDV)
+
+- Toda ação do caixa grava a projeção local **e** o evento na outbox na mesma transação (`PdvService.enqueue`). Eventos são validados pelos schemas de `@bipae/domain/events`.
+- O servidor aplica cada evento uma vez (`sync_events`), cada um na sua transação; rejeições permanentes usam `Rejection` com motivo pt-BR; falha temporária interrompe o lote para preservar a ordem.
+- Protocolos de periféricos (ESC/POS, balança, Conector) ficam em TypeScript puro e testável; o Rust só move bytes e espelha `ConnectorCore`.
+- Capacidades nunca mentem: o que não está construído ou configurado aparece como "chega em breve" ou "falta configurar".
 
 ## Padrões da API
 

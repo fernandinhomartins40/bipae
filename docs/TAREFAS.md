@@ -2,51 +2,55 @@
 
 ## Fase 0 — Pesquisa e benchmark ✅
 
-- [x] Benchmark, versões fiscais, dúvidas fiscais, PRD, ADRs 0001–0011, `CLAUDE.md`
-- [x] Adendo 01 (web + desktop): análise de impacto e ADR-0012, aprovados em 12/10/2026
+- [x] Benchmark, versões fiscais, dúvidas fiscais, PRD, ADRs 0001–0012, `CLAUDE.md`
 - [ ] Decisão sobre instalar a REA (ver `docs/benchmark/README.md`)
-- [ ] Conferência manual do Portal da NF-e (o acesso automático falhou), obrigatória antes da Fase 3
+- [ ] Conferência manual do Portal da NF-e (o acesso automático falhou), **obrigatória antes da Fase 3**
 
 ## Fase 1 — Fundação ✅ (12/10/2026)
 
-- [x] Monorepo pnpm + Turborepo, TypeScript estrito, ESLint com fronteiras do ADR-0012
-- [x] Núcleo compartilhado + cascas finas `apps/web` e `apps/desktop` (Adendo 01)
-- [x] `packages/platform`: ports, capacidades, simuladores
-- [x] API NestJS/Fastify + Drizzle + migrações SQL
-- [x] Multi-tenant com RLS forçada + teste de isolamento de todas as tabelas
-- [x] Auth: Argon2id, refresh rotativo com detecção de reuso, limite de tentativas, troca de empresa
-- [x] Papéis e permissões (recarregadas a cada requisição)
-- [x] Trilha de auditoria encadeada por hash e imutável
-- [x] Cadastros: produtos (códigos de barras, variações, kits, pesáveis), unidades, perfis fiscais, tabelas de preço, clientes, fornecedores, empresas, lojas
-- [x] Caixas (terminais) com série de NFC-e exclusiva e nunca reutilizada
-- [x] API `/v1` com versão mínima de cliente (426), nunca bloqueando envio de vendas
-- [x] Telas: entrar, criar conta, início, produtos, clientes, fornecedores, caixas, equipe, auditoria, configurações (tema, alto contraste, fonte grande, bip)
-- [x] Seed de demonstração
-- [x] Testes: unitários, integração (PGlite e PostgreSQL), E2E com a mesma suíte nas duas cascas
-- [x] CI (lint, typecheck, testes, PostgreSQL real, E2E, instaladores desktop) e Docker Compose
-- [x] README, CHANGELOG, `docs/plataformas.md`
+Entregue: monorepo, API com RLS, auth, permissões, auditoria encadeada, cadastros, caixas com série de NFC-e, telas da retaguarda, CI e Docker. Ver CHANGELOG.
 
-### Pendências da Fase 1 (não bloqueiam a Fase 2)
-
-- [ ] **Rodar a CI pela primeira vez:** o repositório não tem remoto no GitHub. Até lá, `docker compose`, build Tauri e testes contra PostgreSQL real **não foram executados**.
+Pendências (não bloqueiam):
 - [ ] 2FA (TOTP) opcional para donos e gerentes
-- [ ] Telas de empresa (CNPJ, UF), perfis fiscais e tabelas de preço (a API já existe; falta a tela)
-- [ ] Permissões por loja (`memberships.store_ids` existe, mas ainda não é aplicado)
-- [ ] Convite com aceite: hoje, adicionar um e-mail que já tem conta dá acesso direto
-- [ ] Fotos de produto (depende de armazenamento de arquivos, decisão de hospedagem)
-- [ ] Redis/BullMQ: entra com as filas da Fase 3 (transmissão à SEFAZ)
+- [ ] Telas de empresa (CNPJ, UF), perfis fiscais e tabelas de preço (a API existe)
+- [ ] Permissões por loja (`memberships.store_ids` ainda não aplicado)
+- [ ] Convite com aceite (hoje um e-mail que já tem conta ganha acesso direto)
+- [ ] Fotos de produto (depende de armazenamento de arquivos)
+- [ ] Redis/BullMQ (entra com as filas da Fase 3)
 
-## Fase 2 — PDV MVP offline-first (próxima; planejar antes de começar)
+## Fase 2 — PDV offline-first ✅ (12/10/2026)
 
-- [ ] `packages/local-db` (SQLite nativo + SQLite WASM/OPFS, mesmo schema) e `StoragePort`
-- [ ] `packages/sync` (eventos idempotentes, pull incremental) e endpoint `/v1/sync`
-- [ ] `packages/pdv-core` e `packages/pdv-ui`: venda, pagamentos (dinheiro, Pix e cartão simulados), caixa (abertura, sangria, suprimento, fechamento cego), troca/devolução por item, orçamento, CPF na nota
-- [ ] Estoque como livro de movimentações
-- [ ] Drivers nativos no Tauri: impressora ESC/POS, gaveta, balança (+ WebSerial na web)
-- [ ] Bipaê Conector (bandeja, WebSocket local, pareamento, token, origem)
-- [ ] Auto-update do desktop com canais estável/beta; assinatura pronta e desligada
-- [ ] Testes do adendo: dois terminais offline (web + desktop), update com fila pendente, Conector com periféricos simulados, E2E dentro do WebView real (tauri-driver)
+Entregue: caixa completo nas duas cascas, banco local, sincronização, estoque por livro de movimentações, periféricos, Bipaê Conector, atualizador, testes do Adendo 01. Ver CHANGELOG e `docs/fase-2/plano.md`.
 
-## Fases 3–7
+### Bloqueios que dependem de ação externa
+- [ ] **Rodar a CI pela primeira vez** (o repositório não tem remoto). Até lá, nunca foram compilados nem executados:
+  - todo o código Rust (banco nativo, periféricos, Conector, bandeja, atualizador);
+  - as imagens Docker;
+  - a suíte da API contra PostgreSQL real.
+- [ ] Testar com hardware real: impressora térmica (rede e USB/serial), gaveta, balança Toledo/Filizola.
+- [ ] Chaves do atualizador, hospedagem de `releases.bipae.com.br` e certificado de assinatura de código (ver `docs/plataformas.md`).
 
-Ver escopo em `docs/PRD.md` §5. Detalhar ao iniciar cada fase.
+### Pendências técnicas
+- [ ] E2E dentro do WebView real com `tauri-driver` (Windows e Linux) na CI
+- [ ] Impressoras USB sem porta COM virtual (spooler do Windows em modo RAW)
+- [ ] Balança direto no navegador por WebSerial (hoje só pelo Conector)
+- [ ] Fallback IndexedDB para navegadores sem OPFS (hoje: banco em memória com aviso)
+- [ ] Conector: atalho do instalador, iniciar com o sistema, página `bipae.com.br/download`
+- [ ] Desconto por item na tela do caixa (o núcleo já suporta; a tela tem só desconto na venda)
+- [ ] Crediário/convênio no pagamento (forma `store_credit` existe; falta limite por cliente)
+- [ ] Troca de operador no mesmo caixa sem sair da conta
+- [ ] Ao desativar um caixa, apagar os dados locais do aparelho após enviar pendências
+
+## Fase 3 — Fiscal (próxima; planejar antes de começar)
+
+- [ ] Revalidar NTs e cronograma (`docs/fiscal/versoes.md`) e dúvidas com contador
+- [ ] `packages/fiscal`: motor com regras por vigência (ADR-0006), IBS/CBS/IS + tributos atuais
+- [ ] XML NFC-e/NF-e a partir dos XSD, assinatura A1 (servidor, desktop e WebCrypto opcional), A3 via Conector
+- [ ] Transmissão em homologação, QR Code, contingência offline e SVC, eventos, inutilização
+- [ ] Numeração `nNF` a partir de `terminalSeq` na série do caixa
+- [ ] Importação de XML de compra e Distribuição DF-e
+- [ ] Rejeições da SEFAZ traduzidas
+
+## Fases 4–7
+
+Ver escopo em `docs/PRD.md` §5.

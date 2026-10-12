@@ -1,5 +1,46 @@
 # Changelog
 
+## [Fase 2 — PDV offline-first] — 12/10/2026
+
+### Adicionado
+- **Caixa (PDV)** igual no navegador e no app desktop:
+  - bipagem com multiplicador (`3*código`), busca sem acento, pesáveis com leitura de balança e etiquetas de balança (prefixo 2);
+  - desconto com limite (acima de 10%, autorização de gerente com as credenciais dele, registrada na auditoria);
+  - vários pagamentos na mesma venda com troco; Pix e cartão por **simulador**;
+  - CPF/CNPJ na nota, orçamentos, sangria, suprimento, **fechamento cego**;
+  - cancelamento, devolução por item sem sobra de centavo, reimpressão de comprovante (não fiscal);
+  - atalhos F2–F12 e operação por toque, som de bip.
+- **Offline-first**: banco local SQLite em todos os caixas (WASM + OPFS no navegador, nativo no desktop), venda e evento gravados na mesma transação, sincronização a cada 30 s e ao reconectar.
+- **Servidor**:
+  - eventos idempotentes (`/v1/sync/events`) com rejeição explicada em pt-BR;
+  - catálogo incremental (`/v1/sync/pull`);
+  - vendas, caixa e estoque como livro de movimentações;
+  - contagem e ajuste de estoque; autorização de gerente.
+- **Retaguarda**: tela de Vendas (faturamento, ticket médio), coluna e contagem de estoque, tela de Periféricos.
+- **Periféricos** (desktop): impressora ESC/POS por rede ou serial, gaveta pela impressora, balança Toledo/Filizola.
+- **Bipaê Conector**:
+  - o app desktop serve impressora, balança e gaveta ao caixa do navegador, com pareamento por código, tokens revogáveis, checagem de origem e lista fechada de comandos;
+  - modo bandeja (`--connector`);
+  - simulador para desenvolvimento e testes.
+- **Atualização automática** do desktop: assinada, canais estável/beta, nunca durante uma venda; workflow de release com assinatura de código opcional.
+- **Testes**: 161 automatizados rodando nesta máquina (152 unitários e de integração + 9 E2E), mais 9 testes Rust que só rodam na CI:
+  - dois caixas (web e desktop) vendendo offline ao mesmo tempo com estoque e numeração exatos;
+  - atualização com vendas pendentes sem perda;
+  - Conector com impressora e balança simuladas;
+  - E2E de venda online e offline, fechamento cego e autorização nos dois frontends;
+  - testes Rust para banco local, periféricos e Conector.
+
+### Corrigido (achado pelos testes)
+- Produto marcado como "vendido por peso" ficava com unidade UN.
+- Caixa recém-vinculado não tinha catálogo no primeiro bip.
+- Montagem dupla do React (modo de desenvolvimento) travava o banco do navegador.
+- Bipar e apertar uma tecla de atalho logo em seguida usava o carrinho antigo.
+
+### Limitações conhecidas
+- O código Rust (banco nativo, periféricos, Conector, bandeja, atualizador) **não foi compilado nem testado em hardware** nesta máquina; depende da primeira execução da CI.
+- O E2E dentro do WebView real (tauri-driver) ainda não existe; a suíte roda o frontend desktop no Chromium.
+- Detalhes em `docs/TAREFAS.md`.
+
 ## [Fase 1 — Fundação] — 12/10/2026
 
 ### Adicionado

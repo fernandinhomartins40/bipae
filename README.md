@@ -10,8 +10,9 @@ Um código, dois alvos: **Bipaê Online** (navegador, `app.bipae.com.br`) e **Bi
 |---|---|
 | 0 — Pesquisa e benchmark | ✅ concluída |
 | Adendo 01 — Web + desktop | ✅ análise aprovada, incorporado às Fases 1 e 2 |
-| **1 — Fundação** | ✅ **entregue** (ver [CHANGELOG](CHANGELOG.md) e pendências em [docs/TAREFAS.md](docs/TAREFAS.md)) |
-| 2 — PDV offline-first | próxima |
+| 1 — Fundação | ✅ entregue |
+| **2 — PDV offline-first** | ✅ **entregue** (ver [CHANGELOG](CHANGELOG.md) e pendências em [docs/TAREFAS.md](docs/TAREFAS.md)) |
+| 3 — Fiscal (NFC-e/NF-e, IBS/CBS) | próxima |
 
 ## Rodando localmente
 
@@ -23,7 +24,9 @@ pnpm db:seed      # cria o "Mercadinho Bipaê (demo)"
 pnpm dev          # API em http://localhost:3333 · web em http://localhost:5173
 ```
 
-Entre com **demo@bipae.com.br / bipae123** (dono) ou **caixa@bipae.com.br / bipae123** (operadora de caixa).
+Entre com **demo@bipae.com.br / bipae123** (dono) ou **caixa@bipae.com.br / bipae123** (operadora de caixa) e clique em **Abrir o caixa**. Atalhos e uso do caixa: [docs/plataformas.md](docs/plataformas.md).
+
+Para testar periféricos no navegador sem hardware: `pnpm --filter @bipae/web connector:sim` (simulador do Bipaê Conector, código 123456).
 
 ### Com Docker (PostgreSQL real)
 
@@ -60,8 +63,12 @@ apps/
   web/        casca web (PWA)
   desktop/    casca Tauri 2
 packages/
-  domain/     regras puras: dinheiro, CPF/CNPJ, GTIN, permissões, contratos
-  platform/   ports de plataforma, capacidades e simuladores
+  domain/     regras puras: dinheiro, CPF/CNPJ, GTIN, permissões, contratos e eventos
+  local-db/   banco local do caixa (SQLite: node, WASM e nativo)
+  pdv-core/   regras do caixa: carrinho, pagamentos, caixa, ESC/POS, balança
+  sync/       sincronização do caixa com o servidor
+  pdv-ui/     telas do caixa
+  platform/   ports de plataforma, capacidades, protocolo do Conector e simuladores
   ui/         design system (claro, escuro, alto contraste, fonte grande)
   erp-ui/     todas as telas, compartilhadas pelas duas cascas
 ```
