@@ -48,6 +48,8 @@ export default defineConfig({
         DATABASE_URL: 'pglite://memory',
         CORS_ORIGINS: `http://localhost:${WEB_PORT},http://localhost:${DESKTOP_UI_PORT}`,
         LOGIN_RATE_LIMIT_PER_MINUTE: '1000',
+        // Test-only: this sign-up becomes the first Bipaê staff owner (ignored in production).
+        PLATFORM_BOOTSTRAP_EMAIL: 'admin-e2e@exemplo.com.br',
       },
     },
     {

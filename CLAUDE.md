@@ -4,7 +4,7 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 
 ## Estado atual
 
-- Fases 0, 1 e 2 entregues (12/10/2026). Próxima: **Fase 3 — Fiscal** (revalidar `docs/fiscal/versoes.md` antes de codificar).
+- Fases 0, 1 e 2 entregues (12/10/2026), mais a plataforma SaaS com painel super admin em `/app/admin` (ADR-0013). Próxima: **Fase 3 — Fiscal** (revalidar `docs/fiscal/versoes.md` antes de codificar).
 - Tarefas da fase atual e das próximas: [docs/TAREFAS.md](docs/TAREFAS.md). Mantenha esse arquivo atualizado.
 
 ## Nomes e idioma
@@ -56,6 +56,7 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 
 - Injeção de dependência sempre com `@Inject(Token)` explícito (não há metadados de decorators: tsx/esbuild/Vite não os emitem).
 - Toda consulta de negócio passa por `withTenant(db, ctx, fn)`; ações relevantes chamam `audit.record(tx, ...)` na mesma transação.
+- Plataforma SaaS (ADR-0013): `asPlatform()` (papel `bipae_platform`, sem RLS) **só** dentro de `modules/admin`, na `admin-cli`, no seed e no atalho de desenvolvimento `PLATFORM_BOOTSTRAP_EMAIL`; nunca em rotas de clientes. Criar empresa/loja/caixa/usuário/produto chama `limits.assertCanAdd(tx, recurso)` na mesma transação. Rota nova do painel declara `@PlatformPermission(...)` (sem isso, só `owner` passa) e registra em `platformAudit.record`.
 - Validação com os schemas Zod de `@bipae/domain` via `parse()`; erros sempre com mensagem pt-BR para o usuário.
 - Migrações em `apps/api/src/db/migrations/*.sql` (fonte da verdade); `schema.ts` é o espelho tipado. Nunca editar migração já aplicada.
 

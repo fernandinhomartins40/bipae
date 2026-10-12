@@ -39,6 +39,17 @@ Entregue: caixa completo nas duas cascas, banco local, sincronização, estoque 
 - [ ] Troca de operador no mesmo caixa sem sair da conta
 - [ ] Ao desativar um caixa, apagar os dados locais do aparelho após enviar pendências
 
+## Plataforma SaaS e painel super admin ✅ (12/10/2026)
+
+Entregue: planos e limites, ciclo de vida da conta, multi-empresas, painel `/app/admin`, acesso de suporte, auditoria da plataforma. Ver ADR-0013 e `docs/saas/plano.md`.
+
+- [ ] Promover o primeiro super admin em produção (`admin-cli grant`, ver `docs/deploy.md`) e ativar o 2FA
+- [ ] Definir preços dos planos pagos no painel (hoje "no lançamento")
+- [ ] Cobrança automática e troca de plano pelo próprio cliente (entra com o PSP, Fase 6)
+- [ ] Permissões por loja dentro do cliente (`memberships.store_ids`)
+- [ ] E-mails de ciclo de vida (teste terminando, conta suspensa) quando houver envio de e-mail
+- [ ] Exportação dos dados do cliente (LGPD) e exclusão definitiva após cancelamento
+
 ## Fase 3 — Fiscal (próxima; planejar antes de começar)
 
 - [ ] Revalidar NTs e cronograma (`docs/fiscal/versoes.md`) e dúvidas com contador

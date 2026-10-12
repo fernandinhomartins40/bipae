@@ -27,6 +27,11 @@ if [ ! -f .env ]; then
     echo "JWT_SECRET=$(openssl rand -hex 48)"
   } > .env
 fi
+# Chave própria para segredos guardados (sementes do 2FA da equipe Bipaê), criada uma vez.
+if ! grep -q '^SECRETS_KEY=' .env; then
+  echo "==> Adicionando SECRETS_KEY ao .env"
+  echo "SECRETS_KEY=$(openssl rand -hex 32)" >> .env
+fi
 
 set_image_vars() {
   # As imagens ficam fora do .env para que os segredos nunca sejam reescritos.

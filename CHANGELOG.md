@@ -1,5 +1,41 @@
 # Changelog
 
+## [Plataforma SaaS e painel super admin] — 12/10/2026
+
+### Adicionado
+- **Multi-clientes e multi-empresas** (ADR-0013):
+  - cada cliente (conta) pode ter várias empresas (CNPJs), cada empresa várias lojas, cada loja vários caixas;
+  - nova tela **Empresas e lojas**;
+  - quem participa de mais de um cliente troca pelo seletor no menu.
+- **Planos e limites**:
+  - planos Grátis, Essencial, Profissional e Rede, com limites de empresas, lojas, caixas, usuários e produtos;
+  - limite aplicado na API com mensagem clara;
+  - exceções negociadas por cliente;
+  - nova tela **Minha assinatura**, com uso do plano e histórico da conta.
+- **Ciclo de vida da conta**:
+  - estados ativo, em teste (com data de fim), suspenso e cancelado;
+  - conta bloqueada vê uma tela explicando o motivo, mas os caixas **continuam enviando as vendas feitas offline**.
+- **Painel super admin** em `/app/admin`, para a equipe Bipaê:
+  - **visão geral**: clientes ativos, receita mensal estimada, uso na semana, caixas ativos, novos clientes e faturamento por dia, clientes por plano, testes terminando;
+  - **clientes**: busca e filtros; ficha com uso do plano, movimento, empresas, caixas, equipe, histórico e auditoria; ações de mudar plano ou teste, limites especiais, suspender, reativar, cancelar, anotar e encerrar sessões;
+  - **pessoas**: busca em todos os clientes;
+  - **planos, avisos** (faixa na retaguarda dos clientes) e **equipe Bipaê** (papéis Administrador, Suporte e Consulta);
+  - **auditoria da plataforma** encadeada por hash, com verificação de integridade;
+  - **sistema**: versões, banco e migrações.
+- **Segurança do painel**:
+  - login próprio, separado do login dos clientes;
+  - verificação em duas etapas (app autenticador) obrigatória;
+  - papel de banco exclusivo, que os clientes não enxergam;
+  - rota sem permissão declarada só libera o Administrador.
+- **Acesso de suporte**:
+  - "entrar como o cliente" por 30 minutos, somente leitura por padrão, com motivo obrigatório;
+  - faixa visível na tela do cliente;
+  - registro nas duas auditorias.
+- `admin-cli` para promover o primeiro super admin na VPS.
+
+### Mudou
+- Produção ganhou `SECRETS_KEY` (gerada no próximo deploy), usada para cifrar as sementes do 2FA.
+
 ## [Fase 2 — PDV offline-first] — 12/10/2026
 
 ### Adicionado

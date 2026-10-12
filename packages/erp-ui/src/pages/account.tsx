@@ -1,0 +1,132 @@
+import {
+  formatBRL,
+  describeLimit,
+  LIMIT_LABELS,
+  LIMIT_RESOURCES,
+  TENANT_STATUS_LABELS,
+  type AccountView,
+  type Cents,
+} from '@bipae/domain';
+import { Alert, Badge, Card, PageHeader } from '@bipae/ui';
+import { useQuery } from '@tanstack/react-query';
+import { UsageBar } from '../admin/charts';
+import { useApp } from '../context';
+
+const dateOnly = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' });
+
+const EVENT_LABELS: Record<string, string> = {
+  created: 'Conta criada',
+  plan_changed: 'Plano alterado',
+  trial_set: 'Período de teste',
+  suspended: 'Conta suspensa',
+  reactivated: 'Conta reativada',
+  cancelled: 'Conta cancelada',
+  limits_changed: 'Limites ajustados',
+  support_session: 'Acesso do suporte Bipaê',
+};
+
+/** "Minha assinatura": plan, usage against limits and the account history. */
+export function AccountPage() {
+  const { api } = useApp();
+  const account = useQuery({
+    queryKey: ['account'],
+    queryFn: () => api.get<AccountView>('/account'),
+  });
+  const a = account.data;
+  return (
+    <>
+      <PageHeader
+        title="Minha assinatura"
+        description="Seu plano, o quanto você usa dele e o histórico da conta."
+      />
+      {account.error && <Alert>{(account.error as Error).message}</Alert>}
+      {a && (
+        <div className="grid gap-6 xl:grid-cols-2">
+          <Card>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-xl font-bold">Plano {a.plan.name}</h2>
+              <Badge
+                tone={
+                  a.tenant.status === 'active'
+                    ? 'success'
+                    : a.tenant.status === 'trial'
+                      ? 'warning'
+                      : 'danger'
+                }
+              >
+                {TENANT_STATUS_LABELS[a.tenant.status]}
+              </Badge>
+            </div>
+            {a.plan.description && <p className="mt-1 text-muted">{a.plan.description}</p>}
+            <p className="mt-2 text-lg font-semibold">
+              {a.plan.priceCents === null
+                ? 'Preço no lançamento'
+                : a.plan.priceCents === 0
+                  ? 'Grátis'
+                  : `${formatBRL(a.plan.priceCents as Cents)} por mês`}
+            </p>
+            {a.tenant.trialEndsAt && (
+              <p className="mt-2">
+                Período de teste até{' '}
+                <strong>{dateOnly.format(new Date(a.tenant.trialEndsAt))}</strong>.
+              </p>
+            )}
+            <div className="mt-5 flex flex-col gap-3">
+              {LIMIT_RESOURCES.map((r) => (
+                <UsageBar
+                  key={r}
+                  label={LIMIT_LABELS[r].many[0]!.toUpperCase() + LIMIT_LABELS[r].many.slice(1)}
+                  used={a.usage[r]}
+                  limit={a.limits[r]}
+                />
+              ))}
+            </div>
+            <p className="mt-5 text-sm text-muted">
+              Para mudar de plano ou ampliar limites, fale com a equipe Bipaê. Em breve dá para
+              fazer isso direto por aqui.
+            </p>
+          </Card>
+
+          <Card>
+            <h2 className="mb-3 text-lg font-bold">Planos disponíveis</h2>
+            <ul className="divide-y divide-border">
+              {a.plans.map((p) => (
+                <li key={p.id} className="py-3">
+                  <div className="flex justify-between gap-2">
+                    <span className="font-semibold">
+                      {p.name} {p.id === a.plan.id && <Badge tone="success">Seu plano</Badge>}
+                    </span>
+                    <span className="tabular-nums">
+                      {p.priceCents === null
+                        ? 'no lançamento'
+                        : p.priceCents === 0
+                          ? 'Grátis'
+                          : formatBRL(p.priceCents as Cents)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted">
+                    {LIMIT_RESOURCES.map((r) => describeLimit(r, p.limits[r])).join(' · ')}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </Card>
+
+          <Card className="xl:col-span-2">
+            <h2 className="mb-3 text-lg font-bold">Histórico da conta</h2>
+            <ul className="flex flex-col gap-2">
+              {a.events.map((e, i) => (
+                <li key={i} className="border-l-4 border-border pl-3">
+                  <span className="font-medium">{EVENT_LABELS[e.kind] ?? e.kind}</span>{' '}
+                  <span className="text-sm text-muted">
+                    {dateOnly.format(new Date(e.createdAt))}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </div>
+      )}
+    </>
+  );
+}

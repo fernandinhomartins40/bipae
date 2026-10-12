@@ -38,6 +38,10 @@ export interface ApiClientOptions {
   preferences: PreferencesPort;
   fetch?: typeof fetch;
   onSessionEnd?: () => void;
+  /** '/auth' for clients, '/admin/auth' for the Bipaê staff panel (separate session). */
+  authBase?: string;
+  /** Preferences key of the refresh token (each session kind keeps its own). */
+  refreshKey?: string;
 }
 
 type AuthResult = SessionTokens & { me: Me };
@@ -51,9 +55,25 @@ export class ApiClient {
   private accessToken: string | null = null;
   private refreshing: Promise<boolean> | null = null;
   private readonly fetchImpl: typeof fetch;
+  private readonly authBase: string;
+  private readonly refreshKey: string;
+  /** Bipaê support session: a fixed short-lived token, never refreshed nor stored. */
+  private supportMode = false;
 
   constructor(private readonly options: ApiClientOptions) {
     this.fetchImpl = options.fetch ?? ((...args) => fetch(...args));
+    this.authBase = options.authBase ?? '/auth';
+    this.refreshKey = options.refreshKey ?? REFRESH_KEY;
+  }
+
+  get isSupportSession() {
+    return this.supportMode;
+  }
+
+  /** Uses a support-session token (from the staff panel) instead of a stored login. */
+  useSupportToken(accessToken: string) {
+    this.accessToken = accessToken;
+    this.supportMode = true;
   }
 
   get isAuthenticated() {
@@ -65,7 +85,27 @@ export class ApiClient {
   }
 
   async login(input: LoginInput) {
-    return this.storeSession(await this.request<AuthResult>('POST', '/auth/login', input, false));
+    return this.storeSession(
+      await this.request<AuthResult>('POST', `${this.authBase}/login`, input, false),
+    );
+  }
+
+  /** Login whose result has a different "me" (the staff panel). */
+  async loginAs<T>(input: object): Promise<T> {
+    const result = await this.request<SessionTokens & { me: T }>(
+      'POST',
+      `${this.authBase}/login`,
+      input,
+      false,
+    );
+    return this.adopt(result);
+  }
+
+  /** Stores tokens returned by another call (e.g. enabling 2FA issues a new session). */
+  async adopt<T>(result: SessionTokens & { me: T }): Promise<T> {
+    this.accessToken = result.accessToken;
+    await this.options.preferences.set(this.refreshKey, result.refreshToken);
+    return result.me;
   }
 
   async switchTenant(tenantId: string) {
@@ -75,17 +115,24 @@ export class ApiClient {
   }
 
   /** Restores a session from the stored refresh token (app start). */
-  async restore(): Promise<Me | null> {
+  async restore<T = Me>(): Promise<T | null> {
+    if (this.supportMode) return this.get<T>(`${this.authBase}/me`);
     if (!(await this.refresh())) return null;
-    return this.get<Me>('/auth/me');
+    return this.get<T>(`${this.authBase}/me`);
   }
 
   async logout() {
-    const refreshToken = await this.options.preferences.get(REFRESH_KEY);
     this.accessToken = null;
-    await this.options.preferences.remove(REFRESH_KEY);
+    if (this.supportMode) {
+      this.supportMode = false;
+      return;
+    }
+    const refreshToken = await this.options.preferences.get(this.refreshKey);
+    await this.options.preferences.remove(this.refreshKey);
     if (refreshToken) {
-      await this.request('POST', '/auth/logout', { refreshToken }, false).catch(() => undefined);
+      await this.request('POST', `${this.authBase}/logout`, { refreshToken }, false).catch(
+        () => undefined,
+      );
     }
   }
 
@@ -109,19 +156,20 @@ export class ApiClient {
 
   private async storeSession(result: AuthResult) {
     this.accessToken = result.accessToken;
-    await this.options.preferences.set(REFRESH_KEY, result.refreshToken);
+    await this.options.preferences.set(this.refreshKey, result.refreshToken);
     return result.me;
   }
 
   private refresh(): Promise<boolean> {
     // Concurrent 401s share a single refresh (refresh tokens rotate and can be used once).
+    if (this.supportMode) return Promise.resolve(false);
     this.refreshing ??= (async () => {
       try {
-        const refreshToken = await this.options.preferences.get(REFRESH_KEY);
+        const refreshToken = await this.options.preferences.get(this.refreshKey);
         if (!refreshToken) return false;
         const result = await this.request<AuthResult>(
           'POST',
-          '/auth/refresh',
+          `${this.authBase}/refresh`,
           { refreshToken },
           false,
         );
@@ -130,7 +178,7 @@ export class ApiClient {
       } catch (error) {
         if (error instanceof ApiError && error.status === 401) {
           this.accessToken = null;
-          await this.options.preferences.remove(REFRESH_KEY);
+          await this.options.preferences.remove(this.refreshKey);
         }
         return false;
       } finally {

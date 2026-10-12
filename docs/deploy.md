@@ -8,6 +8,7 @@
 |---|---|
 | https://www.bipae.com.br | Landing page de vendas (`apps/site`) |
 | https://www.bipae.com.br/app/ | Aplicação: retaguarda e caixa (`apps/web`, PWA) |
+| https://www.bipae.com.br/app/admin | Painel super admin da equipe Bipaê (ADR-0013) |
 | https://www.bipae.com.br/v1/health | API (`apps/api`) |
 | https://bipae.com.br | Redireciona para o www |
 
@@ -22,7 +23,7 @@ Internet ─HTTPS─► nginx do host (certbot) ─► 127.0.0.1:3400 ─► con
 
 - Projeto compose `bipae` em `/root/bipae` (`deploy/docker-compose.vps.yml`). Só o web escuta no host, e só em 127.0.0.1.
 - Limites de memória: postgres 512 MB, api 512 MB, web 128 MB (a VPS não tem swap).
-- Segredos (`POSTGRES_PASSWORD`, `JWT_SECRET`) em `/root/bipae/.env`, gerados no primeiro deploy, permissão 600. **Nunca estão no repositório.**
+- Segredos (`POSTGRES_PASSWORD`, `JWT_SECRET`, `SECRETS_KEY`) em `/root/bipae/.env`, gerados pelo `deploy.sh` quando faltam, permissão 600. `SECRETS_KEY` cifra as sementes do 2FA do painel: **não troque** sem antes zerar o 2FA da equipe. **Nunca estão no repositório.**
 - Certificado Let's Encrypt `bipae.com.br` (bipae.com.br + www), renovado pelo `certbot.timer` da VPS.
 
 ## Deploy
@@ -61,6 +62,21 @@ Restaurar um backup (apaga os dados atuais; só com aprovação):
 ```bash
 gunzip -c backups/bipae-AAAAMMDDTHHMMSSZ.sql.gz | $C exec -T postgres psql -U bipae -d bipae
 ```
+
+## Painel super admin (equipe Bipaê)
+
+Não existe cadastro de super admin pela tela. A pessoa primeiro cria uma conta comum em https://www.bipae.com.br/app/criar-conta. Depois, na VPS:
+
+```bash
+$C exec api node dist/admin-cli.js grant pessoa@exemplo.com.br owner     # owner | support | viewer
+$C exec api node dist/admin-cli.js list
+$C exec api node dist/admin-cli.js reset-totp pessoa@exemplo.com.br      # perdeu o celular do 2FA
+$C exec api node dist/admin-cli.js revoke pessoa@exemplo.com.br
+```
+
+No primeiro acesso a https://www.bipae.com.br/app/admin, o painel pede para ativar a verificação em duas etapas (Google Authenticator, Microsoft Authenticator, 1Password etc.). Sem ela o painel não abre.
+
+Os demais membros da equipe podem ser adicionados pelo próprio painel (Equipe Bipaê), por quem é Administrador.
 
 ## Configuração única já feita
 

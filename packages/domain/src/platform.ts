@@ -21,7 +21,17 @@ export const LIMIT_LABELS: Record<LimitResource, { one: string; many: string }> 
   products: { one: 'produto', many: 'produtos' },
 };
 
-export function effectiveLimits(plan: PlanLimits, overrides?: Partial<PlanLimits> | null): PlanLimits {
+/** "1 loja", "20 caixas" or "produtos sem limite" for a plan limit. */
+export function describeLimit(resource: LimitResource, max: number | null): string {
+  const { one, many } = LIMIT_LABELS[resource];
+  if (max === null) return `${many} sem limite`;
+  return `${max.toLocaleString('pt-BR')} ${max === 1 ? one : many}`;
+}
+
+export function effectiveLimits(
+  plan: PlanLimits,
+  overrides?: Partial<PlanLimits> | null,
+): PlanLimits {
   return { ...plan, ...(overrides ?? {}) } as PlanLimits;
 }
 
@@ -66,17 +76,23 @@ export function accountAccess(
     return {
       allowed: false,
       code: 'suspended',
-      message: 'Esta conta está suspensa. Fale com o suporte do Bipaê para reativar. Nenhuma venda foi perdida.',
+      message:
+        'Esta conta está suspensa. Fale com o suporte do Bipaê para reativar. Nenhuma venda foi perdida.',
     };
   }
   if (status === 'cancelled') {
-    return { allowed: false, code: 'cancelled', message: 'Esta conta foi cancelada. Fale com o suporte do Bipaê.' };
+    return {
+      allowed: false,
+      code: 'cancelled',
+      message: 'Esta conta foi cancelada. Fale com o suporte do Bipaê.',
+    };
   }
   if (status === 'trial' && trialEndsAt && new Date(trialEndsAt).getTime() < now.getTime()) {
     return {
       allowed: false,
       code: 'trial_expired',
-      message: 'O período de teste terminou. Escolha um plano para continuar; seus dados estão guardados.',
+      message:
+        'O período de teste terminou. Escolha um plano para continuar; seus dados estão guardados.',
     };
   }
   return { allowed: true };
@@ -120,10 +136,19 @@ export function platformCan(role: PlatformRole, permission: PlatformPermission):
 export const adminLoginInput = z.object({
   email: emailSchema,
   password: z.string().min(1, 'Informe a senha'),
-  totp: z.string().trim().regex(/^\d{6}$/, 'O código tem 6 dígitos').optional(),
+  totp: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'O código tem 6 dígitos')
+    .optional(),
 });
 
-export const totpCodeInput = z.object({ code: z.string().trim().regex(/^\d{6}$/, 'O código tem 6 dígitos') });
+export const totpCodeInput = z.object({
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'O código tem 6 dígitos'),
+});
 
 const reason = z.string().trim().min(3, 'Informe o motivo').max(500);
 
@@ -212,9 +237,21 @@ export interface AccountView {
     statusReason: string | null;
     trialEndsAt: string | null;
   };
-  plan: { id: string; name: string; description: string | null; priceCents: number | null; features: string[] };
+  plan: {
+    id: string;
+    name: string;
+    description: string | null;
+    priceCents: number | null;
+    features: string[];
+  };
   limits: PlanLimits;
   usage: Record<LimitResource, number>;
   events: { kind: string; data: unknown; createdAt: string }[];
-  plans: { id: string; name: string; description: string | null; priceCents: number | null; limits: PlanLimits }[];
+  plans: {
+    id: string;
+    name: string;
+    description: string | null;
+    priceCents: number | null;
+    limits: PlanLimits;
+  }[];
 }

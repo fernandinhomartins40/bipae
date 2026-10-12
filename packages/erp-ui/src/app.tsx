@@ -12,6 +12,10 @@ import { HomePage } from './pages/home';
 import { PartiesPage } from './pages/parties';
 import { DevicesPage } from './pages/devices';
 import { PosPage } from './pages/pos';
+import { AccountPage } from './pages/account';
+import { CompaniesPage } from './pages/companies';
+import { AdminApp } from './admin/admin-app';
+import { captureSupportHandoff, endSupportSession, readSupportSession } from './support';
 import { SalesPage } from './pages/sales';
 import { ProductsPage } from './pages/products';
 import { loadDisplayPreferences, SettingsPage } from './pages/settings';
@@ -47,7 +51,10 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
         clientKind: platform.kind,
         clientVersion: platform.version,
         preferences: platform.preferences,
-        onSessionEnd: () => setMe(null),
+        onSessionEnd: () => {
+          endSupportSession();
+          setMe(null);
+        },
       }),
     [apiUrl, platform],
   );
@@ -56,12 +63,16 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
     void loadDisplayPreferences((k) => platform.preferences.get(k)).then((prefs) =>
       applyDisplayPreferences(prefs, document.documentElement),
     );
+    // A support session opened from the staff panel takes over this tab only.
+    if (router === 'browser') captureSupportHandoff(basename ?? '');
+    const support = readSupportSession();
+    if (support) api.useSupportToken(support.token);
     api
       .restore()
       .then(setMe)
       .catch(() => setMe(null))
       .finally(() => setRestoring(false));
-  }, [api, platform]);
+  }, [api, platform, router, basename]);
 
   useEffect(() => {
     if (!me) queryClient.clear();
@@ -86,6 +97,10 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
       <AppContextProvider value={{ platform, api, me, setMe }}>
         <Router {...(router === 'browser' && basename && basename !== '/' && { basename })}>
           <Routes>
+            <Route
+              path="/admin/*"
+              element={<AdminApp platform={platform} apiUrl={apiUrl} appBase={basename ?? ''} />}
+            />
             <Route
               path="/entrar"
               element={
@@ -119,6 +134,8 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
             >
               <Route index element={<HomePage />} />
               <Route path="vendas" element={<SalesPage />} />
+              <Route path="empresas" element={<CompaniesPage />} />
+              <Route path="assinatura" element={<AccountPage />} />
               <Route path="produtos" element={<ProductsPage />} />
               <Route path="clientes" element={<PartiesPage kind="customer" />} />
               <Route path="fornecedores" element={<PartiesPage kind="supplier" />} />

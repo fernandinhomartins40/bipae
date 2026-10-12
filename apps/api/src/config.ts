@@ -28,6 +28,11 @@ const envSchema = z.object({
   ADMIN_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
   ADMIN_SESSION_HOURS: z.coerce.number().int().positive().default(12),
   SUPPORT_SESSION_MINUTES: z.coerce.number().int().positive().default(30),
+  /**
+   * DEV/TEST ONLY: whoever signs up with this e-mail becomes the first platform owner (only if
+   * there is none yet). Ignored in production, where e-mails are not verified: use admin-cli.
+   */
+  PLATFORM_BOOTSTRAP_EMAIL: z.string().email().optional(),
   /** Bipaê staff must enable 2FA before using the admin panel (always true in production). */
   PLATFORM_REQUIRE_TOTP: z
     .enum(['true', 'false'])

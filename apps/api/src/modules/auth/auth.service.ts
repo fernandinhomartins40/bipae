@@ -10,18 +10,19 @@ import {
   type signupInput,
   type SystemRoleKey,
 } from '@bipae/domain';
-import { and, eq, isNull, sql } from 'drizzle-orm';
+import { and, count, eq, isNull, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { Config } from '../../config';
 import { CONFIG, DB } from '../../common/di';
 import { AppError } from '../../common/errors';
 import { TokenService } from '../../common/tokens';
-import { asApp, withTenant, type Db, type Tx } from '../../db/client';
+import { asApp, asPlatform, withTenant, type Db, type Tx } from '../../db/client';
 import { rowsOf } from '../../db/migrate';
 import {
   companies,
   fiscalProfiles,
   memberships,
+  platformAdmins,
   roles,
   sessions,
   stores,
@@ -117,7 +118,24 @@ export class AuthService {
       );
     });
 
+    await this.bootstrapPlatformOwner(userId, input.email);
     return this.issueSession(tenantId, userId, userAgent);
+  }
+
+  /** Development/test convenience only (see PLATFORM_BOOTSTRAP_EMAIL). */
+  private async bootstrapPlatformOwner(userId: string, email: string) {
+    const target = this.config.PLATFORM_BOOTSTRAP_EMAIL;
+    if (
+      !target ||
+      this.config.NODE_ENV === 'production' ||
+      target.toLowerCase() !== email.toLowerCase()
+    )
+      return;
+    await asPlatform(this.db, async (tx) => {
+      const [existing] = await tx.select({ n: count() }).from(platformAdmins);
+      if (Number(existing?.n) > 0) return;
+      await tx.insert(platformAdmins).values({ userId, role: 'owner' });
+    });
   }
 
   async createSystemRoles(tx: Tx, tenantId: string): Promise<Record<SystemRoleKey, string>> {
