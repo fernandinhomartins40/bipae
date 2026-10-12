@@ -1,0 +1,252 @@
+import { formatBRL, type Cents, type Page, type Product } from '@bipae/domain';
+import {
+  Alert,
+  Badge,
+  Button,
+  Checkbox,
+  DataTable,
+  Drawer,
+  EmptyState,
+  MoneyField,
+  PageHeader,
+  SelectField,
+  TextField,
+} from '@bipae/ui';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Plus, Search } from 'lucide-react';
+import { useDeferredValue, useState, type FormEvent } from 'react';
+import { useApp, useCan } from '../context';
+import { ApiError } from '../api-client';
+import { useForm } from '../forms';
+
+interface Unit {
+  code: string;
+  description: string;
+}
+
+export function ProductsPage() {
+  const { api } = useApp();
+  const canWrite = useCan('catalog.write');
+  const [query, setQuery] = useState('');
+  const deferred = useDeferredValue(query.trim());
+  const [editing, setEditing] = useState<Product | 'new' | null>(null);
+
+  const products = useQuery({
+    queryKey: ['products', deferred],
+    queryFn: () => api.get<Page<Product>>(`/products?limit=100&q=${encodeURIComponent(deferred)}`),
+  });
+
+  return (
+    <>
+      <PageHeader
+        title="Produtos"
+        description="Busque pelo nome, código interno ou bipando o código de barras."
+        actions={
+          canWrite && (
+            <Button icon={<Plus className="size-5" aria-hidden />} onClick={() => setEditing('new')}>
+              Novo produto
+            </Button>
+          )
+        }
+      />
+      <div className="relative mb-4 max-w-xl">
+        <Search className="pointer-events-none absolute left-3 top-3 size-5 text-muted" aria-hidden />
+        <input
+          type="search"
+          aria-label="Buscar produtos"
+          placeholder="Buscar ou bipar…"
+          className="min-h-11 w-full rounded-ui border border-border bg-surface pl-10 pr-3"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          autoFocus
+        />
+      </div>
+
+      {products.error && <Alert>{(products.error as Error).message}</Alert>}
+      {products.data && products.data.items.length === 0 ? (
+        <EmptyState title={deferred ? 'Nada encontrado' : 'Nenhum produto ainda'}>
+          {deferred
+            ? 'Confira o que foi digitado ou cadastre um produto novo.'
+            : 'Cadastre seu primeiro produto. Depois dá para importar tudo pelo XML das notas de compra.'}
+        </EmptyState>
+      ) : (
+        products.data && (
+          <DataTable
+            caption="Lista de produtos"
+            rows={products.data.items}
+            onRowClick={canWrite ? (p) => setEditing(p) : undefined}
+            columns={[
+              {
+                header: 'Produto',
+                cell: (p) => (
+                  <div>
+                    <p className="font-semibold">{p.name}</p>
+                    <p className="text-sm text-muted">
+                      {[p.sku, p.barcodes[0]].filter(Boolean).join(' · ') || 'Sem código'}
+                    </p>
+                  </div>
+                ),
+              },
+              { header: 'Unidade', cell: (p) => (p.isWeighable ? `${p.unit} (pesável)` : p.unit) },
+              {
+                header: 'Situação',
+                cell: (p) =>
+                  p.active ? <Badge tone="success">Ativo</Badge> : <Badge>Inativo</Badge>,
+              },
+              { header: 'Preço', align: 'right', cell: (p) => formatBRL(p.priceCents as Cents) },
+            ]}
+          />
+        )
+      )}
+      {products.data && (
+        <p className="mt-3 text-sm text-muted">
+          {products.data.total} produto{products.data.total === 1 ? '' : 's'}
+        </p>
+      )}
+
+      {editing && (
+        <ProductForm
+          product={editing === 'new' ? null : editing}
+          onClose={() => setEditing(null)}
+        />
+      )}
+    </>
+  );
+}
+
+function ProductForm({ product, onClose }: { product: Product | null; onClose: () => void }) {
+  const { api } = useApp();
+  const queryClient = useQueryClient();
+  const canChangePrice = useCan('catalog.price.write');
+  const units = useQuery({ queryKey: ['units'], queryFn: () => api.get<Unit[]>('/units') });
+  const form = useForm({
+    name: product?.name ?? '',
+    sku: product?.sku ?? '',
+    barcodes: product?.barcodes.join(', ') ?? '',
+    unit: product?.unit ?? 'UN',
+    priceCents: product?.priceCents ?? (null as number | null),
+    costCents: product?.costCents ?? (null as number | null),
+    ncm: product?.ncm ?? '',
+    cest: product?.cest ?? '',
+    isWeighable: product?.isWeighable ?? false,
+    active: product?.active ?? true,
+  });
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    void form.submit(async (v) => {
+      if (v.priceCents === null) {
+        const message = 'Informe o preço de venda';
+        throw new ApiError(400, 'validation', message, [{ path: 'priceCents', message }]);
+      }
+      const body = {
+        ...(product ?? {}),
+        ...v,
+        barcodes: v.barcodes
+          .split(/[\s,;]+/)
+          .map((b) => b.trim())
+          .filter(Boolean),
+      };
+      if (product) await api.put(`/products/${product.id}`, body);
+      else await api.post('/products', body);
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
+      onClose();
+    });
+  };
+
+  return (
+    <Drawer open onOpenChange={(open) => !open && onClose()} title={product ? 'Editar produto' : 'Novo produto'}>
+      <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+        {form.formError && <Alert>{form.formError}</Alert>}
+        <TextField
+          label="Nome"
+          value={form.values.name}
+          onChange={(e) => form.set('name', e.target.value)}
+          error={form.errors.name}
+          autoFocus
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <MoneyField
+            label="Preço de venda"
+            value={form.values.priceCents}
+            onChange={(v) => form.set('priceCents', v)}
+            error={form.errors.priceCents}
+            required
+          />
+          <MoneyField
+            label="Custo (opcional)"
+            value={form.values.costCents}
+            onChange={(v) => form.set('costCents', v)}
+            error={form.errors.costCents}
+          />
+        </div>
+        {product && !canChangePrice && (
+          <p className="text-sm text-muted">Você pode editar o produto, mas não o preço.</p>
+        )}
+        <TextField
+          label="Código de barras"
+          hint="Separe vários códigos com vírgula."
+          inputMode="numeric"
+          value={form.values.barcodes}
+          onChange={(e) => form.set('barcodes', e.target.value)}
+          error={Object.entries(form.errors).find(([k]) => k.startsWith('barcodes'))?.[1]}
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Código interno (SKU)"
+            value={form.values.sku}
+            onChange={(e) => form.set('sku', e.target.value)}
+            error={form.errors.sku}
+          />
+          <SelectField
+            label="Unidade"
+            value={form.values.unit}
+            onChange={(e) => form.set('unit', e.target.value)}
+            options={(units.data ?? [{ code: 'UN', description: 'Unidade' }]).map((u) => ({
+              value: u.code,
+              label: `${u.code} — ${u.description}`,
+            }))}
+          />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="NCM"
+            inputMode="numeric"
+            maxLength={8}
+            value={form.values.ncm}
+            onChange={(e) => form.set('ncm', e.target.value.replace(/\D/g, ''))}
+            error={form.errors.ncm}
+          />
+          <TextField
+            label="CEST"
+            inputMode="numeric"
+            maxLength={7}
+            value={form.values.cest}
+            onChange={(e) => form.set('cest', e.target.value.replace(/\D/g, ''))}
+            error={form.errors.cest}
+          />
+        </div>
+        <Checkbox
+          label="Vendido por peso"
+          hint="Lido na balança ou pela etiqueta de peso."
+          checked={form.values.isWeighable}
+          onChange={(v) => form.set('isWeighable', v)}
+        />
+        <Checkbox
+          label="Ativo"
+          hint="Produtos inativos não aparecem no caixa."
+          checked={form.values.active}
+          onChange={(v) => form.set('active', v)}
+        />
+        <div className="flex gap-2 pt-2">
+          <Button type="submit" loading={form.submitting}>
+            Salvar
+          </Button>
+          <Button variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+        </div>
+      </form>
+    </Drawer>
+  );
+}

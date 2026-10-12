@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { baselineCapabilities, explainCapability, SaleInProgressError } from './index';
+import {
+  baselineCapabilities,
+  explainCapability,
+  implementedCapabilities,
+  SaleInProgressError,
+} from './index';
 import {
   createSimulatedPlatform,
   MemoryPreferences,
@@ -44,7 +49,26 @@ describe('capabilities', () => {
     expect(explainCapability('scale', { available: true, via: 'native' }, 'desktop')).toBeNull();
   });
 
-  it.each(['browser-unsupported', 'not-configured', 'offline'] as const)(
+  it('uses the right article for each capability', () => {
+    const gap = { available: false as const, reason: 'needs-connector' as const };
+    expect(explainCapability('tef', gap, 'web')?.message).toContain('Para usar o TEF / pinpad');
+    expect(explainCapability('certificateA3', gap, 'web')?.message).toContain(
+      'o certificado digital A3',
+    );
+  });
+
+  it('reports supported-but-unbuilt capabilities as coming soon', () => {
+    const caps = implementedCapabilities(
+      baselineCapabilities('web', { connectorPaired: false, webSerial: true }),
+      ['printer', 'certificateA1'],
+    );
+    expect(caps.printer.available).toBe(true);
+    expect(caps.storage).toEqual({ available: false, reason: 'coming-soon' });
+    expect(caps.cashDrawer).toEqual({ available: false, reason: 'needs-connector' });
+    expect(explainCapability('storage', caps.storage, 'web')?.title).toBe('Chega em breve');
+  });
+
+  it.each(['browser-unsupported', 'not-configured', 'offline', 'coming-soon'] as const)(
     'has an explanation for %s',
     (reason) => {
       const web = explainCapability('printer', { available: false, reason }, 'web');

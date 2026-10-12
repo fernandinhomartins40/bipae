@@ -11,7 +11,13 @@ export type CapabilityStatus =
   | { available: false; reason: CapabilityGap };
 
 /** Why a capability is missing — maps to a user-facing explanation and fix. */
-export type CapabilityGap = 'needs-connector' | 'browser-unsupported' | 'not-configured' | 'offline';
+export type CapabilityGap =
+  | 'needs-connector'
+  | 'browser-unsupported'
+  | 'not-configured'
+  | 'offline'
+  /** Supported by the platform but not built yet: never claim a capability we do not have. */
+  | 'coming-soon';
 
 export type CapabilityName =
   | 'storage'

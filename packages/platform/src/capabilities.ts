@@ -1,19 +1,22 @@
 import type { CapabilityGap, CapabilityName, CapabilityStatus, PlatformKind } from './ports';
 
-const CAPABILITY_LABELS: Record<CapabilityName, string> = {
-  storage: 'banco local',
-  printer: 'impressora térmica',
-  cashDrawer: 'gaveta de dinheiro',
-  scale: 'balança',
-  tef: 'TEF / pinpad',
-  certificateA1: 'certificado digital A1',
-  certificateA3: 'certificado digital A3 (token ou cartão)',
-  updater: 'atualização automática',
-  notifications: 'notificações',
+/** Labels with their article, so sentences read naturally in pt-BR. */
+const CAPABILITY_LABELS: Record<CapabilityName, { name: string; article: 'o' | 'a' | 'as' }> = {
+  storage: { name: 'banco local', article: 'o' },
+  printer: { name: 'impressora térmica', article: 'a' },
+  cashDrawer: { name: 'gaveta de dinheiro', article: 'a' },
+  scale: { name: 'balança', article: 'a' },
+  tef: { name: 'TEF / pinpad', article: 'o' },
+  certificateA1: { name: 'certificado digital A1', article: 'o' },
+  certificateA3: { name: 'certificado digital A3 (token ou cartão)', article: 'o' },
+  updater: { name: 'atualização automática', article: 'a' },
+  notifications: { name: 'notificações', article: 'as' },
 };
 
 export interface CapabilityExplanation {
+  /** Short status for a badge. */
   title: string;
+  /** Plain-language explanation with the fix. */
   message: string;
   action?: { label: string; kind: 'install-connector' | 'open-settings' | 'retry' };
 }
@@ -28,43 +31,51 @@ export function explainCapability(
   platform: PlatformKind,
 ): CapabilityExplanation | null {
   if (status.available) return null;
-  const label = CAPABILITY_LABELS[name];
-  return explainGap(label, status.reason, platform);
+  const { name: label, article } = CAPABILITY_LABELS[name];
+  return explainGap(`${article} ${label}`, status.reason, platform);
 }
 
-function explainGap(label: string, gap: CapabilityGap, platform: PlatformKind): CapabilityExplanation {
+function explainGap(
+  subject: string,
+  gap: CapabilityGap,
+  platform: PlatformKind,
+): CapabilityExplanation {
   switch (gap) {
     case 'needs-connector':
       return {
-        title: `Use a ${label} no navegador`,
-        message: `Para usar a ${label} no navegador, instale o Bipaê Conector. É 1 clique e você só faz isso uma vez neste computador.`,
+        title: 'Precisa do Bipaê Conector',
+        message: `Para usar ${subject} no navegador, instale o Bipaê Conector. É 1 clique e você só faz isso uma vez neste computador.`,
         action: { label: 'Instalar o Bipaê Conector', kind: 'install-connector' },
       };
     case 'browser-unsupported':
-      return {
-        title: `Este navegador não acessa a ${label}`,
-        message:
-          platform === 'web'
-            ? `Este navegador não consegue falar com a ${label}. Use o Google Chrome ou o Microsoft Edge atualizados, ou instale o Bipaê Conector.`
-            : `Não foi possível acessar a ${label} neste computador.`,
-        action: { label: 'Instalar o Bipaê Conector', kind: 'install-connector' },
-      };
+      return platform === 'web'
+        ? {
+            title: 'Navegador sem suporte',
+            message: `Este navegador não consegue usar ${subject}. Use o Google Chrome ou o Microsoft Edge atualizados, ou instale o Bipaê Conector.`,
+            action: { label: 'Instalar o Bipaê Conector', kind: 'install-connector' },
+          }
+        : { title: 'Indisponível', message: `Não foi possível usar ${subject} neste computador.` };
     case 'not-configured':
       return {
-        title: `Falta configurar a ${label}`,
-        message: `A ${label} ainda não foi configurada. Leva menos de um minuto.`,
+        title: 'Falta configurar',
+        message: `Falta configurar ${subject}. Leva menos de um minuto.`,
         action: { label: 'Configurar agora', kind: 'open-settings' },
       };
     case 'offline':
       return {
-        title: 'Sem internet no momento',
-        message: `A ${label} precisa de internet. Você pode continuar vendendo; tentaremos de novo assim que a conexão voltar.`,
+        title: 'Sem internet',
+        message: `No momento não dá para usar ${subject} porque estamos sem internet. Você pode continuar vendendo; tentamos de novo assim que a conexão voltar.`,
         action: { label: 'Tentar de novo', kind: 'retry' },
+      };
+    case 'coming-soon':
+      return {
+        title: 'Chega em breve',
+        message: `O suporte para ${subject} chega numa próxima atualização do Bipaê.`,
       };
   }
 }
 
-/** Baseline capability matrix from Adendo 01 §4, before probing devices. */
+/** Capability matrix from Adendo 01 §4: what each platform supports by design. */
 export function baselineCapabilities(
   platform: PlatformKind,
   options: { connectorPaired: boolean; webSerial: boolean },
@@ -104,4 +115,21 @@ export function baselineCapabilities(
     updater: { available: true, via: 'browser' },
     notifications: { available: true, via: 'browser' },
   };
+}
+
+/**
+ * Baseline matrix minus what is not built yet. Shells list the capabilities they actually
+ * implement; anything else the platform would support is reported as "coming-soon".
+ */
+export function implementedCapabilities(
+  baseline: Record<CapabilityName, CapabilityStatus>,
+  implemented: readonly CapabilityName[],
+): Record<CapabilityName, CapabilityStatus> {
+  const result = { ...baseline };
+  for (const name of Object.keys(result) as CapabilityName[]) {
+    if (result[name].available && !implemented.includes(name)) {
+      result[name] = { available: false, reason: 'coming-soon' };
+    }
+  }
+  return result;
 }
