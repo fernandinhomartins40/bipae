@@ -93,7 +93,12 @@ export class TeamService {
       if (!existing) {
         await tx
           .insert(users)
-          .values({ id: userId, name: input.name, email: input.email, passwordHash: passwordHash! });
+          .values({
+            id: userId,
+            name: input.name,
+            email: input.email,
+            passwordHash: passwordHash!,
+          });
       }
       await tx.insert(memberships).values({ tenantId: ctx.tenantId, userId, roleId: role.id });
       await this.audit.record(tx, ctx, {

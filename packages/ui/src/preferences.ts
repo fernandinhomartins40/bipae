@@ -37,7 +37,9 @@ export function parseDisplayPreferences(raw: string | null): DisplayPreferences 
  */
 export function playBeep(enabled = true) {
   if (!enabled || typeof window === 'undefined') return;
-  const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  const AudioCtx =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!AudioCtx) return;
   try {
     const ctx = new AudioCtx();

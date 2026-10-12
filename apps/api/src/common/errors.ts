@@ -23,7 +23,11 @@ export class AppError extends Error {
 
 export const notFound = (what: string) => new AppError(404, 'not_found', `${what} não encontrado.`);
 export const forbidden = () =>
-  new AppError(403, 'forbidden', 'Você não tem permissão para fazer isso. Peça ao dono ou gerente.');
+  new AppError(
+    403,
+    'forbidden',
+    'Você não tem permissão para fazer isso. Peça ao dono ou gerente.',
+  );
 
 export function parse<S extends ZodType>(schema: S, value: unknown) {
   const result = schema.safeParse(value);

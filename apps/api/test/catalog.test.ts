@@ -31,7 +31,10 @@ describe('products', () => {
 
     for (const q of ['arroz', '7891000315507', 'ARZ5']) {
       const found = (await client.get(`/products?q=${encodeURIComponent(q)}`)).json();
-      expect(found.items.map((p: { id: string }) => p.id), q).toContain(product.id);
+      expect(
+        found.items.map((p: { id: string }) => p.id),
+        q,
+      ).toContain(product.id);
     }
     expect((await client.get('/products?q=inexistente')).json().total).toBe(0);
 
@@ -110,8 +113,12 @@ describe('products', () => {
   it('requires a known unit', async () => {
     const res = await client.post('/products', { name: 'X', priceCents: 1, unit: 'ZZ' });
     expect(res.statusCode).toBe(409);
-    expect((await client.post('/units', { code: 'ZZ', description: 'Teste' })).statusCode).toBe(201);
-    expect((await client.post('/products', { name: 'X', priceCents: 1, unit: 'ZZ' })).statusCode).toBe(201);
+    expect((await client.post('/units', { code: 'ZZ', description: 'Teste' })).statusCode).toBe(
+      201,
+    );
+    expect(
+      (await client.post('/products', { name: 'X', priceCents: 1, unit: 'ZZ' })).statusCode,
+    ).toBe(201);
   });
 });
 
@@ -155,7 +162,11 @@ describe('customers and suppliers', () => {
     expect(bad.json().message).toBe('CPF ou CNPJ inválido');
 
     const customer = (
-      await client.post('/customers', { name: 'Ana Souza', taxId: '123.456.789-09', phone: '(11) 98765-4321' })
+      await client.post('/customers', {
+        name: 'Ana Souza',
+        taxId: '123.456.789-09',
+        phone: '(11) 98765-4321',
+      })
     ).json();
     expect(customer).toMatchObject({ taxId: '12345678909', marketingConsent: false });
 
@@ -192,18 +203,26 @@ describe('customers and suppliers', () => {
 describe('terminals and NFC-e series (ADR-0012)', () => {
   it('allocates an exclusive series per terminal and never reuses it', async () => {
     const store = (await client.get('/stores')).json()[0];
-    const web = (await client.post('/terminals', { storeId: store.id, name: 'Tablet', platform: 'web' })).json();
-    const desk = (await client.post('/terminals', { storeId: store.id, name: 'Balcão', platform: 'desktop' })).json();
+    const web = (
+      await client.post('/terminals', { storeId: store.id, name: 'Tablet', platform: 'web' })
+    ).json();
+    const desk = (
+      await client.post('/terminals', { storeId: store.id, name: 'Balcão', platform: 'desktop' })
+    ).json();
     expect([web.nfceSeries, desk.nfceSeries]).toEqual([1, 2]);
 
     expect((await client.post(`/terminals/${web.id}/revoke`)).json().status).toBe('revoked');
-    const next = (await client.post('/terminals', { storeId: store.id, name: 'Caixa 3', platform: 'web' })).json();
+    const next = (
+      await client.post('/terminals', { storeId: store.id, name: 'Caixa 3', platform: 'web' })
+    ).json();
     expect(next.nfceSeries).toBe(3);
   });
 
   it('terminals cannot be deleted at the database level', async () => {
     const store = (await client.get('/stores')).json()[0];
-    const terminal = (await client.post('/terminals', { storeId: store.id, name: 'X', platform: 'web' })).json();
+    const terminal = (
+      await client.post('/terminals', { storeId: store.id, name: 'X', platform: 'web' })
+    ).json();
     const { withTenant } = await import('../src/db/client');
     await expect(
       withTenant(t.database.db, { tenantId: ownerCtx.me.tenant.id }, (tx) =>

@@ -69,7 +69,10 @@ class BrowserNotifications implements NotificationPort {
 
 /** New versions are applied on reload, and never during a sale. */
 class ServiceWorkerUpdater implements UpdaterPort {
-  constructor(private readonly applyUpdate: () => Promise<void>, private readonly waiting: () => boolean) {}
+  constructor(
+    private readonly applyUpdate: () => Promise<void>,
+    private readonly waiting: () => boolean,
+  ) {}
   async check() {
     return this.waiting() ? { version: 'nova', channel: 'stable' as const } : null;
   }

@@ -98,7 +98,8 @@ export type TaxIdKind = 'cpf' | 'cnpj';
 export function parseTaxId(value: string): { kind: TaxIdKind; value: string } | null {
   const normalized = normalizeTaxId(value);
   if (normalized.length === 11 && isValidCpf(normalized)) return { kind: 'cpf', value: normalized };
-  if (normalized.length === 14 && isValidCnpj(normalized)) return { kind: 'cnpj', value: normalized };
+  if (normalized.length === 14 && isValidCnpj(normalized))
+    return { kind: 'cnpj', value: normalized };
   return null;
 }
 

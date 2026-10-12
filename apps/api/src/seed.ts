@@ -50,7 +50,13 @@ const PRODUCTS: [name: string, priceCents: number, unit?: string, ncm?: string][
   ['Chocolate ao Leite 90g', 699, 'UN', '18063210'],
 ];
 
-const CUSTOMERS = ['Maria Aparecida', 'José Carlos', 'Ana Paula', 'Francisco Lima', 'Juliana Rocha'];
+const CUSTOMERS = [
+  'Maria Aparecida',
+  'José Carlos',
+  'Ana Paula',
+  'Francisco Lima',
+  'Juliana Rocha',
+];
 const SUPPLIERS = ['Distribuidora Boa Compra', 'Laticínios Vale Verde', 'Hortifruti Central'];
 
 function fakeCpf(seed: number) {
@@ -68,7 +74,12 @@ export async function seed(url: string) {
   const database = await openDatabase(url);
   await migrate(database);
   const app = await createApp({ ...config, LOGIN_RATE_LIMIT_PER_MINUTE: 1000 }, database);
-  const call = async (method: 'GET' | 'POST', path: string, token: string | null, payload?: object) => {
+  const call = async (
+    method: 'GET' | 'POST',
+    path: string,
+    token: string | null,
+    payload?: object,
+  ) => {
     const res = await app.inject({
       method,
       url: `/v1${path}`,
@@ -118,7 +129,9 @@ export async function seed(url: string) {
         isWeighable: weighable,
         sku: `P${String(index + 1).padStart(4, '0')}`,
         // Weighables use in-store codes printed by the scale; others get a fictitious GTIN-13.
-        barcodes: weighable ? [] : [completeGtin(`789${String(4500000 + index * 37).padStart(9, '0')}`)],
+        barcodes: weighable
+          ? []
+          : [completeGtin(`789${String(4500000 + index * 37).padStart(9, '0')}`)],
       });
     }
 
@@ -135,8 +148,16 @@ export async function seed(url: string) {
     }
 
     const [store] = (await call('GET', '/stores', token)) as { id: string }[];
-    await call('POST', '/terminals', token, { storeId: store!.id, name: 'Caixa 1 (balcão)', platform: 'desktop' });
-    await call('POST', '/terminals', token, { storeId: store!.id, name: 'Caixa 2 (tablet)', platform: 'web' });
+    await call('POST', '/terminals', token, {
+      storeId: store!.id,
+      name: 'Caixa 1 (balcão)',
+      platform: 'desktop',
+    });
+    await call('POST', '/terminals', token, {
+      storeId: store!.id,
+      name: 'Caixa 2 (tablet)',
+      platform: 'web',
+    });
 
     console.log(`Demonstração criada. Entre com ${DEMO.ownerEmail} / ${DEMO.password}`);
     console.log(`Operadora de caixa: ${DEMO.cashierEmail} / ${DEMO.password}`);
@@ -145,4 +166,3 @@ export async function seed(url: string) {
     await database.close();
   }
 }
-

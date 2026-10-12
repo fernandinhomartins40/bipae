@@ -18,12 +18,13 @@ export function subtractCents(a: Cents, b: Cents): Cents {
   return cents(a - b);
 }
 
+const NO_BREAK_SPACE = String.fromCharCode(0xa0);
 const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
 /** Formats cents as BRL, e.g. 123456 -> "R$ 1.234,56". UI boundary only. */
 export function formatBRL(value: Cents): string {
-  // Integer division keeps formatting exact for any safe integer.
-  return brl.format(value / 100).replace(/ /g, ' ');
+  // Intl uses a no-break space after "R$"; normalize it so text compares and prints simply.
+  return brl.format(value / 100).replaceAll(NO_BREAK_SPACE, ' ');
 }
 
 /**

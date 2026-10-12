@@ -97,7 +97,9 @@ export const terminals = pgTable('terminals', {
   name: text('name').notNull(),
   platform: text('platform', { enum: ['web', 'desktop'] }).notNull(),
   nfceSeries: integer('nfce_series').notNull(),
-  status: text('status', { enum: ['active', 'revoked'] }).notNull().default('active'),
+  status: text('status', { enum: ['active', 'revoked'] })
+    .notNull()
+    .default('active'),
   createdAt: ts('created_at').notNull().defaultNow(),
   revokedAt: ts('revoked_at'),
 });

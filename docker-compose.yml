@@ -1,0 +1,45 @@
+# Sobe tudo com dados de demonstração: docker compose up --build
+# Web: http://localhost:8080 · API: http://localhost:3333/v1/health
+# Entre com demo@bipae.com.br / bipae123
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: bipae
+      POSTGRES_PASSWORD: bipae
+      POSTGRES_DB: bipae
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U bipae']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://bipae:bipae@postgres:5432/bipae
+      JWT_SECRET: troque-este-segredo-em-producao-0123456789
+      CORS_ORIGINS: http://localhost:8080
+    # Migrations run on start; the demo seed is idempotent.
+    command: sh -c "node dist/seed-cli.js && node dist/main.js"
+    ports: ['3333:3333']
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3333
+    ports: ['8080:80']
+    depends_on: [api]
+
+volumes:
+  pgdata:

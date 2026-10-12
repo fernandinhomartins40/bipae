@@ -39,7 +39,10 @@ export function Shell() {
             {platform.kind === 'desktop' ? 'Desktop' : 'Online'}
           </span>
         </div>
-        <nav aria-label="Menu principal" className="flex gap-1 overflow-x-auto px-2 pb-2 md:flex-col">
+        <nav
+          aria-label="Menu principal"
+          className="flex gap-1 overflow-x-auto px-2 pb-2 md:flex-col"
+        >
           {items.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
@@ -80,4 +83,3 @@ export function Shell() {
     </div>
   );
 }
-

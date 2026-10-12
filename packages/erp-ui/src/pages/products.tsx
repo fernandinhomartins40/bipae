@@ -43,14 +43,20 @@ export function ProductsPage() {
         description="Busque pelo nome, código interno ou bipando o código de barras."
         actions={
           canWrite && (
-            <Button icon={<Plus className="size-5" aria-hidden />} onClick={() => setEditing('new')}>
+            <Button
+              icon={<Plus className="size-5" aria-hidden />}
+              onClick={() => setEditing('new')}
+            >
               Novo produto
             </Button>
           )
         }
       />
       <div className="relative mb-4 max-w-xl">
-        <Search className="pointer-events-none absolute left-3 top-3 size-5 text-muted" aria-hidden />
+        <Search
+          className="pointer-events-none absolute left-3 top-3 size-5 text-muted"
+          aria-hidden
+        />
         <input
           type="search"
           aria-label="Buscar produtos"
@@ -155,7 +161,11 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   };
 
   return (
-    <Drawer open onOpenChange={(open) => !open && onClose()} title={product ? 'Editar produto' : 'Novo produto'}>
+    <Drawer
+      open
+      onOpenChange={(open) => !open && onClose()}
+      title={product ? 'Editar produto' : 'Novo produto'}
+    >
       <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
         {form.formError && <Alert>{form.formError}</Alert>}
         <TextField

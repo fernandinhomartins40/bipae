@@ -12,7 +12,13 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-export function AppContextProvider({ value, children }: { value: AppContextValue; children: ReactNode }) {
+export function AppContextProvider({
+  value,
+  children,
+}: {
+  value: AppContextValue;
+  children: ReactNode;
+}) {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 

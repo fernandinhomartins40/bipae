@@ -311,4 +311,3 @@ export class CatalogService {
     });
   }
 }
-

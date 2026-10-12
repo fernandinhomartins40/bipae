@@ -13,7 +13,12 @@ const envSchema = z.object({
   CORS_ORIGINS: z
     .string()
     .default('http://localhost:5173,http://localhost:4173,http://tauri.localhost,tauri://localhost')
-    .transform((v) => v.split(',').map((o) => o.trim()).filter(Boolean)),
+    .transform((v) =>
+      v
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean),
+    ),
   MIN_CLIENT_VERSION_WEB: z.string().optional(),
   MIN_CLIENT_VERSION_DESKTOP: z.string().optional(),
   MIN_CLIENT_VERSION_CONNECTOR: z.string().optional(),

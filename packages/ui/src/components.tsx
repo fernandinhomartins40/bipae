@@ -73,7 +73,11 @@ interface FieldProps {
   label: string;
   error?: string | null | undefined;
   hint?: string;
-  children: (props: { id: string; 'aria-invalid'?: true; 'aria-describedby'?: string }) => ReactNode;
+  children: (props: {
+    id: string;
+    'aria-invalid'?: true;
+    'aria-describedby'?: string;
+  }) => ReactNode;
 }
 
 export function Field({ label, error, hint, children }: FieldProps) {
@@ -158,7 +162,9 @@ export function MoneyField({
   error?: string | null | undefined;
   required?: boolean;
 }) {
-  const [text, setText] = useState(value === null ? '' : formatBRL(value as Cents).replace('R$ ', ''));
+  const [text, setText] = useState(
+    value === null ? '' : formatBRL(value as Cents).replace('R$ ', ''),
+  );
   const [localError, setLocalError] = useState<string | null>(null);
   return (
     <TextField
@@ -204,7 +210,14 @@ export function TaxIdField({
     <TextField
       label={label}
       value={value ? formatTaxId(value) : ''}
-      onChange={(e) => onChange(e.target.value.replace(/[^0-9a-zA-Z]/g, '').toUpperCase().slice(0, 14))}
+      onChange={(e) =>
+        onChange(
+          e.target.value
+            .replace(/[^0-9a-zA-Z]/g, '')
+            .toUpperCase()
+            .slice(0, 14),
+        )
+      }
       autoComplete="off"
       error={error}
     />
@@ -284,7 +297,9 @@ export function Badge({
     warning: 'bg-warning-soft text-text',
   };
   return (
-    <span className={cx('inline-flex rounded-full px-2.5 py-0.5 text-sm font-semibold', tones[tone])}>
+    <span
+      className={cx('inline-flex rounded-full px-2.5 py-0.5 text-sm font-semibold', tones[tone])}
+    >
       {children}
     </span>
   );
@@ -305,7 +320,10 @@ export function Alert({
     warning: 'border-accent bg-warning-soft',
   };
   return (
-    <div role={tone === 'danger' ? 'alert' : 'status'} className={cx('rounded-ui border-l-4 p-4', tones[tone])}>
+    <div
+      role={tone === 'danger' ? 'alert' : 'status'}
+      className={cx('rounded-ui border-l-4 p-4', tones[tone])}
+    >
       {title && <p className="font-semibold">{title}</p>}
       <div className={title ? 'mt-1' : ''}>{children}</div>
     </div>
@@ -359,7 +377,10 @@ export function DataTable<T extends { id: string }>({
           {rows.map((row) => (
             <tr
               key={row.id}
-              className={cx('border-t border-border', onRowClick && 'cursor-pointer hover:bg-surface-2')}
+              className={cx(
+                'border-t border-border',
+                onRowClick && 'cursor-pointer hover:bg-surface-2',
+              )}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
               onKeyDown={
                 onRowClick
@@ -371,7 +392,10 @@ export function DataTable<T extends { id: string }>({
               tabIndex={onRowClick ? 0 : undefined}
             >
               {columns.map((c) => (
-                <td key={c.header} className={cx('px-4 py-3', c.align === 'right' && 'text-right tabular-nums')}>
+                <td
+                  key={c.header}
+                  className={cx('px-4 py-3', c.align === 'right' && 'text-right tabular-nums')}
+                >
                   {c.cell(row)}
                 </td>
               ))}

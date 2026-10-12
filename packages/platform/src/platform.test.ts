@@ -44,7 +44,9 @@ describe('capabilities', () => {
       { available: false, reason: 'needs-connector' },
       'web',
     );
-    expect(explanation?.message).toContain('Para usar a balança no navegador, instale o Bipaê Conector');
+    expect(explanation?.message).toContain(
+      'Para usar a balança no navegador, instale o Bipaê Conector',
+    );
     expect(explanation?.action?.kind).toBe('install-connector');
     expect(explainCapability('scale', { available: true, via: 'native' }, 'desktop')).toBeNull();
   });

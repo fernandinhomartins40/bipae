@@ -2,11 +2,12 @@ import { defineConfig, devices } from '@playwright/test';
 
 const API_PORT = 3334;
 const WEB_PORT = 5174;
+const DESKTOP_UI_PORT = 1421;
 
 /**
- * E2E against the real API (in-memory PostgreSQL via PGlite) and the web shell.
- * The desktop shell runs the same UI package; its E2E (WebdriverIO + tauri-driver)
- * is added with the Tauri build in CI (ADR-0012).
+ * E2E against the real API (in-memory PostgreSQL via PGlite) and both shells' frontends.
+ * The same specs run for "web" and "desktop-ui" (ADR-0012). Running them inside the real
+ * Tauri WebView (WebdriverIO + tauri-driver) is a CI job added with the native drivers.
  */
 export default defineConfig({
   testDir: './e2e',
@@ -15,12 +16,17 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
-    baseURL: `http://localhost:${WEB_PORT}`,
     locale: 'pt-BR',
     timezoneId: 'America/Sao_Paulo',
     trace: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'web', use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${WEB_PORT}` } },
+    {
+      name: 'desktop-ui',
+      use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${DESKTOP_UI_PORT}` },
+    },
+  ],
   webServer: [
     {
       command: 'pnpm --filter @bipae/api exec tsx src/main.ts',
@@ -30,13 +36,20 @@ export default defineConfig({
       env: {
         PORT: String(API_PORT),
         DATABASE_URL: 'pglite://memory',
-        CORS_ORIGINS: `http://localhost:${WEB_PORT}`,
+        CORS_ORIGINS: `http://localhost:${WEB_PORT},http://localhost:${DESKTOP_UI_PORT}`,
         LOGIN_RATE_LIMIT_PER_MINUTE: '1000',
       },
     },
     {
       command: `pnpm exec vite --port ${WEB_PORT} --strictPort`,
       url: `http://localhost:${WEB_PORT}`,
+      reuseExistingServer: false,
+      timeout: 120_000,
+      env: { VITE_API_URL: `http://localhost:${API_PORT}` },
+    },
+    {
+      command: `pnpm --filter @bipae/desktop exec vite --port ${DESKTOP_UI_PORT} --strictPort`,
+      url: `http://localhost:${DESKTOP_UI_PORT}`,
       reuseExistingServer: false,
       timeout: 120_000,
       env: { VITE_API_URL: `http://localhost:${API_PORT}` },

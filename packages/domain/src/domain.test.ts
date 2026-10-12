@@ -235,8 +235,9 @@ describe('contracts', () => {
     });
     expect(product.unit).toBe('UN');
     expect(product.active).toBe(true);
-    expect(productInput.safeParse({ name: 'X', priceCents: 1, barcodes: ['7891000315508'] }).success)
-      .toBe(false);
+    expect(
+      productInput.safeParse({ name: 'X', priceCents: 1, barcodes: ['7891000315508'] }).success,
+    ).toBe(false);
     expect(productInput.safeParse({ name: 'X', priceCents: 1.5 }).success).toBe(false);
     expect(productInput.parse({ name: 'X', priceCents: 1, ncm: '' }).ncm).toBeNull();
   });

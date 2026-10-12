@@ -21,7 +21,14 @@ describe('seed', () => {
     const { loadConfig } = await import('../src/config');
     const database = await openDatabase(dir);
     const app = await createApp(loadConfig({ NODE_ENV: 'test', DATABASE_URL: dir }), database);
-    t = { app, database, close: async () => { await app.close(); await database.close(); } };
+    t = {
+      app,
+      database,
+      close: async () => {
+        await app.close();
+        await database.close();
+      },
+    };
 
     const login = await app.inject({
       method: 'POST',
@@ -36,4 +43,3 @@ describe('seed', () => {
     expect((await client.get('/audit/verify')).json().valid).toBe(true);
   });
 });
-

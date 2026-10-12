@@ -69,7 +69,9 @@ export class ApiClient {
   }
 
   async switchTenant(tenantId: string) {
-    return this.storeSession(await this.request<AuthResult>('POST', '/auth/switch-tenant', { tenantId }));
+    return this.storeSession(
+      await this.request<AuthResult>('POST', '/auth/switch-tenant', { tenantId }),
+    );
   }
 
   /** Restores a session from the stored refresh token (app start). */
@@ -117,7 +119,12 @@ export class ApiClient {
       try {
         const refreshToken = await this.options.preferences.get(REFRESH_KEY);
         if (!refreshToken) return false;
-        const result = await this.request<AuthResult>('POST', '/auth/refresh', { refreshToken }, false);
+        const result = await this.request<AuthResult>(
+          'POST',
+          '/auth/refresh',
+          { refreshToken },
+          false,
+        );
         await this.storeSession(result);
         return true;
       } catch (error) {

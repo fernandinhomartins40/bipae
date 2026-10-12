@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@import '@bipae/ui/theme.css';
+
+/* Shared packages hold all screens (ADR-0012); Tailwind must scan them. */
+@source '../../../packages/ui/src';
+@source '../../../packages/erp-ui/src';

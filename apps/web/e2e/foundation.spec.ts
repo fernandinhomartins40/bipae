@@ -1,22 +1,25 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
-const unique = Date.now();
-const owner = {
-  name: 'Célia Andrade',
-  business: 'Bazar da Célia',
-  email: `celia-${unique}@exemplo.com.br`,
-  password: 'senha-forte-123',
-};
+/**
+ * The same scenarios run against both shells (ADR-0012): "web" (browser routing) and
+ * "desktop-ui" (the Tauri frontend with hash routing, here in Chromium; inside the real
+ * WebView it runs in CI with tauri-driver).
+ */
+const isDesktop = () => test.info().project.name === 'desktop-ui';
+const go = (page: Page, path: string) => page.goto(isDesktop() ? `/#${path}` : path);
+const unique = () => `${test.info().project.name}-${Date.now()}`;
+const password = 'senha-forte-123';
 
 test('signup, register a product, find it by barcode, add a terminal, log out and back in', async ({
   page,
 }) => {
-  await page.goto('/');
+  const owner = { email: `celia-${unique()}@exemplo.com.br`, password };
+  await go(page, '/');
   await expect(page).toHaveURL(/\/entrar$/);
   await page.getByRole('link', { name: 'Comece grátis' }).click();
 
-  await page.getByLabel('Seu nome').fill(owner.name);
-  await page.getByLabel('Nome do negócio').fill(owner.business);
+  await page.getByLabel('Seu nome').fill('Célia Andrade');
+  await page.getByLabel('Nome do negócio').fill('Bazar da Célia');
   await page.getByLabel('E-mail').fill(owner.email);
   await page.getByLabel('Senha').fill(owner.password);
   await page.getByLabel('CNPJ ou CPF (opcional)').fill('11222333000181');
@@ -25,11 +28,21 @@ test('signup, register a product, find it by barcode, add a terminal, log out an
 
   // Ready to use right after signup: no mandatory setup screens.
   await expect(page.getByRole('heading', { name: 'Olá, Célia!' })).toBeVisible();
-  await expect(page.getByText('O que funciona neste navegador')).toBeVisible();
-  // Peripherals ask for the Conector; what is not built yet says so honestly.
-  await expect(
-    page.getByText('Para usar a gaveta de dinheiro no navegador, instale o Bipaê Conector'),
-  ).toBeVisible();
+  if (isDesktop()) {
+    await expect(page.getByText('O que funciona neste computador')).toBeVisible();
+    // Native drivers are not built yet, and the screen says so instead of pretending.
+    await expect(
+      page.getByText(
+        'O suporte para a gaveta de dinheiro chega numa próxima atualização do Bipaê.',
+      ),
+    ).toBeVisible();
+  } else {
+    await expect(page.getByText('O que funciona neste navegador')).toBeVisible();
+    // Peripherals ask for the Conector; what is not built yet says so honestly.
+    await expect(
+      page.getByText('Para usar a gaveta de dinheiro no navegador, instale o Bipaê Conector'),
+    ).toBeVisible();
+  }
   await expect(
     page.getByText('O suporte para o banco local chega numa próxima atualização do Bipaê.'),
   ).toBeVisible();
@@ -65,7 +78,9 @@ test('signup, register a product, find it by barcode, add a terminal, log out an
   await page.getByRole('button', { name: 'Novo caixa' }).click();
   await page.getByLabel('Nome do caixa').fill('Caixa 1');
   await page.getByRole('button', { name: 'Criar caixa' }).click();
-  await expect(page.getByRole('row', { name: /Caixa 1/ })).toContainText('Navegador');
+  await expect(page.getByRole('row', { name: /Caixa 1/ })).toContainText(
+    isDesktop() ? 'App desktop' : 'Navegador',
+  );
   await expect(page.getByRole('row', { name: /Caixa 1/ })).toContainText('1');
 
   // Audit trail recorded everything and is intact.
@@ -88,11 +103,11 @@ test('signup, register a product, find it by barcode, add a terminal, log out an
 });
 
 test('accessibility preferences: high contrast and large font persist', async ({ page }) => {
-  await page.goto('/criar-conta');
+  await go(page, '/criar-conta');
   await page.getByLabel('Seu nome').fill('Juliana');
   await page.getByLabel('Nome do negócio').fill('Loja da Ju');
-  await page.getByLabel('E-mail').fill(`ju-${unique}@exemplo.com.br`);
-  await page.getByLabel('Senha').fill(owner.password);
+  await page.getByLabel('E-mail').fill(`ju-${unique()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill(password);
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await page.getByRole('link', { name: 'Configurações', exact: true }).click();
   await page.getByLabel('Alto contraste').check();

@@ -76,7 +76,9 @@ export class OrganizationService {
   }
 
   listStores(ctx: RequestContext) {
-    return withTenant(this.db, ctx, (tx) => tx.select().from(stores).orderBy(asc(stores.createdAt)));
+    return withTenant(this.db, ctx, (tx) =>
+      tx.select().from(stores).orderBy(asc(stores.createdAt)),
+    );
   }
 
   async createStore(ctx: RequestContext, input: z.output<typeof storeInput>) {

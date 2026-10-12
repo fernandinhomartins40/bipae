@@ -66,7 +66,11 @@ export function BipaeApp({ platform, apiUrl, router }: BipaeAppProps) {
 
   if (restoring) {
     return (
-      <div className="flex min-h-screen items-center justify-center" role="status" aria-label="Carregando">
+      <div
+        className="flex min-h-screen items-center justify-center"
+        role="status"
+        aria-label="Carregando"
+      >
         <Logo className="animate-pulse text-3xl" />
       </div>
     );
@@ -77,9 +81,29 @@ export function BipaeApp({ platform, apiUrl, router }: BipaeAppProps) {
       <AppContextProvider value={{ platform, api, me, setMe }}>
         <Router>
           <Routes>
-            <Route path="/entrar" element={<PublicOnly><LoginPage /></PublicOnly>} />
-            <Route path="/criar-conta" element={<PublicOnly><SignupPage /></PublicOnly>} />
-            <Route element={<RequireAuth><Shell /></RequireAuth>}>
+            <Route
+              path="/entrar"
+              element={
+                <PublicOnly>
+                  <LoginPage />
+                </PublicOnly>
+              }
+            />
+            <Route
+              path="/criar-conta"
+              element={
+                <PublicOnly>
+                  <SignupPage />
+                </PublicOnly>
+              }
+            />
+            <Route
+              element={
+                <RequireAuth>
+                  <Shell />
+                </RequireAuth>
+              }
+            >
               <Route index element={<HomePage />} />
               <Route path="produtos" element={<ProductsPage />} />
               <Route path="clientes" element={<PartiesPage kind="customer" />} />

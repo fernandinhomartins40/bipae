@@ -19,7 +19,12 @@ function json(status: number, body: unknown) {
 }
 
 function authResult(n: number) {
-  return { accessToken: `access-${n}`, refreshToken: `t1.s${n}.secret-${n}`, expiresIn: 900, me: ME };
+  return {
+    accessToken: `access-${n}`,
+    refreshToken: `t1.s${n}.secret-${n}`,
+    expiresIn: 900,
+    me: ME,
+  };
 }
 
 describe('ApiClient', () => {
@@ -61,7 +66,13 @@ describe('ApiClient', () => {
       const auth = (init?.headers as Record<string, string>).authorization;
       return auth === 'Bearer access-1' ? json(200, { ok: true }) : json(401, { message: 'x' });
     });
-    const client = new ApiClient({ baseUrl: '', clientKind: 'web', clientVersion: '0.1.0', preferences, fetch });
+    const client = new ApiClient({
+      baseUrl: '',
+      clientKind: 'web',
+      clientVersion: '0.1.0',
+      preferences,
+      fetch,
+    });
     const results = await Promise.all([client.get('/a'), client.get('/b'), client.get('/c')]);
     expect(results).toEqual([{ ok: true }, { ok: true }, { ok: true }]);
     expect(refreshes).toBe(1);
@@ -71,15 +82,26 @@ describe('ApiClient', () => {
     const preferences = new MemoryPreferences();
     await preferences.set('bipae.refreshToken', 'old');
     const onSessionEnd = vi.fn();
-    const fetch = vi.fn<typeof globalThis.fetch>(async () => json(401, { message: 'Sua sessão expirou.' }));
-    const client = new ApiClient({ baseUrl: '', clientKind: 'web', clientVersion: '0.1.0', preferences, fetch, onSessionEnd });
+    const fetch = vi.fn<typeof globalThis.fetch>(async () =>
+      json(401, { message: 'Sua sessão expirou.' }),
+    );
+    const client = new ApiClient({
+      baseUrl: '',
+      clientKind: 'web',
+      clientVersion: '0.1.0',
+      preferences,
+      fetch,
+      onSessionEnd,
+    });
     await expect(client.get('/x')).rejects.toMatchObject({ status: 401 });
     expect(onSessionEnd).toHaveBeenCalled();
     expect(await preferences.get('bipae.refreshToken')).toBeNull();
   });
 
   it('turns network failures into a friendly offline error', async () => {
-    const fetch = vi.fn<typeof globalThis.fetch>().mockRejectedValue(new TypeError('Failed to fetch'));
+    const fetch = vi
+      .fn<typeof globalThis.fetch>()
+      .mockRejectedValue(new TypeError('Failed to fetch'));
     const client = new ApiClient({
       baseUrl: '',
       clientKind: 'web',
@@ -101,8 +123,16 @@ describe('ApiClient', () => {
         issues: [{ path: 'email', message: 'E-mail inválido' }],
       }),
     );
-    const client = new ApiClient({ baseUrl: '', clientKind: 'web', clientVersion: '0.1.0', preferences: new MemoryPreferences(), fetch });
-    const error = (await client.login({ email: 'x', password: 'y' }).catch((e: unknown) => e)) as ApiError;
+    const client = new ApiClient({
+      baseUrl: '',
+      clientKind: 'web',
+      clientVersion: '0.1.0',
+      preferences: new MemoryPreferences(),
+      fetch,
+    });
+    const error = (await client
+      .login({ email: 'x', password: 'y' })
+      .catch((e: unknown) => e)) as ApiError;
     expect(error.fieldErrors()).toEqual({ email: 'E-mail inválido' });
   });
 });
@@ -129,7 +159,9 @@ describe('BipaeApp', () => {
     // Navigation only shows what the user may access.
     expect(screen.getByRole('link', { name: 'Produtos' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Equipe' })).not.toBeInTheDocument();
-    await waitFor(() => expect(screen.getByText('O que funciona neste navegador')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText('O que funciona neste navegador')).toBeInTheDocument(),
+    );
     vi.unstubAllGlobals();
   });
 });

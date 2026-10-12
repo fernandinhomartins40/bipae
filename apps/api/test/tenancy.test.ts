@@ -16,9 +16,22 @@ afterAll(async () => {
 
 /** Every table protected by tenant RLS (must match the list in 0001_init.sql). */
 const TENANT_TABLES = [
-  'roles', 'sessions', 'companies', 'stores', 'terminals', 'units', 'fiscal_profiles',
-  'products', 'product_barcodes', 'product_components', 'price_tables', 'price_table_items',
-  'customers', 'suppliers', 'audit_log', 'memberships',
+  'roles',
+  'sessions',
+  'companies',
+  'stores',
+  'terminals',
+  'units',
+  'fiscal_profiles',
+  'products',
+  'product_barcodes',
+  'product_components',
+  'price_tables',
+  'price_table_items',
+  'customers',
+  'suppliers',
+  'audit_log',
+  'memberships',
 ];
 
 describe('row-level security (ADR-0003)', () => {
@@ -58,9 +71,7 @@ describe('row-level security (ADR-0003)', () => {
 
     for (const table of TENANT_TABLES) {
       const seenByB = await withTenant(t.database.db, { tenantId: b.me.tenant.id }, async (tx) =>
-        rowsOf<{ tenant_id: string }>(
-          await tx.execute(sql.raw(`select tenant_id from ${table}`)),
-        ),
+        rowsOf<{ tenant_id: string }>(await tx.execute(sql.raw(`select tenant_id from ${table}`))),
       );
       expect(
         seenByB.every((r) => r.tenant_id === b.me.tenant.id),
@@ -141,7 +152,10 @@ describe('permissions', () => {
     const product = (await client.post('/products', { name: 'Leite 1L', priceCents: 549 })).json();
 
     const role = (
-      await client.post('/roles', { name: 'Repositor', permissions: ['catalog.read', 'catalog.write'] })
+      await client.post('/roles', {
+        name: 'Repositor',
+        permissions: ['catalog.read', 'catalog.write'],
+      })
     ).json();
     const email = `repositor-${Date.now()}@exemplo.com.br`;
     await client.post('/members', {

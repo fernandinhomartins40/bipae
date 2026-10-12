@@ -7,8 +7,33 @@ import { TERMINAL_PLATFORMS } from './terminals';
 /** API contracts shared by the API (validation) and the UI (forms). Messages are pt-BR. */
 
 export const UFS = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA',
-  'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
 ] as const;
 
 const trimmed = (min: number, max: number, label: string) =>
@@ -184,11 +209,26 @@ export type PriceTableInput = z.input<typeof priceTableInput>;
 export const fiscalProfileInput = z.object({
   name: trimmed(1, 60, 'Nome do perfil'),
   origem: z.number().int().min(0).max(8).default(0),
-  cfopInterna: z.string().regex(/^\d{4}$/, 'CFOP deve ter 4 dígitos').default('5102'),
-  cfopInterestadual: z.string().regex(/^\d{4}$/, 'CFOP deve ter 4 dígitos').default('6102'),
-  csosn: z.string().regex(/^\d{3}$/, 'CSOSN deve ter 3 dígitos').nullish(),
-  cstIcms: z.string().regex(/^\d{2}$/, 'CST deve ter 2 dígitos').nullish(),
-  cClassTrib: z.string().regex(/^\d{6}$/, 'cClassTrib deve ter 6 dígitos').nullish(),
+  cfopInterna: z
+    .string()
+    .regex(/^\d{4}$/, 'CFOP deve ter 4 dígitos')
+    .default('5102'),
+  cfopInterestadual: z
+    .string()
+    .regex(/^\d{4}$/, 'CFOP deve ter 4 dígitos')
+    .default('6102'),
+  csosn: z
+    .string()
+    .regex(/^\d{3}$/, 'CSOSN deve ter 3 dígitos')
+    .nullish(),
+  cstIcms: z
+    .string()
+    .regex(/^\d{2}$/, 'CST deve ter 2 dígitos')
+    .nullish(),
+  cClassTrib: z
+    .string()
+    .regex(/^\d{6}$/, 'cClassTrib deve ter 6 dígitos')
+    .nullish(),
 });
 export type FiscalProfileInput = z.input<typeof fiscalProfileInput>;
 

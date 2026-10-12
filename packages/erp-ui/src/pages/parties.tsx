@@ -29,7 +29,8 @@ const TEXT = {
     title: 'Fornecedores',
     one: 'fornecedor',
     path: '/suppliers',
-    empty: 'Fornecedores também são criados automaticamente quando você importa o XML de uma nota de compra.',
+    empty:
+      'Fornecedores também são criados automaticamente quando você importa o XML de uma nota de compra.',
   },
 };
 
@@ -56,7 +57,10 @@ export function PartiesPage({ kind }: { kind: Kind }) {
         title={text.title}
         actions={
           canWrite && (
-            <Button icon={<Plus className="size-5" aria-hidden />} onClick={() => setEditing('new')}>
+            <Button
+              icon={<Plus className="size-5" aria-hidden />}
+              onClick={() => setEditing('new')}
+            >
               Novo {text.one}
             </Button>
           )
@@ -90,13 +94,25 @@ export function PartiesPage({ kind }: { kind: Kind }) {
         )
       )}
       {editing && (
-        <PartyForm kind={kind} party={editing === 'new' ? null : editing} onClose={() => setEditing(null)} />
+        <PartyForm
+          kind={kind}
+          party={editing === 'new' ? null : editing}
+          onClose={() => setEditing(null)}
+        />
       )}
     </>
   );
 }
 
-function PartyForm({ kind, party, onClose }: { kind: Kind; party: Party | null; onClose: () => void }) {
+function PartyForm({
+  kind,
+  party,
+  onClose,
+}: {
+  kind: Kind;
+  party: Party | null;
+  onClose: () => void;
+}) {
   const { api } = useApp();
   const queryClient = useQueryClient();
   const text = TEXT[kind];
@@ -140,7 +156,11 @@ function PartyForm({ kind, party, onClose }: { kind: Kind; party: Party | null; 
           error={form.errors.name}
           autoFocus
         />
-        <TaxIdField value={form.values.taxId} onChange={(v) => form.set('taxId', v)} error={form.errors.taxId} />
+        <TaxIdField
+          value={form.values.taxId}
+          onChange={(v) => form.set('taxId', v)}
+          error={form.errors.taxId}
+        />
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField
             label="Telefone / WhatsApp"

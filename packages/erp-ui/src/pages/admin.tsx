@@ -24,7 +24,10 @@ export function TerminalsPage() {
   const { api } = useApp();
   const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
-  const terminals = useQuery({ queryKey: ['terminals'], queryFn: () => api.get<Terminal[]>('/terminals') });
+  const terminals = useQuery({
+    queryKey: ['terminals'],
+    queryFn: () => api.get<Terminal[]>('/terminals'),
+  });
   const stores = useQuery({
     queryKey: ['stores'],
     queryFn: () => api.get<{ id: string; name: string }[]>('/stores'),
@@ -47,12 +50,19 @@ export function TerminalsPage() {
           rows={terminals.data}
           columns={[
             { header: 'Nome', cell: (t) => <span className="font-semibold">{t.name}</span> },
-            { header: 'Tipo', cell: (t) => (t.platform === 'desktop' ? 'App desktop' : 'Navegador') },
+            {
+              header: 'Tipo',
+              cell: (t) => (t.platform === 'desktop' ? 'App desktop' : 'Navegador'),
+            },
             { header: 'Série NFC-e', align: 'right', cell: (t) => t.nfceSeries },
             {
               header: 'Situação',
               cell: (t) =>
-                t.status === 'active' ? <Badge tone="success">Ativo</Badge> : <Badge>Desativado</Badge>,
+                t.status === 'active' ? (
+                  <Badge tone="success">Ativo</Badge>
+                ) : (
+                  <Badge>Desativado</Badge>
+                ),
             },
             {
               header: 'Ações',
@@ -62,7 +72,12 @@ export function TerminalsPage() {
                     variant="ghost"
                     onClick={async (e) => {
                       e.stopPropagation();
-                      if (!confirm(`Desativar "${t.name}"? A série ${t.nfceSeries} não será reutilizada.`)) return;
+                      if (
+                        !confirm(
+                          `Desativar "${t.name}"? A série ${t.nfceSeries} não será reutilizada.`,
+                        )
+                      )
+                        return;
                       await api.post(`/terminals/${t.id}/revoke`);
                       await queryClient.invalidateQueries({ queryKey: ['terminals'] });
                     }}
@@ -81,10 +96,20 @@ export function TerminalsPage() {
   );
 }
 
-function TerminalForm({ stores, onClose }: { stores: { id: string; name: string }[]; onClose: () => void }) {
+function TerminalForm({
+  stores,
+  onClose,
+}: {
+  stores: { id: string; name: string }[];
+  onClose: () => void;
+}) {
   const { api, platform } = useApp();
   const queryClient = useQueryClient();
-  const form = useForm({ name: '', storeId: stores[0]?.id ?? '', platform: platform.kind as string });
+  const form = useForm({
+    name: '',
+    storeId: stores[0]?.id ?? '',
+    platform: platform.kind as string,
+  });
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     void form.submit(async (v) => {
@@ -186,7 +211,11 @@ export function TeamPage() {
             {
               header: 'Acesso',
               cell: (m) =>
-                m.active ? <Badge tone="success">Ativo</Badge> : <Badge tone="danger">Bloqueado</Badge>,
+                m.active ? (
+                  <Badge tone="success">Ativo</Badge>
+                ) : (
+                  <Badge tone="danger">Bloqueado</Badge>
+                ),
             },
             {
               header: 'Ações',
@@ -251,8 +280,20 @@ function MemberForm({ roles, onClose }: { roles: Role[]; onClose: () => void }) 
     <Drawer open onOpenChange={(o) => !o && onClose()} title="Adicionar pessoa">
       <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
         {form.formError && <Alert>{form.formError}</Alert>}
-        <TextField label="Nome" value={form.values.name} onChange={(e) => form.set('name', e.target.value)} error={form.errors.name} autoFocus />
-        <TextField label="E-mail" type="email" value={form.values.email} onChange={(e) => form.set('email', e.target.value)} error={form.errors.email} />
+        <TextField
+          label="Nome"
+          value={form.values.name}
+          onChange={(e) => form.set('name', e.target.value)}
+          error={form.errors.name}
+          autoFocus
+        />
+        <TextField
+          label="E-mail"
+          type="email"
+          value={form.values.email}
+          onChange={(e) => form.set('email', e.target.value)}
+          error={form.errors.email}
+        />
         <TextField
           label="Senha inicial"
           type="password"
@@ -317,7 +358,8 @@ export function AuditPage() {
   });
   const verify = useQuery({
     queryKey: ['audit', 'verify'],
-    queryFn: () => api.get<{ valid: boolean; brokenAt: number | null; entries: number }>('/audit/verify'),
+    queryFn: () =>
+      api.get<{ valid: boolean; brokenAt: number | null; entries: number }>('/audit/verify'),
   });
 
   return (
@@ -330,13 +372,15 @@ export function AuditPage() {
         (verify.data.valid ? (
           <Alert tone="success" title="Trilha íntegra">
             <span className="inline-flex items-center gap-2">
-              <ShieldCheck className="size-5" aria-hidden /> {verify.data.entries} registros conferidos.
+              <ShieldCheck className="size-5" aria-hidden /> {verify.data.entries} registros
+              conferidos.
             </span>
           </Alert>
         ) : (
           <Alert title="Atenção: trilha alterada">
             <span className="inline-flex items-center gap-2">
-              <ShieldAlert className="size-5" aria-hidden /> O registro nº {verify.data.brokenAt} não confere. Fale com o suporte.
+              <ShieldAlert className="size-5" aria-hidden /> O registro nº {verify.data.brokenAt}{' '}
+              não confere. Fale com o suporte.
             </span>
           </Alert>
         ))}

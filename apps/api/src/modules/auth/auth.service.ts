@@ -34,7 +34,6 @@ import { AuditService } from '../audit/audit.service';
 const INVALID_LOGIN = 'E-mail ou senha incorretos.';
 const SESSION_EXPIRED = 'Sua sessão expirou. Entre novamente.';
 
-
 export const DEFAULT_UNITS = [
   { code: 'UN', description: 'Unidade', decimals: 0 },
   { code: 'KG', description: 'Quilograma', decimals: 3 },
@@ -102,12 +101,16 @@ export class AuthService {
         name: 'Revenda — Simples Nacional',
         data: { origem: 0, cfopInterna: '5102', cfopInterestadual: '6102', csosn: '102' },
       });
-      await this.audit.record(tx, { tenantId, userId }, {
-        action: 'tenant.created',
-        entity: 'tenant',
-        entityId: tenantId,
-        data: { businessName: input.businessName },
-      });
+      await this.audit.record(
+        tx,
+        { tenantId, userId },
+        {
+          action: 'tenant.created',
+          entity: 'tenant',
+          entityId: tenantId,
+          data: { businessName: input.businessName },
+        },
+      );
     });
 
     return this.issueSession(tenantId, userId, userAgent);
@@ -115,7 +118,10 @@ export class AuthService {
 
   async createSystemRoles(tx: Tx, tenantId: string): Promise<Record<SystemRoleKey, string>> {
     const ids = {} as Record<SystemRoleKey, string>;
-    for (const [key, role] of Object.entries(SYSTEM_ROLES) as [SystemRoleKey, (typeof SYSTEM_ROLES)[SystemRoleKey]][]) {
+    for (const [key, role] of Object.entries(SYSTEM_ROLES) as [
+      SystemRoleKey,
+      (typeof SYSTEM_ROLES)[SystemRoleKey],
+    ][]) {
       ids[key] = uuidv7();
       await tx.insert(roles).values({
         id: ids[key],
@@ -137,9 +143,7 @@ export class AuthService {
     if (available.length === 0) {
       throw new AppError(401, 'no_tenant', 'Seu usuário não está ativo em nenhuma empresa.');
     }
-    const tenant = input.tenantId
-      ? available.find((t) => t.id === input.tenantId)
-      : available[0];
+    const tenant = input.tenantId ? available.find((t) => t.id === input.tenantId) : available[0];
     if (!tenant) throw new AppError(403, 'forbidden', 'Você não tem acesso a esta empresa.');
     return this.issueSession(tenant.id, found.id, userAgent);
   }
@@ -163,11 +167,15 @@ export class AuthService {
           .update(sessions)
           .set({ revokedAt: new Date() })
           .where(and(eq(sessions.familyId, session.familyId), isNull(sessions.revokedAt)));
-        await this.audit.record(tx, { tenantId, userId: session.userId }, {
-          action: 'auth.refresh_reuse_detected',
-          entity: 'session',
-          entityId: session.familyId,
-        });
+        await this.audit.record(
+          tx,
+          { tenantId, userId: session.userId },
+          {
+            action: 'auth.refresh_reuse_detected',
+            entity: 'session',
+            entityId: session.familyId,
+          },
+        );
         return 'reused' as const;
       }
       if (session.expiresAt.getTime() < Date.now()) return null;

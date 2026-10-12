@@ -76,7 +76,10 @@ describe('data table', () => {
 describe('display preferences', () => {
   it('applies theme, contrast and font size to the root element', () => {
     const root = document.createElement('html');
-    applyDisplayPreferences({ theme: 'dark', highContrast: true, largeFont: true, beep: false }, root);
+    applyDisplayPreferences(
+      { theme: 'dark', highContrast: true, largeFont: true, beep: false },
+      root,
+    );
     expect(root.dataset).toMatchObject({ theme: 'dark', contrast: 'high', font: 'large' });
     applyDisplayPreferences(DEFAULT_DISPLAY, root);
     expect(root.dataset.theme).toBeUndefined();

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Bipaê",
+  "version": "0.1.0",
+  "identifier": "br.com.bipae.pdv",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build:web"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Bipaê",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 1024,
+        "minHeight": 640,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://localhost:3333 https://api.bipae.com.br https://homolog-api.bipae.com.br; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "nsis", "deb", "appimage"],
+    "category": "Business",
+    "shortDescription": "PDV e gestão para o seu comércio",
+    "longDescription": "Bipaê Desktop: o PDV de balcão com impressora, balança, gaveta e operação offline. Bipou? Bipaê!",
+    "copyright": "© Bipaê",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": { "type": "embedBootstrapper" },
+      "nsis": { "languages": ["PortugueseBR"], "displayLanguageSelector": false },
+      "wix": { "language": "pt-BR" }
+    }
+  }
+}

@@ -1,9 +1,5 @@
 import type { Page, Product } from '@bipae/domain';
-import {
-  explainCapability,
-  type CapabilityName,
-  type CapabilityStatus,
-} from '@bipae/platform';
+import { explainCapability, type CapabilityName, type CapabilityStatus } from '@bipae/platform';
 import { Badge, Card, PageHeader } from '@bipae/ui';
 import { useQuery } from '@tanstack/react-query';
 import { CheckCircle2, Circle } from 'lucide-react';
@@ -37,7 +33,10 @@ export function HomePage() {
     queryFn: () => api.get<Page<Product>>('/products?limit=1'),
     enabled: me.permissions.includes('catalog.read'),
   });
-  const capabilities = useQuery({ queryKey: ['capabilities'], queryFn: () => platform.capabilities() });
+  const capabilities = useQuery({
+    queryKey: ['capabilities'],
+    queryFn: () => platform.capabilities(),
+  });
 
   const firstName = me.user.name.split(' ')[0];
   const hasProducts = (products.data?.total ?? 0) > 0;

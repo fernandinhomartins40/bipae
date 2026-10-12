@@ -4,7 +4,7 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 
 ## Estado atual
 
-- Fase 0 e Adendo 01 (web + desktop) aprovados em 12/10/2026. **Fase 1 (fundação) em andamento.**
+- Fase 0 e Adendo 01 aprovados; **Fase 1 (fundação) entregue em 12/10/2026**. Próxima: Fase 2 (PDV offline-first).
 - Tarefas da fase atual e das próximas: [docs/TAREFAS.md](docs/TAREFAS.md). Mantenha esse arquivo atualizado.
 
 ## Nomes e idioma
@@ -36,6 +36,19 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 - PDV desktop: Tauri 2 (Rust para periféricos e certificado A3); o mesmo app roda como Bipaê Conector (bandeja) para o PDV web.
 - Banco local do PDV: SQLite (nativo no Tauri; WASM com OPFS no navegador). Mesmo schema e mesmas migrações nos dois.
 - Motor fiscal: `packages/fiscal`, puro (sem I/O), testável, cobertura ≥ 90%.
+
+## Comandos
+
+- `pnpm install`, `pnpm db:seed`, `pnpm dev` (API :3333 + web :5173). Sem `DATABASE_URL` a API usa PGlite em `apps/api/.data`.
+- `pnpm lint && pnpm typecheck && pnpm test`; `pnpm test:e2e` (Playwright, projetos `web` e `desktop-ui`).
+- Desktop: `pnpm --filter @bipae/desktop tauri:dev` (requer Rust).
+
+## Padrões da API
+
+- Injeção de dependência sempre com `@Inject(Token)` explícito (não há metadados de decorators: tsx/esbuild/Vite não os emitem).
+- Toda consulta de negócio passa por `withTenant(db, ctx, fn)`; ações relevantes chamam `audit.record(tx, ...)` na mesma transação.
+- Validação com os schemas Zod de `@bipae/domain` via `parse()`; erros sempre com mensagem pt-BR para o usuário.
+- Migrações em `apps/api/src/db/migrations/*.sql` (fonte da verdade); `schema.ts` é o espelho tipado. Nunca editar migração já aplicada.
 
 ## Testes e qualidade
 
