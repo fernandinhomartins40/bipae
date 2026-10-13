@@ -77,9 +77,12 @@ set_image_vars "$BIPAE_API_IMAGE" "$BIPAE_WEB_IMAGE"
 "${COMPOSE[@]}" pull --quiet
 
 echo "==> Subindo"
-"${COMPOSE[@]}" up -d --remove-orphans
+# O `up` devolve erro quando um serviço não fica saudável. Isso não pode encerrar o script aqui
+# (set -e), senão a volta para a versão anterior, logo abaixo, nunca roda.
+UP_OK=1
+"${COMPOSE[@]}" up -d --remove-orphans || UP_OK=0
 
-if wait_healthy; then
+if [ "$UP_OK" = 1 ] && wait_healthy; then
   printf 'DEPLOYED_API=%q\nDEPLOYED_WEB=%q\n' "$BIPAE_API_IMAGE" "$BIPAE_WEB_IMAGE" > "$STATE"
   echo "==> Nova versão saudável."
 else
@@ -88,7 +91,7 @@ else
   if [ -n "$PREVIOUS_API" ] && [ -n "$PREVIOUS_WEB" ]; then
     echo "==> Voltando para a versão anterior" >&2
     set_image_vars "$PREVIOUS_API" "$PREVIOUS_WEB"
-    "${COMPOSE[@]}" up -d --remove-orphans
+    "${COMPOSE[@]}" up -d --remove-orphans || true
     wait_healthy && echo "==> Versão anterior restaurada." >&2 || echo "ERRO: a versão anterior também não subiu." >&2
   fi
   exit 1

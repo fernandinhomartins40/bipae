@@ -32,10 +32,16 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   async onModuleInit() {
-    this.queue.process(SESSIONS_CLEANUP, async () => {
-      const removed = await this.cleanupSessions();
-      if (removed > 0) this.logger.log(`${removed} registros de login antigos apagados`);
-    });
+    // A manutenção é um extra: se a fila falhar ao iniciar, a API sobe do mesmo jeito.
+    try {
+      this.queue.process(SESSIONS_CLEANUP, async () => {
+        const removed = await this.cleanupSessions();
+        if (removed > 0) this.logger.log(`${removed} registros de login antigos apagados`);
+      });
+    } catch (error) {
+      this.logger.error(`Fila de manutenção não iniciou: ${(error as Error).message}`);
+      return;
+    }
     // Nos testes a rotina é chamada direto, sem agendamento. O agendamento não segura a subida
     // da API: se o Redis demorar, a API sobe e a tarefa é agendada quando ele responder.
     if (this.config.NODE_ENV !== 'test') {
@@ -48,7 +54,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    await this.queue.close();
+    await this.queue.close().catch(() => undefined);
   }
 
   /** Apaga logins vencidos ou encerrados há mais de 30 dias, de todas as empresas. */

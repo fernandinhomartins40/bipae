@@ -1,5 +1,18 @@
 # Changelog
 
+## [Correção da fila e do deploy] — 13/10/2026
+
+O deploy da F1-07 deixou o site fora do ar por alguns minutos: a API não subia e a volta automática para a versão anterior não rodou. A versão anterior foi restaurada à mão.
+
+### Corrigido
+- **A API não subia com o Redis ligado.** O BullMQ 6 não traz o driver `ioredis`, e no pacote de produção não consegue carregá-lo sozinho. Agora o driver é dependência da API e o cliente é criado por ela.
+- **Fila com problema não derruba mais a API.** Redis fora do ar vira aviso no log, e a fila reconecta sozinha.
+- **O deploy agora volta mesmo para a versão anterior** quando a nova não fica saudável. Antes, o script parava no primeiro erro, sem chegar a esse passo.
+
+### Adicionado
+- **Teste do pacote compilado** (`scripts/smoke-api.mjs`): sobe a API do jeito que roda em produção, com Redis de verdade e com o Redis fora do ar. Roda no CI e antes de todo deploy.
+- O teste que antecede o deploy passou a usar um Redis de verdade. Era a falta dele que deixava o erro passar.
+
 ## [F1-07 Fila de tarefas] — 13/10/2026
 
 ### Adicionado

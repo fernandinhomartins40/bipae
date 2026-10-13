@@ -1,4 +1,5 @@
 import { Queue, Worker, type ConnectionOptions } from 'bullmq';
+import IORedis from 'ioredis';
 
 /**
  * Fila de tarefas em segundo plano (F1-07), com nova tentativa automática. Duas versões com o
@@ -108,22 +109,35 @@ export class RedisQueue implements JobQueue {
   private readonly handlers = new Map<string, JobHandler>();
   private readonly queue: Queue;
   private worker: Worker | null = null;
-  private readonly connection: ConnectionOptions;
+  private readonly client: IORedis;
+  private lastError = '';
 
   constructor(
     redisUrl: string,
     private readonly log: (message: string) => void = () => undefined,
     queueName = 'bipae',
   ) {
-    const url = new URL(redisUrl);
-    this.connection = {
-      host: url.hostname,
-      port: Number(url.port || 6379),
-      ...(url.password && { password: decodeURIComponent(url.password) }),
+    // O cliente é criado aqui e entregue pronto ao BullMQ: no pacote de produção (ESM) ele não
+    // consegue carregar o `ioredis` sozinho, e a API não subia.
+    this.client = new IORedis(redisUrl, {
       // Exigido pelo BullMQ nos trabalhadores (comandos bloqueantes).
       maxRetriesPerRequest: null,
-    };
+    });
+    // Redis fora do ar não pode derrubar a API: o cliente tenta reconectar sozinho.
+    this.client.on('error', (error: Error) => this.warn(`Redis: ${error.message}`));
     this.queue = new Queue(queueName, { connection: this.connection });
+    this.queue.on('error', (error) => this.warn(error.message));
+  }
+
+  private get connection(): ConnectionOptions {
+    return this.client as unknown as ConnectionOptions;
+  }
+
+  /** Avisa uma vez por tipo de erro seguido, para a reconexão não encher o log. */
+  private warn(message: string) {
+    if (message === this.lastError) return;
+    this.lastError = message;
+    this.log(message);
   }
 
   process(name: string, handler: JobHandler) {
@@ -141,6 +155,7 @@ export class RedisQueue implements JobQueue {
       },
       { connection: this.connection },
     );
+    worker.on('error', (error) => this.warn(error.message));
     worker.on('failed', (job, error) => {
       if (job && job.attemptsMade >= (job.opts.attempts ?? 1)) {
         this.log(`Tarefa ${job.name} falhou ${job.attemptsMade} vezes: ${error.message}`);
@@ -166,12 +181,24 @@ export class RedisQueue implements JobQueue {
   async close() {
     await this.worker?.close();
     await this.queue.close();
+    // O BullMQ não fecha um cliente que recebeu pronto.
+    this.client.disconnect();
   }
 }
 
+/**
+ * Cria a fila conforme a configuração. Se a versão com Redis não puder ser montada, a API sobe
+ * com a fila em memória e avisa no log: tarefa em segundo plano nunca derruba o sistema.
+ */
 export function createQueue(
   redisUrl: string | undefined,
-  log?: (message: string) => void,
+  log: (message: string) => void = () => undefined,
 ): JobQueue {
-  return redisUrl ? new RedisQueue(redisUrl, log) : new MemoryQueue(log);
+  if (!redisUrl) return new MemoryQueue(log);
+  try {
+    return new RedisQueue(redisUrl, log);
+  } catch (error) {
+    log(`Fila em Redis indisponível, usando a fila em memória: ${(error as Error).message}`);
+    return new MemoryQueue(log);
+  }
 }

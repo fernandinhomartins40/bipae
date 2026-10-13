@@ -63,6 +63,16 @@ jobs:
         env:
           TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/bipae_test
           TEST_REDIS_URL: redis://localhost:6379
+      # O que vai para produção é o pacote compilado (ESM), não o código-fonte dos testes.
+      - name: Pacote compilado da API sobe com Redis
+        run: pnpm --filter @bipae/api build && node scripts/smoke-api.mjs
+        env:
+          REDIS_URL: redis://localhost:6379
+      - name: Pacote compilado da API sobe com o Redis fora do ar
+        run: node scripts/smoke-api.mjs
+        env:
+          REDIS_URL: redis://localhost:6399
+          SMOKE_REDIS_DOWN: 1
 
   e2e:
     name: E2E (web e desktop-ui)
