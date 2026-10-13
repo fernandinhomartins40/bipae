@@ -165,18 +165,23 @@ export class RedisQueue implements JobQueue {
   }
 
   async add(name: string, data?: unknown, options: JobOptions = {}) {
-    await this.queue.add(name, data ?? {}, {
+    const opts = {
       attempts: options.attempts ?? DEFAULT_ATTEMPTS,
-      backoff: { type: 'exponential', delay: options.backoffMs ?? DEFAULT_BACKOFF_MS },
+      backoff: { type: 'exponential' as const, delay: options.backoffMs ?? DEFAULT_BACKOFF_MS },
       removeOnComplete: 100,
       removeOnFail: 500,
-      // Tarefa repetida tem id fixo: reiniciar a API não agenda duas vezes. O BullMQ não aceita
-      // dois-pontos em id (é o separador das chaves dele no Redis).
-      ...(options.repeatEveryMs && {
-        repeat: { every: options.repeatEveryMs },
-        jobId: `repetir-${name.replaceAll(':', '-')}`,
-      }),
-    });
+    };
+    if (options.repeatEveryMs) {
+      // Tarefa repetida é um "agendador" do BullMQ com id fixo: reiniciar a API atualiza o mesmo
+      // agendador em vez de criar outro. O id não pode ter dois-pontos (separador das chaves dele).
+      await this.queue.upsertJobScheduler(
+        `repetir-${name.replaceAll(':', '-')}`,
+        { every: options.repeatEveryMs },
+        { name, data: data ?? {}, opts },
+      );
+      return;
+    }
+    await this.queue.add(name, data ?? {}, opts);
   }
 
   async close() {
