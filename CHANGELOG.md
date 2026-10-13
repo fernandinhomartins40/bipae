@@ -1,5 +1,20 @@
 # Changelog
 
+## [F3-04 Tributos atuais] — 13/10/2026
+
+### Adicionado
+- **Cálculo de ICMS** no regime normal (CST 00, 10, 20, 40, 41, 50, 51, 60 e 70) e no Simples Nacional (CSOSN 101, 102, 103, 201, 202, 203, 300, 400 e 500), com redução de base, diferimento, FCP, crédito do Simples e **substituição tributária por MVA**.
+- **PIS e COFINS** por alíquota, por unidade de produto e nas situações sem destaque, com a opção de tirar o ICMS da base.
+- **IPI** por alíquota.
+- `calculateCurrentTaxes` escolhe a regra de cada tributo em vigor na data e calcula na ordem certa (IPI, ICMS, PIS/COFINS). Casos de teste para **Simples Nacional, Lucro Presumido e Lucro Real**.
+- **Cada valor vem com a explicação da conta**, passo a passo, começando pela regra usada e a norma que a justifica.
+- Alíquotas gerais de PIS e COFINS (cumulativo e não cumulativo) na tabela de referência, conferidas nas leis, com fim em 2027.
+- As regras passam a poder depender do regime de apuração (Simples, Presumido ou Real), além do CRT.
+
+### Limites assumidos
+- Situação que o motor ainda não calcula (CST 30 e 90, CSOSN 900, combustíveis monofásicos, FCP-ST, DIFAL) gera aviso claro, nunca conta aproximada. Lista na dúvida D-019.
+- **Ainda sem alíquotas reais de ICMS e MVA**: dependem da UF de homologação (item E2). Os testes usam valores de exemplo.
+
 ## [F3-03.d Tabela de CEST] — 13/10/2026
 
 ### Adicionado

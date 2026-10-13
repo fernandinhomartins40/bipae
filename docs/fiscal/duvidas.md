@@ -22,6 +22,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-016 | 🔴 aberta | cClassTrib: o dia do fim da vigência ainda vale? |
 | D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
+| D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
 
 ---
 
@@ -136,4 +137,20 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a tabela de CEST (1.043 códigos) foi extraída do texto consolidado do Convênio ICMS 142/18 no site do CONFAZ, porque não existe arquivo oficial estruturado. A lista é nacional e diz o que **pode** estar em substituição tributária; quem decide o que **está** é cada UF, por legislação própria, que não está no sistema.
 - **Implementação provisória:** o sistema valida o código e sugere CEST pelo NCM, sem decidir sozinho se há ST. A data de início de cada item é a que o convênio informa; quando ele não informa item a item, fica 01/01/2019. O Anexo XXVII (escala industrial não relevante) não foi importado.
 - **Pergunta:** o contador pode conferir uma amostra dos CEST do ramo da loja? De onde virá a lista de mercadorias em ST da UF (item E2, UF de homologação)?
+
+### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração
+
+- **Contexto:** o cálculo de ICMS, PIS, COFINS e IPI (F3-04) cobre o que o varejo usa no dia a dia. O restante não é calculado "mais ou menos": o sistema avisa que a situação ainda não está disponível.
+- **Ainda não calculado:**
+  - ICMS com CST 30 (isenta com ST), CST 90 e CSOSN 900 (outras), que dependem de combinação livre de campos;
+  - ICMS monofásico de combustíveis (CST 02, 15, 53 e 61);
+  - FCP da substituição tributária (FCP-ST) e ICMS desonerado;
+  - valores de ICMS retido anteriormente (CST 60 e CSOSN 500), que vêm da nota de compra;
+  - diferencial de alíquotas (DIFAL) para consumidor final de outra UF.
+- **Virou configuração da regra, sem valor suposto no código:**
+  - se o IPI entra na base do ICMS próprio (`includeIpiInBase`);
+  - se o ICMS sai da base do PIS e da COFINS (`excludeIcms`). A Lei 14.592/2023 trata disso no regime não cumulativo; no cumulativo vale a decisão do STF (Tema 69), que precisa ser confirmada;
+  - o arredondamento de cada tributo.
+- **Faltam as alíquotas reais:** ICMS interno e interestadual, MVA e reduções da UF de homologação (item externo E2). Os testes usam 18% e MVA de 40% só como exemplo.
+- **Perguntas:** o ICMS sai da base do PIS/COFINS também no cumulativo? No ICMS-ST do Simples Nacional, o abatimento usa a alíquota interna cheia? Quais das situações "ainda não calculadas" o contador considera necessárias para a primeira loja?
 

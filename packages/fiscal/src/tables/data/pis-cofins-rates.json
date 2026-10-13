@@ -1,0 +1,38 @@
+[
+  {
+    "id": "pis-cumulativo",
+    "tax": "PIS",
+    "regime": "cumulativo",
+    "rate": "0.65",
+    "validity": { "start": "2026-01-01", "end": "2027-01-01" },
+    "source": "Lei 9.715/1998, art. 8º, I; extinção em 2027 pela EC 132/2023 (ADCT, art. 126, II)",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9715.htm"
+  },
+  {
+    "id": "cofins-cumulativo",
+    "tax": "COFINS",
+    "regime": "cumulativo",
+    "rate": "3",
+    "validity": { "start": "2026-01-01", "end": "2027-01-01" },
+    "source": "Lei 9.718/1998, art. 8º; extinção em 2027 pela EC 132/2023 (ADCT, art. 126, II)",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9718.htm"
+  },
+  {
+    "id": "pis-nao-cumulativo",
+    "tax": "PIS",
+    "regime": "nao-cumulativo",
+    "rate": "1.65",
+    "validity": { "start": "2026-01-01", "end": "2027-01-01" },
+    "source": "Lei 10.637/2002, art. 2º; extinção em 2027 pela EC 132/2023 (ADCT, art. 126, II)",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10637.htm"
+  },
+  {
+    "id": "cofins-nao-cumulativo",
+    "tax": "COFINS",
+    "regime": "nao-cumulativo",
+    "rate": "7.6",
+    "validity": { "start": "2026-01-01", "end": "2027-01-01" },
+    "source": "Lei 10.833/2003, art. 2º; extinção em 2027 pela EC 132/2023 (ADCT, art. 126, II)",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/2003/l10.833.htm"
+  }
+]

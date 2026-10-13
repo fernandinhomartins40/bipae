@@ -9,6 +9,12 @@ import { assertDate, assertValidity, isValidOn, overlaps, type Validity } from '
 /** Código de Regime Tributário do emitente: 1 e 2 Simples Nacional, 3 regime normal, 4 MEI. */
 export type Crt = 1 | 2 | 3 | 4;
 
+/**
+ * Regime de apuração do emitente. O CRT não basta: Lucro Presumido e Lucro Real são os dois
+ * CRT 3, mas o PIS e a COFINS de cada um são diferentes.
+ */
+export type TaxRegime = 'simples' | 'presumido' | 'real';
+
 /** Tipo da operação, quando a regra depende dele. */
 export type OperationKind = 'venda' | 'devolucao' | 'transferencia' | 'bonificacao';
 
@@ -18,6 +24,7 @@ export type OperationKind = 'venda' | 'devolucao' | 'transferencia' | 'bonificac
  */
 export interface RuleScope {
   crt?: Crt[];
+  taxRegime?: TaxRegime[];
   ufOrigem?: string[];
   ufDestino?: string[];
   municipio?: string[];
@@ -43,6 +50,7 @@ export interface Rule<Effect = unknown> {
 export interface RuleContext {
   date: string;
   crt: Crt;
+  taxRegime?: TaxRegime;
   ufOrigem: string;
   ufDestino: string;
   municipio?: string;
@@ -77,6 +85,7 @@ const WEIGHT = {
   ufDestino: 32,
   ufOrigem: 16,
   crt: 8,
+  taxRegime: 4,
 } as const;
 
 const includes = <T>(list: T[] | undefined, value: T | undefined): boolean =>
@@ -95,6 +104,7 @@ function matchedNcmPrefix(scope: RuleScope, ncm: string | undefined): number {
 export function matches(scope: RuleScope, ctx: RuleContext): boolean {
   return (
     includes(scope.crt, ctx.crt) &&
+    includes(scope.taxRegime, ctx.taxRegime) &&
     includes(scope.ufOrigem, ctx.ufOrigem) &&
     includes(scope.ufDestino, ctx.ufDestino) &&
     includes(scope.municipio, ctx.municipio) &&
@@ -109,7 +119,7 @@ export function matches(scope: RuleScope, ctx: RuleContext): boolean {
 /** Quanto a regra é específica para esta operação (só faz sentido para regras que casam). */
 export function specificity(scope: RuleScope, ctx: RuleContext): number {
   let score = 0;
-  for (const key of ['cClassTrib', 'cest', 'cfop', 'operation', 'municipio', 'ufDestino', 'ufOrigem', 'crt'] as const) {
+  for (const key of ['cClassTrib', 'cest', 'cfop', 'operation', 'municipio', 'ufDestino', 'ufOrigem', 'crt', 'taxRegime'] as const) {
     if (scope[key] !== undefined) score += WEIGHT[key];
   }
   const prefix = matchedNcmPrefix(scope, ctx.ncm);

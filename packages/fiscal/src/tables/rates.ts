@@ -2,6 +2,7 @@ import { isValidOn, type Validity } from '../validity';
 import cbsPublished from './data/cbs-rates.json';
 import fcp from './data/fcp.json';
 import legal from './data/legal-rates.json';
+import pisCofins from './data/pis-cofins-rates.json';
 
 /**
  * Alíquotas de referência com vigência. Só entra aqui o que tem número em texto oficial; ano sem
@@ -51,4 +52,38 @@ const fcpByUf = new Map(FCP_BY_UF.map((item) => [item.uf, item]));
 
 export function findFcp(uf: string): FcpByUf | null {
   return fcpByUf.get(uf) ?? null;
+}
+
+/**
+ * Alíquotas gerais do PIS e da COFINS por regime de apuração. Valem até 31/12/2026: as duas
+ * contribuições são extintas em 2027 (EC 132/2023). Alíquotas diferenciadas por produto
+ * (monofásicos, alíquota zero) não estão aqui: entram como regra mais específica, por NCM.
+ *
+ * O início da vigência é 01/01/2026, o começo do período que o sistema cobre, e não a data em
+ * que cada lei entrou em vigor: o Bipaê não calcula documento anterior a isso.
+ */
+export interface PisCofinsRate {
+  id: string;
+  tax: 'PIS' | 'COFINS';
+  /** Cumulativo (Lucro Presumido, em regra) ou não cumulativo (Lucro Real, em regra). */
+  regime: 'cumulativo' | 'nao-cumulativo';
+  rate: string;
+  validity: Validity;
+  source: string;
+  url: string;
+}
+
+export const PIS_COFINS_RATES: readonly PisCofinsRate[] = pisCofins as PisCofinsRate[];
+
+/** A alíquota geral em vigor na data; null se não houver (de 2027 em diante). */
+export function pisCofinsRate(
+  tax: PisCofinsRate['tax'],
+  regime: PisCofinsRate['regime'],
+  date: string,
+): PisCofinsRate | null {
+  return (
+    PIS_COFINS_RATES.find(
+      (rate) => rate.tax === tax && rate.regime === regime && isValidOn(rate.validity, date),
+    ) ?? null
+  );
 }

@@ -68,6 +68,14 @@ Lidos no texto da **LC 214/2025** (Planalto, com as alterações da LC 227/2026)
 - **Art. 347:** CBS de 2027–2028 = alíquota fixada nos termos do art. 14, **menos 0,1 ponto percentual**. O número ainda não foi publicado.
 - **Art. 349:** as alíquotas de referência de 2027 a 2033 saem por resolução do Senado.
 
+Lidos no Planalto para o **PIS e a COFINS** (F3-04):
+
+- **Lei 9.715/1998, art. 8º, I:** PIS de 0,65% sobre o faturamento (cumulativo).
+- **Lei 9.718/1998, art. 8º:** COFINS de 3% (cumulativo).
+- **Lei 10.637/2002, art. 2º:** PIS de 1,65% (não cumulativo); o art. 1º, § 3º, tira da base o ICMS que incidiu na operação (Lei 14.592/2023).
+- **Lei 10.833/2003, art. 2º:** COFINS de 7,6% (não cumulativo), com a mesma exclusão do ICMS.
+- **EC 132/2023, art. 126 do ADCT:** PIS e COFINS extintos a partir de 2027.
+
 **Correção:** o CFOP está na v2.10 (04/09/2026), não na v2.00 listada na seção 0; o portal SVRS ainda mostra a anterior.
 
 O NCM vem de <https://portalunico.siscomex.gov.br/classif/api/publico/nomenclatura/download/json> e traz **só os códigos vigentes**: um NCM extinto some da tabela, sem histórico. O Portal da NF-e publica à parte os avisos de mudança (o mais recente: IT 2024.001 v2.40, NCM a partir de 01/10/2026).
