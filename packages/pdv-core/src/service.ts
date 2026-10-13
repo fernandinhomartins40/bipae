@@ -708,6 +708,19 @@ export class PdvService {
 
   // ---------------------------------------------------------------- outbox
 
+  /**
+   * Garante que a numeração das vendas continue depois do último número que o servidor já recebeu
+   * deste caixa (F3-12). Sem isso, um aparelho novo ligado a um caixa antigo recomeçaria em 1 e
+   * repetiria números de venda e de NFC-e. Nunca diminui o contador.
+   */
+  async alignSaleSequence(lastOnServer: number) {
+    if (!Number.isSafeInteger(lastOnServer) || lastOnServer < 0) return;
+    await this.storage.transaction(async (tx) => {
+      const current = Number((await getMeta(tx, 'sale_seq')) ?? '0');
+      if (lastOnServer > current) await setMeta(tx, 'sale_seq', String(lastOnServer));
+    });
+  }
+
   private async nextCounter(tx: Tx, key: string): Promise<number> {
     const value = Number((await getMeta(tx, key)) ?? '0') + 1;
     await setMeta(tx, key, String(value));

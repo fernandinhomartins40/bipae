@@ -412,3 +412,17 @@ describe('impostos calculados ao fechar a venda (F3-06.d3)', () => {
     expect((await pdv.pendingEvents()).some((e) => e.type === 'sale.completed')).toBe(true);
   });
 });
+
+describe('numeração alinhada com o servidor (F3-12)', () => {
+  it('continua do último número do servidor e nunca volta para trás', async () => {
+    const p = product();
+    await pdv.applyCatalog([p]);
+    await pdv.openSession(0);
+    const vender = () => pdv.completeSale(addItem(EMPTY_CART, p), [{ method: 'pix', receivedCents: p.priceCents }], { discountLimitPercent: 10 });
+    await pdv.alignSaleSequence(41);
+    expect((await vender()).terminalSeq).toBe(42);
+    await pdv.alignSaleSequence(10);
+    await pdv.alignSaleSequence(-1);
+    expect((await vender()).terminalSeq).toBe(43);
+  });
+});

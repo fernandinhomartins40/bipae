@@ -17,6 +17,8 @@ export interface TerminalContext {
   storeName: string;
   businessName: string;
   taxId: string | null;
+  /** Último número de venda que o servidor já tem deste caixa (F3-12); caixas antigos não mandam. */
+  lastTerminalSeq?: number;
 }
 
 export type AuthorizablePermission =

@@ -84,6 +84,7 @@ export function useRegister(platform: Platform, backend: PosBackend, user: PosUs
       }
 
       const pdv = new PdvService(storage, { terminalId, operatorId: user.id });
+      await pdv.alignSaleSequence(context.lastTerminalSeq ?? 0);
       const sync = new SyncClient(storage, pdv, backend, terminalId);
       const handle = { pdv, sync, storage, context, persistent: driver.persistent };
       handleRef.current = handle;

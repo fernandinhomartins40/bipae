@@ -10,3 +10,4 @@ export * from './taxes';
 export * from './nfce/access-key';
 export * from './nfce/build';
 export * from './nfce/sign';
+export * from './nfce/numbering';

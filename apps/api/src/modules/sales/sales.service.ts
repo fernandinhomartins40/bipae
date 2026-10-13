@@ -180,6 +180,12 @@ export class SalesService {
         .where(eq(terminals.id, terminalId));
       if (!row) throw notFound('Caixa');
       assertStore(ctx, row.terminal.storeId);
+      // Último número de venda já recebido deste caixa (F3-12): um aparelho novo ligado a este caixa
+      // continua daqui, em vez de recomeçar em 1 e repetir números (venda e NFC-e).
+      const [last] = await tx
+        .select({ seq: sql<number>`coalesce(max(${sales.terminalSeq}), 0)` })
+        .from(sales)
+        .where(eq(sales.terminalId, terminalId));
       return {
         terminal: {
           id: row.terminal.id,
@@ -192,6 +198,7 @@ export class SalesService {
         storeName: row.storeName,
         businessName: row.tradeName ?? row.companyName,
         taxId: row.companyTaxId,
+        lastTerminalSeq: Number(last?.seq ?? 0),
       };
     });
   }

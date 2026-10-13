@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-12 Numeração da NFC-e] — 13/10/2026
+
+### Adicionado
+- **Numeração da NFC-e:** a série é a do caixa (única na empresa) e o número da nota é o número da venda no caixa, para dois caixas nunca repetirem número, mesmo sem internet. Os buracos (devolução, venda que não virou nota) serão inutilizados na F3-17.
+
+### Corrigido
+- **Aparelho novo ligado a um caixa que já vendeu recomeçava a numeração em 1.** As vendas novas colidiam com números já gravados no servidor. Agora o servidor informa o último número recebido e o aparelho continua dali (nunca volta para trás).
+
 ## [F3-10 Certificado digital A1] — 13/10/2026
 
 ### Adicionado

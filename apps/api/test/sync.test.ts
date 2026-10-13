@@ -821,3 +821,41 @@ describe('regras de ICMS da empresa (F3-06.e)', () => {
     expect((await caixa.pdv.fiscalContext()).icmsRules).toEqual([]);
   });
 });
+
+describe('aparelho novo ligado a um caixa que já vendeu (F3-12)', () => {
+  it('continua a numeração do servidor, sem repetir número de venda', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    await admin.post('/products', { name: 'Água', priceCents: 300, barcodes: ['78912342'] });
+    const primeiro = await terminalDevice(dono, 'Caixa 1', 'web');
+    await primeiro.sync.sync();
+    await primeiro.pdv.openSession(0);
+    const vender = async (pdv: PdvService) =>
+      pdv.completeSale(addItem(EMPTY_CART, (await pdv.findByCode('78912342'))!), [{ method: 'cash', receivedCents: 300 }], {
+        discountLimitPercent: 10,
+      });
+    await vender(primeiro.pdv);
+    await vender(primeiro.pdv);
+    await primeiro.sync.sync();
+
+    // O mesmo caixa num aparelho novo: banco local vazio.
+    const contexto = (await api(t.app, dono.auth).get(`/pos/terminals/${primeiro.terminal.id}/context`)).json();
+    expect(contexto.lastTerminalSeq).toBe(2);
+    const storage = createStorage(nodeSqliteDriver());
+    await migrateLocal(storage);
+    const novo = new PdvService(storage, { terminalId: primeiro.terminal.id, operatorId: dono.me.user.id });
+    await novo.alignSaleSequence(contexto.lastTerminalSeq);
+    const sync = new SyncClient(storage, novo, transport(dono.auth, primeiro.terminal.id).impl, primeiro.terminal.id);
+    await sync.sync();
+    await novo.openSession(0);
+    const venda = await vender(novo);
+    expect(venda.terminalSeq).toBe(3);
+    const estado = await sync.sync();
+    expect(estado.rejected).toBe(0);
+    expect(estado.pending).toBe(0);
+
+    // Alinhar nunca diminui o contador.
+    await novo.alignSaleSequence(1);
+    expect((await vender(novo)).terminalSeq).toBe(4);
+  });
+});
