@@ -44,3 +44,37 @@ export async function validateSigned(xml: string): Promise<string[]> {
   });
   return result.errors.map((e) => e.message);
 }
+
+/**
+ * Schemas dos webservices (pacote 9q): as mensagens de serviço (enviNFe, consStatServ...) com o
+ * leiaute da nota do PL_010f, que é o vigente.
+ */
+const serviceSchemas = await (async () => {
+  const { unzip } = await import('../scripts/xlsx.mjs');
+  const zip = readFileSync(
+    fileURLToPath(new URL('../sources/PL_009q_servicos_2025-05-19.zip', import.meta.url)),
+  );
+  const fromNfePackage = new Set(schemas.map((s) => s.fileName));
+  return [
+    ...schemas,
+    ...[...unzip(zip)]
+      .filter(([name]) => name.endsWith('.xsd'))
+      .map(([name, body]) => ({
+        fileName: name.split('/').pop()!,
+        contents: body.toString('utf8'),
+      }))
+      .filter((s) => !fromNfePackage.has(s.fileName)),
+  ];
+})();
+
+/** Valida uma mensagem de serviço contra o schema indicado (ex.: "enviNFe_v4.00.xsd"). */
+export async function validateServiceXml(xml: string, schemaFile: string): Promise<string[]> {
+  const schema = serviceSchemas.find((s) => s.fileName === schemaFile);
+  if (!schema) throw new Error(`Schema não encontrado: ${schemaFile}`);
+  const result = await validateXML({
+    xml: [{ fileName: 'mensagem.xml', contents: xml }],
+    schema: [schema],
+    preload: serviceSchemas.filter((s) => s !== schema),
+  });
+  return result.errors.map((e) => e.message);
+}

@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query } from '@nestjs/common';
-import { certificateUploadInput, companyIcmsRuleInput } from '@bipae/domain';
+import { certificateUploadInput, companyIcmsRuleInput, sefazStatusInput } from '@bipae/domain';
 import { COMPANY_REGIMES } from '@bipae/fiscal';
 import {
   CESTS,
@@ -24,6 +24,7 @@ import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { notFound, parse } from '../../common/errors';
 import { today } from './fiscal-validation';
 import { CertificatesService } from './certificates.service';
+import { SefazService } from './sefaz.service';
 import { IcmsRulesService } from './icms-rules.service';
 
 const ncmQuery = z.object({
@@ -64,6 +65,7 @@ export class FiscalController {
   constructor(
     @Inject(IcmsRulesService) private readonly rules: IcmsRulesService,
     @Inject(CertificatesService) private readonly certificates: CertificatesService,
+    @Inject(SefazService) private readonly sefaz: SefazService,
   ) {}
 
   // ---------------------------------------------------------------- certificado A1 (F3-10)
@@ -88,6 +90,19 @@ export class FiscalController {
   @RequirePermission('fiscal.profile.write')
   removeCertificate(@Ctx() ctx: RequestContext, @Param('companyId', new ParseUUIDPipe()) companyId: string) {
     return this.certificates.remove(ctx, companyId);
+  }
+
+  // ---------------------------------------------------------------- SEFAZ em homologação (F3-11)
+
+  /** Pergunta à SEFAZ de homologação se o serviço está no ar, usando o certificado da empresa. */
+  @Post('sefaz/status/:companyId')
+  @RequirePermission('fiscal.profile.write')
+  sefazStatus(
+    @Ctx() ctx: RequestContext,
+    @Param('companyId', new ParseUUIDPipe()) companyId: string,
+    @Body() body: unknown,
+  ) {
+    return this.sefaz.status(ctx, companyId, parse(sefazStatusInput, body ?? {}).model);
   }
 
   // ---------------------------------------------------------------- regras de ICMS da empresa

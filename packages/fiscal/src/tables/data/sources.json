@@ -124,5 +124,23 @@
   "publishedAt": "2026-10-13",
   "downloadedAt": "2026-10-13",
   "sha256": "23a253111a717ce6e2d04e1b31f4c2096c54bd5c10f92983d121b619be192928"
+ },
+ "nfeServiceSchemas": {
+  "file": "PL_009q_servicos_2025-05-19.zip",
+  "title": "Pacote de schemas da NF-e/NFC-e nº 9q, com os schemas dos webservices (status, lote, recibo, consulta e inutilização)",
+  "publisher": "Portal Nacional da NF-e (ENCAT)",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2025-05-19",
+  "downloadedAt": "2026-10-13",
+  "sha256": "82a26d04a778fc214bf8c6c6e5c65ea577721e32ed5efa9a11a80098b8f9802f"
+ },
+ "icpBrasil": {
+  "file": "ICP-Brasil_ACcompactado_2026-10-13.zip",
+  "title": "Certificados das Autoridades Certificadoras da ICP-Brasil (arquivo único compactado)",
+  "publisher": "Instituto Nacional de Tecnologia da Informação (ITI)",
+  "page": "https://www.gov.br/iti/pt-br/assuntos/repositorio/certificados-das-acs-da-icp-brasil-arquivo-unico-compactado",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-10-13",
+  "sha256": "d7f977c68fed76090dc58c32684716f4a8863bb94cb2d9fd663328c01eeaaf7d"
  }
 }

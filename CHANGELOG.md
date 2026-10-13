@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-11.a Conversa com a SEFAZ] — 13/10/2026
+
+### Adicionado
+- **Cliente dos webservices da SEFAZ (homologação):** status do serviço, envio de notas assinadas (síncrono com uma nota), consulta do recibo e consulta pela chave, para NF-e e NFC-e, nas 27 UFs, com os endereços oficiais.
+- Mensagens conferidas contra os schemas oficiais dos serviços (pacote 9q do Portal da NF-e). O XML autorizado (nfeProc, nota mais protocolo) passa no schema `procNFe`.
+- **Conexão segura:** HTTPS com o certificado A1 da empresa (autenticação mútua) e a cadeia oficial da ICP-Brasil (arquivo do ITI, guardado com hash). Um teste prova que servidor com certificado desconhecido é recusado.
+- Retornos explicados em português: SEFAZ fora do ar, falha SOAP com o motivo, resposta sem mensagem.
+- Botão **"Testar conexão com a SEFAZ"** na empresa com certificado: mostra o código e a mensagem que a SEFAZ devolveu.
+- O leitor de XML passou para o motor fiscal (`@bipae/fiscal`), usado pelo DANFE e pelos retornos da SEFAZ.
+
+### Pendente
+- A primeira conversa com a SEFAZ real depende do certificado de homologação (item E1): tarefa F3-11.b.
+
 ## [F3-13.c DANFE da NF-e] — 13/10/2026
 
 ### Adicionado

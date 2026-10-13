@@ -37,7 +37,7 @@ describe('origem das tabelas', () => {
       // Só fontes oficiais: Portal Nacional da NF-e, Siscomex, SEFAZ Virtual do RS, CONFAZ e o
       // Portal Nacional da NFC-e, mantido pelo ENCAT (os coordenadores tributários das SEFAZ).
       expect(fonte.page).toMatch(
-        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda)\.gov\.br|nfce\.encat\.org)\//,
+        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda)\.gov\.br|nfce\.encat\.org|www\.gov\.br\/iti)\//,
       );
       assertDate(fonte.publishedAt);
       assertDate(fonte.downloadedAt);

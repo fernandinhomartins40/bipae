@@ -1,4 +1,4 @@
-import type { CertificateStatus } from '@bipae/domain';
+import type { CertificateStatus, SefazStatus } from '@bipae/domain';
 import { Alert, Button, Drawer, TextField } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
@@ -49,8 +49,50 @@ export function CertificateLine({
           {certificate ? 'Trocar certificado' : 'Enviar certificado'}
         </Button>
       )}
+      {canWrite && certificate && certificate.status !== 'vencido' && (
+        <SefazCheck companyId={companyId} />
+      )}
       {open && <CertificateForm companyId={companyId} onClose={() => setOpen(false)} />}
     </div>
+  );
+}
+
+/**
+ * Testa a conexão com a SEFAZ de homologação usando o certificado da empresa (F3-11): mostra o
+ * código e a mensagem que a SEFAZ devolveu, ou o motivo de não ter conseguido falar com ela.
+ */
+function SefazCheck({ companyId }: { companyId: string }) {
+  const { api } = useApp();
+  const [checking, setChecking] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
+  const check = async () => {
+    setChecking(true);
+    setResult(null);
+    try {
+      const status = await api.post<SefazStatus>(`/fiscal/sefaz/status/${companyId}`, {
+        model: '65',
+      });
+      setResult({
+        ok: status.online,
+        text: `SEFAZ de homologação (${status.uf}) respondeu: ${status.cStat} - ${status.xMotivo}`,
+      });
+    } catch (err) {
+      setResult({ ok: false, text: (err as Error).message });
+    } finally {
+      setChecking(false);
+    }
+  };
+  return (
+    <>
+      <Button variant="ghost" onClick={check} disabled={checking}>
+        {checking ? 'Testando...' : 'Testar conexão com a SEFAZ'}
+      </Button>
+      {result && (
+        <p role="status" className={`w-full text-sm ${result.ok ? 'text-success' : 'text-danger'}`}>
+          {result.text}
+        </p>
+      )}
+    </>
   );
 }
 

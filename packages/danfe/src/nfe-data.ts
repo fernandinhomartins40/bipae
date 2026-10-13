@@ -1,4 +1,4 @@
-import { descendant, find, findAll, parseXml, textOf, type XmlElement } from './xml';
+import { descendant, find, findAll, parseXml, textOf, type XmlElement } from '@bipae/fiscal';
 
 /**
  * O que o DANFE da NF-e mostra, lido do XML da nota (NFe) ou do XML autorizado (nfeProc, que traz

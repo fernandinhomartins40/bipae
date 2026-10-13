@@ -188,4 +188,21 @@ export class CertificatesService {
     );
     return { privateKey, certificate: parsed.certificateDer, notAfter: row.notAfter };
   }
+
+  /**
+   * Chave e certificado em PEM para a conexão com a SEFAZ (autenticação mútua). Convertidos aqui,
+   * e não com o .pfx direto, porque muitos A1 usam cifras antigas que o OpenSSL 3 recusa.
+   */
+  async tlsCredentials(tx: Tx, companyId: string): Promise<{ key: string; cert: string }> {
+    const [row] = await tx.select().from(companyCertificates).where(eq(companyCertificates.companyId, companyId));
+    if (!row) throw new AppError(400, 'no_certificate', 'A empresa ainda não tem certificado digital A1 cadastrado.');
+    if (row.notAfter <= new Date()) throw new AppError(400, 'certificate_expired', 'O certificado digital da empresa venceu.');
+    const parsed = parsePfx(Buffer.from(this.box.open(row.sealedPfx), 'base64'), this.box.open(row.sealedPassword));
+    const pem = (label: string, der: Buffer) =>
+      `-----BEGIN ${label}-----\n${der.toString('base64').replace(/.{64}/g, '$&\n').replace(/\n$/, '')}\n-----END ${label}-----\n`;
+    return {
+      key: pem('PRIVATE KEY', Buffer.from(parsed.privateKeyPkcs8)),
+      cert: pem('CERTIFICATE', Buffer.from(parsed.certificateDer, 'base64')),
+    };
+  }
 }

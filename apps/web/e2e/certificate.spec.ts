@@ -37,7 +37,11 @@ test('enviar o certificado A1 da empresa e ver a validade', async ({ page }) => 
   await page.getByRole('button', { name: 'Salvar empresa' }).click();
   await expect(page.getByText('Sem certificado digital A1')).toBeVisible();
 
-  const arquivo = { name: 'empresa.pfx', mimeType: 'application/x-pkcs12', buffer: makePfx('11222333000181', 'segredo') };
+  const arquivo = {
+    name: 'empresa.pfx',
+    mimeType: 'application/x-pkcs12',
+    buffer: makePfx('11222333000181', 'segredo'),
+  };
   await page.getByRole('button', { name: 'Enviar certificado' }).click();
   await page.getByLabel('Arquivo do certificado').setInputFiles(arquivo);
   await page.getByLabel('Senha do certificado').fill('errada');
@@ -46,6 +50,28 @@ test('enviar o certificado A1 da empresa e ver a validade', async ({ page }) => 
 
   await page.getByLabel('Senha do certificado').fill('segredo');
   await page.getByRole('button', { name: 'Enviar certificado' }).last().click();
-  await expect(page.getByText(/Certificado A1 de MERCADO TESTE:11222333000181, válido até/)).toBeVisible();
+  await expect(
+    page.getByText(/Certificado A1 de MERCADO TESTE:11222333000181, válido até/),
+  ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Trocar certificado' })).toBeVisible();
+
+  // F3-11: teste de conexão. A resposta da SEFAZ é simulada aqui: o certificado de teste não
+  // vale na SEFAZ de verdade (a conversa real é testada na API, com uma SEFAZ simulada).
+  await page.route('**/fiscal/sefaz/status/**', (route) =>
+    route.fulfill({
+      json: {
+        model: '65',
+        uf: 'SP',
+        environment: 'homologacao',
+        cStat: '107',
+        xMotivo: 'Serviço em Operação',
+        online: true,
+        checkedAt: new Date().toISOString(),
+      },
+    }),
+  );
+  await page.getByRole('button', { name: 'Testar conexão com a SEFAZ' }).click();
+  await expect(
+    page.getByText('SEFAZ de homologação (SP) respondeu: 107 - Serviço em Operação'),
+  ).toBeVisible();
 });

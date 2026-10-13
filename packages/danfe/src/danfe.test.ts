@@ -23,7 +23,6 @@ import {
   layoutDanfeNfe,
   measureWith,
   nfNumberBR,
-  parseXml,
   phoneBR,
   readNfe,
   renderDanfeNfe,
@@ -215,26 +214,6 @@ describe('formatação do DANFE', () => {
   it('troca o que a fonte padrão não desenha', () => {
     expect(winAnsi('Ação – “ok” €')).toBe('Ação – “ok” €');
     expect(winAnsi('ŝ ≥ 😀')).toBe('s ? ?');
-  });
-});
-
-describe('leitor de XML', () => {
-  it('lê elementos, atributos, entidades e ignora prefixo de namespace', () => {
-    const root = parseXml(
-      '<?xml version="1.0"?><!-- nota --><a x="1" y=\'&quot;2&quot;\'><ds:b>Zé &amp; Cia &#233;&#x41;</ds:b><c/></a>',
-    );
-    expect(root.name).toBe('a');
-    expect(root.attrs).toEqual({ x: '1', y: '"2"' });
-    expect(root.children.map((c) => c.name)).toEqual(['b', 'c']);
-    expect(root.children[0]!.text).toBe('Zé & Cia éA');
-  });
-
-  it('recusa XML quebrado', () => {
-    expect(() => parseXml('<a><b></a>')).toThrow('fora de ordem');
-    expect(() => parseXml('<a>')).toThrow('sem fechamento');
-    expect(() => parseXml('<a/><b/>')).toThrow('um elemento raiz');
-    expect(() => parseXml('<a>&nbsp;</a>')).toThrow('Entidade desconhecida');
-    expect(() => parseXml('<a>x < y</a>')).toThrow('não fecha');
   });
 });
 

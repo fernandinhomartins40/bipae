@@ -394,6 +394,21 @@ function importNfeEndpoints() {
   });
 }
 
+// Cadeia da ICP-Brasil: as SEFAZ usam certificados dela, que não vêm na lista padrão do Node.
+function importIcpBrasil() {
+  const zip = readFileSync(join(sourcesDir, manifest.icpBrasil.file));
+  return [...unzip(zip)]
+    .filter(([name]) => name.endsWith('.crt'))
+    .map(([name, body]) => {
+      const pem = body.toString('utf8').replace(/\r\n/g, '\n').trim();
+      if (!/^-----BEGIN CERTIFICATE-----\n[\s\S]+\n-----END CERTIFICATE-----$/.test(pem)) {
+        throw new Error(`Certificado fora do formato PEM: ${name}`);
+      }
+      return { name: name.split('/').pop().replace(/\.crt$/, ''), pem };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 const tables = {
   'cfop.json': importCfop(),
   'class-trib.json': importClassTrib(),
@@ -405,6 +420,7 @@ const tables = {
   'payment-means.json': importPaymentMeans(),
   'nfce-endpoints.json': importNfceEndpoints(),
   'nfe-endpoints.json': importNfeEndpoints(),
+  'icp-brasil.json': importIcpBrasil(),
 };
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha

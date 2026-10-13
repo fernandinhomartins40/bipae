@@ -1,6 +1,6 @@
 /**
  * Leitor de XML mínimo para a NF-e: elementos, atributos e texto, com as entidades do XML.
- * Basta para o XML da nota e para o nfeProc devolvido pela SEFAZ (sem DTD nem CDATA). O DANFE
+ * Basta para o XML da nota, para o nfeProc e para os retornos da SEFAZ (sem DTD nem CDATA). O DANFE
  * é sempre montado a partir do XML, porque o manual proíbe imprimir o que não está nele.
  */
 export interface XmlElement {

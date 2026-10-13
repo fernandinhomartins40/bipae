@@ -538,3 +538,21 @@ export interface CertificateStatus {
   daysLeft: number;
   status: 'valido' | 'vencendo' | 'vencido';
 }
+
+/** Teste de conexão com a SEFAZ de homologação (F3-11): NF-e (55) ou NFC-e (65). */
+export const sefazStatusInput = z.object({
+  model: z.enum(['55', '65'], { message: 'Escolha NF-e (55) ou NFC-e (65)' }).default('65'),
+});
+
+/** Resposta do status do serviço da SEFAZ, como a tela mostra. */
+export interface SefazStatus {
+  model: '55' | '65';
+  uf: string;
+  environment: 'homologacao';
+  cStat: string;
+  xMotivo: string;
+  online: boolean;
+  averageSeconds?: number;
+  observation?: string;
+  checkedAt: string;
+}

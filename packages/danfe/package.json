@@ -11,10 +11,10 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
+    "@bipae/fiscal": "workspace:*",
     "pdf-lib": "1.17.1"
   },
   "devDependencies": {
-    "@bipae/fiscal": "workspace:*",
     "@types/node": "^24.0.0",
     "@vitest/coverage-v8": "^5.0.3",
     "vitest": "^5.0.3"
