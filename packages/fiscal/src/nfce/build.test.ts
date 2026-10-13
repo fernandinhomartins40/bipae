@@ -1,7 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { validateXML } from 'xmllint-wasm';
+import { validateNfeXml as validate, validateSigned } from '../../test/schema';
 import { calculateContribution } from '../taxes/contributions';
 import { calculateIbsCbs } from '../taxes/ibs-cbs';
 import { calculateIcms } from '../taxes/icms';
@@ -9,44 +7,6 @@ import { accessKeyCheckDigit, buildAccessKey } from './access-key';
 import { buildNfce, NfceBuildError, type NfceInput, type NfceItem } from './build';
 
 /** F3-07: XML da NFC-e validado contra os schemas oficiais (pacote PL_010f do Portal Nacional). */
-
-// Os XSD saem do pacote oficial guardado em sources/ (o mesmo que gera as tabelas).
-const schemas = await (async () => {
-  const { unzip } = await import('../../scripts/xlsx.mjs');
-  const zip = readFileSync(
-    fileURLToPath(new URL('../../sources/PL_010f_v1.04.zip', import.meta.url)),
-  );
-  return [...unzip(zip)]
-    .filter(([name]) => name.endsWith('.xsd'))
-    .map(([name, body]) => ({ fileName: name.split('/').pop()!, contents: body.toString('utf8') }));
-})();
-const nfeSchema = schemas.find((s) => s.fileName === 'nfe_v4.00.xsd')!;
-const preload = schemas.filter((s) => s !== nfeSchema);
-
-/**
- * A assinatura é a F3-09. Para validar a estrutura, entra um bloco de assinatura no formato do
- * schema, com valores fictícios: ele nunca vai para a SEFAZ.
- */
-const FAKE_SIGNATURE =
-  '<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo>' +
-  '<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>' +
-  '<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>' +
-  '<Reference URI="#NFe0"><Transforms>' +
-  '<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>' +
-  '<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/></Transforms>' +
-  '<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>AAAA</DigestValue>' +
-  '</Reference></SignedInfo><SignatureValue>AAAA</SignatureValue>' +
-  '<KeyInfo><X509Data><X509Certificate>AAAA</X509Certificate></X509Data></KeyInfo></Signature>';
-
-async function validate(xml: string) {
-  const signed = xml.replace('</NFe>', `${FAKE_SIGNATURE}</NFe>`);
-  const result = await validateXML({
-    xml: [{ fileName: 'nfce.xml', contents: signed }],
-    schema: [nfeSchema],
-    preload,
-  });
-  return result.errors.map((e) => e.message);
-}
 
 const HOJE = '2026-06-15';
 const EMITENTE: NfceInput['issuer'] = {
@@ -236,15 +196,38 @@ describe('XML da NFC-e contra o schema oficial', () => {
     expect(doc.xml).toContain('<ICMS20>');
   });
 
-  it('o que ainda não é emitido ou está incoerente vira erro claro', () => {
+  it('ICMS com substituição tributária (CST 10) entra no total da nota', async () => {
     const comSt = calculateIcms(
-      { cst: '10', rate: '18', st: { mva: '40', rate: '18' } },
+      { cst: '10', rate: '18', fcpRate: '2', st: { mva: '40', rate: '18' } },
       { baseCents: 10_000 },
     );
-    expect(() => buildNfce(venda({ items: [itemReal({ icms: comSt })] }))).toThrow(NfceBuildError);
-    expect(() => buildNfce(venda({ items: [itemReal({ icms: comSt })] }))).toThrow(
+    const doc = buildNfce(
+      venda({
+        items: [itemReal({ icms: comSt })],
+        payments: [{ code: '17', amountCents: 10_720 }],
+      }),
+    );
+    expect(await validate(doc.xml)).toEqual([]);
+    expect(doc.xml).toContain('<modBCST>4</modBCST><pMVAST>40.00</pMVAST><vBCST>140.00</vBCST>');
+    expect(doc.xml).toContain('<vBCFCP>100.00</vBCFCP><pFCP>2.00</pFCP><vFCP>2.00</vFCP>');
+    expect(doc.xml).toContain('<vST>7.20</vST>');
+    expect(doc.totalCents).toBe(10_720);
+  });
+
+  it('o que ainda não é emitido ou está incoerente vira erro claro', () => {
+    const icms90 = {
+      ...calculateIcms({ cst: '00', rate: '18' }, { baseCents: 10_000 }),
+      cst: '90',
+      group: 'ICMS90',
+    };
+    expect(() => buildNfce(venda({ items: [itemReal({ icms: icms90 })] }))).toThrow(NfceBuildError);
+    expect(() => buildNfce(venda({ items: [itemReal({ icms: icms90 })] }))).toThrow(
       'ainda não é emitida na NFC-e',
     );
+    expect(() => buildNfce(venda({ payments: [{ code: '99', amountCents: 10_000 }] }))).toThrow(
+      'descrição do meio usado',
+    );
+    expect(() => buildNfce(venda({ items: Array(991).fill(itemReal()) }))).toThrow('990 itens');
     expect(() => buildNfce(venda({ items: [] }))).toThrow('pelo menos um item');
     expect(() => buildNfce(venda({ payments: [{ code: '17', amountCents: 5000 }] }))).toThrow(
       'precisam somar o valor da nota',
@@ -285,11 +268,6 @@ describe('XML assinado de verdade contra o schema (F3-09)', () => {
       privateKey: par.privateKey,
       certificate: btoa('teste'),
     });
-    const result = await validateXML({
-      xml: [{ fileName: 'assinado.xml', contents: assinado }],
-      schema: [nfeSchema],
-      preload,
-    });
-    expect(result.errors.map((e) => e.message)).toEqual([]);
+    expect(await validateSigned(assinado)).toEqual([]);
   });
 });

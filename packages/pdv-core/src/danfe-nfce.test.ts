@@ -54,9 +54,7 @@ const nota: DanfeNfceData = {
   surchargeCents: 0,
   discountCents: 77,
   totalCents: 1700,
-  payments: [
-    { label: 'Dinheiro', amountCents: 2000 },
-  ],
+  payments: [{ label: 'Dinheiro', amountCents: 2000 }],
   changeCents: 300,
   consumer: null,
   number: 123,
@@ -167,9 +165,9 @@ describe('DANFE NFC-e (F3-13.b)', () => {
     expect(cpf).toContain('Ana Souza');
     expect(cpf).toContain('Rua A, 1');
     expect(cpf).not.toContain('NÃO IDENTIFICADO');
-    expect(textoDe({ ...nota, consumer: { kind: 'cnpj', id: '11222333000181' } }).join('\n')).toContain(
-      'CONSUMIDOR CNPJ: 11.222.333/0001-81',
-    );
+    expect(
+      textoDe({ ...nota, consumer: { kind: 'cnpj', id: '11222333000181' } }).join('\n'),
+    ).toContain('CONSUMIDOR CNPJ: 11.222.333/0001-81');
     expect(
       textoDe({ ...nota, consumer: { kind: 'estrangeiro', id: 'X1234567' } }).join('\n'),
     ).toContain('CONSUMIDOR Id. Estrangeiro: X1234567');
@@ -229,7 +227,9 @@ describe('DANFE NFC-e (F3-13.b)', () => {
     const pontos = (qr as { moduleDots: number }).moduleDots;
     expect((lado * pontos) / 8).toBeGreaterThanOrEqual(22);
     // Impressora de 300 dpi (≈ 12 pontos por mm) precisa de quadradinhos maiores.
-    const maior = buildDanfeNfce(nota, { ...opcoes, dotsPerMm: 12 }).find((b) => b.kind === 'qrcode');
+    const maior = buildDanfeNfce(nota, { ...opcoes, dotsPerMm: 12 }).find(
+      (b) => b.kind === 'qrcode',
+    );
     expect((maior as { moduleDots: number }).moduleDots).toBeGreaterThan(pontos);
   });
 });
@@ -259,7 +259,8 @@ describe('QR Code na impressora (ESC/POS)', () => {
   it('o DANFE vira bytes com o QR Code centralizado', () => {
     const bytes = Array.from(encodeReceipt(buildDanfeNfce(nota, opcoes)));
     const inicio = bytes.findIndex(
-      (b, i) => b === 0x1d && bytes[i + 1] === 0x28 && bytes[i + 2] === 0x6b && bytes[i + 6] === 0x50,
+      (b, i) =>
+        b === 0x1d && bytes[i + 1] === 0x28 && bytes[i + 2] === 0x6b && bytes[i + 6] === 0x50,
     );
     expect(inicio).toBeGreaterThan(0);
     const tamanho = bytes[inicio + 3]! + bytes[inicio + 4]! * 256 - 3;
@@ -294,7 +295,11 @@ describe('cupom em HTML', () => {
       'z.rs.gov.br/nfce',
       '/consulta',
     ]);
-    expect(wrapText('a https://www.sefaz.rs.gov.br', 16)).toEqual(['a', 'https://www.sefa', 'z.rs.gov.br']);
+    expect(wrapText('a https://www.sefaz.rs.gov.br', 16)).toEqual([
+      'a',
+      'https://www.sefa',
+      'z.rs.gov.br',
+    ]);
     expect(wrapText('', 10)).toEqual([]);
   });
 });

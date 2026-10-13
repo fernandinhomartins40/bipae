@@ -61,7 +61,7 @@ describe('ICMS no regime normal (CST)', () => {
     const r = calculateIcms({ cst: '10', rate: '18', st: { mva: '40', rate: '18' } }, CEM_REAIS);
     // Base da ST: 100,00 × 1,40 = 140,00; 140,00 × 18% = 25,20; menos 18,00 de ICMS próprio = 7,20
     expect(r.amountCents).toBe(1800);
-    expect(r.st).toEqual({ mva: '40.00', baseCents: 14_000, rate: '18.00', amountCents: 720 });
+    expect(r.st).toEqual({ mva: '40.00', baseReduction: null, baseCents: 14_000, rate: '18.00', amountCents: 720 });
     expect(r.trace.at(-1)).toMatchObject({
       label: 'ICMS-ST a 18.00%',
       formula: '140.00 × 18.00% − 18.00 de ICMS próprio',
@@ -94,7 +94,7 @@ describe('ICMS no regime normal (CST)', () => {
     );
     // Próprio: 90,00 × 18% = 16,20. ST: 140,00 × 0,90 = 126,00; 22,68 − 16,20 = 6,48
     expect(r).toMatchObject({ group: 'ICMS70', baseCents: 9000, amountCents: 1620 });
-    expect(r.st).toMatchObject({ baseCents: 12_600, amountCents: 648 });
+    expect(r.st).toMatchObject({ baseReduction: '10.00', baseCents: 12_600, amountCents: 648 });
   });
 
   it('o ICMS-ST nunca fica negativo', () => {
@@ -128,7 +128,7 @@ describe('ICMS no Simples Nacional (CSOSN)', () => {
   it('202: ST com o ICMS próprio só abatido, sem destaque', () => {
     const r = calculateIcms({ csosn: '202', rate: '18', st: { mva: '40', rate: '18' } }, CEM_REAIS);
     expect(r).toMatchObject({ group: 'ICMSSN202', baseCents: 0, amountCents: 0, rate: '18.00', credit: null });
-    expect(r.st).toEqual({ mva: '40.00', baseCents: 14_000, rate: '18.00', amountCents: 720 });
+    expect(r.st).toEqual({ mva: '40.00', baseReduction: null, baseCents: 14_000, rate: '18.00', amountCents: 720 });
     expect(r.trace.map((s) => s.label)).toContain('ICMS próprio a abater (18.00%, não destacado)');
   });
 

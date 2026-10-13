@@ -1,5 +1,16 @@
 # Changelog
 
+## [F3-08.a XML da NF-e] — 13/10/2026
+
+### Adicionado
+- **XML da NF-e (modelo 55)**, validado contra o schema oficial: destinatário com endereço e indicador da inscrição estadual, natureza da operação, finalidade (normal, complementar, ajuste, devolução com a nota referenciada), presença do comprador, transporte com transportadora e volumes, fatura e duplicatas, pedido do cliente no item, informações ao fisco e ao contribuinte.
+- **IPI na nota** (tributado e não tributado), com o código de enquadramento vindo da regra.
+- **ICMS com substituição tributária, redução e diferimento** na NF-e e na NFC-e: CST 10, 51 e 70, CSOSN 201 e 202, FCP com base. O total da nota soma ST, IPI, frete, seguro e outras despesas, pela fórmula do manual.
+- Conferências antes da SEFAZ, com mensagem clara: CFOP de entrada em nota de saída, CFOP interno para destinatário de outro estado, inscrição estadual faltando, parcelas que não fecham com a fatura, "sem pagamento" com valor.
+
+### Pendente
+- Venda interestadual para consumidor final não contribuinte (partilha do ICMS, DIFAL) avisa que ainda não é emitida: tarefa F3-32.
+
 ## [F3-13.b DANFE da NFC-e] — 13/10/2026
 
 ### Adicionado

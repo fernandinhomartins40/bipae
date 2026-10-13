@@ -53,7 +53,14 @@ export interface IcmsResult {
   /** CST 51: imposto da operação, parte diferida e percentual do diferimento. */
   deferral: { rate: string; operationAmountCents: number; deferredAmountCents: number } | null;
   fcp: { rate: string; amountCents: number } | null;
-  st: { mva: string; baseCents: number; rate: string; amountCents: number } | null;
+  st: {
+    mva: string;
+    /** Redução da base da ST, quando a regra traz uma (pRedBCST). */
+    baseReduction: string | null;
+    baseCents: number;
+    rate: string;
+    amountCents: number;
+  } | null;
   /** Crédito que o Simples Nacional permite ao comprador aproveitar. */
   credit: { rate: string; amountCents: number } | null;
   trace: TraceStep[];
@@ -196,8 +203,9 @@ export function calculateIcms(effect: IcmsEffect, input: IcmsInput): IcmsResult 
           : `${money(input.baseCents)} × (1 + ${pct(mva)})`,
       ),
     );
+    let stReduction: Dec | null = null;
     if (rule.baseReduction !== undefined) {
-      const stReduction = percentage(rule.baseReduction, 'redução da base da ST', code);
+      stReduction = percentage(rule.baseReduction, 'redução da base da ST', code);
       const reduced = round(stBase.mul(dec(1).minus(percent(stReduction))), 2);
       trace.push(
         step(`Redução de ${pct(stReduction)} na base da ST`, money(toCents(reduced)), `${money(toCents(stBase))} × (1 − ${pct(stReduction)})`),
@@ -206,7 +214,13 @@ export function calculateIcms(effect: IcmsEffect, input: IcmsInput): IcmsResult 
     }
     const gross = toCents(stBase.mul(percent(stRate)), mode);
     const stAmount = Math.max(0, gross - ownForSt);
-    st = { mva: mva.toFixed(2), baseCents: toCents(stBase), rate: stRate.toFixed(2), amountCents: stAmount };
+    st = {
+      mva: mva.toFixed(2),
+      baseReduction: stReduction ? stReduction.toFixed(2) : null,
+      baseCents: toCents(stBase),
+      rate: stRate.toFixed(2),
+      amountCents: stAmount,
+    };
     trace.push(
       step(`ICMS-ST a ${pct(stRate)}`, money(stAmount), `${money(st.baseCents)} × ${pct(stRate)} − ${money(ownForSt)} de ICMS próprio`),
     );

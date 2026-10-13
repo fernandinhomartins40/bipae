@@ -193,9 +193,11 @@ export function buildDanfeNfce(data: DanfeNfceData, options: DanfeNfceOptions): 
   // Divisão IV: consulta pela chave.
   blocks.push(
     ...text(`Consulte pela Chave de Acesso em ${data.urlChave}`, { align: 'center' }),
-    ...accessKeyLines(data.accessKey, columns).map(
-      (t): ReceiptBlock => ({ kind: 'text', text: t, align: 'center' }),
-    ),
+    ...accessKeyLines(data.accessKey, columns).map((t): ReceiptBlock => ({
+      kind: 'text',
+      text: t,
+      align: 'center',
+    })),
     line,
   );
 
@@ -203,7 +205,9 @@ export function buildDanfeNfce(data: DanfeNfceData, options: DanfeNfceOptions): 
   if (data.consumer) {
     const id =
       data.consumer.kind === 'estrangeiro' ? data.consumer.id : formatTaxId(data.consumer.id);
-    blocks.push(...text(`CONSUMIDOR ${CONSUMER_LABEL[data.consumer.kind]}: ${id}`, { align: 'center' }));
+    blocks.push(
+      ...text(`CONSUMIDOR ${CONSUMER_LABEL[data.consumer.kind]}: ${id}`, { align: 'center' }),
+    );
     if (data.consumer.name) blocks.push(...text(data.consumer.name, { align: 'center' }));
     if (data.consumer.address) blocks.push(...text(data.consumer.address, { align: 'center' }));
   } else {
