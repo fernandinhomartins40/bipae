@@ -30,6 +30,7 @@ import { PlatformGuard } from './modules/admin/platform.guard';
 import { LimitsService } from './modules/account/limits.service';
 import { DownloadsController, DownloadsService } from './modules/downloads/downloads.controller';
 import { FiscalController } from './modules/fiscal/fiscal.controller';
+import { CertificatesService } from './modules/fiscal/certificates.service';
 import { IcmsRulesService } from './modules/fiscal/icms-rules.service';
 import { AuditController } from './modules/audit/audit.controller';
 import { AuditService } from './modules/audit/audit.service';
@@ -103,6 +104,7 @@ class AppModule {
         TeamService,
         CatalogService,
         IcmsRulesService,
+        CertificatesService,
         PartiesService,
         SyncService,
         SalesService,

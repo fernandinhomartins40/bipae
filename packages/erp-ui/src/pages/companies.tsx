@@ -13,6 +13,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Building2, Plus, Store } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
+import { CertificateLine, useCertificates } from './certificate';
 import { formatRate, useFiscalOptions } from './fiscal-lookup';
 
 interface Company {
@@ -53,6 +54,7 @@ export function CompaniesPage() {
     queryFn: () => api.get<PriceTable[]>('/price-tables'),
   });
   const tableName = (id: string | null) => tables.data?.find((t) => t.id === id)?.name;
+  const certificates = useCertificates().data;
   const fiscal = useFiscalOptions().data;
   const regimeLabel = (id: string | null) => fiscal?.regimes.find((r) => r.id === id)?.label;
   const reload = () =>
@@ -96,10 +98,16 @@ export function CompaniesPage() {
                   {(!c.uf || !c.taxRegime) && (
                     <p className="text-sm text-muted">
                       Falta configurar:{' '}
-                      {[!c.uf && 'UF', !c.taxRegime && 'regime tributário'].filter(Boolean).join(' e ')}.
-                      O Bipaê vai precisar disso para calcular os impostos e emitir notas.
+                      {[!c.uf && 'UF', !c.taxRegime && 'regime tributário']
+                        .filter(Boolean)
+                        .join(' e ')}
+                      . O Bipaê vai precisar disso para calcular os impostos e emitir notas.
                     </p>
                   )}
+                  <CertificateLine
+                    companyId={c.id}
+                    certificate={certificates?.find((cert) => cert.companyId === c.id)}
+                  />
                 </div>
               </div>
               {canManage && (

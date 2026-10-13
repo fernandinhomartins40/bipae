@@ -1,5 +1,17 @@
 # Changelog
 
+## [F3-10 Certificado digital A1] — 13/10/2026
+
+### Adicionado
+- **Envio do certificado A1 da empresa** no cartão da empresa (Empresas e lojas): escolhe o arquivo .pfx, digita a senha e pronto.
+- O servidor confere o certificado e explica o problema: senha errada, arquivo que não é certificado, certificado vencido ou ainda não válido, CNPJ de outra empresa (filial da mesma raiz pode usar o da matriz).
+- **Arquivo e senha guardados cifrados** (AES-256-GCM); a API nunca devolve nenhum dos dois, e a trilha de auditoria registra só o titular e a validade. A equipe Bipaê (painel da plataforma) não tem acesso à tabela.
+- **Aviso de vencimento:** faltando 30 dias ou menos, o cartão da empresa avisa em destaque; vencido, pede o novo.
+- O servidor já usa o certificado para assinar notas, e o teste confere a assinatura com o certificado guardado.
+
+### Banco de dados
+- Migração `0010`: tabela de certificados por empresa, com isolamento por cliente (RLS).
+
 ## [F3-09 Assinatura da nota] — 13/10/2026
 
 ### Adicionado

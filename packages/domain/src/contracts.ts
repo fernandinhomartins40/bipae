@@ -515,3 +515,26 @@ export interface CompanyIcmsRuleRow {
   source: string;
   updatedAt: string;
 }
+
+// ---------- Certificado digital A1 (F3-10) ----------
+
+/** Envio do certificado A1: o arquivo .pfx em base64 e a senha dele. */
+export const certificateUploadInput = z.object({
+  pfxBase64: z
+    .string()
+    .min(100, 'Escolha o arquivo do certificado (.pfx ou .p12)')
+    .max(200_000, 'Arquivo grande demais para um certificado A1')
+    .regex(/^[A-Za-z0-9+/=]+$/, 'Arquivo do certificado em formato inválido'),
+  password: z.string().min(1, 'Informe a senha do certificado').max(200),
+});
+export type CertificateUploadInput = z.input<typeof certificateUploadInput>;
+
+/** Situação do certificado de uma empresa, sem nenhum segredo. */
+export interface CertificateStatus {
+  companyId: string;
+  subject: string;
+  cnpj: string;
+  notAfter: string;
+  daysLeft: number;
+  status: 'valido' | 'vencendo' | 'vencido';
+}

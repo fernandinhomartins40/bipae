@@ -110,6 +110,23 @@ export const companyIcmsRules = pgTable('company_icms_rules', {
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
 
+/** Certificado A1 da empresa (F3-10): .pfx e senha cifrados; o resto é só para exibir. */
+export const companyCertificates = pgTable('company_certificates', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  sealedPfx: text('sealed_pfx').notNull(),
+  sealedPassword: text('sealed_password').notNull(),
+  subject: text('subject').notNull(),
+  cnpj: text('cnpj').notNull(),
+  serial: text('serial').notNull(),
+  fingerprint: text('fingerprint').notNull(),
+  notBefore: ts('not_before').notNull(),
+  notAfter: ts('not_after').notNull(),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});
+
 export const stores = pgTable('stores', {
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),

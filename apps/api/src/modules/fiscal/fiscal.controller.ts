@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query } from '@nestjs/common';
-import { companyIcmsRuleInput } from '@bipae/domain';
+import { certificateUploadInput, companyIcmsRuleInput } from '@bipae/domain';
 import { COMPANY_REGIMES } from '@bipae/fiscal';
 import {
   CESTS,
@@ -23,6 +23,7 @@ import { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { notFound, parse } from '../../common/errors';
 import { today } from './fiscal-validation';
+import { CertificatesService } from './certificates.service';
 import { IcmsRulesService } from './icms-rules.service';
 
 const ncmQuery = z.object({
@@ -60,7 +61,34 @@ const cestView = (cest: Cest) => ({
  */
 @Controller('fiscal')
 export class FiscalController {
-  constructor(@Inject(IcmsRulesService) private readonly rules: IcmsRulesService) {}
+  constructor(
+    @Inject(IcmsRulesService) private readonly rules: IcmsRulesService,
+    @Inject(CertificatesService) private readonly certificates: CertificatesService,
+  ) {}
+
+  // ---------------------------------------------------------------- certificado A1 (F3-10)
+
+  @Get('certificates')
+  @RequirePermission('catalog.read')
+  listCertificates(@Ctx() ctx: RequestContext) {
+    return this.certificates.list(ctx);
+  }
+
+  @Post('certificates/:companyId')
+  @RequirePermission('fiscal.profile.write')
+  uploadCertificate(
+    @Ctx() ctx: RequestContext,
+    @Param('companyId', new ParseUUIDPipe()) companyId: string,
+    @Body() body: unknown,
+  ) {
+    return this.certificates.upload(ctx, companyId, parse(certificateUploadInput, body));
+  }
+
+  @Delete('certificates/:companyId')
+  @RequirePermission('fiscal.profile.write')
+  removeCertificate(@Ctx() ctx: RequestContext, @Param('companyId', new ParseUUIDPipe()) companyId: string) {
+    return this.certificates.remove(ctx, companyId);
+  }
 
   // ---------------------------------------------------------------- regras de ICMS da empresa
 

@@ -105,7 +105,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-09 · Assinatura XML com certificado A1 no servidor — depende: F3-07
   - `signNfe` (WebCrypto, roda no servidor e no desktop), conferida pela biblioteca independente xml-crypto e pelo schema.
   - Pronto quando: os testes passam com certificado de teste gerado na hora, e o certificado real fica para F3-11.
-- [ ] F3-10 · Cadastro do certificado A1 com assistente (cifrado, aviso de vencimento) — depende: F3-09
+- [x] F3-10 · Cadastro do certificado A1 com assistente (cifrado, aviso de vencimento) — depende: F3-09
 - [ ] F3-11 · Webservices da SEFAZ em homologação: status, autorização e consulta — depende: F3-10, F1-07 · externo: E1, E2
 - [ ] F3-12 · Numeração `nNF` a partir de `terminalSeq` na série do caixa — depende: F3-07
 - [ ] F3-13 · QR Code e DANFE da NFC-e (80 mm) e DANFE da NF-e (PDF) — depende: F3-07

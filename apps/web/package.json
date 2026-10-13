@@ -13,25 +13,27 @@
   },
   "dependencies": {
     "@bipae/erp-ui": "workspace:*",
+    "@bipae/local-db": "workspace:*",
     "@bipae/platform": "workspace:*",
     "@bipae/ui": "workspace:*",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "@bipae/local-db": "workspace:*"
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@types/node-forge": "^1.3.14",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/ws": "^8.5.12",
     "@vitejs/plugin-react": "^6.1.2",
+    "node-forge": "^1.4.0",
+    "otpauth": "^9.5.2",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
     "vite": "^8.3.4",
     "vite-plugin-pwa": "^2.0.0",
     "workbox-window": "^7.4.1",
-    "ws": "^8.18.0",
-    "@types/ws": "^8.5.12",
-    "tsx": "^4.23.15",
-    "otpauth": "^9.5.2"
+    "ws": "^8.18.0"
   }
 }
