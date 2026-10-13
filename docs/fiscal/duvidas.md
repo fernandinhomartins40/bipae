@@ -10,10 +10,15 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-004 | 🔴 aberta | Alíquotas de CBS/IBS de 2027–2028 |
 | D-005 | 🔴 aberta | Simples Nacional "por fora" em 2027: como o ERP deve tratar |
 | D-006 | 🔴 aberta | Data da NFS-e Nacional para o Simples Nacional |
-| D-007 | 🔴 aberta | Escopo das NT 2026.007 e 2026.008 |
+| D-007 | 🟡 parcial | Escopo das NT 2026.007 e 2026.008 |
 | D-008 | 🔴 aberta | Arredondamento de IBS/CBS por item × total |
 | D-009 | 🔴 aberta | Devolução no PDV com referência por item (VC02-14) |
 | D-010 | 🔴 aberta | Faixa de séries de NFC-e permitida para série por terminal |
+| D-011 | 🔴 aberta | Datas de homologação e produção da NT 2025.002 v1.52 |
+| D-012 | 🔴 aberta | Qual pacote de schemas (XSD) vale para a v1.52 |
+| D-013 | 🔴 aberta | Contingência off-line da NFC-e depois da NT 2026.002 |
+| D-014 | 🔴 aberta | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
+| D-015 | 🔴 aberta | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
 
 ---
 
@@ -74,3 +79,38 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** o Adendo 01 exige série exclusiva por terminal (web ou desktop). Fontes secundárias indicam séries 000–889 de uso livre, 890–899 reservadas para nota avulsa, e que a exigência de série exclusiva 890–989 para contingência foi revogada (Ajuste SINIEF 26/19).
 - **Implementação provisória:** alocação automática na faixa configurável `1..889`, nunca reutilizando série; contingência usa a mesma série do terminal.
 - **Pergunta:** confirmar no MOC da NFC-e vigente e na legislação da UF prioritária.
+
+### D-007 — atualização de 13/10/2026
+
+- **O que a fonte oficial (portal SVRS) diz:** a NT 2026.007 v1.10 trata de emissão por contribuinte sem inscrição estadual e de validações na LCC-RFB e no CCC; a NT 2026.008 v1.00 cria campos para o Valor Líquido do Produto.
+- **Falta responder:** se algum desses campos é obrigatório para o varejo (NFC-e) e a partir de quando. Ler os PDFs na tarefa F3-07.
+
+### D-011 — Datas de homologação e produção da NT 2025.002 v1.52
+
+- **Contexto:** a v1.52 está publicada (01/10/2026, portal SVRS). As datas de homologação (26/10/2026) e produção (16/11/2026) só aparecem em fontes secundárias, e o portal avisa que as datas podem mudar.
+- **Implementação provisória:** as regras da v1.52 (VC02-14 e VC02-50) entram na tabela de regras com vigência configurável, não fixa no código.
+- **Pergunta:** quais são as datas oficiais de homologação e produção?
+
+### D-012 — Qual pacote de schemas (XSD) vale para a v1.52
+
+- **Contexto:** o último pacote completo de schemas listado no portal SVRS é o 010b v1.30, de 07/10/2025. Depois dele só aparece o schema de um evento (v1.40). As versões v1.40 a v1.52 anunciaram "novos campos", mas não há pacote de leiaute mais novo na lista.
+- **Implementação provisória:** gerar e validar o XML contra o pacote 010b v1.30, com a versão do pacote registrada como dado (não fixa no código).
+- **Pergunta:** existe pacote de leiaute posterior ao 010b v1.30? Conferir a página de schemas antes de começar a F3-07.
+
+### D-013 — Contingência off-line da NFC-e depois da NT 2026.002
+
+- **Contexto:** a NT 2026.002 v1.10a (25/08/2026) regulamenta a contingência off-line da NFC-e e da NF-e com DANFE Simplificado Tipo 2 (tpEmis 9). O plano do Bipaê previa a contingência off-line tradicional da NFC-e.
+- **Implementação provisória:** nenhuma ainda. O caixa já vende sem internet e guarda a venda; falta decidir o formato fiscal da contingência.
+- **Pergunta:** a contingência off-line da NFC-e mudou (prazo de transmissão, impressão, tpEmis)? Quais UFs aceitam? Ler a NT antes da F3-15.
+
+### D-014 — QR Code versão 3 da NFC-e: obrigatoriedade por UF
+
+- **Contexto:** a NT 2025.001 v1.01 (26/06/2025) define o QR Code versão 3 da NFC-e.
+- **Implementação provisória:** a versão do QR Code fica como configuração por UF.
+- **Pergunta:** a versão 3 já é obrigatória? Em quais UFs e desde quando? A versão 2 ainda é aceita?
+
+### D-015 — Split payment no grupo de pagamento da NFC-e (NT 2026.006)
+
+- **Contexto:** a NT 2026.006 RTC v1.00 (25/08/2026) e o IT 2026.001 v1.01 tratam da vinculação do pagamento à nota para o split payment, com tabela própria de meios de pagamento.
+- **Implementação provisória:** nada a ativar no caixa: o split payment começa facultativo e B2B em 2027 (ver `versoes.md`, seção 5).
+- **Pergunta:** algum campo novo do grupo de pagamento já é exigido na NFC-e em 2026?

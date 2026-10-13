@@ -71,17 +71,19 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 
 ## Fase 3 — Fiscal
 
-- [ ] F3-01 · Revalidar NTs, leiautes e cronograma da Reforma em `docs/fiscal/versoes.md`, com conferência manual do Portal da NF-e
+- [x] F3-01 · Revalidar NTs, leiautes e cronograma da Reforma em `docs/fiscal/versoes.md`, com conferência manual do Portal da NF-e
   - Pronto quando: cada versão tem fonte e data, e as dúvidas novas estão em `duvidas.md`.
 - [ ] F3-02 · `packages/fiscal`: estrutura, decimal de precisão, regras como dados versionados por vigência (ADR-0006) — depende: F3-01
   - Pronto quando: o motor puro carrega tabelas por data, e a cobertura é de pelo menos 90%.
 - [ ] F3-03 · Tabelas oficiais versionadas: NCM, CEST, CFOP, CST/CSOSN, cClassTrib e alíquotas de referência — depende: F3-02
+  - Fontes: IT 2025.002 v1.70 (cClassTrib, CST, cCredPres) e IT 2023.002 v2.00 (CFOP), ver `docs/fiscal/versoes.md` seção 0.
 - [ ] F3-04 · Tributos atuais: ICMS (Simples/CSOSN, regime normal/CST, ST básico), PIS/COFINS e IPI, com explicação do cálculo — depende: F3-03
   - Pronto quando: há casos de teste por regime (Simples, Presumido, Real) e cada cálculo mostra seus passos.
 - [ ] F3-05 · IBS, CBS e IS com vigência (2026 teste, 2027, transição 2029–2032, 2033) — depende: F3-03
   - Pronto quando: há casos por período, e as ambiguidades viram configuração, nunca suposição.
 - [ ] F3-06 · Perfil fiscal do produto e da empresa ligado ao motor, com cálculo na venda — depende: F1-02, F3-04, F3-05
 - [ ] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
+  - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
 - [ ] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07
 - [ ] F3-09 · Assinatura XML com certificado A1 no servidor — depende: F3-07
   - Pronto quando: os testes passam com certificado de teste gerado na hora, e o certificado real fica para F3-11.
@@ -89,9 +91,11 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] F3-11 · Webservices da SEFAZ em homologação: status, autorização e consulta — depende: F3-10, F1-07 · externo: E1, E2
 - [ ] F3-12 · Numeração `nNF` a partir de `terminalSeq` na série do caixa — depende: F3-07
 - [ ] F3-13 · QR Code e DANFE da NFC-e (80 mm) e DANFE da NF-e (PDF) — depende: F3-07
+  - Seguir a NT 2025.001 (QR Code versão 3), a NT 2026.003 (DANFE Simplificado Tipo 2) e a NT 2026.010 (DANFE com tributos da Reforma); dúvida D-014.
 - [ ] F3-14 · Caixa emite NFC-e na venda (CPF na nota, fila, reimpressão) — depende: F3-11, F3-12, F3-13
 - [ ] F3-15 · Contingência offline da NFC-e (emite sem rede e transmite no prazo) — depende: F3-14
   - Pronto quando: um E2E com rede desligada emite em contingência e transmite ao reconectar.
+  - Antes de começar: ler a NT 2026.002 v1.10a (contingência com DANFE Simplificado Tipo 2) e resolver a dúvida D-013.
 - [ ] F3-16 · SVC para NF-e — depende: F3-11, F3-08
 - [ ] F3-17 · Eventos: cancelamento, carta de correção e inutilização — depende: F3-11
 - [ ] F3-18 · Rejeições da SEFAZ traduzidas, com causa e solução — depende: F3-11

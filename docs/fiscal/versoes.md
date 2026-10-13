@@ -1,10 +1,52 @@
 # Versões da legislação e dos leiautes fiscais
 
-> Pesquisa feita em **11/10/2026** (Fase 0). Rever **obrigatoriamente** no início da Fase 3 e a cada nova NT: as notas técnicas da Reforma mudaram mais de dez vezes em pouco mais de um ano.
+> Pesquisa feita em **11/10/2026** (Fase 0) e **revalidada em 13/10/2026** (tarefa F3-01, início da Fase 3). Rever a cada nova NT: as notas técnicas da Reforma mudaram mais de dez vezes em pouco mais de um ano.
 
-## ⚠️ Limitação desta pesquisa
+## 0. Revalidação de 13/10/2026 (F3-01)
 
-O Portal Nacional da NF-e (nfe.fazenda.gov.br) **não pôde ser lido automaticamente** (loop de redirecionamento). As informações abaixo vêm de fontes secundárias (fornecedores de software fiscal, portais contábeis e escritórios de advocacia) que concordam entre si. A coluna **Status** indica o que ainda precisa ser conferido no texto oficial antes de virar regra no motor fiscal.
+**Fonte oficial usada:** portal da SEFAZ Virtual do RS (SVRS), que publica as mesmas notas técnicas e schemas do Portal Nacional: <https://dfe-portal.svrs.rs.gov.br/Nfe/Documentos>. O Portal Nacional (nfe.fazenda.gov.br) continua sem leitura automática (loop de redirecionamento).
+
+**Como foi lido:** a página foi consultada por ferramenta que resume o conteúdo. Os números de versão e as datas abaixo vêm da lista oficial, mas **o texto de cada NT ainda precisa ser lido no PDF** na tarefa que a implementa. A própria página avisa que as datas de 01/10/2026 podem mudar.
+
+### Documentos vigentes que afetam a NFC-e e a NF-e
+
+| Documento | Versão | Data | Assunto | Usado em |
+|---|---|---|---|---|
+| NT 2025.002 (RTC) | **v1.52** | 01/10/2026 | Leiaute e regras de NF-e/NFC-e para IBS, CBS e IS | F3-05, F3-07, F3-08 |
+| IT 2025.002 (tabelas cClassTrib, CST e cCredPres) | **v1.70** | 01/10/2026 | Tabelas de classificação tributária; implementação até 16/10/2026 | F3-03 |
+| IT 2023.002 (Tabela CFOP) | v2.00 | 25/08/2026 | Tabela de CFOP | F3-03 |
+| Pacote de schemas 010b (NT 2025.002) | **v1.30** | 07/10/2025 | Último pacote **completo** de XSD da NF-e/NFC-e listado | F3-07, F3-08 |
+| Schema do evento 211110 | NT 2025.002 v1.40 | 23/07/2026 | Solicitação de apropriação de crédito presumido | fora do MVP |
+| NT 2025.001 (QR Code da NFC-e) | v1.01 | 26/06/2025 | Leiaute do **QR Code versão 3** da NFC-e | F3-13 |
+| NT 2026.002 | v1.10a | 25/08/2026 | **Contingência off-line** da NFC-e e da NF-e com DANFE Simplificado Tipo 2 (tpEmis 9); vendas presenciais e não presenciais | F3-15 |
+| NT 2026.002 RTC | v1.11 | 01/10/2026 | DANFE Simplificado Tipo 2 | F3-13, F3-15 |
+| NT 2026.003 | v1.0 | 22/05/2026 | Especificações do DANFE Simplificado Tipo 2 | F3-13 |
+| NT 2026.010 | v1.00 | 01/10/2026 | Leiaute do DANFE (modelo 55) com os tributos da Reforma | F3-13 |
+| NT 2026.006 RTC | v1.00 | 25/08/2026 | Vinculação de pagamento (split payment) | F3-07 (grupo de pagamento), F6 |
+| IT 2026.001 | v1.01 | 25/08/2026 | Tabela de meios de pagamento para a vinculação com o split | F3-07 |
+| NT 2026.007 | v1.10 | 01/10/2026 | Emissão por contribuinte sem IE e validações na LCC-RFB e no CCC | F3-07, F3-18 |
+| NT 2026.008 | v1.00 | 01/10/2026 | Campos para o Valor Líquido do Produto | F3-07 |
+| NT 2026.009 | v1.00 | 09/09/2026 | Correção em regra de validação | F3-18 |
+| NT 2014.001 (EPEC) | v1.41 | 04/08/2026 | Evento Prévio de Emissão em Contingência (NF-e) | F3-16 |
+| NT 2026.001 (PAA) | v1.02b | 29/07/2026 | Provedor de Assinatura e Autorização | avaliar em F3-09 |
+| NT 2023.003 | v1.4 | 24/09/2026 | Regras da NFC-e exclusivas do AM | só se a UF for AM |
+| NT 2019.001 | v1.62 | 19/03/2024 | Regras de validação da NF-e/NFC-e versão 4.0 | F3-07, F3-18 |
+| NT 2018.005 | v1.40 | 13/09/2024 | Alteração de leiaute NF-e/NFC-e | F3-07 |
+| NT DFe Conjunta (CNPJ alfanumérico) | v1.00 | 07/05/2025 | CNPJ com letras nos documentos fiscais | já aceito no cadastro |
+| NT 2024.001 (CRT-MEI) | — | 12/04/2024 | CRT = 4 para o MEI | F3-06 |
+| MOC | v7.00 | 16/12/2020 | Manual de integração; Anexo I (leiaute 55 e 65), II (DANFE), III (contingência) | toda a Fase 3 |
+
+### O que mudou em relação à pesquisa de 11/10
+
+- **Confirmado em fonte oficial:** NT 2025.002 v1.52 (01/10/2026) e IT 2025.002 v1.70 (01/10/2026).
+- **Identificadas** (antes "conteúdo não identificado"): NT 2026.007 (contribuinte sem IE, validações de cadastro) e NT 2026.008 (Valor Líquido do Produto).
+- **Novas no radar:** NT 2026.010 (DANFE com tributos da Reforma), NT 2026.006 e IT 2026.001 (split payment no grupo de pagamento), NT 2026.003 (DANFE Simplificado Tipo 2), NT 2026.009, NT 2014.001 v1.41 e NT 2026.001 (PAA).
+- **Correção:** a NT 2026.002 do Portal NF-e está na v1.10a (25/08/2026), com uma versão RTC v1.11 (01/10/2026), e **trata também da contingência off-line** da NFC-e. Isso afeta direto a tarefa F3-15.
+- **Continua sem confirmação oficial:** as datas de homologação (26/10/2026) e de produção (16/11/2026) da v1.52, que só aparecem em fontes secundárias (dúvida D-011).
+
+## ⚠️ Limitação da pesquisa de 11/10
+
+Na Fase 0, o Portal Nacional da NF-e (nfe.fazenda.gov.br) **não pôde ser lido automaticamente** (loop de redirecionamento), e as informações das seções 1 a 5 vieram de fontes secundárias (fornecedores de software fiscal, portais contábeis e escritórios de advocacia) que concordam entre si. A seção 0 acima traz o que já foi conferido em fonte oficial. A coluna **Status** indica o que ainda precisa ser conferido no texto oficial antes de virar regra no motor fiscal.
 
 - ✅ confirmado por várias fontes que concordam
 - 🟡 fonte única ou divergência entre fontes, conferir no texto oficial
@@ -38,8 +80,8 @@ O Portal Nacional da NF-e (nfe.fazenda.gov.br) **não pôde ser lido automaticam
 | Schema NF-e | PL_010 (v1.20b de 30/07/2025 confirmado; a versão do pacote correspondente à v1.52 **não foi confirmada**) | — | XSD com grupos IBS/CBS/IS | 🟡 |
 | NT 2026.002 (Portal NF-e) | v1.10 | 04/08/2026 | **Não é sobre IBS/CBS**: vendas presenciais/não presenciais com DANFE Simplificado Tipo 2 (v1.00 de 25/05/2026) | 🟡 |
 | NT 2026.002 (NFCom e NF3e) | v1.00 | jun/2026 | Campos RTC obrigatórios em NFCom/NF3e. Mesmo número, outros portais | 🟡 |
-| NT 2026.007 v1.10 e NT 2026.008 v1.00 | — | 2026 | Citadas no comunicado de 05/10/2026; conteúdo **não identificado** | ❌ |
-| Informe Técnico RT 2025.002 (tabelas cClassTrib, CST IBS/CBS, crédito presumido) | v1.70 citada para 16/10/2026 | — | Tabelas de classificação tributária. Data futura citada em fórum; conferir | 🟡 |
+| NT 2026.007 v1.10 e NT 2026.008 v1.00 | — | 01/10/2026 | Identificadas na revalidação (seção 0): contribuinte sem IE e validações de cadastro; Valor Líquido do Produto | ✅ |
+| Informe Técnico RT 2025.002 (tabelas cClassTrib, CST IBS/CBS, crédito presumido) | **v1.70** | 01/10/2026 | Tabelas de classificação tributária; implementação até 16/10/2026. Confirmado no portal SVRS | ✅ |
 | NFS-e Padrão Nacional | — | — | Versão do leiaute com IBS/CBS **não identificada** | ❌ |
 
 ## 3. Cronograma de obrigatoriedade dos campos IBS/CBS (Ato Conjunto nº 4/2026)
@@ -99,4 +141,7 @@ As alíquotas efetivas por ente (UF/município) ficam em tabela com vigência. N
 - [Contábeis – Ceará encerra MFE](https://www.contabeis.com.br/noticias/73536/ceara-encerra-mfe-e-cf-e-migracao-para-nfc-e-comeca-em-2026/)
 - [Conta Azul – NFS-e Nacional, prazo de novembro/2026](https://contaazul.com/blog/nfse-padrao-nacional/)
 - [Tecnospeed – Pix Automático e por Aproximação](https://blog.tecnospeed.com.br/?p=23867)
-- Portal oficial (conferir manualmente): <https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY%3D>
+- **Portal SVRS (oficial, lido em 13/10/2026):** <https://dfe-portal.svrs.rs.gov.br/Nfe/Documentos>
+- [NDD – NT 2025.002 v1.52](https://reformatributaria.ndd.tech/nota-tecnica-2025-002-v1-52-mudancas-na-nf-e-e-nfc-e/)
+- [IT 2025.002 v1.70 (PDF)](https://www.reformatributaria.com/wp-content/uploads/2026/10/IT-2025.002-v.1.70-Tabelas-de-Classificacao-do-IBS-e-da-CBS.pdf)
+- Portal Nacional (ainda sem leitura automática; conferir manualmente): <https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY%3D>
