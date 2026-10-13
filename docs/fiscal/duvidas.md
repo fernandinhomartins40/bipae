@@ -189,3 +189,9 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Pergunta:** qual é o autorizador vigente da NFC-e em MG?
 - **D-014, atualização de 13/10/2026 (F3-13.a):** a NT 2025.001 v1.01 (texto oficial) diz que todas as UF disponibilizam o QR Code versão 3 desde 01/09/2025 e que a adoção pela empresa com CNPJ é opcional. O Bipaê usa a versão 3: na emissão normal o QR Code leva só chave, versão e ambiente, **sem CSC**. Ainda em aberto: algumas URLs da tabela oficial do ENCAT vêm sem o protocolo (AM, MA e as de consulta pela chave); o Bipaê acrescenta https://, o que precisa ser confirmado na primeira autorização em homologação.
 
+
+### D-023 — Código de barras do DANFE com o CNPJ alfanumérico
+
+- **Contexto:** o Anexo II do MOC 7.0 manda imprimir a chave de acesso em CODE-128C, que só codifica dígitos. Com o CNPJ alfanumérico (NT DFe Conjunta 2025), a chave passa a ter letras.
+- **Implementação provisória (F3-13.c):** quando a chave tem letras, o DANFE sai sem o código de barras, com a chave impressa por extenso. Nenhuma simbologia foi inventada.
+- **Pergunta:** qual simbologia (CODE-128B ou outra) o manual adotará para a chave com letras, e a partir de quando?

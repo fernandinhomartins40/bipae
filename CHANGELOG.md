@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-13.c DANFE da NF-e] — 13/10/2026
+
+### Adicionado
+- **DANFE da NF-e em PDF (A4 retrato)**, no novo pacote `@bipae/danfe`, gerado sempre a partir do XML da nota, como manda o manual: canhoto, emitente, quadro "DANFE", código de barras CODE-128C da chave, protocolo, destinatário, fatura, cálculo do imposto, transportador, produtos e dados adicionais, nas posições do Anexo II do MOC 7.0.
+- **Já no leiaute da NT 2026.010** (produção em 01/12/2026): código do regime tributário no emitente, quadro "Total do IBS/CBS/IS" e, em cada item, cClassTrib, base, alíquotas (a efetiva quando há redução) e valores do IBS e da CBS.
+- Nota grande continua em folhas adicionais com o cabeçalho completo e "FOLHA n/total"; informações complementares longas continuam na folha seguinte. Homologação sai com "SEM VALOR FISCAL"; nota sem protocolo só como prévia marcada.
+- Dúvida D-023: simbologia do código de barras quando a chave tiver letras (CNPJ alfanumérico).
+
 ## [F3-08.b Endereços da NF-e] — 13/10/2026
 
 ### Adicionado
