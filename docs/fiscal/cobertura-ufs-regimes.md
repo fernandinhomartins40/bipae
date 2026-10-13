@@ -110,8 +110,9 @@ Checklist que cada UF precisa ter preenchido para ser considerada "coberta". Os 
 | Substituição tributária | Quais CEST a UF adota e com que MVA | Regulamento de cada UF e protocolos do CONFAZ | ⬜ |
 | Código de benefício (cBenef) | Obrigatório em algumas UFs quando há isenção ou redução | Tabela cBenef × CST do Portal da NF-e e tabela de cada UF | ⬜ |
 | Sublimite do Simples | R$ 3,6 milhões em regra (LC 123, art. 13-A); o art. 19 deixa UFs pequenas adotarem valor menor | Resolução anual do Comitê Gestor do Simples | ⬜ |
-| NFC-e: endereços | Autorização, consulta, evento e inutilização, em produção e homologação | Portais da SVRS e das 7 UFs com ambiente próprio | 🟡 lidos, ainda não importados |
-| NFC-e: QR Code e consulta | Endereço de consulta que vai impresso no cupom, por UF | Portal Nacional da NF-e e NT 2025.001 | ⬜ (dúvida D-014) |
+| NFC-e: endereços | Autorização, consulta, evento e inutilização, em produção e homologação | Portal da SVRS e Portal Nacional da NFC-e (ENCAT) | ✅ 27 UFs (F3-28; MG na dúvida D-022) |
+| NF-e: endereços | Autorizador, contingência (SVC-AN ou SVC-RS) e serviços, em produção e homologação | Portal Nacional da NF-e, relação de serviços web | ✅ 27 UFs (F3-08.b) |
+| NFC-e: QR Code e consulta | Endereço de consulta que vai impresso no cupom, por UF | Portal Nacional da NFC-e e NT 2025.001 | ✅ 27 UFs, QR Code versão 3 (F3-13.a); protocolo das URLs sem https na dúvida D-014 |
 | NFC-e: regras locais | Ex.: NT 2023.003 (regras exclusivas do AM); exigência de identificar o consumidor acima de certo valor | NTs e legislação de cada UF | ⬜ |
 | IBS por UF e município | A partir de 2029, cada ente fixa a sua alíquota | Resolução do Senado e lei de cada ente | Não existe ainda (D-004, D-020) |
 

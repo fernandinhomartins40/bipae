@@ -94,5 +94,21 @@
     "page": "https://nfce.encat.org/desenvolvedor/httpnfce-encat-orgconsulte-sua-nota-qr-code-versao-2-0/",
     "publishedAt": "2026-10-13",
     "downloadedAt": "2026-10-13"
+  },
+  "nfeWebservicesProducao": {
+    "file": "PortalNFe_webservices_producao_2026-10-13.html.gz",
+    "title": "Relação de Serviços Web da NF-e, ambiente de produção (autorizadores e contingência por UF)",
+    "publisher": "Portal Nacional da NF-e (ENCAT)",
+    "page": "https://www.nfe.fazenda.gov.br/portal/webServices.aspx",
+    "publishedAt": "2026-10-13",
+    "downloadedAt": "2026-10-13"
+  },
+  "nfeWebservicesHomologacao": {
+    "file": "PortalNFe_webservices_homologacao_2026-10-13.html.gz",
+    "title": "Relação de Serviços Web da NF-e, ambiente de homologação (autorizadores e contingência por UF)",
+    "publisher": "Portal Nacional da NF-e (ENCAT)",
+    "page": "https://hom.nfe.fazenda.gov.br/portal/webServices.aspx",
+    "publishedAt": "2026-10-13",
+    "downloadedAt": "2026-10-13"
   }
 }

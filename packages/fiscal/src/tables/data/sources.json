@@ -106,5 +106,23 @@
   "publishedAt": "2026-10-13",
   "downloadedAt": "2026-10-13",
   "sha256": "377d996e372624d3036b696d673f20f5f80f9761e0e0a0386ae1835ce3ee3bcc"
+ },
+ "nfeWebservicesProducao": {
+  "file": "PortalNFe_webservices_producao_2026-10-13.html.gz",
+  "title": "Relação de Serviços Web da NF-e, ambiente de produção (autorizadores e contingência por UF)",
+  "publisher": "Portal Nacional da NF-e (ENCAT)",
+  "page": "https://www.nfe.fazenda.gov.br/portal/webServices.aspx",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-10-13",
+  "sha256": "9e56cbb60bd086b38da68e76ef1c75c133f7de9acd44237e09a9be769725a04c"
+ },
+ "nfeWebservicesHomologacao": {
+  "file": "PortalNFe_webservices_homologacao_2026-10-13.html.gz",
+  "title": "Relação de Serviços Web da NF-e, ambiente de homologação (autorizadores e contingência por UF)",
+  "publisher": "Portal Nacional da NF-e (ENCAT)",
+  "page": "https://hom.nfe.fazenda.gov.br/portal/webServices.aspx",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-10-13",
+  "sha256": "23a253111a717ce6e2d04e1b31f4c2096c54bd5c10f92983d121b619be192928"
  }
 }

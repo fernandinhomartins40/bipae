@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-08.b Endereços da NF-e] — 13/10/2026
+
+### Adicionado
+- **Endereços oficiais da NF-e das 27 UFs**, em produção e homologação: quem autoriza (10 UFs com ambiente próprio, MA pela SEFAZ Virtual do Ambiente Nacional, as demais pela SEFAZ Virtual do RS), quem atende em contingência (SVC-AN ou SVC-RS) e os serviços de cada um, mais os do Ambiente Nacional.
+- Extraídos da "Relação de Serviços Web" do Portal Nacional da NF-e, guardada com data e hash. Um teste confere que cada endereço aparece na página oficial do seu ambiente e que homologação nunca aponta para produção.
+- A página oficial mostra o PI em contingências diferentes (SVC-AN em produção, SVC-RS em homologação): o Bipaê segue a página de cada ambiente.
+
 ## [F3-08.a XML da NF-e] — 13/10/2026
 
 ### Adicionado

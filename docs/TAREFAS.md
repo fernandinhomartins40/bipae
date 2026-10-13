@@ -101,9 +101,9 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
   - Feito em 13/10/2026: `buildNfce` em `packages/fiscal/src/nfce`, validado contra o PL_010f. ST (CST 10, 70, CSOSN 201 a 203) e diferimento (51) passaram a ser emitidos com a F3-08.a. Assinatura é a F3-09; QR Code, a F3-13; o mapeamento dos pagamentos do caixa para o tPag entra na F3-10.
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
-- [~] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07
+- [x] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07
 - [x] F3-08.a · XML da NF-e com destinatário, transporte, cobrança, IPI e ICMS com ST e diferimento, validado contra o schema; grupos de imposto comuns à NFC-e — depende: F3-07
-- [ ] F3-08.b · Endereços dos webservices da NF-e das 27 UFs (produção e homologação), extraídos da página oficial — depende: F3-28
+- [x] F3-08.b · Endereços dos webservices da NF-e das 27 UFs (produção e homologação), extraídos da página oficial — depende: F3-28
 - [x] F3-09 · Assinatura XML com certificado A1 no servidor — depende: F3-07
   - `signNfe` (WebCrypto, roda no servidor e no desktop), conferida pela biblioteca independente xml-crypto e pelo schema.
   - Pronto quando: os testes passam com certificado de teste gerado na hora, e o certificado real fica para F3-11.
@@ -138,7 +138,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
 - [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
-  - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entram com a F3-08.
+  - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entraram com a F3-08.b (Portal Nacional da NF-e).
 - [ ] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c
 - [ ] F3-30 · Regras do MEI na nota (CRT 4, CFOP permitidos) — depende: F3-06.c
 - [ ] F3-32 · Partilha do ICMS (DIFAL, grupo ICMSUFDest) na venda interestadual para consumidor final não contribuinte — depende: F3-08.a
