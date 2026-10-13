@@ -19,7 +19,8 @@ Lista executável de tudo o que falta no plano (PRD §5), na ordem de execução
 Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde está, por exemplo o nome do secret, sem nunca colar o segredo aqui.
 
 - [ ] E1 · Certificado digital A1 de homologação de um CNPJ real e CSC de homologação da NFC-e
-- [ ] E2 · UF prioritária para começar a emissão
+- [x] E2 · UF prioritária para começar a emissão
+  - Decidido em 13/10/2026: o Bipaê cobre **as 27 UFs e todos os regimes** (ver `docs/fiscal/cobertura-ufs-regimes.md`). A primeira emissão em homologação será na UF do CNPJ do certificado do item E1.
 - [ ] E3 · Contador parceiro para validar `docs/fiscal/duvidas.md`
 - [ ] E4 · Chaves do atualizador do desktop (secrets do GitHub) e local para hospedar as atualizações
 - [ ] E5 · Certificado de assinatura de código do Windows
@@ -89,7 +90,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Trocar as listas digitadas do cadastro (`ICMS_ORIGINS` em `@bipae/domain`, campos livres de CST, CFOP e NCM) pelas tabelas de `@bipae/fiscal/tables`, com busca de NCM.
 - [x] F3-06.a · API: valida NCM, CEST e os códigos do perfil fiscal nas tabelas oficiais; rotas de consulta (`/v1/fiscal/*`)
 - [x] F3-06.b · Telas: perfil fiscal com as listas oficiais; busca de NCM e sugestão de CEST no produto — depende: F3-06.a
-- [ ] F3-06.c · Dados fiscais da empresa (CRT, regime de apuração, UF) e tabela de regras de tributos por vigência — depende: F3-06.a
+- [ ] F3-06.c · Dados fiscais da empresa (CRT 1 a 4, regime de apuração, UF) e tabela de regras de tributos por vigência, com a carga inicial das alíquotas interestaduais e da alíquota geral das UFs já confirmadas — depende: F3-06.a
+  - Fonte e status de cada UF: `docs/fiscal/cobertura-ufs-regimes.md`, seção 2.1. Só entra o que estiver ✅.
 - [ ] F3-06.d · Cálculo dos tributos na venda, no caixa (offline) e conferido no servidor — depende: F3-06.c
 - [ ] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
@@ -112,6 +114,16 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] F3-20 · Distribuição DF-e e manifestação do destinatário — depende: F3-11, F3-19
 - [ ] F3-21 · Desktop: assinatura A1 local e A3 pelo Conector — depende: F3-09
 - [ ] F3-22 · Validação com contador e teste de emissão com pessoas leigas — depende: F3-14 · externo: E3, E15
+- [ ] F3-23 · Matriz de cobertura UF × regime: teste que falha se alguma das 27 UFs ou dos 5 regimes ficar sem regra ou sem "falta configurar" explícito, e mapa no painel — depende: F3-06.c
+  - Pronto quando: as 135 combinações (27 UFs × MEI, Simples, Simples acima do sublimite, Presumido e Real) estão no teste.
+- [ ] F3-24 · Fechar as 7 UFs pendentes (AL, AP, MA, PI, RS, SE, TO): ler a lei na fonte oficial e promover para confirmado — depende: F3-06.c
+- [ ] F3-25 · Importar as alíquotas por produto das 27 UFs do Portal Nacional da DIFAL, com a data de cada linha e marcação do que está defasado — depende: F3-06.c
+- [ ] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
+- [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
+- [ ] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
+- [ ] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c
+- [ ] F3-30 · Regras do MEI na nota (CRT 4, CFOP permitidos) — depende: F3-06.c
+- [ ] F3-31 · Rotina que baixa de novo as fontes oficiais, compara com o que está guardado e avisa quando uma tabela ou alíquota mudou — depende: F3-25
 
 ## Fase 2 — pendências
 

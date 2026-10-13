@@ -24,6 +24,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 | D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
 | D-020 | 🔴 aberta | IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação |
+| D-021 | 🔴 aberta | Alíquota geral do ICMS: 7 UFs sem confirmação oficial (AL divergente) |
 
 ---
 
@@ -169,4 +170,12 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - O Imposto Seletivo será destacado à parte do preço (como o IPI) ou embutido? O motor assume que é à parte e o soma à base.
   - A redução do ICMS de 2029 a 2032 será aplicada pelo sistema sobre a alíquota da legislação, ou cada UF publicará a alíquota já reduzida? Hoje a proporção fica só em tabela, sem alterar o cálculo do ICMS.
   - Continuam valendo D-001 (total da nota), D-002 e D-003 (obrigatoriedade por regime) e D-008 (arredondamento), que são configuração do documento e entram na F3-06 e na F3-07.
+
+### D-021 — Alíquota geral do ICMS: 7 UFs sem confirmação oficial (AL divergente)
+
+- **Contexto:** o Bipaê vai cobrir as 27 UFs (decisão de 13/10/2026). A alíquota geral de 20 delas foi confirmada em site oficial do estado. Faltam sete, listadas em `cobertura-ufs-regimes.md`, seção 2.1.
+- **Alagoas (divergente):** o Portal Nacional da DIFAL mostra "20,5%" no campo e "19% a partir de 01/04/2023" na observação, mais 1% de FECOEP. Fontes privadas de 2026 citam 20% e 20,5%.
+- **Só em fonte secundária ou em texto oficial possivelmente defasado:** AP (18%), MA (23%), PI (22,5%), RS (17%), SE (19%) e TO (20%).
+- **Implementação provisória:** essas sete UFs ficam como "falta configurar" no motor. Uma empresa dessas UFs consegue usar o caixa, mas o cálculo do ICMS pede a alíquota ao contador até a confirmação.
+- **Pergunta:** o contador confirma as sete alíquotas e as leis? O adicional de FECOEP de AL e de SE se soma à alíquota geral em todos os produtos ou só nos listados?
 

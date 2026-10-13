@@ -1,5 +1,17 @@
 # Changelog
 
+## [Plano de cobertura: 27 UFs e todos os regimes] — 13/10/2026
+
+### Documentado
+- **`docs/fiscal/cobertura-ufs-regimes.md`**: o mapa do que é preciso para atender as 27 UFs e todos os regimes, do MEI ao Lucro Real, com a fonte de cada número.
+  - Alíquota geral do ICMS das 27 UFs: 20 confirmadas em site oficial do estado, 6 só em fonte secundária e 1 divergente (Alagoas).
+  - FCP por UF, autorizador da NF-e e da NFC-e de cada UF e o servidor de contingência.
+  - Os cinco regimes (MEI, Simples, Simples acima do sublimite, Presumido e Real), com o que o motor já calcula em cada um.
+  - O que ainda muda por UF e não foi levantado: alíquotas por produto, substituição tributária, código de benefício, endereços de QR Code.
+- **Plano no backlog:** nove tarefas novas (F3-23 a F3-31). A principal é um teste que falha se alguma UF ou algum regime ficar sem regra, para a cobertura não depender de memória.
+- O item externo E2 (UF prioritária) foi fechado: são todas.
+- Dúvida D-021 com as sete UFs que faltam confirmar.
+
 ## [F3-06.b Telas com as tabelas fiscais] — 13/10/2026
 
 ### Adicionado
