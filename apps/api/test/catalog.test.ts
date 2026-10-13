@@ -149,8 +149,9 @@ describe('fiscal profiles and price tables', () => {
       items: [{ productId: p.id, priceCents: 649 }],
     });
     const tables = (await client.get('/price-tables')).json();
+    // Items carry the product name and regular price, so screens need not load the catalog.
     expect(tables.find((x: { id: string }) => x.id === table.id).items).toEqual([
-      { productId: p.id, priceCents: 649 },
+      { productId: p.id, priceCents: 649, name: 'Óleo 900ml', basePriceCents: 799 },
     ]);
   });
 });

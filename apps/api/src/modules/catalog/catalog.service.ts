@@ -254,22 +254,31 @@ export class CatalogService {
   listPriceTables(ctx: RequestContext) {
     return withTenant(this.db, ctx, async (tx) => {
       const tables = await tx.select().from(priceTables).orderBy(asc(priceTables.name));
+      // Name and regular price come along, so screens need not load the whole catalog.
       const items = tables.length
         ? await tx
-            .select()
+            .select({
+              priceTableId: priceTableItems.priceTableId,
+              productId: priceTableItems.productId,
+              priceCents: priceTableItems.priceCents,
+              name: products.name,
+              basePriceCents: products.priceCents,
+            })
             .from(priceTableItems)
+            .innerJoin(products, eq(products.id, priceTableItems.productId))
             .where(
               inArray(
                 priceTableItems.priceTableId,
                 tables.map((t) => t.id),
               ),
             )
+            .orderBy(asc(products.name))
         : [];
       return tables.map((t) => ({
         ...t,
         items: items
           .filter((i) => i.priceTableId === t.id)
-          .map((i) => ({ productId: i.productId, priceCents: i.priceCents })),
+          .map(({ priceTableId: _, ...item }) => item),
       }));
     });
   }

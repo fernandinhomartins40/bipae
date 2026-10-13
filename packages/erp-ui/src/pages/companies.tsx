@@ -1,4 +1,4 @@
-import { formatTaxId, UFS } from '@bipae/domain';
+import { formatTaxId, UFS, type PriceTable } from '@bipae/domain';
 import {
   Alert,
   Button,
@@ -25,6 +25,7 @@ interface StoreRow {
   id: string;
   name: string;
   companyId: string;
+  priceTableId: string | null;
 }
 
 /**
@@ -42,6 +43,14 @@ export function CompaniesPage() {
   const stores = useQuery({ queryKey: ['stores'], queryFn: () => api.get<StoreRow[]>('/stores') });
   const [editing, setEditing] = useState<Company | 'new' | null>(null);
   const [storeFor, setStoreFor] = useState<Company | null>(null);
+  const [editingStore, setEditingStore] = useState<{ company: Company; store: StoreRow } | null>(
+    null,
+  );
+  const tables = useQuery({
+    queryKey: ['price-tables'],
+    queryFn: () => api.get<PriceTable[]>('/price-tables'),
+  });
+  const tableName = (id: string | null) => tables.data?.find((t) => t.id === id)?.name;
   const reload = () =>
     queryClient
       .invalidateQueries({ queryKey: ['companies'] })
@@ -100,11 +109,19 @@ export function CompaniesPage() {
               {stores.data
                 ?.filter((s) => s.companyId === c.id)
                 .map((s) => (
-                  <li
-                    key={s.id}
-                    className="inline-flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1 text-sm font-medium"
-                  >
-                    <Store className="size-4" aria-hidden /> {s.name}
+                  <li key={s.id}>
+                    <button
+                      type="button"
+                      disabled={!canManage}
+                      onClick={() => setEditingStore({ company: c, store: s })}
+                      aria-label={canManage ? `Editar a loja ${s.name}` : undefined}
+                      className="inline-flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1 text-sm font-medium enabled:hover:bg-border"
+                    >
+                      <Store className="size-4" aria-hidden /> {s.name}
+                      {tableName(s.priceTableId) && (
+                        <span className="text-muted">· {tableName(s.priceTableId)}</span>
+                      )}
+                    </button>
                   </li>
                 ))}
             </ul>
@@ -120,6 +137,15 @@ export function CompaniesPage() {
       )}
       {storeFor && (
         <StoreForm company={storeFor} onClose={() => setStoreFor(null)} onSaved={reload} />
+      )}
+      {editingStore && (
+        <StoreForm
+          company={editingStore.company}
+          store={editingStore.store}
+          tables={tables.data ?? []}
+          onClose={() => setEditingStore(null)}
+          onSaved={reload}
+        />
       )}
     </>
   );
@@ -194,21 +220,30 @@ function CompanyForm({
 
 function StoreForm({
   company,
+  store,
+  tables = [],
   onClose,
   onSaved,
 }: {
   company: Company;
+  store?: StoreRow;
+  tables?: PriceTable[];
   onClose: () => void;
   onSaved: () => Promise<unknown>;
 }) {
   const { api } = useApp();
-  const [name, setName] = useState('');
+  const [name, setName] = useState(store?.name ?? '');
+  const [priceTableId, setPriceTableId] = useState(store?.priceTableId ?? '');
   const [error, setError] = useState<string | null>(null);
   return (
     <Drawer
       open
       onOpenChange={(o) => !o && onClose()}
-      title={`Nova loja em ${company.tradeName ?? company.legalName}`}
+      title={
+        store
+          ? `Editar loja ${store.name}`
+          : `Nova loja em ${company.tradeName ?? company.legalName}`
+      }
     >
       <form
         className="flex flex-col gap-4"
@@ -216,7 +251,9 @@ function StoreForm({
           e.preventDefault();
           setError(null);
           try {
-            await api.post('/stores', { companyId: company.id, name });
+            if (store)
+              await api.patch(`/stores/${store.id}`, { name, priceTableId: priceTableId || null });
+            else await api.post('/stores', { companyId: company.id, name });
             await onSaved();
             onClose();
           } catch (err) {
@@ -232,7 +269,19 @@ function StoreForm({
           onChange={(e) => setName(e.target.value)}
           autoFocus
         />
-        <Button type="submit">Criar loja</Button>
+        {store && (
+          <SelectField
+            label="Tabela de preço da loja"
+            hint="Os caixas desta loja usam estes preços. Clientes com tabela própria usam a deles."
+            value={priceTableId}
+            onChange={(e) => setPriceTableId(e.target.value)}
+            options={[
+              { value: '', label: 'Preço do cadastro do produto' },
+              ...tables.map((t) => ({ value: t.id, label: t.name })),
+            ]}
+          />
+        )}
+        <Button type="submit">{store ? 'Salvar loja' : 'Criar loja'}</Button>
       </form>
     </Drawer>
   );

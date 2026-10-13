@@ -15,6 +15,7 @@ import { PosPage } from './pages/pos';
 import { AccountPage } from './pages/account';
 import { DownloadsPage, PublicDownloadsPage } from './pages/downloads';
 import { FiscalProfilesPage } from './pages/fiscal-profiles';
+import { PriceTablesPage } from './pages/price-tables';
 import { CompaniesPage } from './pages/companies';
 import { AdminApp } from './admin/admin-app';
 import { captureSupportHandoff, endSupportSession, readSupportSession } from './support';
@@ -141,6 +142,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="assinatura" element={<AccountPage />} />
               <Route path="produtos" element={<ProductsPage />} />
               <Route path="perfis-fiscais" element={<FiscalProfilesPage />} />
+              <Route path="tabelas-de-preco" element={<PriceTablesPage />} />
               <Route path="clientes" element={<PartiesPage kind="customer" />} />
               <Route path="fornecedores" element={<PartiesPage kind="supplier" />} />
               <Route path="caixas" element={<TerminalsPage />} />

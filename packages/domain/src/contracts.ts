@@ -210,6 +210,12 @@ export const priceTableInput = z.object({
 });
 export type PriceTableInput = z.input<typeof priceTableInput>;
 
+export interface PriceTable {
+  id: string;
+  name: string;
+  items: { productId: string; name: string; priceCents: number; basePriceCents: number }[];
+}
+
 /**
  * Fiscal profile data is stored only (no calculation until Phase 3).
  * Fields mirror the NF-e layout names.

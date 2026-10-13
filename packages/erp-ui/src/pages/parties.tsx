@@ -1,10 +1,11 @@
-import { formatTaxId, type Page, type Party } from '@bipae/domain';
+import { formatTaxId, type Page, type Party, type PriceTable } from '@bipae/domain';
 import {
   Alert,
   Button,
   Checkbox,
   DataTable,
   Drawer,
+  SelectField,
   EmptyState,
   PageHeader,
   TaxIdField,
@@ -123,6 +124,12 @@ function PartyForm({
     phone: party?.phone ?? '',
     notes: party?.notes ?? '',
     marketingConsent: party?.marketingConsent ?? false,
+    priceTableId: party?.priceTableId ?? '',
+  });
+  const tables = useQuery({
+    queryKey: ['price-tables'],
+    queryFn: () => api.get<PriceTable[]>('/price-tables'),
+    enabled: kind === 'customer',
   });
 
   const onSubmit = (e: FormEvent) => {
@@ -132,6 +139,7 @@ function PartyForm({
         ...v,
         taxId: v.taxId || null,
         address: party?.address ?? null,
+        priceTableId: kind === 'customer' ? v.priceTableId || null : undefined,
         ...(kind === 'supplier' && { marketingConsent: undefined }),
       };
       if (party) await api.put(`${text.path}/${party.id}`, body);
@@ -183,6 +191,18 @@ function PartyForm({
           onChange={(e) => form.set('notes', e.target.value)}
           error={form.errors.notes}
         />
+        {kind === 'customer' && (
+          <SelectField
+            label="Tabela de preço"
+            hint="Preços especiais para este cliente no caixa (ex.: atacado)."
+            value={form.values.priceTableId}
+            onChange={(e) => form.set('priceTableId', e.target.value)}
+            options={[
+              { value: '', label: 'Preço normal (tabela da loja)' },
+              ...(tables.data ?? []).map((t) => ({ value: t.id, label: t.name })),
+            ]}
+          />
+        )}
         {kind === 'customer' && (
           <Checkbox
             label="Aceita receber ofertas por WhatsApp ou e-mail"
