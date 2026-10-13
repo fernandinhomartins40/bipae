@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-28 Endereços da NFC-e das 27 UFs] — 13/10/2026
+
+### Adicionado
+- **Endereços oficiais da NFC-e de cada UF:** quem autoriza (8 UFs com ambiente próprio, as demais pela SEFAZ Virtual do RS), os seis webservices de homologação e produção, a URL do QR Code e a de consulta pela chave.
+- **Extraídos das páginas oficiais** da SEFAZ Virtual do RS e do Portal Nacional da NFC-e (ENCAT), guardadas com data e hash. Quando a página lista o endereço antigo e o novo, vale o vigente.
+- Um teste confere que **cada endereço aparece literalmente na página oficial**: nenhum foi digitado ou inventado.
+- Dúvida D-022: a SVRS e o ENCAT divergem sobre o autorizador da NFC-e em MG.
+
 ## [F3-12 Numeração da NFC-e] — 13/10/2026
 
 ### Adicionado

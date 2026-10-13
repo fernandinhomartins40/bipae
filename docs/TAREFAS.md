@@ -130,7 +130,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] F3-25 · Importar as alíquotas por produto das 27 UFs do Portal Nacional da DIFAL, com a data de cada linha e marcação do que está defasado — depende: F3-06.c
 - [ ] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
 - [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
-- [ ] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
+- [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
+  - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entram com a F3-08.
 - [ ] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c
 - [ ] F3-30 · Regras do MEI na nota (CRT 4, CFOP permitidos) — depende: F3-06.c
 - [ ] F3-31 · Rotina que baixa de novo as fontes oficiais, compara com o que está guardado e avisa quando uma tabela ou alíquota mudou — depende: F3-25

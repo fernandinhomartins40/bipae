@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import Decimal from 'decimal.js';
 import { parseCest } from './cest.mjs';
+import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -374,6 +375,16 @@ function importPaymentMeans() {
     });
 }
 
+function importNfceEndpoints() {
+  const page = (key) => gunzipSync(readFileSync(join(sourcesDir, manifest[key].file))).toString('utf8');
+  return parseNfceEndpoints({
+    svrsHtml: page('nfceAuthorizers'),
+    encatWsHtml: page('nfceWebservicesEncat'),
+    qrHtml: page('nfceQrCode'),
+    chaveHtml: page('nfceUrlChave'),
+  });
+}
+
 const tables = {
   'cfop.json': importCfop(),
   'class-trib.json': importClassTrib(),
@@ -383,6 +394,7 @@ const tables = {
   'nfe-codes.json': importNfeSchema(),
   'cest.json': importCest(),
   'payment-means.json': importPaymentMeans(),
+  'nfce-endpoints.json': importNfceEndpoints(),
 };
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha

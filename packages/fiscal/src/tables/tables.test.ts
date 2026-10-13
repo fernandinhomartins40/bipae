@@ -34,9 +34,10 @@ describe('origem das tabelas', () => {
     for (const fonte of Object.values(TABLE_SOURCES)) {
       const hash = createHash('sha256').update(readFileSync(pacote(`sources/${fonte.file}`))).digest('hex');
       expect(hash, fonte.file).toBe(fonte.sha256);
-      // Só sites do governo: Portal Nacional da NF-e, Siscomex, SEFAZ Virtual do RS e CONFAZ.
+      // Só fontes oficiais: Portal Nacional da NF-e, Siscomex, SEFAZ Virtual do RS, CONFAZ e o
+      // Portal Nacional da NFC-e, mantido pelo ENCAT (os coordenadores tributários das SEFAZ).
       expect(fonte.page).toMatch(
-        /^https:\/\/(www\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda)\.gov\.br\//,
+        /^https:\/\/((www\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda)\.gov\.br|nfce\.encat\.org)\//,
       );
       assertDate(fonte.publishedAt);
       assertDate(fonte.downloadedAt);

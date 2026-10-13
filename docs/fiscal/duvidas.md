@@ -24,6 +24,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 | D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
 | D-020 | 🔴 aberta | IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação |
+| D-022 | 🔴 aberta | NFC-e em MG: ambiente próprio ou SVRS? |
 | D-021 | 🟡 parcial | Alíquota geral do ICMS: AL divergente e AP sem fonte oficial |
 
 ---
@@ -180,3 +181,10 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Pergunta:** o contador confirma as sete alíquotas e as leis? O adicional de FECOEP de AL e de SE se soma à alíquota geral em todos os produtos ou só nos listados?
 - **Atualização de 13/10/2026 (F3-24):** MA (23%), PI (22,5%), RS (17%), SE (19%) e TO (20%) confirmadas em fonte oficial (Assembleias, Receita Estadual do RS e decisão do STF na ADI 7375). Continuam abertas: **AL**, onde a Lei 8.779/2022 diz 19% e o Portal Nacional da DIFAL mostra 20,5% (pode haver lei posterior), e **AP**, sem fonte oficial atual localizada.
 - **D-012 resolvida em 13/10/2026 (F3-07):** a lista oficial de Esquemas XML do Portal Nacional da NF-e tem como pacote mais recente o **PL_010f v1.04** (NT 2025.002 v1.50 e NT 2026.007 v1.00, publicado em 31/08/2026). Não há pacote próprio da v1.52, que mudou regras e não o leiaute. O Bipaê passou a usar o PL_010f (guardado em `packages/fiscal/sources`).
+
+### D-022 — NFC-e em MG: ambiente próprio ou SVRS?
+
+- **Contexto:** a relação de serviços web da NFC-e no portal da SEFAZ Virtual do RS lista os autorizadores AM, GO, MS, MT, PR, RS, SP e SVRS, sem MG. A página de webservices do Portal Nacional da NFC-e (ENCAT) lista um ambiente próprio de MG (hnfce.fazenda.mg.gov.br).
+- **Implementação provisória:** MG usa o ambiente próprio listado pelo ENCAT. Se a primeira autorização em homologação falhar, o caminho é tentar a SVRS.
+- **Pergunta:** qual é o autorizador vigente da NFC-e em MG?
+
