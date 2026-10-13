@@ -15,7 +15,7 @@
 | NT 2025.002 (RTC) | **v1.52** | 01/10/2026 | Leiaute e regras de NF-e/NFC-e para IBS, CBS e IS | F3-05, F3-07, F3-08 |
 | IT 2025.002 (tabelas cClassTrib, CST e cCredPres) | **v1.70** | 01/10/2026 | Tabelas de classificação tributária; implementação até 16/10/2026 | F3-03 |
 | IT 2023.002 (Tabela CFOP) | v2.00 | 25/08/2026 | Tabela de CFOP | F3-03 |
-| Pacote de schemas 010b (NT 2025.002) | **v1.30** | 07/10/2025 | Último pacote **completo** de XSD da NF-e/NFC-e listado | F3-07, F3-08 |
+| Pacote de schemas 010f (NT 2025.002 v1.50 e NT 2026.007) | **v1.04** | 31/08/2026 | Pacote vigente de XSD da NF-e/NFC-e no Portal Nacional (o 010b do portal SVRS estava defasado) | F3-07, F3-08 |
 | Schema do evento 211110 | NT 2025.002 v1.40 | 23/07/2026 | Solicitação de apropriação de crédito presumido | fora do MVP |
 | NT 2025.001 (QR Code da NFC-e) | v1.01 | 26/06/2025 | Leiaute do **QR Code versão 3** da NFC-e | F3-13 |
 | NT 2026.002 | v1.10a | 25/08/2026 | **Contingência off-line** da NFC-e e da NF-e com DANFE Simplificado Tipo 2 (tpEmis 9); vendas presenciais e não presenciais | F3-15 |

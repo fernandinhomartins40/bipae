@@ -1,5 +1,19 @@
 # Changelog
 
+## [F3-07 XML da NFC-e] — 13/10/2026
+
+### Adicionado
+- **Gerador do XML da NFC-e** (modelo 65, leiaute 4.00 com os grupos da Reforma: IBS, CBS e totais), a partir da venda e dos impostos já calculados pelo motor. Chave de acesso com dígito verificador.
+- **Validação automática contra os schemas oficiais**: os testes validam cada XML gerado contra o pacote **PL_010f v1.04** do Portal Nacional, e conferem que o validador reprova XML errado.
+- **Tabela oficial de meios de pagamento (tPag)** importada do Portal Nacional, com data e hash.
+- Só homologação (tpAmb = 2): o gerador nem tem opção de produção.
+
+### Alterado
+- O motor passou a usar o pacote de schemas **PL_010f** (31/08/2026), o vigente no Portal Nacional, no lugar do PL_010b. Isso resolve a dúvida D-012.
+
+### Ainda não
+- A nota ainda não é assinada (F3-09) nem enviada (F3-10); o QR Code entra na F3-13.
+
 ## [F3-24 Mais cinco UFs confirmadas] — 13/10/2026
 
 ### Alterado

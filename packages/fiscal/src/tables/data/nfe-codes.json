@@ -1,5 +1,5 @@
 {
- "package": "PL_010b_NT2025_002_v1.30",
+ "package": "PL_010f_v1.04",
  "icms": [
   {
    "code": "00",
@@ -29,7 +29,8 @@
   {
    "code": "20",
    "groups": [
-    "ICMS20"
+    "ICMS20",
+    "ICMSPart"
    ]
   },
   {

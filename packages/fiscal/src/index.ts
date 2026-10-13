@@ -7,3 +7,5 @@ export * from './company-rules';
 export * from './coverage';
 export * from './engine';
 export * from './taxes';
+export * from './nfce/access-key';
+export * from './nfce/build';

@@ -40,11 +40,11 @@
     "downloadedAt": "2026-10-13"
   },
   "nfeSchema": {
-    "file": "PL_010b_NT2025_002_v1.30.zip",
-    "title": "Pacote de schemas da NF-e/NFC-e PL_010b (NT 2025.002 v1.30)",
-    "publisher": "Portal da SEFAZ Virtual do RS (SVRS), mesmos arquivos do Portal Nacional da NF-e",
-    "page": "https://dfe-portal.svrs.rs.gov.br/Nfe/Documentos",
-    "publishedAt": "2025-10-07",
+    "file": "PL_010f_v1.04.zip",
+    "title": "Pacote de schemas da NF-e/NFC-e PL_010f v1.04 (NT 2025.002 v1.50 e NT 2026.007 v1.00)",
+    "publisher": "Portal Nacional da NF-e (ENCAT)",
+    "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+    "publishedAt": "2026-08-31",
     "downloadedAt": "2026-10-13"
   },
   "cest": {
@@ -53,6 +53,14 @@
     "publisher": "Conselho Nacional de Política Fazendária (CONFAZ)",
     "page": "https://www.confaz.fazenda.gov.br/legislacao/convenios/2018/CV142_18",
     "publishedAt": "2026-10-13",
+    "downloadedAt": "2026-10-13"
+  },
+  "paymentMeans": {
+    "file": "Tabela_de_meios_de_pagamento_2026-03-04.xlsx",
+    "title": "Tabela de Meios de Pagamento (tPag) da NF-e/NFC-e",
+    "publisher": "Portal Nacional da NF-e (ENCAT)",
+    "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=",
+    "publishedAt": "2026-03-06",
     "downloadedAt": "2026-10-13"
   }
 }

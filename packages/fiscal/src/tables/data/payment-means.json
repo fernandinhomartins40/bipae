@@ -1,0 +1,117 @@
+[
+ {
+  "code": "01",
+  "description": "Dinheiro",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "02",
+  "description": "Cheque",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "03",
+  "description": "Cartão de Crédito",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "04",
+  "description": "Cartão de Débito",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "05",
+  "description": "Cartão da Loja (Private Label), Crediário Digital, Outros Crediários",
+  "start": "2024-07-01"
+ },
+ {
+  "code": "10",
+  "description": "Vale Alimentação",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "11",
+  "description": "Vale Refeição",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "12",
+  "description": "Vale Presente",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "13",
+  "description": "Vale Combustível",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "14",
+  "description": "Duplicata Mercantil",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "15",
+  "description": "Boleto Bancário",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "16",
+  "description": "Depósito Bancário",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "17",
+  "description": "Pagamento Instantâneo (PIX) - Dinâmico",
+  "start": "2024-07-01"
+ },
+ {
+  "code": "18",
+  "description": "TED (Transferência Eletrônica Disponível)",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "19",
+  "description": "Programa de fidelidade, Cashback, Crédito Virtual",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "20",
+  "description": "Pagamento Instantâneo (PIX) - Estático",
+  "start": "2024-07-01"
+ },
+ {
+  "code": "21",
+  "description": "Crédito em Loja",
+  "start": "2024-07-01"
+ },
+ {
+  "code": "22",
+  "description": "Pagamento Eletrônico não Informado - falha de hardware do sistema emissor",
+  "start": "2024-07-01"
+ },
+ {
+  "code": "23",
+  "description": "Pagamento Instantâneo (PIX) - Automático",
+  "start": "2026-05-04"
+ },
+ {
+  "code": "24",
+  "description": "TEF - \"Book Transfer\"",
+  "start": "2026-05-04"
+ },
+ {
+  "code": "90",
+  "description": "Sem Pagamento",
+  "start": "2020-01-01"
+ },
+ {
+  "code": "91",
+  "description": "Pagamento Posterior",
+  "start": "2025-11-03"
+ },
+ {
+  "code": "99",
+  "description": "Outros",
+  "start": "2020-01-01"
+ }
+]

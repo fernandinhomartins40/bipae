@@ -15,7 +15,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-009 | 🔴 aberta | Devolução no PDV com referência por item (VC02-14) |
 | D-010 | 🔴 aberta | Faixa de séries de NFC-e permitida para série por terminal |
 | D-011 | 🔴 aberta | Datas de homologação e produção da NT 2025.002 v1.52 |
-| D-012 | 🔴 aberta | Qual pacote de schemas (XSD) vale para a v1.52 |
+| D-012 | ✅ resolvida | Qual pacote de schemas (XSD) vale para a v1.52 |
 | D-013 | 🔴 aberta | Contingência off-line da NFC-e depois da NT 2026.002 |
 | D-014 | 🔴 aberta | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
 | D-015 | 🔴 aberta | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
@@ -179,3 +179,4 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Implementação provisória:** essas sete UFs ficam como "falta configurar" no motor. Uma empresa dessas UFs consegue usar o caixa, mas o cálculo do ICMS pede a alíquota ao contador até a confirmação.
 - **Pergunta:** o contador confirma as sete alíquotas e as leis? O adicional de FECOEP de AL e de SE se soma à alíquota geral em todos os produtos ou só nos listados?
 - **Atualização de 13/10/2026 (F3-24):** MA (23%), PI (22,5%), RS (17%), SE (19%) e TO (20%) confirmadas em fonte oficial (Assembleias, Receita Estadual do RS e decisão do STF na ADI 7375). Continuam abertas: **AL**, onde a Lei 8.779/2022 diz 19% e o Portal Nacional da DIFAL mostra 20,5% (pode haver lei posterior), e **AP**, sem fonte oficial atual localizada.
+- **D-012 resolvida em 13/10/2026 (F3-07):** a lista oficial de Esquemas XML do Portal Nacional da NF-e tem como pacote mais recente o **PL_010f v1.04** (NT 2025.002 v1.50 e NT 2026.007 v1.00, publicado em 31/08/2026). Não há pacote próprio da v1.52, que mudou regras e não o leiaute. O Bipaê passou a usar o PL_010f (guardado em `packages/fiscal/sources`).

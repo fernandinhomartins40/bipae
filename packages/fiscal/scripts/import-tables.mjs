@@ -359,6 +359,21 @@ function importCest() {
   return parseCest(html, manifest.cest.downloadedAt);
 }
 
+function importPaymentMeans() {
+  const sheet = sheetOf('paymentMeans', () => true);
+  const head = sheet.rows[1]?.map(clean) ?? [];
+  if (head[0] !== 'tPag' || head[1] !== 'Descrição' || head[2] !== 'dIniVig') {
+    throw new Error('Tabela de meios de pagamento mudou de formato');
+  }
+  return sheet.rows
+    .slice(2)
+    .filter((row) => /^\d{2}$/.test(row[0]))
+    .map((row) => {
+      const end = isoDate(row[3]);
+      return { code: row[0], description: clean(row[1]), start: isoDate(row[2]), ...(end && { end }) };
+    });
+}
+
 const tables = {
   'cfop.json': importCfop(),
   'class-trib.json': importClassTrib(),
@@ -367,6 +382,7 @@ const tables = {
   'ncm.json': importNcm(),
   'nfe-codes.json': importNfeSchema(),
   'cest.json': importCest(),
+  'payment-means.json': importPaymentMeans(),
 };
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha

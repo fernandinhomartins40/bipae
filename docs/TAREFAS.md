@@ -98,7 +98,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-06.d3 · O caixa calcula os impostos ao fechar a venda (sem internet), o evento leva o resultado e o servidor grava e confere — depende: F3-06.d2
 - [x] F3-06.d4 · A retaguarda mostra os impostos de cada venda e o que falta configurar — depende: F3-06.d3
 - [x] F3-06.e · Regras de tributo próprias da empresa, por vigência (alíquota por produto, redução de base, MVA), para o contador ajustar o que a tabela geral não cobre — depende: F3-06.d
-- [ ] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
+- [x] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
+  - Feito em 13/10/2026: `buildNfce` em `packages/fiscal/src/nfce`, validado contra o PL_010f. Ainda não emitidos: ICMS com ST própria (CST 10, 70, CSOSN 201 a 203), diferimento (51). Assinatura é a F3-09; QR Code, a F3-13; o mapeamento dos pagamentos do caixa para o tPag entra na F3-10.
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
 - [ ] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07
 - [ ] F3-09 · Assinatura XML com certificado A1 no servidor — depende: F3-07
