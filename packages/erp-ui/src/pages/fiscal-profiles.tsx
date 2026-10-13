@@ -14,11 +14,12 @@ import { Plus } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
 import { useForm } from '../forms';
+import { CodeSuggestions, codeHint, useFiscalOptions } from './fiscal-lookup';
 
 /**
  * Perfis fiscais (F1-02): o "jeito de tributar" reaproveitado por vários produtos (CFOP, CSOSN
- * ou CST, origem e cClassTrib). O cálculo dos impostos chega com a emissão de notas (Fase 3);
- * até lá o perfil fica guardado e já vinculado aos produtos.
+ * ou CST, origem e cClassTrib). Os códigos são conferidos nas tabelas oficiais (F3-06); o cálculo
+ * dos impostos na venda chega com a emissão de notas.
  */
 export function FiscalProfilesPage() {
   const { api } = useApp();
@@ -47,8 +48,9 @@ export function FiscalProfilesPage() {
       />
       <div className="mb-4">
         <Alert tone="warning" title="O cálculo dos impostos chega com a emissão de NFC-e">
-          Por enquanto o Bipaê guarda o perfil e o vínculo com os produtos, sem calcular impostos.
-          Na dúvida sobre CFOP, CSOSN ou cClassTrib, confirme com o seu contador.
+          O Bipaê já confere cada código na tabela oficial e mostra o que ele significa, mas ainda
+          não calcula os impostos na venda. Na dúvida sobre CFOP, CSOSN ou cClassTrib, confirme com
+          o seu contador.
         </Alert>
       </div>
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
@@ -98,6 +100,7 @@ function FiscalProfileForm({
 }) {
   const { api } = useApp();
   const queryClient = useQueryClient();
+  const options = useFiscalOptions().data;
   const d = profile?.data;
   const [regime, setRegime] = useState<'simples' | 'normal'>(
     d?.cstIcms && !d.csosn ? 'normal' : 'simples',
@@ -155,10 +158,12 @@ function FiscalProfileForm({
           label="Origem da mercadoria"
           value={form.values.origem}
           onChange={(e) => form.set('origem', e.target.value)}
-          options={ICMS_ORIGINS.map((o) => ({
-            value: String(o.code),
-            label: `${o.code} — ${o.label}`,
-          }))}
+          options={
+            // Lista oficial quando já carregou; a lista curta do domínio enquanto isso.
+            options
+              ? options.origins.map((o) => ({ value: o.code, label: `${o.code} — ${o.description}` }))
+              : ICMS_ORIGINS.map((o) => ({ value: String(o.code), label: `${o.code} — ${o.label}` }))
+          }
         />
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField
@@ -167,6 +172,8 @@ function FiscalProfileForm({
             value={form.values.cfopInterna}
             onChange={digits('cfopInterna', 4)}
             error={form.errors.cfopInterna}
+            list="cfop-interna-opcoes"
+            hint={codeHint(options?.cfopInterna, form.values.cfopInterna, 4, 'Começa com 5. Ex.: 5102 (revenda).')}
           />
           <TextField
             label="CFOP para outro estado"
@@ -174,6 +181,13 @@ function FiscalProfileForm({
             value={form.values.cfopInterestadual}
             onChange={digits('cfopInterestadual', 4)}
             error={form.errors.cfopInterestadual}
+            list="cfop-interestadual-opcoes"
+            hint={codeHint(
+              options?.cfopInterestadual,
+              form.values.cfopInterestadual,
+              4,
+              'Começa com 6. Ex.: 6102 (revenda).',
+            )}
           />
         </div>
         <SelectField
@@ -189,7 +203,13 @@ function FiscalProfileForm({
           <TextField
             label="CSOSN"
             inputMode="numeric"
-            hint="Ex.: 102 (sem permissão de crédito), 500 (ICMS já recolhido por ST)."
+            list="csosn-opcoes"
+            hint={codeHint(
+              options?.csosn,
+              form.values.csosn,
+              3,
+              'Ex.: 102 (sem permissão de crédito), 500 (ICMS já recolhido por ST).',
+            )}
             value={form.values.csosn}
             onChange={digits('csosn', 3)}
             error={form.errors.csosn}
@@ -198,7 +218,13 @@ function FiscalProfileForm({
           <TextField
             label="CST do ICMS"
             inputMode="numeric"
-            hint="Ex.: 00 (tributada integralmente), 60 (ICMS cobrado antes por ST)."
+            list="cst-icms-opcoes"
+            hint={codeHint(
+              options?.cstIcms,
+              form.values.cstIcms,
+              2,
+              'Ex.: 00 (tributada integralmente), 60 (ICMS cobrado antes por ST).',
+            )}
             value={form.values.cstIcms}
             onChange={digits('cstIcms', 2)}
             error={form.errors.cstIcms}
@@ -207,11 +233,22 @@ function FiscalProfileForm({
         <TextField
           label="cClassTrib (IBS/CBS) — opcional"
           inputMode="numeric"
-          hint="Classificação tributária da Reforma, com 6 dígitos."
+          list="class-trib-opcoes"
+          hint={codeHint(
+            options?.classTrib,
+            form.values.cClassTrib,
+            6,
+            'Classificação tributária da Reforma, com 6 dígitos. Ex.: 000001 (tributação integral).',
+          )}
           value={form.values.cClassTrib}
           onChange={digits('cClassTrib', 6)}
           error={form.errors.cClassTrib}
         />
+        <CodeSuggestions id="cfop-interna-opcoes" list={options?.cfopInterna} />
+        <CodeSuggestions id="cfop-interestadual-opcoes" list={options?.cfopInterestadual} />
+        <CodeSuggestions id="csosn-opcoes" list={options?.csosn} />
+        <CodeSuggestions id="cst-icms-opcoes" list={options?.cstIcms} />
+        <CodeSuggestions id="class-trib-opcoes" list={options?.classTrib} />
         <div className="flex gap-2 pt-2">
           <Button type="submit" loading={form.submitting}>
             Salvar perfil

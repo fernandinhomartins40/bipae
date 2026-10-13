@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-06.b Telas com as tabelas fiscais] — 13/10/2026
+
+### Adicionado
+- **Busca de NCM pelo nome da mercadoria** no cadastro de produto: digite "arroz polido" ou "cerveja" e escolha na lista. Quem digita o código vê na hora o que ele é, ou o aviso de que não existe.
+- **Sugestão de CEST** pelo NCM escolhido, com o lembrete de que só se preenche quando o produto está em substituição tributária no estado.
+- **Perfil fiscal explicado:** cada campo (CFOP, CSOSN, CST, cClassTrib) mostra o significado do código digitado e oferece as opções oficiais; código fora da tabela é avisado antes de salvar.
+
 ## [F3-06.a Cadastro conferido nas tabelas oficiais] — 13/10/2026
 
 ### Adicionado
@@ -13,7 +20,8 @@
 ## [Correção da limpeza periódica] — 13/10/2026
 
 ### Corrigido
-- **A limpeza de logins antigos não era agendada em produção.** O identificador da tarefa repetida tinha dois-pontos, que o BullMQ recusa. A API subia normalmente e só avisava no log; agora a rotina é agendada de fato.
+- **A limpeza de logins antigos não era agendada em produção.** O identificador da tarefa repetida tinha dois-pontos, que o BullMQ recusa. A API subia normalmente e só avisava no log. A rotina passa a usar o agendador próprio do BullMQ, que também não duplica o agendamento quando a API reinicia.
+- A primeira tentativa de correção foi barrada pelo teste com Redis de verdade antes do deploy, sem afetar o site: era só trocar o identificador, e a tarefa continuava sem disparar.
 - Novo teste de tarefa repetida, rodando também contra o Redis de verdade, e o teste do pacote compilado passa a reprovar se o agendamento falhar.
 
 ## [F3-05 IBS, CBS e Imposto Seletivo] — 13/10/2026

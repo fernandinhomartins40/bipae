@@ -18,6 +18,7 @@ import { useDeferredValue, useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
 import { ApiError } from '../api-client';
 import { useForm } from '../forms';
+import { NcmCestHelp } from './fiscal-lookup';
 import { KitEditor, type KitComponent } from './product-kit';
 import { VariantsEditor } from './product-variants';
 
@@ -271,6 +272,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
             error={form.errors.cest}
           />
         </div>
+        <NcmCestHelp
+          ncm={form.values.ncm}
+          cest={form.values.cest}
+          onPickNcm={(code) => form.set('ncm', code)}
+          onPickCest={(code) => form.set('cest', code)}
+        />
         <SelectField
           label="Perfil fiscal"
           hint="Como o produto é tributado. Os perfis ficam em Perfis fiscais."
