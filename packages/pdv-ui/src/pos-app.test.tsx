@@ -7,7 +7,13 @@ import { describe, expect, it, vi } from 'vitest';
 import type { PosBackend } from './backend';
 import { PosApp } from './index';
 
-const terminal = { id: uuidv7(), name: 'Caixa 1', platform: 'web' as const, nfceSeries: 1, storeId: uuidv7() };
+const terminal = {
+  id: uuidv7(),
+  name: 'Caixa 1',
+  platform: 'web' as const,
+  nfceSeries: 1,
+  storeId: uuidv7(),
+};
 const water = {
   id: uuidv7(),
   name: 'Água Mineral 1,5L',
@@ -19,6 +25,7 @@ const water = {
   ncm: null,
   cest: null,
   fiscalProfileId: null,
+  parentId: null,
   barcodes: ['78912342'],
   updatedAt: '2026-10-12T10:00:00.000Z',
 };
@@ -30,14 +37,26 @@ function setup(permissions = ['pos.sell', 'pos.discount.above_limit']) {
       received.push(...(events as TerminalEvent[]));
       return { accepted: events.map((e) => e.id), rejected: [] };
     }),
-    pull: vi.fn(async (): Promise<SyncPullResult> => ({ cursor: 'c1', products: [water], hasMore: false })),
+    pull: vi.fn(async (): Promise<SyncPullResult> => ({
+      cursor: 'c1',
+      products: [water],
+      hasMore: false,
+    })),
     listTerminals: async () => [terminal],
     createTerminal: async () => terminal,
     listStores: async () => [],
-    terminalContext: async () => ({ terminal: { ...terminal, status: 'active' }, storeName: 'Loja', businessName: 'Mercadinho', taxId: null }),
+    terminalContext: async () => ({
+      terminal: { ...terminal, status: 'active' },
+      storeName: 'Loja',
+      businessName: 'Mercadinho',
+      taxId: null,
+    }),
     authorize: async () => ({ userId: uuidv7(), name: 'Gerente' }),
   };
-  const platform = { ...createSimulatedPlatform('web'), openLocalDatabase: async () => nodeSqliteDriver() };
+  const platform = {
+    ...createSimulatedPlatform('web'),
+    openLocalDatabase: async () => nodeSqliteDriver(),
+  };
   const user = { id: uuidv7(), name: 'Juliana', tenantId: uuidv7(), permissions };
   render(<PosApp platform={platform} backend={backend} user={user} onExit={() => {}} />);
   return { received, platform };
@@ -49,7 +68,10 @@ describe('PosApp', () => {
     await userEvent.click(await screen.findByRole('button', { name: /Caixa 1/ }));
     expect(await platform.preferences.get('bipae.terminalId')).toBe(terminal.id);
 
-    await userEvent.type(await screen.findByLabelText('Dinheiro na gaveta para troco (R$)'), '50,00');
+    await userEvent.type(
+      await screen.findByLabelText('Dinheiro na gaveta para troco (R$)'),
+      '50,00',
+    );
     await userEvent.click(screen.getByRole('button', { name: 'Abrir caixa' }));
     expect(await screen.findByText('Caixa livre')).toBeInTheDocument();
 
@@ -62,8 +84,12 @@ describe('PosApp', () => {
     expect(screen.getByText('Troco')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Finalizar venda' }));
 
-    expect(await screen.findByText('Bipaê! Venda nº 1 concluída. Troco: R$ 4,02.')).toBeInTheDocument();
-    await waitFor(() => expect(received.map((e) => e.type)).toEqual(['cash_session.opened', 'sale.completed']));
+    expect(
+      await screen.findByText('Bipaê! Venda nº 1 concluída. Troco: R$ 4,02.'),
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(received.map((e) => e.type)).toEqual(['cash_session.opened', 'sale.completed']),
+    );
     expect(screen.getByTestId('sync-status')).not.toHaveTextContent('para enviar');
   });
 
@@ -71,9 +97,17 @@ describe('PosApp', () => {
     setup();
     await userEvent.click(await screen.findByRole('button', { name: /Caixa 1/ }));
     await userEvent.click(await screen.findByRole('button', { name: 'Abrir caixa' }));
-    await userEvent.type(await screen.findByLabelText('Bipe o código ou digite o nome do produto'), '7891000315507{Enter}');
-    expect(await screen.findByText('Código 7891000315507 não encontrado. Confira ou busque pelo nome.')).toBeInTheDocument();
-    await userEvent.type(screen.getByLabelText('Bipe o código ou digite o nome do produto'), 'agua{Enter}');
+    await userEvent.type(
+      await screen.findByLabelText('Bipe o código ou digite o nome do produto'),
+      '7891000315507{Enter}',
+    );
+    expect(
+      await screen.findByText('Código 7891000315507 não encontrado. Confira ou busque pelo nome.'),
+    ).toBeInTheDocument();
+    await userEvent.type(
+      screen.getByLabelText('Bipe o código ou digite o nome do produto'),
+      'agua{Enter}',
+    );
     expect(screen.getByTestId('pdv-total')).toHaveTextContent('R$ 2,99');
   });
 });

@@ -140,7 +140,7 @@ export class PdvService {
   async findByCode(code: string, customerTaxId?: string | null): Promise<CatalogProduct | null> {
     const table = (await this.activePriceTable(customerTaxId))?.id ?? null;
     const [row] = await this.storage.query<Row>(
-      `${this.productSelect} WHERE p.active = 1 AND (p.id IN (SELECT product_id FROM barcodes WHERE code = ?) OR p.sku = ?) LIMIT 1`,
+      `${this.productSelect} WHERE p.active = 1 AND NOT EXISTS (SELECT 1 FROM products v WHERE v.parent_id = p.id AND v.active = 1) AND (p.id IN (SELECT product_id FROM barcodes WHERE code = ?) OR p.sku = ?) LIMIT 1`,
       [table, code, code],
     );
     return row ? toProduct(row) : null;
@@ -150,7 +150,7 @@ export class PdvService {
   async findByPlu(plu: string, customerTaxId?: string | null): Promise<CatalogProduct | null> {
     const table = (await this.activePriceTable(customerTaxId))?.id ?? null;
     const [row] = await this.storage.query<Row>(
-      `${this.productSelect} WHERE p.active = 1 AND p.is_weighable = 1 AND ltrim(p.sku, '0') = ? LIMIT 1`,
+      `${this.productSelect} WHERE p.active = 1 AND NOT EXISTS (SELECT 1 FROM products v WHERE v.parent_id = p.id AND v.active = 1) AND p.is_weighable = 1 AND ltrim(p.sku, '0') = ? LIMIT 1`,
       [table, String(Number(plu))],
     );
     return row ? toProduct(row) : null;
@@ -162,7 +162,7 @@ export class PdvService {
     const table = (await this.activePriceTable(customerTaxId))?.id ?? null;
     const where = terms.map(() => 'p.search_name LIKE ?').join(' AND ');
     const rows = await this.storage.query<Row>(
-      `${this.productSelect} WHERE p.active = 1 AND ${where} ORDER BY p.search_name LIMIT ?`,
+      `${this.productSelect} WHERE p.active = 1 AND NOT EXISTS (SELECT 1 FROM products v WHERE v.parent_id = p.id AND v.active = 1) AND ${where} ORDER BY p.search_name LIMIT ?`,
       [table, ...terms.map((t) => `%${t}%`), limit],
     );
     return rows.map(toProduct);
@@ -225,12 +225,13 @@ export class PdvService {
     await this.storage.transaction(async (tx) => {
       for (const p of products) {
         await tx.execute(
-          `INSERT INTO products (id, name, search_name, sku, unit, price_cents, is_weighable, active, ncm, cest, fiscal_profile_id, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `INSERT INTO products (id, name, search_name, sku, unit, price_cents, is_weighable, active, ncm, cest, fiscal_profile_id, parent_id, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
            ON CONFLICT (id) DO UPDATE SET name = excluded.name, search_name = excluded.search_name,
              sku = excluded.sku, unit = excluded.unit, price_cents = excluded.price_cents,
              is_weighable = excluded.is_weighable, active = excluded.active, ncm = excluded.ncm,
-             cest = excluded.cest, fiscal_profile_id = excluded.fiscal_profile_id, updated_at = excluded.updated_at`,
+             cest = excluded.cest, fiscal_profile_id = excluded.fiscal_profile_id, parent_id = excluded.parent_id,
+             updated_at = excluded.updated_at`,
           [
             p.id,
             p.name,
@@ -243,6 +244,7 @@ export class PdvService {
             p.ncm,
             p.cest,
             p.fiscalProfileId,
+            p.parentId ?? null,
             p.updatedAt,
           ],
         );

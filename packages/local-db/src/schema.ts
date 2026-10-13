@@ -94,6 +94,10 @@ export const LOCAL_MIGRATIONS: string[] = [
   -- Clientes com tabela própria, pelo CPF/CNPJ (o que o caixa sabe do cliente).
   CREATE TABLE customer_price_tables (tax_id TEXT PRIMARY KEY, price_table_id TEXT NOT NULL);
   `,
+  /* 3 — F1-04: variações apontam para o modelo; o modelo não é vendido no caixa */ `
+  ALTER TABLE products ADD COLUMN parent_id TEXT;
+  CREATE INDEX products_parent ON products (parent_id);
+  `,
 ];
 
 /**

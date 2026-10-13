@@ -170,6 +170,8 @@ export interface SyncPullResult {
     ncm: string | null;
     cest: string | null;
     fiscalProfileId: string | null;
+    /** Modelo desta variação (F1-04); null para produtos comuns. */
+    parentId: string | null;
     barcodes: string[];
     updatedAt: string;
   }[];

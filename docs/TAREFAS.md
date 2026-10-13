@@ -50,12 +50,12 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F1-03.b · Tela de tabelas de preço e escolha da tabela na loja e no cliente — depende: F1-03.a
 - [x] F1-03.c · Caixa offline aplica o preço da tabela (sincronização, banco local, cálculo) — depende: F1-03.a
 - [x] F1-03.d · E2E: venda com tabela da loja e do cliente — depende: F1-03.b, F1-03.c
-- [~] F1-04 · Variações (grade) e kits no cadastro e no caixa
+- [x] F1-04 · Variações (grade) e kits no cadastro e no caixa
   - Pronto quando: variação aparece na busca, e o kit baixa o estoque dos componentes, com testes.
 - [x] F1-04.a · Kit: a venda baixa o estoque dos componentes; cancelamento e devolução devolvem (servidor, testes)
 - [x] F1-04.b · Tela do kit: composição no cadastro do produto — depende: F1-04.a
 - [x] F1-04.c · Tela da grade: atributos (tamanho, cor...) geram as variações — depende: F1-04.a
-- [ ] F1-04.d · Caixa: as variações aparecem na busca e o modelo (produto pai) não, com E2E — depende: F1-04.b, F1-04.c
+- [x] F1-04.d · Caixa: as variações aparecem na busca e o modelo (produto pai) não, com E2E — depende: F1-04.b, F1-04.c
 - [ ] F1-05 · Permissões por loja (`memberships.store_ids`) aplicadas na API e nas telas
   - Pronto quando: um operador restrito não vê nem vende em outra loja, com teste de RLS/API.
 - [ ] F1-06 · Convite de equipe com aceite por link (sem depender de e-mail)

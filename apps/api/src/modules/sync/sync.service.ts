@@ -469,6 +469,7 @@ export class SyncService {
           ncm: p.ncm,
           cest: p.cest,
           fiscalProfileId: p.fiscalProfileId,
+          parentId: p.parentId,
           barcodes: codes.filter((c) => c.productId === p.id).map((c) => c.code),
           updatedAt: p.updatedAt.toISOString(),
         })),

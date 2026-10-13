@@ -1,5 +1,17 @@
 # Changelog
 
+## [F1-04 Variações e kits] — 13/10/2026
+
+### Adicionado
+- **Kits** (ex.: cesta básica):
+  - a composição é montada no cadastro do produto;
+  - vender o kit baixa o estoque de cada componente, e o cancelamento e a devolução devolvem;
+  - um kit não pode conter outro kit.
+- **Grade de variações**:
+  - os atributos (ex.: Tamanho P, M, G e Cor Azul, Preto) geram uma variação por combinação, com preço e estoque próprios;
+  - gerar de novo só cria as combinações que faltam.
+- **No caixa**, aparecem as variações e não o modelo; o kit entra como um item só, pelo preço do kit.
+
 ## [F1-03 Tabelas de preço] — 13/10/2026
 
 ### Adicionado

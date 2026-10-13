@@ -1,4 +1,9 @@
-import { uuidv7, type SyncPullResult, type SyncPushResult, type TerminalEvent } from '@bipae/domain';
+import {
+  uuidv7,
+  type SyncPullResult,
+  type SyncPushResult,
+  type TerminalEvent,
+} from '@bipae/domain';
 import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { addItem, EMPTY_CART, PdvService } from '@bipae/pdv-core';
@@ -16,6 +21,7 @@ const product = {
   ncm: null,
   cest: null,
   fiscalProfileId: null,
+  parentId: null,
   barcodes: ['78912342'],
   updatedAt: '2026-10-12T10:00:00.000Z',
 };
@@ -58,11 +64,17 @@ describe('sync client', () => {
     const server = new FakeServer();
     server.pages = [
       { cursor: 'c1', products: [product], hasMore: true },
-      { cursor: 'c2', products: [{ ...product, id: uuidv7(), name: 'Pão', barcodes: [] }], hasMore: false },
+      {
+        cursor: 'c2',
+        products: [{ ...product, id: uuidv7(), name: 'Pão', barcodes: [] }],
+        hasMore: false,
+      },
     ];
     const { pdv, client } = await setup(server);
     await pdv.openSession(0);
-    await pdv.completeSale(addItem(EMPTY_CART, product), [{ method: 'cash', receivedCents: 299 }], { discountLimitPercent: 10 });
+    await pdv.completeSale(addItem(EMPTY_CART, product), [{ method: 'cash', receivedCents: 299 }], {
+      discountLimitPercent: 10,
+    });
 
     const status = await client.sync();
     expect(status).toMatchObject({ pending: 0, rejected: 0, lastError: null });
@@ -79,7 +91,11 @@ describe('sync client', () => {
     await pdv.applyCatalog([product]);
     await pdv.openSession(0);
     for (let i = 0; i < 3; i++) {
-      await pdv.completeSale(addItem(EMPTY_CART, product), [{ method: 'cash', receivedCents: 299 }], { discountLimitPercent: 10 });
+      await pdv.completeSale(
+        addItem(EMPTY_CART, product),
+        [{ method: 'cash', receivedCents: 299 }],
+        { discountLimitPercent: 10 },
+      );
     }
     const offline = await client.sync();
     expect(offline.pending).toBe(4);
@@ -99,7 +115,9 @@ describe('sync client', () => {
     await pdv.openSession(0);
     const status = await client.sync();
     expect(status).toMatchObject({ pending: 0, rejected: 1 });
-    expect(await pdv.rejectedEvents()).toMatchObject([{ type: 'cash_session.opened', reason: 'Não pode' }]);
+    expect(await pdv.rejectedEvents()).toMatchObject([
+      { type: 'cash_session.opened', reason: 'Não pode' },
+    ]);
   });
 
   it('reports a partial push as an error so it retries later', async () => {

@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, request, test, type Page } from '@playwright/test';
 
 /** F1-04: kits (composição no cadastro) e, depois, variações. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -90,4 +90,78 @@ test('gerar a grade de variações de um modelo', async ({ page }) => {
   // As variações aparecem na lista de produtos.
   await page.getByRole('button', { name: 'Cancelar' }).click();
   await expect(page.getByRole('row', { name: /Camiseta Básica — G \/ Preto/ })).toBeVisible();
+});
+
+test('no caixa aparecem as variações e não o modelo; o kit é vendido como um item', async ({
+  page,
+}) => {
+  // Dados preparados direto pela API, para o teste focar no caixa.
+  const email = `tati-caixa-${Date.now()}@exemplo.com.br`;
+  const api = await request.newContext({ baseURL: 'http://localhost:3334/v1/' });
+  const conta = await (
+    await api.post('auth/signup', {
+      data: {
+        ownerName: 'Tati Dona',
+        businessName: `Boutique ${Date.now()}`,
+        email,
+        password: 'senha-forte-123',
+      },
+    })
+  ).json();
+  const headers = { authorization: `Bearer ${conta.accessToken}` };
+  const modelo = await (
+    await api.post('products', { headers, data: { name: 'Camiseta Básica', priceCents: 4990 } })
+  ).json();
+  for (const tamanho of ['P', 'M']) {
+    await api.post('products', {
+      headers,
+      data: {
+        name: `Camiseta Básica — ${tamanho}`,
+        priceCents: 4990,
+        parentId: modelo.id,
+        attributes: { Tamanho: tamanho },
+      },
+    });
+  }
+  const meia = await (
+    await api.post('products', { headers, data: { name: 'Meia Esportiva', priceCents: 1500 } })
+  ).json();
+  await api.post('products', {
+    headers,
+    data: {
+      name: 'Kit Treino',
+      priceCents: 5900,
+      barcodes: ['7890000000048'],
+      components: [{ productId: meia.id, quantity: 2 }],
+    },
+  });
+
+  await page.goto('/entrar');
+  await page.getByLabel('E-mail').fill(email);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Entrar' }).click();
+  await menu(page, 'Abrir o caixa');
+  await page.getByLabel('Novo caixa').fill('Caixa 1');
+  await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByLabel('Dinheiro na gaveta para troco (R$)').fill('0,00');
+  await page.getByRole('button', { name: 'Abrir caixa' }).click();
+
+  const bipar = page.getByLabel('Bipe o código ou digite o nome do produto');
+  await bipar.fill('camiseta');
+  await bipar.press('Enter');
+  const resultados = page.getByRole('list', { name: 'Resultados da busca' });
+  await expect(resultados.getByRole('listitem')).toHaveCount(2);
+  await expect(resultados).toContainText('Camiseta Básica — P');
+  await expect(resultados).toContainText('Camiseta Básica — M');
+  await resultados.getByRole('button', { name: /Camiseta Básica — M/ }).click();
+  await expect(page.getByTestId('pdv-total')).toHaveText('R$ 49,90');
+
+  // O kit entra como um item só, pelo preço do kit.
+  await bipar.fill('7890000000048');
+  await bipar.press('Enter');
+  await expect(page.getByTestId('pdv-total')).toHaveText('R$ 108,90');
+  await api.dispose();
 });
