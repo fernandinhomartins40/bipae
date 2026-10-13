@@ -1063,6 +1063,25 @@ export function PeoplePage() {
                   Encerrar todas as sessões
                 </Button>
               )}
+              {can('platform.tenants.manage') && (
+                <Button
+                  variant="ghost"
+                  onClick={async () => {
+                    if (
+                      !confirm(
+                        `Zerar a verificação em duas etapas de ${p.email}? Faça isso só depois de confirmar que é a própria pessoa (ela perdeu o celular). As sessões abertas serão encerradas.`,
+                      )
+                    )
+                      return;
+                    await api.post(`/admin/users/${p.id}/reset-totp`);
+                    alert(
+                      'Verificação em duas etapas zerada. A pessoa pode entrar só com a senha e ativar de novo.',
+                    );
+                  }}
+                >
+                  Zerar verificação em duas etapas
+                </Button>
+              )}
             </div>
           </Card>
         ))}

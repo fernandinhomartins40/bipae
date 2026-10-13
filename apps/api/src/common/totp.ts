@@ -1,17 +1,25 @@
 import { Secret, TOTP } from 'otpauth';
 
-/** Time-based one-time codes (RFC 6238) for the Bipaê staff 2FA (Google Authenticator etc.). */
+/** Time-based one-time codes (RFC 6238): 2FA of the Bipaê staff and of client users. */
 
 export function newTotpSecret(): string {
   return new Secret({ size: 20 }).base32;
 }
 
-function totp(secret: string, label: string) {
-  return new TOTP({ issuer: 'Bipaê Admin', label, algorithm: 'SHA1', digits: 6, period: 30, secret: Secret.fromBase32(secret) });
+function totp(secret: string, label: string, issuer = 'Bipaê Admin') {
+  return new TOTP({
+    issuer,
+    label,
+    algorithm: 'SHA1',
+    digits: 6,
+    period: 30,
+    secret: Secret.fromBase32(secret),
+  });
 }
 
-export function totpUri(secret: string, label: string): string {
-  return totp(secret, label).toString();
+/** otpauth:// link for the QR code; the issuer is the name shown in the authenticator app. */
+export function totpUri(secret: string, label: string, issuer?: string): string {
+  return totp(secret, label, issuer).toString();
 }
 
 /** Accepts the current code and the neighbours (±30 s) for clock drift. */

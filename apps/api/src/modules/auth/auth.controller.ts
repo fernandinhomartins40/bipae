@@ -1,9 +1,9 @@
 import { Body, Controller, Get, HttpCode, Headers, Inject, Post } from '@nestjs/common';
 import { RouteConfig } from '@nestjs/platform-fastify';
-import { loginInput, refreshInput, signupInput } from '@bipae/domain';
+import { loginInput, refreshInput, signupInput, totpCodeInput } from '@bipae/domain';
 import { z } from 'zod';
 import { Ctx, Public, type RequestContext } from '../../common/auth';
-import { parse } from '../../common/errors';
+import { AppError, parse } from '../../common/errors';
 import { AuthService } from './auth.service';
 
 /** Brute-force protection on credential endpoints: per IP, max from LOGIN_RATE_LIMIT_PER_MINUTE (app.ts). */
@@ -66,6 +66,46 @@ export class AuthController {
       body,
     );
     return this.auth.authorize(ctx.tenantId, input.email, input.password, input.permission);
+  }
+
+  // Two-step verification of the logged-in user (F1-01). Not available in support sessions.
+  @Get('totp')
+  totpStatus(@Ctx() ctx: RequestContext) {
+    return this.auth.totpStatus(ctx.tenantId, ctx.userId);
+  }
+
+  @Post('totp/setup')
+  @HttpCode(200)
+  totpSetup(@Ctx() ctx: RequestContext) {
+    this.ownerOnly(ctx);
+    return this.auth.totpSetup(ctx.tenantId, ctx.userId);
+  }
+
+  @Post('totp/enable')
+  @HttpCode(200)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  totpEnable(@Ctx() ctx: RequestContext, @Body() body: unknown) {
+    this.ownerOnly(ctx);
+    return this.auth.totpEnable(ctx.tenantId, ctx.userId, parse(totpCodeInput, body).code);
+  }
+
+  @Post('totp/disable')
+  @HttpCode(200)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  totpDisable(@Ctx() ctx: RequestContext, @Body() body: unknown) {
+    this.ownerOnly(ctx);
+    return this.auth.totpDisable(ctx.tenantId, ctx.userId, parse(totpCodeInput, body).code);
+  }
+
+  /** Only the person themselves changes their 2FA, never Bipaê support acting as them. */
+  private ownerOnly(ctx: RequestContext) {
+    if (ctx.impersonatedBy) {
+      throw new AppError(
+        403,
+        'forbidden',
+        'O suporte Bipaê não pode mudar a verificação em duas etapas do cliente.',
+      );
+    }
   }
 
   @Get('me')

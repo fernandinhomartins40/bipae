@@ -40,7 +40,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 
 ## Fase 1 — pendências
 
-- [ ] F1-01 · Verificação em duas etapas (TOTP) opcional para donos e gerentes
+- [x] F1-01 · Verificação em duas etapas (TOTP) opcional para donos e gerentes
   - Pronto quando: ativar, entrar e desativar com código funciona na retaguarda, a semente é cifrada (SecretBox) e há teste de API e E2E.
 - [ ] F1-02 · Tela de perfis fiscais (lista, criar, editar, vincular ao produto)
   - Pronto quando: o perfil é escolhido no cadastro do produto e há E2E.

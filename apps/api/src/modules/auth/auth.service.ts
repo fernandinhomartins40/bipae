@@ -15,7 +15,9 @@ import type { z } from 'zod';
 import type { Config } from '../../config';
 import { CONFIG, DB } from '../../common/di';
 import { AppError } from '../../common/errors';
+import { SecretBox } from '../../common/secrets';
 import { TokenService } from '../../common/tokens';
+import { newTotpSecret, totpUri, verifyTotp } from '../../common/totp';
 import { asApp, asPlatform, withTenant, type Db, type Tx } from '../../db/client';
 import { rowsOf } from '../../db/migrate';
 import {
@@ -59,7 +61,11 @@ export class AuthService {
     @Inject(CONFIG) private readonly config: Config,
     @Inject(TokenService) private readonly tokens: TokenService,
     @Inject(AuditService) private readonly audit: AuditService,
-  ) {}
+  ) {
+    this.box = new SecretBox(config.SECRETS_KEY ?? config.JWT_SECRET);
+  }
+
+  private readonly box: SecretBox;
 
   // Hash of a random password, verified when the e-mail does not exist so timing stays equal.
   private readonly dummyHash = hash(crypto.randomUUID());
@@ -138,6 +144,117 @@ export class AuthService {
     });
   }
 
+  // ------------------------------------------------------------- two-step verification (F1-01)
+
+  /** After the password: users with 2FA must also send the authenticator code. */
+  private checkSecondFactor(
+    user: { totp_enabled: boolean; totp_secret: string | null },
+    code: string | undefined,
+  ) {
+    if (!user.totp_enabled || !user.totp_secret) return;
+    if (!code) {
+      throw new AppError(
+        401,
+        'totp_required',
+        'Digite o código de 6 dígitos do seu aplicativo autenticador.',
+      );
+    }
+    if (!verifyTotp(this.box.open(user.totp_secret), code)) {
+      throw new AppError(
+        401,
+        'totp_invalid',
+        'Código de verificação incorreto. Confira o aplicativo e tente de novo.',
+      );
+    }
+  }
+
+  private async ownUser(tenantId: string, userId: string) {
+    const [user] = await withTenant(this.db, { tenantId, userId }, (tx) =>
+      tx
+        .select({
+          email: users.email,
+          totpSecret: users.totpSecret,
+          totpEnabled: users.totpEnabled,
+        })
+        .from(users)
+        .where(eq(users.id, userId)),
+    );
+    if (!user) throw new AppError(401, 'unauthenticated', SESSION_EXPIRED);
+    return user;
+  }
+
+  async totpStatus(tenantId: string, userId: string) {
+    return { enabled: (await this.ownUser(tenantId, userId)).totpEnabled };
+  }
+
+  /** Starts (or restarts) the setup: a new seed, kept sealed until a valid code confirms it. */
+  async totpSetup(tenantId: string, userId: string) {
+    const user = await this.ownUser(tenantId, userId);
+    if (user.totpEnabled) {
+      throw new AppError(409, 'totp_enabled', 'A verificação em duas etapas já está ativa.');
+    }
+    const secret = newTotpSecret();
+    await withTenant(this.db, { tenantId, userId }, (tx) =>
+      tx
+        .update(users)
+        .set({ totpSecret: this.box.seal(secret), updatedAt: new Date() })
+        .where(eq(users.id, userId)),
+    );
+    return { secret, uri: totpUri(secret, user.email, 'Bipaê') };
+  }
+
+  async totpEnable(tenantId: string, userId: string, code: string) {
+    const user = await this.ownUser(tenantId, userId);
+    if (user.totpEnabled) return { enabled: true };
+    if (!user.totpSecret) {
+      throw new AppError(409, 'totp_not_started', 'Comece pela leitura do código QR.');
+    }
+    if (!verifyTotp(this.box.open(user.totpSecret), code)) {
+      throw new AppError(
+        422,
+        'totp_invalid',
+        'Código incorreto. Confira o aplicativo e tente de novo.',
+      );
+    }
+    await withTenant(this.db, { tenantId, userId }, async (tx) => {
+      await tx
+        .update(users)
+        .set({ totpEnabled: true, updatedAt: new Date() })
+        .where(eq(users.id, userId));
+      await this.audit.record(
+        tx,
+        { tenantId, userId },
+        { action: 'auth.totp_enabled', entity: 'user', entityId: userId },
+      );
+    });
+    return { enabled: true };
+  }
+
+  /** Turning it off asks for a current code, so a stolen open session cannot remove it. */
+  async totpDisable(tenantId: string, userId: string, code: string) {
+    const user = await this.ownUser(tenantId, userId);
+    if (!user.totpEnabled || !user.totpSecret) return { enabled: false };
+    if (!verifyTotp(this.box.open(user.totpSecret), code)) {
+      throw new AppError(
+        422,
+        'totp_invalid',
+        'Código incorreto. Confira o aplicativo e tente de novo.',
+      );
+    }
+    await withTenant(this.db, { tenantId, userId }, async (tx) => {
+      await tx
+        .update(users)
+        .set({ totpEnabled: false, totpSecret: null, updatedAt: new Date() })
+        .where(eq(users.id, userId));
+      await this.audit.record(
+        tx,
+        { tenantId, userId },
+        { action: 'auth.totp_disabled', entity: 'user', entityId: userId },
+      );
+    });
+    return { enabled: false };
+  }
+
   async createSystemRoles(tx: Tx, tenantId: string): Promise<Record<SystemRoleKey, string>> {
     const ids = {} as Record<SystemRoleKey, string>;
     for (const [key, role] of Object.entries(SYSTEM_ROLES) as [
@@ -160,6 +277,7 @@ export class AuthService {
     const found = await this.findUserByEmail(input.email);
     const valid = await verify(found?.password_hash ?? (await this.dummyHash), input.password);
     if (!found || !valid) throw new AppError(401, 'invalid_login', INVALID_LOGIN);
+    this.checkSecondFactor(found, input.totp);
 
     const available = await this.userTenants(found.id);
     if (available.length === 0) {
@@ -259,7 +377,14 @@ export class AuthService {
   async findUserByEmail(email: string) {
     return asApp(this.db, async (tx) => {
       const result = await tx.execute(sql`select * from auth_find_user(${email})`);
-      return rowsOf<{ id: string; name: string; email: string; password_hash: string }>(result)[0];
+      return rowsOf<{
+        id: string;
+        name: string;
+        email: string;
+        password_hash: string;
+        totp_secret: string | null;
+        totp_enabled: boolean;
+      }>(result)[0];
     });
   }
 

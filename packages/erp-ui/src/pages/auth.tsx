@@ -1,6 +1,7 @@
 import { Alert, Button, Card, Logo, TaxIdField, TextField } from '@bipae/ui';
-import type { FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { ApiError } from '../api-client';
 import { useApp } from '../context';
 import { useForm } from '../forms';
 
@@ -33,13 +34,23 @@ function AuthLayout({
 export function LoginPage() {
   const { api, setMe } = useApp();
   const navigate = useNavigate();
-  const form = useForm({ email: '', password: '' });
+  const form = useForm({ email: '', password: '', totp: '' });
+  // Second step, only for people who turned on two-step verification.
+  const [needsCode, setNeedsCode] = useState(false);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    void form.submit(async (values) => {
-      setMe(await api.login(values));
-      navigate('/', { replace: true });
+    void form.submit(async ({ totp, ...values }) => {
+      try {
+        setMe(await api.login({ ...values, ...(needsCode && { totp }) }));
+        navigate('/', { replace: true });
+      } catch (error) {
+        if (error instanceof ApiError && error.code === 'totp_required') {
+          setNeedsCode(true);
+          return;
+        }
+        throw error;
+      }
     });
   };
 
@@ -65,8 +76,25 @@ export function LoginPage() {
           error={form.errors.password}
           required
         />
+        {needsCode && (
+          <>
+            <p className="text-muted">
+              Sua conta tem verificação em duas etapas. Abra o aplicativo autenticador no celular.
+            </p>
+            <TextField
+              label="Código de 6 dígitos"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              autoFocus
+              maxLength={6}
+              value={form.values.totp}
+              onChange={(e) => form.set('totp', e.target.value.replace(/\D/g, ''))}
+              error={form.errors.totp}
+            />
+          </>
+        )}
         <Button type="submit" size="lg" loading={form.submitting}>
-          Entrar
+          {needsCode ? 'Confirmar e entrar' : 'Entrar'}
         </Button>
         <p className="text-center text-sm">
           Ainda não tem conta?{' '}

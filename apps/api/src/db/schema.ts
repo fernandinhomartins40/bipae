@@ -38,6 +38,9 @@ export const users = pgTable('users', {
   name: text('name').notNull(),
   email: text('email').notNull(),
   passwordHash: text('password_hash').notNull(),
+  /** TOTP seed sealed with SecretBox (F1-01); null until the user starts the setup. */
+  totpSecret: text('totp_secret'),
+  totpEnabled: boolean('totp_enabled').notNull().default(false),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
@@ -413,7 +416,9 @@ export const announcements = pgTable('announcements', {
   id: uuid('id').primaryKey(),
   title: text('title').notNull(),
   body: text('body').notNull(),
-  level: text('level', { enum: ['info', 'warning', 'critical'] }).notNull().default('info'),
+  level: text('level', { enum: ['info', 'warning', 'critical'] })
+    .notNull()
+    .default('info'),
   planIds: text('plan_ids').array(),
   startsAt: ts('starts_at').notNull().defaultNow(),
   endsAt: ts('ends_at'),

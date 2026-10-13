@@ -1,5 +1,17 @@
 # Changelog
 
+## [F1-01 Verificação em duas etapas] — 13/10/2026
+
+### Adicionado
+- **Verificação em duas etapas** opcional para os usuários dos clientes, recomendada para donos e gerentes:
+  - ativa em Configurações, com código QR e app autenticador;
+  - o login passa a pedir o código de 6 dígitos;
+  - desativar exige um código válido;
+  - a semente fica cifrada no banco;
+  - o suporte Bipaê, entrando como o cliente, não consegue mudá-la;
+  - ativar e desativar ficam na auditoria.
+- Painel super admin: **"Zerar verificação em duas etapas"** em Pessoas, para quem perdeu o celular. A ação encerra as sessões abertas e fica na auditoria da plataforma.
+
 ## [Nova landing page] — 12/10/2026
 
 ### Mudou

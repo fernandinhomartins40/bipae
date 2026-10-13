@@ -49,7 +49,8 @@ export class AdminPlatformService {
   async savePlan(admin: AdminContext, input: z.output<typeof planInput>, create: boolean) {
     return asPlatform(this.db, async (tx) => {
       const [existing] = await tx.select().from(plans).where(eq(plans.id, input.id));
-      if (create && existing) throw new AppError(409, 'conflict', 'Já existe um plano com este código.');
+      if (create && existing)
+        throw new AppError(409, 'conflict', 'Já existe um plano com este código.');
       if (!create && !existing) throw notFound('Plano');
       const values = {
         name: input.name,
@@ -76,10 +77,16 @@ export class AdminPlatformService {
   // ---------------------------------------------------------------- announcements
 
   listAnnouncements() {
-    return asPlatform(this.db, (tx) => tx.select().from(announcements).orderBy(desc(announcements.createdAt)).limit(100));
+    return asPlatform(this.db, (tx) =>
+      tx.select().from(announcements).orderBy(desc(announcements.createdAt)).limit(100),
+    );
   }
 
-  async saveAnnouncement(admin: AdminContext, id: string | null, input: z.output<typeof announcementInput>) {
+  async saveAnnouncement(
+    admin: AdminContext,
+    id: string | null,
+    input: z.output<typeof announcementInput>,
+  ) {
     return asPlatform(this.db, async (tx) => {
       const values = {
         title: input.title,
@@ -91,19 +98,33 @@ export class AdminPlatformService {
       };
       const announcementId = id ?? uuidv7();
       if (id) {
-        const [row] = await tx.update(announcements).set(values).where(eq(announcements.id, id)).returning();
+        const [row] = await tx
+          .update(announcements)
+          .set(values)
+          .where(eq(announcements.id, id))
+          .returning();
         if (!row) throw notFound('Aviso');
       } else {
-        await tx.insert(announcements).values({ id: announcementId, ...values, createdBy: admin.userId });
+        await tx
+          .insert(announcements)
+          .values({ id: announcementId, ...values, createdBy: admin.userId });
       }
-      await this.audit.record(tx, admin, { action: id ? 'announcement.updated' : 'announcement.created', target: announcementId, data: input });
+      await this.audit.record(tx, admin, {
+        action: id ? 'announcement.updated' : 'announcement.created',
+        target: announcementId,
+        data: input,
+      });
       return { id: announcementId };
     });
   }
 
   async endAnnouncement(admin: AdminContext, id: string) {
     return asPlatform(this.db, async (tx) => {
-      const [row] = await tx.update(announcements).set({ endsAt: new Date() }).where(eq(announcements.id, id)).returning();
+      const [row] = await tx
+        .update(announcements)
+        .set({ endsAt: new Date() })
+        .where(eq(announcements.id, id))
+        .returning();
       if (!row) throw notFound('Aviso');
       await this.audit.record(tx, admin, { action: 'announcement.ended', target: id });
       return { ok: true };
@@ -123,7 +144,9 @@ export class AdminPlatformService {
           active: platformAdmins.active,
           totpEnabled: platformAdmins.totpEnabled,
           createdAt: platformAdmins.createdAt,
-          lastLogin: sql<string | null>`(select max(s.created_at) from admin_sessions s where s.user_id = ${platformAdmins.userId})`,
+          lastLogin: sql<
+            string | null
+          >`(select max(s.created_at) from admin_sessions s where s.user_id = ${platformAdmins.userId})`,
         })
         .from(platformAdmins)
         .innerJoin(users, eq(users.id, platformAdmins.userId))
@@ -135,39 +158,86 @@ export class AdminPlatformService {
   async addAdmin(admin: AdminContext, email: string, role: PlatformRole) {
     const user = await this.auth.findUserByEmail(email);
     if (!user) {
-      throw new AppError(404, 'not_found', 'Não existe conta com este e-mail. A pessoa precisa criar uma conta no Bipaê antes.');
+      throw new AppError(
+        404,
+        'not_found',
+        'Não existe conta com este e-mail. A pessoa precisa criar uma conta no Bipaê antes.',
+      );
     }
     return asPlatform(this.db, async (tx) => {
-      const [existing] = await tx.select().from(platformAdmins).where(eq(platformAdmins.userId, user.id));
-      if (existing?.active) throw new AppError(409, 'conflict', 'Esta pessoa já faz parte da equipe Bipaê.');
+      const [existing] = await tx
+        .select()
+        .from(platformAdmins)
+        .where(eq(platformAdmins.userId, user.id));
+      if (existing?.active)
+        throw new AppError(409, 'conflict', 'Esta pessoa já faz parte da equipe Bipaê.');
       if (existing) {
-        await tx.update(platformAdmins).set({ active: true, role, updatedAt: new Date() }).where(eq(platformAdmins.userId, user.id));
+        await tx
+          .update(platformAdmins)
+          .set({ active: true, role, updatedAt: new Date() })
+          .where(eq(platformAdmins.userId, user.id));
       } else {
         await tx.insert(platformAdmins).values({ userId: user.id, role, createdBy: admin.userId });
       }
-      await this.audit.record(tx, admin, { action: 'admin.granted', target: user.id, data: { email, role } });
+      await this.audit.record(tx, admin, {
+        action: 'admin.granted',
+        target: user.id,
+        data: { email, role },
+      });
       return { userId: user.id };
     });
   }
 
-  async updateAdmin(admin: AdminContext, userId: string, change: { role?: PlatformRole; active?: boolean }) {
-    if (userId === admin.userId) throw new AppError(400, 'self_change', 'Você não pode mudar o seu próprio acesso.');
+  async updateAdmin(
+    admin: AdminContext,
+    userId: string,
+    change: { role?: PlatformRole; active?: boolean },
+  ) {
+    if (userId === admin.userId)
+      throw new AppError(400, 'self_change', 'Você não pode mudar o seu próprio acesso.');
     return asPlatform(this.db, async (tx) => {
-      const [current] = await tx.select().from(platformAdmins).where(eq(platformAdmins.userId, userId));
+      const [current] = await tx
+        .select()
+        .from(platformAdmins)
+        .where(eq(platformAdmins.userId, userId));
       if (!current) throw notFound('Pessoa da equipe');
-      const losesOwner = current.role === 'owner' && current.active && (change.active === false || (change.role && change.role !== 'owner'));
+      const losesOwner =
+        current.role === 'owner' &&
+        current.active &&
+        (change.active === false || (change.role && change.role !== 'owner'));
       if (losesOwner) {
         const [others] = await tx
           .select({ n: count() })
           .from(platformAdmins)
-          .where(and(eq(platformAdmins.role, 'owner'), eq(platformAdmins.active, true), ne(platformAdmins.userId, userId)));
-        if (!Number(others?.n)) throw new AppError(400, 'last_owner', 'A plataforma precisa de pelo menos um administrador ativo.');
+          .where(
+            and(
+              eq(platformAdmins.role, 'owner'),
+              eq(platformAdmins.active, true),
+              ne(platformAdmins.userId, userId),
+            ),
+          );
+        if (!Number(others?.n))
+          throw new AppError(
+            400,
+            'last_owner',
+            'A plataforma precisa de pelo menos um administrador ativo.',
+          );
       }
-      await tx.update(platformAdmins).set({ ...change, updatedAt: new Date() }).where(eq(platformAdmins.userId, userId));
+      await tx
+        .update(platformAdmins)
+        .set({ ...change, updatedAt: new Date() })
+        .where(eq(platformAdmins.userId, userId));
       if (change.active === false) {
-        await tx.update(adminSessions).set({ revokedAt: new Date() }).where(and(eq(adminSessions.userId, userId), isNull(adminSessions.revokedAt)));
+        await tx
+          .update(adminSessions)
+          .set({ revokedAt: new Date() })
+          .where(and(eq(adminSessions.userId, userId), isNull(adminSessions.revokedAt)));
       }
-      await this.audit.record(tx, admin, { action: 'admin.updated', target: userId, data: { before: { role: current.role, active: current.active }, after: change } });
+      await this.audit.record(tx, admin, {
+        action: 'admin.updated',
+        target: userId,
+        data: { before: { role: current.role, active: current.active }, after: change },
+      });
       return { ok: true };
     });
   }
@@ -181,7 +251,10 @@ export class AdminPlatformService {
         .where(eq(platformAdmins.userId, userId))
         .returning();
       if (!row) throw notFound('Pessoa da equipe');
-      await tx.update(adminSessions).set({ revokedAt: new Date() }).where(and(eq(adminSessions.userId, userId), isNull(adminSessions.revokedAt)));
+      await tx
+        .update(adminSessions)
+        .set({ revokedAt: new Date() })
+        .where(and(eq(adminSessions.userId, userId), isNull(adminSessions.revokedAt)));
       await this.audit.record(tx, admin, { action: 'admin.totp_reset', target: userId });
       return { ok: true };
     });
@@ -201,12 +274,25 @@ export class AdminPlatformService {
       const result = [];
       for (const u of rows) {
         const clientRows = await tx
-          .select({ tenantId: tenants.id, name: tenants.name, status: tenants.status, active: memberships.active })
+          .select({
+            tenantId: tenants.id,
+            name: tenants.name,
+            status: tenants.status,
+            active: memberships.active,
+          })
           .from(memberships)
           .innerJoin(tenants, eq(tenants.id, memberships.tenantId))
           .where(eq(memberships.userId, u.id));
-        const [staff] = await tx.select({ role: platformAdmins.role }).from(platformAdmins).where(eq(platformAdmins.userId, u.id));
-        result.push({ ...u, createdAt: u.createdAt.toISOString(), clients: clientRows, staffRole: staff?.role ?? null });
+        const [staff] = await tx
+          .select({ role: platformAdmins.role })
+          .from(platformAdmins)
+          .where(eq(platformAdmins.userId, u.id));
+        result.push({
+          ...u,
+          createdAt: u.createdAt.toISOString(),
+          clients: clientRows,
+          staffRole: staff?.role ?? null,
+        });
       }
       return result;
     });
@@ -220,8 +306,31 @@ export class AdminPlatformService {
         .set({ revokedAt: new Date() })
         .where(and(eq(sessions.userId, userId), isNull(sessions.revokedAt)))
         .returning({ id: sessions.id });
-      await this.audit.record(tx, admin, { action: 'user.sessions_revoked', target: userId, data: { sessions: revoked.length } });
+      await this.audit.record(tx, admin, {
+        action: 'user.sessions_revoked',
+        target: userId,
+        data: { sessions: revoked.length },
+      });
       return { revoked: revoked.length };
+    });
+  }
+
+  /** A client user lost the phone: turn their 2FA off (they set it up again after logging in). */
+  async resetUserTotp(admin: AdminContext, userId: string) {
+    return asPlatform(this.db, async (tx) => {
+      const [user] = await tx
+        .update(users)
+        .set({ totpEnabled: false, totpSecret: null, updatedAt: new Date() })
+        .where(eq(users.id, userId))
+        .returning({ id: users.id });
+      if (!user) throw new AppError(404, 'not_found', 'Pessoa não encontrada.');
+      // Open sessions end too: whoever had the phone or the password must log in again.
+      await tx
+        .update(sessions)
+        .set({ revokedAt: new Date() })
+        .where(and(eq(sessions.userId, userId), isNull(sessions.revokedAt)));
+      await this.audit.record(tx, admin, { action: 'user.totp_reset', target: userId });
+      return { reset: true };
     });
   }
 
@@ -229,7 +338,9 @@ export class AdminPlatformService {
 
   async system() {
     return asPlatform(this.db, async (tx) => {
-      const size = rowsOf<{ size: string }>(await tx.execute(sql`select pg_size_pretty(pg_database_size(current_database())) as size`));
+      const size = rowsOf<{ size: string }>(
+        await tx.execute(sql`select pg_size_pretty(pg_database_size(current_database())) as size`),
+      );
       const tables = rowsOf<{ name: string; rows: number; size: string }>(
         await tx.execute(sql`
           select relname as name, n_live_tup::int as rows, pg_size_pretty(pg_total_relation_size(relid)) as size
@@ -244,8 +355,15 @@ export class AdminPlatformService {
         api: API_VERSION_INFO,
         node: process.version,
         uptimeSeconds: Math.round(process.uptime()),
-        memoryMb: { rss: Math.round(memory.rss / 1_048_576), heapUsed: Math.round(memory.heapUsed / 1_048_576) },
-        database: { kind: this.config.DATABASE_URL.startsWith('pglite://') ? 'pglite' : 'postgres', size: size[0]?.size ?? '?', version: version[0]?.version ?? '?' },
+        memoryMb: {
+          rss: Math.round(memory.rss / 1_048_576),
+          heapUsed: Math.round(memory.heapUsed / 1_048_576),
+        },
+        database: {
+          kind: this.config.DATABASE_URL.startsWith('pglite://') ? 'pglite' : 'postgres',
+          size: size[0]?.size ?? '?',
+          version: version[0]?.version ?? '?',
+        },
         migrations,
         tables,
         config: {

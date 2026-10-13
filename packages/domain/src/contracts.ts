@@ -105,6 +105,12 @@ export const loginInput = z.object({
   email: emailSchema,
   password: z.string().min(1, 'Informe a senha'),
   tenantId: z.string().uuid().optional(),
+  /** Código do app autenticador, quando o usuário ativou a verificação em duas etapas. */
+  totp: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'O código tem 6 dígitos')
+    .optional(),
 });
 export type LoginInput = z.input<typeof loginInput>;
 

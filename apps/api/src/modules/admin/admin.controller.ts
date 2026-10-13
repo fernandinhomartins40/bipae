@@ -43,7 +43,11 @@ const tenantQuery = z.object({
   planId: z.string().max(40).optional(),
   ...page,
 });
-const auditQuery = z.object({ tenantId: z.string().uuid().optional(), actorId: z.string().uuid().optional(), ...page });
+const auditQuery = z.object({
+  tenantId: z.string().uuid().optional(),
+  actorId: z.string().uuid().optional(),
+  ...page,
+});
 const adminUpdate = z
   .object({ role: z.enum(PLATFORM_ROLES).optional(), active: z.boolean().optional() })
   .refine((v) => v.role !== undefined || v.active !== undefined, 'Nada para alterar.');
@@ -88,49 +92,77 @@ export class AdminController {
   @Post('tenants/:id/plan')
   @HttpCode(200)
   @PlatformPermission('platform.tenants.manage')
-  changePlan(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  changePlan(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     return this.tenants.changePlan(admin, id, parse(changePlanInput, body));
   }
 
   @Post('tenants/:id/suspend')
   @HttpCode(200)
   @PlatformPermission('platform.tenants.manage')
-  suspend(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  suspend(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     return this.tenants.setStatus(admin, id, 'suspended', parse(statusChangeInput, body).reason);
   }
 
   @Post('tenants/:id/reactivate')
   @HttpCode(200)
   @PlatformPermission('platform.tenants.manage')
-  reactivate(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  reactivate(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     return this.tenants.setStatus(admin, id, 'active', parse(statusChangeInput, body).reason);
   }
 
   @Post('tenants/:id/cancel')
   @HttpCode(200)
   @PlatformPermission('platform.tenants.manage')
-  cancel(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  cancel(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     return this.tenants.setStatus(admin, id, 'cancelled', parse(statusChangeInput, body).reason);
   }
 
   @Post('tenants/:id/limits')
   @HttpCode(200)
   @PlatformPermission('platform.tenants.manage')
-  limits(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  limits(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     const input = parse(limitOverridesInput, body);
     return this.tenants.setLimits(admin, id, input.overrides, input.reason);
   }
 
   @Post('tenants/:id/notes')
   @PlatformPermission('platform.notes')
-  note(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  note(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     return this.tenants.addNote(admin, id, parse(noteInput, body).note);
   }
 
   @Post('tenants/:id/impersonate')
   @HttpCode(200)
   @PlatformPermission('platform.support')
-  impersonate(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  impersonate(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     return this.tenants.impersonate(admin, id, parse(impersonateInput, body));
   }
 
@@ -150,7 +182,10 @@ export class AdminController {
   @Get('users')
   @PlatformPermission('platform.read')
   users(@Query() query: unknown) {
-    return this.platform.searchUsers(parse(z.object({ q: z.string().trim().min(2, 'Digite pelo menos 2 letras').max(120) }), query).q);
+    return this.platform.searchUsers(
+      parse(z.object({ q: z.string().trim().min(2, 'Digite pelo menos 2 letras').max(120) }), query)
+        .q,
+    );
   }
 
   @Post('users/:userId/revoke-sessions')
@@ -158,6 +193,16 @@ export class AdminController {
   @PlatformPermission('platform.tenants.manage')
   revokeUser(@Admin() admin: AdminContext, @Param('userId', new ParseUUIDPipe()) userId: string) {
     return this.platform.revokeAllSessions(admin, userId);
+  }
+
+  @Post('users/:userId/reset-totp')
+  @HttpCode(200)
+  @PlatformPermission('platform.tenants.manage')
+  resetUserTotp(
+    @Admin() admin: AdminContext,
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+  ) {
+    return this.platform.resetUserTotp(admin, userId);
   }
 
   // ---------------------------------------------------------------- plans
@@ -196,7 +241,11 @@ export class AdminController {
 
   @Put('announcements/:id')
   @PlatformPermission('platform.announcements.manage')
-  updateAnnouncement(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  updateAnnouncement(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     return this.platform.saveAnnouncement(admin, id, parse(announcementInput, body));
   }
 
@@ -224,7 +273,11 @@ export class AdminController {
 
   @Patch('admins/:userId')
   @PlatformPermission('platform.admins.manage')
-  updateAdmin(@Admin() admin: AdminContext, @Param('userId', new ParseUUIDPipe()) userId: string, @Body() body: unknown) {
+  updateAdmin(
+    @Admin() admin: AdminContext,
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+    @Body() body: unknown,
+  ) {
     return this.platform.updateAdmin(admin, userId, parse(adminUpdate, body));
   }
 

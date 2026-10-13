@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useApp } from '../context';
+import { TwoStepCard } from './two-step';
 
 export const DISPLAY_KEY = 'bipae.display';
 
@@ -74,6 +75,7 @@ export function SettingsPage() {
           />
         </div>
       </Card>
+      <TwoStepCard />
       <Button
         variant="secondary"
         className="mt-6 md:hidden"
