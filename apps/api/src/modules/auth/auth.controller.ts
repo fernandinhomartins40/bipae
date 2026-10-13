@@ -1,6 +1,12 @@
-import { Body, Controller, Get, HttpCode, Headers, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Headers, Inject, Param, Post } from '@nestjs/common';
 import { RouteConfig } from '@nestjs/platform-fastify';
-import { loginInput, refreshInput, signupInput, totpCodeInput } from '@bipae/domain';
+import {
+  inviteAcceptInput,
+  loginInput,
+  refreshInput,
+  signupInput,
+  totpCodeInput,
+} from '@bipae/domain';
 import { z } from 'zod';
 import { Ctx, Public, type RequestContext } from '../../common/auth';
 import { AppError, parse } from '../../common/errors';
@@ -68,7 +74,26 @@ export class AuthController {
     return this.auth.authorize(ctx.tenantId, input.email, input.password, input.permission);
   }
 
-  // Two-step verification of the logged-in user (F1-01). Not available in support sessions.
+  // Convite por link (F1-06): quem abre o link ainda não tem sessão.
+  @Public()
+  @Get('invites/:token')
+  inviteInfo(@Param('token') token: string) {
+    return this.auth.inviteInfo(token);
+  }
+
+  @Public()
+  @Post('invites/:token/accept')
+  @HttpCode(200)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  acceptInvite(
+    @Param('token') token: string,
+    @Body() body: unknown,
+    @Headers('user-agent') userAgent?: string,
+  ) {
+    return this.auth.acceptInvite(token, parse(inviteAcceptInput, body), userAgent);
+  }
+
+  // Verificação em duas etapas do próprio usuário (F1-01). Não vale em sessão de suporte.
   @Get('totp')
   totpStatus(@Ctx() ctx: RequestContext) {
     return this.auth.totpStatus(ctx.tenantId, ctx.userId);

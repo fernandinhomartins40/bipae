@@ -160,21 +160,42 @@ describe('login and sessions', () => {
     expect(forged.json().message).toBe('Sua sessão expirou. Entre novamente.');
   });
 
-  it('an accountant can serve several businesses and switch between them', async () => {
+  it('o contador atende várias empresas: na segunda, entra por convite e troca entre elas', async () => {
     const a = await signup(t.app);
     const b = await signup(t.app);
     const email = `contador-${Date.now()}@exemplo.com.br`;
-    for (const owner of [a, b]) {
-      const client = api(t.app, owner.auth);
-      const roles = (await client.get('/roles')).json() as { id: string; systemKey: string }[];
-      const res = await client.post('/members', {
-        name: 'Sérgio Contador',
-        email,
-        password: 'senha-forte-123',
-        roleId: roles.find((r) => r.systemKey === 'accountant')!.id,
-      });
-      expect(res.statusCode).toBe(201);
-    }
+    const papelContador = async (owner: typeof a) =>
+      (
+        (await api(t.app, owner.auth).get('/roles')).json() as { id: string; systemKey: string }[]
+      ).find((r) => r.systemKey === 'accountant')!.id;
+
+    // Na primeira empresa o dono cria a conta dele.
+    const criada = await api(t.app, a.auth).post('/members', {
+      name: 'Sérgio Contador',
+      email,
+      password: 'senha-forte-123',
+      roleId: await papelContador(a),
+    });
+    expect(criada.statusCode).toBe(201);
+
+    // Na segunda, a conta já existe: só entra se aceitar um convite.
+    const direto = await api(t.app, b.auth).post('/members', {
+      name: 'Sérgio Contador',
+      email,
+      password: 'outra-senha-123',
+      roleId: await papelContador(b),
+    });
+    expect(direto.statusCode).toBe(409);
+    expect(direto.json().code).toBe('use_invite');
+    const convite = (
+      await api(t.app, b.auth).post('/invites', { roleId: await papelContador(b) })
+    ).json();
+    const aceite = await t.app.inject({
+      method: 'POST',
+      url: `/v1/auth/invites/${convite.token}/accept`,
+      payload: { email, password: 'senha-forte-123' },
+    });
+    expect(aceite.statusCode).toBe(200);
     const login = await t.app.inject({
       method: 'POST',
       url: '/v1/auth/login',

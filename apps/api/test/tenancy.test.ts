@@ -15,7 +15,13 @@ afterAll(async () => {
 });
 
 /** Platform (super admin) tables: no RLS, and the client role has no privileges on them. */
-const PLATFORM_TABLES = ['plans', 'platform_admins', 'admin_sessions', 'platform_audit_log', 'announcements'];
+const PLATFORM_TABLES = [
+  'plans',
+  'platform_admins',
+  'admin_sessions',
+  'platform_audit_log',
+  'announcements',
+];
 
 /** Every table protected by tenant RLS (must match the list in 0001_init.sql). */
 const TENANT_TABLES = [
@@ -42,6 +48,7 @@ const TENANT_TABLES = [
   'sale_items',
   'sale_payments',
   'stock_movements',
+  'invites',
   'tenant_events',
 ];
 
@@ -53,7 +60,10 @@ describe('row-level security (ADR-0003)', () => {
     const rows = rowsOf<{ relname: string; relrowsecurity: boolean }>(result);
     const unprotected = rows
       .filter(
-        (r) => !r.relrowsecurity && r.relname !== 'schema_migrations' && !PLATFORM_TABLES.includes(r.relname),
+        (r) =>
+          !r.relrowsecurity &&
+          r.relname !== 'schema_migrations' &&
+          !PLATFORM_TABLES.includes(r.relname),
       )
       .map((r) => r.relname);
     expect(unprotected).toEqual([]);

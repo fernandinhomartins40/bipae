@@ -60,8 +60,10 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: um operador restrito não vê nem vende em outra loja, com teste de RLS/API.
 - [x] F1-05.a · API: lojas permitidas na sessão e aplicadas em lojas, caixas, sincronização, vendas e estoque (testes)
 - [x] F1-05.b · Tela da equipe: escolher as lojas de cada pessoa, com E2E — depende: F1-05.a
-- [ ] F1-06 · Convite de equipe com aceite por link (sem depender de e-mail)
+- [~] F1-06 · Convite de equipe com aceite por link (sem depender de e-mail)
   - Pronto quando: o convite gera um link de uso único que expira, e quem aceita entra com o papel definido.
+- [x] F1-06.a · API: convites (criar, listar, revogar, consultar e aceitar pelo link); conta que já existe só entra por convite (testes)
+- [ ] F1-06.b · Telas: convidar por link na Equipe e página de aceite do convite, com E2E — depende: F1-06.a
 - [ ] F1-07 · Fila de tarefas (Redis + BullMQ) na API e no deploy
   - Pronto quando: um job de exemplo roda com nova tentativa, o Redis está no compose da VPS e há teste.
 - [ ] F1-08 · Fotos de produto — externo: E12

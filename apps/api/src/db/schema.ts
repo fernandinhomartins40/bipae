@@ -222,6 +222,22 @@ export const customers = pgTable('customers', {
 
 export const suppliers = pgTable('suppliers', partyColumns());
 
+/** Convite de equipe por link (F1-06); o segredo do link fica só como hash. */
+export const invites = pgTable('invites', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  roleId: uuid('role_id').notNull(),
+  storeIds: uuid('store_ids').array(),
+  email: text('email'),
+  tokenHash: text('token_hash').notNull(),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  expiresAt: ts('expires_at').notNull(),
+  acceptedAt: ts('accepted_at'),
+  acceptedBy: uuid('accepted_by'),
+  revokedAt: ts('revoked_at'),
+});
+
 export const auditLog = pgTable('audit_log', {
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),

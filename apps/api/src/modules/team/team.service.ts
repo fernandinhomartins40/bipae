@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { inviteUserInput, roleInput, uuidv7 } from '@bipae/domain';
-import { and, asc, eq, inArray } from 'drizzle-orm';
+import { inviteCreateInput, inviteUserInput, roleInput, uuidv7 } from '@bipae/domain';
+import { createHash, randomBytes } from 'node:crypto';
+import { and, asc, desc, eq, gt, inArray, isNull } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
-import { memberships, roles, stores, users } from '../../db/schema';
+import { invites, memberships, roles, stores, users } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 import { AuthService } from '../auth/auth.service';
@@ -82,34 +83,124 @@ export class TeamService {
   }
 
   /**
-   * Adds a person to the team. New e-mails get an account with the given initial password;
-   * existing accounts (e.g. an accountant serving many businesses) just gain access.
+   * Cria a conta de uma pessoa nova na equipe, com senha inicial (ex.: o caixa da loja). Quem já
+   * tem conta no Bipaê (ex.: o contador de várias empresas) só entra se aceitar um convite.
    */
   async addMember(ctx: RequestContext, input: z.output<typeof inviteUserInput>) {
-    const existing = await this.auth.findUserByEmail(input.email);
-    const passwordHash = existing ? null : await this.auth.hashPassword(input.password);
-    const userId = existing?.id ?? uuidv7();
+    if (await this.auth.findUserByEmail(input.email)) {
+      throw new AppError(
+        409,
+        'use_invite',
+        'Esta pessoa já tem conta no Bipaê. Envie um convite por link para ela aceitar.',
+      );
+    }
+    const passwordHash = await this.auth.hashPassword(input.password);
+    const userId = uuidv7();
 
     return withTenant(this.db, ctx, async (tx) => {
       await this.limits.assertCanAdd(tx, 'users');
       const [role] = await tx.select().from(roles).where(eq(roles.id, input.roleId));
       if (!role) throw notFound('Papel');
-      if (!existing) {
-        await tx.insert(users).values({
-          id: userId,
-          name: input.name,
-          email: input.email,
-          passwordHash: passwordHash!,
-        });
-      }
+      await tx.insert(users).values({
+        id: userId,
+        name: input.name,
+        email: input.email,
+        passwordHash,
+      });
       await tx.insert(memberships).values({ tenantId: ctx.tenantId, userId, roleId: role.id });
       await this.audit.record(tx, ctx, {
         action: 'member.added',
         entity: 'user',
         entityId: userId,
-        data: { email: input.email, role: role.name, existingAccount: Boolean(existing) },
+        data: { email: input.email, role: role.name },
       });
-      return { userId, name: existing?.name ?? input.name, email: input.email, roleId: role.id };
+      return { userId, name: input.name, email: input.email, roleId: role.id };
+    });
+  }
+
+  // ------------------------------------------------------------- convites por link (F1-06)
+
+  /** Cria o convite e devolve o link uma única vez; no banco fica só o hash do segredo. */
+  async createInvite(ctx: RequestContext, input: z.output<typeof inviteCreateInput>) {
+    const secret = randomBytes(24).toString('base64url');
+    const id = uuidv7();
+    const token = `${id}.${secret}`;
+    const expiresAt = new Date(Date.now() + 7 * 86_400_000);
+    return withTenant(this.db, ctx, async (tx) => {
+      const [role] = await tx.select().from(roles).where(eq(roles.id, input.roleId));
+      if (!role) throw notFound('Papel');
+      if (role.systemKey === 'owner') {
+        throw new AppError(422, 'invalid_role', 'O papel de Dono não pode ser dado por convite.');
+      }
+      if (input.storeIds && input.storeIds.length > 0) {
+        const ids = [...new Set(input.storeIds)];
+        const found = await tx
+          .select({ id: stores.id })
+          .from(stores)
+          .where(inArray(stores.id, ids));
+        if (found.length !== ids.length) {
+          throw new AppError(422, 'invalid_store', 'Uma das lojas escolhidas não existe.');
+        }
+      }
+      await tx.insert(invites).values({
+        id,
+        tenantId: ctx.tenantId,
+        roleId: role.id,
+        storeIds: input.storeIds ?? null,
+        email: input.email ?? null,
+        tokenHash: createHash('sha256').update(token).digest('hex'),
+        createdBy: ctx.userId,
+        expiresAt,
+      });
+      await this.audit.record(tx, ctx, {
+        action: 'invite.created',
+        entity: 'invite',
+        entityId: id,
+        data: { role: role.name, email: input.email ?? null },
+      });
+      return { id, token, path: `/convite/${token}`, expiresAt: expiresAt.toISOString() };
+    });
+  }
+
+  /** Convites ainda válidos (não usados, não revogados, dentro da validade). */
+  listInvites(ctx: RequestContext) {
+    return withTenant(this.db, ctx, (tx) =>
+      tx
+        .select({
+          id: invites.id,
+          roleName: roles.name,
+          email: invites.email,
+          storeIds: invites.storeIds,
+          createdAt: invites.createdAt,
+          expiresAt: invites.expiresAt,
+        })
+        .from(invites)
+        .innerJoin(roles, eq(roles.id, invites.roleId))
+        .where(
+          and(
+            isNull(invites.acceptedAt),
+            isNull(invites.revokedAt),
+            gt(invites.expiresAt, new Date()),
+          ),
+        )
+        .orderBy(desc(invites.createdAt)),
+    );
+  }
+
+  async revokeInvite(ctx: RequestContext, id: string) {
+    return withTenant(this.db, ctx, async (tx) => {
+      const [row] = await tx
+        .update(invites)
+        .set({ revokedAt: new Date() })
+        .where(and(eq(invites.id, id), isNull(invites.acceptedAt), isNull(invites.revokedAt)))
+        .returning({ id: invites.id });
+      if (!row) throw notFound('Convite');
+      await this.audit.record(tx, ctx, {
+        action: 'invite.revoked',
+        entity: 'invite',
+        entityId: id,
+      });
+      return { revoked: true };
     });
   }
 

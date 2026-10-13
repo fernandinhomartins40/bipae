@@ -4,12 +4,16 @@ import {
   parseTaxId,
   SYSTEM_ROLES,
   uuidv7,
+  passwordSchema,
+  type inviteAcceptInput,
+  type InviteInfo,
   type LoginInput,
   type Me,
   type SessionTokens,
   type signupInput,
   type SystemRoleKey,
 } from '@bipae/domain';
+import { createHash } from 'node:crypto';
 import { and, count, eq, isNull, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { Config } from '../../config';
@@ -23,6 +27,7 @@ import { rowsOf } from '../../db/migrate';
 import {
   companies,
   fiscalProfiles,
+  invites,
   memberships,
   platformAdmins,
   roles,
@@ -33,6 +38,7 @@ import {
   units,
   users,
 } from '../../db/schema';
+import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 
 const INVALID_LOGIN = 'E-mail ou senha incorretos.';
@@ -61,6 +67,7 @@ export class AuthService {
     @Inject(CONFIG) private readonly config: Config,
     @Inject(TokenService) private readonly tokens: TokenService,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(LimitsService) private readonly limits: LimitsService,
   ) {
     this.box = new SecretBox(config.SECRETS_KEY ?? config.JWT_SECRET);
   }
@@ -253,6 +260,133 @@ export class AuthService {
       );
     });
     return { enabled: false };
+  }
+
+  // ------------------------------------------------------------- convite por link (F1-06)
+
+  private async findInvite(token: string) {
+    return asApp(this.db, async (tx) => {
+      const hash = createHash('sha256').update(token).digest('hex');
+      const result = await tx.execute(sql`select * from invite_lookup(${hash})`);
+      return rowsOf<{
+        id: string;
+        tenant_id: string;
+        tenant_name: string;
+        role_id: string;
+        role_name: string;
+        store_ids: string[] | null;
+        email: string | null;
+        expires_at: string | Date;
+        accepted_at: string | Date | null;
+        revoked_at: string | Date | null;
+      }>(result)[0];
+    });
+  }
+
+  private inviteStatus(row: {
+    expires_at: string | Date;
+    accepted_at: unknown;
+    revoked_at: unknown;
+  }) {
+    if (row.revoked_at) return 'revoked' as const;
+    if (row.accepted_at) return 'used' as const;
+    if (new Date(row.expires_at).getTime() < Date.now()) return 'expired' as const;
+    return 'valid' as const;
+  }
+
+  /** O que a tela de aceite mostra antes de a pessoa entrar. */
+  async inviteInfo(token: string): Promise<InviteInfo> {
+    const row = await this.findInvite(token);
+    if (!row) throw new AppError(404, 'not_found', 'Convite não encontrado. Confira o link.');
+    return {
+      businessName: row.tenant_name,
+      roleName: row.role_name,
+      email: row.email,
+      expiresAt: new Date(row.expires_at).toISOString(),
+      status: this.inviteStatus(row),
+    };
+  }
+
+  /**
+   * Aceita o convite: com uma conta que já existe (senha e, se tiver, o código da verificação em
+   * duas etapas) ou criando uma conta nova. Uso único; quem aceita já entra na empresa.
+   */
+  async acceptInvite(
+    token: string,
+    input: z.output<typeof inviteAcceptInput>,
+    userAgent?: string,
+  ): Promise<AuthResult> {
+    const invite = await this.findInvite(token);
+    if (!invite) throw new AppError(404, 'not_found', 'Convite não encontrado. Confira o link.');
+    const status = this.inviteStatus(invite);
+    const reasons = {
+      expired: 'Este convite venceu. Peça um novo para quem enviou.',
+      used: 'Este convite já foi usado.',
+      revoked: 'Este convite foi cancelado.',
+    } as const;
+    if (status !== 'valid') throw new AppError(410, `invite_${status}`, reasons[status]);
+    if (invite.email && invite.email.toLowerCase() !== input.email.toLowerCase()) {
+      throw new AppError(403, 'invite_email', 'Este convite é para outro e-mail.');
+    }
+
+    const found = await this.findUserByEmail(input.email);
+    let userId: string;
+    if (found) {
+      const valid = await verify(found.password_hash, input.password);
+      if (!valid) throw new AppError(401, 'invalid_login', INVALID_LOGIN);
+      this.checkSecondFactor(found, input.totp);
+      userId = found.id;
+    } else {
+      if (!input.name)
+        throw new AppError(400, 'validation', 'Informe o seu nome para criar a conta.');
+      const parsed = passwordSchema.safeParse(input.password);
+      if (!parsed.success) throw new AppError(400, 'validation', parsed.error.issues[0]!.message);
+      userId = uuidv7();
+    }
+    const passwordHash = found ? null : await this.hashPassword(input.password);
+
+    await withTenant(this.db, { tenantId: invite.tenant_id, userId }, async (tx) => {
+      const [already] = await tx
+        .select({ userId: memberships.userId })
+        .from(memberships)
+        .where(eq(memberships.userId, userId));
+      if (already) throw new AppError(409, 'already_member', 'Você já faz parte desta empresa.');
+      await this.limits.assertCanAdd(tx, 'users');
+      if (!found) {
+        await tx
+          .insert(users)
+          .values({
+            id: userId,
+            name: input.name!,
+            email: input.email,
+            passwordHash: passwordHash!,
+          });
+      }
+      await tx.insert(memberships).values({
+        tenantId: invite.tenant_id,
+        userId,
+        roleId: invite.role_id,
+        storeIds: invite.store_ids,
+      });
+      // Uso único: só marca se ninguém aceitou no mesmo instante.
+      const [used] = await tx
+        .update(invites)
+        .set({ acceptedAt: new Date(), acceptedBy: userId })
+        .where(and(eq(invites.id, invite.id), isNull(invites.acceptedAt)))
+        .returning({ id: invites.id });
+      if (!used) throw new AppError(410, 'invite_used', reasons.used);
+      await this.audit.record(
+        tx,
+        { tenantId: invite.tenant_id, userId },
+        {
+          action: 'invite.accepted',
+          entity: 'invite',
+          entityId: invite.id,
+          data: { role: invite.role_name, existingAccount: Boolean(found) },
+        },
+      );
+    });
+    return this.issueSession(invite.tenant_id, userId, userAgent);
   }
 
   async createSystemRoles(tx: Tx, tenantId: string): Promise<Record<SystemRoleKey, string>> {

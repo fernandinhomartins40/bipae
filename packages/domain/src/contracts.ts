@@ -372,6 +372,33 @@ export const inviteUserInput = z.object({
   roleId: z.string().uuid(),
 });
 
+/** Convite por link (F1-06): papel, lojas e, se quiser, o e-mail de quem pode aceitar. */
+export const inviteCreateInput = z.object({
+  roleId: z.string().uuid(),
+  storeIds: z.array(z.string().uuid()).max(500).nullish(),
+  email: emailSchema.nullish().or(z.literal('').transform(() => null)),
+});
+
+/** Aceitar o convite: entrar com uma conta que já existe ou criar uma nova. */
+export const inviteAcceptInput = z.object({
+  name: trimmed(2, 120, 'Nome').optional(),
+  email: emailSchema,
+  password: z.string().min(1, 'Informe a senha'),
+  totp: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'O código tem 6 dígitos')
+    .optional(),
+});
+
+export interface InviteInfo {
+  businessName: string;
+  roleName: string;
+  email: string | null;
+  expiresAt: string;
+  status: 'valid' | 'expired' | 'used' | 'revoked';
+}
+
 // ---------- Common ----------
 
 export const listQuery = z.object({

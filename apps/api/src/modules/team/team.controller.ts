@@ -1,5 +1,15 @@
-import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
-import { inviteUserInput, roleInput } from '@bipae/domain';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Inject,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { inviteCreateInput, inviteUserInput, roleInput } from '@bipae/domain';
 import { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { parse } from '../../common/errors';
@@ -53,6 +63,25 @@ export class TeamController {
   @RequirePermission('admin.users')
   addMember(@Ctx() ctx: RequestContext, @Body() body: unknown) {
     return this.team.addMember(ctx, parse(inviteUserInput, body));
+  }
+
+  @Get('invites')
+  @RequirePermission('admin.users')
+  listInvites(@Ctx() ctx: RequestContext) {
+    return this.team.listInvites(ctx);
+  }
+
+  @Post('invites')
+  @RequirePermission('admin.users')
+  createInvite(@Ctx() ctx: RequestContext, @Body() body: unknown) {
+    return this.team.createInvite(ctx, parse(inviteCreateInput, body));
+  }
+
+  @Post('invites/:id/revoke')
+  @HttpCode(200)
+  @RequirePermission('admin.users')
+  revokeInvite(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.team.revokeInvite(ctx, id);
   }
 
   @Patch('members/:userId')
