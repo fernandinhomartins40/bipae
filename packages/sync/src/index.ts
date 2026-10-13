@@ -8,7 +8,12 @@ import type { PdvService } from '@bipae/pdv-core';
  */
 export interface SyncTransport {
   push(terminalId: string, events: TerminalEvent[]): Promise<SyncPushResult>;
-  pull(cursor: string | null, limit: number): Promise<SyncPullResult>;
+  /** `pricingVersion`: o retrato de preços que o caixa tem; o servidor só reenvia quando muda. */
+  pull(
+    cursor: string | null,
+    limit: number,
+    pricingVersion: string | null,
+  ): Promise<SyncPullResult>;
 }
 
 export interface SyncStatus {
@@ -20,6 +25,7 @@ export interface SyncStatus {
 }
 
 const CURSOR_KEY = 'catalog_cursor';
+const PRICING_KEY = 'pricing_version';
 const LAST_SYNC_KEY = 'last_sync_at';
 const BATCH = 100;
 
@@ -86,16 +92,24 @@ export class SyncClient {
       const handled = result.accepted.length + result.rejected.length;
       // The server stops at the first transient failure; retry later instead of looping.
       if (handled < events.length) {
-        throw new Error('O servidor não conseguiu processar todas as vendas agora. Tentaremos de novo.');
+        throw new Error(
+          'O servidor não conseguiu processar todas as vendas agora. Tentaremos de novo.',
+        );
       }
     }
   }
 
   private async pullAll() {
     let cursor = await getMeta(this.storage, CURSOR_KEY);
+    let pricingVersion = await getMeta(this.storage, PRICING_KEY);
     for (;;) {
-      const page = await this.transport.pull(cursor, 500);
+      const page = await this.transport.pull(cursor, 500, pricingVersion);
       if (page.products.length > 0) await this.pdv.applyCatalog(page.products);
+      if (page.pricing) {
+        await this.pdv.applyPricing(page.pricing);
+        pricingVersion = page.pricing.version;
+        await setMeta(this.storage, PRICING_KEY, pricingVersion);
+      }
       if (page.cursor) {
         cursor = page.cursor;
         await setMeta(this.storage, CURSOR_KEY, cursor);

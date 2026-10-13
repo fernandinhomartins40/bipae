@@ -2,6 +2,7 @@ import {
   terminalEvent,
   uuidv7,
   type PaymentMethod,
+  type PricingSnapshot,
   type SaleItem,
   type SalePayment,
   type SyncPullResult,
@@ -9,7 +10,13 @@ import {
 } from '@bipae/domain';
 import { getMeta, searchKey, setMeta, type LocalStorage, type Tx } from '@bipae/local-db';
 import { discountNeedsAuthorization, totals, type Cart, type CatalogItem } from './cart';
-import { closeBlind, expectedBySession, type ByMethod, type CloseResult, type SessionActivity } from './cash';
+import {
+  closeBlind,
+  expectedBySession,
+  type ByMethod,
+  type CloseResult,
+  type SessionActivity,
+} from './cash';
 import { summarizePayments, type TenderInput } from './payments';
 
 /** User-facing error from register operations (pt-BR). */
@@ -68,7 +75,8 @@ function toProduct(row: Row): CatalogProduct {
     id: row.id as string,
     name: row.name as string,
     unit: row.unit as string,
-    priceCents: Number(row.price_cents),
+    // Preço já resolvido: tabela do cliente, senão a da loja, senão o preço do cadastro.
+    priceCents: Number(row.effective_price_cents ?? row.price_cents),
     isWeighable: Number(row.is_weighable) === 1,
     sku: (row.sku as string | null) ?? null,
     barcodes: row.barcodes ? String(row.barcodes).split(',') : [],
@@ -99,36 +107,112 @@ export class PdvService {
 
   // ---------------------------------------------------------------- catalog
 
+  /** O primeiro parâmetro é a tabela de preço em vigor (ou null para o preço do cadastro). */
   private readonly productSelect = `
-    SELECT p.*, (SELECT group_concat(code) FROM barcodes b WHERE b.product_id = p.id) AS barcodes
+    SELECT p.*, (SELECT group_concat(code) FROM barcodes b WHERE b.product_id = p.id) AS barcodes,
+      (SELECT i.price_cents FROM price_table_items i WHERE i.table_id = ? AND i.product_id = p.id) AS effective_price_cents
     FROM products p`;
 
-  async findByCode(code: string): Promise<CatalogProduct | null> {
+  /**
+   * Tabela de preço em vigor (F1-03): a do cliente (identificado pelo CPF/CNPJ na venda),
+   * senão a tabela padrão da loja, senão nenhuma (preço do cadastro).
+   */
+  async activePriceTable(
+    customerTaxId?: string | null,
+  ): Promise<{ id: string; name: string } | null> {
+    let id: string | null = null;
+    if (customerTaxId) {
+      const [row] = await this.storage.query<{ price_table_id: string }>(
+        'SELECT price_table_id FROM customer_price_tables WHERE tax_id = ?',
+        [customerTaxId],
+      );
+      id = row?.price_table_id ?? null;
+    }
+    id ??= await getMeta(this.storage, 'store_price_table_id');
+    if (!id) return null;
+    const [table] = await this.storage.query<{ id: string; name: string }>(
+      'SELECT id, name FROM price_tables WHERE id = ?',
+      [id],
+    );
+    return table ?? null;
+  }
+
+  async findByCode(code: string, customerTaxId?: string | null): Promise<CatalogProduct | null> {
+    const table = (await this.activePriceTable(customerTaxId))?.id ?? null;
     const [row] = await this.storage.query<Row>(
       `${this.productSelect} WHERE p.active = 1 AND (p.id IN (SELECT product_id FROM barcodes WHERE code = ?) OR p.sku = ?) LIMIT 1`,
-      [code, code],
+      [table, code, code],
     );
     return row ? toProduct(row) : null;
   }
 
   /** PLU from a scale label matches the product's internal code (SKU), ignoring leading zeros. */
-  async findByPlu(plu: string): Promise<CatalogProduct | null> {
+  async findByPlu(plu: string, customerTaxId?: string | null): Promise<CatalogProduct | null> {
+    const table = (await this.activePriceTable(customerTaxId))?.id ?? null;
     const [row] = await this.storage.query<Row>(
       `${this.productSelect} WHERE p.active = 1 AND p.is_weighable = 1 AND ltrim(p.sku, '0') = ? LIMIT 1`,
-      [String(Number(plu))],
+      [table, String(Number(plu))],
     );
     return row ? toProduct(row) : null;
   }
 
-  async search(text: string, limit = 20): Promise<CatalogProduct[]> {
+  async search(text: string, limit = 20, customerTaxId?: string | null): Promise<CatalogProduct[]> {
     const terms = searchKey(text).split(/\s+/).filter(Boolean);
     if (terms.length === 0) return [];
+    const table = (await this.activePriceTable(customerTaxId))?.id ?? null;
     const where = terms.map(() => 'p.search_name LIKE ?').join(' AND ');
     const rows = await this.storage.query<Row>(
       `${this.productSelect} WHERE p.active = 1 AND ${where} ORDER BY p.search_name LIMIT ?`,
-      [...terms.map((t) => `%${t}%`), limit],
+      [table, ...terms.map((t) => `%${t}%`), limit],
     );
     return rows.map(toProduct);
+  }
+
+  /** Preços dos produtos pela tabela em vigor (para recalcular um carrinho). */
+  async pricesFor(
+    productIds: string[],
+    customerTaxId?: string | null,
+  ): Promise<Map<string, number>> {
+    const prices = new Map<string, number>();
+    if (productIds.length === 0) return prices;
+    const table = (await this.activePriceTable(customerTaxId))?.id ?? null;
+    const marks = productIds.map(() => '?').join(', ');
+    const rows = await this.storage.query<Row>(`${this.productSelect} WHERE p.id IN (${marks})`, [
+      table,
+      ...productIds,
+    ]);
+    for (const row of rows) prices.set(row.id as string, toProduct(row).priceCents);
+    return prices;
+  }
+
+  /** Troca o retrato de preços recebido na sincronização (F1-03). */
+  async applyPricing(pricing: PricingSnapshot) {
+    await this.storage.transaction(async (tx) => {
+      await tx.execute('DELETE FROM price_table_items');
+      await tx.execute('DELETE FROM price_tables');
+      await tx.execute('DELETE FROM customer_price_tables');
+      for (const table of pricing.tables) {
+        await tx.execute('INSERT INTO price_tables (id, name) VALUES (?, ?)', [
+          table.id,
+          table.name,
+        ]);
+        for (const item of table.items) {
+          await tx.execute(
+            'INSERT INTO price_table_items (table_id, product_id, price_cents) VALUES (?, ?, ?)',
+            [table.id, item.productId, item.priceCents],
+          );
+        }
+      }
+      for (const c of pricing.customers) {
+        await tx.execute(
+          'INSERT INTO customer_price_tables (tax_id, price_table_id) VALUES (?, ?) ON CONFLICT (tax_id) DO UPDATE SET price_table_id = excluded.price_table_id',
+          [c.taxId, c.priceTableId],
+        );
+      }
+      if (pricing.storePriceTableId)
+        await setMeta(tx, 'store_price_table_id', pricing.storePriceTableId);
+      else await tx.execute("DELETE FROM meta WHERE key = 'store_price_table_id'");
+    });
   }
 
   async catalogSize(): Promise<number> {
@@ -148,8 +232,18 @@ export class PdvService {
              is_weighable = excluded.is_weighable, active = excluded.active, ncm = excluded.ncm,
              cest = excluded.cest, fiscal_profile_id = excluded.fiscal_profile_id, updated_at = excluded.updated_at`,
           [
-            p.id, p.name, searchKey(p.name), p.sku, p.unit, p.priceCents, p.isWeighable ? 1 : 0,
-            p.active ? 1 : 0, p.ncm, p.cest, p.fiscalProfileId, p.updatedAt,
+            p.id,
+            p.name,
+            searchKey(p.name),
+            p.sku,
+            p.unit,
+            p.priceCents,
+            p.isWeighable ? 1 : 0,
+            p.active ? 1 : 0,
+            p.ncm,
+            p.cest,
+            p.fiscalProfileId,
+            p.updatedAt,
           ],
         );
         await tx.execute('DELETE FROM barcodes WHERE product_id = ?', [p.id]);
@@ -187,7 +281,8 @@ export class PdvService {
   }
 
   async openSession(openingCents: number): Promise<Session> {
-    if (!Number.isInteger(openingCents) || openingCents < 0) throw new PdvError('Valor de abertura inválido.');
+    if (!Number.isInteger(openingCents) || openingCents < 0)
+      throw new PdvError('Valor de abertura inválido.');
     if (await this.currentSession()) throw new PdvError('O caixa já está aberto.');
     const session: Session = {
       id: this.newId(),
@@ -207,10 +302,15 @@ export class PdvService {
   }
 
   async sessionActivity(sessionId: string): Promise<SessionActivity> {
-    const [session] = await this.storage.query<Row>('SELECT * FROM cash_sessions WHERE id = ?', [sessionId]);
+    const [session] = await this.storage.query<Row>('SELECT * FROM cash_sessions WHERE id = ?', [
+      sessionId,
+    ]);
     if (!session) throw new PdvError('Caixa não encontrado.');
     const sales = await this.listSales(sessionId);
-    const movements = await this.storage.query<Row>('SELECT * FROM cash_movements WHERE session_id = ?', [sessionId]);
+    const movements = await this.storage.query<Row>(
+      'SELECT * FROM cash_movements WHERE session_id = ?',
+      [sessionId],
+    );
     return {
       openingCents: Number(session.opening_cents),
       sales: sales.filter((s) => s.kind === 'sale'),
@@ -231,7 +331,8 @@ export class PdvService {
     authorizedBy: string | null = null,
   ) {
     const session = await this.requireSession();
-    if (!Number.isInteger(amountCents) || amountCents <= 0) throw new PdvError('Informe um valor maior que zero.');
+    if (!Number.isInteger(amountCents) || amountCents <= 0)
+      throw new PdvError('Informe um valor maior que zero.');
     if (kind === 'withdrawal') {
       const inDrawer = expectedBySession(await this.sessionActivity(session.id)).cash;
       if (amountCents > inDrawer) {
@@ -278,17 +379,25 @@ export class PdvService {
 
   // ---------------------------------------------------------------- sales
 
-  async completeSale(cart: Cart, tenders: TenderInput[], options: CompleteSaleOptions): Promise<StoredSale> {
+  async completeSale(
+    cart: Cart,
+    tenders: TenderInput[],
+    options: CompleteSaleOptions,
+  ): Promise<StoredSale> {
     const session = await this.requireSession();
     if (cart.lines.length === 0) throw new PdvError('O carrinho está vazio.');
-    if (discountNeedsAuthorization(cart, options.discountLimitPercent) && !options.discountAuthorizedBy) {
+    if (
+      discountNeedsAuthorization(cart, options.discountLimitPercent) &&
+      !options.discountAuthorizedBy
+    ) {
       throw new PdvError(
         `Desconto acima de ${options.discountLimitPercent}% precisa da autorização de um gerente.`,
       );
     }
     const t = totals(cart);
     const summary = summarizePayments(t.totalCents, tenders);
-    if (summary.remainingCents > 0) throw new PdvError('Ainda falta receber parte do valor da venda.');
+    if (summary.remainingCents > 0)
+      throw new PdvError('Ainda falta receber parte do valor da venda.');
 
     const sale: StoredSale = {
       id: this.newId(),
@@ -362,13 +471,17 @@ export class PdvService {
       const prev = already.get(line) ?? { quantityMilli: 0, refundCents: 0 };
       const remaining = item.quantityMilli - prev.quantityMilli;
       if (!Number.isInteger(quantityMilli) || quantityMilli <= 0 || quantityMilli > remaining) {
-        throw new PdvError(`Só dá para devolver até ${remaining / 1000} ${item.unit} de "${item.name}".`);
+        throw new PdvError(
+          `Só dá para devolver até ${remaining / 1000} ${item.unit} de "${item.name}".`,
+        );
       }
       // The last return of a line refunds exactly what is left, so refunds never drift by a cent.
       const refundCents =
         quantityMilli === remaining
           ? item.totalCents - prev.refundCents
-          : Math.floor((item.totalCents * quantityMilli + item.quantityMilli / 2) / item.quantityMilli);
+          : Math.floor(
+              (item.totalCents * quantityMilli + item.quantityMilli / 2) / item.quantityMilli,
+            );
       return { line, productId: item.productId, quantityMilli, refundCents };
     });
     const refundCents = returned.reduce((a, r) => a + r.refundCents, 0);
@@ -428,19 +541,35 @@ export class PdvService {
     await tx.execute(
       'INSERT INTO sales (id, terminal_seq, session_id, kind, status, total_cents, customer_tax_id, created_at, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
-        sale.id, sale.terminalSeq, sale.sessionId, sale.kind, sale.status, sale.totalCents,
-        sale.customerTaxId, sale.createdAt, JSON.stringify(sale),
+        sale.id,
+        sale.terminalSeq,
+        sale.sessionId,
+        sale.kind,
+        sale.status,
+        sale.totalCents,
+        sale.customerTaxId,
+        sale.createdAt,
+        JSON.stringify(sale),
       ],
     );
   }
 
   async getSale(id: string): Promise<StoredSale | null> {
-    const [row] = await this.storage.query<Row>('SELECT data, status FROM sales WHERE id = ?', [id]);
-    return row ? { ...(JSON.parse(row.data as string) as StoredSale), status: row.status as StoredSale['status'] } : null;
+    const [row] = await this.storage.query<Row>('SELECT data, status FROM sales WHERE id = ?', [
+      id,
+    ]);
+    return row
+      ? {
+          ...(JSON.parse(row.data as string) as StoredSale),
+          status: row.status as StoredSale['status'],
+        }
+      : null;
   }
 
   async findSaleBySeq(terminalSeq: number): Promise<StoredSale | null> {
-    const [row] = await this.storage.query<Row>('SELECT id FROM sales WHERE terminal_seq = ?', [terminalSeq]);
+    const [row] = await this.storage.query<Row>('SELECT id FROM sales WHERE terminal_seq = ?', [
+      terminalSeq,
+    ]);
     return row ? this.getSale(row.id as string) : null;
   }
 
@@ -449,7 +578,10 @@ export class PdvService {
       `SELECT data, status FROM sales ${sessionId ? 'WHERE session_id = ?' : ''} ORDER BY terminal_seq DESC LIMIT ?`,
       sessionId ? [sessionId, limit] : [limit],
     );
-    return rows.map((r) => ({ ...(JSON.parse(r.data as string) as StoredSale), status: r.status as StoredSale['status'] }));
+    return rows.map((r) => ({
+      ...(JSON.parse(r.data as string) as StoredSale),
+      status: r.status as StoredSale['status'],
+    }));
   }
 
   // ---------------------------------------------------------------- quotes
@@ -465,22 +597,37 @@ export class PdvService {
     return id;
   }
 
-  async listQuotes(): Promise<{ id: string; createdAt: string; totalCents: number; items: number }[]> {
-    const rows = await this.storage.query<Row>("SELECT * FROM quotes WHERE status = 'open' ORDER BY created_at DESC");
+  async listQuotes(): Promise<
+    { id: string; createdAt: string; totalCents: number; items: number }[]
+  > {
+    const rows = await this.storage.query<Row>(
+      "SELECT * FROM quotes WHERE status = 'open' ORDER BY created_at DESC",
+    );
     return rows.map((r) => {
       const cart = JSON.parse(r.data as string) as Cart;
-      return { id: r.id as string, createdAt: r.created_at as string, totalCents: totals(cart).totalCents, items: cart.lines.length };
+      return {
+        id: r.id as string,
+        createdAt: r.created_at as string,
+        totalCents: totals(cart).totalCents,
+        items: cart.lines.length,
+      };
     });
   }
 
   /** Loads a quote into a cart, refreshing prices from the current catalog. */
   async loadQuote(id: string): Promise<Cart> {
-    const [row] = await this.storage.query<Row>("SELECT data FROM quotes WHERE id = ? AND status = 'open'", [id]);
+    const [row] = await this.storage.query<Row>(
+      "SELECT data FROM quotes WHERE id = ? AND status = 'open'",
+      [id],
+    );
     if (!row) throw new PdvError('Orçamento não encontrado.');
     const cart = JSON.parse(row.data as string) as Cart;
     const lines = [];
     for (const line of cart.lines) {
-      const [p] = await this.storage.query<Row>('SELECT price_cents, active FROM products WHERE id = ?', [line.productId]);
+      const [p] = await this.storage.query<Row>(
+        'SELECT price_cents, active FROM products WHERE id = ?',
+        [line.productId],
+      );
       if (!p || Number(p.active) !== 1) continue;
       lines.push({ ...line, unitPriceCents: Number(p.price_cents) });
     }
@@ -510,13 +657,10 @@ export class PdvService {
       deviceSeq,
       payload,
     });
-    await tx.execute('INSERT INTO outbox (id, seq, type, payload, created_at) VALUES (?, ?, ?, ?, ?)', [
-      event.id,
-      deviceSeq,
-      type,
-      JSON.stringify(event),
-      event.occurredAt,
-    ]);
+    await tx.execute(
+      'INSERT INTO outbox (id, seq, type, payload, created_at) VALUES (?, ?, ?, ?, ?)',
+      [event.id, deviceSeq, type, JSON.stringify(event), event.occurredAt],
+    );
   }
 
   async pendingEvents(limit = 100): Promise<TerminalEvent[]> {
@@ -528,7 +672,9 @@ export class PdvService {
   }
 
   async pendingCount(): Promise<number> {
-    const [row] = await this.storage.query<{ n: number }>('SELECT count(*) AS n FROM outbox WHERE sent_at IS NULL');
+    const [row] = await this.storage.query<{ n: number }>(
+      'SELECT count(*) AS n FROM outbox WHERE sent_at IS NULL',
+    );
     return Number(row?.n ?? 0);
   }
 
@@ -536,7 +682,8 @@ export class PdvService {
     if (ids.length === 0) return;
     const at = this.now().toISOString();
     await this.storage.transaction(async (tx) => {
-      for (const id of ids) await tx.execute('UPDATE outbox SET sent_at = ? WHERE id = ?', [at, id]);
+      for (const id of ids)
+        await tx.execute('UPDATE outbox SET sent_at = ? WHERE id = ?', [at, id]);
     });
   }
 
@@ -546,17 +693,29 @@ export class PdvService {
     const at = this.now().toISOString();
     await this.storage.transaction(async (tx) => {
       for (const r of rejections) {
-        await tx.execute("UPDATE outbox SET sent_at = ?, last_error = 'REJEITADO: ' || ? WHERE id = ?", [at, r.reason, r.id]);
+        await tx.execute(
+          "UPDATE outbox SET sent_at = ?, last_error = 'REJEITADO: ' || ? WHERE id = ?",
+          [at, r.reason, r.id],
+        );
       }
     });
   }
 
   async rejectedEvents(): Promise<{ id: string; type: string; reason: string }[]> {
-    const rows = await this.storage.query<Row>("SELECT id, type, last_error FROM outbox WHERE last_error LIKE 'REJEITADO:%' ORDER BY seq");
-    return rows.map((r) => ({ id: r.id as string, type: r.type as string, reason: String(r.last_error).replace('REJEITADO: ', '') }));
+    const rows = await this.storage.query<Row>(
+      "SELECT id, type, last_error FROM outbox WHERE last_error LIKE 'REJEITADO:%' ORDER BY seq",
+    );
+    return rows.map((r) => ({
+      id: r.id as string,
+      type: r.type as string,
+      reason: String(r.last_error).replace('REJEITADO: ', ''),
+    }));
   }
 
   async markFailed(id: string, error: string) {
-    await this.storage.execute('UPDATE outbox SET attempts = attempts + 1, last_error = ? WHERE id = ?', [error, id]);
+    await this.storage.execute(
+      'UPDATE outbox SET attempts = attempts + 1, last_error = ? WHERE id = ?',
+      [error, id],
+    );
   }
 }

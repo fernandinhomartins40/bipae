@@ -174,4 +174,18 @@ export interface SyncPullResult {
     updatedAt: string;
   }[];
   hasMore: boolean;
+  /** Só vem quando os preços mudaram desde a `pricingVersion` que o caixa enviou (F1-03). */
+  pricing?: PricingSnapshot;
+}
+
+/**
+ * Tudo o que o caixa sem internet precisa para dar preço aos itens: a tabela padrão da loja,
+ * os itens das tabelas e quais clientes (por CPF/CNPJ) têm tabela própria. Vai inteiro, não
+ * aos pedaços: é pequeno, e trocar tudo de uma vez evita preço velho.
+ */
+export interface PricingSnapshot {
+  version: string;
+  storePriceTableId: string | null;
+  tables: { id: string; name: string; items: { productId: string; priceCents: number }[] }[];
+  customers: { taxId: string; priceTableId: string }[];
 }

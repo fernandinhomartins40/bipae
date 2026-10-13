@@ -18,6 +18,7 @@ import {
   type CloseResult,
   type Session,
   type StoredSale,
+  repriceLines,
 } from '@bipae/pdv-core';
 import type { Platform } from '@bipae/platform';
 import { describeLastSync, type SyncStatus } from '@bipae/sync';
@@ -100,11 +101,17 @@ export function Register({
   const [selected, setSelected] = useState<number | null>(null);
   const [input, setInput] = useState('');
   const [results, setResults] = useState<CatalogProduct[]>([]);
-  const [message, setMessage] = useState<{ tone: 'danger' | 'success' | 'warning'; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    tone: 'danger' | 'success' | 'warning';
+    text: string;
+  } | null>(null);
   const [dialog, setDialog] = useState<Dialog>({ kind: 'none' });
   const [discountAuthorizedBy, setDiscountAuthorizedBy] = useState<string | null>(null);
   const [lastSale, setLastSale] = useState<StoredSale | null>(null);
-  const [auth, setAuth] = useState<{ permission: AuthorizablePermission; resolve: (id: string | null) => void } | null>(null);
+  const [auth, setAuth] = useState<{
+    permission: AuthorizablePermission;
+    resolve: (id: string | null) => void;
+  } | null>(null);
   const [beep, setBeep] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const t = useMemo(() => totals(cart), [cart]);
@@ -112,18 +119,49 @@ export function Register({
 
   const [caps, setCaps] = useState<Awaited<ReturnType<Platform['capabilities']>> | null>(null);
   useEffect(() => {
-    void platform.preferences.get('bipae.display').then((raw) => setBeep(parseDisplayPreferences(raw).beep));
+    void platform.preferences
+      .get('bipae.display')
+      .then((raw) => setBeep(parseDisplayPreferences(raw).beep));
     void platform.capabilities().then(setCaps);
   }, [platform]);
 
   const focusInput = () => setTimeout(() => inputRef.current?.focus(), 0);
   const fail = (error: unknown) =>
-    setMessage({ tone: 'danger', text: error instanceof Error ? error.message : 'Algo deu errado.' });
+    setMessage({
+      tone: 'danger',
+      text: error instanceof Error ? error.message : 'Algo deu errado.',
+    });
 
   const requestAuthorization = useCallback(
-    (permission: AuthorizablePermission) => new Promise<string | null>((resolve) => setAuth({ permission, resolve })),
+    (permission: AuthorizablePermission) =>
+      new Promise<string | null>((resolve) => setAuth({ permission, resolve })),
     [],
   );
+
+  // Tabela de preço em vigor nesta venda (F1-03): a do cliente, senão a da loja.
+  const [priceTable, setPriceTable] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void pdv
+      .activePriceTable(cart.customerTaxId)
+      .then((t) => alive && setPriceTable(t?.name ?? null));
+    return () => {
+      alive = false;
+    };
+  }, [pdv, cart.customerTaxId, syncStatus?.lastSyncAt]);
+
+  /** O CPF/CNPJ na venda muda a tabela de preço: recalcula o que já está no carrinho. */
+  const setCustomer = async (taxId: string | null) => {
+    try {
+      const prices = await pdv.pricesFor(
+        cartRef.current.lines.map((l) => l.productId),
+        taxId,
+      );
+      setCart((c) => repriceLines({ ...c, customerTaxId: taxId }, prices));
+    } catch (error) {
+      fail(error);
+    }
+  };
 
   const add = (product: CatalogProduct, quantityMilli: number) => {
     try {
@@ -138,13 +176,14 @@ export function Register({
     }
   };
 
-  const readScale = platform.scale && caps?.scale.available
-    ? async () => {
-        const reading = await platform.scale!.read();
-        if (!reading.stable) throw new Error(SCALE_MESSAGES.unstable);
-        return reading.grams;
-      }
-    : undefined;
+  const readScale =
+    platform.scale && caps?.scale.available
+      ? async () => {
+          const reading = await platform.scale!.read();
+          if (!reading.stable) throw new Error(SCALE_MESSAGES.unstable);
+          return reading.grams;
+        }
+      : undefined;
 
   // A scan is async (local database lookup). Shortcuts pressed meanwhile wait for it.
   const pendingScan = useRef<Promise<void> | null>(null);
@@ -164,21 +203,27 @@ export function Register({
     const explicitQuantity = /^\d+(?:[.,]\d{1,3})?\s*[*xX]/.test(text.trim());
     try {
       if (scan.kind === 'scale-label') {
-        const product = await pdv.findByPlu(scan.plu);
-        if (!product) return fail(new Error(`Etiqueta de balança com código ${scan.plu} não encontrado.`));
-        const quantity = scan.quantityMilli ?? quantityFromLabelPrice(scan.totalCents!, product.priceCents);
+        const product = await pdv.findByPlu(scan.plu, cartRef.current.customerTaxId);
+        if (!product)
+          return fail(new Error(`Etiqueta de balança com código ${scan.plu} não encontrado.`));
+        const quantity =
+          scan.quantityMilli ?? quantityFromLabelPrice(scan.totalCents!, product.priceCents);
         return add(product, quantity);
       }
       if (scan.kind === 'barcode') {
-        const product = await pdv.findByCode(scan.code);
-        if (!product) return fail(new Error(`Código ${scan.code} não encontrado. Confira ou busque pelo nome.`));
+        const product = await pdv.findByCode(scan.code, cartRef.current.customerTaxId);
+        if (!product)
+          return fail(
+            new Error(`Código ${scan.code} não encontrado. Confira ou busque pelo nome.`),
+          );
         if (product.isWeighable && !explicitQuantity) return setDialog({ kind: 'weigh', product });
         return add(product, scan.quantityMilli);
       }
-      const found = await pdv.search(scan.text);
+      const found = await pdv.search(scan.text, 20, cartRef.current.customerTaxId);
       if (found.length === 0) return fail(new Error(`Nada encontrado para "${scan.text}".`));
       if (found.length === 1) {
-        if (found[0]!.isWeighable && !explicitQuantity) return setDialog({ kind: 'weigh', product: found[0]! });
+        if (found[0]!.isWeighable && !explicitQuantity)
+          return setDialog({ kind: 'weigh', product: found[0]! });
         return add(found[0]!, scan.quantityMilli);
       }
       setResults(found);
@@ -192,7 +237,9 @@ export function Register({
       const next = setSaleDiscount(cartRef.current, cents);
       let by: string | null = null;
       if (discountNeedsAuthorization(next, DISCOUNT_LIMIT_PERCENT)) {
-        by = can('pos.discount.above_limit') ? user.id : await requestAuthorization('pos.discount.above_limit');
+        by = can('pos.discount.above_limit')
+          ? user.id
+          : await requestAuthorization('pos.discount.above_limit');
         if (!by) return fail(new Error('Desconto não autorizado.'));
       }
       setCart(next);
@@ -209,7 +256,12 @@ export function Register({
     const columns = 48;
     const blocks = buildReceipt(
       sale,
-      { businessName: context.businessName, taxId: context.taxId, terminalName: context.terminal.name, operatorName: user.name },
+      {
+        businessName: context.businessName,
+        taxId: context.taxId,
+        terminalName: context.terminal.name,
+        operatorName: user.name,
+      },
       columns,
     );
     try {
@@ -239,7 +291,11 @@ export function Register({
       tone: 'success',
       text: `Bipaê! Venda nº ${sale.terminalSeq} concluída.${change > 0 ? ` Troco: ${brl(change)}.` : ''}`,
     });
-    if (platform.cashDrawer && caps?.cashDrawer.available && sale.payments.some((p) => p.method === 'cash')) {
+    if (
+      platform.cashDrawer &&
+      caps?.cashDrawer.available &&
+      sale.payments.some((p) => p.method === 'cash')
+    ) {
       void platform.cashDrawer.open().catch(() => undefined);
     }
     onSyncNow();
@@ -253,7 +309,14 @@ export function Register({
       F2: () => inputRef.current?.focus(),
       F3: () => {
         const line = cart.lines.find((l) => l.line === selected);
-        if (line) setDialog({ kind: 'quantity', line: line.line, title: line.name, unit: line.unit, weighable: line.isWeighable });
+        if (line)
+          setDialog({
+            kind: 'quantity',
+            line: line.line,
+            title: line.name,
+            unit: line.unit,
+            weighable: line.isWeighable,
+          });
       },
       F4: () => cart.lines.length > 0 && setDialog({ kind: 'discount' }),
       F5: () =>
@@ -275,7 +338,8 @@ export function Register({
       F10: () => cart.lines.length > 0 && setDialog({ kind: 'payment' }),
       F11: () => setDialog({ kind: 'history' }),
       F12: () => {
-        if (cart.lines.length > 0 && confirm('Limpar todos os itens desta venda?')) setCart(EMPTY_CART);
+        if (cart.lines.length > 0 && confirm('Limpar todos os itens desta venda?'))
+          setCart(EMPTY_CART);
       },
       ArrowUp: () => {
         const i = cart.lines.findIndex((l) => l.line === selected);
@@ -337,7 +401,8 @@ export function Register({
       </header>
       {!handle.persistent && (
         <Alert tone="warning">
-          Este navegador não guarda dados no aparelho. Sem internet, as vendas podem ser perdidas se a página fechar. Use o Chrome ou o Edge atualizados, ou o Bipaê Desktop.
+          Este navegador não guarda dados no aparelho. Sem internet, as vendas podem ser perdidas se
+          a página fechar. Use o Chrome ou o Edge atualizados, ou o Bipaê Desktop.
         </Alert>
       )}
 
@@ -365,13 +430,18 @@ export function Register({
           </form>
           {message && <Alert tone={message.tone}>{message.text}</Alert>}
           {results.length > 0 && (
-            <ul className="max-h-60 overflow-y-auto rounded-ui border border-border bg-surface" aria-label="Resultados da busca">
+            <ul
+              className="max-h-60 overflow-y-auto rounded-ui border border-border bg-surface"
+              aria-label="Resultados da busca"
+            >
               {results.map((p) => (
                 <li key={p.id}>
                   <button
                     type="button"
                     className="flex w-full justify-between gap-3 px-4 py-3 text-left hover:bg-surface-2"
-                    onClick={() => (p.isWeighable ? setDialog({ kind: 'weigh', product: p }) : add(p, 1000))}
+                    onClick={() =>
+                      p.isWeighable ? setDialog({ kind: 'weigh', product: p }) : add(p, 1000)
+                    }
                   >
                     <span>{p.name}</span>
                     <span className="tabular-nums">
@@ -394,11 +464,21 @@ export function Register({
                 <caption className="sr-only">Itens da venda</caption>
                 <thead className="sticky top-0 bg-surface-2 text-sm text-muted">
                   <tr>
-                    <th scope="col" className="px-3 py-2">#</th>
-                    <th scope="col" className="px-3 py-2">Produto</th>
-                    <th scope="col" className="px-3 py-2 text-right">Qtd.</th>
-                    <th scope="col" className="px-3 py-2 text-right">Preço</th>
-                    <th scope="col" className="px-3 py-2 text-right">Total</th>
+                    <th scope="col" className="px-3 py-2">
+                      #
+                    </th>
+                    <th scope="col" className="px-3 py-2">
+                      Produto
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Qtd.
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Preço
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Total
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -407,15 +487,25 @@ export function Register({
                       key={item.line}
                       aria-selected={selected === item.line}
                       onClick={() => setSelected(item.line)}
-                      className={cx('cursor-pointer border-t border-border', selected === item.line && 'bg-warning-soft')}
+                      className={cx(
+                        'cursor-pointer border-t border-border',
+                        selected === item.line && 'bg-warning-soft',
+                      )}
                     >
                       <td className="px-3 py-2 text-muted">{item.line}</td>
                       <td className="px-3 py-2 font-medium">{item.name}</td>
                       <td className="px-3 py-2 text-right tabular-nums">
-                        {(item.quantityMilli / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 3 })} {item.unit}
+                        {(item.quantityMilli / 1000).toLocaleString('pt-BR', {
+                          maximumFractionDigits: 3,
+                        })}{' '}
+                        {item.unit}
                       </td>
-                      <td className="px-3 py-2 text-right tabular-nums">{brl(item.unitPriceCents)}</td>
-                      <td className="px-3 py-2 text-right font-semibold tabular-nums">{brl(item.totalCents)}</td>
+                      <td className="px-3 py-2 text-right tabular-nums">
+                        {brl(item.unitPriceCents)}
+                      </td>
+                      <td className="px-3 py-2 text-right font-semibold tabular-nums">
+                        {brl(item.totalCents)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -427,18 +517,38 @@ export function Register({
         <aside className="flex flex-col gap-3" aria-label="Resumo">
           <div className="rounded-ui bg-primary p-5 text-primary-contrast">
             <p className="text-sm font-semibold uppercase tracking-wide opacity-90">Total</p>
-            <p className="text-5xl font-extrabold tabular-nums" aria-live="polite" data-testid="pdv-total">
+            <p
+              className="text-5xl font-extrabold tabular-nums"
+              aria-live="polite"
+              data-testid="pdv-total"
+            >
               {brl(t.totalCents)}
             </p>
             {t.discountCents > 0 && <p className="mt-1">Descontos: {brl(t.discountCents)}</p>}
             <p className="mt-1 text-sm opacity-90">{cart.lines.length} itens</p>
           </div>
-          {cart.customerTaxId && <p className="text-sm">CPF/CNPJ na nota: {formatTaxId(cart.customerTaxId)}</p>}
-          <Button size="lg" onClick={() => setDialog({ kind: 'payment' })} disabled={cart.lines.length === 0} aria-keyshortcuts="F10">
+          {cart.customerTaxId && (
+            <p className="text-sm">CPF/CNPJ na nota: {formatTaxId(cart.customerTaxId)}</p>
+          )}
+          {priceTable && (
+            <p className="text-sm font-semibold text-primary" data-testid="price-table">
+              Preços da tabela {priceTable}
+            </p>
+          )}
+          <Button
+            size="lg"
+            onClick={() => setDialog({ kind: 'payment' })}
+            disabled={cart.lines.length === 0}
+            aria-keyshortcuts="F10"
+          >
             Pagar (F10)
           </Button>
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="secondary" onClick={() => setDialog({ kind: 'discount' })} disabled={cart.lines.length === 0}>
+            <Button
+              variant="secondary"
+              onClick={() => setDialog({ kind: 'discount' })}
+              disabled={cart.lines.length === 0}
+            >
               Desconto (F4)
             </Button>
             <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
@@ -459,10 +569,16 @@ export function Register({
         </aside>
       </div>
 
-      <footer className="hidden flex-wrap gap-x-4 gap-y-1 border-t border-border bg-surface px-4 py-2 text-sm text-muted md:flex" aria-label="Atalhos do teclado">
+      <footer
+        className="hidden flex-wrap gap-x-4 gap-y-1 border-t border-border bg-surface px-4 py-2 text-sm text-muted md:flex"
+        aria-label="Atalhos do teclado"
+      >
         {SHORTCUTS.map(([key, label]) => (
           <span key={key}>
-            <kbd className="rounded border border-border bg-surface-2 px-1.5 font-mono text-text">{key}</kbd> {label}
+            <kbd className="rounded border border-border bg-surface-2 px-1.5 font-mono text-text">
+              {key}
+            </kbd>{' '}
+            {label}
           </span>
         ))}
       </footer>
@@ -509,13 +625,15 @@ export function Register({
         <CustomerDialog
           current={cart.customerTaxId}
           onConfirm={(taxId) => {
-            setCart((c) => ({ ...c, customerTaxId: taxId }));
+            void setCustomer(taxId);
             closeDialog();
           }}
           onClose={closeDialog}
         />
       )}
-      {dialog.kind === 'payment' && <PaymentDialog totalCents={t.totalCents} onPaid={pay} onClose={closeDialog} />}
+      {dialog.kind === 'payment' && (
+        <PaymentDialog totalCents={t.totalCents} onPaid={pay} onClose={closeDialog} />
+      )}
       {dialog.kind === 'cash' && (
         <CashDialog
           pdv={pdv}
@@ -594,10 +712,13 @@ function SyncBadge({ status, onSync }: { status: SyncStatus | null; onSync: () =
       title={status.lastError ?? 'Sincronizar agora'}
       data-testid="sync-status"
     >
-      {offline ? <CloudOff className="size-4" aria-hidden /> : <RefreshCw className={cx('size-4', status.syncing && 'animate-spin')} aria-hidden />}
+      {offline ? (
+        <CloudOff className="size-4" aria-hidden />
+      ) : (
+        <RefreshCw className={cx('size-4', status.syncing && 'animate-spin')} aria-hidden />
+      )}
       {offline ? 'Sem conexão' : describeLastSync(status.lastSyncAt)}
       {status.pending > 0 && ` · ${status.pending} para enviar`}
     </button>
   );
 }
-

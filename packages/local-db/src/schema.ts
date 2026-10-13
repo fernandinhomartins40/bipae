@@ -83,6 +83,17 @@ export const LOCAL_MIGRATIONS: string[] = [
   );
   CREATE INDEX outbox_pending ON outbox (sent_at, seq);
   `,
+  /* 2 — F1-03: tabelas de preço (retrato inteiro vindo do servidor; veja PricingSnapshot) */ `
+  CREATE TABLE price_tables (id TEXT PRIMARY KEY, name TEXT NOT NULL);
+  CREATE TABLE price_table_items (
+    table_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    price_cents INTEGER NOT NULL,
+    PRIMARY KEY (table_id, product_id)
+  );
+  -- Clientes com tabela própria, pelo CPF/CNPJ (o que o caixa sabe do cliente).
+  CREATE TABLE customer_price_tables (tax_id TEXT PRIMARY KEY, price_table_id TEXT NOT NULL);
+  `,
 ];
 
 /**
@@ -109,15 +120,13 @@ export async function migrateLocal(
 }
 
 export async function getMeta(storage: Pick<LocalStorage, 'query'>, key: string) {
-  const [row] = await storage.query<{ value: string }>('SELECT value FROM meta WHERE key = ?', [key]);
+  const [row] = await storage.query<{ value: string }>('SELECT value FROM meta WHERE key = ?', [
+    key,
+  ]);
   return row?.value ?? null;
 }
 
-export async function setMeta(
-  storage: Pick<LocalStorage, 'execute'>,
-  key: string,
-  value: string,
-) {
+export async function setMeta(storage: Pick<LocalStorage, 'execute'>, key: string, value: string) {
   await storage.execute(
     'INSERT INTO meta (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value',
     [key, value],

@@ -18,6 +18,8 @@ import { SyncService } from './sync.service';
 const pullQuery = z.object({
   cursor: z.string().max(100).optional(),
   limit: z.coerce.number().int().min(1).max(1000).default(500),
+  /** Versão de preços que o caixa já tem (F1-03); o retrato só é reenviado quando muda. */
+  pricingVersion: z.string().max(64).optional(),
 });
 
 @Controller('sync')
@@ -31,7 +33,11 @@ export class SyncController {
   push(@Ctx() ctx: RequestContext, @Body() body: unknown) {
     const input = parse(syncPushInput, body);
     if (ctx.terminalId && ctx.terminalId !== input.terminalId) {
-      throw new AppError(400, 'terminal_mismatch', 'O caixa informado não confere com este aparelho.');
+      throw new AppError(
+        400,
+        'terminal_mismatch',
+        'O caixa informado não confere com este aparelho.',
+      );
     }
     return this.sync.push(ctx, input.terminalId, input.events);
   }
@@ -39,8 +45,8 @@ export class SyncController {
   @Get('pull')
   @RequirePermission('pos.sell')
   pull(@Ctx() ctx: RequestContext, @Query() query: unknown) {
-    const { cursor, limit } = parse(pullQuery, query);
-    return this.sync.pull(ctx, cursor, limit);
+    const { cursor, limit, pricingVersion } = parse(pullQuery, query);
+    return this.sync.pull(ctx, cursor, limit, pricingVersion);
   }
 
   @Get('status/:terminalId')

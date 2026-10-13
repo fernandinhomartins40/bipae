@@ -18,6 +18,7 @@ import {
   quantityFromLabelPrice,
   receiptToText,
   removeLine,
+  repriceLines,
   setLineDiscount,
   setQuantity,
   setSaleDiscount,
@@ -27,9 +28,27 @@ import {
   type CatalogItem,
 } from './index';
 
-const rice: CatalogItem = { id: 'r', name: 'Arroz 5kg', unit: 'UN', priceCents: 2890, isWeighable: false };
-const banana: CatalogItem = { id: 'b', name: 'Banana prata', unit: 'KG', priceCents: 699, isWeighable: true };
-const gum: CatalogItem = { id: 'g', name: 'Chiclete', unit: 'UN', priceCents: 33, isWeighable: false };
+const rice: CatalogItem = {
+  id: 'r',
+  name: 'Arroz 5kg',
+  unit: 'UN',
+  priceCents: 2890,
+  isWeighable: false,
+};
+const banana: CatalogItem = {
+  id: 'b',
+  name: 'Banana prata',
+  unit: 'KG',
+  priceCents: 699,
+  isWeighable: true,
+};
+const gum: CatalogItem = {
+  id: 'g',
+  name: 'Chiclete',
+  unit: 'UN',
+  priceCents: 33,
+  isWeighable: false,
+};
 
 describe('cart', () => {
   it('merges repeated units and keeps weighed items on separate lines', () => {
@@ -89,9 +108,17 @@ describe('cart', () => {
 
 describe('scan input', () => {
   it('reads barcodes, multipliers and searches', () => {
-    expect(parseScan('7891000315507')).toEqual({ kind: 'barcode', code: '7891000315507', quantityMilli: 1000 });
+    expect(parseScan('7891000315507')).toEqual({
+      kind: 'barcode',
+      code: '7891000315507',
+      quantityMilli: 1000,
+    });
     expect(parseScan('3*7891000315507')).toMatchObject({ kind: 'barcode', quantityMilli: 3000 });
-    expect(parseScan('0,5x banana')).toEqual({ kind: 'search', text: 'banana', quantityMilli: 500 });
+    expect(parseScan('0,5x banana')).toEqual({
+      kind: 'search',
+      text: 'banana',
+      quantityMilli: 500,
+    });
     expect(parseScan('   ')).toBeNull();
     expect(parseScan('0*arroz')).toBeNull();
   });
@@ -102,7 +129,12 @@ describe('scan input', () => {
     expect(quantityFromLabelPrice(1234, 699)).toBe(1765);
     expect(() => quantityFromLabelPrice(1, 0)).toThrow();
     const weightLabel = parseScan(label, {
-      prefix: '2', pluStart: 1, pluLength: 5, valueStart: 6, valueLength: 6, valueKind: 'weight',
+      prefix: '2',
+      pluStart: 1,
+      pluLength: 5,
+      valueStart: 6,
+      valueLength: 6,
+      valueKind: 'weight',
     });
     expect(weightLabel).toEqual({ kind: 'scale-label', plu: '123', quantityMilli: 1234 });
   });
@@ -115,17 +147,37 @@ describe('payments', () => {
       { method: 'debit', receivedCents: 2000, nsu: '123' },
     ]);
     expect(s.payments).toEqual([
-      { method: 'debit', amountCents: 2000, changeCents: 0, nsu: '123', authorizationCode: null, provider: null },
-      { method: 'cash', amountCents: 3000, changeCents: 2000, nsu: null, authorizationCode: null, provider: null },
+      {
+        method: 'debit',
+        amountCents: 2000,
+        changeCents: 0,
+        nsu: '123',
+        authorizationCode: null,
+        provider: null,
+      },
+      {
+        method: 'cash',
+        amountCents: 3000,
+        changeCents: 2000,
+        nsu: null,
+        authorizationCode: null,
+        provider: null,
+      },
     ]);
     expect(s.changeCents).toBe(2000);
     expect(s.remainingCents).toBe(0);
   });
 
   it('rejects overpaying with card and reports what is left', () => {
-    expect(() => summarizePayments(1000, [{ method: 'credit', receivedCents: 1500 }])).toThrow('Só pagamento em dinheiro');
-    expect(() => summarizePayments(1000, [{ method: 'pix', receivedCents: 0 }])).toThrow('inválido');
-    expect(summarizePayments(1000, [{ method: 'pix', receivedCents: 400 }]).remainingCents).toBe(600);
+    expect(() => summarizePayments(1000, [{ method: 'credit', receivedCents: 1500 }])).toThrow(
+      'Só pagamento em dinheiro',
+    );
+    expect(() => summarizePayments(1000, [{ method: 'pix', receivedCents: 0 }])).toThrow(
+      'inválido',
+    );
+    expect(summarizePayments(1000, [{ method: 'pix', receivedCents: 400 }]).remainingCents).toBe(
+      600,
+    );
   });
 
   it('suggests common notes for cash', () => {
@@ -138,7 +190,13 @@ describe('cash session', () => {
     const expected = expectedBySession({
       openingCents: 10000,
       sales: [
-        { status: 'completed', payments: [{ method: 'cash', amountCents: 3000, changeCents: 2000 }, { method: 'pix', amountCents: 1500, changeCents: 0 }] },
+        {
+          status: 'completed',
+          payments: [
+            { method: 'cash', amountCents: 3000, changeCents: 2000 },
+            { method: 'pix', amountCents: 1500, changeCents: 0 },
+          ],
+        },
         { status: 'cancelled', payments: [{ method: 'cash', amountCents: 9999, changeCents: 0 }] },
       ],
       returns: [{ refundCents: 500, refundMethod: 'cash' }],
@@ -173,7 +231,16 @@ describe('printing', () => {
       payments: [{ method: 'cash' as const, amountCents: 3764, changeCents: 1236 }],
       customerTaxId: '12345678909',
     };
-    const blocks = buildReceipt(sale, { businessName: 'Mercadinho', taxId: '11222333000181', terminalName: 'Caixa 1', operatorName: 'Ju' }, 48);
+    const blocks = buildReceipt(
+      sale,
+      {
+        businessName: 'Mercadinho',
+        taxId: '11222333000181',
+        terminalName: 'Caixa 1',
+        operatorName: 'Ju',
+      },
+      48,
+    );
     const text = receiptToText(blocks, 48).join('\n');
     expect(text).toContain('NÃO É DOCUMENTO FISCAL');
     expect(text).toContain('1,250 KG x 6,99');
@@ -184,14 +251,27 @@ describe('printing', () => {
     expect(Array.from(bytes.slice(0, 5))).toEqual([0x1b, 0x40, 0x1b, 0x74, 3]);
     expect(Array.from(bytes.slice(-3))).toEqual([0x56, 0x42, 0x00]);
     expect(Array.from(DRAWER_PULSE)).toEqual([0x1b, 0x70, 0x00, 0x19, 0xfa]);
-    const discounted = buildReceipt({ ...sale, discountCents: 100, customerTaxId: null }, { businessName: 'X', terminalName: 'C', operatorName: 'O' }, 32);
+    const discounted = buildReceipt(
+      { ...sale, discountCents: 100, customerTaxId: null },
+      { businessName: 'X', terminalName: 'C', operatorName: 'O' },
+      32,
+    );
     expect(receiptToText(discounted, 32).join('\n')).toContain('Descontos');
-    expect(receiptToText([{ kind: 'text', text: 'oi', align: 'right' }, { kind: 'feed', lines: 1 }], 4)).toEqual(['  oi', '']);
+    expect(
+      receiptToText(
+        [
+          { kind: 'text', text: 'oi', align: 'right' },
+          { kind: 'feed', lines: 1 },
+        ],
+        4,
+      ),
+    ).toEqual(['  oi', '']);
   });
 });
 
 describe('scale protocol', () => {
-  const frame = (s: string) => Uint8Array.from([0x02, ...Array.from(s, (c) => c.charCodeAt(0)), 0x03]);
+  const frame = (s: string) =>
+    Uint8Array.from([0x02, ...Array.from(s, (c) => c.charCodeAt(0)), 0x03]);
   it('parses weight and special states', () => {
     expect(parseScaleResponse(frame('01250'))).toEqual({ status: 'ok', grams: 1250 });
     expect(parseScaleResponse(frame('IIIII'))).toEqual({ status: 'unstable' });
@@ -199,5 +279,28 @@ describe('scale protocol', () => {
     expect(parseScaleResponse(frame('SSSSS'))).toEqual({ status: 'overload' });
     expect(parseScaleResponse(frame('12a45'))).toEqual({ status: 'invalid' });
     expect(parseScaleResponse(Uint8Array.from([0x30]))).toEqual({ status: 'invalid' });
+  });
+});
+
+describe('tabelas de preço no carrinho (F1-03)', () => {
+  const arroz = { id: 'arroz', name: 'Arroz', unit: 'UN', priceCents: 2890, isWeighable: false };
+  const banana = { id: 'banana', name: 'Banana', unit: 'KG', priceCents: 699, isWeighable: true };
+
+  it('recalcula os itens quando o cliente tem outra tabela', () => {
+    let cart = addItem(EMPTY_CART, arroz, 2000);
+    cart = addItem(cart, banana, 1255);
+    const next = repriceLines(cart, new Map([['arroz', 2590]]));
+    expect(next.lines.map((l) => l.unitPriceCents)).toEqual([2590, 699]);
+    expect(totals(next).totalCents).toBe(2 * 2590 + 877);
+  });
+
+  it('o desconto nunca fica maior que o novo valor', () => {
+    let cart = addItem(EMPTY_CART, arroz, 1000);
+    cart = setLineDiscount(cart, 1, 2000);
+    cart = setSaleDiscount(cart, 890);
+    const next = repriceLines(cart, new Map([['arroz', 1500]]));
+    expect(next.lines[0]!.discountCents).toBe(1500);
+    expect(next.saleDiscountCents).toBe(0);
+    expect(totals(next).totalCents).toBe(0);
   });
 });

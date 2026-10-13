@@ -10,7 +10,8 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 ## Nomes e idioma
 
 - Marca: **Bipaê** em interface e textos; `bipae` (sem acento) em código, pacotes (`@bipae/*`), URLs e e-mails.
-- **Código** (identificadores, nomes de arquivos, commits): inglês.
+- **Identificadores e nomes de arquivos** (variáveis, funções, tipos, rotas): inglês.
+- **Todo o resto em português do Brasil**, porque o dono do projeto não lê inglês: comentários no código, nomes e descrições de testes, mensagens de commit, mensagens de erro, documentação e qualquer texto para ele. Isso vale para código novo e para os trechos que você alterar; textos antigos em inglês são traduzidos quando o arquivo for mexido.
 - **Termos fiscais oficiais** mantêm o nome do leiaute, sem tradução: `cClassTrib`, `CFOP`, `NCM`, `CEST`, `CST`, `CSOSN`, `vNF`, `IBS`, `CBS`, `IS`. Ex.: `calculateIbsCbs(item)`, `item.cClassTrib`.
 - **Documentação, UI e mensagens ao usuário**: português do Brasil. Tom leve, simpático e direto ("Bipou? Bipaê!"), sem infantilizar.
 - UI: moeda BRL (`R$ 1.234,56`), datas `dd/mm/aaaa`, CPF/CNPJ sempre com máscara e validação de dígito.
@@ -99,5 +100,5 @@ O estado fica em `.claude/goal-state.json`, que não é versionado.
 
 ## Git
 
-- Conventional Commits em inglês (`feat(pos): ...`, `fix(fiscal): ...`).
+- Conventional Commits com a descrição em português (`feat(pos): desconto por item no caixa`, `fix(fiscal): ...`).
 - Commit ao fim de cada etapa estável. Uma fase só fecha com README e `CHANGELOG.md` atualizados.

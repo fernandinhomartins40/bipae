@@ -33,7 +33,12 @@ export interface Cart {
   quoteId: string | null;
 }
 
-export const EMPTY_CART: Cart = { lines: [], saleDiscountCents: 0, customerTaxId: null, quoteId: null };
+export const EMPTY_CART: Cart = {
+  lines: [],
+  saleDiscountCents: 0,
+  customerTaxId: null,
+  quoteId: null,
+};
 
 export class CartError extends Error {}
 
@@ -42,14 +47,23 @@ export function lineGross(unitPriceCents: number, quantityMilli: number): number
   return Math.floor((unitPriceCents * quantityMilli + 500) / 1000);
 }
 
-export function addItem(cart: Cart, item: CatalogItem, quantityMilli = 1000, priceCents?: number): Cart {
+export function addItem(
+  cart: Cart,
+  item: CatalogItem,
+  quantityMilli = 1000,
+  priceCents?: number,
+): Cart {
   if (!Number.isInteger(quantityMilli) || quantityMilli <= 0) {
     throw new CartError('Quantidade inválida.');
   }
   const unitPriceCents = priceCents ?? item.priceCents;
   // Same product (not weighed, same price) adds up on the same line, like a real register.
   const existing = cart.lines.find(
-    (l) => l.productId === item.id && !l.isWeighable && l.unitPriceCents === unitPriceCents && l.discountCents === 0,
+    (l) =>
+      l.productId === item.id &&
+      !l.isWeighable &&
+      l.unitPriceCents === unitPriceCents &&
+      l.discountCents === 0,
   );
   if (existing && !item.isWeighable) {
     return setQuantity(cart, existing.line, existing.quantityMilli + quantityMilli);
@@ -88,7 +102,11 @@ export function setQuantity(cart: Cart, line: number, quantityMilli: number): Ca
     throw new CartError(`"${current.name}" é vendido por unidade inteira.`);
   }
   const gross = lineGross(current.unitPriceCents, quantityMilli);
-  return replaceLine(cart, { ...current, quantityMilli, discountCents: Math.min(current.discountCents, gross) });
+  return replaceLine(cart, {
+    ...current,
+    quantityMilli,
+    discountCents: Math.min(current.discountCents, gross),
+  });
 }
 
 export function removeLine(cart: Cart, line: number): Cart {
@@ -107,10 +125,33 @@ export function setLineDiscount(cart: Cart, line: number, discountCents: number)
 
 export function setSaleDiscount(cart: Cart, discountCents: number): Cart {
   const { subtotalCents, itemDiscountCents } = totals({ ...cart, saleDiscountCents: 0 });
-  if (!Number.isInteger(discountCents) || discountCents < 0 || discountCents > subtotalCents - itemDiscountCents) {
+  if (
+    !Number.isInteger(discountCents) ||
+    discountCents < 0 ||
+    discountCents > subtotalCents - itemDiscountCents
+  ) {
     throw new CartError('O desconto não pode ser maior que o total da venda.');
   }
   return { ...cart, saleDiscountCents: discountCents };
+}
+
+/**
+ * Novos preços unitários para os itens que já estão no carrinho (F1-03: o cliente identificado
+ * na venda tem tabela própria). Os descontos nunca passam dos novos valores.
+ */
+export function repriceLines(cart: Cart, prices: ReadonlyMap<string, number>): Cart {
+  const lines = cart.lines.map((l) => {
+    const price = prices.get(l.productId);
+    if (price === undefined || price === l.unitPriceCents) return l;
+    const gross = lineGross(price, l.quantityMilli);
+    return { ...l, unitPriceCents: price, discountCents: Math.min(l.discountCents, gross) };
+  });
+  const next = { ...cart, lines };
+  const { subtotalCents, itemDiscountCents } = totals({ ...next, saleDiscountCents: 0 });
+  return {
+    ...next,
+    saleDiscountCents: Math.min(cart.saleDiscountCents, subtotalCents - itemDiscountCents),
+  };
 }
 
 /** Percent (e.g. 10 for 10%) of the current total, rounded half up to cents. */

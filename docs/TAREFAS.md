@@ -48,7 +48,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: o caixa aplica a tabela da loja ou do cliente, com teste de cálculo e E2E.
 - [x] F1-03.a · API: loja e cliente apontam para uma tabela de preço (migração, rotas, testes)
 - [x] F1-03.b · Tela de tabelas de preço e escolha da tabela na loja e no cliente — depende: F1-03.a
-- [ ] F1-03.c · Caixa offline aplica o preço da tabela (sincronização, banco local, cálculo) — depende: F1-03.a
+- [x] F1-03.c · Caixa offline aplica o preço da tabela (sincronização, banco local, cálculo) — depende: F1-03.a
 - [ ] F1-03.d · E2E: venda com tabela da loja e do cliente — depende: F1-03.b, F1-03.c
 - [ ] F1-04 · Variações (grade) e kits no cadastro e no caixa
   - Pronto quando: variação aparece na busca, e o kit baixa o estoque dos componentes, com testes.

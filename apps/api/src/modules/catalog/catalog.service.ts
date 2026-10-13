@@ -254,7 +254,7 @@ export class CatalogService {
   listPriceTables(ctx: RequestContext) {
     return withTenant(this.db, ctx, async (tx) => {
       const tables = await tx.select().from(priceTables).orderBy(asc(priceTables.name));
-      // Name and regular price come along, so screens need not load the whole catalog.
+      // Nome e preço normal já vêm junto, para as telas não precisarem carregar o catálogo inteiro.
       const items = tables.length
         ? await tx
             .select({

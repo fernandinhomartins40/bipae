@@ -2,7 +2,14 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { createStorage, getMeta, migrateLocal, searchKey, setMeta } from './index';
+import {
+  createStorage,
+  getMeta,
+  LOCAL_MIGRATIONS,
+  migrateLocal,
+  searchKey,
+  setMeta,
+} from './index';
 import { nodeSqliteDriver } from './node-driver';
 
 async function open(path?: string) {
@@ -12,11 +19,11 @@ async function open(path?: string) {
 }
 
 describe('local database', () => {
-  it('migrates once and is idempotent', async () => {
+  it('aplica todas as migrações uma vez e repetir não muda nada', async () => {
     const storage = await open();
-    expect(await migrateLocal(storage)).toBe(1);
+    expect(await migrateLocal(storage)).toBe(LOCAL_MIGRATIONS.length);
     const [row] = await storage.query<{ user_version: number }>('PRAGMA user_version');
-    expect(Number(row?.user_version)).toBe(1);
+    expect(Number(row?.user_version)).toBe(LOCAL_MIGRATIONS.length);
     await storage.close();
   });
 

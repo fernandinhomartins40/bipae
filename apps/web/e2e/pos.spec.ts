@@ -40,7 +40,10 @@ async function scan(page: Page, text: string) {
   await input.press('Enter');
 }
 
-test('sell online, keep selling offline, sync on reconnect, close blind', async ({ page, context }) => {
+test('sell online, keep selling offline, sync on reconnect, close blind', async ({
+  page,
+  context,
+}) => {
   await signupWithProducts(page);
 
   // Link this device to a new register and open it.
@@ -48,7 +51,10 @@ test('sell online, keep selling offline, sync on reconnect, close blind', async 
   await expect(page.getByRole('heading', { name: 'Qual caixa é este aparelho?' })).toBeVisible();
   await page.getByLabel('Novo caixa').fill('Caixa 1');
   await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
-  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible();
+  // A primeira preparação baixa o catálogo e as tabelas de preço: numa máquina carregada passa de 5 s.
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
   await page.getByLabel('Dinheiro na gaveta para troco (R$)').fill('100,00');
   await page.getByRole('button', { name: 'Abrir caixa' }).click();
   await expect(page.getByText('Caixa livre')).toBeVisible();
@@ -85,7 +91,9 @@ test('sell online, keep selling offline, sync on reconnect, close blind', async 
 
   // Back online: pending sales go up by themselves.
   await context.setOffline(false);
-  await expect(page.getByTestId('sync-status')).toContainText('sincronizado agora', { timeout: 15_000 });
+  await expect(page.getByTestId('sync-status')).toContainText('sincronizado agora', {
+    timeout: 15_000,
+  });
   await expect(page.getByTestId('sync-status')).not.toContainText('para enviar');
 
   // Blind close: count the drawer; the difference shows only after confirming.
@@ -96,7 +104,10 @@ test('sell online, keep selling offline, sync on reconnect, close blind', async 
   await page.getByRole('button', { name: 'Confirmar fechamento' }).click();
   await expect(page.getByText('Bateu certinho. Bipaê!')).toBeVisible();
   await page.getByRole('button', { name: 'Ok' }).click();
-  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible();
+  // A primeira preparação baixa o catálogo e as tabelas de preço: numa máquina carregada passa de 5 s.
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
 
   // The back office sees both sales, with stock moved by the ledger.
   await page.getByRole('button', { name: 'Voltar' }).click();
@@ -107,7 +118,9 @@ test('sell online, keep selling offline, sync on reconnect, close blind', async 
   await expect(page.getByRole('row', { name: /Água Mineral/ })).toContainText('-4');
 });
 
-test('discount above the limit needs a manager, who approves on the cashier screen', async ({ page }) => {
+test('discount above the limit needs a manager, who approves on the cashier screen', async ({
+  page,
+}) => {
   const ownerEmail = await signupWithProducts(page);
   // The owner may give any discount, so create a cashier and sell as them.
   await page.getByRole('link', { name: 'Equipe' }).click();

@@ -1,7 +1,9 @@
+import { createHash } from 'node:crypto';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   terminalEvent,
   uuidv7,
+  type PricingSnapshot,
   type SyncPullResult,
   type SyncPushResult,
   type TerminalEvent,
@@ -14,13 +16,17 @@ import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   cashMovements,
   cashSessions,
+  customers,
   memberships,
+  priceTableItems,
+  priceTables,
   productBarcodes,
   products,
   saleItems,
   salePayments,
   sales,
   stockMovements,
+  stores,
   syncEvents,
   terminals,
 } from '../../db/schema';
@@ -45,12 +51,17 @@ export class SyncService {
    * bad event never blocks the rest. Already-applied ids are accepted again (idempotent).
    * Transient failures are neither accepted nor rejected: the terminal retries later.
    */
-  async push(ctx: RequestContext, terminalId: string, rawEvents: unknown[]): Promise<SyncPushResult> {
+  async push(
+    ctx: RequestContext,
+    terminalId: string,
+    rawEvents: unknown[],
+  ): Promise<SyncPushResult> {
     const terminal = await withTenant(this.db, ctx, async (tx) => {
       const [row] = await tx.select().from(terminals).where(eq(terminals.id, terminalId));
       return row;
     });
-    if (!terminal) throw new AppError(404, 'not_found', 'Este caixa não está cadastrado nesta empresa.');
+    if (!terminal)
+      throw new AppError(404, 'not_found', 'Este caixa não está cadastrado nesta empresa.');
 
     const result: SyncPushResult = { accepted: [], rejected: [] };
     const parsed: TerminalEvent[] = [];
@@ -59,7 +70,10 @@ export class SyncService {
       const id = (raw as { id?: unknown })?.id;
       if (!event.success) {
         if (typeof id === 'string') {
-          result.rejected.push({ id, reason: `Evento inválido: ${event.error.issues[0]?.message ?? 'formato'}` });
+          result.rejected.push({
+            id,
+            reason: `Evento inválido: ${event.error.issues[0]?.message ?? 'formato'}`,
+          });
         }
         continue;
       }
@@ -108,7 +122,10 @@ export class SyncService {
   }
 
   private async requireMember(tx: Tx, userId: string) {
-    const [m] = await tx.select({ userId: memberships.userId }).from(memberships).where(eq(memberships.userId, userId));
+    const [m] = await tx
+      .select({ userId: memberships.userId })
+      .from(memberships)
+      .where(eq(memberships.userId, userId));
     if (!m) throw new Rejection('Operador não pertence a esta empresa.');
   }
 
@@ -146,7 +163,11 @@ export class SyncService {
             entity: 'cash_session',
             entityId: event.payload.sessionId,
             authorizedBy: event.payload.authorizedBy ?? null,
-            data: { amountCents: event.payload.amountCents, reason: event.payload.reason, terminal: terminal.name },
+            data: {
+              amountCents: event.payload.amountCents,
+              reason: event.payload.reason,
+              terminal: terminal.name,
+            },
           });
         }
         return;
@@ -175,7 +196,10 @@ export class SyncService {
       case 'sale.completed': {
         const p = event.payload;
         await this.requireSession(tx, p.sessionId);
-        await this.requireProducts(tx, p.items.map((i) => i.productId));
+        await this.requireProducts(
+          tx,
+          p.items.map((i) => i.productId),
+        );
         await tx.insert(sales).values({
           id: p.saleId,
           tenantId: ctx.tenantId,
@@ -194,9 +218,9 @@ export class SyncService {
           occurredAt: at,
           data: p,
         });
-        await tx.insert(saleItems).values(
-          p.items.map((i) => ({ tenantId: ctx.tenantId, saleId: p.saleId, ...i })),
-        );
+        await tx
+          .insert(saleItems)
+          .values(p.items.map((i) => ({ tenantId: ctx.tenantId, saleId: p.saleId, ...i })));
         await tx.insert(salePayments).values(
           p.payments.map((pay, idx) => ({
             tenantId: ctx.tenantId,
@@ -210,14 +234,26 @@ export class SyncService {
             provider: pay.provider ?? null,
           })),
         );
-        await this.moveStock(tx, ctx, terminal, at, 'sale', p.saleId, p.items.map((i) => [i.productId, -i.quantityMilli]));
+        await this.moveStock(
+          tx,
+          ctx,
+          terminal,
+          at,
+          'sale',
+          p.saleId,
+          p.items.map((i) => [i.productId, -i.quantityMilli]),
+        );
         if (p.discountAuthorizedBy) {
           await this.audit.record(tx, actor, {
             action: 'sale.discount_authorized',
             entity: 'sale',
             entityId: p.saleId,
             authorizedBy: p.discountAuthorizedBy,
-            data: { discountCents: p.discountCents, subtotalCents: p.subtotalCents, terminalSeq: p.terminalSeq },
+            data: {
+              discountCents: p.discountCents,
+              subtotalCents: p.subtotalCents,
+              terminalSeq: p.terminalSeq,
+            },
           });
         }
         return;
@@ -231,13 +267,25 @@ export class SyncService {
           .set({ status: 'cancelled', cancelledAt: at, cancelReason: event.payload.reason })
           .where(eq(sales.id, sale.id));
         const items = await tx.select().from(saleItems).where(eq(saleItems.saleId, sale.id));
-        await this.moveStock(tx, ctx, terminal, at, 'sale_cancelled', sale.id, items.map((i) => [i.productId, i.quantityMilli]));
+        await this.moveStock(
+          tx,
+          ctx,
+          terminal,
+          at,
+          'sale_cancelled',
+          sale.id,
+          items.map((i) => [i.productId, i.quantityMilli]),
+        );
         await this.audit.record(tx, actor, {
           action: 'sale.cancelled',
           entity: 'sale',
           entityId: sale.id,
           authorizedBy: event.payload.authorizedBy ?? null,
-          data: { reason: event.payload.reason, totalCents: sale.totalCents, terminalSeq: sale.terminalSeq },
+          data: {
+            reason: event.payload.reason,
+            totalCents: sale.totalCents,
+            terminalSeq: sale.terminalSeq,
+          },
         });
         return;
       }
@@ -245,7 +293,8 @@ export class SyncService {
         const p = event.payload;
         await this.requireSession(tx, p.sessionId);
         const [original] = await tx.select().from(sales).where(eq(sales.id, p.originalSaleId));
-        if (!original || original.kind !== 'sale') throw new Rejection('Venda original da devolução não encontrada.');
+        if (!original || original.kind !== 'sale')
+          throw new Rejection('Venda original da devolução não encontrada.');
         await tx.insert(sales).values({
           id: p.returnId,
           tenantId: ctx.tenantId,
@@ -264,7 +313,15 @@ export class SyncService {
           occurredAt: at,
           data: p,
         });
-        await this.moveStock(tx, ctx, terminal, at, 'return', p.returnId, p.items.map((i) => [i.productId, i.quantityMilli]));
+        await this.moveStock(
+          tx,
+          ctx,
+          terminal,
+          at,
+          'return',
+          p.returnId,
+          p.items.map((i) => [i.productId, i.quantityMilli]),
+        );
         await this.audit.record(tx, actor, {
           action: 'sale.returned',
           entity: 'sale',
@@ -277,15 +334,22 @@ export class SyncService {
   }
 
   private async requireSession(tx: Tx, sessionId: string) {
-    const [s] = await tx.select({ id: cashSessions.id }).from(cashSessions).where(eq(cashSessions.id, sessionId));
+    const [s] = await tx
+      .select({ id: cashSessions.id })
+      .from(cashSessions)
+      .where(eq(cashSessions.id, sessionId));
     if (!s) throw new Rejection('Abertura de caixa não recebida antes deste evento.');
   }
 
   /** FK checks bypass RLS, so product ownership is verified explicitly under the tenant scope. */
   private async requireProducts(tx: Tx, ids: string[]) {
     const unique = [...new Set(ids)];
-    const found = await tx.select({ id: products.id }).from(products).where(inArray(products.id, unique));
-    if (found.length !== unique.length) throw new Rejection('A venda tem um produto desconhecido nesta empresa.');
+    const found = await tx
+      .select({ id: products.id })
+      .from(products)
+      .where(inArray(products.id, unique));
+    if (found.length !== unique.length)
+      throw new Rejection('A venda tem um produto desconhecido nesta empresa.');
   }
 
   private async moveStock(
@@ -317,10 +381,16 @@ export class SyncService {
    * Catalog changes since a cursor `<iso>|<id>` (keyset pagination on updated_at, id,
    * so products updated in the same instant are never skipped).
    */
-  async pull(ctx: RequestContext, cursor: string | undefined, limit: number): Promise<SyncPullResult> {
+  async pull(
+    ctx: RequestContext,
+    cursor: string | undefined,
+    limit: number,
+    pricingVersion?: string,
+  ): Promise<SyncPullResult> {
     const [sinceIso, sinceId] = cursor ? cursor.split('|') : [];
     const since = sinceIso ? new Date(sinceIso) : null;
-    if (since && Number.isNaN(since.getTime())) throw new AppError(400, 'validation', 'Cursor inválido.');
+    if (since && Number.isNaN(since.getTime()))
+      throw new AppError(400, 'validation', 'Cursor inválido.');
 
     return withTenant(this.db, ctx, async (tx) => {
       const rows = await tx
@@ -330,7 +400,10 @@ export class SyncService {
           since
             ? or(
                 gt(products.updatedAt, since),
-                and(eq(products.updatedAt, since), gt(products.id, sinceId ?? '00000000-0000-0000-0000-000000000000')),
+                and(
+                  eq(products.updatedAt, since),
+                  gt(products.id, sinceId ?? '00000000-0000-0000-0000-000000000000'),
+                ),
               )
             : undefined,
         )
@@ -338,12 +411,21 @@ export class SyncService {
         .limit(limit + 1);
       const page = rows.slice(0, limit);
       const codes = page.length
-        ? await tx.select().from(productBarcodes).where(inArray(productBarcodes.productId, page.map((p) => p.id)))
+        ? await tx
+            .select()
+            .from(productBarcodes)
+            .where(
+              inArray(
+                productBarcodes.productId,
+                page.map((p) => p.id),
+              ),
+            )
         : [];
       const last = page.at(-1);
       return {
         cursor: last ? `${last.updatedAt.toISOString()}|${last.id}` : (cursor ?? ''),
         hasMore: rows.length > limit,
+        ...(await this.pricing(tx, ctx.terminalId, pricingVersion)),
         products: page.map((p) => ({
           id: p.id,
           name: p.name,
@@ -360,6 +442,86 @@ export class SyncService {
         })),
       };
     });
+  }
+
+  /**
+   * Retrato de preços para o caixa (F1-03): só quando algo mudou desde a versão que o caixa já
+   * tem. A versão é um hash de agregados baratos (última alteração e contagens), então uma
+   * sincronização sem mudança custa poucas consultas pequenas e nenhum dado a mais.
+   */
+  private async pricing(
+    tx: Tx,
+    terminalId: string | null,
+    known: string | undefined,
+  ): Promise<{ pricing?: PricingSnapshot }> {
+    const [terminal] = terminalId
+      ? await tx
+          .select({ storeId: terminals.storeId })
+          .from(terminals)
+          .where(eq(terminals.id, terminalId))
+      : [];
+    const [store] = terminal
+      ? await tx
+          .select({ priceTableId: stores.priceTableId, updatedAt: stores.updatedAt })
+          .from(stores)
+          .where(eq(stores.id, terminal.storeId))
+      : [];
+    const [tables] = await tx
+      .select({
+        last: sql<string>`coalesce(max(${priceTables.updatedAt})::text, '')`,
+        n: sql<number>`count(*)`,
+      })
+      .from(priceTables);
+    const [linked] = await tx
+      .select({
+        last: sql<string>`coalesce(max(${customers.updatedAt})::text, '')`,
+        n: sql<number>`count(*)`,
+      })
+      .from(customers)
+      .where(sql`${customers.priceTableId} is not null`);
+    const version = createHash('sha256')
+      .update(
+        [
+          store?.priceTableId ?? '',
+          store?.updatedAt?.toISOString() ?? '',
+          tables?.last,
+          tables?.n,
+          linked?.last,
+          linked?.n,
+        ].join('|'),
+      )
+      .digest('hex')
+      .slice(0, 24);
+    if (version === known) return {};
+
+    const allTables = await tx
+      .select({ id: priceTables.id, name: priceTables.name })
+      .from(priceTables);
+    const items = await tx
+      .select({
+        tableId: priceTableItems.priceTableId,
+        productId: priceTableItems.productId,
+        priceCents: priceTableItems.priceCents,
+      })
+      .from(priceTableItems);
+    const people = await tx
+      .select({ taxId: customers.taxId, priceTableId: customers.priceTableId })
+      .from(customers)
+      .where(sql`${customers.priceTableId} is not null and ${customers.taxId} is not null`);
+    return {
+      pricing: {
+        version,
+        storePriceTableId: store?.priceTableId ?? null,
+        tables: allTables.map((t) => ({
+          id: t.id,
+          name: t.name,
+          items: items
+            .filter((i) => i.tableId === t.id)
+            .map(({ productId, priceCents }) => ({ productId, priceCents })),
+        })),
+        customers: people.map((p) => ({ taxId: p.taxId!, priceTableId: p.priceTableId! })),
+      },
+    };
   }
 
   /** Last device sequence received per terminal, for support and gap detection. */
