@@ -12,6 +12,7 @@ import { asc, eq, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
+import { assertStore, storeCondition } from '../../common/stores';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
 import { companies, priceTables, stores, terminals } from '../../db/schema';
@@ -81,7 +82,7 @@ export class OrganizationService {
 
   listStores(ctx: RequestContext) {
     return withTenant(this.db, ctx, (tx) =>
-      tx.select().from(stores).orderBy(asc(stores.createdAt)),
+      tx.select().from(stores).where(storeCondition(ctx, stores.id)).orderBy(asc(stores.createdAt)),
     );
   }
 
@@ -132,7 +133,11 @@ export class OrganizationService {
 
   async listTerminals(ctx: RequestContext): Promise<Terminal[]> {
     const rows = await withTenant(this.db, ctx, (tx) =>
-      tx.select().from(terminals).orderBy(asc(terminals.nfceSeries)),
+      tx
+        .select()
+        .from(terminals)
+        .where(storeCondition(ctx, terminals.storeId))
+        .orderBy(asc(terminals.nfceSeries)),
     );
     return rows.map(toTerminal);
   }
@@ -144,6 +149,7 @@ export class OrganizationService {
   async createTerminal(ctx: RequestContext, input: z.output<typeof terminalInput>) {
     return withTenant(this.db, ctx, async (tx) => {
       await this.limits.assertCanAdd(tx, 'terminals');
+      assertStore(ctx, input.storeId);
       const [store] = await tx.select().from(stores).where(eq(stores.id, input.storeId));
       if (!store) throw notFound('Loja');
       await tx.execute(

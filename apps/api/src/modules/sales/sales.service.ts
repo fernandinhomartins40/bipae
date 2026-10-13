@@ -4,6 +4,7 @@ import { and, count, desc, eq, inArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
+import { assertStore, canUseStore, storeCondition } from '../../common/stores';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
 import {
@@ -50,12 +51,24 @@ export class SalesService {
         })
         .from(sales)
         .innerJoin(terminals, eq(terminals.id, sales.terminalId))
+        .where(storeCondition(ctx, sales.storeId))
         .orderBy(desc(sales.occurredAt))
         .limit(limit)
         .offset(offset);
-      const [total] = await tx.select({ n: count() }).from(sales);
+      const [total] = await tx
+        .select({ n: count() })
+        .from(sales)
+        .where(storeCondition(ctx, sales.storeId));
       const payments = rows.length
-        ? await tx.select().from(salePayments).where(inArray(salePayments.saleId, rows.map((r) => r.id)))
+        ? await tx
+            .select()
+            .from(salePayments)
+            .where(
+              inArray(
+                salePayments.saleId,
+                rows.map((r) => r.id),
+              ),
+            )
         : [];
       return {
         items: rows.map((r) => ({
@@ -71,7 +84,8 @@ export class SalesService {
   async get(ctx: RequestContext, id: string) {
     return withTenant(this.db, ctx, async (tx) => {
       const [sale] = await tx.select().from(sales).where(eq(sales.id, id));
-      if (!sale) throw notFound('Venda');
+      // Venda de outra loja: para quem não tem acesso, é como se não existisse.
+      if (!sale || !canUseStore(ctx, sale.storeId)) throw notFound('Venda');
       const items = await tx.select().from(saleItems).where(eq(saleItems.saleId, id));
       const payments = await tx.select().from(salePayments).where(eq(salePayments.saleId, id));
       return { ...sale, items, payments };
@@ -88,7 +102,12 @@ export class SalesService {
           quantityMilli: sql<number>`sum(${stockMovements.deltaMilli})`,
         })
         .from(stockMovements)
-        .where(productIds?.length ? inArray(stockMovements.productId, productIds) : undefined)
+        .where(
+          and(
+            productIds?.length ? inArray(stockMovements.productId, productIds) : undefined,
+            storeCondition(ctx, stockMovements.storeId),
+          ),
+        )
         .groupBy(stockMovements.productId, stockMovements.storeId);
       return rows.map((r) => ({ ...r, quantityMilli: Number(r.quantityMilli) }));
     });
@@ -96,20 +115,33 @@ export class SalesService {
 
   async adjust(ctx: RequestContext, input: z.output<typeof stockAdjustmentInput>) {
     return withTenant(this.db, ctx, async (tx) => {
-      const [product] = await tx.select({ id: products.id, name: products.name }).from(products).where(eq(products.id, input.productId));
+      const [product] = await tx
+        .select({ id: products.id, name: products.name })
+        .from(products)
+        .where(eq(products.id, input.productId));
       if (!product) throw notFound('Produto');
-      const [store] = await tx.select({ id: stores.id }).from(stores).where(eq(stores.id, input.storeId));
+      const [store] = await tx
+        .select({ id: stores.id })
+        .from(stores)
+        .where(eq(stores.id, input.storeId));
       if (!store) throw notFound('Loja');
+      assertStore(ctx, input.storeId);
       const [current] = await tx
         .select({ q: sql<number>`coalesce(sum(${stockMovements.deltaMilli}), 0)` })
         .from(stockMovements)
-        .where(and(eq(stockMovements.productId, input.productId), eq(stockMovements.storeId, input.storeId)));
+        .where(
+          and(
+            eq(stockMovements.productId, input.productId),
+            eq(stockMovements.storeId, input.storeId),
+          ),
+        );
       const balance = Number(current?.q ?? 0);
       const delta = input.mode === 'count' ? input.quantityMilli - balance : input.quantityMilli;
       if (input.mode === 'count' && input.quantityMilli < 0) {
         throw new AppError(400, 'validation', 'A quantidade contada não pode ser negativa.');
       }
-      if (delta === 0) return { productId: input.productId, storeId: input.storeId, quantityMilli: balance };
+      if (delta === 0)
+        return { productId: input.productId, storeId: input.storeId, quantityMilli: balance };
       await tx.insert(stockMovements).values({
         id: uuidv7(),
         tenantId: ctx.tenantId,
@@ -147,6 +179,7 @@ export class SalesService {
         .innerJoin(companies, eq(companies.id, terminals.companyId))
         .where(eq(terminals.id, terminalId));
       if (!row) throw notFound('Caixa');
+      assertStore(ctx, row.terminal.storeId);
       return {
         terminal: {
           id: row.terminal.id,
@@ -174,7 +207,7 @@ export class SalesService {
           storeId: terminals.storeId,
         })
         .from(terminals)
-        .where(eq(terminals.status, 'active'))
+        .where(and(eq(terminals.status, 'active'), storeCondition(ctx, terminals.storeId)))
         .orderBy(terminals.nfceSeries),
     );
   }

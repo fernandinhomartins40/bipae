@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { inviteUserInput, roleInput, uuidv7 } from '@bipae/domain';
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
-import { memberships, roles, users } from '../../db/schema';
+import { memberships, roles, stores, users } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 import { AuthService } from '../auth/auth.service';
@@ -72,6 +72,7 @@ export class TeamService {
           roleId: memberships.roleId,
           roleName: roles.name,
           active: memberships.active,
+          storeIds: memberships.storeIds,
         })
         .from(memberships)
         .innerJoin(users, eq(users.id, memberships.userId))
@@ -94,14 +95,12 @@ export class TeamService {
       const [role] = await tx.select().from(roles).where(eq(roles.id, input.roleId));
       if (!role) throw notFound('Papel');
       if (!existing) {
-        await tx
-          .insert(users)
-          .values({
-            id: userId,
-            name: input.name,
-            email: input.email,
-            passwordHash: passwordHash!,
-          });
+        await tx.insert(users).values({
+          id: userId,
+          name: input.name,
+          email: input.email,
+          passwordHash: passwordHash!,
+        });
       }
       await tx.insert(memberships).values({ tenantId: ctx.tenantId, userId, roleId: role.id });
       await this.audit.record(tx, ctx, {
@@ -117,12 +116,23 @@ export class TeamService {
   async updateMember(
     ctx: RequestContext,
     userId: string,
-    input: { roleId?: string; active?: boolean },
+    input: { roleId?: string; active?: boolean; storeIds?: string[] | null },
   ) {
     if (userId === ctx.userId) {
       throw new AppError(400, 'self_change', 'Você não pode mudar o seu próprio acesso.');
     }
     return withTenant(this.db, ctx, async (tx) => {
+      if (input.storeIds && input.storeIds.length > 0) {
+        // Lista de lojas não tem chave estrangeira: confirma que são desta empresa.
+        const ids = [...new Set(input.storeIds)];
+        const found = await tx
+          .select({ id: stores.id })
+          .from(stores)
+          .where(inArray(stores.id, ids));
+        if (found.length !== ids.length) {
+          throw new AppError(422, 'invalid_store', 'Uma das lojas escolhidas não existe.');
+        }
+      }
       const [row] = await tx
         .update(memberships)
         .set(input)

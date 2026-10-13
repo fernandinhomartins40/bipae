@@ -11,6 +11,7 @@ import {
 import { and, asc, eq, gt, inArray, or, sql } from 'drizzle-orm';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
+import { assertStore } from '../../common/stores';
 import { AppError } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import {
@@ -63,6 +64,8 @@ export class SyncService {
     });
     if (!terminal)
       throw new AppError(404, 'not_found', 'Este caixa não está cadastrado nesta empresa.');
+    // F1-05: quem não tem acesso à loja do caixa não envia vendas por ele.
+    assertStore(ctx, terminal.storeId);
 
     const result: SyncPushResult = { accepted: [], rejected: [] };
     const parsed: TerminalEvent[] = [];

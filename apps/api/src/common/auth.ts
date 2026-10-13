@@ -11,7 +11,7 @@ import { accountAccess, hasPermission, TERMINAL_HEADER, type Permission } from '
 import { and, eq } from 'drizzle-orm';
 import type { FastifyRequest } from 'fastify';
 import { withTenant, type Db } from '../db/client';
-import { memberships, roles, tenants } from '../db/schema';
+import { memberships, roles, tenants, terminals } from '../db/schema';
 import { DB } from './di';
 import { AppError, forbidden } from './errors';
 import { TokenService } from './tokens';
@@ -21,6 +21,8 @@ export interface RequestContext {
   userId: string;
   permissions: string[];
   terminalId: string | null;
+  /** Lojas que a pessoa pode usar (F1-05); null = todas. */
+  storeIds: string[] | null;
   /** Bipaê staff member acting as this client (support session); recorded in the audit. */
   impersonatedBy?: string;
   /** Read-only support session: every change is refused. */
@@ -75,14 +77,37 @@ export class AuthGuard implements CanActivate {
       { tenantId: claims.tid, userId: claims.sub },
       async (tx) => {
         const [row] = await tx
-          .select({ permissions: roles.permissions, active: memberships.active })
+          .select({
+            permissions: roles.permissions,
+            active: memberships.active,
+            storeIds: memberships.storeIds,
+          })
           .from(memberships)
           .innerJoin(roles, eq(roles.id, memberships.roleId))
           .where(and(eq(memberships.userId, claims.sub), eq(memberships.tenantId, claims.tid)));
         const [tenant] = await tx
           .select({ status: tenants.status, trialEndsAt: tenants.trialEndsAt })
           .from(tenants);
-        return { permissions: row?.active ? row.permissions : null, tenant };
+        // Pedido vindo de um caixa: a loja do caixa precisa estar entre as lojas da pessoa.
+        const terminalHeader = request.headers[TERMINAL_HEADER];
+        let terminalStore: string | null = null;
+        if (
+          row?.storeIds &&
+          typeof terminalHeader === 'string' &&
+          /^[0-9a-f-]{36}$/i.test(terminalHeader)
+        ) {
+          const [t] = await tx
+            .select({ storeId: terminals.storeId })
+            .from(terminals)
+            .where(eq(terminals.id, terminalHeader));
+          terminalStore = t?.storeId ?? null;
+        }
+        return {
+          permissions: row?.active ? row.permissions : null,
+          storeIds: row?.storeIds ?? null,
+          terminalStore,
+          tenant,
+        };
       },
     );
     const permissions = found.permissions;
@@ -92,11 +117,26 @@ export class AuthGuard implements CanActivate {
 
     const path = request.url.split('?')[0] ?? '';
     const access = accountAccess(found.tenant.status, found.tenant.trialEndsAt);
-    if (!access.allowed && !ALLOWED_WHEN_BLOCKED.some((p) => path === p || path.startsWith(`${p}/`))) {
+    if (
+      !access.allowed &&
+      !ALLOWED_WHEN_BLOCKED.some((p) => path === p || path.startsWith(`${p}/`))
+    ) {
       throw new AppError(403, `account_${access.code}`, access.message!);
     }
     if (claims.ro && request.method !== 'GET') {
-      throw new AppError(403, 'read_only', 'Acesso de suporte somente leitura: nada pode ser alterado.');
+      throw new AppError(
+        403,
+        'read_only',
+        'Acesso de suporte somente leitura: nada pode ser alterado.',
+      );
+    }
+
+    if (found.storeIds && found.terminalStore && !found.storeIds.includes(found.terminalStore)) {
+      throw new AppError(
+        403,
+        'store_forbidden',
+        'Este caixa é de uma loja que você não tem acesso.',
+      );
     }
 
     const terminal = request.headers[TERMINAL_HEADER];
@@ -105,6 +145,7 @@ export class AuthGuard implements CanActivate {
       userId: claims.sub,
       permissions,
       terminalId: typeof terminal === 'string' ? terminal : null,
+      storeIds: found.storeIds,
       ...(claims.imp && { impersonatedBy: claims.imp }),
       ...(claims.ro && { readOnly: true }),
     };

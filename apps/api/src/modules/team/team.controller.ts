@@ -6,8 +6,16 @@ import { parse } from '../../common/errors';
 import { TeamService } from './team.service';
 
 const memberUpdate = z
-  .object({ roleId: z.string().uuid().optional(), active: z.boolean().optional() })
-  .refine((v) => v.roleId !== undefined || v.active !== undefined, 'Nada para alterar.');
+  .object({
+    roleId: z.string().uuid().optional(),
+    active: z.boolean().optional(),
+    /** Lojas que a pessoa pode usar (F1-05); null = todas as lojas. */
+    storeIds: z.array(z.string().uuid()).max(500).nullable().optional(),
+  })
+  .refine(
+    (v) => v.roleId !== undefined || v.active !== undefined || v.storeIds !== undefined,
+    'Nada para alterar.',
+  );
 
 @Controller()
 export class TeamController {
