@@ -15,7 +15,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { analyse, parseBacklog } from './tarefas.mjs';
+import { analyse, parseBacklog, pickNext } from './tarefas.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BACKLOG = join(ROOT, 'docs', 'TAREFAS.md');
@@ -47,7 +47,7 @@ export function decide(state, tasks, work = '') {
   if (remaining.length === 0) return finish('objetivo concluído');
   if (state.max && doneNow.length >= state.max) return finish(`limite de ${state.max} tarefa(s) atingido`);
 
-  const next = remaining.find((t) => t.status === 'andamento') ?? remaining.find((t) => t.free);
+  const next = pickNext(scope);
   if (!next) return finish('só restam tarefas travadas por dependências ou itens externos');
 
   const snap = `${snapshot(scope)}#${work}`;

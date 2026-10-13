@@ -3,6 +3,7 @@ import {
   allocateNfceSeries,
   companyInput,
   storeInput,
+  storeUpdateInput,
   terminalInput,
   uuidv7,
   type Terminal,
@@ -11,9 +12,9 @@ import { asc, eq, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
-import { notFound } from '../../common/errors';
+import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
-import { companies, stores, terminals } from '../../db/schema';
+import { companies, priceTables, stores, terminals } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 
@@ -98,6 +99,34 @@ export class OrganizationService {
         data: input,
       });
       return row!;
+    });
+  }
+
+  /** Rename a store or change its default price table (a price change, so it is audited). */
+  async updateStore(ctx: RequestContext, id: string, input: z.output<typeof storeUpdateInput>) {
+    return withTenant(this.db, ctx, async (tx) => {
+      if (input.priceTableId) {
+        // FK checks ignore RLS: confirm the table belongs to this client.
+        const [table] = await tx
+          .select({ id: priceTables.id })
+          .from(priceTables)
+          .where(eq(priceTables.id, input.priceTableId));
+        if (!table)
+          throw new AppError(422, 'invalid_price_table', 'Tabela de preço não encontrada.');
+      }
+      const [row] = await tx
+        .update(stores)
+        .set({ ...input, updatedAt: new Date() })
+        .where(eq(stores.id, id))
+        .returning();
+      if (!row) throw notFound('Loja');
+      await this.audit.record(tx, ctx, {
+        action: 'store.updated',
+        entity: 'store',
+        entityId: id,
+        data: input,
+      });
+      return row;
     });
   }
 

@@ -96,3 +96,14 @@ test('commits e arquivos alterados também contam como progresso', () => {
   assert.equal(r.stop, false);
   assert.equal(r.state.idleStops, 0);
 });
+
+test('tarefa quebrada em partes é feita pelas partes, na ordem', () => {
+  const tasks = backlog([
+    '- [~] F1-03 · Tabelas',
+    '- [x] F1-03.a · API',
+    '- [ ] F1-03.b · Tela — depende: F1-03.a',
+    '- [ ] F1-03.c · Caixa — depende: F1-03.a',
+    '- [ ] F1-03.d · E2E — depende: F1-03.b, F1-03.c',
+  ]);
+  assert.equal(decide(fresh('F1'), tasks).next.id, 'F1-03.b');
+});

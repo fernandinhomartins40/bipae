@@ -298,6 +298,8 @@ export type PartyInput = z.input<typeof partyInput>;
 /** Marketing consent is recorded separately from the CPF on the receipt (LGPD, ADR-0010). */
 export const customerInput = partyInput.extend({
   marketingConsent: z.boolean().default(false),
+  /** Tabela de preço do cliente (atacado, funcionário...). Nula usa a tabela da loja. */
+  priceTableId: z.string().uuid().nullish(),
 });
 export type CustomerInput = z.input<typeof customerInput>;
 
@@ -310,6 +312,7 @@ export interface Party {
   address: z.output<typeof addressSchema> | null;
   notes: string | null;
   marketingConsent?: boolean;
+  priceTableId?: string | null;
   updatedAt: string;
 }
 
@@ -318,6 +321,12 @@ export interface Party {
 export const storeInput = z.object({
   companyId: z.string().uuid(),
   name: trimmed(1, 80, 'Nome da loja'),
+});
+
+export const storeUpdateInput = z.object({
+  name: trimmed(1, 80, 'Nome da loja').optional(),
+  /** Tabela de preço padrão dos caixas da loja; null volta ao preço de cadastro. */
+  priceTableId: z.string().uuid().nullable().optional(),
 });
 
 export const companyInput = z.object({

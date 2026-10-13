@@ -81,7 +81,7 @@ describe('verificação em duas etapas dos clientes', () => {
     );
     expect(row!.totp_secret.startsWith('v1.')).toBe(true);
     expect(row!.totp_secret).not.toContain(secret);
-    for (const path of ['/auth/me', '/team', '/auth/totp']) {
+    for (const path of ['/auth/me', '/members', '/auth/totp']) {
       expect((await client.get(path)).body).not.toContain(secret);
     }
   });

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
-import { companyInput, storeInput, terminalInput } from '@bipae/domain';
+import { companyInput, storeInput, storeUpdateInput, terminalInput } from '@bipae/domain';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { parse } from '../../common/errors';
 import { OrganizationService } from './organization.service';
@@ -38,6 +38,16 @@ export class OrganizationController {
   @RequirePermission('admin.stores')
   createStore(@Ctx() ctx: RequestContext, @Body() body: unknown) {
     return this.org.createStore(ctx, parse(storeInput, body));
+  }
+
+  @Patch('stores/:id')
+  @RequirePermission('admin.stores')
+  updateStore(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.org.updateStore(ctx, id, parse(storeUpdateInput, body));
   }
 
   @Get('terminals')

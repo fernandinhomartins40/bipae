@@ -53,6 +53,29 @@ export function analyse(tasks) {
   return tasks;
 }
 
+/**
+ * Próxima tarefa a executar: a que está em andamento, senão a primeira liberada. Uma tarefa
+ * quebrada em partes (F1-03.a, F1-03.b...) é feita pelas partes, na ordem.
+ */
+export function pickNext(work) {
+  const subsOf = (id) => work.filter((s) => s.id.startsWith(`${id}.`) && s.status !== 'feita');
+  const resolve = (t) => {
+    const subs = subsOf(t.id);
+    if (subs.length === 0) return t;
+    return subs.find((s) => s.status === 'andamento') ?? subs.find((s) => s.free) ?? null;
+  };
+  const top = work.filter((t) => !t.id.includes('.') && t.status !== 'feita');
+  for (const t of top.filter((t) => t.status === 'andamento')) {
+    const next = resolve(t);
+    if (next) return next;
+  }
+  for (const t of top.filter((t) => t.free)) {
+    const next = resolve(t);
+    if (next) return next;
+  }
+  return null;
+}
+
 function main() {
   const tasks = analyse(parseBacklog(readFileSync(FILE, 'utf8')));
   const work = tasks.filter((t) => !t.id.startsWith('E'));
@@ -60,7 +83,7 @@ function main() {
   const show = (t) => `${t.id} · ${t.title}${t.details.length ? `\n    ${t.details.join('\n    ')}` : ''}`;
 
   if (mode === 'proxima') {
-    const next = work.find((t) => t.status === 'andamento') ?? work.find((t) => t.free);
+    const next = pickNext(work);
     console.log(next ? show(next) : 'Nenhuma tarefa liberada: veja "pnpm tarefas bloqueadas".');
     return;
   }

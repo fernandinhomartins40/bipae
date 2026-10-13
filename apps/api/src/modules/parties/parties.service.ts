@@ -4,9 +4,9 @@ import { asc, count, eq, ilike, or, sql, type SQL } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
-import { notFound } from '../../common/errors';
+import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
-import { customers, suppliers } from '../../db/schema';
+import { customers, priceTables, suppliers } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 
 export type PartyKind = 'customer' | 'supplier';
@@ -24,7 +24,10 @@ function toParty(row: typeof customers.$inferSelect | typeof suppliers.$inferSel
     phone: row.phone,
     address: row.address as Party['address'],
     notes: row.notes,
-    ...('marketingConsent' in row && { marketingConsent: row.marketingConsent }),
+    ...('marketingConsent' in row && {
+      marketingConsent: row.marketingConsent,
+      priceTableId: row.priceTableId,
+    }),
     updatedAt: row.updatedAt.toISOString(),
   };
 }
@@ -104,8 +107,19 @@ export class PartiesService {
               .where(eq(customers.id, id))
           : [];
         consentChanged = (current?.consent ?? false) !== input.marketingConsent;
+        const priceTableId = (input as CustomerData).priceTableId ?? null;
+        if (priceTableId) {
+          // FK checks ignore RLS: confirm the table belongs to this client.
+          const [table] = await tx
+            .select({ id: priceTables.id })
+            .from(priceTables)
+            .where(eq(priceTables.id, priceTableId));
+          if (!table)
+            throw new AppError(422, 'invalid_price_table', 'Tabela de preço não encontrada.');
+        }
         values = {
           ...base,
+          priceTableId,
           marketingConsent: input.marketingConsent,
           ...(consentChanged && { marketingConsentAt: new Date() }),
         };

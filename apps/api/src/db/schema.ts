@@ -97,6 +97,8 @@ export const stores = pgTable('stores', {
   tenantId: uuid('tenant_id').notNull(),
   companyId: uuid('company_id').notNull(),
   name: text('name').notNull(),
+  /** Default price table of the store's registers (F1-03). */
+  priceTableId: uuid('price_table_id'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
@@ -214,6 +216,8 @@ export const customers = pgTable('customers', {
   ...partyColumns(),
   marketingConsent: boolean('marketing_consent').notNull().default(false),
   marketingConsentAt: ts('marketing_consent_at'),
+  /** Price table for this customer, above the store's (F1-03). */
+  priceTableId: uuid('price_table_id'),
 });
 
 export const suppliers = pgTable('suppliers', partyColumns());
