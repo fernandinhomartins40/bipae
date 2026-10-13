@@ -367,7 +367,7 @@ export function Register({
   useEffect(() => {
     const listener = (e: globalThis.KeyboardEvent) => {
       const pending = pendingScan.current;
-      if (pending && /^Fd+$/.test(e.key)) {
+      if (pending && /^F\d+$/.test(e.key)) {
         e.preventDefault();
         // The cart ref is updated synchronously by the scan, so the key sees the new item.
         void pending.then(() => keyHandler.current(e));
