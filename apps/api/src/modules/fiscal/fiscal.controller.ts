@@ -1,9 +1,12 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import { COMPANY_REGIMES } from '@bipae/fiscal';
 import {
   CESTS,
   CEST_SEGMENTS,
   CFOPS,
   CLASS_TRIBS,
+  ICMS_GENERAL_RATES,
+  ICMS_RATES_CHECKED_AT,
   MERCHANDISE_ORIGINS,
   TABLE_SOURCES,
   TAX_SITUATIONS,
@@ -107,6 +110,22 @@ export class FiscalController {
         pRedCBS: item.pRedCBS,
         nfce: item.documents.nfce,
       })),
+      // Regimes de empresa e a situação da alíquota geral do ICMS de cada UF, para o cadastro da
+      // empresa mostrar o que já está coberto e o que ainda falta configurar.
+      regimes: COMPANY_REGIMES.map((regime) => ({
+        id: regime.id,
+        label: regime.label,
+        hint: regime.hint,
+        crt: regime.crt,
+        icmsCode: regime.icmsCode,
+      })),
+      ufRates: ICMS_GENERAL_RATES.map((item) => ({
+        uf: item.uf,
+        status: item.status,
+        rate: item.rate ?? null,
+        law: item.law,
+      })),
+      ufRatesCheckedAt: ICMS_RATES_CHECKED_AT,
       cestSegments: CEST_SEGMENTS,
       counts: { cest: CESTS.length },
       sources: TABLE_SOURCES,

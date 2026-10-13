@@ -1,3 +1,4 @@
+import { COMPANY_TAX_REGIMES } from '@bipae/domain';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { asPlatform } from '../src/db/client';
@@ -162,5 +163,39 @@ describe('conferência dos códigos do perfil fiscal', () => {
     expect(res.statusCode).toBe(400);
     const ok = await cliente.put(`/fiscal-profiles/${criado.id}`, { ...valido, name: 'Para alterar', csosn: '500' });
     expect(ok.statusCode).toBe(200);
+  });
+});
+
+describe('regime tributário e UF da empresa (F3-06.c)', () => {
+  it('as opções trazem os cinco regimes e a situação das 27 UFs', async () => {
+    const opcoes = (await cliente.get('/fiscal/options')).json();
+    // O domínio e o motor fiscal precisam listar os mesmos regimes.
+    expect(opcoes.regimes.map((r: { id: string }) => r.id)).toEqual([...COMPANY_TAX_REGIMES]);
+    expect(opcoes.regimes.find((r: { id: string }) => r.id === 'mei')).toMatchObject({ crt: 4, icmsCode: 'csosn' });
+    expect(opcoes.ufRates).toHaveLength(27);
+    expect(opcoes.ufRates.find((u: { uf: string }) => u.uf === 'SP')).toMatchObject({ status: 'confirmado', rate: '18' });
+    // UF sem confirmação oficial vem sem número, nunca com valor suposto.
+    expect(opcoes.ufRates.find((u: { uf: string }) => u.uf === 'AL')).toMatchObject({ status: 'divergente', rate: null });
+  });
+
+  it('a empresa guarda o regime e recusa valor fora da lista', async () => {
+    const [empresa] = (await cliente.get('/companies')).json();
+    expect(empresa.taxRegime).toBeNull();
+
+    const salvo = await cliente.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      uf: 'SP',
+      taxRegime: 'simples-excesso',
+    });
+    expect(salvo.statusCode).toBe(200);
+    expect(salvo.json()).toMatchObject({ uf: 'SP', taxRegime: 'simples-excesso' });
+    expect((await cliente.get('/companies')).json()[0].taxRegime).toBe('simples-excesso');
+
+    const invalido = await cliente.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      taxRegime: 'ltda',
+    });
+    expect(invalido.statusCode).toBe(400);
+    expect(invalido.json().message).toBe('Regime tributário inválido');
   });
 });

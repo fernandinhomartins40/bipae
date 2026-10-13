@@ -20,7 +20,12 @@ export interface FiscalOptions {
   cfopInterna: FiscalCode[];
   cfopInterestadual: FiscalCode[];
   classTrib: (FiscalCode & { cst: string; pRedIBS: string; pRedCBS: string; nfce: boolean })[];
+  regimes: { id: string; label: string; hint: string; crt: number; icmsCode: 'csosn' | 'cst' }[];
+  ufRates: { uf: string; status: 'confirmado' | 'pendente' | 'divergente'; rate: string | null; law: string }[];
 }
+
+/** "20.5" → "20,5%". */
+export const formatRate = (rate: string) => `${rate.replace('.', ',')}%`;
 
 interface NcmResult {
   code: string;

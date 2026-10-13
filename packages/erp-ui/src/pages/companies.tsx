@@ -13,6 +13,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Building2, Plus, Store } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
+import { formatRate, useFiscalOptions } from './fiscal-lookup';
 
 interface Company {
   id: string;
@@ -20,6 +21,7 @@ interface Company {
   tradeName: string | null;
   taxId: string | null;
   uf: string | null;
+  taxRegime: string | null;
 }
 interface StoreRow {
   id: string;
@@ -51,6 +53,8 @@ export function CompaniesPage() {
     queryFn: () => api.get<PriceTable[]>('/price-tables'),
   });
   const tableName = (id: string | null) => tables.data?.find((t) => t.id === id)?.name;
+  const fiscal = useFiscalOptions().data;
+  const regimeLabel = (id: string | null) => fiscal?.regimes.find((r) => r.id === id)?.label;
   const reload = () =>
     queryClient
       .invalidateQueries({ queryKey: ['companies'] })
@@ -87,7 +91,15 @@ export function CompaniesPage() {
                     {c.tradeName && `${c.legalName} · `}
                     {c.taxId ? formatTaxId(c.taxId) : 'CNPJ não informado'}
                     {c.uf && ` · ${c.uf}`}
+                    {regimeLabel(c.taxRegime) && ` · ${regimeLabel(c.taxRegime)}`}
                   </p>
+                  {(!c.uf || !c.taxRegime) && (
+                    <p className="text-sm text-muted">
+                      Falta configurar:{' '}
+                      {[!c.uf && 'UF', !c.taxRegime && 'regime tributário'].filter(Boolean).join(' e ')}.
+                      O Bipaê vai precisar disso para calcular os impostos e emitir notas.
+                    </p>
+                  )}
                 </div>
               </div>
               {canManage && (
@@ -166,7 +178,11 @@ function CompanyForm({
     tradeName: company?.tradeName ?? '',
     taxId: company?.taxId ?? '',
     uf: company?.uf ?? '',
+    taxRegime: company?.taxRegime ?? '',
   });
+  const fiscal = useFiscalOptions().data;
+  const regime = fiscal?.regimes.find((r) => r.id === v.taxRegime);
+  const ufRate = fiscal?.ufRates.find((r) => r.uf === v.uf);
   const [error, setError] = useState<string | null>(null);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -176,6 +192,7 @@ function CompanyForm({
       tradeName: v.tradeName || null,
       taxId: v.taxId || null,
       uf: v.uf || null,
+      taxRegime: v.taxRegime || null,
     };
     try {
       if (company) await api.patch(`/companies/${company.id}`, body);
@@ -211,6 +228,27 @@ function CompanyForm({
           value={v.uf}
           onChange={(e) => setV({ ...v, uf: e.target.value })}
           options={[{ value: '', label: 'Selecione' }, ...UFS.map((u) => ({ value: u, label: u }))]}
+          hint={
+            !ufRate
+              ? 'O estado onde a empresa está inscrita.'
+              : ufRate.rate
+                ? `ICMS geral de ${ufRate.uf}: ${formatRate(ufRate.rate)} (${ufRate.law}).`
+                : `A alíquota geral de ICMS de ${ufRate.uf} ainda não foi confirmada em fonte oficial: o cálculo vai pedir a alíquota ao seu contador.`
+          }
+        />
+        <SelectField
+          label="Regime tributário"
+          value={v.taxRegime}
+          onChange={(e) => setV({ ...v, taxRegime: e.target.value })}
+          options={[
+            { value: '', label: 'Selecione' },
+            ...(fiscal?.regimes ?? []).map((r) => ({ value: r.id, label: r.label })),
+          ]}
+          hint={
+            regime
+              ? `${regime.hint} Na nota: CRT ${regime.crt}, ICMS com ${regime.icmsCode === 'csosn' ? 'CSOSN' : 'CST'}.`
+              : 'Não é o tipo da empresa (MEI, LTDA...), é como ela paga imposto. Na dúvida, pergunte ao contador.'
+          }
         />
         <Button type="submit">Salvar empresa</Button>
       </form>

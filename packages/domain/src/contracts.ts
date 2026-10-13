@@ -336,11 +336,19 @@ export const storeUpdateInput = z.object({
   priceTableId: z.string().uuid().nullable().optional(),
 });
 
+/**
+ * Regime tributário da empresa, do MEI ao Lucro Real. Os detalhes de cada um (CRT, CSOSN ou CST,
+ * PIS e COFINS) ficam em `COMPANY_REGIMES`, no pacote `@bipae/fiscal`.
+ */
+export const COMPANY_TAX_REGIMES = ['mei', 'simples', 'simples-excesso', 'presumido', 'real'] as const;
+export type CompanyTaxRegime = (typeof COMPANY_TAX_REGIMES)[number];
+
 export const companyInput = z.object({
   legalName: trimmed(2, 120, 'Razão social'),
   tradeName: optionalText(120),
   taxId: optionalTaxId,
   uf: z.enum(UFS).nullish(),
+  taxRegime: z.enum(COMPANY_TAX_REGIMES, { message: 'Regime tributário inválido' }).nullish(),
 });
 
 export const terminalInput = z.object({

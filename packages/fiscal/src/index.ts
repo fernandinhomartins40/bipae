@@ -1,5 +1,6 @@
 export * from './decimal';
 export * from './validity';
 export * from './rules';
+export * from './regimes';
 export * from './engine';
 export * from './taxes';

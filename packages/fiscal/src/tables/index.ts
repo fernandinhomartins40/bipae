@@ -7,3 +7,4 @@ export * from './rates';
 export * from './sources';
 export * from './tax-situations';
 export * from './transition';
+export * from './icms-uf';

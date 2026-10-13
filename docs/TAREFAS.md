@@ -90,9 +90,10 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Trocar as listas digitadas do cadastro (`ICMS_ORIGINS` em `@bipae/domain`, campos livres de CST, CFOP e NCM) pelas tabelas de `@bipae/fiscal/tables`, com busca de NCM.
 - [x] F3-06.a · API: valida NCM, CEST e os códigos do perfil fiscal nas tabelas oficiais; rotas de consulta (`/v1/fiscal/*`)
 - [x] F3-06.b · Telas: perfil fiscal com as listas oficiais; busca de NCM e sugestão de CEST no produto — depende: F3-06.a
-- [ ] F3-06.c · Dados fiscais da empresa (CRT 1 a 4, regime de apuração, UF) e tabela de regras de tributos por vigência, com a carga inicial das alíquotas interestaduais e da alíquota geral das UFs já confirmadas — depende: F3-06.a
+- [x] F3-06.c · Dados fiscais da empresa (regime tributário, que define o CRT de 1 a 4, e UF) e tabela do motor com as alíquotas interestaduais e a alíquota geral das UFs já confirmadas — depende: F3-06.a
   - Fonte e status de cada UF: `docs/fiscal/cobertura-ufs-regimes.md`, seção 2.1. Só entra o que estiver ✅.
 - [ ] F3-06.d · Cálculo dos tributos na venda, no caixa (offline) e conferido no servidor — depende: F3-06.c
+- [ ] F3-06.e · Regras de tributo próprias da empresa, por vigência (alíquota por produto, redução de base, MVA), para o contador ajustar o que a tabela geral não cobre — depende: F3-06.d
 - [ ] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
 - [ ] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07

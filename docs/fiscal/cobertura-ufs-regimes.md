@@ -148,7 +148,7 @@ O que garante a cobertura não é este documento, é um **teste automático**: o
 
 Ordem de execução (as tarefas estão em `docs/TAREFAS.md`):
 
-1. **F3-06.c — Dados fiscais da empresa e tabela de regras.** CRT (1, 2, 3 ou 4), regime de apuração e UF no cadastro da empresa; tabela de regras de tributo por vigência; carga inicial com as alíquotas interestaduais e a alíquota geral das **20 UFs ✅**.
+1. **F3-06.c — Dados fiscais da empresa e tabela do motor (feita em 13/10/2026).** Regime tributário e UF no cadastro da empresa; no motor, as alíquotas interestaduais e a alíquota geral das **20 UFs ✅**, com as 7 pendentes listadas sem número (`packages/fiscal/src/tables/data/icms-uf.json`).
 2. **F3-23 — Matriz de cobertura UF × regime.** O teste descrito acima: 27 UFs × 5 regimes = 135 combinações, cada uma com resultado esperado ou com "falta configurar" explícito. Uma tela do painel mostra o mapa.
 3. **F3-24 — Fechar as 7 UFs pendentes.** Ler a lei de AL, AP, MA, PI, RS, SE e TO na fonte oficial e promover para ✅.
 4. **F3-25 — Importar as alíquotas por produto do Portal da DIFAL.** Com a data de cada linha; linha anterior à última mudança de alíquota geral da UF entra como 🟡.

@@ -88,6 +88,8 @@ export const companies = pgTable('companies', {
   tradeName: text('trade_name'),
   taxId: text('tax_id'),
   uf: char('uf', { length: 2 }),
+  /** Regime tributário (F3-06.c): mei, simples, simples-excesso, presumido ou real. */
+  taxRegime: text('tax_regime'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });

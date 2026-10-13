@@ -64,4 +64,21 @@ test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código
   await page.getByLabel('CFOP dentro do estado').fill('5102');
   await page.getByRole('button', { name: 'Salvar perfil' }).click();
   await expect(page.getByRole('row', { name: /Teste de códigos/ })).toContainText('5102 / 6102');
+
+  // ---------------------------------------------------------------- empresa: UF e regime (F3-06.c)
+  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await expect(page.getByText(/Falta configurar: UF e regime tributário/)).toBeVisible();
+  await page.getByRole('button', { name: 'Editar', exact: true }).click();
+  // UF com alíquota confirmada mostra o número e a lei; UF pendente avisa, sem número.
+  await page.getByLabel('UF').selectOption('AL');
+  await expect(page.getByText(/alíquota geral de ICMS de AL ainda não foi confirmada/)).toBeVisible();
+  await page.getByLabel('UF').selectOption('SP');
+  await expect(page.getByText('ICMS geral de SP: 18% (RICMS/2000, art. 52, I).')).toBeVisible();
+  await page.getByLabel('Regime tributário').selectOption({ label: 'Lucro Real' });
+  await expect(page.getByText(/Na nota: CRT 3, ICMS com CST\./)).toBeVisible();
+  await page.getByLabel('Regime tributário').selectOption({ label: 'MEI' });
+  await expect(page.getByText(/Na nota: CRT 4, ICMS com CSOSN\./)).toBeVisible();
+  await page.getByRole('button', { name: 'Salvar empresa' }).click();
+  await expect(page.getByText(/· SP · MEI/)).toBeVisible();
+  await expect(page.getByText(/Falta configurar/)).toHaveCount(0);
 });

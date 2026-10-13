@@ -1,5 +1,17 @@
 # Changelog
 
+## [F3-06.c Regime tributário e UF da empresa] — 13/10/2026
+
+### Adicionado
+- **Regime tributário no cadastro da empresa:** MEI, Simples Nacional, Simples acima do sublimite, Lucro Presumido ou Lucro Real. A tela explica cada um e mostra o que ele muda na nota (CRT e se o ICMS usa CSOSN ou CST).
+- **Alíquota geral do ICMS das 27 UFs no motor fiscal.** As 20 confirmadas em fonte oficial têm número e lei; as 7 pendentes (AL, AP, MA, PI, RS, SE, TO) aparecem como "ainda não confirmada", sem valor suposto.
+- **Alíquotas interestaduais** (4%, 7% e 12%) para qualquer par de UFs.
+- Ao escolher a UF da empresa, a tela mostra a alíquota geral e a lei, ou avisa que ainda falta confirmar.
+- Empresa sem UF ou sem regime mostra "Falta configurar" no cartão.
+
+### Banco de dados
+- Migração `0007`: coluna `tax_regime` na empresa (opcional).
+
 ## [Plano de cobertura: 27 UFs e todos os regimes] — 13/10/2026
 
 ### Documentado
