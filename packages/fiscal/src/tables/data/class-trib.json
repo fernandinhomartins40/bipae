@@ -1,0 +1,5342 @@
+{
+ "csts": [
+  {
+   "cst": "000",
+   "description": "Tributação integral",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "010",
+   "description": "Tributação com alíquotas uniformes",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "011",
+   "description": "Tributação com alíquotas uniformes reduzidas",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": true,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "200",
+   "description": "Alíquota reduzida",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": true,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "220",
+   "description": "Alíquota fixa",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "222",
+   "description": "Redução de base de cálculo",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": true
+   }
+  },
+  {
+   "cst": "221",
+   "description": "Alíquota fixa proporcional",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "400",
+   "description": "Isenção",
+   "groups": {
+    "ibsCbs": false,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "410",
+   "description": "Imunidade e não incidência",
+   "groups": {
+    "ibsCbs": false,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "510",
+   "description": "Diferimento",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": false,
+    "deferral": true,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "515",
+   "description": "Diferimento com redução de alíquota",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": true,
+    "deferral": true,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "550",
+   "description": "Suspensão",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "620",
+   "description": "Tributação monofásica",
+   "groups": {
+    "ibsCbs": false,
+    "mono": true,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "800",
+   "description": "Transferência de crédito",
+   "groups": {
+    "ibsCbs": false,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": true,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "810",
+   "description": "Ajuste de IBS na ZFM",
+   "groups": {
+    "ibsCbs": false,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": true,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "811",
+   "description": "Ajustes",
+   "groups": {
+    "ibsCbs": false,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": true,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "820",
+   "description": "Tributação em documento específico",
+   "groups": {
+    "ibsCbs": false,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  },
+  {
+   "cst": "830",
+   "description": "Exclusão de base de cálculo",
+   "groups": {
+    "ibsCbs": true,
+    "mono": false,
+    "reduction": false,
+    "deferral": false,
+    "creditTransfer": false,
+    "presumedCreditZfm": false,
+    "accrualAdjustment": false,
+    "baseReducer": false
+   }
+  }
+ ],
+ "classes": [
+  {
+   "cClassTrib": "000001",
+   "cst": "000",
+   "name": "Situações tributadas integralmente pelo IBS e CBS.",
+   "description": "Situações tributadas integralmente pelo IBS e CBS.",
+   "rateType": "Padrão",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art4"
+  },
+  {
+   "cClassTrib": "000002",
+   "cst": "000",
+   "name": "Exploração de via",
+   "description": "Exploração de via, observado o art. 11 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "90111",
+   "law": "Art. 11, VIII",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art11"
+  },
+  {
+   "cClassTrib": "000003",
+   "cst": "000",
+   "name": "Regime automotivo - projetos incentivados (art. 311)",
+   "description": "Regime automotivo - projetos incentivados, observado o art. 311 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": true,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 311",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art311"
+  },
+  {
+   "cClassTrib": "000004",
+   "cst": "000",
+   "name": "Regime automotivo - projetos incentivados (art. 312)",
+   "description": "Regime automotivo - projetos incentivados, observado o art. 312 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": true,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 312",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art312"
+  },
+  {
+   "cClassTrib": "000005",
+   "cst": "000",
+   "name": "Operação com EAC destinado à mistura com gasolina A, mas com saída do biocombustível com destinação diversa",
+   "description": "Operação com EAC destinado à mistura com gasolina A, mas com saída do biocombustível com destinação diversa, observado o art. 179 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 179, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art179"
+  },
+  {
+   "cClassTrib": "000006",
+   "cst": "000",
+   "name": "Situações tributadas integralmente pelo IBS e CBS realizadas por autônomo",
+   "description": "Situações tributadas integralmente pelo IBS e CBS.realizadas por autônomo",
+   "rateType": "Padrão",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art4"
+  },
+  {
+   "cClassTrib": "010001",
+   "cst": "010",
+   "name": "Operações do FGTS não realizadas pela Caixa Econômica Federal",
+   "description": "Operações do FGTS não realizadas pela Caixa Econômica Federal, observado o art. 212 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme setorial",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 212",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art212"
+  },
+  {
+   "cClassTrib": "010002",
+   "cst": "010",
+   "name": "Operações do serviço financeiro",
+   "description": "Operações do serviço financeiro",
+   "rateType": "Uniforme setorial",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 233",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art233"
+  },
+  {
+   "cClassTrib": "011001",
+   "cst": "011",
+   "name": "Planos de assistência funerária.",
+   "description": "Planos de assistência funerária, observado o art. 236 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme nacional (referência)",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 236",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art236"
+  },
+  {
+   "cClassTrib": "011002",
+   "cst": "011",
+   "name": "Planos de assistência à saúde",
+   "description": "Planos de assistência à saúde, observado o art. 237 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme nacional (referência)",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 237",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art237"
+  },
+  {
+   "cClassTrib": "011003",
+   "cst": "011",
+   "name": "Intermediação de planos de assistência à saúde",
+   "description": "Intermediação de planos de assistência à saúde, observado o art. 240 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme nacional (referência)",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "92401",
+   "law": "Art. 240",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art240"
+  },
+  {
+   "cClassTrib": "011004",
+   "cst": "011",
+   "name": "Concursos e prognósticos",
+   "description": "Concursos e prognósticos, observado o art. 246 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme nacional (referência)",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 246",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art246"
+  },
+  {
+   "cClassTrib": "011005",
+   "cst": "011",
+   "name": "Planos de assistência à saúde de animais domésticos",
+   "description": "Planos de assistência à saúde de animais domésticos, observado o art. 243 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme nacional (referência)",
+   "pRedIBS": "30",
+   "pRedCBS": "30",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 243",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art243"
+  },
+  {
+   "cClassTrib": "200001",
+   "cst": "200",
+   "name": "Serviços de transporte de bens até as zonas de processamento de exportação e bens exportados a partir das zonas de processamento de exportação",
+   "description": "Serviços de transporte de bens até as zonas de processamento de exportação e bens exportados a partir das zonas de processamento de exportação, observado o art. 103 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "3",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 103",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art103"
+  },
+  {
+   "cClassTrib": "200002",
+   "cst": "200",
+   "name": "Fornecimento ou importação para produtor rural não contribuinte ou TAC",
+   "description": "Fornecimento ou importação de tratores, máquinas e implementos agrícolas, destinados a produtor rural não contribuinte, e de veículos de transporte de carga destinados a transportador autônomo de carga pessoa física não contribuinte, observado o art. 110 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "annex": "81971",
+   "law": "Art. 110",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art110"
+  },
+  {
+   "cClassTrib": "200003",
+   "cst": "200",
+   "name": "Vendas de produtos destinados à alimentação humana (Anexo I)",
+   "description": "Vendas de produtos destinados à alimentação humana relacionados no Anexo I da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, que compõem a Cesta Básica Nacional de Alimentos, criada nos termos do art. 8º da Emenda Constitucional nº 132, de 20 de dezembro de 2023, observado o art. 125 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "annex": "1",
+   "law": "Art. 125",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art125"
+  },
+  {
+   "cClassTrib": "200004",
+   "cst": "200",
+   "name": "Fornecimento de dispositivos médicos (Anexo XII)",
+   "description": "Fornecimento de dispositivos médicos com a especificação das respectivas classificações da NCM/SH previstas no Anexo XII da Lei Complementar nº 214, de 2025, observado o art. 144 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "annex": "12",
+   "law": "Art. 144, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art144"
+  },
+  {
+   "cClassTrib": "200005",
+   "cst": "200",
+   "name": "Fornecimento de dispositivos médicos para órgãos da administração pública e entidades de saúde imunes (Anexo IV)",
+   "description": "Fornecimento de dispositivos médicos com a especificação das respectivas classificações da NCM/SH previstas no Anexo IV da Lei Complementar nº 214, de 2025, quando adquiridos por órgãos da administração pública direta, autarquias, fundações públicas e entidades de saúde imunes, observado o art. 144 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "4",
+   "law": "Art. 144, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art144"
+  },
+  {
+   "cClassTrib": "200006",
+   "cst": "200",
+   "name": "Situação de emergência de saúde pública reconhecida pelo Poder público",
+   "description": "Situação de emergência de saúde pública reconhecida pelo Poder Legislativo federal, estadual, distrital ou municipal competente, ato conjunto do Ministro da Fazenda e do Comitê Gestor do IBS poderá ser editado, a qualquer momento, para incluir dispositivos não listados no Anexo XII da Lei Complementar nº 214, de 2025, limitada a vigência do benefício ao período e à localidade da emergência de saúde pública, observado o art. 144 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 144, § 3º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art144"
+  },
+  {
+   "cClassTrib": "200007",
+   "cst": "200",
+   "name": "Fornecimento dos dispositivos de acessibilidade próprios para pessoas com deficiência (Anexo XIII)",
+   "description": "Fornecimento dos dispositivos de acessibilidade próprios para pessoas com deficiência relacionados no Anexo XIII da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, observado o art. 145 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "annex": "13",
+   "law": "Art. 145, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art145"
+  },
+  {
+   "cClassTrib": "200008",
+   "cst": "200",
+   "name": "Fornecimento dos dispositivos de acessibilidade próprios para pessoas com deficiência adquiridos por órgãos da administração pública (Anexo V)",
+   "description": "Fornecimento dos dispositivos de acessibilidade próprios para pessoas com deficiência relacionados no Anexo V da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, quando adquiridos por órgãos da administração pública direta, autarquias, fundações públicas e entidades imunes, observado o art. 145 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "5",
+   "law": "Art. 145, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art145"
+  },
+  {
+   "cClassTrib": "200009",
+   "cst": "200",
+   "name": "Fornecimento dos medicamentos registrados na Anvisa",
+   "description": "Fornecimento dos medicamentos registrados na Anvisa, observado o art. 146 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 146",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art146"
+  },
+  {
+   "cClassTrib": "200010",
+   "cst": "200",
+   "name": "Fornecimento dos medicamentos registrados na Anvisa, adquiridos por órgãos da administração pública",
+   "description": "Fornecimento dos medicamentos registrados na Anvisa, quando adquiridos por órgãos da administração pública direta, autarquias, fundações públicas e entidades imunes, observado o art. 146 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 146, § 1º, I e II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art146"
+  },
+  {
+   "cClassTrib": "200011",
+   "cst": "200",
+   "name": "Fornecimento das composições para nutrição enteral e parenteral quando adquiridas por órgãos da administração pública (Anexo VI)",
+   "description": "Fornecimento das composições para nutrição enteral e parenteral, composições especiais e fórmulas nutricionais destinadas às pessoas com erros inatos do metabolismo relacionadas no Anexo VI da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, quando adquiridas por órgãos da administração pública direta, autarquias e fundações públicas, observado o art. 146 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "6",
+   "law": "Art. 146, § 2º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art146"
+  },
+  {
+   "cClassTrib": "200012",
+   "cst": "200",
+   "name": "Situação de emergência de saúde pública reconhecida pelo Poder público",
+   "description": "Situação de emergência de saúde pública reconhecida pelo Poder Legislativo federal, estadual, distrital ou municipal competente, ato conjunto do Ministro da Fazenda e do Comitê Gestor do IBS poderá ser editado, a qualquer momento, limitada a vigência do benefício ao período e à localidade da emergência de saúde pública, observado o art. 146 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 146, § 4º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art146"
+  },
+  {
+   "cClassTrib": "200013",
+   "cst": "200",
+   "name": "Fornecimento de tampões higiênicos, absorventes higiênicos internos ou externos",
+   "description": "Fornecimento de tampões higiênicos, absorventes higiênicos internos ou externos, descartáveis ou reutilizáveis, calcinhas absorventes e coletores menstruais, observado o art. 147 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "annex": "91471",
+   "law": "Art. 147",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art147"
+  },
+  {
+   "cClassTrib": "200014",
+   "cst": "200",
+   "name": "Fornecimento dos produtos hortícolas, frutas e ovos (Anexo XV)",
+   "description": "Fornecimento dos produtos hortícolas, frutas e ovos, relacionados no Anexo XV da Lei Complementar nº 214 , de 2025, com a especificação das respectivas classificações da NCM/SH e desde que não cozidos, observado o art. 148 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "annex": "15",
+   "law": "Art. 148",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art148"
+  },
+  {
+   "cClassTrib": "200015",
+   "cst": "200",
+   "name": "Venda de automóveis de passageiros de fabricação nacional adquiridos por motoristas profissionais ou pessoas com deficiência",
+   "description": "Venda de automóveis de passageiros de fabricação nacional de, no mínimo, 4 (quatro) portas, inclusive a de acesso ao bagageiro, quando adquiridos por motoristas profissionais que exerçam, comprovadamente, em automóvel de sua propriedade, atividade de condutor autônomo de passageiros, na condição de titular de autorização, permissão ou concessão do poder público, e que destinem o automóvel à utilização na categoria de aluguel (táxi), ou por pessoas com deficiência física, visual, auditiva, deficiência mental severa ou profunda, transtorno do espectro autista, com prejuízos na comunicação social e em padrões restritos ou repetitivos de comportamento de nível moderado ou grave, nos termos da legislação relativa à matéria, observado o disposto no art. 149 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 149",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art149"
+  },
+  {
+   "cClassTrib": "200016",
+   "cst": "200",
+   "name": "Prestação de serviços de pesquisa e desenvolvimento por Instituição Científica, Tecnológica e de Inovação (ICT)",
+   "description": "Prestação de serviços de pesquisa e desenvolvimento por Instituição Científica, Tecnológica e de Inovação (ICT) sem fins lucrativos para a administração pública direta, autarquias e fundações públicas ou para o contribuinte sujeito ao regime regular do IBS e da CBS, observado o disposto no art. 156 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "91561",
+   "law": "Art. 156",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art156"
+  },
+  {
+   "cClassTrib": "200017",
+   "cst": "200",
+   "name": "Operações relacionadas ao FGTS",
+   "description": "Operações relacionadas ao FGTS, considerando aquelas necessárias à aplicação da Lei nº 8.036, de 1990, realizadas pelo Conselho Curador ou Secretaria Executiva do FGTS, observado o art. 212 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 212, § 3º, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art212"
+  },
+  {
+   "cClassTrib": "200018",
+   "cst": "200",
+   "name": "Operações de resseguro e retrocessão",
+   "description": "Operações de resseguro e retrocessão ficam sujeitas à incidência à alíquota zero, inclusive quando os prêmios de resseguro e retrocessão forem cedidos ao exterior, observado o art. 223 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 223, § 4º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art223"
+  },
+  {
+   "cClassTrib": "200019",
+   "cst": "200",
+   "name": "Importador dos serviços financeiros contribuinte",
+   "description": "Importador dos serviços financeiros que seja contribuinte e tenha direito de apropriação de créditos na aquisição do mesmo serviço financeiro no País, observado o art. 231 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 231, § 1º, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art231"
+  },
+  {
+   "cClassTrib": "200020",
+   "cst": "200",
+   "name": "Operação praticada por sociedades cooperativas optantes por regime específico do IBS e CBS",
+   "description": "Operação praticada por sociedades cooperativas optantes por regime específico do IBS e CBS, quando o associado destinar bem ou serviço à cooperativa de que participa, e a cooperativa fornecer bem ou serviço ao associado sujeito ao regime regular do IBS e da CBS, observado o art. 271 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 271",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art271"
+  },
+  {
+   "cClassTrib": "200021",
+   "cst": "200",
+   "name": "Serviços de transporte público coletivo de passageiros ferroviário e hidroviário",
+   "description": "Serviços de transporte público coletivo de passageiros ferroviário e hidroviário urbanos, semiurbanos e metropolitanos, observado o art. 285 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 285, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art285"
+  },
+  {
+   "cClassTrib": "200022",
+   "cst": "200",
+   "name": "Operação originada fora da ZFM que destine bem material industrializado a contribuinte estabelecido na ZFM",
+   "description": "Operação originada fora da Zona Franca de Manaus que destine bem material industrializado de origem nacional a contribuinte estabelecido na Zona Franca de Manaus que seja habilitado nos termos do art. 442 da Lei Complementar nº 214, de 2025, e sujeito ao regime regular do IBS e da CBS ou optante pelo regime do Simples Nacional de que trata o art. 12 da Lei Complementar nº 123, de 2006, observado o art. 445 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 445",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art445"
+  },
+  {
+   "cClassTrib": "200023",
+   "cst": "200",
+   "name": "Operação realizada por indústria incentivada que destine bem material intermediário para outra indústria incentivada na ZFM",
+   "description": "Operação realizada por indústria incentivada que destine bem material intermediário para outra indústria incentivada na Zona Franca de Manaus, desde que a entrega ou disponibilização dos bens ocorra dentro da referida área, observado o art. 448 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 448",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art448"
+  },
+  {
+   "cClassTrib": "200024",
+   "cst": "200",
+   "name": "Operação originada fora das Áreas de Livre Comércio destinadas a contribuinte estabelecido nas Áreas de Livre Comércio",
+   "description": "Operação originada fora das Áreas de Livre Comércio que destine bem material industrializado de origem nacional a contribuinte estabelecido nas Áreas de Livre Comércio que seja habilitado nos termos do art. 456 da Lei Complementar nº 214, de 2025, e sujeito ao regime regular do IBS e da CBS ou optante pelo regime do Simples Nacional de que trata o art. 12 da Lei Complementar nº 123, de 2006, observado o art. 463 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 463",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art463"
+  },
+  {
+   "cClassTrib": "200025",
+   "cst": "200",
+   "name": "Fornecimento dos serviços de educação relacionados ao Programa Universidade para Todos (Prouni)",
+   "description": "Fornecimento dos serviços de educação relacionados ao Programa Universidade para Todos (Prouni), instituído pela Lei nº 11.096, de 13 de janeiro de 2005, observado o art. 308 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "93081",
+   "law": "Art. 308",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art308"
+  },
+  {
+   "cClassTrib": "200026",
+   "cst": "200",
+   "name": "Locação de imóveis localizados nas zonas reabilitadas",
+   "description": "Locação de imóveis localizados nas zonas reabilitadas, pelo prazo de 5 (cinco) anos, contado da data de expedição do habite-se, e relacionados a projetos de reabilitação urbana de zonas históricas e de áreas críticas de recuperação e reconversão urbanística dos Municípios ou do Distrito Federal, a serem delimitadas por lei municipal ou distrital, observado o art. 158 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "80",
+   "pRedCBS": "80",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "91581",
+   "law": "Art. 158, parágrafo único",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art158"
+  },
+  {
+   "cClassTrib": "200027",
+   "cst": "200",
+   "name": "Operações de locação, cessão onerosa e arrendamento de bens imóveis",
+   "description": "Operações de locação, cessão onerosa e arrendamento de bens imóveis, observado o art. 261 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "70",
+   "pRedCBS": "70",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "92611",
+   "law": "Art. 261, parágrafo único",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art261"
+  },
+  {
+   "cClassTrib": "200028",
+   "cst": "200",
+   "name": "Fornecimento dos serviços de educação (Anexo II)",
+   "description": "Fornecimento dos serviços de educação relacionados no Anexo II da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da Nomenclatura Brasileira de Serviços, Intangíveis e Outras Operações que Produzam Variações no Patrimônio (NBS), observado o art. 129 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "2",
+   "law": "Art. 129",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art129"
+  },
+  {
+   "cClassTrib": "200029",
+   "cst": "200",
+   "name": "Fornecimento dos serviços de saúde humana (Anexo III)",
+   "description": "Fornecimento dos serviços de saúde humana relacionados no Anexo III da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NBS, observado o art. 130 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "3",
+   "law": "Art. 130",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art130"
+  },
+  {
+   "cClassTrib": "200030",
+   "cst": "200",
+   "name": "Venda dos dispositivos médicos (Anexo IV)",
+   "description": "Venda dos dispositivos médicos relacionados no Anexo IV da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, observado o art. 131 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "annex": "4",
+   "law": "Art. 131",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art131"
+  },
+  {
+   "cClassTrib": "200031",
+   "cst": "200",
+   "name": "Fornecimento dos dispositivos de acessibilidade próprios para pessoas com deficiência (Anexo V)",
+   "description": "Fornecimento dos dispositivos de acessibilidade próprios para pessoas com deficiência relacionados no Anexo V da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, observado o art. 132 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "annex": "5",
+   "law": "Art. 132",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art132"
+  },
+  {
+   "cClassTrib": "200032",
+   "cst": "200",
+   "name": "Fornecimento dos medicamentos registrados na Anvisa ou produzidos por farmácias de manipulação, ressalvados os medicamentos sujeitos à alíquota zero",
+   "description": "Fornecimento dos medicamentos registrados na Anvisa ou produzidos por farmácias de manipulação, ressalvados os medicamentos sujeitos à alíquota zero de que trata o art. 146 da Lei Complementar nº 214, de 2025, observado o art. 133 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 133",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art133"
+  },
+  {
+   "cClassTrib": "200033",
+   "cst": "200",
+   "name": "Fornecimento das composições para nutrição enteral e parenteral (Anexo VI)",
+   "description": "Fornecimento das composições para nutrição enteral e parenteral, composições especiais e fórmulas nutricionais destinadas às pessoas com erros inatos do metabolismo relacionadas no Anexo VI da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, observado o art. 133 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "annex": "6",
+   "law": "Art. 133, § 1º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art133"
+  },
+  {
+   "cClassTrib": "200034",
+   "cst": "200",
+   "name": "Fornecimento dos alimentos destinados ao consumo humano (Anexo VII)",
+   "description": "Fornecimento dos alimentos destinados ao consumo humano relacionados no Anexo VII da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, observado o art. 135 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "annex": "7",
+   "law": "Art. 135",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art135"
+  },
+  {
+   "cClassTrib": "200035",
+   "cst": "200",
+   "name": "Fornecimento dos produtos de higiene pessoal e limpeza (Anexo VIII)",
+   "description": "Fornecimento dos produtos de higiene pessoal e limpeza relacionados no Anexo VIII da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH, observado o art. 136 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "annex": "8",
+   "law": "Art. 136",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art136"
+  },
+  {
+   "cClassTrib": "200036",
+   "cst": "200",
+   "name": "Fornecimento de produtos agropecuários, aquícolas, pesqueiros, florestais e extrativistas vegetais in natura",
+   "description": "Fornecimento de produtos agropecuários, aquícolas, pesqueiros, florestais e extrativistas vegetais in natura, observado o art. 137 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 137",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art137"
+  },
+  {
+   "cClassTrib": "200037",
+   "cst": "200",
+   "name": "Fornecimento de serviços ambientais de conservação ou recuperação da vegetação nativa",
+   "description": "Fornecimento de serviços ambientais de conservação ou recuperação da vegetação nativa, mesmo que fornecidos sob a forma de manejo sustentável de sistemas agrícolas, agroflorestais e agrossilvopastoris, em conformidade com as definições e requisitos da legislação específica, observado o art. 137 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 137, § 3º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art137"
+  },
+  {
+   "cClassTrib": "200038",
+   "cst": "200",
+   "name": "Fornecimento dos insumos agropecuários e aquícolas (Anexo IX)",
+   "description": "Fornecimento dos insumos agropecuários e aquícolas relacionados no Anexo IX da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH e da NBS, observado o art. 138 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "annex": "9",
+   "law": "Art. 138",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art138"
+  },
+  {
+   "cClassTrib": "200039",
+   "cst": "200",
+   "name": "Fornecimento dos bens e serviços relacionados com produções nacionais artísticas, culturais, de eventos, jornalísticas e audiovisuais (Anexo X)",
+   "description": "Fornecimento dos bens e serviços listados no Anexo X da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NCM/SH e NBS, nos casos relacionados com produções nacionais artísticas, culturais, de eventos, jornalísticas e audiovisuais, observado o art. 139 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "10",
+   "law": "Art. 139",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art139"
+  },
+  {
+   "cClassTrib": "200040",
+   "cst": "200",
+   "name": "Fornecimento de serviços de comunicação institucional à administração pública",
+   "description": "Fornecimento dos seguintes serviços de comunicação institucional à administração pública direta, autarquias e fundações públicas: serviços direcionados ao planejamento, criação, programação e manutenção de páginas eletrônicas da administração pública, ao monitoramento e gestão de suas redes sociais e à otimização de páginas e canais digitais para mecanismos de buscas e produção de mensagens, infográficos, painéis interativos e conteúdo institucional, serviços de relações com a imprensa, que reúnem estratégias organizacionais para promover e reforçar a comunicação dos órgãos e das entidades contratantes com seus públicos de interesse, por meio da interação com profissionais da imprensa, e serviços de relações públicas, que compreendem o esforço de comunicação planejado, coeso e contínuo que tem por objetivo estabelecer adequada percepção da atuação e dos objetivos institucionais, a partir do estímulo à compreensão mútua e da manutenção de padrões de relacionamento e fluxos de informação entre os órgãos e as entidades contratantes e seus públicos de interesse, no País e no exterior, observado o art. 140 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 140",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art140"
+  },
+  {
+   "cClassTrib": "200041",
+   "cst": "200",
+   "name": "Fornecimento de serviço de educação desportiva (art. 141. I)",
+   "description": "Operações relacionadas às seguintes atividades desportivas: fornecimento de serviço de educação desportiva, classificado no código 1.2205.12.00 da NBS, observado o art. 141 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "91411",
+   "law": "Art. 141, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art141"
+  },
+  {
+   "cClassTrib": "200042",
+   "cst": "200",
+   "name": "Fornecimento de serviço de gestão e exploração do desporto (art. 141. II)",
+   "description": "Operações relacionadas às seguintes atividades desportivas: gestão e exploração do desporto por associações e clubes esportivos filiados ao órgão estadual ou federal responsável pela coordenação dos desportos, observado o art. 141 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 141, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art141"
+  },
+  {
+   "cClassTrib": "200043",
+   "cst": "200",
+   "name": "Fornecimento à administração pública dos serviços e dos bens relativos à soberania (Anexo XI)",
+   "description": "Fornecimento à administração pública direta, autarquias e fundações púbicas dos serviços e dos bens relativos à soberania e à segurança nacional, à segurança da informação e à segurança cibernética relacionados no Anexo XI da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NBS e da NCM/SH, observado o art. 142 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "11",
+   "law": "Art. 142, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art142"
+  },
+  {
+   "cClassTrib": "200044",
+   "cst": "200",
+   "name": "Operações e prestações de serviços de segurança da informação e segurança cibernética desenvolvidos por sociedade que tenha sócio brasileiro (Anexo XI)",
+   "description": "Operações e prestações de serviços de segurança da informação e segurança cibernética desenvolvidos por sociedade que tenha sócio brasileiro com o mínimo de 20% (vinte por cento) do seu capital social, relacionados no Anexo XI da Lei Complementar nº 214, de 2025, com a especificação das respectivas classificações da NBS e da NCM/SH, observado o art. 142 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "11",
+   "law": "Art. 142, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art142"
+  },
+  {
+   "cClassTrib": "200045",
+   "cst": "200",
+   "name": "Operações relacionadas a projetos de reabilitação urbana de zonas históricas e de áreas críticas de recuperação e reconversão urbanística",
+   "description": "Operações relacionadas a projetos de reabilitação urbana de zonas históricas e de áreas críticas de recuperação e reconversão urbanística dos Municípios ou do Distrito Federal, a serem delimitadas por lei municipal ou distrital, observado o art. 158 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 158",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art158"
+  },
+  {
+   "cClassTrib": "200046",
+   "cst": "200",
+   "name": "Operações com bens imóveis",
+   "description": "Operações com bens imóveis, observado o art. 261 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "50",
+   "pRedCBS": "50",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 261",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art261"
+  },
+  {
+   "cClassTrib": "200047",
+   "cst": "200",
+   "name": "Bares e Restaurantes",
+   "description": "Bares e Restaurantes, observado o art. 275 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "40",
+   "pRedCBS": "40",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 275",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art275"
+  },
+  {
+   "cClassTrib": "200048",
+   "cst": "200",
+   "name": "Hotelaria, Parques de Diversão e Parques Temáticos",
+   "description": "Hotelaria, Parques de Diversão e Parques Temáticos, observado o art. 281 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "40",
+   "pRedCBS": "40",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "92811",
+   "law": "Art. 281",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art281"
+  },
+  {
+   "cClassTrib": "200049",
+   "cst": "200",
+   "name": "Transporte coletivo de passageiros rodoviário, ferroviário e hidroviário",
+   "description": "Transporte coletivo de passageiros rodoviário, ferroviário e hidroviário intermunicipais e interestaduais, observado o art. 286 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "40",
+   "pRedCBS": "40",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 286",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art286"
+  },
+  {
+   "cClassTrib": "200050",
+   "cst": "200",
+   "name": "Serviços de transporte aéreo regional coletivo de passageiros ou de carga",
+   "description": "Serviços de transporte aéreo regional coletivo de passageiros ou de carga, observado o art. 287 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "40",
+   "pRedCBS": "40",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 287",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art287"
+  },
+  {
+   "cClassTrib": "200051",
+   "cst": "200",
+   "name": "Agências de Turismo",
+   "description": "Agências de Turismo, observado o art. 289 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "40",
+   "pRedCBS": "40",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 289, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art289"
+  },
+  {
+   "cClassTrib": "200052",
+   "cst": "200",
+   "name": "Prestação de serviços de profissões intelectuais",
+   "description": "Prestação de serviços das seguintes profissões intelectuais de natureza científica, literária ou artística, submetidas à fiscalização por conselho profissional: administradores, advogados, arquitetos e urbanistas, assistentes sociais, bibliotecários, biólogos, contabilistas, economistas, economistas domésticos, profissionais de educação física, engenheiros e agrônomos, estatísticos, médicos veterinários e zootecnistas, museólogos, químicos, profissionais de relações públicas, técnicos industriais e técnicos agrícolas, observado o art. 127 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "30",
+   "pRedCBS": "30",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "91271",
+   "law": "Art. 127, I a XVIII",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art127"
+  },
+  {
+   "cClassTrib": "200053",
+   "cst": "200",
+   "name": "Fornecimento de medicamentos registrados na Anvisa, quando classificados como soros ou vacinas",
+   "description": "Fornecimento de medicamentos registrados na Anvisa, quando classificados como soros ou vacinas, observado o art. 146 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 146, § 1º, III",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art146"
+  },
+  {
+   "cClassTrib": "200054",
+   "cst": "200",
+   "name": "Fornecimento de bem material pela cooperativa de produção agropecuária a associado não sujeito ao regime regular do IBS e da CBS",
+   "description": "Fornecimento de bem material pela cooperativa de produção agropecuária a associado não sujeito ao regime regular do IBS e da CBS com anulação de créditos referentes ao bem fornecido, observado o art. 271 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "100",
+   "pRedCBS": "100",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": true
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 271, § 1º, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art271"
+  },
+  {
+   "cClassTrib": "200055",
+   "cst": "200",
+   "name": "Fornecimento dos serviços com redução de alíquota de 60% realizado por autônomo",
+   "description": "Fornecimento dos serviços com redução de alíquota de 60% realizado por autônomo, observado o art. 128 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 128, I, II, VIII, IX, X, XI, XII e XIII",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art128"
+  },
+  {
+   "cClassTrib": "200056",
+   "cst": "200",
+   "name": "Fornecimento dos serviços com redução de alíquota de 30% realizado por autônomo",
+   "description": "Fornecimento dos serviços com redução de alíquota de 30% realizado por autônomo, observado o art. 127 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "30",
+   "pRedCBS": "30",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "91271",
+   "law": "Art. 127",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art127"
+  },
+  {
+   "cClassTrib": "220001",
+   "cst": "220",
+   "name": "Incorporação imobiliária submetida ao regime especial de tributação",
+   "description": "Incorporação imobiliária submetida ao regime especial de tributação, observado o art. 485 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Fixa",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "end": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 485, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art485"
+  },
+  {
+   "cClassTrib": "220002",
+   "cst": "220",
+   "name": "Incorporação imobiliária submetida ao regime especial de tributação",
+   "description": "Incorporação imobiliária submetida ao regime especial de tributação, observado o art. 485 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Fixa",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "end": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 485, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art485"
+  },
+  {
+   "cClassTrib": "220003",
+   "cst": "220",
+   "name": "Alienação de imóvel decorrente de parcelamento do solo",
+   "description": "Alienação de imóvel decorrente de parcelamento do solo, observado o art. 486 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Fixa",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "end": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 486",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art486"
+  },
+  {
+   "cClassTrib": "221001",
+   "cst": "221",
+   "name": "Locação, cessão onerosa ou arrendamento de bem imóvel com alíquota sobre a receita bruta",
+   "description": "Locação, cessão onerosa ou arrendamento de bem imóvel com alíquota sobre a receita bruta, observado o art. 487 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Fixa",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "94871",
+   "law": "Art. 487, § 2º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art487"
+  },
+  {
+   "cClassTrib": "221002",
+   "cst": "221",
+   "name": "Incorporação imobiliária submetida ao regime especial de tributação",
+   "description": "Incorporação imobiliária submetida ao regime especial de tributação, observado o art. 485 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Fixa",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 485, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art485"
+  },
+  {
+   "cClassTrib": "221003",
+   "cst": "221",
+   "name": "Incorporação imobiliária submetida ao regime especial de tributação",
+   "description": "Incorporação imobiliária submetida ao regime especial de tributação, observado o art. 485 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Fixa",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 485, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art485"
+  },
+  {
+   "cClassTrib": "221004",
+   "cst": "221",
+   "name": "Alienação de imóvel decorrente de parcelamento do solo",
+   "description": "Alienação de imóvel decorrente de parcelamento do solo, observado o art. 486 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Fixa",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 486",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art486"
+  },
+  {
+   "cClassTrib": "222001",
+   "cst": "222",
+   "name": "Transporte internacional de passageiros, caso os trechos de ida e volta sejam vendidos em conjunto",
+   "description": "Transporte internacional de passageiros, caso os trechos de ida e volta sejam vendidos em conjunto, a base de cálculo será a metade do valor cobrado, observado o Art. 12 § 8º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "5",
+   "tpDoacao": "2",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 12 § 8º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art12"
+  },
+  {
+   "cClassTrib": "400001",
+   "cst": "400",
+   "name": "Fornecimento de serviços de transporte público coletivo de passageiros rodoviário e metroviário",
+   "description": "Fornecimento de serviços de transporte público coletivo de passageiros rodoviário e metroviário de caráter urbano, semiurbano e metropolitano, sob regime de autorização, permissão ou concessão pública, observado o art. 157 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 157",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art157"
+  },
+  {
+   "cClassTrib": "400002",
+   "cst": "400",
+   "name": "Fornecimento de serviços de transporte público coletivo de passageiros rodoviário e metroviário com medição por quilômetro rodado",
+   "description": "Fornecimento de serviços de transporte público coletivo de passageiros rodoviário e metroviário de caráter urbano, semiurbano e metropolitano, sob regime de autorização, permissão ou concessão pública, com medição por quilômetro rodado, observado o art. 157 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 157",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art157"
+  },
+  {
+   "cClassTrib": "400003",
+   "cst": "400",
+   "name": "Bagagens",
+   "description": "Bagagens de viajantes e de tripulantes, acompanhadas ou desacompanhadas, observado o art. 94 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 94 I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art94"
+  },
+  {
+   "cClassTrib": "400004",
+   "cst": "400",
+   "name": "Remessas internacionais",
+   "description": "Remessas internacionais, observado o art. 94 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 94 II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art94"
+  },
+  {
+   "cClassTrib": "410001",
+   "cst": "410",
+   "name": "Fornecimento de bonificações quando constem no documento fiscal e que não dependam de evento posterior",
+   "description": "Fornecimento de bonificações quando constem do respectivo documento fiscal e que não dependam de evento posterior, observado o art. 5º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 5º, § 1º, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art5"
+  },
+  {
+   "cClassTrib": "410002",
+   "cst": "410",
+   "name": "Transferências entre estabelecimentos pertencentes ao mesmo contribuinte",
+   "description": "Transferências entre estabelecimentos pertencentes ao mesmo contribuinte, observado o art. 6º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 6º, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art6"
+  },
+  {
+   "cClassTrib": "410003",
+   "cst": "410",
+   "name": "Doações sem contraprestação em benefício do doador",
+   "description": "Doações que não tenham por objeto bens ou serviços que tenham permitido a apropriação de créditos pelo doador, observado o art. 6º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "1",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 6º, VIII",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art6"
+  },
+  {
+   "cClassTrib": "410004",
+   "cst": "410",
+   "name": "Exportações de bens e serviços",
+   "description": "Exportações de bens e serviços, observado o art. 8º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "3",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 8º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art8"
+  },
+  {
+   "cClassTrib": "410005",
+   "cst": "410",
+   "name": "Fornecimentos realizados pela União, pelos Estados, pelo Distrito Federal e pelos Municípios",
+   "description": "Fornecimentos realizados pela União, pelos Estados, pelo Distrito Federal e pelos Municípios, observado o art. 9º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 9º, I e § 1º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art9"
+  },
+  {
+   "cClassTrib": "410006",
+   "cst": "410",
+   "name": "Fornecimentos realizados por entidades religiosas e templos de qualquer culto",
+   "description": "Fornecimentos realizados por entidades religiosas e templos de qualquer culto, inclusive suas organizações assistenciais e beneficentes, observado o art. 9º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 9º, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art9"
+  },
+  {
+   "cClassTrib": "410007",
+   "cst": "410",
+   "name": "Fornecimentos realizados por partidos políticos, entidades sindicais e instituições de educação e de assistência social",
+   "description": "Fornecimentos realizados por partidos políticos, inclusive suas fundações, entidades sindicais dos trabalhadores e instituições de educação e de assistência social, sem fins lucrativos, observado o art. 9º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 9º, III",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art9"
+  },
+  {
+   "cClassTrib": "410008",
+   "cst": "410",
+   "name": "Fornecimentos de livros, jornais, periódicos e do papel destinado a sua impressão",
+   "description": "Fornecimentos de livros, jornais, periódicos e do papel destinado a sua impressão, observado o art. 9º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "2",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 9º, IV",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art9"
+  },
+  {
+   "cClassTrib": "410009",
+   "cst": "410",
+   "name": "Fornecimentos de fonogramas e videofonogramas musicais produzidos no Brasil",
+   "description": "Fornecimentos de fonogramas e videofonogramas musicais produzidos no Brasil contendo obras musicais ou literomusicais de autores brasileiros e/ou obras em geral interpretadas por artistas brasileiros, bem como os suportes materiais ou arquivos digitais que os contenham, salvo na etapa de replicação industrial de mídias ópticas de leitura a laser, observado o art. 9º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "2",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 9º, V",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art9"
+  },
+  {
+   "cClassTrib": "410010",
+   "cst": "410",
+   "name": "Fornecimentos de serviço de comunicação nas modalidades de radiodifusão sonora e de sons e imagens de recepção livre e gratuita",
+   "description": "Fornecimentos de serviço de comunicação nas modalidades de radiodifusão sonora e de sons e imagens de recepção livre e gratuita, observado o art. 9º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "2",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 9º, VI",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art9"
+  },
+  {
+   "cClassTrib": "410011",
+   "cst": "410",
+   "name": "Fornecimentos de ouro, quando definido em lei como ativo financeiro ou instrumento cambial",
+   "description": "Fornecimentos de ouro, quando definido em lei como ativo financeiro ou instrumento cambial, observado o art. 9º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "2",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 9º, VII",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art9"
+  },
+  {
+   "cClassTrib": "410012",
+   "cst": "410",
+   "name": "Fornecimento de condomínio edilício não optante pelo regime regular",
+   "description": "Fornecimento de condomínio edilício não optante pelo regime regular, observado o art. 26 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 26, § 2º, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art26"
+  },
+  {
+   "cClassTrib": "410013",
+   "cst": "410",
+   "name": "Exportações de combustíveis",
+   "description": "Exportações de combustíveis, observado o art. 98 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "3",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 98",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art98"
+  },
+  {
+   "cClassTrib": "410014",
+   "cst": "410",
+   "name": "Fornecimento de produtor rural não contribuinte",
+   "description": "Fornecimento de produtor rural não contribuinte, observado o art. 164 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 164",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art164"
+  },
+  {
+   "cClassTrib": "410015",
+   "cst": "410",
+   "name": "Fornecimento por transportador autônomo não contribuinte",
+   "description": "Fornecimento por transportador autônomo não contribuinte, observado o art. 169 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 169",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art169"
+  },
+  {
+   "cClassTrib": "410016",
+   "cst": "410",
+   "name": "Fornecimento ou aquisição de resíduos sólidos",
+   "description": "Fornecimento ou aquisição de resíduos sólidos, observado o art. 170 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": true,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 170",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art170"
+  },
+  {
+   "cClassTrib": "410017",
+   "cst": "410",
+   "name": "Aquisição de bem móvel com crédito presumido sob condição de revenda realizada",
+   "description": "Aquisição de bem móvel com crédito presumido sob condição de revenda realizada, observado o art. 171 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 171",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art171"
+  },
+  {
+   "cClassTrib": "410018",
+   "cst": "410",
+   "name": "Operações relacionadas aos fundos garantidores e executores de políticas públicas",
+   "description": "Operações relacionadas aos fundos garantidores e executores de políticas públicas, inclusive de habitação, previstos em lei, assim entendidas os serviços prestados ao fundo pelo seu agente operador e por entidade encarregada da sua administração, observado o art. 213 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 213",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art213"
+  },
+  {
+   "cClassTrib": "410019",
+   "cst": "410",
+   "name": "Exclusão da gorjeta na base de cálculo no fornecimento de alimentação",
+   "description": "Exclusão da gorjeta na base de cálculo no fornecimento de alimentação, observado o art. 274 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 274, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art274"
+  },
+  {
+   "cClassTrib": "410020",
+   "cst": "410",
+   "name": "Exclusão do valor de intermediação na base de cálculo no fornecimento de alimentação",
+   "description": "Exclusão do valor de intermediação na base de cálculo no fornecimento de alimentação, observado o art. 274 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 274, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art274"
+  },
+  {
+   "cClassTrib": "410021",
+   "cst": "410",
+   "name": "Contribuição de que trata o art. 149-A da Constituição Federal",
+   "description": "Contribuição de que trata o art. 149-A da Constituição Federal, observado o art. 12 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 12 § 2º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art12"
+  },
+  {
+   "cClassTrib": "410022",
+   "cst": "410",
+   "name": "Consolidação da propriedade do bem pelo credor",
+   "description": "Consolidação da propriedade pelo credor de bens móveis ou imóveis que tenham sido objeto de garantia, observado o art. 200 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 200, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art200"
+  },
+  {
+   "cClassTrib": "410023",
+   "cst": "410",
+   "name": "Alienação de bens móveis ou imóveis que tenham sido objeto de garantia em que o prestador da garantia não seja contribuinte",
+   "description": "Alienação de bens móveis ou imóveis que tenham sido objeto de garantia constituída em favor de credor em que o prestador da garantia não seja contribuinte, observado o art. 200 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 200, II, a",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art200"
+  },
+  {
+   "cClassTrib": "410024",
+   "cst": "410",
+   "name": "Consolidação da propriedade do bem pelo grupo de consórcio",
+   "description": "Consolidação da propriedade pelo grupo de consórcio de bem que tenha sido objeto de garantia, observado o art. 204 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 204, § 3º, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art204"
+  },
+  {
+   "cClassTrib": "410025",
+   "cst": "410",
+   "name": "Alienação de bem que tenha sido objeto de garantia em que o prestador da garantia não seja contribuinte",
+   "description": "Alienação de bem que tenha sido objeto de garantia constituída em favor do grupo de consórcio em que o prestador da garantia não seja contribuinte, observado o art. 204 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 204, § 3º II, a",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art204"
+  },
+  {
+   "cClassTrib": "410026",
+   "cst": "410",
+   "name": "Doação com anulação de crédito",
+   "description": "Doações sem contraprestação em benefício do doador, com anulação de crédito apropriados pelo doador referente ao fornecimento doado, observado o art. 6º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": true
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "1",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 6º, § 2º II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art6"
+  },
+  {
+   "cClassTrib": "410027",
+   "cst": "410",
+   "name": "Exportação de serviço ou de bem imaterial",
+   "description": "Fornecimento de bens e serviços, desde que vinculados direta e exclusivamente à exportação de bens materiais ou associados à entrega no exterior de bens materiais, observado o art. 6º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "3",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 80 II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art80"
+  },
+  {
+   "cClassTrib": "410028",
+   "cst": "410",
+   "name": "Operações com bens imóveis realizadas por pessoas físicas não consideradas contribuintes",
+   "description": "Operações com bens imóveis realizadas por pessoas físicas não consideradas contribuintes do regime regular do IBS e da CBS, observado o art. 251 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 251, § 1º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art251"
+  },
+  {
+   "cClassTrib": "410029",
+   "cst": "410",
+   "name": "Operações acobertadas somente pelo ICMS",
+   "description": "Operações não sujeitas à incidência de IBS e de CBS, alcançadas apenas por obrigação acessória do ICMS, observado o art. 4º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "law": "Art. 4º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art4"
+  },
+  {
+   "cClassTrib": "410030",
+   "cst": "410",
+   "name": "Estorno de crédito por perecimento, deteriorização, roubo, furto ou extravio.",
+   "description": "Estorno de crédito apropriado de bens adquiridos e venham a perecer, deteriorar-se ou ser objeto de roubo, furto ou extravio, observado o art. 47 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": true
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 47, § 6º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art47"
+  },
+  {
+   "cClassTrib": "410031",
+   "cst": "410",
+   "name": "Fornecimento em período anterior ao início de vigência de incidências de CBS e IBS",
+   "description": "Fornecimento em período anterior ao início de vigência de incidências de CBS e IBS, observado o art. 544 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 544, VI",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art544"
+  },
+  {
+   "cClassTrib": "410032",
+   "cst": "410",
+   "name": "Tributos incidentes na operação que não integram a base de cálculo do IBS e da CBS",
+   "description": "Tributos incidentes na operação que não integram a base de cálculo do IBS e da CBS, observado o art. 12 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 12, §2º V",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art12"
+  },
+  {
+   "cClassTrib": "410033",
+   "cst": "410",
+   "name": "Operações de Fundos de Investimento Imobiliário (FII) e Fundos de Investimento nas Cadeias Produtivas do Agronegócio (Fiagro)",
+   "description": "Operações com bens imóveis, inclusive operações com direitos reais sobre bens imóveis, realizadas por Fundos de Investimento Imobiliário (FII) e Fundos de Investimento nas Cadeias Produtivas do Agronegócio (Fiagro), observado o art. 26 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 26, § 5º-A, I e II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art26"
+  },
+  {
+   "cClassTrib": "410034",
+   "cst": "410",
+   "name": "Operações de fundos de investimento",
+   "description": "Fundos de investimento cujo patrimônio seja constituído exclusivamente por aplicações em participações societárias, certificados, direitos, títulos, valores mobiliários e demais ativos financeiros permitidos pela Comissão de Valores Mobiliários, observado o art. 26 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 26, § 5º-A, III",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art26"
+  },
+  {
+   "cClassTrib": "410035",
+   "cst": "410",
+   "name": "Fornecimento realizado por nanoempreendedor",
+   "description": "Fornecimento realizado por nanoempreendedor, observado o art. 26 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 26, IV",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art26"
+  },
+  {
+   "cClassTrib": "410036",
+   "cst": "410",
+   "name": "Descontos financeiros em nota fatura",
+   "description": "Descontos financeiros em nota fatura, observado o art. 12 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 12, §2º III",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art12"
+  },
+  {
+   "cClassTrib": "410037",
+   "cst": "410",
+   "name": "Importação os bens materiais sem incidência de IBS e CBS",
+   "description": "Importação os bens materiais sem incidência de IBS e CBS, observado o art. 66 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 66, I,III e VII",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art66"
+  },
+  {
+   "cClassTrib": "410999",
+   "cst": "410",
+   "name": "Operações não onerosas sem previsão de tributação, não especificadas anteriormente",
+   "description": "Operações não onerosas sem previsão de tributação, não especificadas anteriormente, observado o art. 4º da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": true
+   },
+   "law": "Art. 4º, § 1º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art4"
+  },
+  {
+   "cClassTrib": "510001",
+   "cst": "510",
+   "name": "Operações, sujeitas a diferimento, com energia elétrica, relativas à importação, geração, comercialização, distribuição e transmissão",
+   "description": "Operações, sujeitas a diferimento, com energia elétrica ou com direitos a ela relacionados, relativas à importação, geração, comercialização, distribuição e transmissão, observado o art. 28 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "2",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "90281",
+   "law": "Art. 28, § 1º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art28"
+  },
+  {
+   "cClassTrib": "515001",
+   "cst": "515",
+   "name": "Operações, sujeitas a diferimento, com insumos agropecuários e aquícolas (Anexo IX)",
+   "description": "Operações, sujeitas a diferimento, com insumos agropecuários e aquícolas, observado o art. 138 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Padrão",
+   "pRedIBS": "60",
+   "pRedCBS": "60",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "9",
+   "law": "Art. 138, § 2º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art138"
+  },
+  {
+   "cClassTrib": "550001",
+   "cst": "550",
+   "name": "Exportações de bens materiais",
+   "description": "Exportações de bens materiais, observado o art. 82 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "4",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 82",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art82"
+  },
+  {
+   "cClassTrib": "550002",
+   "cst": "550",
+   "name": "Regime de Trânsito",
+   "description": "Regime de Trânsito, observado o art. 84 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 84",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art84"
+  },
+  {
+   "cClassTrib": "550003",
+   "cst": "550",
+   "name": "Regimes de Depósito (art. 85)",
+   "description": "Regimes de Depósito, observado o art. 85 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 85",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art85"
+  },
+  {
+   "cClassTrib": "550004",
+   "cst": "550",
+   "name": "Regimes de Depósito (art. 87)",
+   "description": "Regimes de Depósito, observado o art. 87 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "4",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 87",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art87"
+  },
+  {
+   "cClassTrib": "550005",
+   "cst": "550",
+   "name": "Regimes de Depósito (art. 87, Parágrafo único)",
+   "description": "Regimes de Depósito, observado o art. 87 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "4",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 87, parágrafo único",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art87"
+  },
+  {
+   "cClassTrib": "550006",
+   "cst": "550",
+   "name": "Regimes de Permanência Temporária com suspensão total",
+   "description": "Regimes de Permanência Temporária com suspensão total, observado o art. 88 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 88",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art88"
+  },
+  {
+   "cClassTrib": "550007",
+   "cst": "550",
+   "name": "Regimes de Aperfeiçoamento (Recof)",
+   "description": "Regimes de Aperfeiçoamento (Recof), observado o art. 90 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 90",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art90"
+  },
+  {
+   "cClassTrib": "550008",
+   "cst": "550",
+   "name": "Importação de bens para o Regime de Repetro-Temporário",
+   "description": "Importação de bens para o Regime de Repetro-Temporário, de que tratam o inciso I do art. 93 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "81641",
+   "law": "Art. 93, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art93"
+  },
+  {
+   "cClassTrib": "550009",
+   "cst": "550",
+   "name": "GNL-Temporário",
+   "description": "GNL-Temporário, de que trata o inciso II do art. 93 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "81642",
+   "law": "Art. 93, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art93"
+  },
+  {
+   "cClassTrib": "550010",
+   "cst": "550",
+   "name": "Repetro-Permanente",
+   "description": "Repetro-Permanente, de que trata o inciso III do art. 93 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "81643",
+   "law": "Art. 93, III",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art93"
+  },
+  {
+   "cClassTrib": "550011",
+   "cst": "550",
+   "name": "Repetro-Industrialização",
+   "description": "Repetro-Industrialização, de que trata o inciso IV do art. 93 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "81643",
+   "law": "Art. 93, IV e Art. 93, § 4º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art93"
+  },
+  {
+   "cClassTrib": "550012",
+   "cst": "550",
+   "name": "Repetro-Nacional",
+   "description": "Repetro-Nacional, de que trata o inciso V do art. 93 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "81643",
+   "law": "Art. 93, V",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art93"
+  },
+  {
+   "cClassTrib": "550013",
+   "cst": "550",
+   "name": "Repetro-Entreposto",
+   "description": "Repetro-Entreposto, de que trata o inciso VI do art. 93 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "81644",
+   "law": "Art. 93, VI",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art93"
+  },
+  {
+   "cClassTrib": "550014",
+   "cst": "550",
+   "name": "Zona de Processamento de Exportação",
+   "description": "Zona de Processamento de Exportação, observado os arts. 99 e 100 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "4",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Arts. 99 e 100",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art99"
+  },
+  {
+   "cClassTrib": "550015",
+   "cst": "550",
+   "name": "Regime Tributário para Incentivo à Modernização e à Ampliação da Estrutura Portuária",
+   "description": "Regime Tributário para Incentivo à Modernização e à Ampliação da Estrutura Portuária - Reporto, observado o art. 105 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "81861",
+   "law": "Art. 105",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art105"
+  },
+  {
+   "cClassTrib": "550016",
+   "cst": "550",
+   "name": "Regime Especial de Incentivos para o Desenvolvimento da Infraestrutura",
+   "description": "Regime Especial de Incentivos para o Desenvolvimento da Infraestrutura - Reidi, observado o art. 106 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 106",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art106"
+  },
+  {
+   "cClassTrib": "550017",
+   "cst": "550",
+   "name": "Regime Tributário para Incentivo à Atividade Naval - Renaval (Art. 107, I)",
+   "description": "Fornecimentos de embarcações registradas ou pré-registradas no Registro Especial Brasileiro - REB para incorporação ao ativo imobilizado de adquirente sujeito ao regime regular do IBS e da CBS, observado o art. 107 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 107, I",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art107"
+  },
+  {
+   "cClassTrib": "550018",
+   "cst": "550",
+   "name": "Desoneração da aquisição de bens de capital",
+   "description": "Desoneração da aquisição de bens de capital, observado o art. 109 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "81961",
+   "law": "Art. 109",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art109"
+  },
+  {
+   "cClassTrib": "550019",
+   "cst": "550",
+   "name": "Importação de bem material por indústria incentivada para utilização na ZFM",
+   "description": "Importação de bem material por indústria incentivada para utilização na Zona Franca de Manaus, observado o art. 443 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 443",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art443"
+  },
+  {
+   "cClassTrib": "550020",
+   "cst": "550",
+   "name": "Áreas de livre comércio",
+   "description": "Áreas de livre comércio, observado o art. 461 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 461",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art461"
+  },
+  {
+   "cClassTrib": "550021",
+   "cst": "550",
+   "name": "Industrialização destinada a exportações",
+   "description": "Fornecimento de produtos agropecuários in natura para contribuinte do regime regular que promova industrialização destinada a exportação, observado o art. 82 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "4",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 82, § 11",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art82"
+  },
+  {
+   "cClassTrib": "550022",
+   "cst": "550",
+   "name": "Regime Especial de Incentivos para a Produção de Hidrogênio de Baixa Emissão de Carbono (Rehidro)",
+   "description": "Regime Especial de Incentivos para a Produção de Hidrogênio de Baixa Emissão de Carbono (Rehidro), observado o art. 106 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 106, § 7º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art106"
+  },
+  {
+   "cClassTrib": "550023",
+   "cst": "550",
+   "name": "Operações com hidrocarbonetos líquidos derivados de petróleo não combustíveis ou de gás natural, inclusive nafta",
+   "description": "Operações com hidrocarbonetos líquidos derivados de petróleo não combustíveis ou de gás natural, inclusive nafta, observado o art. 172 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 172, § 2º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art172"
+  },
+  {
+   "cClassTrib": "550024",
+   "cst": "550",
+   "name": "Regime Tributário para Incentivo à Atividade Naval - Renaval (Art. 107, II)",
+   "description": "Importações e nas aquisições no mercado interno de máquinas, equipamentos e veículos destinados a utilização nas atividades de que trata o inciso IIIdo art. 107 efetuadas para incorporação a seu ativo imobilizado, observado o art. 107 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 107, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art107"
+  },
+  {
+   "cClassTrib": "550025",
+   "cst": "550",
+   "name": "Regime Tributário para Incentivo à Atividade Naval - Renaval (Art. 107, III)",
+   "description": "Importações e nas aquisições no mercado interno de matérias-primas, produtos intermediários, partes, peças e componentes para utilização na construção, conservação, modernização e reparo de embarcações pré-registradas ou registradas no REB, observado o art. 107 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "1",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 107, III",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art107"
+  },
+  {
+   "cClassTrib": "550026",
+   "cst": "550",
+   "name": "Regimes de admissão temporária com suspensão total do pagamento dos tributos (ZFM)",
+   "description": "Regimes de admissão temporária com suspensão total do pagamento dos tributos durante o período de sua permanência na Zona Franca de Manaus, observado o art. 89 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 89, § 3º, II",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art89"
+  },
+  {
+   "cClassTrib": "550027",
+   "cst": "550",
+   "name": "Regimes de Aperfeiçoamento (Drawback)",
+   "description": "Regimes de Aperfeiçoamento (Drawback), observado o art. 90 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 90",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art90"
+  },
+  {
+   "cClassTrib": "550028",
+   "cst": "550",
+   "name": "Regimes de Aperfeiçoamento (Admissão temporária)",
+   "description": "Regimes de Aperfeiçoamento (Admissão temporária), observado o art. 90 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 90",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art90"
+  },
+  {
+   "cClassTrib": "550029",
+   "cst": "550",
+   "name": "Zona de Processamento de Exportação",
+   "description": "Zona de Processamento de Exportação, observado os art. 102 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": true,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "4",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 102",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art99"
+  },
+  {
+   "cClassTrib": "620001",
+   "cst": "620",
+   "name": "Tributação monofásica sobre combustíveis",
+   "description": "Tributação monofásica sobre combustíveis, observados os art. 172 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme setorial",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": true,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "91721",
+   "law": "Art. 172",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art172"
+  },
+  {
+   "cClassTrib": "620002",
+   "cst": "620",
+   "name": "Tributação monofásica com responsabilidade pela retenção sobre combustíveis",
+   "description": "Tributação monofásica com responsabilidade pela retenção sobre combustíveis, observado o art. 178 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme setorial",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": true,
+    "monoWithholding": true,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "91722",
+   "law": "Art. 178",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art178"
+  },
+  {
+   "cClassTrib": "620003",
+   "cst": "620",
+   "name": "Tributação monofásica com responsabilidade de retenção de tributos por terceiros",
+   "description": "Tributação monofásica com responsabilidade de retenção de tributos por terceiros, observado o art. 178 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme setorial",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "91723",
+   "law": "Art. 178",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art178"
+  },
+  {
+   "cClassTrib": "620004",
+   "cst": "620",
+   "name": "Tributação monofásica sobre mistura de EAC com gasolina A em percentual superior ao obrigatório",
+   "description": "Tributação monofásica sobre mistura de EAC com gasolina A em percentual superior ou inferior ao obrigatório, observado o art. 179 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme setorial",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": true,
+    "biofuelDifference": true,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "91724",
+   "law": "Art. 179, II, a",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art179"
+  },
+  {
+   "cClassTrib": "620005",
+   "cst": "620",
+   "name": "Tributação monofásica sobre mistura de EAC com gasolina A em percentual inferior ao obrigatório",
+   "description": "Tributação monofásica sobre mistura de EAC com gasolina A em percentual superior ou inferior ao obrigatório, observado o art. 179 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme setorial",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": true,
+    "biofuelDifference": true,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "annex": "91725",
+   "law": "Art. 179, II, b",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art179"
+  },
+  {
+   "cClassTrib": "620006",
+   "cst": "620",
+   "name": "Tributação monofásica sobre combustíveis cobrada anteriormente",
+   "description": "Tributação monofásica sobre combustíveis cobrada anteriormente, observador o art. 180 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Uniforme setorial",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": true,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "2",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": true,
+    "nfse": false
+   },
+   "annex": "91726",
+   "law": "Art. 180",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art180"
+  },
+  {
+   "cClassTrib": "620007",
+   "cst": "620",
+   "name": "Perecimento, deteriorização, roubo, furto ou extravio no regime monofásico",
+   "description": "Perecimento, deteriorização, roubo, furto ou extravio no regime monofásico sem estorno de crédito, observado o art. 47 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 47, § 6º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art47"
+  },
+  {
+   "cClassTrib": "800001",
+   "cst": "800",
+   "name": "Fusão, cisão ou incorporação",
+   "description": "Fusão, cisão ou incorporação, observado o art. 55 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 55",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art55"
+  },
+  {
+   "cClassTrib": "800002",
+   "cst": "800",
+   "name": "Transferência de crédito do associado, inclusive as cooperativas singulares",
+   "description": "Transferência de crédito do associado, inclusive as cooperativas singulares, para cooperativa de que participa das operações antecedentes às operações em que fornece bens e serviços e os créditos presumidos, observado o art. 272 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 272",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art272"
+  },
+  {
+   "cClassTrib": "810001",
+   "cst": "810",
+   "name": "Crédito presumido de IBS sobre o valor apurado nos fornecimentos a partir da ZFM",
+   "description": "Crédito presumido de IBS sobre o valor apurado nos fornecimentos a partir da Zona Franca de Manaus, observado o art. 450 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 450, § 1º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art450"
+  },
+  {
+   "cClassTrib": "811001",
+   "cst": "811",
+   "name": "Anulação de Crédito por Saídas Imunes/Isentas",
+   "description": "Anulação de crédito proporcional ao valor das operações imunes e isentas, observado o art. 51 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 51",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art51"
+  },
+  {
+   "cClassTrib": "811002",
+   "cst": "811",
+   "name": "Débitos de notas fiscais não processadas na apuração",
+   "description": "Débitos de notas fiscais não processadas na apuração, observado o art. 45 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 45",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art45"
+  },
+  {
+   "cClassTrib": "811003",
+   "cst": "811",
+   "name": "Desenquadramento do Simples Nacional",
+   "description": "Débitos apurados após o desenquadramento do regime Simples Nacional, observado o art. 41 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 41",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art41"
+  },
+  {
+   "cClassTrib": "820001",
+   "cst": "820",
+   "name": "Documento com informações de fornecimento de serviços de planos de assistência à saúde elencados no art. 234 da Lei Complementar nº214, de 2025",
+   "description": "Documento com informações de fornecimento de serviços de planos de assistência à saúde elencados no art. 234 da Lei Complementar nº 214, de 2025, mas com tributação realizada por outro meio",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "92341",
+   "law": "Art. 234",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art234"
+  },
+  {
+   "cClassTrib": "820002",
+   "cst": "820",
+   "name": "Documento com informações de fornecimento de serviços de planos de assistência funerária",
+   "description": "Documento com informações de fornecimento de serviços de planos de assinstência funerária, mas com tributação realizada por outro meio, observado o art. 236 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "92361",
+   "law": "Art. 236",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art236"
+  },
+  {
+   "cClassTrib": "820003",
+   "cst": "820",
+   "name": "Documento com informações de fornecimento de serviços de planos de assistência à saúde de animais domésticos",
+   "description": "Documento com informações de fornecimento de serviços de planos de assinstência à saúde de animais domésticos, mas com tributação realizada por outro meio, observado o art. 243 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "92431",
+   "law": "Art. 243",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art243"
+  },
+  {
+   "cClassTrib": "820004",
+   "cst": "820",
+   "name": "Documento com informações de prestação de serviços de consursos de prognósticos",
+   "description": "Documento com informações de prestação de serviços de consursos de prognósticos, mas com tributação realizada por outro meio, observado o art. 248 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 248",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art248"
+  },
+  {
+   "cClassTrib": "820005",
+   "cst": "820",
+   "name": "Documento com informações de alienação de bens imóveis",
+   "description": "Documento com informações de alienação de bens imóveis, mas com tributação realizada por outro meio, observado o art. 254 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 254, § 1º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art254"
+  },
+  {
+   "cClassTrib": "820006",
+   "cst": "820",
+   "name": "Documento com informações de fornecimento de serviços de exploração de via",
+   "description": "Documento com informações de fornecimento de serviços de exploração de via, mas com tributação realizada por outro meio, observado o art. 11 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "90111",
+   "law": "Art. 11, VIII",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art11"
+  },
+  {
+   "cClassTrib": "820007",
+   "cst": "820",
+   "name": "Documento com informações de fornecimento de serviços financeiros",
+   "description": "Documento com informações de fornecimento de serviços financeiros, mas com tributação realizada por outro meio, observado o art. 181 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "9",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "annex": "91811",
+   "law": "Art. 181",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art181"
+  },
+  {
+   "cClassTrib": "820008",
+   "cst": "820",
+   "name": "Documento com informações de fornecimento de serviço continuado, mas com tributação realizada em fatura anterior",
+   "description": "Documento com informações de fornecimento de serviço continuado, mas com tributação realizada em fatura anterior, observado o art. 10 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 10, § 3º",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art10"
+  },
+  {
+   "cClassTrib": "820009",
+   "cst": "820",
+   "name": "Fornecimentos declarados e tributados em outro documento",
+   "description": "Fornecimentos declarados e tributados em outro documento, observado o art. 60 da Lei Complementar nº 214, de 2025.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": false,
+    "nfce": false,
+    "nfse": true
+   },
+   "law": "Art. 60",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art60"
+  },
+  {
+   "cClassTrib": "830001",
+   "cst": "830",
+   "name": "Documento com exclusão da BC da CBS e do IBS de energia elétrica fornecida pela distribuidora à UC",
+   "description": "Documento com exclusão da base de cálculo da CBS e do IBS refrente à energia elétrica fornecida pela distribuidora à unidade consumidora, conforme Art 28, parágrafos 3° e 4°.",
+   "rateType": "Sem alíquota",
+   "pRedIBS": "0",
+   "pRedCBS": "0",
+   "groups": {
+    "regularTaxation": false,
+    "presumedCredit": false,
+    "monoStandard": false,
+    "monoWithholding": false,
+    "monoWithheld": false,
+    "biofuelDifference": false,
+    "creditReversal": false
+   },
+   "tpRBSN": "0",
+   "tpDoacao": "0",
+   "start": "2026-01-01",
+   "updatedAt": "2026-10-01",
+   "documents": {
+    "nfe": true,
+    "nfce": false,
+    "nfse": false
+   },
+   "law": "Art. 28, parágrafos 3° e 4°",
+   "lawUrl": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art28"
+  }
+ ],
+ "tpRBSN": {
+  "0": "Não é receita bruta",
+  "1": "Receita bruta - interna",
+  "2": "Receita bruta - interna sem cálculo de IBS e CBS",
+  "3": "Receita bruta - exportação direta",
+  "4": "Receita bruta - exportação indireta",
+  "5": "Receita bruta - mercado interno e exportação",
+  "9": "Fornecimento incompatível com SN"
+ },
+ "tpDoacao": {
+  "0": "Campo indDoacao não pode ser preenchido",
+  "1": "Campo indDoacao deve obrigatoriamente ser preenchido",
+  "2": "Campo indDoacao deve ser preenchido quando a doação for tributada conforme Art. 6º, 2º, I"
+ }
+}

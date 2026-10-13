@@ -1,5 +1,21 @@
 # Changelog
 
+## [F3-03.a Tabelas oficiais: CFOP, cClassTrib e alíquotas de referência] — 13/10/2026
+
+### Adicionado
+- **Tabelas fiscais geradas dos arquivos oficiais**, nunca digitadas: as planilhas do Portal Nacional da NF-e ficam em `packages/fiscal/sources`, com data e hash, e `pnpm --filter @bipae/fiscal tables` gera os dados. Um teste falha se alguém trocar a planilha sem regerar.
+  - **CFOP** (IT 2023.002 v2.10): 619 códigos, com vigência e indicadores de devolução, retorno e remessa.
+  - **CST e cClassTrib do IBS e da CBS** (IT 2025.002 v1.70): 18 CSTs e 173 classificações, com a redução de alíquota de cada uma.
+  - **Alíquotas de referência** com vigência e artigo da lei: CBS de 0,9% e IBS de 0,1% em 2026; IBS de 0,05% estadual + 0,05% municipal em 2027–2028 (LC 214/2025).
+  - **FCP por UF**: alíquota fixa ou teto das 27 UFs.
+- Uso: `import { findCfop, findClassTrib, referenceRates } from '@bipae/fiscal/tables'`.
+- O lint passa a barrar qualquer leitura de arquivo, rede ou processo dentro do motor fiscal.
+
+### Documentado
+- A CBS de 2027 **não tem alíquota publicada** (o portal diz "aguarda legislação"): fica sem número na tabela, e a dúvida D-004 continua aberta.
+- Dúvidas novas: D-016 (fim da vigência do cClassTrib) e D-017 (lista de CFOP do contribuinte exclusivo do IBS/CBS).
+- O Portal Nacional da NF-e agora é lido direto; a tabela de CFOP vigente é a v2.10.
+
 ## [F3-02 Motor fiscal: base] — 13/10/2026
 
 ### Adicionado

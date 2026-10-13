@@ -19,6 +19,8 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-013 | 🔴 aberta | Contingência off-line da NFC-e depois da NT 2026.002 |
 | D-014 | 🔴 aberta | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
 | D-015 | 🔴 aberta | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
+| D-016 | 🔴 aberta | cClassTrib: o dia do fim da vigência ainda vale? |
+| D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
 
 ---
 
@@ -43,6 +45,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 ### D-004 — Alíquotas de CBS/IBS de 2027–2028
 
 - **Contexto:** a pesquisa não confirmou as alíquotas de referência publicadas para 2027.
+- **Atualização de 13/10/2026 (F3-03):** confirmado em fonte oficial que **ainda não há número**. A Tabela de Alíquotas da CBS do Portal da NF-e (IT 2026.002 v1.00) traz "aguarda legislação" para 2027, e a LC 214/2025 (arts. 347 e 349) manda fixar a alíquota por resolução do Senado. O IBS de 2027–2028 está na lei (art. 344): 0,05% estadual + 0,05% municipal, já na tabela do motor.
 - **Implementação provisória:** tabela de alíquotas com vigência; 2027 fica sem valor e bloqueia emissão com mensagem clara até ser preenchida.
 - **Pergunta:** fonte oficial das alíquotas de referência de 2027.
 
@@ -114,3 +117,16 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a NT 2026.006 RTC v1.00 (25/08/2026) e o IT 2026.001 v1.01 tratam da vinculação do pagamento à nota para o split payment, com tabela própria de meios de pagamento.
 - **Implementação provisória:** nada a ativar no caixa: o split payment começa facultativo e B2B em 2027 (ver `versoes.md`, seção 5).
 - **Pergunta:** algum campo novo do grupo de pagamento já é exigido na NFC-e em 2026?
+
+### D-016 — cClassTrib: o dia do fim da vigência ainda vale?
+
+- **Contexto:** a tabela oficial (IT 2025.002 v1.70) traz as colunas `dIniVig` e `dFimVig`, sem dizer se o fim é o último dia válido ou o primeiro inválido. Três códigos (220001, 220002 e 220003, do regime de incorporação imobiliária e parcelamento do solo) estão com **início e fim em 01/01/2026**.
+- **Implementação provisória:** no dia exato do fim, o motor responde "vigência indefinida" e não escolhe o código sozinho. Esses três códigos não se aplicam a venda de mercadoria no varejo.
+- **Pergunta:** o `dFimVig` é inclusivo? Os três códigos estão extintos ou nunca entraram em vigor?
+
+### D-017 — CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos?
+
+- **Contexto:** o texto do IT 2023.002 v2.00 diz que 84 CFOPs são permitidos ao contribuinte exclusivo do IBS/CBS (`indExcIBSCBS` = 1). A planilha da v2.10 (04/09/2026) marca 72. O PDF da v2.10 ainda não foi lido.
+- **Implementação provisória:** vale a planilha mais recente, que é o que o motor carrega. A coluna é só informativa até a entrada em produção e não afeta o varejo comum (contribuinte do ICMS).
+- **Pergunta:** a v2.10 reduziu a lista de propósito?
+

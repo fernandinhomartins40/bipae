@@ -75,8 +75,12 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: cada versão tem fonte e data, e as dúvidas novas estão em `duvidas.md`.
 - [x] F3-02 · `packages/fiscal`: estrutura, decimal de precisão, regras como dados versionados por vigência (ADR-0006) — depende: F3-01
   - Pronto quando: o motor puro carrega tabelas por data, e a cobertura é de pelo menos 90%.
-- [ ] F3-03 · Tabelas oficiais versionadas: NCM, CEST, CFOP, CST/CSOSN, cClassTrib e alíquotas de referência — depende: F3-02
-  - Fontes: IT 2025.002 v1.70 (cClassTrib, CST, cCredPres) e IT 2023.002 v2.00 (CFOP), ver `docs/fiscal/versoes.md` seção 0.
+- [~] F3-03 · Tabelas oficiais versionadas: NCM, CEST, CFOP, CST/CSOSN, cClassTrib e alíquotas de referência — depende: F3-02
+  - Fontes: arquivos oficiais do Portal Nacional da NF-e, do Siscomex, do CONFAZ e do Planalto, guardados em `packages/fiscal/sources` com data e hash (ver `docs/fiscal/versoes.md` seção 0.1).
+- [x] F3-03.a · Importador das planilhas oficiais; CFOP, CST e cClassTrib do IBS/CBS, alíquotas de referência (CBS, IBS) e FCP por UF
+- [ ] F3-03.b · NCM (tabela do Siscomex), com vigência — depende: F3-03.a
+- [ ] F3-03.c · CST do ICMS, CSOSN, CST de PIS, COFINS e IPI e origem da mercadoria, tirados dos schemas oficiais (XSD) — depende: F3-03.a
+- [ ] F3-03.d · CEST (Convênio ICMS 142/18) — depende: F3-03.a
 - [ ] F3-04 · Tributos atuais: ICMS (Simples/CSOSN, regime normal/CST, ST básico), PIS/COFINS e IPI, com explicação do cálculo — depende: F3-03
   - Pronto quando: há casos de teste por regime (Simples, Presumido, Real) e cada cálculo mostra seus passos.
 - [ ] F3-05 · IBS, CBS e IS com vigência (2026 teste, 2027, transição 2029–2032, 2033) — depende: F3-03

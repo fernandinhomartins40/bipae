@@ -44,6 +44,31 @@
 - **Correção:** a NT 2026.002 do Portal NF-e está na v1.10a (25/08/2026), com uma versão RTC v1.11 (01/10/2026), e **trata também da contingência off-line** da NFC-e. Isso afeta direto a tarefa F3-15.
 - **Continua sem confirmação oficial:** as datas de homologação (26/10/2026) e de produção (16/11/2026) da v1.52, que só aparecem em fontes secundárias (dúvida D-011).
 
+### 0.1 Arquivos oficiais usados nas tabelas do motor (F3-03, 13/10/2026)
+
+O **Portal Nacional da NF-e passou a ser lido** (a página exige cookies; sem eles entra em loop de redirecionamento). As tabelas ficam em "Documentos › Diversos": <https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=>.
+
+Os arquivos abaixo estão guardados em `packages/fiscal/sources`, com data e hash em `sources/manifest.json`. Os dados do motor são **gerados** deles por `pnpm --filter @bipae/fiscal tables`; nada é digitado à mão.
+
+| Tabela | Arquivo oficial | Publicada em | Conteúdo |
+|---|---|---|---|
+| CFOP | IT 2023.002 **v2.10** | 04/09/2026 | 619 códigos, com vigência e indicadores (devolução, retorno, remessa, combustível, `indExcIBSCBS`) |
+| CST e cClassTrib do IBS/CBS | IT 2025.002 v1.70 | 01/10/2026 | 18 CSTs e 173 classificações, com redução de alíquota, grupos exigidos e documentos em que valem |
+| Alíquotas da CBS | IT 2026.002 v1.00 | 12/05/2026 | 2026: 0,9%. 2027: **"aguarda legislação"** |
+| FCP por UF | Tabela de Alíquotas de FCP | 25/02/2025 | 27 UFs, alíquota fixa ou teto |
+
+Lidos no texto da **LC 214/2025** (Planalto, com as alterações da LC 227/2026):
+
+- **Art. 343:** IBS de 0,1% (alíquota estadual) em 2026.
+- **Art. 344:** IBS de 0,05% estadual + 0,05% municipal em 2027 e 2028.
+- **Art. 346:** CBS de 0,9% em 2026.
+- **Art. 347:** CBS de 2027–2028 = alíquota fixada nos termos do art. 14, **menos 0,1 ponto percentual**. O número ainda não foi publicado.
+- **Art. 349:** as alíquotas de referência de 2027 a 2033 saem por resolução do Senado.
+
+**Correção:** o CFOP está na v2.10 (04/09/2026), não na v2.00 listada na seção 0; o portal SVRS ainda mostra a anterior.
+
+Ainda a buscar (subtarefas da F3-03): NCM (Siscomex, já localizado), CST de ICMS/PIS/COFINS/IPI e CSOSN (schemas oficiais) e CEST (Convênio ICMS 142/18).
+
 ## ⚠️ Limitação da pesquisa de 11/10
 
 Na Fase 0, o Portal Nacional da NF-e (nfe.fazenda.gov.br) **não pôde ser lido automaticamente** (loop de redirecionamento), e as informações das seções 1 a 5 vieram de fontes secundárias (fornecedores de software fiscal, portais contábeis e escritórios de advocacia) que concordam entre si. A seção 0 acima traz o que já foi conferido em fonte oficial. A coluna **Status** indica o que ainda precisa ser conferido no texto oficial antes de virar regra no motor fiscal.
@@ -103,7 +128,7 @@ Na Fase 0, o Portal Nacional da NF-e (nfe.fazenda.gov.br) **não pôde ser lido 
 | Período | CBS | IBS | ICMS/ISS | PIS/Cofins | IS | Status |
 |---|---|---|---|---|---|---|
 | 2026 | 0,9% (teste, compensável) | 0,1% (teste) | integral | integral | — | ✅ |
-| 2027–2028 | alíquota plena (a definir por resolução) | 0,1% (teste; CBS reduzida em 0,1 p.p.) | integral | **extintos** | começa | 🟡 alíquotas exatas a confirmar |
+| 2027–2028 | alíquota do art. 14 menos 0,1 p.p. (**número não publicado**, D-004) | 0,05% estadual + 0,05% municipal (art. 344) | integral | **extintos** | começa | ✅ IBS em texto oficial; 🔴 CBS aguarda legislação |
 | 2029 | plena | cresce | −10% | — | sim | ✅ (proporções da EC 132) |
 | 2030 | plena | cresce | −20% | — | sim | ✅ |
 | 2031 | plena | cresce | −30% | — | sim | ✅ |

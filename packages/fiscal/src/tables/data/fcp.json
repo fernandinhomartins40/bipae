@@ -1,0 +1,248 @@
+[
+ {
+  "cUF": "12",
+  "uf": "AC",
+  "kind": "fixed",
+  "rates": [
+   "0.00"
+  ],
+  "note": "UF não possui FCP"
+ },
+ {
+  "cUF": "27",
+  "uf": "AL",
+  "kind": "fixed",
+  "rates": [
+   "1.00",
+   "2.00"
+  ],
+  "note": "UF com até 3 Alíquotas possíveis"
+ },
+ {
+  "cUF": "16",
+  "uf": "AP",
+  "kind": "fixed",
+  "rates": [
+   "0.00"
+  ],
+  "note": "UF não possi FCP"
+ },
+ {
+  "cUF": "13",
+  "uf": "AM",
+  "kind": "fixed",
+  "rates": [
+   "2.00",
+   "1.20"
+  ],
+  "note": "UF com até 2 Alíquotas possíveis (2025)"
+ },
+ {
+  "cUF": "29",
+  "uf": "BA",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "23",
+  "uf": "CE",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00 a partir de 01/02/24"
+ },
+ {
+  "cUF": "53",
+  "uf": "DF",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "32",
+  "uf": "ES",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "52",
+  "uf": "GO",
+  "kind": "max",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota máxima de 2.00 (default)"
+ },
+ {
+  "cUF": "21",
+  "uf": "MA",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "51",
+  "uf": "MT",
+  "kind": "max",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota máxima de 2.00 (default)"
+ },
+ {
+  "cUF": "50",
+  "uf": "MS",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "31",
+  "uf": "MG",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00 a partir de 01/01/24"
+ },
+ {
+  "cUF": "15",
+  "uf": "PA",
+  "kind": "fixed",
+  "rates": [
+   "0.00"
+  ],
+  "note": "UF não possi FCP"
+ },
+ {
+  "cUF": "25",
+  "uf": "PB",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "41",
+  "uf": "PR",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "26",
+  "uf": "PE",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "22",
+  "uf": "PI",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "33",
+  "uf": "RJ",
+  "kind": "max",
+  "rates": [
+   "4.00"
+  ],
+  "note": "UF com alíquota máxima de 4.00"
+ },
+ {
+  "cUF": "24",
+  "uf": "RN",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "43",
+  "uf": "RS",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "11",
+  "uf": "RO",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "14",
+  "uf": "RR",
+  "kind": "max",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota máxima de 2.00 (default)"
+ },
+ {
+  "cUF": "42",
+  "uf": "SC",
+  "kind": "fixed",
+  "rates": [
+   "0.00"
+  ],
+  "note": "UF não possi FCP"
+ },
+ {
+  "cUF": "35",
+  "uf": "SP",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ },
+ {
+  "cUF": "28",
+  "uf": "SE",
+  "kind": "fixed",
+  "rates": [
+   "2.00",
+   "1.00"
+  ],
+  "note": "UF com 2 alíquotas"
+ },
+ {
+  "cUF": "17",
+  "uf": "TO",
+  "kind": "fixed",
+  "rates": [
+   "2.00"
+  ],
+  "note": "Alíquota única de 2.00"
+ }
+]

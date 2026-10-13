@@ -1,0 +1,34 @@
+{
+  "cfop": {
+    "file": "IT_2023.002_v2.10_Tabela_CFOP.xlsx",
+    "title": "Tabela de CFOP (Informe Técnico 2023.002 v2.10)",
+    "publisher": "Portal Nacional da NF-e (ENCAT)",
+    "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=",
+    "publishedAt": "2026-09-04",
+    "downloadedAt": "2026-10-13"
+  },
+  "classTrib": {
+    "file": "IT_2025.002_v1.70_cClassTrib.xlsx",
+    "title": "Tabela de Classificação Tributária do IBS e da CBS (Informe Técnico 2025.002 v1.70)",
+    "publisher": "Portal Nacional da NF-e (ENCAT)",
+    "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=",
+    "publishedAt": "2026-10-01",
+    "downloadedAt": "2026-10-13"
+  },
+  "cbsRates": {
+    "file": "IT_2026.002_v1.00_Aliquotas_CBS.xlsx",
+    "title": "Tabela de Alíquotas da CBS (Informe Técnico 2026.002 v1.00)",
+    "publisher": "Portal Nacional da NF-e (ENCAT)",
+    "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=",
+    "publishedAt": "2026-05-12",
+    "downloadedAt": "2026-10-13"
+  },
+  "fcp": {
+    "file": "Tabela_Aliquotas_FCP_por_UF_2025-02.xlsx",
+    "title": "Tabela de Alíquotas de FCP por UF",
+    "publisher": "Portal Nacional da NF-e (ENCAT)",
+    "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=",
+    "publishedAt": "2025-02-25",
+    "downloadedAt": "2026-10-13"
+  }
+}

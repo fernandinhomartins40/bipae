@@ -68,4 +68,21 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // Motor fiscal: puro, sem I/O (ADR-0006). Só os testes leem arquivo, para conferir as fontes.
+    files: ['packages/fiscal/src/**/*.ts'],
+    ignores: ['packages/fiscal/src/**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            ...shellImports.patterns,
+            { group: ['node:*'], message: 'O motor fiscal é puro: sem arquivo, rede ou processo.' },
+          ],
+          paths: [{ name: 'react', message: 'O motor fiscal é puro (sem React).' }],
+        },
+      ],
+    },
+  },
 );

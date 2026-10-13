@@ -5,16 +5,20 @@
   "description": "Motor fiscal puro do Bipaê: regras como dados com vigência, cálculo com decimal e explicação de cada valor (ADR-0006).",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./tables": "./src/tables/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "tables": "node scripts/import-tables.mjs",
+    "tables:check": "node scripts/import-tables.mjs --check"
   },
   "dependencies": {
     "decimal.js": "^10.5.0"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "@vitest/coverage-v8": "^5.0.3",
     "vitest": "^5.0.3"
   },
