@@ -11,6 +11,12 @@ async function money(page: Page, label: string, digits: string) {
   await input.pressSequentially(digits);
 }
 
+// Shortcuts work while the register has focus (the scan field gets it back after each dialog).
+async function shortcut(page: Page, key: string) {
+  await expect(page.getByLabel('Bipe o código ou digite o nome do produto')).toBeFocused();
+  await page.keyboard.press(key);
+}
+
 async function scan(page: Page, text: string) {
   const input = page.getByLabel('Bipe o código ou digite o nome do produto');
   await input.fill(text);
@@ -49,7 +55,7 @@ test('full register day: open, sell with weight, discount and split payment, can
   await expect(page.getByTestId('total')).toHaveText('R$ 54,44');
 
   // Discount above the 10% limit is refused; 5% is fine.
-  await page.keyboard.press('F4');
+  await shortcut(page, 'F4');
   await page.getByLabel('Percentual').fill('15');
   await expect(page.getByText('O limite deste caixa é 10%')).toBeVisible();
   await page.getByLabel('Percentual').fill('5');
@@ -57,7 +63,7 @@ test('full register day: open, sell with weight, discount and split payment, can
   await expect(page.getByTestId('total')).toHaveText('R$ 51,72');
 
   // Pix R$ 20,00 + cash R$ 50,00 → change R$ 18,28.
-  await page.keyboard.press('F2');
+  await shortcut(page, 'F2');
   await page.getByRole('radio', { name: 'Pix' }).click();
   await money(page, 'Valor', '2000');
   await page.getByRole('button', { name: 'Lançar Pix' }).click();
@@ -81,12 +87,12 @@ test('full register day: open, sell with weight, discount and split payment, can
   // A second sale, then cancel it from the sales list.
   await scan(page, 'café');
   await expect(page.getByTestId('total')).toHaveText('R$ 17,49');
-  await page.keyboard.press('F2');
+  await shortcut(page, 'F2');
   await page.getByRole('radio', { name: 'Cartão de débito' }).click();
   await page.getByRole('button', { name: 'Lançar Cartão de débito' }).click();
   await page.getByRole('button', { name: 'Concluir venda' }).click();
   await page.getByRole('button', { name: 'Nova venda' }).click();
-  await page.keyboard.press('F9');
+  await shortcut(page, 'F9');
   const list = page.getByRole('dialog', { name: 'Vendas deste caixa' });
   await list.getByRole('row', { name: /^2 / }).getByRole('button', { name: 'Cancelar' }).click();
   await list.getByLabel('Motivo do cancelamento').fill('Cliente desistiu');
@@ -135,4 +141,31 @@ test('fits a tablet and explains a wrong configuration', async ({ page }, info) 
   await expect(
     page.locator('#bad').getByText('Sua sessão expirou. Entre de novo no sistema.'),
   ).toBeVisible();
+});
+
+test('fast scanner on a slow network: no scan is lost', async ({ page }, info) => {
+  test.skip(info.project.name !== 'tablet');
+  // Every product lookup takes 300 ms, like a busy store connection.
+  await page.route('**/api/pdv/products**', async (route) => {
+    await new Promise((r) => setTimeout(r, 300));
+    await route.continue();
+  });
+  await page.goto('/');
+  const open = page.getByRole('button', { name: 'Abrir caixa' });
+  await expect(open.or(page.getByText('Caixa livre'))).toBeVisible();
+  if (await open.isVisible()) await open.click();
+
+  const input = page.getByLabel('Bipe o código ou digite o nome do produto');
+  for (const code of ['7891000100103', '7891000200100', '7891000100103']) {
+    await input.fill(code);
+    await input.press('Enter'); // no waiting between reads, like a barcode scanner
+  }
+  await expect(
+    page.getByRole('button', { name: 'Alterar quantidade de Arroz Tipo 1 5kg' }),
+  ).toHaveText('2 UN');
+  await expect(
+    page.getByRole('button', { name: 'Alterar quantidade de Feijão Carioca 1kg' }),
+  ).toHaveText('1 UN');
+  // 2 × 28,90 + 8,99
+  await expect(page.getByTestId('total')).toHaveText('R$ 66,79');
 });

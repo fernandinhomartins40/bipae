@@ -267,7 +267,6 @@ function Register(props: {
       setNotice({ tone: 'danger', text: message(e) });
     }
     setResults(null);
-    setScan('');
     focusScan();
   };
 
@@ -276,10 +275,27 @@ function Register(props: {
     else add(product, quantityMilli);
   };
 
-  const submitScan = async () => {
+  // Scanners type fast: each scan clears the field at once and waits its turn in a queue,
+  // so a code read while the previous one is still being looked up is never lost.
+  const queueRef = useRef<Promise<void>>(Promise.resolve());
+  const pendingRef = useRef(0);
+  const submitScan = () => {
+    const text = scan;
+    if (!parseScan(text)) return;
+    setScan('');
+    pendingRef.current++;
+    setBusy(true);
+    queueRef.current = queueRef.current
+      .then(() => lookup(text))
+      .finally(() => {
+        pendingRef.current--;
+        if (pendingRef.current === 0) setBusy(false);
+      });
+  };
+
+  const lookup = async (scan: string) => {
     const parsed = parseScan(scan);
     if (!parsed) return;
-    setBusy(true);
     try {
       const explicit = /^\s*\d+(?:[.,]\d{1,3})?\s*[*xX]/.test(scan);
       if (parsed.kind === 'barcode' || parsed.kind === 'scale-label') {
@@ -300,7 +316,6 @@ function Register(props: {
           );
         if (byText.length === 0) {
           setNotice({ tone: 'danger', text: `Nenhum produto com o código ${code}.` });
-          setScan('');
           return;
         }
         setResults(byText);
@@ -313,8 +328,6 @@ function Register(props: {
       else setResults(found);
     } catch (e) {
       setNotice({ tone: 'danger', text: message(e) });
-    } finally {
-      setBusy(false);
     }
   };
 
@@ -396,7 +409,7 @@ function Register(props: {
             role="search"
             onSubmit={(e) => {
               e.preventDefault();
-              void submitScan();
+              submitScan();
             }}
           >
             <label class="sr-only" for="bipae-scan">
@@ -420,8 +433,8 @@ function Register(props: {
                 }
               }}
             />
-            <button type="submit" class="primary" disabled={busy || !scan.trim()}>
-              {busy ? 'Buscando…' : 'Adicionar'}
+            <button type="submit" class="primary" disabled={!scan.trim()}>
+              {busy && !scan.trim() ? 'Buscando…' : 'Adicionar'}
             </button>
           </form>
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [Nova landing page] — 12/10/2026
+
+### Mudou
+- **Landing page redesenhada** (www.bipae.com.br):
+  - segue as referências aprovadas, com as **logos oficiais**: verde com o chapéu amarelo e a versão branca;
+  - fonte Plus Jakarta Sans servida pelo próprio site;
+  - seções: herói com a tela do caixa, 3 passos, recursos, "A internet caiu. A fila, não.", Online e Desktop, "O que vem por aí", planos, dúvidas e chamada final;
+  - menu de celular.
+
+### Corrigido
+- **PDV Embed:** com leitor rápido e rede lenta, um código lido enquanto o anterior ainda era buscado podia se perder. Agora cada leitura entra numa fila e nenhuma se perde. Há teste novo que simula a rede lenta.
+
 ## [Bipaê PDV Embed 1.0] — 12/10/2026
 
 ### Adicionado

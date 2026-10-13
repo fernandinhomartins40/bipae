@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bipaê — PDV e gestão que não para, nem sem internet</title>
+    <title>Bipaê — PDV simples que vende mesmo sem internet</title>
     <meta
       name="description"
-      content="Bipaê é o caixa (PDV) e a gestão do seu comércio: vende em 3 toques, funciona sem internet, roda no navegador ou no computador e é grátis para MEI. Bipou? Bipaê!"
+      content="Bipaê é o caixa (PDV) do comércio brasileiro: venda fácil, mesmo sem internet. Caixa, estoque e equipe em um só lugar, no navegador ou no computador. Grátis para MEI. Bipou? Bipaê!"
     />
-    <meta name="theme-color" content="#007a4d" />
+    <meta name="theme-color" content="#06372a" />
     <link rel="canonical" href="https://www.bipae.com.br/" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
@@ -17,256 +17,380 @@
     <meta property="og:title" content="Bipaê — Bipou? Bipaê!" />
     <meta
       property="og:description"
-      content="O caixa que não para: vende sem internet, roda no navegador ou no computador e é grátis para MEI."
+      content="Venda fácil, mesmo sem internet. Caixa, estoque e equipe em um só lugar. Grátis para MEI."
     />
     <link rel="stylesheet" href="/src/styles.css" />
+    <script type="module" src="/src/main.js"></script>
   </head>
   <body>
+    <!-- Ícones (desenho próprio, traço de 2px) -->
+    <svg width="0" height="0" class="sprite" aria-hidden="true">
+      <defs>
+        <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="m10 8 6 4-6 4z" /></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5" /></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></symbol>
+        <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6" /></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.5" /><path d="M2.5 19.5c.8-3.4 3.3-5 6.5-5s5.7 1.6 6.5 5" /><circle cx="17" cy="9" r="2.8" /><path d="M16.5 14.2c2.6.2 4.4 1.8 5 4.8" /></symbol>
+        <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z" /><path d="m4 7.5 8 4.5 8-4.5M12 12v9" /></symbol>
+        <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M4 5v14M7.5 5v14M10 5v14M13.5 5v14M17 5v14M20 5v14" /></symbol>
+        <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2.5 4.5 13.5H12l-1 8 8.5-11H12z" /></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20v-6M10 20V10M15 20V6M20 20V3" /></symbol>
+        <symbol id="i-scale" viewBox="0 0 24 24"><path d="M6 21h12l-1.5-11h-9z" /><circle cx="12" cy="15.5" r="2.5" /><path d="M8 7h8M12 7V4M9.5 4h5" /></symbol>
+        <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2" /><path d="M3 10h18M7 15h4" /></symbol>
+        <symbol id="i-printer" viewBox="0 0 24 24"><path d="M7 9V3.5h10V9" /><rect x="3.5" y="9" width="17" height="8" rx="2" /><path d="M7 14h10v6.5H7z" /></symbol>
+        <symbol id="i-drawer" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 12h18M10 15.5h4" /></symbol>
+        <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M2.5 9a15 15 0 0 1 5-2.9M12 5.5a15 15 0 0 1 9.5 3.5M5.5 12.5a10 10 0 0 1 4-2M14.5 10.6a10 10 0 0 1 4 1.9M9 16a5 5 0 0 1 6 0" /><circle cx="12" cy="19.5" r="1" /><path d="M3 3l18 18" /></symbol>
+        <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0" /><circle cx="12" cy="19.5" r="1" /></symbol>
+        <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4M9 12h6M9 16h6" /></symbol>
+        <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 10a4.3 4.3 0 0 1-.5 8.5z" /></symbol>
+        <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.7 3.6 5.7 3.6 9s-1.1 6.3-3.6 9c-2.5-2.7-3.6-5.7-3.6-9S9.5 5.7 12 3" /></symbol>
+        <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M9 20h6M12 16v4" /></symbol>
+        <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="10" rx="1.5" /><path d="M3 19h18" /></symbol>
+        <symbol id="i-tablet" viewBox="0 0 24 24"><rect x="5.5" y="3" width="13" height="18" rx="2" /><path d="M11 17.5h2" /></symbol>
+        <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2" /><path d="M11 18h2" /></symbol>
+        <symbol id="i-windows" viewBox="0 0 24 24"><path d="M4 5.5 11 4.5v7H4zM13 4.2l7-1v8.3h-7zM4 12.5h7v7l-7-1zM13 12.5h7v8.3l-7-1z" /></symbol>
+        <symbol id="i-penguin" viewBox="0 0 24 24"><path d="M12 3c-2.4 0-3.5 2-3.5 4.5 0 2-.6 3-2 5S4.8 17 6.5 19.5h11c1.7-2.5 1.3-5-.1-7s-2-3-1.9-5C15.5 5 14.4 3 12 3z" /><path d="M10 7.5h.01M14 7.5h.01M11 10h2l-1 1z" /></symbol>
+        <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z" /><path d="M9 8h6M9 12h6M9 16h3" /></symbol>
+        <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5zM5 10v7M9.5 10v7M14.5 10v7M19 10v7M3 20.5h18M4 17.5h16" /></symbol>
+        <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9.5 5.5 4h13L20 9.5" /><path d="M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0M5 11.5V20h14v-8.5M10 20v-5h4v5" /></symbol>
+        <symbol id="i-signal" viewBox="0 0 24 24"><path d="M5 19v-3M9.5 19v-6M14 19v-9M18.5 19V6" /></symbol>
+        <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.5l2 11h11l2-8H7" /><circle cx="9" cy="19" r="1.4" /><circle cx="17" cy="19" r="1.4" /></symbol>
+        <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" /></symbol>
+        <symbol id="i-stock" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2" /><path d="M3.5 10h17M3.5 15h17M9 7h6" /></symbol>
+      </defs>
+    </svg>
+
     <a class="skip" href="#conteudo">Pular para o conteúdo</a>
 
     <header class="topbar">
       <div class="container topbar__inner">
         <a href="/" class="logo" aria-label="Bipaê, página inicial">
-          <svg viewBox="0 0 32 32" aria-hidden="true" class="logo__mark">
-            <rect width="32" height="32" rx="8" fill="#007a4d" />
-            <g fill="#fff"><rect x="7" y="8" width="2" height="16" /><rect x="11" y="8" width="1" height="16" /><rect x="14" y="8" width="3" height="16" /><rect x="19" y="8" width="1" height="16" /><rect x="22" y="8" width="3" height="16" /></g>
-            <circle cx="26" cy="7" r="4" fill="#ffc83d" />
-          </svg>
-          <span class="logo__text">Bipa<span>ê</span></span>
+          <img src="./src/assets/logo-bipae.png" alt="Bipaê" width="101" height="40" />
         </a>
-        <nav aria-label="Seções" class="nav">
+        <nav aria-label="Seções" class="nav" id="menu">
           <a href="#recursos">Recursos</a>
           <a href="#offline">Sem internet</a>
           <a href="#planos">Planos</a>
           <a href="#perguntas">Dúvidas</a>
+          <div class="nav__actions">
+            <a class="btn btn--outline" href="/app/entrar">Entrar</a>
+            <a class="btn btn--primary" href="/app/criar-conta">Começar grátis</a>
+          </div>
         </nav>
-        <div class="topbar__actions">
-          <a class="btn btn--ghost" href="/app/entrar">Entrar</a>
-          <a class="btn btn--primary" href="/app/criar-conta">Comece grátis</a>
-        </div>
+        <button class="menu-btn" type="button" aria-controls="menu" aria-expanded="false" aria-label="Abrir menu">
+          <svg class="ic"><use href="#i-menu" /></svg>
+        </button>
       </div>
     </header>
 
     <main id="conteudo">
-      <!-- Hero -->
+      <!-- Herói -->
       <section class="hero">
         <div class="container hero__grid">
-          <div>
-            <p class="eyebrow">PDV + gestão para o comércio brasileiro</p>
-            <h1>Bipou? <span class="hl">Bipaê!</span><br />O caixa que não para.</h1>
-            <p class="lead">
-              Venda em 3 toques, mesmo quando a internet cai. Controle produtos, estoque, caixa e
-              equipe num só lugar, no navegador ou no computador do balcão.
-            </p>
-            <div class="hero__cta">
-              <a class="btn btn--primary btn--lg" href="/app/criar-conta">Criar minha conta grátis</a>
-              <a class="btn btn--ghost btn--lg" href="#como-funciona">Ver como funciona</a>
+          <div class="hero__text">
+            <p class="eyebrow">PDV simples para o comércio brasileiro</p>
+            <h1>
+              Bipou? <span class="hl">Bipaê!</span><br />Venda fácil.<br /><span class="h1-sub">Mesmo sem internet.</span>
+            </h1>
+            <p class="lead">Caixa, estoque e equipe em um só lugar.</p>
+            <div class="cta">
+              <a class="btn btn--primary btn--lg" href="/app/criar-conta">Começar grátis</a>
+              <a class="btn btn--outline btn--lg" href="#como-funciona">
+                <svg class="ic"><use href="#i-play" /></svg> Ver como funciona
+              </a>
             </div>
             <ul class="checks" aria-label="Vantagens">
-              <li>Sem cartão de crédito</li>
-              <li>Grátis para MEI</li>
-              <li>Pronto em menos de 2 minutos</li>
+              <li><svg class="ic"><use href="#i-check" /></svg>Sem cartão</li>
+              <li><svg class="ic"><use href="#i-check" /></svg>Grátis para MEI</li>
+              <li><svg class="ic"><use href="#i-check" /></svg>No navegador ou computador</li>
             </ul>
           </div>
 
-          <!-- Register mock, drawn in HTML/CSS (no screenshot to keep it light). -->
-          <figure class="mock" aria-label="Exemplo da tela do caixa do Bipaê">
-            <div class="mock__bar">
-              <span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__dot"></span>
-              <span class="mock__status">● sincronizado agora</span>
-            </div>
-            <div class="mock__body">
-              <div class="mock__input">Bipe o código ou digite o nome</div>
-              <ol class="mock__items">
-                <li><span>Arroz Tipo 1 5kg</span><b>R$ 28,90</b></li>
-                <li><span>3 × Feijão Carioca 1kg</span><b>R$ 26,97</b></li>
-                <li><span>1,250 kg Banana Prata</span><b>R$ 8,74</b></li>
-              </ol>
-              <div class="mock__total">
-                <small>TOTAL</small>
-                <strong>R$ 64,61</strong>
+          <!-- Mockup do caixa -->
+          <figure class="app" aria-label="Tela de venda do Bipaê">
+            <aside class="app__side" aria-hidden="true">
+              <img src="./src/assets/logo-bipae-branca.png" alt="" width="76" height="30" />
+              <ul>
+                <li class="on"><svg class="ic"><use href="#i-cart" /></svg>Vender</li>
+                <li><svg class="ic"><use href="#i-box" /></svg>Produtos</li>
+                <li><svg class="ic"><use href="#i-stock" /></svg>Estoque</li>
+                <li><svg class="ic"><use href="#i-users" /></svg>Clientes</li>
+                <li><svg class="ic"><use href="#i-chart" /></svg>Relatórios</li>
+                <li><svg class="ic"><use href="#i-gear" /></svg>Configurações</li>
+              </ul>
+            </aside>
+            <div class="app__main">
+              <div class="app__status">
+                <span class="ok"><svg class="ic"><use href="#i-signal" /></svg>Sincronizado</span>
+                <span class="off"><svg class="ic"><use href="#i-wifi" /></svg>Pronto para usar sem internet</span>
               </div>
-              <div class="mock__keys"><kbd>F10</kbd> Pagar <kbd>F4</kbd> Desconto <kbd>F9</kbd> Caixa</div>
+              <div class="app__search"><svg class="ic"><use href="#i-search" /></svg>Bipe o código ou digite o nome</div>
+              <ul class="app__items">
+                <li><span class="thumb" aria-hidden="true">🌾</span><span class="name">Arroz Tipo 1 5 kg</span><b>R$ 28,50</b><span class="qty"><i>−</i>1<i>+</i></span></li>
+                <li><span class="thumb" aria-hidden="true">🫘</span><span class="name">Feijão Carioca 1 kg</span><b>R$ 26,97</b><span class="qty"><i>−</i>1<i>+</i></span></li>
+                <li><span class="thumb" aria-hidden="true">🍌</span><span class="name">Banana Prata</span><b>R$ 8,74</b><span class="qty"><i>−</i>1<i>+</i></span></li>
+              </ul>
+              <div class="app__foot">
+                <p><small>TOTAL</small><strong>R$ 64,21</strong></p>
+                <span class="btn btn--yellow"><svg class="ic"><use href="#i-card" /></svg>Finalizar venda</span>
+              </div>
             </div>
-            <figcaption class="mock__toast">Bipaê! Venda nº 42 concluída. Troco: R$ 5,39.</figcaption>
           </figure>
         </div>
       </section>
 
-      <!-- Pains -->
-      <section class="band">
+      <!-- 3 passos -->
+      <section id="como-funciona" class="section">
         <div class="container">
-          <h2 class="center">Chega de caixa travado, fila e planilha</h2>
-          <div class="grid grid--3 pains">
-            <article><h3>A internet caiu?</h3><p>O Bipaê continua vendendo e envia tudo sozinho quando a conexão volta.</p></article>
-            <article><h3>Operador novo?</h3><p>Telas grandes e claras, atalhos sempre à vista. Dá para vender no primeiro dia, sem treinamento.</p></article>
-            <article><h3>Dinheiro sumindo?</h3><p>Fechamento cego, sangria com autorização e trilha de auditoria que ninguém consegue apagar.</p></article>
+          <div class="panel steps-panel">
+            <h2>Do primeiro bip à venda em 3 passos.</h2>
+            <ol class="steps">
+              <li>
+                <span class="num">1</span><span class="bubble"><svg class="ic"><use href="#i-user" /></svg></span>
+                <div><h3>Crie sua conta</h3><p>Em poucos minutos, sem complicação.</p></div>
+              </li>
+              <li>
+                <span class="num">2</span><span class="bubble"><svg class="ic"><use href="#i-box" /></svg></span>
+                <div><h3>Cadastre os produtos</h3><p>Bipe, digite ou importe sua lista de produtos.</p></div>
+              </li>
+              <li>
+                <span class="num">3</span><span class="bubble"><svg class="ic"><use href="#i-barcode" /></svg></span>
+                <div><h3>Abra o caixa e bipe</h3><p>Venda para seus clientes de forma rápida e fácil.</p></div>
+              </li>
+            </ol>
           </div>
         </div>
       </section>
 
-      <!-- Features -->
+      <!-- Recursos -->
       <section id="recursos" class="section">
         <div class="container">
-          <p class="eyebrow center">Tudo o que o balcão precisa</p>
-          <h2 class="center">Um sistema só, do bip ao fechamento</h2>
-          <div class="grid grid--3 features">
-            <article><span class="ico" aria-hidden="true">⚡</span><h3>Venda em 3 toques</h3><p>Bipe, receba e pronto. Multiplicador (3×), busca pelo nome, CPF na nota, orçamento e devolução por item.</p></article>
-            <article><span class="ico" aria-hidden="true">⚖️</span><h3>Balança e etiquetas</h3><p>Lê o peso direto da balança e as etiquetas de peso e preço. Ideal para hortifrúti, açougue e padaria.</p></article>
-            <article><span class="ico" aria-hidden="true">💳</span><h3>Vários pagamentos</h3><p>Dinheiro com troco, Pix, débito, crédito e vale na mesma venda. Troco calculado na hora.</p></article>
-            <article><span class="ico" aria-hidden="true">🧾</span><h3>Caixa sob controle</h3><p>Abertura, sangria, suprimento e fechamento cego: o sistema só mostra a diferença depois da contagem.</p></article>
-            <article><span class="ico" aria-hidden="true">📦</span><h3>Estoque que bate</h3><p>Cada venda, cancelamento e devolução movimenta o estoque. Vários caixas offline e a conta ainda fecha.</p></article>
-            <article><span class="ico" aria-hidden="true">🖨️</span><h3>Impressora e gaveta</h3><p>Impressora térmica por rede ou USB e gaveta que abre sozinha em venda no dinheiro.</p></article>
-            <article><span class="ico" aria-hidden="true">👥</span><h3>Equipe e permissões</h3><p>Dono, gerente, operador e contador, cada um vendo só o que precisa. Desconto acima do limite pede gerente.</p></article>
-            <article><span class="ico" aria-hidden="true">📊</span><h3>Vendas em tempo real</h3><p>Faturamento, ticket médio e vendas de todos os caixas, assim que sincronizam.</p></article>
-            <article><span class="ico" aria-hidden="true">♿</span><h3>Feito para todo mundo</h3><p>Modo escuro, alto contraste, letras maiores e operação 100% por teclado ou por toque.</p></article>
+          <h2 class="center">Tudo o que seu balcão precisa.</h2>
+          <div class="features">
+            <figure class="app app--small" aria-label="Venda em andamento no Bipaê">
+              <aside class="app__side" aria-hidden="true">
+                <img src="./src/assets/logo-bipae-branca.png" alt="" width="66" height="26" />
+                <ul>
+                  <li class="on"><svg class="ic"><use href="#i-cart" /></svg>Vender</li>
+                  <li><svg class="ic"><use href="#i-box" /></svg>Produtos</li>
+                  <li><svg class="ic"><use href="#i-stock" /></svg>Estoque</li>
+                  <li><svg class="ic"><use href="#i-users" /></svg>Clientes</li>
+                  <li><svg class="ic"><use href="#i-chart" /></svg>Relatórios</li>
+                  <li><svg class="ic"><use href="#i-gear" /></svg>Configurações</li>
+                </ul>
+              </aside>
+              <div class="app__main">
+                <div class="app__search"><svg class="ic"><use href="#i-search" /></svg>Bipe o código ou digite o nome</div>
+                <ul class="app__items">
+                  <li><span class="thumb" aria-hidden="true">🥤</span><span class="name">Refrigerante 2 L</span><b>R$ 12,90</b><span class="qty"><i>−</i>1<i>+</i></span></li>
+                  <li><span class="thumb" aria-hidden="true">🥖</span><span class="name">Pão Francês</span><b>R$ 0,75</b><span class="qty"><i>−</i>1<i>+</i></span></li>
+                  <li><span class="thumb" aria-hidden="true">🥛</span><span class="name">Leite Integral 1 L</span><b>R$ 4,99</b><span class="qty"><i>−</i>1<i>+</i></span></li>
+                  <li><span class="thumb" aria-hidden="true">🍅</span><span class="name">Tomate</span><b>R$ 6,50</b><span class="qty"><i>−</i>1<i>+</i></span></li>
+                </ul>
+                <div class="app__foot">
+                  <p><small>TOTAL</small><strong>R$ 25,14</strong></p>
+                  <span class="btn btn--yellow"><svg class="ic"><use href="#i-card" /></svg>Finalizar venda</span>
+                </div>
+              </div>
+            </figure>
+            <ul class="feature-list">
+              <li class="card">
+                <span class="bubble"><svg class="ic"><use href="#i-zap" /></svg></span>
+                <div><h3>Venda em 3 toques</h3><p>Bipe, receba o produto, confirme a venda.</p></div>
+              </li>
+              <li class="card">
+                <span class="bubble"><svg class="ic"><use href="#i-chart" /></svg></span>
+                <div><h3>Caixa sob controle</h3><p>Acompanhe suas vendas e tenha o fechamento sempre à vista.</p></div>
+              </li>
+              <li class="card">
+                <span class="bubble"><svg class="ic"><use href="#i-box" /></svg></span>
+                <div><h3>Estoque atualizado</h3><p>Saídas e entradas registradas automaticamente.</p></div>
+              </li>
+            </ul>
           </div>
+          <ul class="strip">
+            <li><svg class="ic"><use href="#i-scale" /></svg><div><h3>Balança e etiquetas</h3><p>Funciona com balança e impressão de etiquetas.</p></div></li>
+            <li><svg class="ic"><use href="#i-card" /></svg><div><h3>Vários pagamentos</h3><p>Dinheiro, cartão, Pix e vale na mesma venda.</p></div></li>
+            <li><svg class="ic"><use href="#i-printer" /></svg><div><h3>Impressora e gaveta</h3><p>Compatível com sua impressora e gaveta.</p></div></li>
+            <li><svg class="ic"><use href="#i-users" /></svg><div><h3>Equipe e permissões</h3><p>Cadastre operadores e defina permissões.</p></div></li>
+            <li><svg class="ic"><use href="#i-chart" /></svg><div><h3>Vendas em tempo real</h3><p>Acompanhe suas vendas de onde estiver.</p></div></li>
+          </ul>
         </div>
       </section>
 
       <!-- Offline -->
-      <section id="offline" class="section section--alt">
-        <div class="container split">
+      <section id="offline" class="offline">
+        <div class="container offline__grid">
           <div>
-            <p class="eyebrow">Offline de verdade</p>
+            <p class="eyebrow eyebrow--yellow">Offline de verdade</p>
             <h2>A internet caiu. A fila, não.</h2>
             <p>
-              Cada caixa guarda as vendas no próprio aparelho. Sem conexão, você continua bipando,
-              recebendo e dando troco. Quando a internet volta, tudo sobe sozinho, sem duplicar
-              nada.
+              Continue vendendo normalmente, mesmo sem internet. Suas vendas ficam salvas no computador e são
+              sincronizadas automaticamente quando a conexão voltar.
             </p>
-            <ul class="list">
-              <li>Cada caixa tem sua própria numeração: dois caixas offline nunca se atrapalham.</li>
-              <li>Estoque somado certinho quando todos sincronizam.</li>
-              <li>Selo na tela mostra o que ainda falta enviar.</li>
-            </ul>
           </div>
-          <div class="sync" aria-hidden="true">
-            <div class="sync__row"><span class="pill pill--warn">Sem conexão</span><span>3 vendas para enviar</span></div>
-            <div class="sync__arrow">↓ internet voltou</div>
-            <div class="sync__row"><span class="pill pill--ok">Sincronizado agora</span><span>tudo enviado</span></div>
+          <div class="sync-card">
+            <ol class="flow" aria-label="Como funciona sem internet">
+              <li><span class="dot dot--warn"><svg class="ic"><use href="#i-wifi-off" /></svg></span>Sem conexão</li>
+              <li aria-hidden="true" class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></li>
+              <li><span class="dot"><svg class="ic"><use href="#i-file" /></svg></span>Venda salva</li>
+              <li aria-hidden="true" class="arrow"><svg class="ic"><use href="#i-arrow" /></svg></li>
+              <li class="flow__ok"><span class="dot"><svg class="ic"><use href="#i-cloud" /></svg></span>Sincronizado</li>
+            </ol>
+            <div class="sync-card__body">
+              <table>
+                <caption class="sr-only">Vendas feitas sem internet, aguardando envio</caption>
+                <tbody>
+                  <tr><td>15:32</td><td>Arroz Tipo 1 5 kg</td><td>R$ 28,50</td><td><svg class="ic" role="img" aria-label="aguardando"><use href="#i-clock" /></svg></td></tr>
+                  <tr><td>15:33</td><td>Feijão Carioca 1 kg</td><td>R$ 26,97</td><td><svg class="ic" role="img" aria-label="aguardando"><use href="#i-clock" /></svg></td></tr>
+                  <tr><td>15:34</td><td>Banana Prata</td><td>R$ 8,74</td><td><svg class="ic" role="img" aria-label="aguardando"><use href="#i-clock" /></svg></td></tr>
+                </tbody>
+              </table>
+              <p class="note">Quando a internet voltar, tudo é sincronizado automaticamente.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Platforms -->
+      <!-- Plataformas -->
       <section class="section">
         <div class="container">
-          <h2 class="center">Use onde quiser, do jeito que quiser</h2>
-          <div class="grid grid--2 platforms">
-            <article>
-              <h3>Bipaê Online</h3>
-              <p>Direto no navegador, no computador, tablet ou celular. Nada para instalar, e dá para colocar na tela inicial como um app.</p>
-            </article>
-            <article>
-              <h3>Bipaê Desktop</h3>
-              <p>O caixa de balcão para Windows e Linux, com impressora, balança e gaveta ligadas direto e venda offline sem limite de tempo.</p>
-              <p><a class="btn btn--ghost" href="/app/download">Baixar o Bipaê Desktop</a></p>
-            </article>
+          <h2 class="center">Use onde quiser, do jeito que quiser.</h2>
+          <div class="platforms">
+            <a class="card platform" href="/app/criar-conta">
+              <span class="bubble bubble--plain"><svg class="ic"><use href="#i-globe" /></svg></span>
+              <div>
+                <h3>Bipaê Online</h3>
+                <p>Funciona no navegador, em qualquer computador, tablet ou celular.</p>
+                <ul class="chips">
+                  <li><svg class="ic"><use href="#i-laptop" /></svg>Computador</li>
+                  <li><svg class="ic"><use href="#i-tablet" /></svg>Tablet</li>
+                  <li><svg class="ic"><use href="#i-phone" /></svg>Celular</li>
+                </ul>
+              </div>
+              <svg class="ic chev"><use href="#i-chevron" /></svg>
+            </a>
+            <a class="card platform" href="/app/download">
+              <span class="bubble bubble--plain"><svg class="ic"><use href="#i-monitor" /></svg></span>
+              <div>
+                <h3>Bipaê Desktop</h3>
+                <p>Aplicativo para Windows e Linux, com suporte a impressora, balança e gaveta.</p>
+                <ul class="chips">
+                  <li><svg class="ic"><use href="#i-windows" /></svg>Windows</li>
+                  <li><svg class="ic"><use href="#i-penguin" /></svg>Linux</li>
+                  <li><svg class="ic"><use href="#i-printer" /></svg>Impressora</li>
+                  <li><svg class="ic"><use href="#i-scale" /></svg>Balança</li>
+                  <li><svg class="ic"><use href="#i-drawer" /></svg>Gaveta</li>
+                </ul>
+                <span class="link">Baixar o Bipaê Desktop</span>
+              </div>
+              <svg class="ic chev"><use href="#i-chevron" /></svg>
+            </a>
           </div>
-          <p class="center muted">Mesma conta, mesmas telas, mesmos dados. Misture caixas no navegador e no computador na mesma loja.</p>
+          <p class="pill">Mesma conta. Mesmos dados. Use no navegador ou no computador da sua loja.</p>
         </div>
       </section>
 
-      <!-- How it works -->
-      <section id="como-funciona" class="section section--alt">
-        <div class="container">
-          <h2 class="center">Comece a vender em minutos</h2>
-          <ol class="steps">
-            <li><b>1</b><h3>Crie sua conta</h3><p>Nome, e-mail e senha. Não pede configuração nenhuma antes da primeira venda.</p></li>
-            <li><b>2</b><h3>Cadastre os produtos</h3><p>Nome, preço e código de barras. Pesáveis, variações e kits também.</p></li>
-            <li><b>3</b><h3>Abra o caixa e bipe</h3><p>Informe o troco inicial e pronto. Bipou? Bipaê!</p></li>
-          </ol>
-        </div>
-      </section>
-
-      <!-- Roadmap (honest about what is coming) -->
+      <!-- Em breve -->
       <section class="section">
         <div class="container">
-          <p class="eyebrow center">Chegando</p>
-          <h2 class="center">O que vem por aí</h2>
-          <div class="grid grid--3 roadmap">
-            <article><span class="tag">Em breve</span><h3>NFC-e e NF-e</h3><p>Emissão das notas com contingência offline e mensagens de erro da SEFAZ em português claro.</p></article>
-            <article><span class="tag">Em breve</span><h3>Pronto para a Reforma Tributária</h3><p>IBS e CBS calculados por regras com data de vigência, para a transição de 2026 a 2033 virar atualização, não dor de cabeça.</p></article>
-            <article><span class="tag">Em breve</span><h3>Cadastro pelo XML</h3><p>Importe as notas de compra e o Bipaê cria produtos, fornecedores, custos e estoque.</p></article>
-            <article><span class="tag">Em breve</span><h3>Pix e maquininha integrados</h3><p>QR Code dinâmico e TEF com baixa automática no caixa.</p></article>
-            <article><span class="tag">Em breve</span><h3>Financeiro e DRE</h3><p>Contas a pagar e receber, conciliação de cartões e Pix, crediário.</p></article>
-            <article><span class="tag">Em breve</span><h3>Mercado e food service</h3><p>Promoções, atacarejo, comandas, mesas e tela de cozinha.</p></article>
-          </div>
+          <p class="eyebrow center">Em breve</p>
+          <h2 class="center">O que vem por aí.</h2>
+          <p class="center muted">Novas funcionalidades para deixar o Bipaê ainda mais completo.</p>
+          <ul class="soon">
+            <li class="card"><span class="bubble bubble--plain"><svg class="ic"><use href="#i-receipt" /></svg></span><div><span class="tag">Em breve</span><h3>NFC-e e NF-e</h3><p>Emissão de notas com contingência offline e integração com a SEFAZ.</p></div></li>
+            <li class="card"><span class="bubble bubble--plain"><svg class="ic"><use href="#i-landmark" /></svg></span><div><span class="tag">Em breve</span><h3>Reforma Tributária</h3><p>Relatórios e adaptação às novas regras, para você vender sempre em dia.</p></div></li>
+            <li class="card"><span class="bubble bubble--plain"><svg class="ic"><use href="#i-file" /></svg></span><div><span class="tag">Em breve</span><h3>Cadastro pelo XML</h3><p>Importe seus produtos de fornecedores através do XML.</p></div></li>
+            <li class="card"><span class="bubble bubble--plain"><svg class="ic"><use href="#i-card" /></svg></span><div><span class="tag">Em breve</span><h3>Pix e maquininha integrados</h3><p>Receba por Pix e conecte sua maquininha no caixa.</p></div></li>
+            <li class="card"><span class="bubble bubble--plain"><svg class="ic"><use href="#i-chart" /></svg></span><div><span class="tag">Em breve</span><h3>Financeiro e DRE</h3><p>Contas a pagar e receber, conciliar cartões e relatório de resultado.</p></div></li>
+            <li class="card"><span class="bubble bubble--plain"><svg class="ic"><use href="#i-store" /></svg></span><div><span class="tag">Em breve</span><h3>Mercado e food service</h3><p>Recursos específicos para mercados, mercearias, padarias e restaurantes.</p></div></li>
+          </ul>
         </div>
       </section>
 
-      <!-- Plans -->
-      <section id="planos" class="section section--alt">
+      <!-- Planos -->
+      <section id="planos" class="section">
         <div class="container">
           <h2 class="center">Comece grátis. Cresça com a gente.</h2>
-          <div class="grid grid--3 plans">
+          <div class="plans">
             <article class="plan plan--featured">
-              <span class="tag tag--accent">Disponível agora</span>
+              <span class="tag">Disponível agora</span>
               <h3>Grátis</h3>
               <p class="price">R$ 0</p>
-              <p class="muted">Para o MEI e quem está começando.</p>
-              <ul class="list">
-                <li>Caixa (PDV) completo</li>
-                <li>Venda sem internet</li>
-                <li>Produtos, clientes e estoque</li>
-                <li>Navegador ou computador</li>
+              <p class="muted">Para MEI e pequenos comércios.</p>
+              <ul>
+                <li><svg class="ic"><use href="#i-check" /></svg>Caixa PDV completo</li>
+                <li><svg class="ic"><use href="#i-check" /></svg>Venda sem internet</li>
+                <li><svg class="ic"><use href="#i-check" /></svg>Produtos, clientes e estoque</li>
+                <li><svg class="ic"><use href="#i-check" /></svg>Navegador ou computador</li>
               </ul>
-              <a class="btn btn--primary btn--block" href="/app/criar-conta">Criar conta grátis</a>
+              <a class="btn btn--primary btn--block" href="/app/criar-conta">Começar grátis</a>
             </article>
             <article class="plan">
               <span class="tag">Em breve</span>
               <h3>Essencial</h3>
               <p class="price price--soon">Preço no lançamento</p>
-              <p class="muted">Para o pequeno comércio com mais de um caixa.</p>
-              <ul class="list">
-                <li>Tudo do Grátis</li>
-                <li>Mais caixas e usuários</li>
-                <li>Compras por XML e relatórios</li>
+              <p class="muted">Para pequenos comércios com mais de um caixa.</p>
+              <ul>
+                <li><svg class="ic"><use href="#i-check" /></svg>Tudo do Grátis</li>
+                <li><svg class="ic"><use href="#i-check" /></svg>Mais caixas e usuários</li>
+                <li><svg class="ic"><use href="#i-check" /></svg>Compras por XML e relatórios</li>
               </ul>
+              <a class="btn btn--muted btn--block" href="/app/criar-conta" title="Crie sua conta grátis: o aviso do lançamento aparece no seu painel">Quero ser avisado</a>
             </article>
             <article class="plan">
               <span class="tag">Em breve</span>
               <h3>Profissional</h3>
               <p class="price price--soon">Preço no lançamento</p>
               <p class="muted">Para lojas com várias unidades.</p>
-              <ul class="list">
-                <li>Tudo do Essencial</li>
-                <li>Multiloja e verticais</li>
-                <li>Conciliação e prevenção de perdas</li>
+              <ul>
+                <li><svg class="ic"><use href="#i-check" /></svg>Tudo do Essencial</li>
+                <li><svg class="ic"><use href="#i-check" /></svg>Múltiplas lojas</li>
+                <li><svg class="ic"><use href="#i-check" /></svg>Conciliação e prevenção de perdas</li>
               </ul>
+              <a class="btn btn--muted btn--block" href="/app/criar-conta" title="Crie sua conta grátis: o aviso do lançamento aparece no seu painel">Quero ser avisado</a>
             </article>
           </div>
         </div>
       </section>
 
-      <!-- FAQ -->
+      <!-- Perguntas -->
       <section id="perguntas" class="section">
-        <div class="container narrow">
+        <div class="container">
           <h2 class="center">Perguntas frequentes</h2>
-          <details><summary>Preciso instalar alguma coisa?</summary><p>Não. O Bipaê funciona direto no navegador. Se quiser usar impressora, balança e gaveta no balcão, instale o <a href="/app/download">Bipaê Desktop</a> no computador do caixa.</p></details>
-          <details><summary>E se a internet cair no meio do expediente?</summary><p>Você continua vendendo normalmente. As vendas ficam guardadas no aparelho e são enviadas sozinhas quando a conexão volta.</p></details>
-          <details><summary>O Bipaê já emite NFC-e?</summary><p>Ainda não. A emissão de NFC-e e NF-e, já preparada para a Reforma Tributária, é a próxima grande entrega. Hoje o caixa imprime um comprovante de venda não fiscal.</p></details>
-          <details><summary>Funciona com a minha impressora e balança?</summary><p>Funciona com impressoras térmicas ESC/POS (rede ou USB/serial) e balanças Toledo e Filizola pela porta serial. Configure em Periféricos e faça um teste antes de vender.</p></details>
-          <details><summary>Meus dados ficam seguros?</summary><p>Sim. Cada empresa só enxerga os próprios dados, as ações importantes ficam numa trilha de auditoria que não pode ser apagada, e o consentimento de marketing dos clientes é registrado à parte (LGPD).</p></details>
-          <details><summary>Posso ter mais de um caixa?</summary><p>Pode. Cada caixa tem sua própria numeração, inclusive sem internet, e o estoque fecha certinho quando todos sincronizam.</p></details>
+          <div class="faq">
+            <details><summary>Preciso instalar alguma coisa?</summary><p>Não. O Bipaê funciona direto no navegador. Se quiser usar impressora, balança e gaveta no balcão, instale o <a href="/app/download">Bipaê Desktop</a> no computador do caixa.</p></details>
+            <details><summary>Funciona com minha impressora e balança?</summary><p>Funciona com impressoras térmicas ESC/POS (rede ou USB/serial) e balanças Toledo e Filizola pela porta serial. Configure em Periféricos e faça um teste antes de vender.</p></details>
+            <details><summary>E se a internet cair no meio do expediente?</summary><p>Você continua vendendo normalmente. As vendas ficam guardadas no aparelho e são enviadas sozinhas quando a conexão volta.</p></details>
+            <details><summary>Meus dados ficam seguros?</summary><p>Sim. Cada empresa só enxerga os próprios dados, as ações importantes ficam numa trilha de auditoria que não pode ser apagada, e o consentimento de marketing dos clientes é registrado à parte (LGPD).</p></details>
+            <details><summary>O Bipaê já emite NFC-e?</summary><p>Ainda não. A emissão de NFC-e e NF-e, já preparada para a Reforma Tributária, é a próxima grande entrega. Hoje o caixa imprime um comprovante de venda não fiscal.</p></details>
+            <details><summary>Posso ter mais de um caixa?</summary><p>Pode. Cada caixa tem sua própria numeração, inclusive sem internet, e o estoque fecha certinho quando todos sincronizam.</p></details>
+          </div>
         </div>
       </section>
 
-      <!-- Final CTA -->
+      <!-- Chamada final -->
       <section class="final">
         <div class="container center">
-          <h2>Bipou? <span class="hl">Bipaê!</span></h2>
-          <p class="lead">Crie sua conta agora e faça a primeira venda em minutos.</p>
-          <a class="btn btn--accent btn--lg" href="/app/criar-conta">Começar grátis</a>
+          <h2>Seu próximo cliente <span class="hl-yellow">não precisa esperar.</span></h2>
+          <p>Comece a vender com o Bipaê.</p>
+          <a class="btn btn--yellow btn--lg" href="/app/criar-conta">Começar grátis</a>
         </div>
       </section>
     </main>
 
     <footer class="footer">
       <div class="container footer__inner">
-        <p>© 2026 Bipaê · PDV e gestão para o comércio brasileiro</p>
-        <p><a href="/app/entrar">Entrar</a> · <a href="/app/criar-conta">Criar conta</a> · <a href="/app/download">Baixar o desktop</a></p>
+        <img src="./src/assets/logo-bipae.png" alt="Bipaê" width="91" height="36" />
+        <p>© 2026 Bipaê. PDV e gestão para o comércio brasileiro.</p>
+        <nav aria-label="Links do rodapé">
+          <a href="/app/entrar">Entrar</a>
+          <a href="/app/download">Baixar o desktop</a>
+        </nav>
       </div>
     </footer>
   </body>
