@@ -13,6 +13,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import Decimal from 'decimal.js';
+import { parseCest } from './cest.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -353,6 +354,11 @@ function importNfeSchema() {
   return result;
 }
 
+function importCest() {
+  const html = gunzipSync(readFileSync(join(sourcesDir, manifest.cest.file))).toString('utf8');
+  return parseCest(html, manifest.cest.downloadedAt);
+}
+
 const tables = {
   'cfop.json': importCfop(),
   'class-trib.json': importClassTrib(),
@@ -360,6 +366,7 @@ const tables = {
   'fcp.json': importFcp(),
   'ncm.json': importNcm(),
   'nfe-codes.json': importNfeSchema(),
+  'cest.json': importCest(),
 };
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha
@@ -382,7 +389,9 @@ for (const [name, data] of Object.entries(tables)) {
   const next =
     name === 'ncm.json'
       ? `{"updatedAt":${JSON.stringify(data.updatedAt)},"act":${JSON.stringify(data.act)},"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
-      : `${JSON.stringify(data, null, 1)}\n`;
+      : name === 'cest.json'
+        ? `{"segments":${JSON.stringify(data.segments)},"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
+        : `${JSON.stringify(data, null, 1)}\n`;
   if (check) {
     let current = '';
     try {

@@ -58,6 +58,7 @@ Os arquivos abaixo estão guardados em `packages/fiscal/sources`, com data e has
 | FCP por UF | Tabela de Alíquotas de FCP | 25/02/2025 | 27 UFs, alíquota fixa ou teto |
 | NCM | Portal Único Siscomex, tabela vigente em 13/10/2026 (Resolução Gecex nº 926/2026) | 13/10/2026 | 10.516 NCMs de 8 dígitos e os níveis acima (capítulo, posição, subposição) |
 | CST do ICMS, CSOSN, CST de PIS, COFINS e IPI, origem | Pacote de schemas PL_010b (NT 2025.002 v1.30), portal SVRS | 07/10/2025 | Lista de códigos aceitos e o grupo do XML de cada um, tirados do próprio schema |
+| CEST | Convênio ICMS 142/18, texto consolidado no site do CONFAZ (já com o Convênio ICMS 107/26) | 13/10/2026 | 25 segmentos e 1.043 códigos vigentes, com os NCM/SH de cada um |
 
 Lidos no texto da **LC 214/2025** (Planalto, com as alterações da LC 227/2026):
 
@@ -73,7 +74,7 @@ O NCM vem de <https://portalunico.siscomex.gov.br/classif/api/publico/nomenclatu
 
 Os **códigos** de situação tributária vêm do schema; as **descrições** foram digitadas a partir das normas (Convênio s/nº de 1970, IN RFB 1.009/2010), porque o texto do schema tem erros (chega a dizer "com similar nacional" na origem 6). Um teste garante que as duas listas têm os mesmos códigos. Se o pacote de schemas mudar (dúvida D-012), basta trocar o arquivo e regerar.
 
-Ainda a buscar (subtarefa F3-03.d): CEST (Convênio ICMS 142/18).
+O **CEST** não tem arquivo estruturado: foi extraído da página do convênio, que mistura redação vigente, redações anteriores e itens revogados. O importador (`packages/fiscal/scripts/cest.mjs`) separa pelo que a própria página marca e **para** diante de qualquer forma de texto que não reconheça. Ficaram de fora o Anexo XXVII (escala industrial não relevante) e os itens revogados. Ver a dúvida D-018.
 
 ## ⚠️ Limitação da pesquisa de 11/10
 

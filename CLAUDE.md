@@ -37,6 +37,7 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 - PDV desktop: Tauri 2 (Rust para periféricos e certificado A3); o mesmo app roda como Bipaê Conector (bandeja) para o PDV web.
 - Banco local do PDV: SQLite (nativo no Tauri; WASM com OPFS no navegador). Mesmo schema e mesmas migrações nos dois.
 - Motor fiscal: `packages/fiscal`, puro (sem I/O), testável, cobertura ≥ 90%.
+- Tabelas fiscais (`@bipae/fiscal/tables`): geradas dos arquivos oficiais em `packages/fiscal/sources` por `pnpm --filter @bipae/fiscal tables`. Nunca editar `src/tables/data/*.json` gerado à mão; para atualizar, troque o arquivo oficial, ajuste `sources/manifest.json` e regere.
 
 ## Comandos
 

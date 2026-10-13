@@ -21,6 +21,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-015 | 🔴 aberta | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
 | D-016 | 🔴 aberta | cClassTrib: o dia do fim da vigência ainda vale? |
 | D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
+| D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 
 ---
 
@@ -129,4 +130,10 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** o texto do IT 2023.002 v2.00 diz que 84 CFOPs são permitidos ao contribuinte exclusivo do IBS/CBS (`indExcIBSCBS` = 1). A planilha da v2.10 (04/09/2026) marca 72. O PDF da v2.10 ainda não foi lido.
 - **Implementação provisória:** vale a planilha mais recente, que é o que o motor carrega. A coluna é só informativa até a entrada em produção e não afeta o varejo comum (contribuinte do ICMS).
 - **Pergunta:** a v2.10 reduziu a lista de propósito?
+
+### D-018 — CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF
+
+- **Contexto:** a tabela de CEST (1.043 códigos) foi extraída do texto consolidado do Convênio ICMS 142/18 no site do CONFAZ, porque não existe arquivo oficial estruturado. A lista é nacional e diz o que **pode** estar em substituição tributária; quem decide o que **está** é cada UF, por legislação própria, que não está no sistema.
+- **Implementação provisória:** o sistema valida o código e sugere CEST pelo NCM, sem decidir sozinho se há ST. A data de início de cada item é a que o convênio informa; quando ele não informa item a item, fica 01/01/2019. O Anexo XXVII (escala industrial não relevante) não foi importado.
+- **Pergunta:** o contador pode conferir uma amostra dos CEST do ramo da loja? De onde virá a lista de mercadorias em ST da UF (item E2, UF de homologação)?
 

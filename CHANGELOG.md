@@ -1,5 +1,17 @@
 # Changelog
 
+## [F3-03.d Tabela de CEST] — 13/10/2026
+
+### Adicionado
+- **CEST do Convênio ICMS 142/18**, extraído do texto consolidado do CONFAZ (já com o Convênio ICMS 107/26): 25 segmentos e 1.043 códigos vigentes, com os NCM/SH de cada um.
+- `findCest` devolve a redação em vigor na data. Dois códigos mudam de texto em 01/11/2026 e já estão com as duas redações, cada uma na sua vigência.
+- `cestsForNcm` sugere os CEST de um NCM, do mais específico para o mais genérico, para o cadastro de produto.
+- O importador para diante de qualquer texto do convênio que não reconheça, em vez de adivinhar.
+
+### Documentado
+- Dúvida D-018: a lista de CEST é nacional; o que está de fato em substituição tributária depende da UF e ainda não está no sistema.
+- Com isso a **F3-03 está concluída**: NCM, CEST, CFOP, CST/CSOSN, cClassTrib e alíquotas de referência, todos gerados de fonte oficial.
+
 ## [F3-03.c Situações tributárias e origem] — 13/10/2026
 
 ### Adicionado
