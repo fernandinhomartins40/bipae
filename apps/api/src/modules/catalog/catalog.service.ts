@@ -200,9 +200,16 @@ export class CatalogService {
       .from(productBarcodes)
       .where(inArray(productBarcodes.productId, ids))
       .orderBy(asc(productBarcodes.code));
+    // Nome do componente junto, para a tela do kit não precisar buscar produto por produto.
     const components = await tx
-      .select()
+      .select({
+        productId: productComponents.productId,
+        componentId: productComponents.componentId,
+        quantity: productComponents.quantity,
+        name: products.name,
+      })
       .from(productComponents)
+      .innerJoin(products, eq(products.id, productComponents.componentId))
       .where(inArray(productComponents.productId, ids));
     return rows.map((r) => ({
       id: r.id,
@@ -222,7 +229,7 @@ export class CatalogService {
       attributes: r.attributes,
       components: components
         .filter((c) => c.productId === r.id)
-        .map((c) => ({ productId: c.componentId, quantity: Number(c.quantity) })),
+        .map((c) => ({ productId: c.componentId, quantity: Number(c.quantity), name: c.name })),
       updatedAt: r.updatedAt.toISOString(),
     }));
   }

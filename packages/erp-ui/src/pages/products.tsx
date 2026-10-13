@@ -18,6 +18,7 @@ import { useDeferredValue, useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
 import { ApiError } from '../api-client';
 import { useForm } from '../forms';
+import { KitEditor, type KitComponent } from './product-kit';
 
 interface Unit {
   code: string;
@@ -144,6 +145,13 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   const queryClient = useQueryClient();
   const canChangePrice = useCan('catalog.price.write');
   const units = useQuery({ queryKey: ['units'], queryFn: () => api.get<Unit[]>('/units') });
+  const [components, setComponents] = useState<KitComponent[]>(
+    (product?.components ?? []).map((c) => ({
+      productId: c.productId,
+      quantity: c.quantity,
+      name: c.name ?? '',
+    })),
+  );
   const profiles = useQuery({
     queryKey: ['fiscal-profiles'],
     queryFn: () => api.get<FiscalProfile[]>('/fiscal-profiles'),
@@ -173,6 +181,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
         ...(product ?? {}),
         ...v,
         fiscalProfileId: v.fiscalProfileId || null,
+        components: components.map(({ productId, quantity }) => ({ productId, quantity })),
         barcodes: v.barcodes
           .split(/[\s,;]+/)
           .map((b) => b.trim())
@@ -282,6 +291,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
             if (!v && form.values.unit === 'KG') form.set('unit', 'UN');
           }}
         />
+        <KitEditor productId={product?.id ?? null} value={components} onChange={setComponents} />
         <Checkbox
           label="Ativo"
           hint="Produtos inativos não aparecem no caixa."

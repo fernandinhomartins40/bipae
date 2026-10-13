@@ -190,7 +190,8 @@ export interface Product {
   fiscalProfileId: string | null;
   parentId: string | null;
   attributes: Record<string, string> | null;
-  components: { productId: string; quantity: number }[];
+  /** Composição do kit; `name` vem da API para exibir. */
+  components: { productId: string; quantity: number; name?: string }[];
   updatedAt: string;
 }
 
