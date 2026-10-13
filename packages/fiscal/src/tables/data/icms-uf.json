@@ -6,35 +6,204 @@
     "imported": "4",
     "fromSouthSoutheast": "7",
     "general": "12",
-    "southSoutheastExceptEs": ["MG", "PR", "RJ", "RS", "SC", "SP"]
+    "southSoutheastExceptEs": [
+      "MG",
+      "PR",
+      "RJ",
+      "RS",
+      "SC",
+      "SP"
+    ]
   },
   "general": [
-    { "uf": "AC", "status": "confirmado", "rate": "19", "law": "LC 55/1997, art. 18, I (LC 422/2022); desde 01/04/2023", "url": "https://sefaz.ac.gov.br/2021/?p=12159" },
-    { "uf": "AL", "status": "divergente", "law": "Lei 5.900/1996, art. 17; Lei 6.558/2004, art. 2º-A", "url": "https://www.sefaz.al.gov.br/nise/faq/icms/465-2-difal-3-base-de-calculo-e-aliquotas", "note": "O Portal da DIFAL mostra 20,5% no campo e 19% na observação; fontes privadas citam 20% e 20,5%. Dúvida D-021." },
-    { "uf": "AP", "status": "pendente", "law": "Lei 400/1997", "url": "http://www.al.ap.gov.br/ver_texto_consolidado.php?iddocumento=10488", "note": "18% no texto consolidado da Assembleia, que pode estar defasado. Dúvida D-021." },
-    { "uf": "AM", "status": "confirmado", "rate": "20", "law": "LC 19/1997 (LC 242/2022); desde 01/04/2023", "url": "https://sistemas.sefaz.am.gov.br/get/Normas.do?metodo=viewDoc&uuidDoc=0569a7de-c88a-4bc1-b895-6aaccb7f88b7" },
-    { "uf": "BA", "status": "confirmado", "rate": "20.5", "law": "Lei 7.014/1996, art. 15, I; desde 07/02/2024", "url": "http://mbusca.sefaz.ba.gov.br/DITRI/leis/leis_estaduais/legest_1996_7014_icmscomnotas.pdf" },
-    { "uf": "CE", "status": "confirmado", "rate": "20", "law": "Lei 18.305/2023; desde 01/01/2024", "url": "https://belt.al.ce.gov.br/index.php/component/k2/item/8265-lei-n-18-305-de-15-02-23-d-o-15-02-23" },
-    { "uf": "DF", "status": "confirmado", "rate": "20", "law": "Lei 1.254/1996, art. 18, II, c (Lei 7.326/2023); efeitos desde 22/01/2024", "url": "https://www.sinj.df.gov.br/sinj/Norma/f308fe684e544a29af7a1570ee07ce3f/Lei_7326_20_10_2023.html" },
-    { "uf": "ES", "status": "confirmado", "rate": "17", "law": "Lei 7.000/2001, art. 20, I", "url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LO7000.html" },
-    { "uf": "GO", "status": "confirmado", "rate": "19", "law": "Lei 11.651/1991, art. 27, I (Lei 22.460/2023); desde 01/04/2024", "url": "https://www.sefaz.go.gov.br/Legislacao/arquivos/Leis/L_22572.htm" },
-    { "uf": "MA", "status": "pendente", "law": "Lei 12.426/2024", "url": "https://sistemas1.sefaz.ma.gov.br/portalsefaz/jsp/noticia/noticia.jsf?codigo=7499", "note": "23% desde 23/02/2025 segundo fontes secundárias; a página da SEFAZ-MA localizada ainda cita 20%. Dúvida D-021." },
-    { "uf": "MT", "status": "confirmado", "rate": "17", "law": "Lei 7.098/1998, art. 14, I", "url": "https://legislacao.mt.gov.br/lei/regulamentacao-do-icms-mt?origin=instituicao" },
-    { "uf": "MS", "status": "confirmado", "rate": "17", "law": "Lei 1.810/1997, art. 41", "url": "https://www.cofimt.ms.gov.br/icms-difcon-legislacao/" },
-    { "uf": "MG", "status": "confirmado", "rate": "18", "law": "Lei 6.763/1975, art. 12; RICMS/MG", "url": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms2023/partegeral2023.pdf" },
-    { "uf": "PA", "status": "confirmado", "rate": "19", "law": "Lei 5.530/1989 (Lei 9.755)", "url": "http://www.sefa.pa.gov.br/orientacoes?layout=edit&id=20716" },
-    { "uf": "PB", "status": "confirmado", "rate": "20", "law": "Lei 6.379/1996 (Lei 12.788/2023); desde 01/01/2024", "url": "https://www.sefaz.pb.gov.br/legislacao/64-leis/icms/13905-lei-n-12-788-de-28-de-setembro-de-2023" },
-    { "uf": "PR", "status": "confirmado", "rate": "19.5", "law": "Lei 11.580/1996 (Lei 21.850/2023); desde março de 2024", "url": "https://www.sefanet.pr.gov.br/dados/sefadocumentos/106201707871.pdf" },
-    { "uf": "PE", "status": "confirmado", "rate": "20.5", "law": "Lei 15.730/2016, art. 15, VII (Lei 18.305/2023); desde 01/01/2024", "url": "https://www.sefaz.pe.gov.br/Legislacao/Tributaria/Documents/legislacao/Leis_Tributarias/2023/Lei18305_2023.htm" },
-    { "uf": "PI", "status": "pendente", "law": "Lei 4.257/1989, art. 23, I, c (Lei 8.558/2024)", "url": "https://portal.sefaz.pi.gov.br/", "note": "22,5% desde 01/04/2025 em reprodução privada da lei. Dúvida D-021." },
-    { "uf": "RJ", "status": "confirmado", "rate": "20", "law": "Lei 2.657/1996 (Lei 10.253/2023); desde 20/03/2024. Há 2% de FECP à parte", "url": "https://portal.fazenda.rj.gov.br/pagamentos/aliquotas-internas/" },
-    { "uf": "RN", "status": "confirmado", "rate": "20", "law": "Lei 6.968/1996 (Lei 11.999/2024)", "url": "https://webdisk.diariooficial.rn.gov.br/Jornal/12025-03-08.pdf" },
-    { "uf": "RS", "status": "pendente", "law": "Lei 8.820/1989, art. 12; RICMS/RS, Livro I, art. 27", "url": "https://www.diariooficial.rs.gov.br/materia?id=1415298", "note": "17%, com confirmação oficial só indireta. Dúvida D-021." },
-    { "uf": "RO", "status": "confirmado", "rate": "19.5", "law": "Lei 688/1996, art. 27 (Lei 5.634/2023); desde 12/01/2024", "url": "https://www.sefin.ro.gov.br/portalsefin/anexos/L23-5634---Altera-e-acresce-dispositivos-a-L96_688.pdf" },
-    { "uf": "RR", "status": "confirmado", "rate": "20", "law": "Portal Nacional da DIFAL, atualizado em 30/03/2023", "url": "https://dfe-portal.svrs.rs.gov.br/Difal/Aliquotas" },
-    { "uf": "SC", "status": "confirmado", "rate": "17", "law": "Lei 10.297/1996, art. 19, I", "url": "https://leis.alesc.sc.gov.br/ato-normativo/11810/compilado" },
-    { "uf": "SP", "status": "confirmado", "rate": "18", "law": "RICMS/2000, art. 52, I", "url": "https://legislacao.fazenda.sp.gov.br/Paginas/RC32330_2025.aspx" },
-    { "uf": "SE", "status": "pendente", "law": "Lei 3.796/1996, art. 18, I, j (Lei 9.176/2023)", "url": "https://al.se.leg.br/por-unanimidade-deputados-aprovam-reducao-do-icms-para-19/", "note": "19% desde 01/04/2023 em fonte secundária, com adicional de FECOEP. Dúvida D-021." },
-    { "uf": "TO", "status": "pendente", "law": "Lei 1.287/2001, art. 27 (Lei 4.141/2023; IN GABSEC 9/2023)", "url": "https://dtri.sefaz.to.gov.br/legislacao/ntributaria/decretos/Decreto2.912-06.htm", "note": "20% desde 01/01/2024 em fonte secundária. Dúvida D-021." }
+    {
+      "uf": "AC",
+      "status": "confirmado",
+      "rate": "19",
+      "law": "LC 55/1997, art. 18, I (LC 422/2022); desde 01/04/2023",
+      "url": "https://sefaz.ac.gov.br/2021/?p=12159"
+    },
+    {
+      "uf": "AL",
+      "status": "divergente",
+      "law": "Lei 5.900/1996, art. 17, I, b (Lei 8.779/2022); Lei 6.558/2004, art. 2º-A",
+      "url": "https://sapl.al.al.leg.br/media/sapl/public/normajuridica/2022/2419/lei_no_8.779_de_20_de_dezembro_de_2022.pdf",
+      "note": "A Lei 8.779/2022 fixa 19% (mais 1% de FECOEP), mas o Portal Nacional da DIFAL e fontes privadas de 2026 mostram 20,5%; pode haver lei posterior não localizada. Dúvida D-021."
+    },
+    {
+      "uf": "AP",
+      "status": "pendente",
+      "law": "Lei 400/1997; RICMS/AP (Decreto 2.269/1998)",
+      "url": "http://www.al.ap.gov.br/ver_texto_consolidado.php?iddocumento=10488",
+      "note": "18% em fontes secundárias e no texto consolidado da Assembleia, que pode estar defasado; nenhuma fonte oficial atual localizada. Dúvida D-021."
+    },
+    {
+      "uf": "AM",
+      "status": "confirmado",
+      "rate": "20",
+      "law": "LC 19/1997 (LC 242/2022); desde 01/04/2023",
+      "url": "https://sistemas.sefaz.am.gov.br/get/Normas.do?metodo=viewDoc&uuidDoc=0569a7de-c88a-4bc1-b895-6aaccb7f88b7"
+    },
+    {
+      "uf": "BA",
+      "status": "confirmado",
+      "rate": "20.5",
+      "law": "Lei 7.014/1996, art. 15, I; desde 07/02/2024",
+      "url": "http://mbusca.sefaz.ba.gov.br/DITRI/leis/leis_estaduais/legest_1996_7014_icmscomnotas.pdf"
+    },
+    {
+      "uf": "CE",
+      "status": "confirmado",
+      "rate": "20",
+      "law": "Lei 18.305/2023; desde 01/01/2024",
+      "url": "https://belt.al.ce.gov.br/index.php/component/k2/item/8265-lei-n-18-305-de-15-02-23-d-o-15-02-23"
+    },
+    {
+      "uf": "DF",
+      "status": "confirmado",
+      "rate": "20",
+      "law": "Lei 1.254/1996, art. 18, II, c (Lei 7.326/2023); efeitos desde 22/01/2024",
+      "url": "https://www.sinj.df.gov.br/sinj/Norma/f308fe684e544a29af7a1570ee07ce3f/Lei_7326_20_10_2023.html"
+    },
+    {
+      "uf": "ES",
+      "status": "confirmado",
+      "rate": "17",
+      "law": "Lei 7.000/2001, art. 20, I",
+      "url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LO7000.html"
+    },
+    {
+      "uf": "GO",
+      "status": "confirmado",
+      "rate": "19",
+      "law": "Lei 11.651/1991, art. 27, I (Lei 22.460/2023); desde 01/04/2024",
+      "url": "https://www.sefaz.go.gov.br/Legislacao/arquivos/Leis/L_22572.htm"
+    },
+    {
+      "uf": "MA",
+      "status": "confirmado",
+      "rate": "23",
+      "law": "Lei 7.799/2002 (Lei 12.426/2024); aumento de 22% para 23% registrado pela Assembleia Legislativa; desde fevereiro de 2025",
+      "url": "https://www.al.ma.leg.br/sitealema/carlos-lula-critica-aumento-do-icms-e-alerta-para-impactos-na-vida-dos-maranhenses/"
+    },
+    {
+      "uf": "MT",
+      "status": "confirmado",
+      "rate": "17",
+      "law": "Lei 7.098/1998, art. 14, I",
+      "url": "https://legislacao.mt.gov.br/lei/regulamentacao-do-icms-mt?origin=instituicao"
+    },
+    {
+      "uf": "MS",
+      "status": "confirmado",
+      "rate": "17",
+      "law": "Lei 1.810/1997, art. 41",
+      "url": "https://www.cofimt.ms.gov.br/icms-difcon-legislacao/"
+    },
+    {
+      "uf": "MG",
+      "status": "confirmado",
+      "rate": "18",
+      "law": "Lei 6.763/1975, art. 12; RICMS/MG",
+      "url": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms2023/partegeral2023.pdf"
+    },
+    {
+      "uf": "PA",
+      "status": "confirmado",
+      "rate": "19",
+      "law": "Lei 5.530/1989 (Lei 9.755)",
+      "url": "http://www.sefa.pa.gov.br/orientacoes?layout=edit&id=20716"
+    },
+    {
+      "uf": "PB",
+      "status": "confirmado",
+      "rate": "20",
+      "law": "Lei 6.379/1996 (Lei 12.788/2023); desde 01/01/2024",
+      "url": "https://www.sefaz.pb.gov.br/legislacao/64-leis/icms/13905-lei-n-12-788-de-28-de-setembro-de-2023"
+    },
+    {
+      "uf": "PR",
+      "status": "confirmado",
+      "rate": "19.5",
+      "law": "Lei 11.580/1996 (Lei 21.850/2023); desde março de 2024",
+      "url": "https://www.sefanet.pr.gov.br/dados/sefadocumentos/106201707871.pdf"
+    },
+    {
+      "uf": "PE",
+      "status": "confirmado",
+      "rate": "20.5",
+      "law": "Lei 15.730/2016, art. 15, VII (Lei 18.305/2023); desde 01/01/2024",
+      "url": "https://www.sefaz.pe.gov.br/Legislacao/Tributaria/Documents/legislacao/Leis_Tributarias/2023/Lei18305_2023.htm"
+    },
+    {
+      "uf": "PI",
+      "status": "confirmado",
+      "rate": "22.5",
+      "law": "Lei 4.257/1989, art. 23, I, c (Lei 8.558/2024); desde 01/04/2025",
+      "url": "https://sapl.al.pi.leg.br/media/sapl/public/normajuridica/2024/6418/sei_00009.028288_2024_82.pdf"
+    },
+    {
+      "uf": "RJ",
+      "status": "confirmado",
+      "rate": "20",
+      "law": "Lei 2.657/1996 (Lei 10.253/2023); desde 20/03/2024. Há 2% de FECP à parte",
+      "url": "https://portal.fazenda.rj.gov.br/pagamentos/aliquotas-internas/"
+    },
+    {
+      "uf": "RN",
+      "status": "confirmado",
+      "rate": "20",
+      "law": "Lei 6.968/1996 (Lei 11.999/2024)",
+      "url": "https://webdisk.diariooficial.rn.gov.br/Jornal/12025-03-08.pdf"
+    },
+    {
+      "uf": "RS",
+      "status": "confirmado",
+      "rate": "17",
+      "law": "RICMS/RS (Decreto 37.699/1997), Livro I, art. 27, X; desde 01/01/2022",
+      "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202508/01150047-mini-ricms-produtos-farmaceuticos-v01082025.pdf"
+    },
+    {
+      "uf": "RO",
+      "status": "confirmado",
+      "rate": "19.5",
+      "law": "Lei 688/1996, art. 27 (Lei 5.634/2023); desde 12/01/2024",
+      "url": "https://www.sefin.ro.gov.br/portalsefin/anexos/L23-5634---Altera-e-acresce-dispositivos-a-L96_688.pdf"
+    },
+    {
+      "uf": "RR",
+      "status": "confirmado",
+      "rate": "20",
+      "law": "Portal Nacional da DIFAL, atualizado em 30/03/2023",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Difal/Aliquotas"
+    },
+    {
+      "uf": "SC",
+      "status": "confirmado",
+      "rate": "17",
+      "law": "Lei 10.297/1996, art. 19, I",
+      "url": "https://leis.alesc.sc.gov.br/ato-normativo/11810/compilado"
+    },
+    {
+      "uf": "SP",
+      "status": "confirmado",
+      "rate": "18",
+      "law": "RICMS/2000, art. 52, I",
+      "url": "https://legislacao.fazenda.sp.gov.br/Paginas/RC32330_2025.aspx"
+    },
+    {
+      "uf": "SE",
+      "status": "confirmado",
+      "rate": "19",
+      "law": "Lei 3.796/1996, art. 18, I, j (Lei 9.176/2023); desde 01/04/2023. FECOEP à parte",
+      "url": "https://aleselegis.al.se.leg.br/Arquivo/Documents/legislacao/html/l91762023.html"
+    },
+    {
+      "uf": "TO",
+      "status": "confirmado",
+      "rate": "20",
+      "law": "Lei 1.287/2001, art. 27 (Lei 4.141/2023); desde 01/01/2024, conforme o STF na ADI 7375",
+      "url": "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6614009"
+    }
   ]
 }

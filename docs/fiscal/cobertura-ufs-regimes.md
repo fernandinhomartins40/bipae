@@ -38,7 +38,7 @@ Pontos que valem para todos os regimes:
 | UF | Alíquota geral | Base legal e início da vigência | Status |
 |---|---|---|---|
 | AC | 19% | LC 55/1997, art. 18, I (LC 422/2022); desde 01/04/2023 | ✅ |
-| AL | 19% + 1% de FECOEP? | Lei 5.900/1996, art. 17; Lei 6.558/2004, art. 2º-A. O Portal da DIFAL mostra "20,5%" e, na observação, 19% desde 01/04/2023 (Lei 8.779/2022). Fontes privadas de 2026 citam 20% e 20,5% | 🔴 |
+| AL | 19% (Lei 8.779/2022) ou 20,5%? | A Lei 8.779/2022 (site da Assembleia) fixa 19% no art. 17, I, "b", mais 1% de FECOEP. O Portal da DIFAL e fontes privadas de 2026 mostram 20,5%; pode haver lei posterior não localizada | 🔴 |
 | AP | 18% | Lei 400/1997 (texto consolidado da Assembleia, pode estar defasado) | 🟡 |
 | AM | 20% | LC 19/1997 (LC 242/2022); desde 01/04/2023 | ✅ |
 | BA | 20,5% | Lei 7.014/1996, art. 15, I; desde 07/02/2024 (antes 19%) | ✅ |
@@ -46,7 +46,7 @@ Pontos que valem para todos os regimes:
 | DF | 20% | Lei 1.254/1996, art. 18, II, "c" (Lei 7.326/2023); efeitos desde 22/01/2024 | ✅ |
 | ES | 17% | Lei 7.000/2001, art. 20, I | ✅ |
 | GO | 19% | Lei 11.651/1991, art. 27, I (Lei 22.460/2023); desde 01/04/2024 | ✅ |
-| MA | 23% | Lei 12.426/2024; desde 23/02/2025. O site da SEFAZ-MA localizado ainda cita os 20% de 2023 | 🟡 |
+| MA | 23% | Lei 7.799/2002 (Lei 12.426/2024); aumento de 22% para 23% registrado pela Assembleia Legislativa; desde fevereiro de 2025 | ✅ |
 | MT | 17% | Lei 7.098/1998, art. 14, I | ✅ |
 | MS | 17% | Lei 1.810/1997, art. 41 | ✅ |
 | MG | 18% | Lei 6.763/1975, art. 12; RICMS/MG (o artigo do RICMS/2023 precisa ser localizado) | ✅ |
@@ -54,18 +54,18 @@ Pontos que valem para todos os regimes:
 | PB | 20% | Lei 6.379/1996 (Lei 12.788/2023); desde 01/01/2024 | ✅ |
 | PR | 19,5% | Lei 11.580/1996 (Lei 21.850/2023); início em março de 2024, dia a confirmar | ✅ |
 | PE | 20,5% | Lei 15.730/2016, art. 15, VII (Lei 18.305/2023); desde 01/01/2024 | ✅ |
-| PI | 22,5% | Lei 4.257/1989, art. 23, I, "c" (Lei 8.558/2024); desde 01/04/2025. Texto lido em reprodução privada | 🟡 |
+| PI | 22,5% | Lei 4.257/1989, art. 23, I, "c" (Lei 8.558/2024, texto no site da Assembleia); desde 01/04/2025 | ✅ |
 | RJ | 20% (+ 2% de FECP = 22%) | Lei 2.657/1996 (Lei 10.253/2023); desde 20/03/2024 | ✅ |
 | RN | 20% | Lei 6.968/1996 (Lei 11.999/2024); data de início a confirmar | ✅ |
-| RS | 17% | Lei 8.820/1989, art. 12; RICMS/RS, Livro I, art. 27. Confirmação oficial só indireta | 🟡 |
+| RS | 17% | RICMS/RS, Livro I, art. 27, X (compilação da Receita Estadual); desde 01/01/2022 | ✅ |
 | RO | 19,5% | Lei 688/1996, art. 27 (Lei 5.634/2023); desde 12/01/2024 | ✅ |
 | RR | 20% | Portal Nacional da DIFAL, atualizado em 30/03/2023; a lei precisa ser identificada | ✅ |
 | SC | 17% | Lei 10.297/1996, art. 19, I | ✅ |
 | SP | 18% | RICMS/2000, art. 52, I | ✅ |
-| SE | 19% | Lei 3.796/1996, art. 18, I, "j" (Lei 9.176/2023); desde 01/04/2023. Há adicional de FECOEP | 🟡 |
-| TO | 20% | Lei 1.287/2001, art. 27 (Lei 4.141/2023; IN GABSEC 9/2023, após a ADI 7375); desde 01/01/2024 | 🟡 |
+| SE | 19% | Lei 3.796/1996, art. 18, I, "j" (Lei 9.176/2023, texto no site da Assembleia); desde 01/04/2023. Há adicional de FECOEP | ✅ |
+| TO | 20% | Lei 1.287/2001, art. 27 (Lei 4.141/2023); desde 01/01/2024, conforme o STF na ADI 7375 | ✅ |
 
-**Resumo:** 20 UFs ✅, 6 UFs 🟡 (AP, MA, PI, RS, SE, TO) e 1 UF 🔴 (AL).
+**Resumo (atualizado em 13/10/2026, F3-24):** 25 UFs ✅, 1 UF 🟡 (AP) e 1 UF 🔴 (AL). Na matriz de cobertura, 129 de 135 combinações já calculam por completo.
 
 **Alíquotas interestaduais** (Portal Nacional da DIFAL, ✅): 4% para mercadoria importada ou com conteúdo de importação acima de 40%; 7% nas saídas do Sul e do Sudeste (exceto ES) para Norte, Nordeste, Centro-Oeste e ES; 12% nos demais casos.
 

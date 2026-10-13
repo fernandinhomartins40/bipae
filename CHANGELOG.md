@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-24 Mais cinco UFs confirmadas] — 13/10/2026
+
+### Alterado
+- **Alíquota geral do ICMS confirmada em fonte oficial para MA (23%), PI (22,5%), RS (17%), SE (19%) e TO (20%).** Empresas dessas UFs no regime normal passam a ter o ICMS calculado sem precisar cadastrar regra.
+- Agora são **25 de 27 UFs** confirmadas e **129 de 135** combinações UF × regime calculando por completo.
+- Continuam pendentes **AL** (a lei diz 19%, o portal nacional mostra 20,5%) e **AP** (sem fonte oficial atual). Empresas dessas UFs informam a alíquota em Regras de ICMS, com o contador (dúvida D-021).
+
 ## [F3-23.b Cobertura fiscal no painel] — 13/10/2026
 
 ### Adicionado

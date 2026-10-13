@@ -123,7 +123,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: as 135 combinações (27 UFs × MEI, Simples, Simples acima do sublimite, Presumido e Real) estão no teste.
 - [x] F3-23.a · O teste das 135 combinações (`packages/fiscal/src/sale.test.ts`) — depende: F3-06.d1
 - [x] F3-23.b · Mapa de cobertura no painel do super admin: o que cada UF e cada regime já calcula — depende: F3-23.a
-- [ ] F3-24 · Fechar as 7 UFs pendentes (AL, AP, MA, PI, RS, SE, TO): ler a lei na fonte oficial e promover para confirmado — depende: F3-06.c
+- [x] F3-24 · Fechar as 7 UFs pendentes (AL, AP, MA, PI, RS, SE, TO): ler a lei na fonte oficial e promover para confirmado — depende: F3-06.c
+  - Feito em 13/10/2026: MA, PI, RS, SE e TO confirmadas. AL (divergente) e AP (sem fonte) ficam com o contador, dúvida D-021.
 - [ ] F3-25 · Importar as alíquotas por produto das 27 UFs do Portal Nacional da DIFAL, com a data de cada linha e marcação do que está defasado — depende: F3-06.c
 - [ ] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
 - [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25

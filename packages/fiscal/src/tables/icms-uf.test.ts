@@ -28,8 +28,8 @@ describe('alíquota geral do ICMS por UF', () => {
         expect(item.rate, item.uf).toBeDefined();
         const rate = dec(item.rate!);
         expect(rate.greaterThanOrEqualTo(17) && rate.lessThanOrEqualTo(25), item.uf).toBe(true);
-        // Fonte oficial: governo ou Assembleia do estado, ou o portal nacional.
-        expect(item.url, item.uf).toMatch(/\.gov\.br|\.leg\.br/);
+        // Fonte oficial: governo, Assembleia ou Judiciário (STF), ou o portal nacional.
+        expect(item.url, item.uf).toMatch(/\.gov\.br|\.leg\.br|\.jus\.br/);
       } else {
         expect(item.rate, item.uf).toBeUndefined();
         expect(item.note, item.uf).toContain('D-021');
@@ -37,10 +37,10 @@ describe('alíquota geral do ICMS por UF', () => {
     }
   });
 
-  it('o retrato de 13/10/2026: 20 confirmadas, 6 pendentes e 1 divergente', () => {
+  it('o retrato de 13/10/2026: 25 confirmadas, 1 pendente e 1 divergente', () => {
     const conta = (status: string) => ICMS_GENERAL_RATES.filter((i) => i.status === status).map((i) => i.uf);
-    expect(conta('confirmado')).toHaveLength(20);
-    expect(conta('pendente')).toEqual(['AP', 'MA', 'PI', 'RS', 'SE', 'TO']);
+    expect(conta('confirmado')).toHaveLength(25);
+    expect(conta('pendente')).toEqual(['AP']);
     expect(conta('divergente')).toEqual(['AL']);
   });
 

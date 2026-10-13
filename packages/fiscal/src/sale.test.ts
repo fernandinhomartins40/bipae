@@ -197,10 +197,10 @@ describe('matriz de cobertura: 27 UFs × 5 regimes (F3-23)', () => {
     expect(combinacoes).toBe(135);
   });
 
-  it('o retrato de hoje: 114 combinações completas e 21 esperando a alíquota da UF', () => {
+  it('o retrato de hoje: 129 combinações completas e 6 esperando a alíquota da UF', () => {
     const completas = UFS.flatMap((uf) => COMPANY_REGIMES.map((regime) => venda(regime.id, uf).complete)).filter(Boolean);
-    // 20 UFs × 5 regimes + 7 UFs pendentes × 2 regimes que não dependem da alíquota (MEI e Simples).
-    expect(completas).toHaveLength(114);
+    // 25 UFs × 5 regimes + 2 UFs pendentes × 2 regimes que não dependem da alíquota (MEI e Simples).
+    expect(completas).toHaveLength(129);
   });
 });
 

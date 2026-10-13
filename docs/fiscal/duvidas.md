@@ -24,7 +24,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 | D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
 | D-020 | 🔴 aberta | IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação |
-| D-021 | 🔴 aberta | Alíquota geral do ICMS: 7 UFs sem confirmação oficial (AL divergente) |
+| D-021 | 🟡 parcial | Alíquota geral do ICMS: AL divergente e AP sem fonte oficial |
 
 ---
 
@@ -178,4 +178,4 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Só em fonte secundária ou em texto oficial possivelmente defasado:** AP (18%), MA (23%), PI (22,5%), RS (17%), SE (19%) e TO (20%).
 - **Implementação provisória:** essas sete UFs ficam como "falta configurar" no motor. Uma empresa dessas UFs consegue usar o caixa, mas o cálculo do ICMS pede a alíquota ao contador até a confirmação.
 - **Pergunta:** o contador confirma as sete alíquotas e as leis? O adicional de FECOEP de AL e de SE se soma à alíquota geral em todos os produtos ou só nos listados?
-
+- **Atualização de 13/10/2026 (F3-24):** MA (23%), PI (22,5%), RS (17%), SE (19%) e TO (20%) confirmadas em fonte oficial (Assembleias, Receita Estadual do RS e decisão do STF na ADI 7375). Continuam abertas: **AL**, onde a Lei 8.779/2022 diz 19% e o Portal Nacional da DIFAL mostra 20,5% (pode haver lei posterior), e **AP**, sem fonte oficial atual localizada.
