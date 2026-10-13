@@ -100,8 +100,9 @@ describe('products', () => {
         ],
       })
     ).json();
+    // Cada componente vem com o nome, para a tela do kit exibir.
     expect(kit.components).toEqual(
-      expect.arrayContaining([{ productId: banana.id, quantity: 0.5 }]),
+      expect.arrayContaining([{ productId: banana.id, quantity: 0.5, name: banana.name }]),
     );
     const self = await client.put(`/products/${kit.id}`, {
       ...kit,
