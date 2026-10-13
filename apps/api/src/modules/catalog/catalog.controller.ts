@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import {
   fiscalProfileInput,
-  listQuery,
+  productListQuery,
   priceTableInput,
   productInput,
   unitInput,
@@ -27,7 +27,7 @@ export class CatalogController {
   @Get('products')
   @RequirePermission('catalog.read')
   listProducts(@Ctx() ctx: RequestContext, @Query() query: unknown) {
-    return this.catalog.listProducts(ctx, parse(listQuery, query));
+    return this.catalog.listProducts(ctx, parse(productListQuery, query));
   }
 
   @Get('products/:id')

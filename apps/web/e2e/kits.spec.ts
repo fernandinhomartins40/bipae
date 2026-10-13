@@ -55,3 +55,39 @@ test('montar um kit no cadastro do produto', async ({ page }) => {
   await page.getByLabel('Adicionar item ao kit').fill('cesta');
   await expect(page.getByText('Nenhum produto encontrado.')).toBeVisible();
 });
+
+test('gerar a grade de variações de um modelo', async ({ page }) => {
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Tati Dona');
+  await page.getByLabel('Nome do negócio').fill(`Boutique ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`tati-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Tati!' })).toBeVisible();
+
+  await menu(page, 'Produtos');
+  await novoProduto(page, 'Camiseta Básica', '49,90');
+  await page.getByRole('button', { name: 'Salvar', exact: true }).click();
+  await page.getByRole('row', { name: /Camiseta Básica/ }).click();
+
+  // 2 tamanhos × 2 cores = 4 variações.
+  await page.getByLabel('Valores de Tamanho').fill('P, M');
+  await page.getByLabel('Valores de Cor').fill('Azul, Preto');
+  await page.getByRole('button', { name: 'Gerar 4 variações' }).click();
+  await expect(page.getByText('4 variações criadas.')).toBeVisible();
+  const lista = page.getByRole('list', { name: 'Variações deste produto' });
+  await expect(lista.getByRole('listitem')).toHaveCount(4);
+  await expect(lista).toContainText('Camiseta Básica — P / Azul');
+  await expect(lista).toContainText('R$ 49,90');
+
+  // Acrescentar o tamanho G só cria as 2 que faltam.
+  await page.getByLabel('Valores de Tamanho').fill('P, M, G');
+  await page.getByLabel('Valores de Cor').fill('Azul, Preto');
+  await page.getByRole('button', { name: 'Gerar 2 variações' }).click();
+  await expect(page.getByText('2 variações criadas.')).toBeVisible();
+  await expect(lista.getByRole('listitem')).toHaveCount(6);
+
+  // As variações aparecem na lista de produtos.
+  await page.getByRole('button', { name: 'Cancelar' }).click();
+  await expect(page.getByRole('row', { name: /Camiseta Básica — G \/ Preto/ })).toBeVisible();
+});

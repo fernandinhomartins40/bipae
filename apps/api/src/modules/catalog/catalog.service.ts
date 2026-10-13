@@ -9,7 +9,7 @@ import {
   type Page,
   type Product,
 } from '@bipae/domain';
-import { asc, count, eq, ilike, inArray, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, count, eq, ilike, inArray, or, sql, type SQL } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
@@ -41,7 +41,7 @@ export class CatalogService {
 
   async listProducts(
     ctx: RequestContext,
-    query: { q?: string | undefined; limit: number; offset: number },
+    query: { q?: string | undefined; limit: number; offset: number; parentId?: string | undefined },
   ): Promise<Page<Product>> {
     return withTenant(this.db, ctx, async (tx) => {
       let where: SQL | undefined;
@@ -53,6 +53,7 @@ export class CatalogService {
           sql`exists (select 1 from product_barcodes b where b.product_id = ${products.id} and b.code = ${term})`,
         );
       }
+      if (query.parentId) where = and(where, eq(products.parentId, query.parentId));
       const rows = await tx
         .select()
         .from(products)

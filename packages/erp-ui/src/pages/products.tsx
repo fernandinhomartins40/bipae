@@ -19,6 +19,7 @@ import { useApp, useCan } from '../context';
 import { ApiError } from '../api-client';
 import { useForm } from '../forms';
 import { KitEditor, type KitComponent } from './product-kit';
+import { VariantsEditor } from './product-variants';
 
 interface Unit {
   code: string;
@@ -307,6 +308,9 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           </Button>
         </div>
       </form>
+      {product && !product.parentId && product.components.length === 0 && (
+        <VariantsEditor product={product} />
+      )}
       {product && <StockCount product={product} />}
     </Drawer>
   );

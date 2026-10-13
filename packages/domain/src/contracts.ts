@@ -381,6 +381,9 @@ export const listQuery = z.object({
 });
 export type ListQuery = z.input<typeof listQuery>;
 
+/** Lista de produtos; `parentId` traz só as variações de um modelo (F1-04). */
+export const productListQuery = listQuery.extend({ parentId: z.string().uuid().optional() });
+
 export interface Page<T> {
   items: T[];
   total: number;
