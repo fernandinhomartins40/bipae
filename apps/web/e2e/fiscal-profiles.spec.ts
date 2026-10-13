@@ -35,8 +35,14 @@ test('criar um perfil fiscal e escolher no cadastro do produto', async ({ page }
   await row.click();
   await page.getByLabel('Regime da empresa').selectOption('normal');
   await page.getByLabel('CST do ICMS').fill('60');
+  // No regime normal o perfil também guarda o CST do PIS e da COFINS (F3-06.d2).
+  await page.getByLabel('CST do PIS e da COFINS').fill('04');
+  await expect(page.getByText(/Operação tributável monofásica/).filter({ visible: true })).toBeVisible();
   await page.getByRole('button', { name: 'Salvar perfil' }).click();
   await expect(page.getByRole('row', { name: /Bebidas com ST/ })).toContainText('CST 60');
+  await page.getByRole('row', { name: /Bebidas com ST/ }).click();
+  await expect(page.getByLabel('CST do PIS e da COFINS')).toHaveValue('04');
+  await page.getByRole('button', { name: 'Cancelar' }).click();
 
   // Link it to a product.
   await page.getByRole('link', { name: 'Produtos' }).click();

@@ -6,11 +6,11 @@ import type { ApiClient } from './api-client';
 export function createPosBackend(api: ApiClient): PosBackend {
   return {
     push: (terminalId, events) => api.post<SyncPushResult>('/sync/events', { terminalId, events }),
-    pull: (cursor, limit, pricingVersion) =>
+    pull: (cursor, limit, pricingVersion, fiscalVersion) =>
       api.get<SyncPullResult>(
         `/sync/pull?limit=${limit}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}${
           pricingVersion ? `&pricingVersion=${encodeURIComponent(pricingVersion)}` : ''
-        }`,
+        }${fiscalVersion ? `&fiscalVersion=${encodeURIComponent(fiscalVersion)}` : ''}`,
       ),
     listTerminals: () => api.get<PosTerminal[]>('/pos/terminals'),
     createTerminal: (input) => api.post<PosTerminal>('/terminals', input),

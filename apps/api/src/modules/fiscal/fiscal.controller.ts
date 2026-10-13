@@ -91,12 +91,13 @@ export class FiscalController {
         const group = cfopGroup(cfop.code);
         return cfop.nfe && isCfopValidOn(cfop, date) && group?.direction === 'saida' && group.scope === scope;
       }).map((cfop) => ({ code: cfop.code, description: cfop.title }));
-    const situations = (kind: 'icms' | 'csosn') =>
+    const situations = (kind: 'icms' | 'csosn' | 'pis') =>
       TAX_SITUATIONS[kind].map((item) => ({ code: item.code, description: item.description }));
     return {
       origins: MERCHANDISE_ORIGINS,
       cstIcms: situations('icms'),
       csosn: situations('csosn'),
+      cstPisCofins: situations('pis'),
       cfopInterna: sale('interna'),
       cfopInterestadual: sale('interestadual'),
       // Só as classificações em vigor e aceitas em NF-e ou NFC-e, que é o que o Bipaê emite.

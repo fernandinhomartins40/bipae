@@ -1,5 +1,17 @@
 # Changelog
 
+## [F3-06.d2 Dados fiscais no caixa] — 13/10/2026
+
+### Adicionado
+- **O caixa passa a receber os dados fiscais na sincronização:** a UF e o regime da empresa e os perfis fiscais dos produtos. Eles ficam guardados no aparelho, para o cálculo funcionar sem internet, e só são reenviados quando mudam.
+- **CST do PIS e da COFINS no perfil fiscal**, para empresas do Lucro Presumido e do Lucro Real. A tela mostra o significado do código e o servidor recusa código que não existe.
+
+### Banco local do caixa
+- Migração local 4: tabela de perfis fiscais. Aplica sozinha na próxima abertura do caixa.
+
+### Ainda não ligado
+- O caixa já tem os dados, mas ainda não calcula os impostos ao fechar a venda: isso é a parte d3.
+
 ## [F3-06.d1 Impostos do item de venda] — 13/10/2026
 
 ### Adicionado

@@ -240,6 +240,11 @@ export const fiscalProfileInput = z.object({
     .string()
     .regex(/^\d{2}$/, 'CST deve ter 2 dígitos')
     .nullish(),
+  /** CST do PIS e da COFINS (a tabela é a mesma para os dois); usado no Lucro Presumido e no Real. */
+  cstPisCofins: z
+    .string()
+    .regex(/^\d{2}$/, 'CST do PIS/COFINS deve ter 2 dígitos')
+    .nullish(),
   cClassTrib: z
     .string()
     .regex(/^\d{6}$/, 'cClassTrib deve ter 6 dígitos')

@@ -13,6 +13,8 @@ export interface SyncTransport {
     cursor: string | null,
     limit: number,
     pricingVersion: string | null,
+    /** `fiscalVersion`: o retrato fiscal que o caixa tem (F3-06). */
+    fiscalVersion?: string | null,
   ): Promise<SyncPullResult>;
 }
 
@@ -26,6 +28,7 @@ export interface SyncStatus {
 
 const CURSOR_KEY = 'catalog_cursor';
 const PRICING_KEY = 'pricing_version';
+const FISCAL_KEY = 'fiscal_version';
 const LAST_SYNC_KEY = 'last_sync_at';
 const BATCH = 100;
 
@@ -102,13 +105,19 @@ export class SyncClient {
   private async pullAll() {
     let cursor = await getMeta(this.storage, CURSOR_KEY);
     let pricingVersion = await getMeta(this.storage, PRICING_KEY);
+    let fiscalVersion = await getMeta(this.storage, FISCAL_KEY);
     for (;;) {
-      const page = await this.transport.pull(cursor, 500, pricingVersion);
+      const page = await this.transport.pull(cursor, 500, pricingVersion, fiscalVersion);
       if (page.products.length > 0) await this.pdv.applyCatalog(page.products);
       if (page.pricing) {
         await this.pdv.applyPricing(page.pricing);
         pricingVersion = page.pricing.version;
         await setMeta(this.storage, PRICING_KEY, pricingVersion);
+      }
+      if (page.fiscal) {
+        await this.pdv.applyFiscal(page.fiscal);
+        fiscalVersion = page.fiscal.version;
+        await setMeta(this.storage, FISCAL_KEY, fiscalVersion);
       }
       if (page.cursor) {
         cursor = page.cursor;

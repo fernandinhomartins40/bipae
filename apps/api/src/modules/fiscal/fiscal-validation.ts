@@ -50,6 +50,7 @@ export interface FiscalProfileCodes {
   cfopInterestadual: string;
   csosn?: string | null | undefined;
   cstIcms?: string | null | undefined;
+  cstPisCofins?: string | null | undefined;
   cClassTrib?: string | null | undefined;
 }
 
@@ -79,6 +80,9 @@ export function assertFiscalProfile(input: FiscalProfileCodes, date = today()): 
   }
   if (input.cstIcms && !findTaxSituation('icms', input.cstIcms)) {
     issues.push({ path: 'cstIcms', message: `O CST de ICMS ${input.cstIcms} não existe.` });
+  }
+  if (input.cstPisCofins && !findTaxSituation('pis', input.cstPisCofins)) {
+    issues.push({ path: 'cstPisCofins', message: `O CST de PIS/COFINS ${input.cstPisCofins} não existe.` });
   }
   if (input.cClassTrib) {
     const item = findClassTrib(input.cClassTrib);

@@ -281,3 +281,44 @@ describe('variações no caixa (F1-04)', () => {
     expect((await pdv.search('camiseta')).map((x) => x.name)).toEqual(['Camiseta Básica']);
   });
 });
+
+describe('dados fiscais guardados no caixa (F3-06.d2)', () => {
+  const perfil = {
+    cfopInterna: '5102',
+    cfopInterestadual: '6102',
+    csosn: '102',
+    cstIcms: null,
+    cstPisCofins: null,
+    cClassTrib: '000001',
+  };
+
+  it('antes da primeira sincronização o caixa não sabe a UF nem o regime', async () => {
+    const contexto = await pdv.fiscalContext();
+    expect(contexto.company).toEqual({ uf: null, taxRegime: null });
+    expect(contexto.profiles.size).toBe(0);
+  });
+
+  it('guarda a empresa e os perfis, e troca tudo quando chega um retrato novo', async () => {
+    const id = uuidv7();
+    await pdv.applyFiscal({
+      version: 'v1',
+      company: { uf: 'SP', taxRegime: 'simples' },
+      profiles: [{ id, ...perfil }],
+    });
+    const primeiro = await pdv.fiscalContext();
+    expect(primeiro.company).toEqual({ uf: 'SP', taxRegime: 'simples' });
+    expect(primeiro.profiles.get(id)).toEqual(perfil);
+
+    // O retrato novo substitui o anterior por inteiro: perfil que saiu do servidor sai do caixa.
+    const outro = uuidv7();
+    await pdv.applyFiscal({
+      version: 'v2',
+      company: { uf: null, taxRegime: null },
+      profiles: [{ id: outro, ...perfil, csosn: '500' }],
+    });
+    const segundo = await pdv.fiscalContext();
+    expect(segundo.company).toEqual({ uf: null, taxRegime: null });
+    expect([...segundo.profiles.keys()]).toEqual([outro]);
+    expect(segundo.profiles.get(outro)!.csosn).toBe('500');
+  });
+});

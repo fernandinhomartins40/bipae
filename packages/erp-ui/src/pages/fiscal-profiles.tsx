@@ -112,10 +112,14 @@ function FiscalProfileForm({
     cfopInterestadual: d?.cfopInterestadual ?? '6102',
     csosn: d?.csosn ?? '102',
     cstIcms: d?.cstIcms ?? '00',
+    cstPisCofins: d?.cstPisCofins ?? '',
     cClassTrib: d?.cClassTrib ?? '',
   });
   const digits =
-    (key: 'cfopInterna' | 'cfopInterestadual' | 'csosn' | 'cstIcms' | 'cClassTrib', max: number) =>
+    (
+      key: 'cfopInterna' | 'cfopInterestadual' | 'csosn' | 'cstIcms' | 'cstPisCofins' | 'cClassTrib',
+      max: number,
+    ) =>
     (e: { target: { value: string } }) =>
       form.set(key, e.target.value.replace(/\D/g, '').slice(0, max));
 
@@ -129,6 +133,8 @@ function FiscalProfileForm({
         cfopInterestadual: v.cfopInterestadual,
         csosn: regime === 'simples' ? v.csosn : null,
         cstIcms: regime === 'normal' ? v.cstIcms : null,
+        // No Simples o PIS e a COFINS vão no documento de arrecadação, não na nota.
+        cstPisCofins: regime === 'normal' ? v.cstPisCofins || null : null,
         cClassTrib: v.cClassTrib || null,
       };
       if (profile) await api.put(`/fiscal-profiles/${profile.id}`, body);
@@ -230,6 +236,22 @@ function FiscalProfileForm({
             error={form.errors.cstIcms}
           />
         )}
+        {regime === 'normal' && (
+          <TextField
+            label="CST do PIS e da COFINS"
+            inputMode="numeric"
+            list="cst-pis-cofins-opcoes"
+            hint={codeHint(
+              options?.cstPisCofins,
+              form.values.cstPisCofins,
+              2,
+              'Ex.: 01 (tributada pela alíquota do regime), 04 (monofásica), 06 (alíquota zero).',
+            )}
+            value={form.values.cstPisCofins}
+            onChange={digits('cstPisCofins', 2)}
+            error={form.errors.cstPisCofins}
+          />
+        )}
         <TextField
           label="cClassTrib (IBS/CBS) — opcional"
           inputMode="numeric"
@@ -246,6 +268,7 @@ function FiscalProfileForm({
         />
         <CodeSuggestions id="cfop-interna-opcoes" list={options?.cfopInterna} />
         <CodeSuggestions id="cfop-interestadual-opcoes" list={options?.cfopInterestadual} />
+        <CodeSuggestions id="cst-pis-cofins-opcoes" list={options?.cstPisCofins} />
         <CodeSuggestions id="csosn-opcoes" list={options?.csosn} />
         <CodeSuggestions id="cst-icms-opcoes" list={options?.cstIcms} />
         <CodeSuggestions id="class-trib-opcoes" list={options?.classTrib} />

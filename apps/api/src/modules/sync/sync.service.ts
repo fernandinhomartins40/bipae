@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   terminalEvent,
   uuidv7,
+  type FiscalSnapshot,
   type PricingSnapshot,
   type SyncPullResult,
   type SyncPushResult,
@@ -17,7 +18,9 @@ import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   cashMovements,
   cashSessions,
+  companies,
   customers,
+  fiscalProfiles,
   memberships,
   priceTableItems,
   productComponents,
@@ -421,6 +424,7 @@ export class SyncService {
     cursor: string | undefined,
     limit: number,
     pricingVersion?: string,
+    fiscalVersion?: string,
   ): Promise<SyncPullResult> {
     const [sinceIso, sinceId] = cursor ? cursor.split('|') : [];
     const since = sinceIso ? new Date(sinceIso) : null;
@@ -461,6 +465,7 @@ export class SyncService {
         cursor: last ? `${last.updatedAt.toISOString()}|${last.id}` : (cursor ?? ''),
         hasMore: rows.length > limit,
         ...(await this.pricing(tx, ctx.terminalId, pricingVersion)),
+        ...(await this.fiscal(tx, ctx.terminalId, fiscalVersion)),
         products: page.map((p) => ({
           id: p.id,
           name: p.name,
@@ -556,6 +561,56 @@ export class SyncService {
             .map(({ productId, priceCents }) => ({ productId, priceCents })),
         })),
         customers: people.map((p) => ({ taxId: p.taxId!, priceTableId: p.priceTableId! })),
+      },
+    };
+  }
+
+  /**
+   * Retrato fiscal para o caixa (F3-06): UF e regime da empresa do caixa e os perfis fiscais. Só
+   * vai quando algo mudou, como o retrato de preços.
+   */
+  private async fiscal(
+    tx: Tx,
+    terminalId: string | null,
+    known: string | undefined,
+  ): Promise<{ fiscal?: FiscalSnapshot }> {
+    const [company] = terminalId
+      ? await tx
+          .select({ uf: companies.uf, taxRegime: companies.taxRegime, updatedAt: companies.updatedAt })
+          .from(terminals)
+          .innerJoin(companies, eq(companies.id, terminals.companyId))
+          .where(eq(terminals.id, terminalId))
+      : [];
+    const [profiles] = await tx
+      .select({
+        last: sql<string>`coalesce(max(${fiscalProfiles.updatedAt})::text, '')`,
+        n: sql<number>`count(*)`,
+      })
+      .from(fiscalProfiles);
+    const version = createHash('sha256')
+      .update([company?.uf ?? '', company?.taxRegime ?? '', profiles?.last, profiles?.n].join('|'))
+      .digest('hex')
+      .slice(0, 24);
+    if (version === known) return {};
+
+    const rows = await tx.select({ id: fiscalProfiles.id, data: fiscalProfiles.data }).from(fiscalProfiles);
+    const text = (value: unknown) => (typeof value === 'string' && value !== '' ? value : null);
+    return {
+      fiscal: {
+        version,
+        company: { uf: company?.uf ?? null, taxRegime: company?.taxRegime ?? null },
+        profiles: rows.map((row) => {
+          const data = row.data as Record<string, unknown>;
+          return {
+            id: row.id,
+            cfopInterna: text(data.cfopInterna) ?? '',
+            cfopInterestadual: text(data.cfopInterestadual) ?? '',
+            csosn: text(data.csosn),
+            cstIcms: text(data.cstIcms),
+            cstPisCofins: text(data.cstPisCofins),
+            cClassTrib: text(data.cClassTrib),
+          };
+        }),
       },
     };
   }

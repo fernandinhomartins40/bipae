@@ -98,6 +98,9 @@ export const LOCAL_MIGRATIONS: string[] = [
   ALTER TABLE products ADD COLUMN parent_id TEXT;
   CREATE INDEX products_parent ON products (parent_id);
   `,
+  /* 4 — F3-06: perfis fiscais (retrato inteiro vindo do servidor; veja FiscalSnapshot) */ `
+  CREATE TABLE fiscal_profiles (id TEXT PRIMARY KEY, data TEXT NOT NULL);
+  `,
 ];
 
 /**

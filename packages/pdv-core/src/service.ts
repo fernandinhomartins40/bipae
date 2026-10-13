@@ -1,6 +1,7 @@
 import {
   terminalEvent,
   uuidv7,
+  type FiscalSnapshot,
   type PaymentMethod,
   type PricingSnapshot,
   type SaleItem,
@@ -183,6 +184,33 @@ export class PdvService {
     ]);
     for (const row of rows) prices.set(row.id as string, toProduct(row).priceCents);
     return prices;
+  }
+
+  /** Troca o retrato fiscal recebido na sincronização (F3-06): empresa do caixa e perfis fiscais. */
+  async applyFiscal(fiscal: FiscalSnapshot) {
+    await this.storage.transaction(async (tx) => {
+      await tx.execute('DELETE FROM fiscal_profiles');
+      for (const { id, ...data } of fiscal.profiles) {
+        await tx.execute('INSERT INTO fiscal_profiles (id, data) VALUES (?, ?)', [id, JSON.stringify(data)]);
+      }
+      await setMeta(tx, 'company_uf', fiscal.company.uf ?? '');
+      await setMeta(tx, 'company_tax_regime', fiscal.company.taxRegime ?? '');
+    });
+  }
+
+  /** Os dados fiscais que o caixa tem guardados: a empresa e os perfis, por id. */
+  async fiscalContext(): Promise<{
+    company: FiscalSnapshot['company'];
+    profiles: Map<string, Omit<FiscalSnapshot['profiles'][number], 'id'>>;
+  }> {
+    const rows = await this.storage.query<{ id: string; data: string }>('SELECT id, data FROM fiscal_profiles');
+    return {
+      company: {
+        uf: (await getMeta(this.storage, 'company_uf')) || null,
+        taxRegime: (await getMeta(this.storage, 'company_tax_regime')) || null,
+      },
+      profiles: new Map(rows.map((row) => [row.id, JSON.parse(row.data)])),
+    };
   }
 
   /** Troca o retrato de preços recebido na sincronização (F1-03). */

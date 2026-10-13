@@ -16,7 +16,7 @@ afterAll(async () => {
 
 /** HTTP transport over the in-process API, with a switch to simulate losing the internet. */
 function transport(auth: Record<string, string>, terminalId: string) {
-  const state = { online: true, pricingSnapshots: 0 };
+  const state = { online: true, pricingSnapshots: 0, fiscalSnapshots: 0 };
   const client = api(t.app, { ...auth, 'x-bipae-terminal': terminalId });
   const impl: SyncTransport = {
     async push(id, events: TerminalEvent[]) {
@@ -25,15 +25,16 @@ function transport(auth: Record<string, string>, terminalId: string) {
       if (res.statusCode !== 200) throw new Error(res.body);
       return res.json() as SyncPushResult;
     },
-    async pull(cursor, _limit, pricingVersion) {
+    async pull(cursor, _limit, pricingVersion, fiscalVersion) {
       if (!state.online) throw new Error('Sem conexão');
       const res = await client.get(
         `/sync/pull?limit=2${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}${
           pricingVersion ? `&pricingVersion=${pricingVersion}` : ''
-        }`,
+        }${fiscalVersion ? `&fiscalVersion=${fiscalVersion}` : ''}`,
       );
       const page = res.json() as SyncPullResult;
       if (page.pricing) state.pricingSnapshots++;
+      if (page.fiscal) state.fiscalSnapshots++;
       return page;
     },
   };
@@ -551,5 +552,81 @@ describe('kits no estoque (F1-04)', () => {
     });
     expect(deOutraEmpresa.statusCode).toBe(400);
     expect(deOutraEmpresa.json().message).toBe('Um dos componentes do kit não existe.');
+  });
+});
+
+describe('dados fiscais no caixa (F3-06.d2)', () => {
+  it('o caixa recebe a UF e o regime da empresa e os perfis fiscais, e só de novo quando mudam', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [empresa] = (await admin.get('/companies')).json();
+    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'real' });
+    const perfil = (
+      await admin.post('/fiscal-profiles', {
+        name: 'Revenda Lucro Real',
+        origem: 0,
+        cfopInterna: '5102',
+        cfopInterestadual: '6102',
+        cstIcms: '00',
+        cstPisCofins: '01',
+        cClassTrib: '000001',
+      })
+    ).json();
+    expect(perfil.data.cstPisCofins).toBe('01');
+
+    const caixa = await terminalDevice(dono, 'Caixa fiscal', 'web');
+    // Caixa novo, antes de sincronizar: não sabe nada e não inventa.
+    expect((await caixa.pdv.fiscalContext()).company).toEqual({ uf: null, taxRegime: null });
+
+    await caixa.sync.sync();
+    expect(caixa.net.fiscalSnapshots).toBe(1);
+    const contexto = await caixa.pdv.fiscalContext();
+    expect(contexto.company).toEqual({ uf: 'SP', taxRegime: 'real' });
+    expect(contexto.profiles.get(perfil.id)).toEqual({
+      cfopInterna: '5102',
+      cfopInterestadual: '6102',
+      csosn: null,
+      cstIcms: '00',
+      cstPisCofins: '01',
+      cClassTrib: '000001',
+    });
+
+    // Nada mudou: o retrato fiscal não vem de novo.
+    await caixa.sync.sync();
+    expect(caixa.net.fiscalSnapshots).toBe(1);
+
+    // Mudou o regime da empresa: chega na próxima sincronização.
+    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'presumido' });
+    await caixa.sync.sync();
+    expect(caixa.net.fiscalSnapshots).toBe(2);
+    expect((await caixa.pdv.fiscalContext()).company.taxRegime).toBe('presumido');
+
+    // Mudou um perfil: também.
+    await admin.put(`/fiscal-profiles/${perfil.id}`, {
+      name: 'Revenda Lucro Real',
+      origem: 0,
+      cfopInterna: '5405',
+      cfopInterestadual: '6102',
+      cstIcms: '60',
+      cstPisCofins: '04',
+      cClassTrib: '000001',
+    });
+    await caixa.sync.sync();
+    expect(caixa.net.fiscalSnapshots).toBe(3);
+    expect((await caixa.pdv.fiscalContext()).profiles.get(perfil.id)).toMatchObject({ cfopInterna: '5405', cstIcms: '60' });
+  });
+
+  it('recusa CST de PIS/COFINS que não existe', async () => {
+    const admin = api(t.app, (await signup(t.app)).auth);
+    const res = await admin.post('/fiscal-profiles', {
+      name: 'CST errado',
+      origem: 0,
+      cfopInterna: '5102',
+      cfopInterestadual: '6102',
+      cstIcms: '00',
+      cstPisCofins: '10',
+    });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().message).toBe('O CST de PIS/COFINS 10 não existe.');
   });
 });

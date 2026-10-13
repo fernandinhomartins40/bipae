@@ -178,6 +178,26 @@ export interface SyncPullResult {
   hasMore: boolean;
   /** Só vem quando os preços mudaram desde a `pricingVersion` que o caixa enviou (F1-03). */
   pricing?: PricingSnapshot;
+  /** Só vem quando os dados fiscais mudaram desde a `fiscalVersion` que o caixa enviou (F3-06). */
+  fiscal?: FiscalSnapshot;
+}
+
+/**
+ * O que o caixa sem internet precisa para calcular os impostos de uma venda: a UF e o regime da
+ * empresa do caixa e os perfis fiscais dos produtos. Vai inteiro, como o retrato de preços.
+ */
+export interface FiscalSnapshot {
+  version: string;
+  company: { uf: string | null; taxRegime: string | null };
+  profiles: {
+    id: string;
+    cfopInterna: string;
+    cfopInterestadual: string;
+    csosn: string | null;
+    cstIcms: string | null;
+    cstPisCofins: string | null;
+    cClassTrib: string | null;
+  }[];
 }
 
 /**

@@ -17,6 +17,7 @@ export interface FiscalOptions {
   origins: FiscalCode[];
   cstIcms: FiscalCode[];
   csosn: FiscalCode[];
+  cstPisCofins: FiscalCode[];
   cfopInterna: FiscalCode[];
   cfopInterestadual: FiscalCode[];
   classTrib: (FiscalCode & { cst: string; pRedIBS: string; pRedCBS: string; nfce: boolean })[];

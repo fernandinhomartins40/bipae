@@ -20,6 +20,8 @@ const pullQuery = z.object({
   limit: z.coerce.number().int().min(1).max(1000).default(500),
   /** Versão de preços que o caixa já tem (F1-03); o retrato só é reenviado quando muda. */
   pricingVersion: z.string().max(64).optional(),
+  /** Versão dos dados fiscais que o caixa já tem (F3-06); mesma ideia. */
+  fiscalVersion: z.string().max(64).optional(),
 });
 
 @Controller('sync')
@@ -45,8 +47,8 @@ export class SyncController {
   @Get('pull')
   @RequirePermission('pos.sell')
   pull(@Ctx() ctx: RequestContext, @Query() query: unknown) {
-    const { cursor, limit, pricingVersion } = parse(pullQuery, query);
-    return this.sync.pull(ctx, cursor, limit, pricingVersion);
+    const { cursor, limit, pricingVersion, fiscalVersion } = parse(pullQuery, query);
+    return this.sync.pull(ctx, cursor, limit, pricingVersion, fiscalVersion);
   }
 
   @Get('status/:terminalId')
