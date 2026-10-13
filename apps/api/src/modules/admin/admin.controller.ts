@@ -25,6 +25,7 @@ import {
   statusChangeInput,
   TENANT_STATUSES,
 } from '@bipae/domain';
+import { coverageMatrix } from '@bipae/fiscal';
 import { z } from 'zod';
 import { Public } from '../../common/auth';
 import { parse } from '../../common/errors';
@@ -306,5 +307,12 @@ export class AdminController {
   @PlatformPermission('platform.read')
   system() {
     return this.platform.system();
+  }
+
+  /** Cobertura fiscal (F3-23.b): o que o motor já calcula em cada UF e regime. */
+  @Get('fiscal-coverage')
+  @PlatformPermission('platform.read')
+  fiscalCoverage() {
+    return coverageMatrix(new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date()));
   }
 }

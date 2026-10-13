@@ -454,5 +454,9 @@ describe('platform settings', () => {
     await expect(t.database.db.execute(sql`delete from platform_audit_log`)).rejects.toThrow();
     const system = (await admin.get('/admin/system')).json();
     expect(system.migrations.map((m: { name: string }) => m.name)).toContain('0003_platform_saas');
+    // F3-23.b: cobertura fiscal das 27 UFs × 5 regimes, só para a equipe Bipaê.
+    const cobertura = (await admin.get('/admin/fiscal-coverage')).json();
+    expect(cobertura.total).toBe(135);
+    expect(cobertura.rows).toHaveLength(27);
   });
 });

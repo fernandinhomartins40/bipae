@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   BarChart3,
   Building2,
+  Landmark,
   LogOut,
   Megaphone,
   ScrollText,
@@ -35,6 +36,7 @@ import {
   TenantDetailPage,
   TenantsPage,
 } from './admin-pages';
+import { FiscalCoveragePage } from './coverage-page';
 
 export interface AdminMe {
   user: { id: string; name: string; email: string };
@@ -137,6 +139,7 @@ export function AdminApp({
             <Route path="equipe" element={<TeamPage />} />
             <Route path="auditoria" element={<AuditPage />} />
             <Route path="sistema" element={<SystemPage />} />
+            <Route path="cobertura-fiscal" element={<FiscalCoveragePage />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>
         </AdminShell>
@@ -153,6 +156,7 @@ const NAV = [
   { to: '/admin/avisos', label: 'Avisos', icon: Megaphone },
   { to: '/admin/equipe', label: 'Equipe Bipaê', icon: ShieldCheck },
   { to: '/admin/auditoria', label: 'Auditoria', icon: ScrollText },
+  { to: '/admin/cobertura-fiscal', label: 'Cobertura fiscal', icon: Landmark },
   { to: '/admin/sistema', label: 'Sistema', icon: Server },
 ];
 

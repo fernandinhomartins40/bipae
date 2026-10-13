@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-23.b Cobertura fiscal no painel] — 13/10/2026
+
+### Adicionado
+- **Painel do super admin, "Cobertura fiscal":** tabela das 27 UFs × 5 regimes mostrando onde o Bipaê já calcula todos os impostos de uma venda comum e o que falta em cada combinação (passe o mouse para ver o motivo). Hoje: 114 de 135.
+- Fecha a F3-23 (teste e mapa de cobertura).
+
 ## [F3-06.e Regras de ICMS da empresa] — 13/10/2026
 
 ### Adicionado
