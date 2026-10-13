@@ -43,5 +43,14 @@
   "publishedAt": "2026-10-13",
   "downloadedAt": "2026-10-13",
   "sha256": "ba19f5ce99064828c2317a28a73fcb76441bfe96ad2ded41d5ad0a8a5186bf73"
+ },
+ "nfeSchema": {
+  "file": "PL_010b_NT2025_002_v1.30.zip",
+  "title": "Pacote de schemas da NF-e/NFC-e PL_010b (NT 2025.002 v1.30)",
+  "publisher": "Portal da SEFAZ Virtual do RS (SVRS), mesmos arquivos do Portal Nacional da NF-e",
+  "page": "https://dfe-portal.svrs.rs.gov.br/Nfe/Documentos",
+  "publishedAt": "2025-10-07",
+  "downloadedAt": "2026-10-13",
+  "sha256": "2deaa8d430d0acb47deae06b9b6d1202dbb436baf3d2d3aa834a534a3d6fa1b8"
  }
 }

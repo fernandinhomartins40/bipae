@@ -79,13 +79,14 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Fontes: arquivos oficiais do Portal Nacional da NF-e, do Siscomex, do CONFAZ e do Planalto, guardados em `packages/fiscal/sources` com data e hash (ver `docs/fiscal/versoes.md` seção 0.1).
 - [x] F3-03.a · Importador das planilhas oficiais; CFOP, CST e cClassTrib do IBS/CBS, alíquotas de referência (CBS, IBS) e FCP por UF
 - [x] F3-03.b · NCM (tabela do Siscomex), com vigência — depende: F3-03.a
-- [ ] F3-03.c · CST do ICMS, CSOSN, CST de PIS, COFINS e IPI e origem da mercadoria, tirados dos schemas oficiais (XSD) — depende: F3-03.a
+- [x] F3-03.c · CST do ICMS, CSOSN, CST de PIS, COFINS e IPI e origem da mercadoria, tirados dos schemas oficiais (XSD) — depende: F3-03.a
 - [ ] F3-03.d · CEST (Convênio ICMS 142/18) — depende: F3-03.a
 - [ ] F3-04 · Tributos atuais: ICMS (Simples/CSOSN, regime normal/CST, ST básico), PIS/COFINS e IPI, com explicação do cálculo — depende: F3-03
   - Pronto quando: há casos de teste por regime (Simples, Presumido, Real) e cada cálculo mostra seus passos.
 - [ ] F3-05 · IBS, CBS e IS com vigência (2026 teste, 2027, transição 2029–2032, 2033) — depende: F3-03
   - Pronto quando: há casos por período, e as ambiguidades viram configuração, nunca suposição.
 - [ ] F3-06 · Perfil fiscal do produto e da empresa ligado ao motor, com cálculo na venda — depende: F1-02, F3-04, F3-05
+  - Trocar as listas digitadas do cadastro (`ICMS_ORIGINS` em `@bipae/domain`, campos livres de CST, CFOP e NCM) pelas tabelas de `@bipae/fiscal/tables`, com busca de NCM.
 - [ ] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
 - [ ] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07

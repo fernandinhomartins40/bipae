@@ -38,5 +38,13 @@
     "page": "https://portalunico.siscomex.gov.br/classif/api/publico/nomenclatura/download/json",
     "publishedAt": "2026-10-13",
     "downloadedAt": "2026-10-13"
+  },
+  "nfeSchema": {
+    "file": "PL_010b_NT2025_002_v1.30.zip",
+    "title": "Pacote de schemas da NF-e/NFC-e PL_010b (NT 2025.002 v1.30)",
+    "publisher": "Portal da SEFAZ Virtual do RS (SVRS), mesmos arquivos do Portal Nacional da NF-e",
+    "page": "https://dfe-portal.svrs.rs.gov.br/Nfe/Documentos",
+    "publishedAt": "2025-10-07",
+    "downloadedAt": "2026-10-13"
   }
 }

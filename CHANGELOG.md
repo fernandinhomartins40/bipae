@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-03.c Situações tributárias e origem] — 13/10/2026
+
+### Adicionado
+- **CST do ICMS, CSOSN, CST de PIS, COFINS e IPI e origem da mercadoria**, com os códigos tirados do schema oficial da NF-e (pacote PL_010b v1.30), que é o que a SEFAZ usa para validar.
+- Cada código já diz **em que grupo do XML ele entra** (CST 40, 41 e 50 no `ICMS40`; CSOSN 102, 103, 300 e 400 no `ICMSSN102`). É a base para montar a nota na F3-07.
+- Descrições em português correto, com a norma de origem, e um teste que impede descrição sem código ou código sem descrição.
+
 ## [F3-03.b Tabela de NCM] — 13/10/2026
 
 ### Adicionado

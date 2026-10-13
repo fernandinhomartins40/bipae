@@ -4,3 +4,4 @@ export * from './cfop';
 export * from './class-trib';
 export * from './rates';
 export * from './sources';
+export * from './tax-situations';

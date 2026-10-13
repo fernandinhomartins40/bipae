@@ -13,7 +13,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import Decimal from 'decimal.js';
-import { readXlsx } from './xlsx.mjs';
+import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sourcesDir = join(root, 'sources');
@@ -296,12 +296,70 @@ function importNcm() {
   return { updatedAt: clean(raw.Data_Ultima_Atualizacao_NCM), act: clean(raw.Ato), items };
 }
 
+// Em que grupo do XML cada código de situação tributária entra (ex.: CST 40, 41 e 50 vão no
+// grupo ICMS40). Sai do schema oficial, que é o que a SEFAZ usa para validar a nota.
+const SCHEMA_GROUPS = [
+  ['csosn', /^ICMSSN\d{3}$/],
+  ['icms', /^ICMS(\d{2}|Part|ST)$/],
+  ['pis', /^PIS(Aliq|Qtde|NT|Outr)$/],
+  ['cofins', /^COFINS(Aliq|Qtde|NT|Outr)$/],
+  ['ipi', /^IPI(Trib|NT)$/],
+];
+
+function importNfeSchema() {
+  const files = unzip(readFileSync(join(sourcesDir, manifest.nfeSchema.file)));
+  const layoutEntry = [...files].find(([name]) => /leiauteNFe_v[\d.]+\.xsd$/.test(name));
+  if (!layoutEntry) throw new Error('Pacote de schemas sem o leiaute da NF-e');
+  const layout = layoutEntry[1].toString('utf8');
+
+  const found = { icms: new Map(), csosn: new Map(), pis: new Map(), cofins: new Map(), ipi: new Map() };
+  const names = [...layout.matchAll(/<xs:element name="([A-Za-z0-9]+)"/g)];
+  for (const match of layout.matchAll(/<xs:element name="(CST|CSOSN)">([\s\S]*?)<\/xs:element>/g)) {
+    // O grupo é o último elemento de tributo aberto antes deste campo.
+    let owner = null;
+    for (let i = names.length - 1; i >= 0 && !owner; i--) {
+      if (names[i].index >= match.index) continue;
+      const kind = SCHEMA_GROUPS.find(([, pattern]) => pattern.test(names[i][1]));
+      if (kind) owner = { kind: kind[0], group: names[i][1] };
+    }
+    if (!owner) throw new Error('Campo CST/CSOSN fora de um grupo de tributo conhecido');
+    if ((owner.kind === 'csosn') !== (match[1] === 'CSOSN')) {
+      throw new Error(`Campo ${match[1]} inesperado no grupo ${owner.group}`);
+    }
+    const codes = [...match[2].matchAll(/<xs:enumeration value="([^"]*)"/g)].map((m) => m[1]);
+    if (codes.length === 0) throw new Error(`Grupo ${owner.group} sem lista de códigos`);
+    for (const code of codes) {
+      const groups = found[owner.kind].get(code) ?? [];
+      if (!groups.includes(owner.group)) groups.push(owner.group);
+      found[owner.kind].set(code, groups);
+    }
+  }
+
+  const origin = /<xs:simpleType name="Torig">([\s\S]*?)<\/xs:simpleType>/.exec(layout);
+  if (!origin) throw new Error('Tipo Torig (origem da mercadoria) não encontrado no schema');
+  const list = (map) => [...map].sort(([a], [b]) => (a < b ? -1 : 1)).map(([code, groups]) => ({ code, groups }));
+  const result = {
+    package: manifest.nfeSchema.file.replace(/\.zip$/, ''),
+    icms: list(found.icms),
+    csosn: list(found.csosn),
+    pis: list(found.pis),
+    cofins: list(found.cofins),
+    ipi: list(found.ipi),
+    orig: [...origin[1].matchAll(/<xs:enumeration value="([^"]*)"/g)].map((m) => m[1]),
+  };
+  for (const [kind, value] of Object.entries(result)) {
+    if (Array.isArray(value) && value.length === 0) throw new Error(`Schema sem códigos de ${kind}`);
+  }
+  return result;
+}
+
 const tables = {
   'cfop.json': importCfop(),
   'class-trib.json': importClassTrib(),
   'cbs-rates.json': importCbsRates(),
   'fcp.json': importFcp(),
   'ncm.json': importNcm(),
+  'nfe-codes.json': importNfeSchema(),
 };
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha

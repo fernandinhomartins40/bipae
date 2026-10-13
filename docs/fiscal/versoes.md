@@ -57,6 +57,7 @@ Os arquivos abaixo estão guardados em `packages/fiscal/sources`, com data e has
 | Alíquotas da CBS | IT 2026.002 v1.00 | 12/05/2026 | 2026: 0,9%. 2027: **"aguarda legislação"** |
 | FCP por UF | Tabela de Alíquotas de FCP | 25/02/2025 | 27 UFs, alíquota fixa ou teto |
 | NCM | Portal Único Siscomex, tabela vigente em 13/10/2026 (Resolução Gecex nº 926/2026) | 13/10/2026 | 10.516 NCMs de 8 dígitos e os níveis acima (capítulo, posição, subposição) |
+| CST do ICMS, CSOSN, CST de PIS, COFINS e IPI, origem | Pacote de schemas PL_010b (NT 2025.002 v1.30), portal SVRS | 07/10/2025 | Lista de códigos aceitos e o grupo do XML de cada um, tirados do próprio schema |
 
 Lidos no texto da **LC 214/2025** (Planalto, com as alterações da LC 227/2026):
 
@@ -70,7 +71,9 @@ Lidos no texto da **LC 214/2025** (Planalto, com as alterações da LC 227/2026)
 
 O NCM vem de <https://portalunico.siscomex.gov.br/classif/api/publico/nomenclatura/download/json> e traz **só os códigos vigentes**: um NCM extinto some da tabela, sem histórico. O Portal da NF-e publica à parte os avisos de mudança (o mais recente: IT 2024.001 v2.40, NCM a partir de 01/10/2026).
 
-Ainda a buscar (subtarefas da F3-03): CST de ICMS/PIS/COFINS/IPI e CSOSN (schemas oficiais) e CEST (Convênio ICMS 142/18).
+Os **códigos** de situação tributária vêm do schema; as **descrições** foram digitadas a partir das normas (Convênio s/nº de 1970, IN RFB 1.009/2010), porque o texto do schema tem erros (chega a dizer "com similar nacional" na origem 6). Um teste garante que as duas listas têm os mesmos códigos. Se o pacote de schemas mudar (dúvida D-012), basta trocar o arquivo e regerar.
+
+Ainda a buscar (subtarefa F3-03.d): CEST (Convênio ICMS 142/18).
 
 ## ⚠️ Limitação da pesquisa de 11/10
 

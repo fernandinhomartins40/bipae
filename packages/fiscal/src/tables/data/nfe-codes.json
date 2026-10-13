@@ -1,0 +1,658 @@
+{
+ "package": "PL_010b_NT2025_002_v1.30",
+ "icms": [
+  {
+   "code": "00",
+   "groups": [
+    "ICMS00"
+   ]
+  },
+  {
+   "code": "02",
+   "groups": [
+    "ICMS02"
+   ]
+  },
+  {
+   "code": "10",
+   "groups": [
+    "ICMS10",
+    "ICMSPart"
+   ]
+  },
+  {
+   "code": "15",
+   "groups": [
+    "ICMS15"
+   ]
+  },
+  {
+   "code": "20",
+   "groups": [
+    "ICMS20"
+   ]
+  },
+  {
+   "code": "30",
+   "groups": [
+    "ICMS30"
+   ]
+  },
+  {
+   "code": "40",
+   "groups": [
+    "ICMS40"
+   ]
+  },
+  {
+   "code": "41",
+   "groups": [
+    "ICMS40",
+    "ICMSST"
+   ]
+  },
+  {
+   "code": "50",
+   "groups": [
+    "ICMS40"
+   ]
+  },
+  {
+   "code": "51",
+   "groups": [
+    "ICMS51"
+   ]
+  },
+  {
+   "code": "53",
+   "groups": [
+    "ICMS53"
+   ]
+  },
+  {
+   "code": "60",
+   "groups": [
+    "ICMS60",
+    "ICMSST"
+   ]
+  },
+  {
+   "code": "61",
+   "groups": [
+    "ICMS61"
+   ]
+  },
+  {
+   "code": "70",
+   "groups": [
+    "ICMS70"
+   ]
+  },
+  {
+   "code": "90",
+   "groups": [
+    "ICMS90",
+    "ICMSPart"
+   ]
+  }
+ ],
+ "csosn": [
+  {
+   "code": "101",
+   "groups": [
+    "ICMSSN101"
+   ]
+  },
+  {
+   "code": "102",
+   "groups": [
+    "ICMSSN102"
+   ]
+  },
+  {
+   "code": "103",
+   "groups": [
+    "ICMSSN102"
+   ]
+  },
+  {
+   "code": "201",
+   "groups": [
+    "ICMSSN201"
+   ]
+  },
+  {
+   "code": "202",
+   "groups": [
+    "ICMSSN202"
+   ]
+  },
+  {
+   "code": "203",
+   "groups": [
+    "ICMSSN202"
+   ]
+  },
+  {
+   "code": "300",
+   "groups": [
+    "ICMSSN102"
+   ]
+  },
+  {
+   "code": "400",
+   "groups": [
+    "ICMSSN102"
+   ]
+  },
+  {
+   "code": "500",
+   "groups": [
+    "ICMSSN500"
+   ]
+  },
+  {
+   "code": "900",
+   "groups": [
+    "ICMSSN900"
+   ]
+  }
+ ],
+ "pis": [
+  {
+   "code": "01",
+   "groups": [
+    "PISAliq"
+   ]
+  },
+  {
+   "code": "02",
+   "groups": [
+    "PISAliq"
+   ]
+  },
+  {
+   "code": "03",
+   "groups": [
+    "PISQtde"
+   ]
+  },
+  {
+   "code": "04",
+   "groups": [
+    "PISNT"
+   ]
+  },
+  {
+   "code": "05",
+   "groups": [
+    "PISNT"
+   ]
+  },
+  {
+   "code": "06",
+   "groups": [
+    "PISNT"
+   ]
+  },
+  {
+   "code": "07",
+   "groups": [
+    "PISNT"
+   ]
+  },
+  {
+   "code": "08",
+   "groups": [
+    "PISNT"
+   ]
+  },
+  {
+   "code": "09",
+   "groups": [
+    "PISNT"
+   ]
+  },
+  {
+   "code": "49",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "50",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "51",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "52",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "53",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "54",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "55",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "56",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "60",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "61",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "62",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "63",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "64",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "65",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "66",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "67",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "70",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "71",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "72",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "73",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "74",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "75",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "98",
+   "groups": [
+    "PISOutr"
+   ]
+  },
+  {
+   "code": "99",
+   "groups": [
+    "PISOutr"
+   ]
+  }
+ ],
+ "cofins": [
+  {
+   "code": "01",
+   "groups": [
+    "COFINSAliq"
+   ]
+  },
+  {
+   "code": "02",
+   "groups": [
+    "COFINSAliq"
+   ]
+  },
+  {
+   "code": "03",
+   "groups": [
+    "COFINSQtde"
+   ]
+  },
+  {
+   "code": "04",
+   "groups": [
+    "COFINSNT"
+   ]
+  },
+  {
+   "code": "05",
+   "groups": [
+    "COFINSNT"
+   ]
+  },
+  {
+   "code": "06",
+   "groups": [
+    "COFINSNT"
+   ]
+  },
+  {
+   "code": "07",
+   "groups": [
+    "COFINSNT"
+   ]
+  },
+  {
+   "code": "08",
+   "groups": [
+    "COFINSNT"
+   ]
+  },
+  {
+   "code": "09",
+   "groups": [
+    "COFINSNT"
+   ]
+  },
+  {
+   "code": "49",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "50",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "51",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "52",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "53",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "54",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "55",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "56",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "60",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "61",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "62",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "63",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "64",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "65",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "66",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "67",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "70",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "71",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "72",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "73",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "74",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "75",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "98",
+   "groups": [
+    "COFINSOutr"
+   ]
+  },
+  {
+   "code": "99",
+   "groups": [
+    "COFINSOutr"
+   ]
+  }
+ ],
+ "ipi": [
+  {
+   "code": "00",
+   "groups": [
+    "IPITrib"
+   ]
+  },
+  {
+   "code": "01",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "02",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "03",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "04",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "05",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "49",
+   "groups": [
+    "IPITrib"
+   ]
+  },
+  {
+   "code": "50",
+   "groups": [
+    "IPITrib"
+   ]
+  },
+  {
+   "code": "51",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "52",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "53",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "54",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "55",
+   "groups": [
+    "IPINT"
+   ]
+  },
+  {
+   "code": "99",
+   "groups": [
+    "IPITrib"
+   ]
+  }
+ ],
+ "orig": [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8"
+ ]
+}
