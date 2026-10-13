@@ -73,7 +73,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 
 - [x] F3-01 · Revalidar NTs, leiautes e cronograma da Reforma em `docs/fiscal/versoes.md`, com conferência manual do Portal da NF-e
   - Pronto quando: cada versão tem fonte e data, e as dúvidas novas estão em `duvidas.md`.
-- [ ] F3-02 · `packages/fiscal`: estrutura, decimal de precisão, regras como dados versionados por vigência (ADR-0006) — depende: F3-01
+- [x] F3-02 · `packages/fiscal`: estrutura, decimal de precisão, regras como dados versionados por vigência (ADR-0006) — depende: F3-01
   - Pronto quando: o motor puro carrega tabelas por data, e a cobertura é de pelo menos 90%.
 - [ ] F3-03 · Tabelas oficiais versionadas: NCM, CEST, CFOP, CST/CSOSN, cClassTrib e alíquotas de referência — depende: F3-02
   - Fontes: IT 2025.002 v1.70 (cClassTrib, CST, cCredPres) e IT 2023.002 v2.00 (CFOP), ver `docs/fiscal/versoes.md` seção 0.

@@ -1,5 +1,16 @@
 # Changelog
 
+## [F3-02 Motor fiscal: base] — 13/10/2026
+
+### Adicionado
+- **`packages/fiscal`**, o motor fiscal puro (sem banco e sem rede), com 100% de cobertura de testes:
+  - contas com decimal de precisão arbitrária, dinheiro em centavos e arredondamento explícito (ADR-0008);
+  - **regras como dados**, cada uma com vigência, escopo e a norma que a justifica (ADR-0006);
+  - escolha da regra em vigor na data do fato gerador, ficando com a mais específica; empate entre regras é erro, nunca escolha silenciosa;
+  - conferência da tabela de regras (id repetido, vigência inválida, regra sem fonte, regras que se cruzam);
+  - cálculo de base × alíquota com redução de base e **explicação passo a passo** de cada valor.
+- Ainda sem alíquotas oficiais: as tabelas entram na F3-03.
+
 ## [Correção da fila e do deploy] — 13/10/2026
 
 O deploy da F1-07 deixou o site fora do ar por alguns minutos: a API não subia e a volta automática para a versão anterior não rodou. A versão anterior foi restaurada à mão.
