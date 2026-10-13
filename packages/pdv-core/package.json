@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@bipae/domain": "workspace:*",
+    "@bipae/fiscal": "workspace:*",
     "@bipae/local-db": "workspace:*",
     "@bipae/platform": "workspace:*"
   },

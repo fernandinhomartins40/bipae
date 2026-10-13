@@ -388,6 +388,9 @@ importers:
       '@bipae/domain':
         specifier: workspace:*
         version: link:../domain
+      '@bipae/fiscal':
+        specifier: workspace:*
+        version: link:../fiscal
       '@bipae/local-db':
         specifier: workspace:*
         version: link:../local-db

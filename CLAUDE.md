@@ -53,6 +53,7 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 - Toda ação do caixa grava a projeção local **e** o evento na outbox na mesma transação (`PdvService.enqueue`). Eventos são validados pelos schemas de `@bipae/domain/events`.
 - O servidor aplica cada evento uma vez (`sync_events`), cada um na sua transação; rejeições permanentes usam `Rejection` com motivo pt-BR; falha temporária interrompe o lote para preservar a ordem.
 - Protocolos de periféricos (ESC/POS, balança, Conector) ficam em TypeScript puro e testável; o Rust só move bytes e espelha `ConnectorCore`.
+- Ao fechar a venda o caixa calcula os impostos de cada item (`PdvService.withTaxes`, com `saleTaxSummaries` de `@bipae/fiscal`) e o resumo viaja no evento. O servidor grava, refaz a conta e marca `sales.tax_check`; nunca recusa a venda por isso. O cálculo fiscal jamais pode impedir uma venda.
 - Capacidades nunca mentem: o que não está construído ou configurado aparece como "chega em breve" ou "falta configurar".
 
 ## Padrões da API

@@ -1,4 +1,4 @@
-import { terminalEvent, uuidv7 } from '@bipae/domain';
+import { terminalEvent, uuidv7, type SyncPullResult } from '@bipae/domain';
 import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -36,9 +36,10 @@ const product = (
 });
 
 let pdv: PdvService;
+let storage: ReturnType<typeof createStorage>;
 
 beforeEach(async () => {
-  const storage = createStorage(nodeSqliteDriver());
+  storage = createStorage(nodeSqliteDriver());
   await migrateLocal(storage);
   pdv = new PdvService(storage, { terminalId: TERMINAL, operatorId: OPERATOR });
 });
@@ -320,5 +321,94 @@ describe('dados fiscais guardados no caixa (F3-06.d2)', () => {
     expect(segundo.company).toEqual({ uf: null, taxRegime: null });
     expect([...segundo.profiles.keys()]).toEqual([outro]);
     expect(segundo.profiles.get(outro)!.csosn).toBe('500');
+  });
+});
+
+describe('impostos calculados ao fechar a venda (F3-06.d3)', () => {
+  const PERFIL = uuidv7();
+  const perfil = {
+    cfopInterna: '5102',
+    cfopInterestadual: '6102',
+    csosn: '102',
+    cstIcms: '00',
+    cstPisCofins: '01',
+    cClassTrib: '000001',
+  };
+  const vender = async (itens: SyncPullResult['products']) => {
+    await pdv.applyCatalog(itens);
+    await pdv.openSession(0);
+    const carrinho = itens.reduce((cart, item) => addItem(cart, item), EMPTY_CART);
+    const total = itens.reduce((soma, item) => soma + item.priceCents, 0);
+    return pdv.completeSale(carrinho, [{ method: 'pix', receivedCents: total }], { discountLimitPercent: 10 });
+  };
+
+  it('empresa sem UF e sem regime: a venda sai sem resumo de impostos', async () => {
+    const venda = await vender([product({ priceCents: 10_000 })]);
+    expect(venda.items[0]!.taxes).toBeUndefined();
+  });
+
+  it('com a empresa e o perfil configurados, cada item leva os seus impostos, sem internet', async () => {
+    await pdv.applyFiscal({
+      version: 'v1',
+      company: { uf: 'SP', taxRegime: 'real' },
+      profiles: [{ id: PERFIL, ...perfil }],
+    });
+    const comPerfil = { ...product({ name: 'Arroz', priceCents: 10_000 }), fiscalProfileId: PERFIL };
+    const semPerfil = product({ name: 'Sem perfil', priceCents: 5000 });
+    const venda = await vender([comPerfil, semPerfil]);
+
+    expect(venda.items[0]!.taxes).toEqual({
+      crt: 3,
+      cfop: '5102',
+      icmsCents: 1800,
+      icmsStCents: null,
+      fcpCents: null,
+      pisCents: 135,
+      cofinsCents: 623,
+      ibsCents: 7,
+      cbsCents: 67,
+      complete: true,
+      pending: [],
+    });
+    expect(venda.items[1]!.taxes).toMatchObject({ icmsCents: null, complete: false });
+    expect(venda.items[1]!.taxes!.pending).toEqual([
+      'O produto não tem perfil fiscal. Escolha um no cadastro do produto.',
+    ]);
+
+    // O evento que vai para o servidor leva os mesmos impostos e passa na validação do domínio.
+    const evento = (await pdv.pendingEvents()).find((e) => e.type === 'sale.completed')!;
+    expect(terminalEvent.safeParse(evento).success).toBe(true);
+    expect((evento.payload as { items: { taxes?: unknown }[] }).items[0]!.taxes).toEqual(venda.items[0]!.taxes);
+    // E a venda guardada no caixa também.
+    expect((await pdv.getSale(venda.id))!.items[0]!.taxes).toEqual(venda.items[0]!.taxes);
+  });
+
+  it('o desconto da venda reduz a base dos impostos de cada item', async () => {
+    await pdv.applyFiscal({
+      version: 'v1',
+      company: { uf: 'SP', taxRegime: 'presumido' },
+      profiles: [{ id: PERFIL, ...perfil }],
+    });
+    const item = { ...product({ priceCents: 10_000 }), fiscalProfileId: PERFIL };
+    await pdv.applyCatalog([item]);
+    await pdv.openSession(0);
+    const venda = await pdv.completeSale(
+      setSaleDiscount(addItem(EMPTY_CART, item), 1000),
+      [{ method: 'pix', receivedCents: 9000 }],
+      { discountLimitPercent: 10 },
+    );
+    // 90,00 × 18% = 16,20
+    expect(venda.items[0]!.totalCents).toBe(9000);
+    expect(venda.items[0]!.taxes).toMatchObject({ icmsCents: 1620, pisCents: 59, cofinsCents: 270 });
+  });
+
+  it('um problema nos dados fiscais nunca impede a venda', async () => {
+    await pdv.applyFiscal({ version: 'v1', company: { uf: 'SP', taxRegime: 'real' }, profiles: [] });
+    // Dado corrompido no aparelho: o cálculo falha, a venda acontece do mesmo jeito.
+    await storage.execute("INSERT INTO fiscal_profiles (id, data) VALUES ('x', 'isto não é JSON')");
+    const venda = await vender([product({ priceCents: 10_000 })]);
+    expect(venda.totalCents).toBe(10_000);
+    expect(venda.items[0]!.taxes).toBeUndefined();
+    expect((await pdv.pendingEvents()).some((e) => e.type === 'sale.completed')).toBe(true);
   });
 });

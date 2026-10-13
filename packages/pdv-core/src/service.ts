@@ -9,6 +9,7 @@ import {
   type SyncPullResult,
   type TerminalEvent,
 } from '@bipae/domain';
+import { saleTaxSummaries } from '@bipae/fiscal';
 import { getMeta, searchKey, setMeta, type LocalStorage, type Tx } from '@bipae/local-db';
 import { discountNeedsAuthorization, totals, type Cart, type CatalogItem } from './cart';
 import {
@@ -22,6 +23,12 @@ import { summarizePayments, type TenderInput } from './payments';
 
 /** User-facing error from register operations (pt-BR). */
 export class PdvError extends Error {}
+
+/** A data no relógio do caixa (AAAA-MM-DD): é a data do fato gerador da venda. */
+function localDate(now: Date): string {
+  const two = (n: number) => String(n).padStart(2, '0');
+  return `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}`;
+}
 
 export interface PdvContext {
   terminalId: string;
@@ -439,7 +446,7 @@ export class PdvService {
       totalCents: t.totalCents,
       subtotalCents: t.subtotalCents,
       discountCents: t.discountCents,
-      items: t.items,
+      items: await this.withTaxes(t.items),
       payments: summary.payments,
       customerTaxId: cart.customerTaxId,
     };
@@ -464,6 +471,35 @@ export class PdvService {
       });
     });
     return sale;
+  }
+
+  /**
+   * Anexa a cada item o resumo dos impostos (F3-06.d3), calculado com os dados fiscais guardados
+   * no caixa. Funciona sem internet. O cálculo nunca impede a venda: se a empresa ainda não
+   * configurou a parte fiscal, ou se algo inesperado acontecer, a venda segue sem o resumo.
+   */
+  private async withTaxes(items: SaleItem[]): Promise<SaleItem[]> {
+    try {
+      const { company, profiles } = await this.fiscalContext();
+      if (!company.uf && !company.taxRegime) return items;
+      const ids = [...new Set(items.map((item) => item.productId))];
+      const rows = await this.storage.query<{ id: string; fiscal_profile_id: string | null }>(
+        `SELECT id, fiscal_profile_id FROM products WHERE id IN (${ids.map(() => '?').join(', ')})`,
+        ids,
+      );
+      const profileOf = new Map(rows.map((row) => [row.id, row.fiscal_profile_id]));
+      const summaries = saleTaxSummaries({
+        company,
+        items: items.map((item) => ({
+          operationCents: item.totalCents,
+          profile: profiles.get(profileOf.get(item.productId) ?? '') ?? null,
+        })),
+        date: localDate(this.now()),
+      });
+      return summaries ? items.map((item, index) => ({ ...item, taxes: summaries[index]! })) : items;
+    } catch {
+      return items;
+    }
   }
 
   async cancelSale(saleId: string, reason: string, authorizedBy: string | null) {

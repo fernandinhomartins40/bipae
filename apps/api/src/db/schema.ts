@@ -314,6 +314,8 @@ export const sales = pgTable('sales', {
   cancelledAt: ts('cancelled_at'),
   cancelReason: text('cancel_reason'),
   data: jsonb('data').notNull(),
+  /** A conta de impostos do servidor bateu com a do caixa? Nulo quando o caixa não calculou. */
+  taxCheck: text('tax_check'),
 });
 
 export const saleItems = pgTable(
@@ -330,6 +332,8 @@ export const saleItems = pgTable(
     grossCents: money('gross_cents').notNull(),
     discountCents: money('discount_cents').notNull(),
     totalCents: money('total_cents').notNull(),
+    /** Resumo dos impostos do item, calculado pelo caixa (F3-06.d3). */
+    taxes: jsonb('taxes'),
   },
   (t) => [primaryKey({ columns: [t.saleId, t.line] })],
 );

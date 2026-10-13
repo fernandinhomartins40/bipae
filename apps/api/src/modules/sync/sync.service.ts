@@ -5,10 +5,12 @@ import {
   uuidv7,
   type FiscalSnapshot,
   type PricingSnapshot,
+  type SaleItem,
   type SyncPullResult,
   type SyncPushResult,
   type TerminalEvent,
 } from '@bipae/domain';
+import { saleTaxSummaries, sameTaxSummary, type SaleFiscalProfile } from '@bipae/fiscal';
 import { and, asc, eq, gt, inArray, or, sql } from 'drizzle-orm';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
@@ -224,6 +226,7 @@ export class SyncService {
           discountAuthorizedBy: p.discountAuthorizedBy ?? null,
           occurredAt: at,
           data: p,
+          taxCheck: await this.checkTaxes(tx, terminal.companyId, p.items, at),
         });
         await tx
           .insert(saleItems)
@@ -349,6 +352,57 @@ export class SyncService {
   }
 
   /** FK checks bypass RLS, so product ownership is verified explicitly under the tenant scope. */
+  /**
+   * Refaz a conta de impostos da venda com os dados do servidor (F3-06.d3) e diz se bateu com a
+   * do caixa. Diferença acontece de forma legítima, por exemplo quando o perfil fiscal mudou e o
+   * caixa ainda não tinha sincronizado: por isso é só um sinal para o suporte, nunca motivo para
+   * recusar a venda. Nulo quando o caixa não mandou impostos.
+   */
+  private async checkTaxes(
+    tx: Tx,
+    companyId: string,
+    items: SaleItem[],
+    at: Date,
+  ): Promise<'ok' | 'divergente' | null> {
+    if (!items.some((item) => item.taxes)) return null;
+    try {
+      const [company] = await tx
+        .select({ uf: companies.uf, taxRegime: companies.taxRegime })
+        .from(companies)
+        .where(eq(companies.id, companyId));
+      const sold = await tx
+        .select({ id: products.id, fiscalProfileId: products.fiscalProfileId })
+        .from(products)
+        .where(inArray(products.id, [...new Set(items.map((item) => item.productId))]));
+      const profileIds = [...new Set(sold.flatMap((p) => (p.fiscalProfileId ? [p.fiscalProfileId] : [])))];
+      const profiles = profileIds.length
+        ? await tx
+            .select({ id: fiscalProfiles.id, data: fiscalProfiles.data })
+            .from(fiscalProfiles)
+            .where(inArray(fiscalProfiles.id, profileIds))
+        : [];
+      const profileOf = (productId: string) => {
+        const id = sold.find((p) => p.id === productId)?.fiscalProfileId;
+        return (profiles.find((profile) => profile.id === id)?.data as SaleFiscalProfile | undefined) ?? null;
+      };
+      const expected = saleTaxSummaries({
+        company: { uf: company?.uf ?? null, taxRegime: company?.taxRegime ?? null },
+        items: items.map((item) => ({ operationCents: item.totalCents, profile: profileOf(item.productId) })),
+        // A data do fato gerador é a do dia da venda no Brasil, não a do fuso do servidor.
+        date: new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(at),
+      });
+      const same =
+        expected !== null &&
+        items.every((item, index) => item.taxes !== undefined && sameTaxSummary(item.taxes, expected[index]!));
+      if (!same) this.logger.warn('Impostos da venda diferentes entre o caixa e o servidor');
+      return same ? 'ok' : 'divergente';
+    } catch (error) {
+      // A conferência é um extra: falha nela não pode impedir a venda de entrar.
+      this.logger.warn(`Não foi possível conferir os impostos da venda: ${(error as Error).message}`);
+      return null;
+    }
+  }
+
   private async requireProducts(tx: Tx, ids: string[]) {
     const unique = [...new Set(ids)];
     const found = await tx

@@ -196,3 +196,88 @@ export function calculateSaleItemTaxes(input: {
 
   return finish({ icms, pis, cofins, ibsCbs }, cfop);
 }
+
+/**
+ * Resumo dos impostos de um item, para viajar com a venda (evento do caixa) e ficar gravado.
+ * Valores em centavos; `null` quer dizer "sem valor destacado": o tributo não se aplica àquele
+ * regime, ou não pôde ser calculado, e nesse caso o motivo está em `pending`.
+ */
+export interface SaleItemTaxSummary {
+  crt: number | null;
+  cfop: string | null;
+  icmsCents: number | null;
+  icmsStCents: number | null;
+  fcpCents: number | null;
+  pisCents: number | null;
+  cofinsCents: number | null;
+  ibsCents: number | null;
+  cbsCents: number | null;
+  complete: boolean;
+  pending: string[];
+}
+
+export function summarizeSaleItemTaxes(taxes: SaleItemTaxes): SaleItemTaxSummary {
+  const icms = taxes.icms.status === 'calculado' ? taxes.icms.result : null;
+  const ibsCbs = taxes.ibsCbs.status === 'calculado' ? taxes.ibsCbs.result : null;
+  const amount = (outcome: TaxOutcome<ContributionResult>) =>
+    outcome.status === 'calculado' ? outcome.result.amountCents : null;
+  return {
+    crt: taxes.crt,
+    cfop: taxes.cfop,
+    icmsCents: icms ? icms.amountCents : null,
+    icmsStCents: icms?.st ? icms.st.amountCents : null,
+    fcpCents: icms?.fcp ? icms.fcp.amountCents : null,
+    pisCents: amount(taxes.pis),
+    cofinsCents: amount(taxes.cofins),
+    ibsCents: ibsCbs ? ibsCbs.ibsAmountCents : null,
+    cbsCents: ibsCbs ? ibsCbs.cbsAmountCents : null,
+    complete: taxes.complete,
+    pending: taxes.pending,
+  };
+}
+
+const SUMMARY_FIELDS = [
+  'crt',
+  'cfop',
+  'icmsCents',
+  'icmsStCents',
+  'fcpCents',
+  'pisCents',
+  'cofinsCents',
+  'ibsCents',
+  'cbsCents',
+] as const;
+
+/** Dois resumos chegaram aos mesmos números? (As mensagens de pendência não entram na comparação.) */
+export function sameTaxSummary(a: SaleItemTaxSummary, b: SaleItemTaxSummary): boolean {
+  return SUMMARY_FIELDS.every((field) => a[field] === b[field]);
+}
+
+/**
+ * Resumo dos impostos de todos os itens de uma venda. É a mesma função no caixa (ao fechar a
+ * venda, sem internet) e no servidor (ao conferir), para as duas contas só divergirem se os
+ * dados forem diferentes.
+ *
+ * Devolve null quando a empresa não informou nem a UF nem o regime: ela ainda não usa a parte
+ * fiscal, e a venda segue sem resumo de impostos, em vez de carregar avisos em todo item.
+ */
+export function saleTaxSummaries(input: {
+  company: { uf: string | null; taxRegime: string | null };
+  items: readonly { operationCents: number; profile: SaleFiscalProfile | null }[];
+  /** Data do fato gerador (AAAA-MM-DD). */
+  date: string;
+}): SaleItemTaxSummary[] | null {
+  const { company, items, date } = input;
+  if (!company.uf && !company.taxRegime) return null;
+  const regime = company.taxRegime ? (findCompanyRegime(company.taxRegime)?.id ?? null) : null;
+  return items.map((item) =>
+    summarizeSaleItemTaxes(
+      calculateSaleItemTaxes({
+        company: { uf: company.uf, regime },
+        profile: item.profile,
+        item: { operationCents: item.operationCents },
+        date,
+      }),
+    ),
+  );
+}

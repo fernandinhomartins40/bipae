@@ -13,6 +13,30 @@ const uuid = z.string().uuid();
 const cents = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
 const iso = z.string().datetime({ offset: true });
 
+/**
+ * Resumo dos impostos de um item, calculado pelo caixa no fechamento da venda (F3-06). Valor nulo
+ * quer dizer "sem valor destacado": o tributo não se aplica ao regime ou não pôde ser calculado,
+ * e nesse caso o motivo vem em `pending`. É o mesmo formato de `SaleItemTaxSummary` do motor.
+ */
+const taxCents = cents.nullable();
+export const saleItemTaxesSchema = z.object({
+  crt: z.number().int().min(1).max(4).nullable(),
+  cfop: z
+    .string()
+    .regex(/^\d{4}$/)
+    .nullable(),
+  icmsCents: taxCents,
+  icmsStCents: taxCents,
+  fcpCents: taxCents,
+  pisCents: taxCents,
+  cofinsCents: taxCents,
+  ibsCents: taxCents,
+  cbsCents: taxCents,
+  complete: z.boolean(),
+  pending: z.array(z.string().max(400)).max(10),
+});
+export type SaleItemTaxes = z.infer<typeof saleItemTaxesSchema>;
+
 export const saleItemSchema = z.object({
   line: z.number().int().positive(),
   productId: uuid,
@@ -23,6 +47,8 @@ export const saleItemSchema = z.object({
   grossCents: cents,
   discountCents: cents,
   totalCents: cents,
+  /** Ausente em vendas de caixas antigos e de empresas sem UF e regime configurados. */
+  taxes: saleItemTaxesSchema.optional(),
 });
 export type SaleItem = z.infer<typeof saleItemSchema>;
 

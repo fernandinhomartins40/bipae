@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { COMPANY_REGIMES, type CompanyRegime } from './regimes';
-import { calculateSaleItemTaxes, type SaleFiscalProfile } from './sale';
+import {
+  calculateSaleItemTaxes,
+  saleTaxSummaries,
+  sameTaxSummary,
+  summarizeSaleItemTaxes,
+  type SaleFiscalProfile,
+} from './sale';
 import { ICMS_GENERAL_RATES, UFS } from './tables/icms-uf';
 
 const HOJE = '2026-06-15';
@@ -195,5 +201,97 @@ describe('matriz de cobertura: 27 UFs × 5 regimes (F3-23)', () => {
     const completas = UFS.flatMap((uf) => COMPANY_REGIMES.map((regime) => venda(regime.id, uf).complete)).filter(Boolean);
     // 20 UFs × 5 regimes + 7 UFs pendentes × 2 regimes que não dependem da alíquota (MEI e Simples).
     expect(completas).toHaveLength(114);
+  });
+});
+
+describe('resumo dos impostos do item', () => {
+  it('leva os valores calculados e deixa nulo o que não tem destaque', () => {
+    const real = summarizeSaleItemTaxes(venda('real', 'SP'));
+    expect(real).toEqual({
+      crt: 3,
+      cfop: '5102',
+      icmsCents: 1800,
+      icmsStCents: null,
+      fcpCents: null,
+      pisCents: 135,
+      cofinsCents: 623,
+      // Base do IBS/CBS: 100,00 − 18,00 − 1,35 − 6,23 = 74,42.
+      ibsCents: 7,
+      cbsCents: 67,
+      complete: true,
+      pending: [],
+    });
+    // No Simples o PIS e a COFINS não vão na nota: nulos, e isso não é pendência.
+    expect(summarizeSaleItemTaxes(venda('simples', 'SP'))).toMatchObject({
+      crt: 1,
+      icmsCents: 0,
+      pisCents: null,
+      cofinsCents: null,
+      complete: true,
+    });
+  });
+
+  it('leva o ICMS-ST e o FCP quando existem', () => {
+    const r = summarizeSaleItemTaxes(
+      venda('real', 'SP', {
+        profile: { ...REVENDA, cstIcms: '10' },
+        settings: { icms: { st: { mva: '40', rate: '18' }, fcpRate: '2' } },
+      }),
+    );
+    expect(r).toMatchObject({ icmsCents: 1800, icmsStCents: 720, fcpCents: 200 });
+  });
+
+  it('o que falta configurar vira valor nulo, com o motivo', () => {
+    const r = summarizeSaleItemTaxes(venda('real', 'AL'));
+    expect(r.icmsCents).toBeNull();
+    expect(r.complete).toBe(false);
+    expect(r.pending[0]).toContain('AL ainda não foi confirmada');
+  });
+
+  it('compara dois resumos pelos números, não pelas mensagens', () => {
+    const a = summarizeSaleItemTaxes(venda('real', 'SP'));
+    expect(sameTaxSummary(a, { ...a, pending: ['outro texto'] })).toBe(true);
+    expect(sameTaxSummary(a, { ...a, icmsCents: 1700 })).toBe(false);
+    expect(sameTaxSummary(a, { ...a, cfop: '5405' })).toBe(false);
+    expect(sameTaxSummary(a, summarizeSaleItemTaxes(venda('presumido', 'SP')))).toBe(false);
+  });
+});
+
+describe('impostos de todos os itens da venda', () => {
+  it('empresa que não informou UF nem regime: sem resumo, em vez de aviso em todo item', () => {
+    expect(
+      saleTaxSummaries({
+        company: { uf: null, taxRegime: null },
+        items: [{ operationCents: 1000, profile: REVENDA }],
+        date: HOJE,
+      }),
+    ).toBeNull();
+  });
+
+  it('um resumo por item, na mesma ordem', () => {
+    const r = saleTaxSummaries({
+      company: { uf: 'SP', taxRegime: 'real' },
+      items: [
+        { operationCents: 10_000, profile: REVENDA },
+        { operationCents: 5000, profile: null },
+      ],
+      date: HOJE,
+    })!;
+    expect(r).toHaveLength(2);
+    expect(r[0]).toMatchObject({ icmsCents: 1800, complete: true });
+    expect(r[1]).toMatchObject({ icmsCents: null, complete: false });
+    expect(r[1]!.pending).toEqual(['O produto não tem perfil fiscal. Escolha um no cadastro do produto.']);
+  });
+
+  it('só a UF, ou regime que o motor não conhece: pede para completar o cadastro', () => {
+    for (const company of [
+      { uf: 'SP', taxRegime: null },
+      { uf: null, taxRegime: 'simples' },
+      { uf: 'SP', taxRegime: 'regime-inexistente' },
+    ]) {
+      const [r] = saleTaxSummaries({ company, items: [{ operationCents: 1000, profile: REVENDA }], date: HOJE })!;
+      expect(r!.complete).toBe(false);
+      expect(r!.pending).toEqual(['Informe a UF e o regime tributário da empresa em Empresas e lojas.']);
+    }
   });
 });

@@ -1,5 +1,22 @@
 # Changelog
 
+## [F3-06.d3 Impostos calculados na venda] — 13/10/2026
+
+### Adicionado
+- **O caixa calcula os impostos de cada item ao fechar a venda, mesmo sem internet.** Usa a UF e o regime da empresa e o perfil fiscal do produto, já guardados no aparelho. O desconto da venda entra na conta, rateado entre os itens.
+- **O resumo dos impostos vai junto com a venda** (CRT, CFOP, ICMS, ICMS-ST, FCP, PIS, COFINS, IBS e CBS, e o que ficou por configurar) e fica gravado no servidor, item a item.
+- **O servidor refaz a conta e registra se bateu.** Quando não bate (por exemplo, o regime mudou e o caixa ainda não tinha sincronizado), a venda entra do mesmo jeito e fica marcada para o suporte.
+
+### Garantias
+- **Imposto nunca impede venda.** Empresa que não configurou UF e regime vende como sempre, sem resumo de impostos. Se os dados fiscais do aparelho estiverem com problema, a venda acontece e segue sem o resumo.
+- Caixas ainda na versão anterior continuam enviando vendas normalmente.
+
+### Banco de dados
+- Migração `0008`: coluna de impostos nos itens da venda e o sinal de conferência na venda.
+
+### Ainda não aparece na tela
+- Os valores já são calculados e gravados, mas a retaguarda ainda não os mostra: é a parte d4.
+
 ## [F3-06.d2 Dados fiscais no caixa] — 13/10/2026
 
 ### Adicionado

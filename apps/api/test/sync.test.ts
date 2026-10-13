@@ -3,7 +3,10 @@ import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { addItem, EMPTY_CART, PdvService } from '@bipae/pdv-core';
 import { SyncClient, type SyncTransport } from '@bipae/sync';
+import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { asPlatform } from '../src/db/client';
+import { rowsOf } from '../src/db/migrate';
 import { api, createTestApp, signup, type TestApp } from './helpers';
 
 let t: TestApp;
@@ -628,5 +631,114 @@ describe('dados fiscais no caixa (F3-06.d2)', () => {
     });
     expect(res.statusCode).toBe(400);
     expect(res.json().message).toBe('O CST de PIS/COFINS 10 não existe.');
+  });
+});
+
+describe('impostos da venda gravados e conferidos no servidor (F3-06.d3)', () => {
+  const perfilReal = {
+    name: 'Revenda Lucro Real',
+    origem: 0,
+    cfopInterna: '5102',
+    cfopInterestadual: '6102',
+    cstIcms: '00',
+    cstPisCofins: '01',
+    cClassTrib: '000001',
+  };
+  const gravado = async (saleId: string) => {
+    const linhas = await asPlatform(t.database.db, async (tx) =>
+      rowsOf<{ taxes: Record<string, unknown> | null; tax_check: string | null }>(
+        await tx.execute(
+          sql`select i.taxes, s.tax_check from sales s join sale_items i on i.sale_id = s.id
+              where s.id = ${saleId} order by i.line`,
+        ),
+      ),
+    );
+    return { itens: linhas.map((l) => l.taxes), conferencia: linhas[0]?.tax_check ?? null };
+  };
+
+  it('venda sem internet leva os impostos; o servidor grava e a conta dele bate', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [empresa] = (await admin.get('/companies')).json();
+    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'real' });
+    const perfil = (await admin.post('/fiscal-profiles', perfilReal)).json();
+    const arroz = (
+      await admin.post('/products', {
+        name: 'Arroz 5kg',
+        priceCents: 10_000,
+        barcodes: ['7891000315507'],
+        fiscalProfileId: perfil.id,
+      })
+    ).json();
+
+    const caixa = await terminalDevice(dono, 'Caixa impostos', 'web');
+    await caixa.sync.sync();
+    caixa.net.online = false;
+    await caixa.pdv.openSession(0);
+    const produto = (await caixa.pdv.findByCode('7891000315507'))!;
+    const venda = await caixa.pdv.completeSale(
+      addItem(EMPTY_CART, produto),
+      [{ method: 'pix', receivedCents: 10_000 }],
+      { discountLimitPercent: 10 },
+    );
+    expect(venda.items[0]!.taxes).toMatchObject({ crt: 3, icmsCents: 1800, complete: true });
+
+    caixa.net.online = true;
+    await caixa.sync.sync();
+    const noServidor = await gravado(venda.id);
+    expect(noServidor.itens[0]).toMatchObject({ crt: 3, cfop: '5102', icmsCents: 1800, pisCents: 135, cofinsCents: 623 });
+    expect(noServidor.conferencia).toBe('ok');
+    expect(arroz.fiscalProfileId).toBe(perfil.id);
+  });
+
+  it('se o cadastro mudou e o caixa ainda não sabia, a venda entra e fica marcada como divergente', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [empresa] = (await admin.get('/companies')).json();
+    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'real' });
+    const perfil = (await admin.post('/fiscal-profiles', perfilReal)).json();
+    await admin.post('/products', {
+      name: 'Feijão 1kg',
+      priceCents: 10_000,
+      barcodes: ['78912342'],
+      fiscalProfileId: perfil.id,
+    });
+
+    const caixa = await terminalDevice(dono, 'Caixa defasado', 'web');
+    await caixa.sync.sync();
+    caixa.net.online = false;
+    // Enquanto o caixa está sem internet, a empresa muda de regime na retaguarda.
+    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'presumido' });
+    await caixa.pdv.openSession(0);
+    const venda = await caixa.pdv.completeSale(
+      addItem(EMPTY_CART, (await caixa.pdv.findByCode('78912342'))!),
+      [{ method: 'pix', receivedCents: 10_000 }],
+      { discountLimitPercent: 10 },
+    );
+
+    caixa.net.online = true;
+    const estado = await caixa.sync.sync();
+    // A venda não é recusada: o cliente já levou a mercadoria.
+    expect(estado.rejected).toBe(0);
+    expect(estado.pending).toBe(0);
+    const noServidor = await gravado(venda.id);
+    // Fica gravado o que o caixa calculou (regime antigo), com o sinal de divergência.
+    expect(noServidor.itens[0]).toMatchObject({ pisCents: 135 });
+    expect(noServidor.conferencia).toBe('divergente');
+  });
+
+  it('empresa que não configurou a parte fiscal: venda sem impostos e sem conferência', async () => {
+    const dono = await signup(t.app);
+    await api(t.app, dono.auth).post('/products', { name: 'Pão', priceCents: 500, barcodes: ['96385074'] });
+    const caixa = await terminalDevice(dono, 'Caixa simples', 'web');
+    await caixa.sync.sync();
+    await caixa.pdv.openSession(0);
+    const venda = await caixa.pdv.completeSale(
+      addItem(EMPTY_CART, (await caixa.pdv.findByCode('96385074'))!),
+      [{ method: 'cash', receivedCents: 500 }],
+      { discountLimitPercent: 10 },
+    );
+    await caixa.sync.sync();
+    expect(await gravado(venda.id)).toEqual({ itens: [null], conferencia: null });
   });
 });
