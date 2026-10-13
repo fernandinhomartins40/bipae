@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-03.b Tabela de NCM] — 13/10/2026
+
+### Adicionado
+- **NCM vigente do Portal Único Siscomex** (13/10/2026): 10.516 códigos de 8 dígitos, mais capítulos, posições e subposições. O arquivo original fica guardado compactado, com hash.
+- `findNcm` aceita o código com ou sem pontos e só devolve NCM completo que exista na tabela.
+- `ncmPath` monta o caminho do capítulo até o código, porque a descrição sozinha quase sempre é "Outros".
+- `searchNcm` busca pelo começo do código ou por palavras, sem acento, em qualquer nível ("arroz polido" acha 1006.30.21). É a base da busca de NCM no cadastro de produto.
+- Módulo à parte (`@bipae/fiscal/tables/ncm`), para a tabela grande não pesar em quem não precisa dela.
+
 ## [F3-03.a Tabelas oficiais: CFOP, cClassTrib e alíquotas de referência] — 13/10/2026
 
 ### Adicionado

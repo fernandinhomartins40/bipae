@@ -56,6 +56,7 @@ Os arquivos abaixo estão guardados em `packages/fiscal/sources`, com data e has
 | CST e cClassTrib do IBS/CBS | IT 2025.002 v1.70 | 01/10/2026 | 18 CSTs e 173 classificações, com redução de alíquota, grupos exigidos e documentos em que valem |
 | Alíquotas da CBS | IT 2026.002 v1.00 | 12/05/2026 | 2026: 0,9%. 2027: **"aguarda legislação"** |
 | FCP por UF | Tabela de Alíquotas de FCP | 25/02/2025 | 27 UFs, alíquota fixa ou teto |
+| NCM | Portal Único Siscomex, tabela vigente em 13/10/2026 (Resolução Gecex nº 926/2026) | 13/10/2026 | 10.516 NCMs de 8 dígitos e os níveis acima (capítulo, posição, subposição) |
 
 Lidos no texto da **LC 214/2025** (Planalto, com as alterações da LC 227/2026):
 
@@ -67,7 +68,9 @@ Lidos no texto da **LC 214/2025** (Planalto, com as alterações da LC 227/2026)
 
 **Correção:** o CFOP está na v2.10 (04/09/2026), não na v2.00 listada na seção 0; o portal SVRS ainda mostra a anterior.
 
-Ainda a buscar (subtarefas da F3-03): NCM (Siscomex, já localizado), CST de ICMS/PIS/COFINS/IPI e CSOSN (schemas oficiais) e CEST (Convênio ICMS 142/18).
+O NCM vem de <https://portalunico.siscomex.gov.br/classif/api/publico/nomenclatura/download/json> e traz **só os códigos vigentes**: um NCM extinto some da tabela, sem histórico. O Portal da NF-e publica à parte os avisos de mudança (o mais recente: IT 2024.001 v2.40, NCM a partir de 01/10/2026).
+
+Ainda a buscar (subtarefas da F3-03): CST de ICMS/PIS/COFINS/IPI e CSOSN (schemas oficiais) e CEST (Convênio ICMS 142/18).
 
 ## ⚠️ Limitação da pesquisa de 11/10
 

@@ -3,3 +3,4 @@
 *.ico binary
 *.icns binary
 *.xlsx binary
+*.gz binary

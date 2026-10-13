@@ -11,6 +11,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gunzipSync } from 'node:zlib';
 import Decimal from 'decimal.js';
 import { readXlsx } from './xlsx.mjs';
 
@@ -266,11 +267,41 @@ function importFcp() {
     });
 }
 
+/** DD/MM/AAAA → AAAA-MM-DD. */
+const brDate = (text) => {
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
+  if (!match) throw new Error(`Data inesperada: "${text}"`);
+  return `${match[3]}-${match[2]}-${match[1]}`;
+};
+
+const nextDay = (iso) => new Date(Date.parse(`${iso}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+
+function importNcm() {
+  const raw = JSON.parse(gunzipSync(readFileSync(join(sourcesDir, manifest.ncm.file))).toString('utf8'));
+  const items = raw.Nomenclaturas.map((item) => {
+    // Capítulo (99), posição (99.99), subposição (9999.9 e 9999.99), item (9999.99.9) e NCM (9999.99.99).
+    if (!/^(\d{2}|\d{2}\.\d{2}|\d{4}\.\d{1,2}|\d{4}\.\d{2}\.\d{1,2})$/.test(item.Codigo)) {
+      throw new Error(`Código NCM em formato inesperado: "${item.Codigo}"`);
+    }
+    const code = item.Codigo.replaceAll('.', '');
+    // A descrição vem com marcação de itálico e com traços que só indicam o nível na árvore.
+    const description = clean(item.Descricao.replace(/<[^>]*>/g, '')).replace(/^(-\s*)+/, '');
+    if (!description) throw new Error(`NCM ${code} sem descrição`);
+    const row = [code, description, brDate(item.Data_Inicio)];
+    // No Siscomex o fim é o último dia válido; a tabela guarda o primeiro dia em que não vale mais.
+    if (item.Data_Fim !== '31/12/9999') row.push(nextDay(brDate(item.Data_Fim)));
+    return row;
+  });
+  items.sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  return { updatedAt: clean(raw.Data_Ultima_Atualizacao_NCM), act: clean(raw.Ato), items };
+}
+
 const tables = {
   'cfop.json': importCfop(),
   'class-trib.json': importClassTrib(),
   'cbs-rates.json': importCbsRates(),
   'fcp.json': importFcp(),
+  'ncm.json': importNcm(),
 };
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha
@@ -289,7 +320,11 @@ const check = process.argv.includes('--check');
 let stale = 0;
 for (const [name, data] of Object.entries(tables)) {
   const path = join(dataDir, name);
-  const next = `${JSON.stringify(data, null, 1)}\n`;
+  // O NCM tem 15 mil linhas: uma por linha do arquivo, para o diff do git continuar legível.
+  const next =
+    name === 'ncm.json'
+      ? `{"updatedAt":${JSON.stringify(data.updatedAt)},"act":${JSON.stringify(data.act)},"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
+      : `${JSON.stringify(data, null, 1)}\n`;
   if (check) {
     let current = '';
     try {
@@ -303,7 +338,8 @@ for (const [name, data] of Object.entries(tables)) {
     }
   } else {
     writeFileSync(path, next);
-    const size = Array.isArray(data) ? `${data.length} linhas` : `${Object.keys(data).length} chaves`;
+    const rows = Array.isArray(data) ? data : data.items;
+    const size = rows ? `${rows.length} linhas` : `${Object.keys(data).length} chaves`;
     console.log(`gerado: src/tables/data/${name} (${size})`);
   }
 }

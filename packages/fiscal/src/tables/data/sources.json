@@ -34,5 +34,14 @@
   "publishedAt": "2025-02-25",
   "downloadedAt": "2026-10-13",
   "sha256": "3079d088169003cf0ef0da5ab36de0930efd5e9cee27c567650b767736f9cb91"
+ },
+ "ncm": {
+  "file": "Siscomex_NCM_2026-10-13.json.gz",
+  "title": "Nomenclatura Comum do Mercosul (NCM), tabela vigente",
+  "publisher": "Portal Único Siscomex (Receita Federal / Secex)",
+  "page": "https://portalunico.siscomex.gov.br/classif/api/publico/nomenclatura/download/json",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-10-13",
+  "sha256": "ba19f5ce99064828c2317a28a73fcb76441bfe96ad2ded41d5ad0a8a5186bf73"
  }
 }

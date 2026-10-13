@@ -34,7 +34,8 @@ describe('origem das tabelas', () => {
     for (const fonte of Object.values(TABLE_SOURCES)) {
       const hash = createHash('sha256').update(readFileSync(pacote(`sources/${fonte.file}`))).digest('hex');
       expect(hash, fonte.file).toBe(fonte.sha256);
-      expect(fonte.page).toMatch(/^https:\/\/www\.nfe\.fazenda\.gov\.br\//);
+      // Só sites do governo: Portal Nacional da NF-e e Portal Único Siscomex.
+      expect(fonte.page).toMatch(/^https:\/\/(www\.nfe\.fazenda|portalunico\.siscomex)\.gov\.br\//);
       assertDate(fonte.publishedAt);
       assertDate(fonte.downloadedAt);
     }
