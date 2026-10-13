@@ -102,7 +102,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Feito em 13/10/2026: `buildNfce` em `packages/fiscal/src/nfce`, validado contra o PL_010f. Ainda não emitidos: ICMS com ST própria (CST 10, 70, CSOSN 201 a 203), diferimento (51). Assinatura é a F3-09; QR Code, a F3-13; o mapeamento dos pagamentos do caixa para o tPag entra na F3-10.
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
 - [ ] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07
-- [ ] F3-09 · Assinatura XML com certificado A1 no servidor — depende: F3-07
+- [x] F3-09 · Assinatura XML com certificado A1 no servidor — depende: F3-07
+  - `signNfe` (WebCrypto, roda no servidor e no desktop), conferida pela biblioteca independente xml-crypto e pelo schema.
   - Pronto quando: os testes passam com certificado de teste gerado na hora, e o certificado real fica para F3-11.
 - [ ] F3-10 · Cadastro do certificado A1 com assistente (cifrado, aviso de vencimento) — depende: F3-09
 - [ ] F3-11 · Webservices da SEFAZ em homologação: status, autorização e consulta — depende: F3-10, F1-07 · externo: E1, E2

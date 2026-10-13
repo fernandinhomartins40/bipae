@@ -9,3 +9,4 @@ export * from './engine';
 export * from './taxes';
 export * from './nfce/access-key';
 export * from './nfce/build';
+export * from './nfce/sign';

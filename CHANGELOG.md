@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-09 Assinatura da nota] — 13/10/2026
+
+### Adicionado
+- **Assinatura XML da NF-e/NFC-e** no padrão da SEFAZ (XMLDSig envelopado, C14N, SHA-1 e RSA-SHA1, com o certificado no KeyInfo), usando só a criptografia padrão: a mesma função serve o servidor e o caixa desktop.
+- **Conferida de duas formas nos testes:** por uma biblioteca independente (xml-crypto), que refaz a canonicalização e verifica a assinatura, e pelo schema oficial. Qualquer alteração depois de assinar invalida a assinatura.
+- O XML passa a sair já na forma canônica (aspas no texto não são mais trocadas por entidades), para o documento assinado ser idêntico ao gerado.
+
 ## [F3-07 XML da NFC-e] — 13/10/2026
 
 ### Adicionado

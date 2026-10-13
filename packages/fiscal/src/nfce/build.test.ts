@@ -267,3 +267,29 @@ describe('o validador realmente reprova XML fora do schema', () => {
     ).toBeGreaterThan(0);
   });
 });
+
+describe('XML assinado de verdade contra o schema (F3-09)', () => {
+  it('a assinatura gerada pelo Bipaê tem a estrutura que o schema exige', async () => {
+    const { signNfe } = await import('./sign');
+    const par = (await crypto.subtle.generateKey(
+      {
+        name: 'RSASSA-PKCS1-v1_5',
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: 'SHA-1',
+      },
+      false,
+      ['sign'],
+    )) as { privateKey: import('./sign').WebCryptoKey; publicKey: import('./sign').WebCryptoKey };
+    const assinado = await signNfe(buildNfce(venda()).xml, {
+      privateKey: par.privateKey,
+      certificate: btoa('teste'),
+    });
+    const result = await validateXML({
+      xml: [{ fileName: 'assinado.xml', contents: assinado }],
+      schema: [nfeSchema],
+      preload,
+    });
+    expect(result.errors.map((e) => e.message)).toEqual([]);
+  });
+});
