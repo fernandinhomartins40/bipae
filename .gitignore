@@ -17,3 +17,6 @@ apps/desktop/src-tauri/gen/
 
 # Kit PDV Embed: o arquivo pronto para copiar fica versionado (a CI confere se está atualizado)
 !kits/pdv-embed/dist/
+
+# Estado do modo /goal (local de cada máquina)
+.claude/goal-state.json

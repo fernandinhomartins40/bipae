@@ -25,8 +25,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
-      - name: Backlog válido (docs/TAREFAS.md)
-        run: pnpm -s tarefas
+      - name: Backlog válido (docs/TAREFAS.md) e modo /goal
+        run: |
+          pnpm -s tarefas
+          node --test scripts/*.test.mjs
       - run: pnpm typecheck
       - run: pnpm test
 

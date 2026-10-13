@@ -75,6 +75,15 @@ O plano inteiro está em [docs/TAREFAS.md](docs/TAREFAS.md). Quando o dono pedir
 
 Tarefas novas, descobertas no caminho, entram no backlog com código novo, no lugar certo da ordem.
 
+**Modo objetivo (`/goal`):** `/goal F3` (ou `tudo`, `F1-01`, `F3 5` para no máximo 5 tarefas) faz o trabalho seguir sozinho, tarefa após tarefa. O Stop hook do projeto (`.claude/settings.json` → `scripts/goal.mjs hook`) devolve a próxima tarefa sempre que o Claude vai parar. O objetivo termina quando:
+- o alvo é concluído;
+- só sobram tarefas travadas;
+- o limite de tarefas é atingido;
+- há duas paradas seguidas sem progresso (sem mudança no backlog, nos arquivos ou nos commits);
+- alguém roda `/goal parar`.
+
+O estado fica em `.claude/goal-state.json`, que não é versionado.
+
 ## Kit PDV Embed (`kits/pdv-embed`, ADR-0014)
 
 - O contrato `contract/openapi.yaml` é a fonte da verdade. Toda regra nova entra no contrato, nas duas implementações de referência (Node e PHP) e no `conformance/run.mjs`. Mudança incompatível exige nova versão (`X-Bipae-Pdv`).
