@@ -394,13 +394,61 @@ export const stockMovements = pgTable('stock_movements', {
   productId: uuid('product_id').notNull(),
   deltaMilli: bigint('delta_milli', { mode: 'number' }).notNull(),
   reason: text('reason', {
-    enum: ['sale', 'sale_cancelled', 'return', 'adjustment', 'count'],
+    enum: ['sale', 'sale_cancelled', 'return', 'adjustment', 'count', 'purchase'],
   }).notNull(),
   refId: uuid('ref_id'),
   note: text('note'),
   actorId: uuid('actor_id'),
   occurredAt: ts('occurred_at').notNull(),
 });
+
+// ---------------------------------------------------------------- compras (0011)
+
+/** O que entrou de cada item de uma nota de compra (F3-19). */
+export interface PurchaseInvoiceItem {
+  line: number;
+  supplierCode: string;
+  description: string;
+  productId: string;
+  /** Unidades de estoque por unidade da nota. */
+  factor: string;
+  quantityMilli: number;
+  unitCostCents: number;
+  created: boolean;
+  taxes: unknown;
+}
+
+export const purchaseInvoices = pgTable('purchase_invoices', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  supplierId: uuid('supplier_id').notNull(),
+  accessKey: char('access_key', { length: 44 }).notNull(),
+  number: integer('number').notNull(),
+  series: integer('series').notNull(),
+  issuedAt: ts('issued_at').notNull(),
+  totalCents: money('total_cents').notNull(),
+  authorized: boolean('authorized').notNull(),
+  signatureValid: boolean('signature_valid').notNull(),
+  xml: text('xml').notNull(),
+  items: jsonb('items').$type<PurchaseInvoiceItem[]>().notNull(),
+  importedBy: uuid('imported_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+export const supplierProductCodes = pgTable(
+  'supplier_product_codes',
+  {
+    tenantId: uuid('tenant_id').notNull(),
+    supplierId: uuid('supplier_id').notNull(),
+    supplierCode: text('supplier_code').notNull(),
+    productId: uuid('product_id').notNull(),
+    factor: numeric('factor', { precision: 14, scale: 4 }).notNull(),
+    updatedAt: ts('updated_at').notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.tenantId, t.supplierId, t.supplierCode] })],
+);
 
 // ---------------------------------------------------------------- SaaS platform (0003)
 

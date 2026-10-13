@@ -345,7 +345,13 @@ export const storeUpdateInput = z.object({
  * Regime tributário da empresa, do MEI ao Lucro Real. Os detalhes de cada um (CRT, CSOSN ou CST,
  * PIS e COFINS) ficam em `COMPANY_REGIMES`, no pacote `@bipae/fiscal`.
  */
-export const COMPANY_TAX_REGIMES = ['mei', 'simples', 'simples-excesso', 'presumido', 'real'] as const;
+export const COMPANY_TAX_REGIMES = [
+  'mei',
+  'simples',
+  'simples-excesso',
+  'presumido',
+  'real',
+] as const;
 export type CompanyTaxRegime = (typeof COMPANY_TAX_REGIMES)[number];
 
 export const companyInput = z.object({
@@ -476,7 +482,9 @@ export const companyIcmsRuleInput = z
           .string()
           .trim()
           .transform((v) => v.replace(/\D/g, ''))
-          .pipe(z.string().regex(/^\d{2,8}$/, 'NCM: de 2 a 8 dígitos (pode ser o começo do código)')),
+          .pipe(
+            z.string().regex(/^\d{2,8}$/, 'NCM: de 2 a 8 dígitos (pode ser o começo do código)'),
+          ),
       )
       .min(1, 'Informe pelo menos um NCM')
       .max(50),
@@ -495,7 +503,8 @@ export const companyIcmsRuleInput = z
     source: trimmed(3, 200, 'Fonte (lei, decreto ou orientação do contador)'),
   })
   .refine((v) => v.rate || v.baseReduction || v.fcpRate || v.st, {
-    message: 'Informe o que muda no ICMS: alíquota, redução da base, FCP ou substituição tributária',
+    message:
+      'Informe o que muda no ICMS: alíquota, redução da base, FCP ou substituição tributária',
     path: ['rate'],
   })
   .refine((v) => !v.validTo || v.validTo > v.validFrom, {
@@ -511,7 +520,12 @@ export interface CompanyIcmsRuleRow {
   ncm: string[];
   validFrom: string;
   validTo: string | null;
-  effect: { rate?: string; baseReduction?: string; fcpRate?: string; st?: { mva: string; rate: string; baseReduction?: string } };
+  effect: {
+    rate?: string;
+    baseReduction?: string;
+    fcpRate?: string;
+    st?: { mva: string; rate: string; baseReduction?: string };
+  };
   source: string;
   updatedAt: string;
 }
@@ -555,4 +569,85 @@ export interface SefazStatus {
   averageSeconds?: number;
   observation?: string;
   checkedAt: string;
+}
+
+// ---------------------------------------------------------------- compras por XML (F3-19)
+
+export const purchaseXmlInput = z.object({
+  xml: z
+    .string()
+    .min(50, 'Escolha o arquivo XML da nota de compra')
+    .max(5_000_000, 'Arquivo grande demais para uma nota fiscal'),
+});
+
+/** Fator de conversão como texto decimal ("12", "0,5"): unidades de estoque por unidade da nota. */
+const conversionFactor = z
+  .union([z.number(), z.string()])
+  .transform((value) => String(value).trim().replace(',', '.'))
+  .refine((value) => /^\d{1,6}(\.\d{1,4})?$/.test(value) && /[1-9]/.test(value), {
+    message: 'Fator de conversão inválido: use um número maior que zero, com até 4 casas',
+  });
+
+export const purchaseImportInput = purchaseXmlInput.extend({
+  storeId: z.string().uuid('Escolha a loja que recebe a mercadoria'),
+  items: z
+    .array(
+      z.object({
+        line: z.number().int().positive(),
+        /** Produto da loja; null cria um produto novo com os dados da nota. */
+        productId: z.string().uuid().nullable(),
+        factor: conversionFactor.default('1'),
+        /** Unidade de estoque do produto novo. */
+        unit: z.string().trim().min(1).max(6).optional(),
+        /** Preço de venda do produto novo, em centavos. */
+        priceCents: z.number().int().nonnegative().optional(),
+      }),
+    )
+    .min(1, 'A nota precisa de pelo menos um item'),
+});
+export type PurchaseImportInput = z.input<typeof purchaseImportInput>;
+
+/** O que a tela mostra antes de confirmar a entrada. */
+export interface PurchasePreview {
+  accessKey: string;
+  number: number;
+  series: number;
+  issuedAt: string;
+  totalCents: number;
+  environment: 'producao' | 'homologacao';
+  authorized: boolean;
+  signature: { valid: boolean; signer: string | null; trusted: boolean };
+  company: { id: string; name: string };
+  supplier: { id: string | null; name: string; taxId: string };
+  alreadyImported: boolean;
+  items: {
+    line: number;
+    supplierCode: string;
+    gtin: string | null;
+    description: string;
+    unit: string;
+    quantity: string;
+    totalCents: number;
+    suggestion: {
+      productId: string;
+      productName: string;
+      unit: string;
+      factor: string;
+      via: 'fornecedor' | 'codigo-de-barras';
+    } | null;
+  }[];
+}
+
+export interface PurchaseSummary {
+  id: string;
+  accessKey: string;
+  number: number;
+  series: number;
+  issuedAt: string;
+  totalCents: number;
+  supplierName: string;
+  storeName: string;
+  authorized: boolean;
+  itemCount: number;
+  createdAt: string;
 }

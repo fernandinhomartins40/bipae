@@ -30,6 +30,8 @@ import { PlatformGuard } from './modules/admin/platform.guard';
 import { LimitsService } from './modules/account/limits.service';
 import { DownloadsController, DownloadsService } from './modules/downloads/downloads.controller';
 import { FiscalController } from './modules/fiscal/fiscal.controller';
+import { PurchasesController } from './modules/purchases/purchases.controller';
+import { PurchasesService } from './modules/purchases/purchases.service';
 import { CertificatesService } from './modules/fiscal/certificates.service';
 import { HttpsSefazTransport } from './modules/fiscal/sefaz.transport';
 import { SEFAZ_TRANSPORT, SefazService } from './modules/fiscal/sefaz.service';
@@ -90,6 +92,7 @@ class AppModule {
         AdminController,
         DownloadsController,
         FiscalController,
+        PurchasesController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -109,6 +112,7 @@ class AppModule {
         CertificatesService,
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },
         SefazService,
+        PurchasesService,
         PartiesService,
         SyncService,
         SalesService,

@@ -16,3 +16,4 @@ export * from './nfce/numbering';
 export * from './nfce/qrcode';
 export * from './xml-reader';
 export * from './sefaz';
+export * from './purchase/read';

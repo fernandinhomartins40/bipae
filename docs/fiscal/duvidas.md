@@ -195,3 +195,9 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** o Anexo II do MOC 7.0 manda imprimir a chave de acesso em CODE-128C, que só codifica dígitos. Com o CNPJ alfanumérico (NT DFe Conjunta 2025), a chave passa a ter letras.
 - **Implementação provisória (F3-13.c):** quando a chave tem letras, o DANFE sai sem o código de barras, com a chave impressa por extenso. Nenhuma simbologia foi inventada.
 - **Pergunta:** qual simbologia (CODE-128B ou outra) o manual adotará para a chave com letras, e a partir de quando?
+
+### D-024 — Custo de aquisição na entrada da compra: com ou sem os créditos?
+
+- **Contexto:** a entrada pelo XML de compra (F3-19) grava o custo de cada produto. Empresas do regime normal recuperam o ICMS destacado, o PIS e a COFINS (e, a partir de 2027, o IBS e a CBS), o que muda o custo contábil.
+- **Implementação provisória:** custo = valor dos produtos − desconto + frete + seguro + outras despesas + ICMS-ST + IPI, dividido pelas unidades de estoque, **sem abater nenhum crédito**. Os tributos de cada item ficam guardados com a nota, para a apuração (F4-13) e para recalcular o custo quando a regra for definida.
+- **Pergunta (contador, E3):** o custo do produto deve abater os créditos recuperáveis conforme o regime (Simples não abate; Presumido e Real abatem ICMS, e o Real abate PIS/COFINS)? O IPI entra no custo de quem não é contribuinte do IPI?

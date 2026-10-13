@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-19 Compras pelo XML] — 13/10/2026
+
+### Adicionado
+- **Tela "Compras":** importe o XML da nota do fornecedor e veja, antes de gravar, o fornecedor (novo ou já cadastrado), cada item e o produto da loja associado a ele.
+- Na confirmação, o Bipaê **cadastra o fornecedor e os produtos que faltam, dá entrada no estoque e atualiza o custo**. Uma caixa com 12 unidades pode entrar como 12 unidades (fator de conversão).
+- Associação automática: pelo código de barras e, a partir da segunda compra, pelo código do produto no fornecedor (com o mesmo fator).
+- **Segurança:** a assinatura digital da nota é conferida (XML alterado é recusado), a nota precisa ser para uma empresa sua e cada nota entra uma vez só. Avisos para nota sem protocolo da SEFAZ, de homologação ou com certificado fora da ICP-Brasil. A entrada vai para a auditoria.
+- Os tributos de cada item ficam guardados com a nota, para a apuração do IBS/CBS (F4-13).
+- Dúvida D-024: custo com ou sem os créditos de impostos.
+
 ## [F3-11.a Conversa com a SEFAZ] — 13/10/2026
 
 ### Adicionado

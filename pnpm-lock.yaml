@@ -65,6 +65,9 @@ importers:
       '@node-rs/argon2':
         specifier: ^2.2.2
         version: 2.2.2
+      '@xmldom/xmldom':
+        specifier: ^0.9.12
+        version: 0.9.12
       bullmq:
         specifier: ^6.3.13
         version: 6.3.13(ioredis@6.0.0)(pg@8.23.1)
@@ -95,6 +98,9 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
+      xml-crypto:
+        specifier: ^6.3.3
+        version: 6.3.3
       zod:
         specifier: ^4.6.6
         version: 4.6.6
@@ -117,9 +123,6 @@ importers:
       '@types/pg':
         specifier: ^8.23.1
         version: 8.23.1
-      '@xmldom/xmldom':
-        specifier: ^0.9.12
-        version: 0.9.12
       esbuild:
         specifier: ^0.27.0
         version: 0.27.7
@@ -129,9 +132,6 @@ importers:
       vitest:
         specifier: ^5.0.3
         version: 5.0.3(@types/node@24.19.2)(@vitest/coverage-v8@5.0.3)(jsdom@30.1.2(@noble/hashes@2.4.0))(vite@8.3.4(@types/node@24.19.2)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15))
-      xml-crypto:
-        specifier: ^6.3.3
-        version: 6.3.3
 
   apps/desktop:
     dependencies:
@@ -215,6 +215,9 @@ importers:
         specifier: ^19.3.0
         version: 19.3.0(react@19.3.0)
     devDependencies:
+      '@bipae/fiscal':
+        specifier: workspace:*
+        version: link:../../packages/fiscal
       '@playwright/test':
         specifier: ^1.64.0
         version: 1.64.0
@@ -294,13 +297,13 @@ importers:
 
   packages/danfe:
     dependencies:
+      '@bipae/fiscal':
+        specifier: workspace:*
+        version: link:../fiscal
       pdf-lib:
         specifier: 1.17.1
         version: 1.17.1
     devDependencies:
-      '@bipae/fiscal':
-        specifier: workspace:*
-        version: link:../fiscal
       '@types/node':
         specifier: ^24.0.0
         version: 24.19.2

@@ -128,7 +128,11 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] F3-16 · SVC para NF-e — depende: F3-11, F3-08
 - [ ] F3-17 · Eventos: cancelamento, carta de correção e inutilização — depende: F3-11
 - [ ] F3-18 · Rejeições da SEFAZ traduzidas, com causa e solução — depende: F3-11
-- [ ] F3-19 · Importação de XML de compra (cria produtos e fornecedores e dá entrada no estoque) — depende: F3-03
+- [x] F3-19 · Importação de XML de compra (cria produtos e fornecedores e dá entrada no estoque) — depende: F3-03
+- [x] F3-19.a · Motor: leitura do XML do fornecedor (itens, valores, tributos), custo de aquisição e fator de conversão, sem ponto flutuante — depende: F3-03
+- [x] F3-19.b · API: prévia e entrada (assinatura conferida, nota da empresa certa, uma vez só, fornecedor e produtos criados, código do fornecedor lembrado, estoque e custo), com auditoria — depende: F3-19.a
+- [x] F3-19.c · Tela "Compras" na retaguarda, com E2E — depende: F3-19.b
+  - Custo sem abater créditos até o contador decidir (dúvida D-024).
 - [ ] F3-20 · Distribuição DF-e e manifestação do destinatário — depende: F3-11, F3-19
 - [ ] F3-21 · Desktop: assinatura A1 local e A3 pelo Conector — depende: F3-09
 - [ ] F3-22 · Validação com contador e teste de emissão com pessoas leigas — depende: F3-14 · externo: E3, E15
