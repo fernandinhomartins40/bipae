@@ -45,6 +45,18 @@ function roteiroDaFila(
       expect(tentativas).toBe(2);
       await fila.close();
     });
+
+    it('repete a tarefa no intervalo pedido', async () => {
+      const fila = criar();
+      let vezes = 0;
+      fila.process('manutencao.limpar-sessoes', async () => {
+        vezes++;
+      });
+      // Mesmo nome da rotina de produção: o id da tarefa repetida é montado a partir dele.
+      await fila.add('manutencao.limpar-sessoes', {}, { repeatEveryMs: 200 });
+      await ate(() => vezes >= 2);
+      await fila.close();
+    });
   });
 }
 

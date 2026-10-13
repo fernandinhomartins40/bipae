@@ -56,7 +56,12 @@ const finish = (ok, message) => {
 
 // Sinais de que a fila não funcionou. Com o Redis fora do ar de propósito, só o aviso de
 // conexão é aceito; a API não pode cair nem trocar de fila calada.
-const FATAL = ['could not load', 'Fila em Redis indisponível', 'Fila de manutenção não iniciou'];
+const FATAL = [
+  'could not load',
+  'Fila em Redis indisponível',
+  'Fila de manutenção não iniciou',
+  'Não foi possível agendar',
+];
 
 const deadline = Date.now() + 90_000;
 let healthy = false;

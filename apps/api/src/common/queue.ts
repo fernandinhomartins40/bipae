@@ -170,10 +170,11 @@ export class RedisQueue implements JobQueue {
       backoff: { type: 'exponential', delay: options.backoffMs ?? DEFAULT_BACKOFF_MS },
       removeOnComplete: 100,
       removeOnFail: 500,
-      // Tarefa repetida tem id fixo: reiniciar a API não agenda duas vezes.
+      // Tarefa repetida tem id fixo: reiniciar a API não agenda duas vezes. O BullMQ não aceita
+      // dois-pontos em id (é o separador das chaves dele no Redis).
       ...(options.repeatEveryMs && {
         repeat: { every: options.repeatEveryMs },
-        jobId: `repetir:${name}`,
+        jobId: `repetir-${name.replaceAll(':', '-')}`,
       }),
     });
   }
