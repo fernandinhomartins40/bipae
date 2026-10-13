@@ -202,6 +202,7 @@ export class PdvService {
       }
       await setMeta(tx, 'company_uf', fiscal.company.uf ?? '');
       await setMeta(tx, 'company_tax_regime', fiscal.company.taxRegime ?? '');
+      await setMeta(tx, 'company_icms_rules', JSON.stringify(fiscal.icmsRules ?? []));
     });
   }
 
@@ -209,6 +210,7 @@ export class PdvService {
   async fiscalContext(): Promise<{
     company: FiscalSnapshot['company'];
     profiles: Map<string, Omit<FiscalSnapshot['profiles'][number], 'id'>>;
+    icmsRules: NonNullable<FiscalSnapshot['icmsRules']>;
   }> {
     const rows = await this.storage.query<{ id: string; data: string }>('SELECT id, data FROM fiscal_profiles');
     return {
@@ -217,6 +219,7 @@ export class PdvService {
         taxRegime: (await getMeta(this.storage, 'company_tax_regime')) || null,
       },
       profiles: new Map(rows.map((row) => [row.id, JSON.parse(row.data)])),
+      icmsRules: JSON.parse((await getMeta(this.storage, 'company_icms_rules')) || '[]'),
     };
   }
 
@@ -480,21 +483,24 @@ export class PdvService {
    */
   private async withTaxes(items: SaleItem[]): Promise<SaleItem[]> {
     try {
-      const { company, profiles } = await this.fiscalContext();
+      const { company, profiles, icmsRules } = await this.fiscalContext();
       if (!company.uf && !company.taxRegime) return items;
       const ids = [...new Set(items.map((item) => item.productId))];
-      const rows = await this.storage.query<{ id: string; fiscal_profile_id: string | null }>(
-        `SELECT id, fiscal_profile_id FROM products WHERE id IN (${ids.map(() => '?').join(', ')})`,
+      const rows = await this.storage.query<{ id: string; fiscal_profile_id: string | null; ncm: string | null }>(
+        `SELECT id, fiscal_profile_id, ncm FROM products WHERE id IN (${ids.map(() => '?').join(', ')})`,
         ids,
       );
       const profileOf = new Map(rows.map((row) => [row.id, row.fiscal_profile_id]));
+      const ncmOf = new Map(rows.map((row) => [row.id, row.ncm]));
       const summaries = saleTaxSummaries({
         company,
         items: items.map((item) => ({
           operationCents: item.totalCents,
           profile: profiles.get(profileOf.get(item.productId) ?? '') ?? null,
+          ncm: ncmOf.get(item.productId) ?? null,
         })),
         date: localDate(this.now()),
+        rules: icmsRules,
       });
       return summaries ? items.map((item, index) => ({ ...item, taxes: summaries[index]! })) : items;
     } catch {

@@ -1,3 +1,4 @@
+import { companyIcmsSettings, type CompanyIcmsRule } from './company-rules';
 import { findCompanyRegime, type CompanyRegime } from './regimes';
 import type { Crt } from './rules';
 import { icmsGeneralRate, interstateRate } from './tables/icms-uf';
@@ -46,6 +47,8 @@ export interface SaleTaxSettings {
    * da substituição tributária...). O que vier aqui vale mais que a alíquota geral da UF.
    */
   icms?: Partial<IcmsEffect>;
+  /** Quando as regras da empresa estão em conflito: o ICMS fica em "falta configurar" com este motivo. */
+  icmsBlocked?: string;
   /** Tirar o ICMS da base do PIS/COFINS no regime cumulativo (dúvida D-019). */
   excludeIcmsFromCumulative?: boolean;
 }
@@ -121,7 +124,9 @@ export function calculateSaleItemTaxes(input: {
   // ---------------------------------------------------------------- ICMS
   let icms: TaxOutcome<IcmsResult>;
   const code = regime.icmsCode === 'csosn' ? profile.csosn : profile.cstIcms;
-  if (!code) {
+  if (settings.icmsBlocked) {
+    icms = missing(settings.icmsBlocked);
+  } else if (!code) {
     icms = missing(
       regime.icmsCode === 'csosn'
         ? `O perfil fiscal não tem CSOSN, exigido no regime ${regime.label}.`
@@ -263,11 +268,13 @@ export function sameTaxSummary(a: SaleItemTaxSummary, b: SaleItemTaxSummary): bo
  */
 export function saleTaxSummaries(input: {
   company: { uf: string | null; taxRegime: string | null };
-  items: readonly { operationCents: number; profile: SaleFiscalProfile | null }[];
+  items: readonly { operationCents: number; profile: SaleFiscalProfile | null; ncm?: string | null }[];
   /** Data do fato gerador (AAAA-MM-DD). */
   date: string;
+  /** Regras de ICMS próprias da empresa (F3-06.e), por NCM. */
+  rules?: readonly CompanyIcmsRule[];
 }): SaleItemTaxSummary[] | null {
-  const { company, items, date } = input;
+  const { company, items, date, rules = [] } = input;
   if (!company.uf && !company.taxRegime) return null;
   const regime = company.taxRegime ? (findCompanyRegime(company.taxRegime)?.id ?? null) : null;
   return items.map((item) =>
@@ -277,6 +284,7 @@ export function saleTaxSummaries(input: {
         profile: item.profile,
         item: { operationCents: item.operationCents },
         date,
+        settings: companyIcmsSettings(rules, item.ncm, date),
       }),
     ),
   );

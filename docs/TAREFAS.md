@@ -86,7 +86,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: há casos de teste por regime (Simples, Presumido, Real) e cada cálculo mostra seus passos.
 - [x] F3-05 · IBS, CBS e IS com vigência (2026 teste, 2027, transição 2029–2032, 2033) — depende: F3-03
   - Pronto quando: há casos por período, e as ambiguidades viram configuração, nunca suposição.
-- [~] F3-06 · Perfil fiscal do produto e da empresa ligado ao motor, com cálculo na venda — depende: F1-02, F3-04, F3-05
+- [x] F3-06 · Perfil fiscal do produto e da empresa ligado ao motor, com cálculo na venda — depende: F1-02, F3-04, F3-05
   - Trocar as listas digitadas do cadastro (`ICMS_ORIGINS` em `@bipae/domain`, campos livres de CST, CFOP e NCM) pelas tabelas de `@bipae/fiscal/tables`, com busca de NCM.
 - [x] F3-06.a · API: valida NCM, CEST e os códigos do perfil fiscal nas tabelas oficiais; rotas de consulta (`/v1/fiscal/*`)
 - [x] F3-06.b · Telas: perfil fiscal com as listas oficiais; busca de NCM e sugestão de CEST no produto — depende: F3-06.a
@@ -97,7 +97,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-06.d2 · CST de PIS/COFINS no perfil fiscal; perfis fiscais e dados fiscais da empresa sincronizados para o caixa — depende: F3-06.d1
 - [x] F3-06.d3 · O caixa calcula os impostos ao fechar a venda (sem internet), o evento leva o resultado e o servidor grava e confere — depende: F3-06.d2
 - [x] F3-06.d4 · A retaguarda mostra os impostos de cada venda e o que falta configurar — depende: F3-06.d3
-- [ ] F3-06.e · Regras de tributo próprias da empresa, por vigência (alíquota por produto, redução de base, MVA), para o contador ajustar o que a tabela geral não cobre — depende: F3-06.d
+- [x] F3-06.e · Regras de tributo próprias da empresa, por vigência (alíquota por produto, redução de base, MVA), para o contador ajustar o que a tabela geral não cobre — depende: F3-06.d
 - [ ] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
 - [ ] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07

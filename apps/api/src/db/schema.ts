@@ -2,6 +2,7 @@ import {
   bigint,
   boolean,
   char,
+  date,
   integer,
   jsonb,
   numeric,
@@ -90,6 +91,21 @@ export const companies = pgTable('companies', {
   uf: char('uf', { length: 2 }),
   /** Regime tributário (F3-06.c): mei, simples, simples-excesso, presumido ou real. */
   taxRegime: text('tax_regime'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Regras de ICMS próprias da empresa (F3-06.e), por NCM e vigência. */
+export const companyIcmsRules = pgTable('company_icms_rules', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  name: text('name').notNull(),
+  ncm: text('ncm').array().notNull(),
+  validFrom: date('valid_from', { mode: 'string' }).notNull(),
+  validTo: date('valid_to', { mode: 'string' }),
+  effect: jsonb('effect').notNull(),
+  source: text('source').notNull(),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });

@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query } from '@nestjs/common';
+import { companyIcmsRuleInput } from '@bipae/domain';
 import { COMPANY_REGIMES } from '@bipae/fiscal';
 import {
   CESTS,
@@ -19,9 +20,10 @@ import {
 } from '@bipae/fiscal/tables';
 import { findNcm, isNcmValidOn, ncmPath, searchNcm, type Ncm } from '@bipae/fiscal/tables/ncm';
 import { z } from 'zod';
-import { RequirePermission } from '../../common/auth';
+import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { notFound, parse } from '../../common/errors';
 import { today } from './fiscal-validation';
+import { IcmsRulesService } from './icms-rules.service';
 
 const ncmQuery = z.object({
   q: z.string().trim().min(2, 'Digite pelo menos 2 caracteres para buscar o NCM').max(80),
@@ -58,6 +60,36 @@ const cestView = (cest: Cest) => ({
  */
 @Controller('fiscal')
 export class FiscalController {
+  constructor(@Inject(IcmsRulesService) private readonly rules: IcmsRulesService) {}
+
+  // ---------------------------------------------------------------- regras de ICMS da empresa
+
+  @Get('icms-rules')
+  @RequirePermission('catalog.read')
+  listRules(@Ctx() ctx: RequestContext, @Query('companyId') companyId?: string) {
+    return this.rules.list(ctx, companyId && /^[0-9a-f-]{36}$/.test(companyId) ? companyId : undefined);
+  }
+
+  @Post('icms-rules')
+  @RequirePermission('fiscal.profile.write')
+  createRule(@Ctx() ctx: RequestContext, @Body() body: unknown) {
+    return this.rules.save(ctx, null, parse(companyIcmsRuleInput, body));
+  }
+
+  @Put('icms-rules/:id')
+  @RequirePermission('fiscal.profile.write')
+  updateRule(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+    return this.rules.save(ctx, id, parse(companyIcmsRuleInput, body));
+  }
+
+  @Delete('icms-rules/:id')
+  @RequirePermission('fiscal.profile.write')
+  removeRule(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.rules.remove(ctx, id);
+  }
+
+  // ---------------------------------------------------------------- tabelas oficiais
+
   @Get('ncm')
   @RequirePermission('catalog.read')
   searchNcm(@Query() query: unknown) {

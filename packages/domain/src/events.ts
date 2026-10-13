@@ -224,6 +224,15 @@ export interface FiscalSnapshot {
     cstPisCofins: string | null;
     cClassTrib: string | null;
   }[];
+  /** Regras de ICMS próprias da empresa do caixa (F3-06.e), no formato do motor fiscal. */
+  icmsRules?: {
+    id: string;
+    name: string;
+    ncm: string[];
+    validity: { start: string; end?: string };
+    effect: { rate?: string; baseReduction?: string; fcpRate?: string; st?: { mva: string; rate: string; baseReduction?: string } };
+    source: string;
+  }[];
 }
 
 /**

@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-06.e Regras de ICMS da empresa] — 13/10/2026
+
+### Adicionado
+- **Nova tela "Regras de ICMS":** a empresa (normalmente com o contador) cadastra o que a alíquota geral da UF não cobre, por NCM e com vigência: alíquota própria do produto, redução da base, FCP e substituição tributária (MVA e alíquota).
+- Vale a regra **mais específica** para o NCM (8 dígitos vence 4, que vence 2). Duas regras para os mesmos NCM no mesmo período são recusadas no cadastro, com a explicação.
+- **O caixa recebe as regras na sincronização e usa no cálculo de cada venda**, mesmo sem internet. O servidor usa as mesmas regras na conferência.
+- Toda criação, alteração e exclusão de regra vai para a trilha de auditoria (alteração fiscal é ação sensível).
+
+### Banco de dados
+- Migração `0009`: tabela de regras de ICMS por empresa, com isolamento por cliente (RLS).
+
+Com isso a **F3-06 está concluída**: cadastro fiscal conferido nas tabelas oficiais, regime e UF da empresa, regras próprias e impostos calculados em cada venda.
+
 ## [F3-06.d4 Impostos da venda na retaguarda] — 13/10/2026
 
 ### Adicionado

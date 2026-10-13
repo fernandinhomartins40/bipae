@@ -449,3 +449,69 @@ export interface ApiErrorBody {
   message: string;
   issues?: { path: string; message: string }[];
 }
+
+// ---------- Regras de ICMS da empresa (F3-06.e) ----------
+
+const percentText = (label: string, max = 100) =>
+  z
+    .string()
+    .trim()
+    .transform((v) => v.replace(',', '.'))
+    .pipe(
+      z
+        .string()
+        .regex(/^\d{1,4}(\.\d{1,4})?$/, `${label}: use um número, como 12 ou 4,5`)
+        .refine((v) => Number(v) <= max, `${label}: no máximo ${max}%`),
+    );
+const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data no formato AAAA-MM-DD');
+
+/** O que muda no ICMS dos produtos do NCM: alíquota, redução de base, FCP e/ou substituição tributária. */
+export const companyIcmsRuleInput = z
+  .object({
+    companyId: z.string().uuid(),
+    name: trimmed(2, 80, 'Nome da regra'),
+    ncm: z
+      .array(
+        z
+          .string()
+          .trim()
+          .transform((v) => v.replace(/\D/g, ''))
+          .pipe(z.string().regex(/^\d{2,8}$/, 'NCM: de 2 a 8 dígitos (pode ser o começo do código)')),
+      )
+      .min(1, 'Informe pelo menos um NCM')
+      .max(50),
+    validFrom: isoDay,
+    validTo: isoDay.nullish(),
+    rate: percentText('Alíquota').nullish(),
+    baseReduction: percentText('Redução da base').nullish(),
+    fcpRate: percentText('FCP').nullish(),
+    st: z
+      .object({
+        mva: percentText('MVA', 1000),
+        rate: percentText('Alíquota da ST'),
+        baseReduction: percentText('Redução da base da ST').nullish(),
+      })
+      .nullish(),
+    source: trimmed(3, 200, 'Fonte (lei, decreto ou orientação do contador)'),
+  })
+  .refine((v) => v.rate || v.baseReduction || v.fcpRate || v.st, {
+    message: 'Informe o que muda no ICMS: alíquota, redução da base, FCP ou substituição tributária',
+    path: ['rate'],
+  })
+  .refine((v) => !v.validTo || v.validTo > v.validFrom, {
+    message: 'O fim da vigência precisa ser depois do início',
+    path: ['validTo'],
+  });
+export type CompanyIcmsRuleInput = z.input<typeof companyIcmsRuleInput>;
+
+export interface CompanyIcmsRuleRow {
+  id: string;
+  companyId: string;
+  name: string;
+  ncm: string[];
+  validFrom: string;
+  validTo: string | null;
+  effect: { rate?: string; baseReduction?: string; fcpRate?: string; st?: { mva: string; rate: string; baseReduction?: string } };
+  source: string;
+  updatedAt: string;
+}

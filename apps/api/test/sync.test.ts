@@ -742,3 +742,82 @@ describe('impostos da venda gravados e conferidos no servidor (F3-06.d3)', () =>
     expect(await gravado(venda.id)).toEqual({ itens: [null], conferencia: null });
   });
 });
+
+describe('regras de ICMS da empresa (F3-06.e)', () => {
+  it('cadastro conferido, auditado e usado pelo caixa sem internet', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [empresa] = (await admin.get('/companies')).json();
+    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'real' });
+    const perfil = (
+      await admin.post('/fiscal-profiles', {
+        name: 'Revenda',
+        origem: 0,
+        cfopInterna: '5102',
+        cfopInterestadual: '6102',
+        cstIcms: '00',
+        cstPisCofins: '01',
+        cClassTrib: '000001',
+      })
+    ).json();
+    await admin.post('/products', {
+      name: 'Cerveja 600ml',
+      priceCents: 10_000,
+      ncm: '22030000',
+      barcodes: ['7891000100103'],
+      fiscalProfileId: perfil.id,
+    });
+
+    // Valores de EXEMPLO, como o contador cadastraria.
+    const base = { companyId: empresa.id, ncm: ['2203'], validFrom: '2026-01-01', source: 'Orientação do contador' };
+    const criada = await admin.post('/fiscal/icms-rules', { ...base, name: 'Cerveja', rate: '25' });
+    expect(criada.statusCode).toBe(201);
+    expect(criada.json()).toMatchObject({ name: 'Cerveja', ncm: ['2203'], effect: { rate: '25' }, validTo: null });
+
+    // Duas regras para o mesmo NCM no mesmo período: recusado, com a explicação.
+    const conflito = await admin.post('/fiscal/icms-rules', { ...base, name: 'Cerveja de novo', rate: '20' });
+    expect(conflito.statusCode).toBe(400);
+    expect(conflito.json().message).toBe('As regras "Cerveja" e "Cerveja de novo" valem para os mesmos NCM no mesmo período.');
+    expect((await admin.get(`/fiscal/icms-rules?companyId=${empresa.id}`)).json()).toHaveLength(1);
+
+    // Regra sem efeito também é recusada.
+    const vazia = await admin.post('/fiscal/icms-rules', { ...base, ncm: ['10'], name: 'Vazia' });
+    expect(vazia.statusCode).toBe(400);
+    expect(vazia.json().message).toContain('Informe o que muda no ICMS');
+
+    // Alteração fiscal fica na trilha de auditoria.
+    const trilha = await asPlatform(t.database.db, async (tx) =>
+      rowsOf<{ action: string }>(
+        await tx.execute(sql`select action from audit_log where tenant_id = ${dono.me.tenant.id} and entity = 'company_icms_rule'`),
+      ),
+    );
+    expect(trilha.map((l) => l.action)).toEqual(['fiscal_rule.created']);
+
+    // O caixa recebe a regra e calcula a cerveja a 25% mesmo sem internet; o servidor confere.
+    const caixa = await terminalDevice(dono, 'Caixa regras', 'web');
+    await caixa.sync.sync();
+    caixa.net.online = false;
+    await caixa.pdv.openSession(0);
+    const venda = await caixa.pdv.completeSale(
+      addItem(EMPTY_CART, (await caixa.pdv.findByCode('7891000100103'))!),
+      [{ method: 'pix', receivedCents: 10_000 }],
+      { discountLimitPercent: 10 },
+    );
+    expect(venda.items[0]!.taxes).toMatchObject({ icmsCents: 2500, complete: true });
+    caixa.net.online = true;
+    await caixa.sync.sync();
+    const [gravada] = await asPlatform(t.database.db, async (tx) =>
+      rowsOf<{ tax_check: string }>(await tx.execute(sql`select tax_check from sales where id = ${venda.id}`)),
+    );
+    expect(gravada!.tax_check).toBe('ok');
+
+    // Mudar a regra chega ao caixa; apagar também, e volta a alíquota geral de SP.
+    const id = criada.json().id;
+    await admin.put(`/fiscal/icms-rules/${id}`, { ...base, name: 'Cerveja', rate: '27' });
+    await caixa.sync.sync();
+    expect((await caixa.pdv.fiscalContext()).icmsRules[0]!.effect.rate).toBe('27');
+    expect((await admin.delete(`/fiscal/icms-rules/${id}`)).statusCode).toBe(200);
+    await caixa.sync.sync();
+    expect((await caixa.pdv.fiscalContext()).icmsRules).toEqual([]);
+  });
+});

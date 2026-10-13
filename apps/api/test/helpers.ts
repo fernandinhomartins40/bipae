@@ -77,7 +77,7 @@ export async function signup(
 }
 
 export function api(app: NestFastifyApplication, auth: Record<string, string>) {
-  const call = (method: 'GET' | 'POST' | 'PUT' | 'PATCH', url: string, payload?: unknown) =>
+  const call = (method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', url: string, payload?: unknown) =>
     app.inject({
       method,
       url: `/v1${url}`,
@@ -89,5 +89,6 @@ export function api(app: NestFastifyApplication, auth: Record<string, string>) {
     post: (url: string, payload: unknown = {}) => call('POST', url, payload),
     put: (url: string, payload: unknown) => call('PUT', url, payload),
     patch: (url: string, payload: unknown) => call('PATCH', url, payload),
+    delete: (url: string) => call('DELETE', url),
   };
 }

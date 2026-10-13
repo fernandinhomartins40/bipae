@@ -21,6 +21,7 @@ import {
   cashMovements,
   cashSessions,
   companies,
+  companyIcmsRules,
   customers,
   fiscalProfiles,
   memberships,
@@ -38,6 +39,7 @@ import {
   terminals,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { toMotorRule } from '../fiscal/icms-rules.service';
 
 /** A business rule says this event can never be applied; the terminal stops retrying it. */
 class Rejection extends Error {}
@@ -370,8 +372,11 @@ export class SyncService {
         .select({ uf: companies.uf, taxRegime: companies.taxRegime })
         .from(companies)
         .where(eq(companies.id, companyId));
+      const rules = (
+        await tx.select().from(companyIcmsRules).where(eq(companyIcmsRules.companyId, companyId))
+      ).map(toMotorRule);
       const sold = await tx
-        .select({ id: products.id, fiscalProfileId: products.fiscalProfileId })
+        .select({ id: products.id, fiscalProfileId: products.fiscalProfileId, ncm: products.ncm })
         .from(products)
         .where(inArray(products.id, [...new Set(items.map((item) => item.productId))]));
       const profileIds = [...new Set(sold.flatMap((p) => (p.fiscalProfileId ? [p.fiscalProfileId] : [])))];
@@ -387,7 +392,12 @@ export class SyncService {
       };
       const expected = saleTaxSummaries({
         company: { uf: company?.uf ?? null, taxRegime: company?.taxRegime ?? null },
-        items: items.map((item) => ({ operationCents: item.totalCents, profile: profileOf(item.productId) })),
+        items: items.map((item) => ({
+          operationCents: item.totalCents,
+          profile: profileOf(item.productId),
+          ncm: sold.find((p) => p.id === item.productId)?.ncm ?? null,
+        })),
+        rules,
         // A data do fato gerador é a do dia da venda no Brasil, não a do fuso do servidor.
         date: new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(at),
       });
@@ -630,7 +640,7 @@ export class SyncService {
   ): Promise<{ fiscal?: FiscalSnapshot }> {
     const [company] = terminalId
       ? await tx
-          .select({ uf: companies.uf, taxRegime: companies.taxRegime, updatedAt: companies.updatedAt })
+          .select({ id: companies.id, uf: companies.uf, taxRegime: companies.taxRegime, updatedAt: companies.updatedAt })
           .from(terminals)
           .innerJoin(companies, eq(companies.id, terminals.companyId))
           .where(eq(terminals.id, terminalId))
@@ -641,8 +651,12 @@ export class SyncService {
         n: sql<number>`count(*)`,
       })
       .from(fiscalProfiles);
+    const rules = company
+      ? await tx.select().from(companyIcmsRules).where(eq(companyIcmsRules.companyId, company.id))
+      : [];
+    const rulesStamp = rules.map((r) => `${r.id}@${r.updatedAt.toISOString()}`).sort().join(',');
     const version = createHash('sha256')
-      .update([company?.uf ?? '', company?.taxRegime ?? '', profiles?.last, profiles?.n].join('|'))
+      .update([company?.uf ?? '', company?.taxRegime ?? '', profiles?.last, profiles?.n, rulesStamp].join('|'))
       .digest('hex')
       .slice(0, 24);
     if (version === known) return {};
@@ -665,6 +679,7 @@ export class SyncService {
             cClassTrib: text(data.cClassTrib),
           };
         }),
+        icmsRules: rules.map(toMotorRule),
       },
     };
   }
