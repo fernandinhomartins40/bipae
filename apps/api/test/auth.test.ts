@@ -10,6 +10,23 @@ afterAll(async () => {
   await t.close();
 });
 
+describe('CORS', () => {
+  it('lets the desktop app (another origin) send edits, not only GET/POST', async () => {
+    const res = await t.app.inject({
+      method: 'OPTIONS',
+      url: '/v1/products/00000000-0000-0000-0000-000000000000',
+      headers: {
+        origin: 'http://tauri.localhost',
+        'access-control-request-method': 'PUT',
+        'access-control-request-headers': 'authorization,content-type',
+      },
+    });
+    expect(res.statusCode).toBe(204);
+    const allowed = String(res.headers['access-control-allow-methods']);
+    for (const method of ['PUT', 'PATCH', 'DELETE']) expect(allowed).toContain(method);
+  });
+});
+
 describe('health', () => {
   it('is public', async () => {
     const res = await t.app.inject({ method: 'GET', url: '/v1/health' });

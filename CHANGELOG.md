@@ -1,5 +1,17 @@
 # Changelog
 
+## [F1-02 Perfis fiscais] — 13/10/2026
+
+### Adicionado
+- Tela **Perfis fiscais**:
+  - lista, criação e edição;
+  - campos: origem da mercadoria, CFOP dentro e fora do estado, CSOSN (Simples) ou CST (Presumido/Real) e cClassTrib (IBS/CBS);
+  - aviso claro de que o cálculo dos impostos chega com a NFC-e.
+- Campo **Perfil fiscal** no cadastro do produto.
+
+### Corrigido
+- **Bipaê Desktop:** salvar uma edição (produto, empresa, perfil...) dava "Sem conexão com o servidor". A API só liberava GET e POST para chamadas de outro endereço; agora libera também PUT, PATCH e DELETE, com teste.
+
 ## [F1-01 Verificação em duas etapas] — 13/10/2026
 
 ### Adicionado

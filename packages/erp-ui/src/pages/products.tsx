@@ -1,4 +1,4 @@
-import { formatBRL, type Cents, type Page, type Product } from '@bipae/domain';
+import { formatBRL, type Cents, type FiscalProfile, type Page, type Product } from '@bipae/domain';
 import {
   Alert,
   Badge,
@@ -144,6 +144,10 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   const queryClient = useQueryClient();
   const canChangePrice = useCan('catalog.price.write');
   const units = useQuery({ queryKey: ['units'], queryFn: () => api.get<Unit[]>('/units') });
+  const profiles = useQuery({
+    queryKey: ['fiscal-profiles'],
+    queryFn: () => api.get<FiscalProfile[]>('/fiscal-profiles'),
+  });
   const form = useForm({
     name: product?.name ?? '',
     sku: product?.sku ?? '',
@@ -152,6 +156,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
     priceCents: product?.priceCents ?? (null as number | null),
     costCents: product?.costCents ?? (null as number | null),
     ncm: product?.ncm ?? '',
+    fiscalProfileId: product?.fiscalProfileId ?? '',
     cest: product?.cest ?? '',
     isWeighable: product?.isWeighable ?? false,
     active: product?.active ?? true,
@@ -167,6 +172,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
       const body = {
         ...(product ?? {}),
         ...v,
+        fiscalProfileId: v.fiscalProfileId || null,
         barcodes: v.barcodes
           .split(/[\s,;]+/)
           .map((b) => b.trim())
@@ -255,6 +261,16 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
             error={form.errors.cest}
           />
         </div>
+        <SelectField
+          label="Perfil fiscal"
+          hint="Como o produto é tributado. Os perfis ficam em Perfis fiscais."
+          value={form.values.fiscalProfileId}
+          onChange={(e) => form.set('fiscalProfileId', e.target.value)}
+          options={[
+            { value: '', label: 'Sem perfil' },
+            ...(profiles.data ?? []).map((p) => ({ value: p.id, label: p.name })),
+          ]}
+        />
         <Checkbox
           label="Vendido por peso"
           hint="Lido na balança ou pela etiqueta de peso."
@@ -295,7 +311,8 @@ function StockCount({ product }: { product: Product }) {
   const save = async (e: FormEvent) => {
     e.preventDefault();
     const value = Number(text.replace(',', '.'));
-    if (!Number.isFinite(value) || value < 0) return setMessage({ ok: false, text: 'Quantidade inválida.' });
+    if (!Number.isFinite(value) || value < 0)
+      return setMessage({ ok: false, text: 'Quantidade inválida.' });
     try {
       const [store] = await api.get<{ id: string }[]>('/stores');
       await api.post('/stock/adjustments', {

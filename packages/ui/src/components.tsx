@@ -133,12 +133,20 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
 export interface SelectFieldProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'id'> {
   label: string;
   error?: string | null | undefined;
+  hint?: string;
   options: { value: string; label: string }[];
 }
 
-export function SelectField({ label, error, options, className, ...props }: SelectFieldProps) {
+export function SelectField({
+  label,
+  error,
+  hint,
+  options,
+  className,
+  ...props
+}: SelectFieldProps) {
   return (
-    <Field label={label} error={error}>
+    <Field label={label} error={error} hint={hint}>
       {(a11y) => (
         <select className={cx(inputClass, className)} {...a11y} {...props}>
           {options.map((o) => (

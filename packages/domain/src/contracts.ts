@@ -240,6 +240,25 @@ export const fiscalProfileInput = z.object({
 });
 export type FiscalProfileInput = z.input<typeof fiscalProfileInput>;
 
+/** Origem da mercadoria (campo `orig` da NF-e, tabela A do CST do ICMS). */
+export const ICMS_ORIGINS: { code: number; label: string }[] = [
+  { code: 0, label: 'Nacional' },
+  { code: 1, label: 'Estrangeira, importação direta' },
+  { code: 2, label: 'Estrangeira, adquirida no mercado interno' },
+  { code: 3, label: 'Nacional, conteúdo de importação acima de 40% e até 70%' },
+  { code: 4, label: 'Nacional, produção conforme processos produtivos básicos' },
+  { code: 5, label: 'Nacional, conteúdo de importação até 40%' },
+  { code: 6, label: 'Estrangeira, importação direta, sem similar nacional (lista CAMEX)' },
+  { code: 7, label: 'Estrangeira, mercado interno, sem similar nacional (lista CAMEX)' },
+  { code: 8, label: 'Nacional, conteúdo de importação acima de 70%' },
+];
+
+export interface FiscalProfile {
+  id: string;
+  name: string;
+  data: Omit<z.output<typeof fiscalProfileInput>, 'name'>;
+}
+
 // ---------- Parties ----------
 
 export const addressSchema = z.object({

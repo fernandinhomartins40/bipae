@@ -121,6 +121,9 @@ export async function createApp(config: Config, database: Database) {
   await app.register(cors, {
     origin: config.CORS_ORIGINS,
     credentials: false,
+    // @fastify/cors only allows GET/HEAD/POST by default: edits (PUT/PATCH) from the desktop app,
+    // which calls the API cross-origin, were blocked by the browser engine.
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['content-type', 'authorization', CLIENT_HEADER, TERMINAL_HEADER],
   });
   await app.register(rateLimit, { global: false, max: config.LOGIN_RATE_LIMIT_PER_MINUTE });
