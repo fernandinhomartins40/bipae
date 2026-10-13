@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-13.a QR Code da NFC-e] — 13/10/2026
+
+### Adicionado
+- **QR Code versão 3 da NFC-e** (NT 2025.001): na emissão normal leva só a chave, a versão e o ambiente, com a URL oficial da UF. **Não precisa mais de CSC.**
+- O XML da NFC-e passa a trazer o grupo `infNFeSupl` (QR Code e URL de consulta pela chave), validado contra o schema oficial.
+- O item externo E1 deixou de pedir o CSC: só o certificado A1 de homologação continua necessário.
+
 ## [F3-28 Endereços da NFC-e das 27 UFs] — 13/10/2026
 
 ### Adicionado

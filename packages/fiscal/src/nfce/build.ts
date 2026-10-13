@@ -4,6 +4,7 @@ import type { IbsCbsResult } from '../taxes/ibs-cbs';
 import type { IcmsResult } from '../taxes/icms';
 import { findPaymentMeans } from '../tables/payment-means';
 import { buildAccessKey } from './access-key';
+import { nfceSupplement } from './qrcode';
 import { el, opt, text, type XmlNode } from './xml';
 
 /**
@@ -83,6 +84,9 @@ export interface NfceInput {
 
 export interface NfceDocument {
   accessKey: string;
+  /** Conteúdo do QR Code e URL de consulta pela chave, que também vão no DANFE. */
+  qrCode: string;
+  urlChave: string;
   /** XML do elemento <NFe>, sem assinatura. */
   xml: string;
   totalCents: number;
@@ -236,163 +240,171 @@ export function buildNfce(input: NfceInput): NfceDocument {
     }
   }
   const taxed = input.items.filter((i) => i.ibsCbs?.taxed);
+  const supplement = nfceSupplement({
+    uf: input.issuer.address.uf,
+    accessKey,
+    environment: 'homologacao',
+  });
 
   const issuer = input.issuer;
   const a = issuer.address;
   const customer = input.customer;
   const xml = el(
     'NFe',
-    el(
-      'infNFe',
-      [
-        el('ide', [
-          req('cUF', input.cUF),
-          req('cNF', input.numericCode),
-          req('natOp', 'Venda'),
-          req('mod', '65'),
-          req('serie', input.series),
-          req('nNF', input.number),
-          req('dhEmi', input.issuedAt),
-          req('tpNF', '1'),
-          req('idDest', '1'),
-          req('cMunFG', a.cityCode),
-          req('tpImp', '4'),
-          req('tpEmis', '1'),
-          req('cDV', accessKey.slice(-1)),
-          req('tpAmb', '2'),
-          req('finNFe', '1'),
-          req('indFinal', '1'),
-          req('indPres', '1'),
-          req('procEmi', '0'),
-          req('verProc', input.appVersion),
-        ]),
-        el('emit', [
-          req('CNPJ', issuer.cnpj),
-          req('xNome', issuer.name),
-          opt('xFant', issuer.tradeName),
-          el('enderEmit', [
-            req('xLgr', a.street),
-            req('nro', a.number),
-            opt('xCpl', a.complement),
-            req('xBairro', a.district),
-            req('cMun', a.cityCode),
-            req('xMun', a.cityName),
-            req('UF', a.uf),
-            req('CEP', a.cep),
-            req('cPais', '1058'),
-            req('xPais', 'Brasil'),
-            opt('fone', a.phone),
+    [
+      el(
+        'infNFe',
+        [
+          el('ide', [
+            req('cUF', input.cUF),
+            req('cNF', input.numericCode),
+            req('natOp', 'Venda'),
+            req('mod', '65'),
+            req('serie', input.series),
+            req('nNF', input.number),
+            req('dhEmi', input.issuedAt),
+            req('tpNF', '1'),
+            req('idDest', '1'),
+            req('cMunFG', a.cityCode),
+            req('tpImp', '4'),
+            req('tpEmis', '1'),
+            req('cDV', accessKey.slice(-1)),
+            req('tpAmb', '2'),
+            req('finNFe', '1'),
+            req('indFinal', '1'),
+            req('indPres', '1'),
+            req('procEmi', '0'),
+            req('verProc', input.appVersion),
           ]),
-          req('IE', issuer.ie),
-          req('CRT', issuer.crt),
-        ]),
-        customer?.cpf || customer?.cnpj
-          ? el('dest', [
-              customer.cpf ? req('CPF', customer.cpf) : req('CNPJ', customer.cnpj!),
-              opt('xNome', customer.name),
-              req('indIEDest', '9'),
-            ])
-          : '',
-        input.items.map((item, index) =>
-          el(
-            'det',
-            [
-              el('prod', [
-                req('cProd', item.code),
-                req('cEAN', item.gtin ?? 'SEM GTIN'),
-                req('xProd', item.description),
-                req('NCM', item.ncm),
-                opt('CEST', item.cest),
-                req('CFOP', item.cfop),
-                req('uCom', item.unit),
-                req('qCom', qty(item.quantityMilli)),
-                req('vUnCom', money(item.unitPriceCents)),
-                req('vProd', money(item.grossCents)),
-                req('cEANTrib', item.gtin ?? 'SEM GTIN'),
-                req('uTrib', item.unit),
-                req('qTrib', qty(item.quantityMilli)),
-                req('vUnTrib', money(item.unitPriceCents)),
-                item.discountCents > 0 ? req('vDesc', money(item.discountCents)) : '',
-                req('indTot', '1'),
-              ]),
-              el('imposto', [
-                icmsGroup(item),
-                contributionGroup('PIS', item.pis),
-                contributionGroup('COFINS', item.cofins),
-                ibsCbsGroup(item.ibsCbs),
-              ]),
-            ],
-            { nItem: String(index + 1) },
-          ),
-        ),
-        el('total', [
-          el('ICMSTot', [
-            req('vBC', money(vBC)),
-            req('vICMS', money(vICMS)),
-            req('vICMSDeson', money(0)),
-            req('vFCP', money(vFCP)),
-            req('vBCST', money(0)),
-            req('vST', money(0)),
-            req('vFCPST', money(0)),
-            req('vFCPSTRet', money(0)),
-            req('vProd', money(vProd)),
-            req('vFrete', money(0)),
-            req('vSeg', money(0)),
-            req('vDesc', money(vDesc)),
-            req('vII', money(0)),
-            req('vIPI', money(0)),
-            req('vIPIDevol', money(0)),
-            req('vPIS', money(vPIS)),
-            req('vCOFINS', money(vCOFINS)),
-            req('vOutro', money(0)),
-            req('vNF', money(vNF)),
+          el('emit', [
+            req('CNPJ', issuer.cnpj),
+            req('xNome', issuer.name),
+            opt('xFant', issuer.tradeName),
+            el('enderEmit', [
+              req('xLgr', a.street),
+              req('nro', a.number),
+              opt('xCpl', a.complement),
+              req('xBairro', a.district),
+              req('cMun', a.cityCode),
+              req('xMun', a.cityName),
+              req('UF', a.uf),
+              req('CEP', a.cep),
+              req('cPais', '1058'),
+              req('xPais', 'Brasil'),
+              opt('fone', a.phone),
+            ]),
+            req('IE', issuer.ie),
+            req('CRT', issuer.crt),
           ]),
-          taxed.length > 0
-            ? el('IBSCBSTot', [
-                req('vBCIBSCBS', money(taxed.reduce((t, i) => t + i.ibsCbs!.baseCents, 0))),
-                el('gIBS', [
-                  el('gIBSUF', [
-                    req('vDif', money(0)),
-                    req('vDevTrib', money(0)),
-                    req(
-                      'vIBSUF',
-                      money(taxed.reduce((t, i) => t + i.ibsCbs!.ibsState!.amountCents, 0)),
-                    ),
-                  ]),
-                  el('gIBSMun', [
-                    req('vDif', money(0)),
-                    req('vDevTrib', money(0)),
-                    req(
-                      'vIBSMun',
-                      money(taxed.reduce((t, i) => t + i.ibsCbs!.ibsMunicipal!.amountCents, 0)),
-                    ),
-                  ]),
-                  req('vIBS', money(taxed.reduce((t, i) => t + i.ibsCbs!.ibsAmountCents, 0))),
-                  req('vCredPres', money(0)),
-                  req('vCredPresCondSus', money(0)),
-                ]),
-                el('gCBS', [
-                  req('vDif', money(0)),
-                  req('vDevTrib', money(0)),
-                  req('vCBS', money(taxed.reduce((t, i) => t + i.ibsCbs!.cbsAmountCents, 0))),
-                  req('vCredPres', money(0)),
-                  req('vCredPresCondSus', money(0)),
-                ]),
+          customer?.cpf || customer?.cnpj
+            ? el('dest', [
+                customer.cpf ? req('CPF', customer.cpf) : req('CNPJ', customer.cnpj!),
+                opt('xNome', customer.name),
+                req('indIEDest', '9'),
               ])
             : '',
-        ]),
-        el('transp', req('modFrete', '9')),
-        el('pag', [
-          input.payments.map((payment) =>
-            el('detPag', [req('tPag', payment.code), req('vPag', money(payment.amountCents))]),
+          input.items.map((item, index) =>
+            el(
+              'det',
+              [
+                el('prod', [
+                  req('cProd', item.code),
+                  req('cEAN', item.gtin ?? 'SEM GTIN'),
+                  req('xProd', item.description),
+                  req('NCM', item.ncm),
+                  opt('CEST', item.cest),
+                  req('CFOP', item.cfop),
+                  req('uCom', item.unit),
+                  req('qCom', qty(item.quantityMilli)),
+                  req('vUnCom', money(item.unitPriceCents)),
+                  req('vProd', money(item.grossCents)),
+                  req('cEANTrib', item.gtin ?? 'SEM GTIN'),
+                  req('uTrib', item.unit),
+                  req('qTrib', qty(item.quantityMilli)),
+                  req('vUnTrib', money(item.unitPriceCents)),
+                  item.discountCents > 0 ? req('vDesc', money(item.discountCents)) : '',
+                  req('indTot', '1'),
+                ]),
+                el('imposto', [
+                  icmsGroup(item),
+                  contributionGroup('PIS', item.pis),
+                  contributionGroup('COFINS', item.cofins),
+                  ibsCbsGroup(item.ibsCbs),
+                ]),
+              ],
+              { nItem: String(index + 1) },
+            ),
           ),
-          input.changeCents ? req('vTroco', money(input.changeCents)) : '',
-        ]),
-        input.additionalInfo ? el('infAdic', req('infCpl', input.additionalInfo)) : '',
-      ],
-      { Id: `NFe${accessKey}`, versao: '4.00' },
-    ),
+          el('total', [
+            el('ICMSTot', [
+              req('vBC', money(vBC)),
+              req('vICMS', money(vICMS)),
+              req('vICMSDeson', money(0)),
+              req('vFCP', money(vFCP)),
+              req('vBCST', money(0)),
+              req('vST', money(0)),
+              req('vFCPST', money(0)),
+              req('vFCPSTRet', money(0)),
+              req('vProd', money(vProd)),
+              req('vFrete', money(0)),
+              req('vSeg', money(0)),
+              req('vDesc', money(vDesc)),
+              req('vII', money(0)),
+              req('vIPI', money(0)),
+              req('vIPIDevol', money(0)),
+              req('vPIS', money(vPIS)),
+              req('vCOFINS', money(vCOFINS)),
+              req('vOutro', money(0)),
+              req('vNF', money(vNF)),
+            ]),
+            taxed.length > 0
+              ? el('IBSCBSTot', [
+                  req('vBCIBSCBS', money(taxed.reduce((t, i) => t + i.ibsCbs!.baseCents, 0))),
+                  el('gIBS', [
+                    el('gIBSUF', [
+                      req('vDif', money(0)),
+                      req('vDevTrib', money(0)),
+                      req(
+                        'vIBSUF',
+                        money(taxed.reduce((t, i) => t + i.ibsCbs!.ibsState!.amountCents, 0)),
+                      ),
+                    ]),
+                    el('gIBSMun', [
+                      req('vDif', money(0)),
+                      req('vDevTrib', money(0)),
+                      req(
+                        'vIBSMun',
+                        money(taxed.reduce((t, i) => t + i.ibsCbs!.ibsMunicipal!.amountCents, 0)),
+                      ),
+                    ]),
+                    req('vIBS', money(taxed.reduce((t, i) => t + i.ibsCbs!.ibsAmountCents, 0))),
+                    req('vCredPres', money(0)),
+                    req('vCredPresCondSus', money(0)),
+                  ]),
+                  el('gCBS', [
+                    req('vDif', money(0)),
+                    req('vDevTrib', money(0)),
+                    req('vCBS', money(taxed.reduce((t, i) => t + i.ibsCbs!.cbsAmountCents, 0))),
+                    req('vCredPres', money(0)),
+                    req('vCredPresCondSus', money(0)),
+                  ]),
+                ])
+              : '',
+          ]),
+          el('transp', req('modFrete', '9')),
+          el('pag', [
+            input.payments.map((payment) =>
+              el('detPag', [req('tPag', payment.code), req('vPag', money(payment.amountCents))]),
+            ),
+            input.changeCents ? req('vTroco', money(input.changeCents)) : '',
+          ]),
+          input.additionalInfo ? el('infAdic', req('infCpl', input.additionalInfo)) : '',
+        ],
+        { Id: `NFe${accessKey}`, versao: '4.00' },
+      ),
+      el('infNFeSupl', [req('qrCode', supplement.qrCode), req('urlChave', supplement.urlChave)]),
+    ],
     { xmlns: NS },
   );
-  return { accessKey, xml, totalCents: vNF };
+  return { accessKey, xml, totalCents: vNF, ...supplement };
 }

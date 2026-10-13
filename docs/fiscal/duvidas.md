@@ -17,7 +17,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-011 | 🔴 aberta | Datas de homologação e produção da NT 2025.002 v1.52 |
 | D-012 | ✅ resolvida | Qual pacote de schemas (XSD) vale para a v1.52 |
 | D-013 | 🔴 aberta | Contingência off-line da NFC-e depois da NT 2026.002 |
-| D-014 | 🔴 aberta | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
+| D-014 | 🟡 parcial | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
 | D-015 | 🔴 aberta | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
 | D-016 | 🔴 aberta | cClassTrib: o dia do fim da vigência ainda vale? |
 | D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
@@ -187,4 +187,5 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a relação de serviços web da NFC-e no portal da SEFAZ Virtual do RS lista os autorizadores AM, GO, MS, MT, PR, RS, SP e SVRS, sem MG. A página de webservices do Portal Nacional da NFC-e (ENCAT) lista um ambiente próprio de MG (hnfce.fazenda.mg.gov.br).
 - **Implementação provisória:** MG usa o ambiente próprio listado pelo ENCAT. Se a primeira autorização em homologação falhar, o caminho é tentar a SVRS.
 - **Pergunta:** qual é o autorizador vigente da NFC-e em MG?
+- **D-014, atualização de 13/10/2026 (F3-13.a):** a NT 2025.001 v1.01 (texto oficial) diz que todas as UF disponibilizam o QR Code versão 3 desde 01/09/2025 e que a adoção pela empresa com CNPJ é opcional. O Bipaê usa a versão 3: na emissão normal o QR Code leva só chave, versão e ambiente, **sem CSC**. Ainda em aberto: algumas URLs da tabela oficial do ENCAT vêm sem o protocolo (AM, MA e as de consulta pela chave); o Bipaê acrescenta https://, o que precisa ser confirmado na primeira autorização em homologação.
 
