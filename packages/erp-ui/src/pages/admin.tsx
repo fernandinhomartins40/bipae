@@ -13,6 +13,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
+import { InviteDrawer, PendingInvites } from './invites';
 import { MemberStoresForm, type StoreOption } from './member-stores';
 import { useApp } from '../context';
 import { useForm } from '../forms';
@@ -182,6 +183,7 @@ export function TeamPage() {
   const { api } = useApp();
   const queryClient = useQueryClient();
   const [adding, setAdding] = useState(false);
+  const [inviting, setInviting] = useState(false);
   const members = useQuery({ queryKey: ['members'], queryFn: () => api.get<Member[]>('/members') });
   const roles = useQuery({ queryKey: ['roles'], queryFn: () => api.get<Role[]>('/roles') });
   const stores = useQuery({
@@ -200,9 +202,14 @@ export function TeamPage() {
         title="Equipe"
         description="Quem acessa o Bipaê e o que cada pessoa pode fazer."
         actions={
-          <Button icon={<Plus className="size-5" aria-hidden />} onClick={() => setAdding(true)}>
-            Adicionar pessoa
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" onClick={() => setInviting(true)}>
+              Convidar por link
+            </Button>
+            <Button icon={<Plus className="size-5" aria-hidden />} onClick={() => setAdding(true)}>
+              Adicionar pessoa
+            </Button>
+          </div>
         }
       />
       {members.data && (
@@ -261,6 +268,14 @@ export function TeamPage() {
         />
       )}
 
+      <PendingInvites />
+      {inviting && (
+        <InviteDrawer
+          roles={roles.data ?? []}
+          stores={stores.data ?? []}
+          onClose={() => setInviting(false)}
+        />
+      )}
       {storesOf && (
         <MemberStoresForm
           member={storesOf}

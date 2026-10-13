@@ -15,6 +15,7 @@ import { PosPage } from './pages/pos';
 import { AccountPage } from './pages/account';
 import { DownloadsPage, PublicDownloadsPage } from './pages/downloads';
 import { FiscalProfilesPage } from './pages/fiscal-profiles';
+import { InvitePage } from './pages/invites';
 import { PriceTablesPage } from './pages/price-tables';
 import { CompaniesPage } from './pages/companies';
 import { AdminApp } from './admin/admin-app';
@@ -113,6 +114,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
                 </PublicOnly>
               }
             />
+            <Route path="/convite/:token" element={<InvitePage />} />
             <Route
               path="/criar-conta"
               element={

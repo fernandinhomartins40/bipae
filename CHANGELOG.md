@@ -1,5 +1,20 @@
 # Changelog
 
+## [F1-06 Convite por link] — 13/10/2026
+
+### Adicionado
+- **Convidar por link** em Equipe:
+  - escolha o papel, o e-mail (opcional) e as lojas;
+  - o link vale 7 dias e só pode ser usado uma vez;
+  - os convites pendentes podem ser cancelados.
+- **Página do convite**: a pessoa cria a conta ou entra com a que já tem (senha e, se usar, o código da verificação em duas etapas) e cai direto na empresa.
+
+### Mudou
+- **Quem já tem conta no Bipaê** (ex.: o contador de várias empresas) não entra mais direto pela tela Adicionar pessoa. Agora precisa aceitar um convite.
+
+### Corrigido
+- **Caixa:** num computador lento, um atalho (F4, F10...) apertado logo depois de bipar se perdia. Agora ele espera a bipagem terminar.
+
 ## [F1-05 Permissões por loja] — 13/10/2026
 
 ### Adicionado
