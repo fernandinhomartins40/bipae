@@ -25,6 +25,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - name: Backlog válido (docs/TAREFAS.md)
+        run: pnpm -s tarefas
       - run: pnpm typecheck
       - run: pnpm test
 

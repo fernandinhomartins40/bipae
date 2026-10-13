@@ -5,7 +5,7 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 ## Estado atual
 
 - Fases 0, 1 e 2 entregues (12/10/2026), mais a plataforma SaaS com painel super admin em `/app/admin` (ADR-0013). Próxima: **Fase 3 — Fiscal** (revalidar `docs/fiscal/versoes.md` antes de codificar).
-- Tarefas da fase atual e das próximas: [docs/TAREFAS.md](docs/TAREFAS.md). Mantenha esse arquivo atualizado.
+- Tudo o que falta está no backlog [docs/TAREFAS.md](docs/TAREFAS.md) (`pnpm tarefas`); como executar está na seção "Backlog" abaixo.
 
 ## Nomes e idioma
 
@@ -59,6 +59,21 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 - Plataforma SaaS (ADR-0013): `asPlatform()` (papel `bipae_platform`, sem RLS) **só** dentro de `modules/admin`, na `admin-cli`, no seed e no atalho de desenvolvimento `PLATFORM_BOOTSTRAP_EMAIL`; nunca em rotas de clientes. Criar empresa/loja/caixa/usuário/produto chama `limits.assertCanAdd(tx, recurso)` na mesma transação. Rota nova do painel declara `@PlatformPermission(...)` (sem isso, só `owner` passa) e registra em `platformAudit.record`.
 - Validação com os schemas Zod de `@bipae/domain` via `parse()`; erros sempre com mensagem pt-BR para o usuário.
 - Migrações em `apps/api/src/db/migrations/*.sql` (fonte da verdade); `schema.ts` é o espelho tipado. Nunca editar migração já aplicada.
+
+## Backlog (execução automática)
+
+O plano inteiro está em [docs/TAREFAS.md](docs/TAREFAS.md). Quando o dono pedir "continue", "próxima tarefa" ou "siga o backlog":
+
+1. Rode `pnpm tarefas proxima`. Retome a tarefa marcada `[~]`; se não houver, pegue a primeira liberada e marque `[~]`.
+2. Se a tarefa for grande, quebre-a em subtarefas `CÓDIGO.a`, `CÓDIGO.b` no próprio arquivo antes de começar.
+3. Implemente seguindo as regras deste arquivo, com testes que provem o "Pronto quando".
+4. Rode `pnpm lint && pnpm typecheck && pnpm test` e o E2E afetado. Se falhar, corrija. Não marque como feita com teste vermelho.
+5. Marque `[x]`, registre no `CHANGELOG.md` e faça o commit (`feat(...)`), com o código da tarefa na mensagem.
+6. Faça o push para `main`: o deploy roda pelo GitHub Actions. Acompanhe e só siga para a próxima com CI e deploy verdes.
+7. Pare e pergunte ao dono antes de uma decisão irreversível ou cara, de uma ambiguidade fiscal (registre em `docs/fiscal/duvidas.md`) ou quando só sobrarem tarefas que dependem de itens `E*`. Nesse caso, mostre `pnpm tarefas bloqueadas`.
+8. Ao terminar, diga em uma linha o que foi entregue e qual é a próxima tarefa.
+
+Tarefas novas, descobertas no caminho, entram no backlog com código novo, no lugar certo da ordem.
 
 ## Kit PDV Embed (`kits/pdv-embed`, ADR-0014)
 

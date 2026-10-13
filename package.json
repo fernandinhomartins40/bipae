@@ -13,7 +13,8 @@
     "test": "turbo run test",
     "test:e2e": "pnpm --filter @bipae/web test:e2e",
     "format": "prettier --write .",
-    "db:seed": "pnpm --filter @bipae/api db:seed"
+    "db:seed": "pnpm --filter @bipae/api db:seed",
+    "tarefas": "node scripts/tarefas.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.0",
