@@ -442,3 +442,114 @@ describe('tabelas de preço no caixa sem internet (F1-03)', () => {
     expect((await caixa.pdv.findByCode('7891000315507'))!.priceCents).toBe(2890);
   });
 });
+
+describe('kits no estoque (F1-04)', () => {
+  it('vender um kit baixa os componentes; cancelar e devolver devolvem', async () => {
+    const owner = await signup(t.app);
+    const admin = api(t.app, owner.auth);
+    const loja = (await admin.get('/stores')).json()[0];
+    const arroz = (await admin.post('/products', { name: 'Arroz 5kg', priceCents: 2890 })).json();
+    const feijao = (await admin.post('/products', { name: 'Feijão 1kg', priceCents: 899 })).json();
+    for (const [produto, quantidade] of [
+      [arroz, 10_000],
+      [feijao, 20_000],
+    ] as const) {
+      await admin.post('/stock/adjustments', {
+        productId: produto.id,
+        storeId: loja.id,
+        mode: 'count',
+        quantityMilli: quantidade,
+      });
+    }
+    // Cesta: 1 arroz e 2 feijões.
+    const cesta = (
+      await admin.post('/products', {
+        name: 'Cesta Básica',
+        priceCents: 4500,
+        barcodes: ['7890000000017'],
+        components: [
+          { productId: arroz.id, quantity: 1 },
+          { productId: feijao.id, quantity: 2 },
+        ],
+      })
+    ).json();
+    const estoque = async (id: string) =>
+      ((await admin.get(`/stock?productId=${id}`)).json()[0]?.quantityMilli as number) ?? 0;
+
+    const caixa = await terminalDevice(owner, 'Caixa kit', 'web');
+    await caixa.sync.sync();
+    await caixa.pdv.openSession(0);
+    const produto = (await caixa.pdv.findByCode('7890000000017'))!;
+    // Três cestas numa venda, uma cesta em outra.
+    await caixa.pdv.completeSale(
+      addItem(EMPTY_CART, produto, 3000),
+      [{ method: 'pix', receivedCents: 13500 }],
+      {
+        discountLimitPercent: 10,
+      },
+    );
+    const segunda = await caixa.pdv.completeSale(
+      addItem(EMPTY_CART, produto, 1000),
+      [{ method: 'pix', receivedCents: 4500 }],
+      { discountLimitPercent: 10 },
+    );
+    expect(await caixa.sync.sync()).toMatchObject({ pending: 0, rejected: 0 });
+    // 4 cestas: 10 − 4 arroz, 20 − 8 feijão; a cesta não tem estoque próprio.
+    expect(await estoque(arroz.id)).toBe(6_000);
+    expect(await estoque(feijao.id)).toBe(12_000);
+    expect(await estoque(cesta.id)).toBe(0);
+
+    // Cancelar a venda de 1 cesta devolve 1 arroz e 2 feijões.
+    await caixa.pdv.cancelSale(segunda.id, 'Cliente desistiu', owner.me.user.id);
+    // Devolver 1 das 3 cestas da primeira venda devolve mais 1 arroz e 2 feijões.
+    const primeira = (await caixa.pdv.findSaleBySeq(1))!;
+    await caixa.pdv.returnItems(
+      primeira.id,
+      [{ line: 1, quantityMilli: 1000 }],
+      'cash',
+      'Veio amassada',
+    );
+    expect(await caixa.sync.sync()).toMatchObject({ pending: 0, rejected: 0 });
+    expect(await estoque(arroz.id)).toBe(8_000);
+    expect(await estoque(feijao.id)).toBe(16_000);
+  });
+
+  it('regras da composição: sem kit dentro de kit e só produtos desta empresa', async () => {
+    const owner = await signup(t.app);
+    const admin = api(t.app, owner.auth);
+    const sabao = (await admin.post('/products', { name: 'Sabão', priceCents: 500 })).json();
+    const kit = (
+      await admin.post('/products', {
+        name: 'Kit Limpeza',
+        priceCents: 900,
+        components: [{ productId: sabao.id, quantity: 2 }],
+      })
+    ).json();
+
+    const kitDeKit = await admin.post('/products', {
+      name: 'Kit grande',
+      priceCents: 2000,
+      components: [{ productId: kit.id, quantity: 1 }],
+    });
+    expect(kitDeKit.statusCode).toBe(400);
+    expect(kitDeKit.json().message).toBe('Um kit não pode ter outro kit como componente.');
+
+    const virarKit = await admin.put(`/products/${sabao.id}`, {
+      ...sabao,
+      components: [{ productId: kit.id, quantity: 1 }],
+    });
+    expect(virarKit.statusCode).toBe(400);
+
+    const outra = await signup(t.app);
+    const alheio = (
+      await api(t.app, outra.auth).post('/products', { name: 'De outro', priceCents: 100 })
+    ).json();
+    const deOutraEmpresa = await admin.post('/products', {
+      name: 'Kit estranho',
+      priceCents: 100,
+      components: [{ productId: alheio.id, quantity: 1 }],
+    });
+    expect(deOutraEmpresa.statusCode).toBe(400);
+    expect(deOutraEmpresa.json().message).toBe('Um dos componentes do kit não existe.');
+  });
+});

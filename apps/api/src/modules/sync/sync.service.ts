@@ -19,6 +19,7 @@ import {
   customers,
   memberships,
   priceTableItems,
+  productComponents,
   priceTables,
   productBarcodes,
   products,
@@ -352,6 +353,35 @@ export class SyncService {
       throw new Rejection('A venda tem um produto desconhecido nesta empresa.');
   }
 
+  /**
+   * Kit (F1-04): não tem estoque próprio. Vender, cancelar ou devolver um kit mexe no estoque
+   * dos componentes, cada um multiplicado pela quantidade que vai no kit. Um nível só: o
+   * cadastro não deixa um kit ser componente de outro.
+   */
+  private async expandKits(
+    tx: Tx,
+    deltas: [productId: string, deltaMilli: number][],
+  ): Promise<[string, number][]> {
+    const ids = [...new Set(deltas.map(([id]) => id))];
+    const parts = await tx
+      .select()
+      .from(productComponents)
+      .where(inArray(productComponents.productId, ids));
+    if (parts.length === 0) return deltas;
+    const result: [string, number][] = [];
+    for (const [productId, deltaMilli] of deltas) {
+      const components = parts.filter((p) => p.productId === productId);
+      if (components.length === 0) {
+        result.push([productId, deltaMilli]);
+        continue;
+      }
+      for (const c of components) {
+        result.push([c.componentId, Math.round(deltaMilli * Number(c.quantity))]);
+      }
+    }
+    return result.filter(([, delta]) => delta !== 0);
+  }
+
   private async moveStock(
     tx: Tx,
     ctx: RequestContext,
@@ -362,8 +392,10 @@ export class SyncService {
     deltas: [productId: string, deltaMilli: number][],
   ) {
     if (deltas.length === 0) return;
+    const expanded = await this.expandKits(tx, deltas);
+    if (expanded.length === 0) return;
     await tx.insert(stockMovements).values(
-      deltas.map(([productId, deltaMilli]) => ({
+      expanded.map(([productId, deltaMilli]) => ({
         id: uuidv7(),
         tenantId: ctx.tenantId,
         storeId: terminal.storeId,

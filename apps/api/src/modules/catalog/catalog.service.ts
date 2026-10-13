@@ -151,6 +151,36 @@ export class CatalogService {
       if (input.components.some((c) => c.productId === productId)) {
         throw new AppError(400, 'validation', 'Um kit não pode conter a si mesmo.');
       }
+      const ids = [...new Set(input.components.map((c) => c.productId))];
+      // A checagem de chave estrangeira ignora o RLS: confirma que os componentes são desta empresa.
+      const found = await tx
+        .select({ id: products.id })
+        .from(products)
+        .where(inArray(products.id, ids));
+      if (found.length !== ids.length) {
+        throw new AppError(400, 'validation', 'Um dos componentes do kit não existe.');
+      }
+      // Um nível só, para a baixa de estoque ser simples e previsível.
+      const nested = await tx
+        .select({ id: productComponents.productId })
+        .from(productComponents)
+        .where(inArray(productComponents.productId, ids))
+        .limit(1);
+      if (nested.length > 0) {
+        throw new AppError(400, 'validation', 'Um kit não pode ter outro kit como componente.');
+      }
+      const usedIn = await tx
+        .select({ id: productComponents.productId })
+        .from(productComponents)
+        .where(eq(productComponents.componentId, productId))
+        .limit(1);
+      if (usedIn.length > 0) {
+        throw new AppError(
+          400,
+          'validation',
+          'Este produto já é componente de um kit e não pode virar kit.',
+        );
+      }
       await tx.insert(productComponents).values(
         input.components.map((c) => ({
           tenantId,
