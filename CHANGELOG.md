@@ -1,5 +1,16 @@
 # Changelog
 
+## [F3-06.d1 Impostos do item de venda] — 13/10/2026
+
+### Adicionado
+- **O motor já responde "quanto de imposto tem neste item?"** a partir do que o lojista cadastrou: UF e regime da empresa, perfil fiscal do produto e valor. Sai o CRT, o CFOP e, para ICMS, PIS, COFINS e IBS/CBS, o valor com a explicação da conta.
+- **Quando falta algo, o motor diz o quê**, em português: "Informe a UF e o regime tributário da empresa", "O produto não tem perfil fiscal", "A alíquota geral de ICMS de AL ainda não foi confirmada. Peça a alíquota ao contador".
+- **Simplificações ficam à vista:** quando o ICMS usa a alíquota geral da UF, o resultado avisa que produto com alíquota própria precisa de regra específica.
+- **Teste de cobertura das 27 UFs × 5 regimes** (135 combinações): hoje 114 calculam por completo e 21 esperam a alíquota de uma das 7 UFs pendentes. Se uma UF ou um regime ficar sem resposta, o teste falha.
+
+### Ainda não ligado
+- É a função do motor, com testes. O caixa ainda não a chama: isso vem nas partes d2 a d4.
+
 ## [F3-06.c Regime tributário e UF da empresa] — 13/10/2026
 
 ### Adicionado
