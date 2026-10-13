@@ -22,6 +22,8 @@ const envSchema = z.object({
   MIN_CLIENT_VERSION_WEB: z.string().optional(),
   MIN_CLIENT_VERSION_DESKTOP: z.string().optional(),
   MIN_CLIENT_VERSION_CONNECTOR: z.string().optional(),
+  /** Redis da fila de tarefas (F1-07). Sem ele, a fila roda em memória (desenvolvimento e testes). */
+  REDIS_URL: z.string().url().optional(),
   LOGIN_RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().default(10),
   /** Encryption key for secrets at rest (2FA seeds). Defaults to a key derived from JWT_SECRET. */
   SECRETS_KEY: z.string().min(32).optional(),

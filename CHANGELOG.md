@@ -1,5 +1,12 @@
 # Changelog
 
+## [F1-07 Fila de tarefas] — 13/10/2026
+
+### Adicionado
+- **Fila de tarefas em segundo plano**, com nova tentativa automática: em memória no desenvolvimento, BullMQ + Redis em produção. É a base para o envio de notas à SEFAZ na Fase 3.
+- Primeira tarefa: limpeza, a cada 6 horas, dos registros de login vencidos ou encerrados há mais de 30 dias.
+- **Redis** na VPS: contêiner próprio do Bipaê, sem porta no host, com 96 MB de memória. A CI testa a fila contra um Redis de verdade.
+
 ## [F1-06 Convite por link] — 13/10/2026
 
 ### Adicionado

@@ -57,7 +57,8 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 
 - Injeção de dependência sempre com `@Inject(Token)` explícito (não há metadados de decorators: tsx/esbuild/Vite não os emitem).
 - Toda consulta de negócio passa por `withTenant(db, ctx, fn)`; ações relevantes chamam `audit.record(tx, ...)` na mesma transação.
-- Plataforma SaaS (ADR-0013): `asPlatform()` (papel `bipae_platform`, sem RLS) **só** dentro de `modules/admin`, na `admin-cli`, no seed e no atalho de desenvolvimento `PLATFORM_BOOTSTRAP_EMAIL`; nunca em rotas de clientes. Criar empresa/loja/caixa/usuário/produto chama `limits.assertCanAdd(tx, recurso)` na mesma transação. Rota nova do painel declara `@PlatformPermission(...)` (sem isso, só `owner` passa) e registra em `platformAudit.record`.
+- Plataforma SaaS (ADR-0013): `asPlatform()` (papel `bipae_platform`, sem RLS) **só** dentro de `modules/admin`, na `admin-cli`, no seed, no atalho de desenvolvimento `PLATFORM_BOOTSTRAP_EMAIL` e nas rotinas de `modules/maintenance`; nunca em rotas de clientes. Criar empresa/loja/caixa/usuário/produto chama `limits.assertCanAdd(tx, recurso)` na mesma transação. Rota nova do painel declara `@PlatformPermission(...)` (sem isso, só `owner` passa) e registra em `platformAudit.record`.
+- Trabalho em segundo plano (envio à SEFAZ, limpezas, e-mails) vai pela fila `QUEUE` (`common/queue.ts`): em memória no desenvolvimento e nos testes, BullMQ + Redis em produção (`REDIS_URL`). A tarefa precisa poder rodar duas vezes sem estrago, porque há nova tentativa automática.
 - Validação com os schemas Zod de `@bipae/domain` via `parse()`; erros sempre com mensagem pt-BR para o usuário.
 - Migrações em `apps/api/src/db/migrations/*.sql` (fonte da verdade); `schema.ts` é o espelho tipado. Nunca editar migração já aplicada.
 

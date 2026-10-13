@@ -64,7 +64,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: o convite gera um link de uso único que expira, e quem aceita entra com o papel definido.
 - [x] F1-06.a · API: convites (criar, listar, revogar, consultar e aceitar pelo link); conta que já existe só entra por convite (testes)
 - [x] F1-06.b · Telas: convidar por link na Equipe e página de aceite do convite, com E2E — depende: F1-06.a
-- [ ] F1-07 · Fila de tarefas (Redis + BullMQ) na API e no deploy
+- [x] F1-07 · Fila de tarefas (Redis + BullMQ) na API e no deploy
   - Pronto quando: um job de exemplo roda com nova tentativa, o Redis está no compose da VPS e há teste.
 - [ ] F1-08 · Fotos de produto — externo: E12
   - Pronto quando: enviar, redimensionar e mostrar na busca do caixa, com limite de tamanho e tipo.

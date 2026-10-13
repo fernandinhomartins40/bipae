@@ -22,7 +22,8 @@ Internet ─HTTPS─► nginx do host (certbot) ─► 127.0.0.1:3400 ─► con
 ```
 
 - Projeto compose `bipae` em `/root/bipae` (`deploy/docker-compose.vps.yml`). Só o web escuta no host, e só em 127.0.0.1.
-- Limites de memória: postgres 512 MB, api 512 MB, web 128 MB (a VPS não tem swap).
+- Limites de memória: postgres 512 MB, api 512 MB, redis 96 MB, web 128 MB (a VPS não tem swap).
+- **Redis** (fila de tarefas em segundo plano): contêiner `redis`, sem porta no host, dados no volume `redisdata`. A API usa `REDIS_URL=redis://redis:6379`.
 - Segredos (`POSTGRES_PASSWORD`, `JWT_SECRET`, `SECRETS_KEY`) em `/root/bipae/.env`, gerados pelo `deploy.sh` quando faltam, permissão 600. `SECRETS_KEY` cifra as sementes do 2FA do painel: **não troque** sem antes zerar o 2FA da equipe. **Nunca estão no repositório.**
 - Certificado Let's Encrypt `bipae.com.br` (bipae.com.br + www), renovado pelo `certbot.timer` da VPS.
 
@@ -54,6 +55,7 @@ C="docker compose -p bipae -f deploy/docker-compose.vps.yml --env-file .env"
 
 $C ps                      # estado
 $C logs --tail 100 api     # logs da API
+$C exec redis redis-cli llen bull:bipae:wait   # tarefas aguardando na fila
 ls -lh backups/            # backups do banco
 ```
 

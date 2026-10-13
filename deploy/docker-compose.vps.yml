@@ -33,6 +33,25 @@ services:
         limits:
           memory: 512m
 
+  # Fila de tarefas em segundo plano (F1-07). Sem porta no host; guarda as tarefas em disco
+  # (AOF) para não perdê-las num reinício. Memória pequena e fixa: a VPS é compartilhada.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes', '--maxmemory', '48mb', '--maxmemory-policy', 'noeviction']
+    volumes:
+      - redisdata:/data
+    networks: [internal]
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 96m
+
   api:
     image: ${BIPAE_API_IMAGE:?defina BIPAE_API_IMAGE}
     restart: unless-stopped
@@ -42,12 +61,15 @@ services:
       DATABASE_URL: postgres://bipae:${POSTGRES_PASSWORD}@postgres:5432/bipae
       JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no .env}
       SECRETS_KEY: ${SECRETS_KEY:?defina SECRETS_KEY no .env}
+      REDIS_URL: redis://redis:6379
       # O web é servido na mesma origem (sem CORS). O app desktop chama a API direto.
       CORS_ORIGINS: https://www.bipae.com.br,http://tauri.localhost,tauri://localhost
       MIN_CLIENT_VERSION_DESKTOP: ${MIN_CLIENT_VERSION_DESKTOP:-}
       MIN_CLIENT_VERSION_WEB: ${MIN_CLIENT_VERSION_WEB:-}
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks: [internal]
     healthcheck:
@@ -85,3 +107,4 @@ networks:
 
 volumes:
   pgdata:
+  redisdata:

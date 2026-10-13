@@ -13,7 +13,8 @@ import {
   type ApiErrorBody,
 } from '@bipae/domain';
 import { AuthGuard, Public } from './common/auth';
-import { CONFIG, DB } from './common/di';
+import { CONFIG, DB, QUEUE } from './common/di';
+import { createQueue } from './common/queue';
 import { ApiExceptionFilter } from './common/errors';
 import { TokenService } from './common/tokens';
 import type { Config } from './config';
@@ -34,6 +35,7 @@ import { AuthController } from './modules/auth/auth.controller';
 import { AuthService } from './modules/auth/auth.service';
 import { CatalogController } from './modules/catalog/catalog.controller';
 import { CatalogService } from './modules/catalog/catalog.service';
+import { MaintenanceService } from './modules/maintenance/maintenance.service';
 import { OrganizationController } from './modules/organization/organization.controller';
 import { OrganizationService } from './modules/organization/organization.service';
 import { PartiesController } from './modules/parties/parties.controller';
@@ -86,6 +88,11 @@ class AppModule {
       providers: [
         { provide: CONFIG, useValue: config },
         { provide: DB, useValue: database.db },
+        {
+          provide: QUEUE,
+          useValue: createQueue(config.REDIS_URL, (m) => console.warn(`[fila] ${m}`)),
+        },
+        MaintenanceService,
         TokenService,
         AuditService,
         AuthService,
