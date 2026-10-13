@@ -85,8 +85,12 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: há casos de teste por regime (Simples, Presumido, Real) e cada cálculo mostra seus passos.
 - [x] F3-05 · IBS, CBS e IS com vigência (2026 teste, 2027, transição 2029–2032, 2033) — depende: F3-03
   - Pronto quando: há casos por período, e as ambiguidades viram configuração, nunca suposição.
-- [ ] F3-06 · Perfil fiscal do produto e da empresa ligado ao motor, com cálculo na venda — depende: F1-02, F3-04, F3-05
+- [~] F3-06 · Perfil fiscal do produto e da empresa ligado ao motor, com cálculo na venda — depende: F1-02, F3-04, F3-05
   - Trocar as listas digitadas do cadastro (`ICMS_ORIGINS` em `@bipae/domain`, campos livres de CST, CFOP e NCM) pelas tabelas de `@bipae/fiscal/tables`, com busca de NCM.
+- [x] F3-06.a · API: valida NCM, CEST e os códigos do perfil fiscal nas tabelas oficiais; rotas de consulta (`/v1/fiscal/*`)
+- [ ] F3-06.b · Telas: perfil fiscal com as listas oficiais; busca de NCM e sugestão de CEST no produto — depende: F3-06.a
+- [ ] F3-06.c · Dados fiscais da empresa (CRT, regime de apuração, UF) e tabela de regras de tributos por vigência — depende: F3-06.a
+- [ ] F3-06.d · Cálculo dos tributos na venda, no caixa (offline) e conferido no servidor — depende: F3-06.c
 - [ ] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.
 - [ ] F3-08 · XML da NF-e (modelo 55), com validação automática — depende: F3-07

@@ -1,5 +1,21 @@
 # Changelog
 
+## [F3-06.a Cadastro conferido nas tabelas oficiais] — 13/10/2026
+
+### Adicionado
+- **O cadastro passa a conferir os códigos fiscais nas tabelas oficiais.** NCM e CEST do produto e, no perfil fiscal, origem, CFOP, CSOSN, CST do ICMS e cClassTrib: código que não existe ou não está em vigor é recusado com a explicação ("O CFOP 6102 não é de venda dentro do estado. Os CFOP de venda dentro do estado começam com 5.").
+- Produto antigo com NCM que deixou de existir continua podendo ser alterado (preço, nome); a conferência só vale para o código que mudou.
+- **Rotas de consulta** para as telas: busca de NCM por palavra ou código (`GET /v1/fiscal/ncm?q=`), sugestão de CEST pelo NCM (`GET /v1/fiscal/cest?ncm=`) e as listas do perfil fiscal (`GET /v1/fiscal/options`).
+
+### Corrigido
+- O seed de demonstração usava o NCM 3402.20.00 (sabão em pó e detergente), extinto em 2022. Agora usa o 3402.50.00. Quem já tem esses dois produtos de demonstração segue vendendo normalmente; o código antigo só precisa ser trocado ao editar o NCM.
+
+## [Correção da limpeza periódica] — 13/10/2026
+
+### Corrigido
+- **A limpeza de logins antigos não era agendada em produção.** O identificador da tarefa repetida tinha dois-pontos, que o BullMQ recusa. A API subia normalmente e só avisava no log; agora a rotina é agendada de fato.
+- Novo teste de tarefa repetida, rodando também contra o Redis de verdade, e o teste do pacote compilado passa a reprovar se o agendamento falhar.
+
 ## [F3-05 IBS, CBS e Imposto Seletivo] — 13/10/2026
 
 ### Adicionado

@@ -26,6 +26,7 @@ import {
 } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
+import { assertFiscalProfile, assertProductFiscal } from '../fiscal/fiscal-validation';
 
 type ProductData = z.output<typeof productInput>;
 
@@ -75,6 +76,7 @@ export class CatalogService {
   }
 
   async createProduct(ctx: RequestContext, input: ProductData): Promise<Product> {
+    assertProductFiscal(input);
     return withTenant(this.db, ctx, async (tx) => {
       await this.limits.assertCanAdd(tx, 'products');
       const id = uuidv7();
@@ -98,6 +100,12 @@ export class CatalogService {
       if (input.parentId === id) {
         throw new AppError(400, 'validation', 'Um produto não pode ser variação de si mesmo.');
       }
+      // Só confere o código fiscal que mudou: um NCM extinto depois do cadastro não pode impedir
+      // o lojista de corrigir o preço ou o nome do produto.
+      assertProductFiscal({
+        ncm: (input.ncm ?? null) === current.ncm ? null : input.ncm,
+        cest: (input.cest ?? null) === current.cest ? null : input.cest,
+      });
       const priceChanged = current.priceCents !== input.priceCents;
       if (priceChanged && !hasPermission(ctx.permissions, 'catalog.price.write')) throw forbidden();
 
@@ -264,6 +272,7 @@ export class CatalogService {
     id: string | null,
     input: z.output<typeof fiscalProfileInput>,
   ) {
+    assertFiscalProfile(input);
     const { name, ...data } = input;
     return withTenant(this.db, ctx, async (tx) => {
       const [row] = id

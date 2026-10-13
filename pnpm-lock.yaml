@@ -38,6 +38,9 @@ importers:
       '@bipae/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@bipae/fiscal':
+        specifier: workspace:*
+        version: link:../../packages/fiscal
       '@electric-sql/pglite':
         specifier: ^0.5.8
         version: 0.5.8
