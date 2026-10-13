@@ -13,6 +13,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
+import { MemberStoresForm, type StoreOption } from './member-stores';
 import { useApp } from '../context';
 import { useForm } from '../forms';
 
@@ -167,6 +168,8 @@ interface Member {
   roleId: string;
   roleName: string;
   active: boolean;
+  /** Lojas que a pessoa usa (F1-05); null = todas. */
+  storeIds: string[] | null;
 }
 interface Role {
   id: string;
@@ -181,6 +184,15 @@ export function TeamPage() {
   const [adding, setAdding] = useState(false);
   const members = useQuery({ queryKey: ['members'], queryFn: () => api.get<Member[]>('/members') });
   const roles = useQuery({ queryKey: ['roles'], queryFn: () => api.get<Role[]>('/roles') });
+  const stores = useQuery({
+    queryKey: ['stores'],
+    queryFn: () => api.get<StoreOption[]>('/stores'),
+  });
+  const [storesOf, setStoresOf] = useState<Member | null>(null);
+  const storeNames = (ids: string[] | null) =>
+    ids === null
+      ? 'Todas'
+      : ids.map((id) => stores.data?.find((s) => s.id === id)?.name ?? '—').join(', ') || 'Nenhuma';
 
   return (
     <>
@@ -208,6 +220,7 @@ export function TeamPage() {
               ),
             },
             { header: 'Papel', cell: (m) => m.roleName },
+            { header: 'Lojas', cell: (m) => storeNames(m.storeIds) },
             {
               header: 'Acesso',
               cell: (m) =>
@@ -220,22 +233,39 @@ export function TeamPage() {
             {
               header: 'Ações',
               cell: (m) => (
-                <Button
-                  variant="ghost"
-                  onClick={async () => {
-                    try {
-                      await api.patch(`/members/${m.userId}`, { active: !m.active });
-                      await queryClient.invalidateQueries({ queryKey: ['members'] });
-                    } catch (error) {
-                      alert((error as Error).message);
-                    }
-                  }}
-                >
-                  {m.active ? 'Bloquear' : 'Liberar'}
-                </Button>
+                <div className="flex flex-wrap gap-1">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setStoresOf(m)}
+                    aria-label={`Lojas de ${m.name}`}
+                  >
+                    Lojas
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={async () => {
+                      try {
+                        await api.patch(`/members/${m.userId}`, { active: !m.active });
+                        await queryClient.invalidateQueries({ queryKey: ['members'] });
+                      } catch (error) {
+                        alert((error as Error).message);
+                      }
+                    }}
+                  >
+                    {m.active ? 'Bloquear' : 'Liberar'}
+                  </Button>
+                </div>
               ),
             },
           ]}
+        />
+      )}
+
+      {storesOf && (
+        <MemberStoresForm
+          member={storesOf}
+          stores={stores.data ?? []}
+          onClose={() => setStoresOf(null)}
         />
       )}
 

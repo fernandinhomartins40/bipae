@@ -56,10 +56,10 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F1-04.b · Tela do kit: composição no cadastro do produto — depende: F1-04.a
 - [x] F1-04.c · Tela da grade: atributos (tamanho, cor...) geram as variações — depende: F1-04.a
 - [x] F1-04.d · Caixa: as variações aparecem na busca e o modelo (produto pai) não, com E2E — depende: F1-04.b, F1-04.c
-- [~] F1-05 · Permissões por loja (`memberships.store_ids`) aplicadas na API e nas telas
+- [x] F1-05 · Permissões por loja (`memberships.store_ids`) aplicadas na API e nas telas
   - Pronto quando: um operador restrito não vê nem vende em outra loja, com teste de RLS/API.
 - [x] F1-05.a · API: lojas permitidas na sessão e aplicadas em lojas, caixas, sincronização, vendas e estoque (testes)
-- [ ] F1-05.b · Tela da equipe: escolher as lojas de cada pessoa, com E2E — depende: F1-05.a
+- [x] F1-05.b · Tela da equipe: escolher as lojas de cada pessoa, com E2E — depende: F1-05.a
 - [ ] F1-06 · Convite de equipe com aceite por link (sem depender de e-mail)
   - Pronto quando: o convite gera um link de uso único que expira, e quem aceita entra com o papel definido.
 - [ ] F1-07 · Fila de tarefas (Redis + BullMQ) na API e no deploy

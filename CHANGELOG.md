@@ -1,5 +1,11 @@
 # Changelog
 
+## [F1-05 Permissões por loja] — 13/10/2026
+
+### Adicionado
+- Em **Equipe**, cada pessoa pode ter **todas as lojas** ou **só algumas**.
+- Quem é restrito só vê e usa as suas lojas e os caixas delas. Vendas e estoque de outras lojas não aparecem para essa pessoa, e ela não consegue sincronizar nem enviar vendas por um caixa de outra loja.
+
 ## [F1-04 Variações e kits] — 13/10/2026
 
 ### Adicionado
