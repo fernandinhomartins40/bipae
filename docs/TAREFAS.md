@@ -92,11 +92,11 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-06.b · Telas: perfil fiscal com as listas oficiais; busca de NCM e sugestão de CEST no produto — depende: F3-06.a
 - [x] F3-06.c · Dados fiscais da empresa (regime tributário, que define o CRT de 1 a 4, e UF) e tabela do motor com as alíquotas interestaduais e a alíquota geral das UFs já confirmadas — depende: F3-06.a
   - Fonte e status de cada UF: `docs/fiscal/cobertura-ufs-regimes.md`, seção 2.1. Só entra o que estiver ✅.
-- [~] F3-06.d · Cálculo dos tributos na venda, no caixa (offline) e conferido no servidor — depende: F3-06.c
+- [x] F3-06.d · Cálculo dos tributos na venda, no caixa (offline) e conferido no servidor — depende: F3-06.c
 - [x] F3-06.d1 · Motor: impostos do item de venda a partir da empresa, do perfil fiscal e do valor, com "falta configurar" explícito (`calculateSaleItemTaxes`) — depende: F3-06.c
 - [x] F3-06.d2 · CST de PIS/COFINS no perfil fiscal; perfis fiscais e dados fiscais da empresa sincronizados para o caixa — depende: F3-06.d1
 - [x] F3-06.d3 · O caixa calcula os impostos ao fechar a venda (sem internet), o evento leva o resultado e o servidor grava e confere — depende: F3-06.d2
-- [ ] F3-06.d4 · A retaguarda mostra os impostos de cada venda e o que falta configurar — depende: F3-06.d3
+- [x] F3-06.d4 · A retaguarda mostra os impostos de cada venda e o que falta configurar — depende: F3-06.d3
 - [ ] F3-06.e · Regras de tributo próprias da empresa, por vigência (alíquota por produto, redução de base, MVA), para o contador ajustar o que a tabela geral não cobre — depende: F3-06.d
 - [ ] F3-07 · XML da NFC-e (modelo 65) gerado a partir dos XSD, com validação automática — depende: F3-06
   - Antes de começar: resolver a dúvida D-012 (qual pacote de schemas vale para a NT 2025.002 v1.52) e ler as NTs 2026.007, 2026.008 e 2026.006.

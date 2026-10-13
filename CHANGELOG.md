@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-06.d4 Impostos da venda na retaguarda] — 13/10/2026
+
+### Adicionado
+- **Detalhe da venda:** em Vendas, clicar numa venda abre os itens, o pagamento e os **impostos que o caixa calculou**, item a item (CFOP, ICMS, ICMS-ST, FCP, PIS, COFINS, IBS e CBS) e somados.
+- **O que falta configurar aparece ali mesmo**, em português: produto sem perfil fiscal, UF sem alíquota confirmada e assim por diante.
+- Quando o cadastro mudou depois da venda e a conta do servidor não bate com a do caixa, a tela avisa e mostra o que o caixa calculou.
+- Teste de ponta a ponta do caminho inteiro: configurar a empresa, vender sem internet e ver os impostos na retaguarda.
+
+### Alterado
+- A tela de perfis fiscais deixou de dizer que o Bipaê não calcula impostos: agora calcula, para conferência. O que ainda não existe é a emissão da nota.
+
+Com isso a **F3-06.d está concluída**. Os valores são para conferência com o contador; o ICMS usa a alíquota geral da UF até as regras por produto entrarem (F3-06.e e F3-25).
+
 ## [F3-06.d3 Impostos calculados na venda] — 13/10/2026
 
 ### Adicionado

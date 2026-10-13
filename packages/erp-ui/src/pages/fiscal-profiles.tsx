@@ -19,7 +19,7 @@ import { CodeSuggestions, codeHint, useFiscalOptions } from './fiscal-lookup';
 /**
  * Perfis fiscais (F1-02): o "jeito de tributar" reaproveitado por vários produtos (CFOP, CSOSN
  * ou CST, origem e cClassTrib). Os códigos são conferidos nas tabelas oficiais (F3-06); o cálculo
- * dos impostos na venda chega com a emissão de notas.
+ * dos impostos é feito pelo caixa a cada venda (F3-06.d3); a emissão da nota vem depois.
  */
 export function FiscalProfilesPage() {
   const { api } = useApp();
@@ -47,10 +47,10 @@ export function FiscalProfilesPage() {
         }
       />
       <div className="mb-4">
-        <Alert tone="warning" title="O cálculo dos impostos chega com a emissão de NFC-e">
-          O Bipaê já confere cada código na tabela oficial e mostra o que ele significa, mas ainda
-          não calcula os impostos na venda. Na dúvida sobre CFOP, CSOSN ou cClassTrib, confirme com
-          o seu contador.
+        <Alert tone="warning" title="A emissão de NFC-e chega em breve">
+          O Bipaê confere cada código na tabela oficial e já calcula os impostos de cada venda, para
+          você conferir em Vendas. A nota fiscal ainda não é emitida. Na dúvida sobre CFOP, CSOSN ou
+          cClassTrib, confirme com o seu contador.
         </Alert>
       </div>
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
