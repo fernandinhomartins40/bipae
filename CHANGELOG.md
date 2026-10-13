@@ -1,5 +1,18 @@
 # Changelog
 
+## [F1-03 Tabelas de preço] — 13/10/2026
+
+### Adicionado
+- Tela **Tabelas de preço**: busca de produtos, preço especial por item e o preço normal ao lado.
+- **Tabela da loja** em Empresas e lojas, que agora permite editar a loja, e **tabela do cliente** no cadastro de clientes.
+- **No caixa, inclusive sem internet**, o preço segue esta ordem: tabela do cliente (pelo CPF/CNPJ na venda) → tabela da loja → preço do cadastro.
+  - Ao informar o CPF, o carrinho é recalculado.
+  - A tela mostra qual tabela está valendo.
+  - Os preços chegam ao caixa na sincronização, só quando algo muda.
+
+### Mudou
+- Comentários no código, nomes de testes e mensagens de commit passam a ser escritos em português.
+
 ## [F1-02 Perfis fiscais] — 13/10/2026
 
 ### Adicionado
