@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Painel da loja · PDV embutido</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: system-ui, sans-serif;
+      }
+      body {
+        margin: 0;
+        background: #eef1f6;
+        color: #1d2433;
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        min-height: 100vh;
+      }
+      aside {
+        background: #1d2433;
+        color: #fff;
+        padding: 20px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      aside strong {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+      }
+      aside a {
+        color: #c9d2e3;
+        text-decoration: none;
+        padding: 8px 10px;
+        border-radius: 6px;
+      }
+      aside a[aria-current] {
+        background: #34405a;
+        color: #fff;
+      }
+      main {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-width: 0;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.4rem;
+      }
+      bipae-pdv {
+        height: calc(100vh - 150px);
+        border: 1px solid #d5dbe6;
+        border-radius: 10px;
+      }
+      #log {
+        font-size: 0.85rem;
+        color: #4b5568;
+        margin: 0;
+      }
+      @media (max-width: 700px) {
+        body {
+          grid-template-columns: 1fr;
+        }
+        aside {
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside aria-label="Menu do painel">
+      <strong>Minha Loja</strong>
+      <a href="#">Pedidos</a>
+      <a href="#">Produtos</a>
+      <a href="#" aria-current="page">Caixa (PDV)</a>
+      <a href="#">Relatórios</a>
+    </aside>
+    <main>
+      <h1>Caixa da loja</h1>
+      <!-- Tudo o que a aplicação precisa: o script e a tag. -->
+      <script src="/bipae-pdv.js"></script>
+      <bipae-pdv api="/api/pdv" token="token-ana"></bipae-pdv>
+      <p id="log" role="status">
+        Eventos do PDV aparecem aqui (a aplicação pode reagir a cada venda).
+      </p>
+    </main>
+    <script>
+      const log = document.getElementById('log');
+      document.addEventListener('bipae-pdv:sale', (e) => {
+        log.textContent = `Evento bipae-pdv:sale → venda nº ${e.detail.number}, total ${(e.detail.totalCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+      });
+      document.addEventListener('bipae-pdv:session-closed', (e) => {
+        log.textContent = `Evento bipae-pdv:session-closed → diferença ${e.detail.differenceCents} centavos`;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "@bipae/pdv-embed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bipaê PDV Embed: o caixa da Bipaê como uma tag HTML para qualquer aplicação.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "demo": "node demo/server.mjs",
+    "conformance": "node conformance/run.mjs",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "preact": "^10.26.0"
+  },
+  "devDependencies": {
+    "@bipae/domain": "workspace:*",
+    "@bipae/pdv-core": "workspace:*",
+    "@electric-sql/pglite": "^0.5.8",
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^24.0.0",
+    "typescript": "6.0.3",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.3"
+  }
+}

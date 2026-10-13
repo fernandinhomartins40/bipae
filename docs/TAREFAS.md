@@ -51,6 +51,15 @@ Entregue: planos e limites, ciclo de vida da conta, multi-empresas, painel `/app
 - [ ] E-mails de ciclo de vida (teste terminando, conta suspensa) quando houver envio de e-mail
 - [ ] Exportação dos dados do cliente (LGPD) e exclusão definitiva após cancelamento
 
+## Bipaê PDV Embed ✅ (12/10/2026)
+
+Entregue: componente `<bipae-pdv>`, contrato de 9 rotas, implementações Node e PHP, teste de conformidade e demonstração. Ver `kits/pdv-embed/README.md` e ADR-0014.
+
+- [ ] Integrar na primeira aplicação real do dono do projeto (rodar `conformance/run.mjs` contra ela)
+- [ ] Autorização de gerente para desconto acima do limite (hoje só recusa)
+- [ ] Modo "Bipaê como serviço": o componente apontando para a API da Bipaê com chave de integração
+- [ ] Publicar o `bipae-pdv.js` num endereço fixo (ex.: `www.bipae.com.br/kits/pdv-embed/1/bipae-pdv.js`)
+
 ## Fase 3 — Fiscal (próxima; planejar antes de começar)
 
 - [ ] Revalidar NTs e cronograma (`docs/fiscal/versoes.md`) e dúvidas com contador

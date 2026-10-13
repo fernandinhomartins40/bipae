@@ -72,6 +72,39 @@ jobs:
           name: playwright-report
           path: apps/web/playwright-report
 
+  pdv-embed:
+    name: Kit PDV Embed (Node, PHP e navegador)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, mbstring
+          coverage: none
+      - run: pnpm install --frozen-lockfile
+      - name: Conformidade do contrato (implementações Node e PHP)
+        run: pnpm --filter @bipae/pdv-embed test
+        env:
+          BIPAE_REQUIRE_PHP: '1'
+      - name: dist/bipae-pdv.js está atualizado
+        run: |
+          pnpm --filter @bipae/pdv-embed build
+          git diff --exit-code -- kits/pdv-embed/dist || { echo 'Rode pnpm --filter @bipae/pdv-embed build e versione o dist.'; exit 1; }
+      - run: pnpm --filter @bipae/pdv-embed exec playwright install --with-deps chromium
+      - name: E2E do componente
+        run: pnpm --filter @bipae/pdv-embed e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: pdv-embed-playwright
+          path: kits/pdv-embed/test-results
+
   build:
     name: Build web (PWA) e API
     runs-on: ubuntu-latest

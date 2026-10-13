@@ -77,6 +77,8 @@ packages/
   platform/   ports de plataforma, capacidades, protocolo do Conector e simuladores
   ui/         design system (claro, escuro, alto contraste, fonte grande)
   erp-ui/     todas as telas, compartilhadas pelas duas cascas
+kits/
+  pdv-embed/  Bipaê PDV Embed: o caixa como tag HTML para outras aplicações (ver o README do kit)
 ```
 
 ## Documentação

@@ -14,3 +14,6 @@ apps/desktop/src-tauri/gen/
 
 # Claude Code: permissões locais desta máquina (nunca versionar)
 .claude/settings.local.json
+
+# Kit PDV Embed: o arquivo pronto para copiar fica versionado (a CI confere se está atualizado)
+!kits/pdv-embed/dist/

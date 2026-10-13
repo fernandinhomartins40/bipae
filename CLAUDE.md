@@ -60,6 +60,12 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 - Validação com os schemas Zod de `@bipae/domain` via `parse()`; erros sempre com mensagem pt-BR para o usuário.
 - Migrações em `apps/api/src/db/migrations/*.sql` (fonte da verdade); `schema.ts` é o espelho tipado. Nunca editar migração já aplicada.
 
+## Kit PDV Embed (`kits/pdv-embed`, ADR-0014)
+
+- O contrato `contract/openapi.yaml` é a fonte da verdade. Toda regra nova entra no contrato, nas duas implementações de referência (Node e PHP) e no `conformance/run.mjs`. Mudança incompatível exige nova versão (`X-Bipae-Pdv`).
+- O componente usa só `@bipae/pdv-core/pure` e partes de `@bipae/domain` sem zod. Confira o tamanho no build (hoje cerca de 18 KB comprimido).
+- Depois de mexer em `src/` ou nas regras do `pdv-core`, rode `pnpm --filter @bipae/pdv-embed build` e versione o `dist/`. A CI recusa um `dist` desatualizado.
+
 ## Testes e qualidade
 
 - Unitários: Vitest. E2E: Playwright (inclui cenário com rede desligada).

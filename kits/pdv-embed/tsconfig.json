@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true
+  },
+  "include": ["src", "test", "vite.config.ts", "playwright.config.ts"]
+}

@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { PAYMENT_METHODS } from './payment-methods';
+
+export { PAYMENT_LABELS, PAYMENT_METHODS, type PaymentMethod } from './payment-methods';
 
 /**
  * Events produced by terminals (ADR-0004). Immutable facts with an id generated on the device
@@ -9,18 +12,6 @@ import { z } from 'zod';
 const uuid = z.string().uuid();
 const cents = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
 const iso = z.string().datetime({ offset: true });
-
-export const PAYMENT_METHODS = ['cash', 'pix', 'credit', 'debit', 'voucher', 'store_credit'] as const;
-export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
-
-export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
-  cash: 'Dinheiro',
-  pix: 'Pix',
-  credit: 'Cartão de crédito',
-  debit: 'Cartão de débito',
-  voucher: 'Vale-refeição/alimentação',
-  store_credit: 'Crediário',
-};
 
 export const saleItemSchema = z.object({
   line: z.number().int().positive(),
@@ -67,7 +58,10 @@ export const saleCompletedEvent = z.object({
     discountCents: cents,
     totalCents: cents,
     payments: z.array(salePaymentSchema).min(1).max(20),
-    customerTaxId: z.string().regex(/^[0-9A-Z]{11,14}$/).nullish(),
+    customerTaxId: z
+      .string()
+      .regex(/^[0-9A-Z]{11,14}$/)
+      .nullish(),
     discountAuthorizedBy: uuid.nullish(),
     quoteId: uuid.nullish(),
   }),

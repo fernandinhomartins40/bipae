@@ -1,5 +1,33 @@
 # Changelog
 
+## [Bipaê PDV Embed 1.0] — 12/10/2026
+
+### Adicionado
+- **Bipaê PDV Embed** (`kits/pdv-embed`, ADR-0014): o caixa da Bipaê como uma tag HTML (`<bipae-pdv>`) para colocar no painel de qualquer aplicação web, em qualquer linguagem.
+  - **O caixa:**
+    - abertura de caixa;
+    - bipagem, busca e `3*código`;
+    - produtos por peso;
+    - desconto com limite;
+    - vários pagamentos com troco;
+    - CPF/CNPJ na nota;
+    - sangria, suprimento e fechamento cego;
+    - cancelamento e reimpressão;
+    - atalhos F2/F4/F9, temas claro/escuro e cores personalizáveis.
+  - **Componente:** um único arquivo de 18 KB (gzip), com estilos isolados e eventos para a aplicação reagir a cada venda.
+  - **Backend:**
+    - contrato aberto de 9 rotas (OpenAPI);
+    - implementações prontas em **Node** e **PHP** (Laravel, WordPress, PHP puro);
+    - tabelas para PostgreSQL, MySQL e SQLite;
+    - produtos lidos da tabela da própria aplicação, por uma view.
+  - **Teste de conformidade** que valida qualquer backend. Junto vai um prompt pronto para pedir a uma IA a implementação em outras linguagens.
+  - **CI:** testa as duas implementações e o componente num navegador real.
+
+### Mudou
+- `@bipae/pdv-core/pure`: entrada só com as regras puras do caixa.
+- As formas de pagamento do `@bipae/domain` estão num arquivo próprio, sem zod.
+- O app web aplica versões novas sozinho fora da tela do caixa. Na tela do caixa, espera o operador sair dela. Antes, páginas novas, como `/app/download`, voltavam para o início até limpar o cache.
+
 ## [Download do Bipaê Desktop] — 12/10/2026
 
 ### Adicionado

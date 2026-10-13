@@ -1,0 +1,462 @@
+openapi: 3.1.0
+info:
+  title: Bipaê PDV Embed — contrato do backend
+  version: '1'
+  summary: As rotas que a aplicação hospedeira implementa para o componente <bipae-pdv>.
+  description: |
+    O componente `<bipae-pdv api="/api/pdv">` conversa só com estas rotas, relativas ao endereço
+    do atributo `api`. Qualquer linguagem serve. Regras gerais:
+
+    - **Dinheiro** sempre em centavos inteiros (`*Cents`). Nunca ponto flutuante.
+    - **Quantidade** em milésimos inteiros (`quantityMilli`): 1000 = 1 unidade; 1255 = 1,255 kg.
+    - **Total de um item** = arredondamento meio para cima de `unitPriceCents × quantityMilli / 1000`,
+      menos `discountCents`. Em inteiros: `floor((unitPriceCents * quantityMilli + 500) / 1000)`.
+    - **Identificadores de venda e de movimento de caixa** são gerados pelo componente (UUID).
+      Repetir o mesmo `id` não cria outra venda: devolve a mesma (o componente reenvia quando a
+      rede falha no meio do caminho).
+    - **Autenticação** é a da própria aplicação: cookie de sessão (mesma origem) ou
+      `Authorization: Bearer <token>` (atributo `token` do componente).
+    - Toda requisição leva o cabeçalho `X-Bipae-Pdv: 1` (versão do contrato).
+    - **Erros**: status HTTP + corpo `Error`. A `message` aparece para o operador, então escreva em
+      português claro e diga o que fazer.
+    - Cada operador/loja só enxerga os próprios dados (filtre pela loja da sessão).
+servers:
+  - url: /api/pdv
+    description: Exemplo de base; qualquer caminho serve.
+
+paths:
+  /me:
+    get:
+      summary: Quem está operando, a loja e as regras do caixa
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Me' }
+        '401': { $ref: '#/components/responses/Error' }
+
+  /products:
+    get:
+      summary: Buscar produtos (por texto) ou bipar (por código de barras exato)
+      parameters:
+        - name: q
+          in: query
+          description: Texto livre (nome, SKU). Ignorar acentos e maiúsculas.
+          schema: { type: string }
+        - name: barcode
+          in: query
+          description: Código de barras exato (EAN/GTIN). Tem prioridade sobre `q`.
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        '200':
+          description: Produtos ativos da loja (lista vazia quando nada bate)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Product' }
+        '401': { $ref: '#/components/responses/Error' }
+
+  /cash-session:
+    get:
+      summary: Sessão de caixa aberta do operador (ou null)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [session]
+                properties:
+                  session:
+                    oneOf:
+                      - $ref: '#/components/schemas/CashSession'
+                      - type: 'null'
+
+  /cash-session/open:
+    post:
+      summary: Abrir o caixa com o troco inicial
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [openingCents]
+              properties:
+                openingCents: { type: integer, minimum: 0 }
+      responses:
+        '201':
+          description: Aberto
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [session]
+                properties:
+                  session: { $ref: '#/components/schemas/CashSession' }
+        '409':
+          description: Já existe caixa aberto para este operador (code `session_open`)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /cash-session/movements:
+    post:
+      summary: Sangria (retirada) ou suprimento (reforço de troco)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, kind, amountCents, reason]
+              properties:
+                id: { type: string, format: uuid }
+                kind: { type: string, enum: [withdrawal, supply] }
+                amountCents: { type: integer, minimum: 1 }
+                reason: { type: string, minLength: 1, maxLength: 200 }
+      responses:
+        '201':
+          description: Registrado (repetir o mesmo id devolve o mesmo movimento)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [movement]
+                properties:
+                  movement: { $ref: '#/components/schemas/CashMovement' }
+        '409':
+          description: Nenhum caixa aberto (code `no_session`)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: Sangria maior que o dinheiro na gaveta (code `insufficient_cash`)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /cash-session/close:
+    post:
+      summary: Fechamento cego — o operador informa o que contou, sem ver o esperado antes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [countedCents]
+              properties:
+                countedCents:
+                  $ref: '#/components/schemas/AmountsByMethod'
+      responses:
+        '200':
+          description: Fechado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [closing]
+                properties:
+                  closing: { $ref: '#/components/schemas/CashClosing' }
+        '409':
+          description: Nenhum caixa aberto (code `no_session`)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /sales:
+    get:
+      summary: Últimas vendas da sessão aberta (para reimprimir ou cancelar)
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        '200':
+          description: Mais recentes primeiro
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Sale' }
+    post:
+      summary: Registrar uma venda (idempotente pelo id)
+      description: |
+        O servidor DEVE:
+        1. exigir caixa aberto (409 `no_session`);
+        2. conferir que cada produto existe e que `unitPriceCents` é o preço atual
+           (422 `price_changed`, com o preço novo na mensagem);
+        3. recalcular cada item e conferir que a soma bate com `totalCents` (422 `totals_mismatch`);
+        4. conferir desconto total ≤ `maxDiscountPercent` do subtotal (403 `discount_not_allowed`);
+        5. conferir que a soma dos pagamentos (`amountCents`) é igual a `totalCents` (422 `payments_mismatch`);
+        6. gravar a venda, numerar em sequência por loja e baixar o estoque — tudo numa transação.
+        Se o `id` já existe, devolver a venda existente com status 200, sem gravar de novo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SaleInput' }
+      responses:
+        '201':
+          description: Venda registrada
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sale]
+                properties:
+                  sale: { $ref: '#/components/schemas/Sale' }
+        '200':
+          description: Venda já registrada antes com o mesmo id (reenvio)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sale]
+                properties:
+                  sale: { $ref: '#/components/schemas/Sale' }
+        '403': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+
+  /sales/{id}/cancel:
+    post:
+      summary: Cancelar uma venda da sessão aberta e devolver o estoque
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, minLength: 3, maxLength: 200 }
+      responses:
+        '200':
+          description: Cancelada (cancelar de novo devolve a mesma venda cancelada)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sale]
+                properties:
+                  sale: { $ref: '#/components/schemas/Sale' }
+        '403': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+
+components:
+  responses:
+    Error:
+      description: Erro com mensagem para o operador
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string, examples: [unauthenticated, no_session, price_changed] }
+            message: { type: string, examples: ['Abra o caixa antes de vender.'] }
+            details:
+              type: object
+              description: |
+                Opcional. Em `price_changed`: { productId, priceCents } com o preço atual; o
+                componente atualiza o item sozinho.
+
+    PaymentMethod:
+      type: string
+      enum: [cash, pix, credit, debit, voucher, store_credit]
+      description: dinheiro, Pix, crédito, débito, vale/voucher, crediário
+
+    AmountsByMethod:
+      type: object
+      description: Centavos por forma de pagamento; formas ausentes contam como 0.
+      additionalProperties: false
+      properties:
+        cash: { type: integer, minimum: 0 }
+        pix: { type: integer, minimum: 0 }
+        credit: { type: integer, minimum: 0 }
+        debit: { type: integer, minimum: 0 }
+        voucher: { type: integer, minimum: 0 }
+        store_credit: { type: integer, minimum: 0 }
+
+    Me:
+      type: object
+      required: [operator, store, settings]
+      properties:
+        operator:
+          type: object
+          required: [id, name]
+          properties:
+            id: { type: string }
+            name: { type: string }
+        store:
+          type: object
+          required: [name]
+          properties:
+            name: { type: string }
+            document: { type: [string, 'null'], description: CNPJ/CPF só com dígitos }
+            address: { type: [string, 'null'] }
+        settings:
+          type: object
+          required: [paymentMethods, maxDiscountPercent, canCancelSales]
+          properties:
+            paymentMethods:
+              type: array
+              minItems: 1
+              items: { $ref: '#/components/schemas/PaymentMethod' }
+            maxDiscountPercent: { type: number, minimum: 0, maximum: 100 }
+            canCancelSales: { type: boolean }
+
+    Product:
+      type: object
+      required: [id, name, priceCents, unit, weighable]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        barcode: { type: [string, 'null'] }
+        sku: { type: [string, 'null'] }
+        priceCents: { type: integer, minimum: 0 }
+        unit: { type: string, examples: [UN, KG, L, CX] }
+        weighable: { type: boolean, description: Vendido por peso (quantidade com 3 casas) }
+        stock: { type: [number, 'null'], description: Só informativo (o componente não bloqueia) }
+
+    CashSession:
+      type: object
+      required: [id, openedAt, openingCents, operator, salesCount, salesTotalCents]
+      properties:
+        id: { type: string }
+        openedAt: { type: string, format: date-time }
+        openingCents: { type: integer }
+        operator:
+          type: object
+          required: [id, name]
+          properties:
+            id: { type: string }
+            name: { type: string }
+        salesCount: { type: integer }
+        salesTotalCents: { type: integer }
+
+    CashMovement:
+      type: object
+      required: [id, kind, amountCents, reason, createdAt]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [withdrawal, supply] }
+        amountCents: { type: integer }
+        reason: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    CashClosing:
+      type: object
+      required: [closedAt, expectedCents, countedCents, differenceCents]
+      properties:
+        closedAt: { type: string, format: date-time }
+        expectedCents: { $ref: '#/components/schemas/AmountsByMethod' }
+        countedCents: { $ref: '#/components/schemas/AmountsByMethod' }
+        differenceCents:
+          type: integer
+          description: contado − esperado, somando todas as formas. Positivo = sobra; negativo = falta.
+
+    SaleItemInput:
+      type: object
+      required: [productId, quantityMilli, unitPriceCents, discountCents]
+      properties:
+        productId: { type: string }
+        quantityMilli: { type: integer, minimum: 1 }
+        unitPriceCents: { type: integer, minimum: 0 }
+        discountCents:
+          type: integer
+          minimum: 0
+          description: Desconto do item já com a parte do desconto geral rateada.
+
+    SaleInput:
+      type: object
+      required: [id, items, subtotalCents, discountCents, totalCents, payments]
+      properties:
+        id: { type: string, format: uuid }
+        items:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/SaleItemInput' }
+        subtotalCents: { type: integer, minimum: 0 }
+        discountCents: { type: integer, minimum: 0 }
+        totalCents: { type: integer, minimum: 0 }
+        payments:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [method, amountCents, changeCents]
+            properties:
+              method: { $ref: '#/components/schemas/PaymentMethod' }
+              amountCents: { type: integer, minimum: 0, description: O que fica na venda }
+              changeCents: { type: integer, minimum: 0, description: Troco (só dinheiro) }
+        customerDocument:
+          type: [string, 'null']
+          description: CPF/CNPJ do cliente, só dígitos (opcional)
+
+    SaleItem:
+      type: object
+      required: [productId, name, unit, quantityMilli, unitPriceCents, discountCents, totalCents]
+      properties:
+        productId: { type: string }
+        name: { type: string }
+        unit: { type: string }
+        quantityMilli: { type: integer }
+        unitPriceCents: { type: integer }
+        discountCents: { type: integer }
+        totalCents: { type: integer }
+
+    Sale:
+      type: object
+      required:
+        [id, number, status, createdAt, items, subtotalCents, discountCents, totalCents, payments]
+      properties:
+        id: { type: string }
+        number: { type: integer, description: Sequencial por loja }
+        status: { type: string, enum: [completed, cancelled] }
+        createdAt: { type: string, format: date-time }
+        cancelledAt: { type: [string, 'null'], format: date-time }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/SaleItem' }
+        subtotalCents: { type: integer }
+        discountCents: { type: integer }
+        totalCents: { type: integer }
+        payments:
+          type: array
+          items:
+            type: object
+            required: [method, amountCents, changeCents]
+            properties:
+              method: { $ref: '#/components/schemas/PaymentMethod' }
+              amountCents: { type: integer }
+              changeCents: { type: integer }
+        customerDocument: { type: [string, 'null'] }
