@@ -1,5 +1,19 @@
 # Changelog
 
+## [F3-05 IBS, CBS e Imposto Seletivo] — 13/10/2026
+
+### Adicionado
+- **Cálculo de IBS e CBS** a partir da classificação tributária oficial (cClassTrib): tributação integral, alíquota reduzida (inclusive a zero, como na cesta básica) e situações sem tributo. O IBS sai separado em parte estadual e parte municipal, como a nota exige.
+- **Base de cálculo por período, em tabela com a fonte:** ICMS, ISS, PIS e COFINS fora da base de 2026 a 2032; Imposto Seletivo dentro a partir de 2027.
+- **Transição em tabela:** ICMS e ISS a 9/10, 8/10, 7/10 e 6/10 de 2029 a 2032, e extintos em 2033.
+- **Imposto Seletivo** por percentual, por unidade ou os dois, sem nenhuma alíquota embutida.
+- Casos de teste por período: 2026, 2027–2028, cada ano de 2029 a 2032 e 2033.
+
+### Como o motor trata o que ainda não foi publicado
+- **Sem alíquota, sem cálculo.** Para 2027 a CBS ainda "aguarda legislação": o motor para com a mensagem "A alíquota da CBS para 2027 ainda não está na tabela do Bipaê", em vez de supor um número. O mesmo vale para o IBS de 2029 em diante.
+- Os testes dos anos futuros usam alíquotas **de exemplo**, marcadas como tal, só para provar que a regra troca na data certa.
+- Situações de IBS/CBS ainda não calculadas e perguntas em aberto estão na dúvida D-020.
+
 ## [F3-04 Tributos atuais] — 13/10/2026
 
 ### Adicionado

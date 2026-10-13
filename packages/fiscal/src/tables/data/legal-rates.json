@@ -4,7 +4,10 @@
     "tax": "CBS",
     "sphere": "federal",
     "rate": "0.9",
-    "validity": { "start": "2026-01-01", "end": "2027-01-01" },
+    "validity": {
+      "start": "2026-01-01",
+      "end": "2027-01-01"
+    },
     "source": "LC 214/2025, art. 346; Tabela de Alíquotas da CBS (IT 2026.002 v1.00)",
     "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art346"
   },
@@ -13,8 +16,23 @@
     "tax": "IBS",
     "sphere": "estadual",
     "rate": "0.1",
-    "validity": { "start": "2026-01-01", "end": "2027-01-01" },
+    "validity": {
+      "start": "2026-01-01",
+      "end": "2027-01-01"
+    },
     "source": "LC 214/2025, art. 343",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art343"
+  },
+  {
+    "id": "ibs-2026-municipal",
+    "tax": "IBS",
+    "sphere": "municipal",
+    "rate": "0",
+    "validity": {
+      "start": "2026-01-01",
+      "end": "2027-01-01"
+    },
+    "source": "LC 214/2025, art. 343 (em 2026 o IBS é cobrado só à alíquota estadual)",
     "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art343"
   },
   {
@@ -22,7 +40,10 @@
     "tax": "IBS",
     "sphere": "estadual",
     "rate": "0.05",
-    "validity": { "start": "2027-01-01", "end": "2029-01-01" },
+    "validity": {
+      "start": "2027-01-01",
+      "end": "2029-01-01"
+    },
     "source": "LC 214/2025, art. 344",
     "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art344"
   },
@@ -31,7 +52,10 @@
     "tax": "IBS",
     "sphere": "municipal",
     "rate": "0.05",
-    "validity": { "start": "2027-01-01", "end": "2029-01-01" },
+    "validity": {
+      "start": "2027-01-01",
+      "end": "2029-01-01"
+    },
     "source": "LC 214/2025, art. 344",
     "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art344"
   }

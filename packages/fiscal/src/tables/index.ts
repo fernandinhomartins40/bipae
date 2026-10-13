@@ -6,3 +6,4 @@ export * from './class-trib';
 export * from './rates';
 export * from './sources';
 export * from './tax-situations';
+export * from './transition';

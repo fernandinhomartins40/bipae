@@ -23,6 +23,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 | D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
+| D-020 | 🔴 aberta | IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação |
 
 ---
 
@@ -153,4 +154,19 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - o arredondamento de cada tributo.
 - **Faltam as alíquotas reais:** ICMS interno e interestadual, MVA e reduções da UF de homologação (item externo E2). Os testes usam 18% e MVA de 40% só como exemplo.
 - **Perguntas:** o ICMS sai da base do PIS/COFINS também no cumulativo? No ICMS-ST do Simples Nacional, o abatimento usa a alíquota interna cheia? Quais das situações "ainda não calculadas" o contador considera necessárias para a primeira loja?
+
+### D-020 — IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação
+
+- **Contexto:** o cálculo de IBS e CBS (F3-05) cobre a tributação integral (CST 000), a alíquota reduzida (CST 200) e as situações sem tributo (isenção, imunidade, documento específico). É o que a tabela oficial permite na NFC-e para o varejo comum.
+- **Ainda não calculado** (o sistema avisa, não aproxima): alíquotas uniformes e fixas (CST 010, 011, 220, 221), redução de base (222), diferimento (510, 515), suspensão (550), monofásica (620), transferência de crédito e ajustes (800, 810, 811), exclusão de base (830), crédito presumido e compras governamentais.
+- **Depende de publicação oficial; hoje o cálculo fica bloqueado com mensagem clara:**
+  - alíquota da CBS de 2027 em diante (D-004);
+  - alíquotas de referência do IBS de 2029 em diante, por resolução do Senado, e as alíquotas próprias de cada UF e município;
+  - alíquotas do Imposto Seletivo, que virão em lei ordinária. O motor calcula IS por percentual e por unidade, mas não traz nenhum número.
+- **Em tabela, com fonte:** o que sai da base (ICMS, ISS, PIS e COFINS de 2026 a 2032), o que entra (IS a partir de 2027) e a redução do ICMS/ISS de 2029 a 2032.
+- **Perguntas:**
+  - O ICMS-ST do item também sai da base do IBS/CBS, ou só o ICMS próprio?
+  - O Imposto Seletivo será destacado à parte do preço (como o IPI) ou embutido? O motor assume que é à parte e o soma à base.
+  - A redução do ICMS de 2029 a 2032 será aplicada pelo sistema sobre a alíquota da legislação, ou cada UF publicará a alíquota já reduzida? Hoje a proporção fica só em tabela, sem alterar o cálculo do ICMS.
+  - Continuam valendo D-001 (total da nota), D-002 e D-003 (obrigatoriedade por regime) e D-008 (arredondamento), que são configuração do documento e entram na F3-06 e na F3-07.
 

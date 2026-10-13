@@ -152,7 +152,7 @@ describe('alíquotas de referência', () => {
       assertValidity(rate.validity);
       expect(rate.source).toMatch(/LC 214\/2025, art\. \d+/);
       expect(rate.url).toContain('planalto.gov.br');
-      expect(dec(rate.rate).greaterThan(0)).toBe(true);
+      expect(dec(rate.rate).greaterThanOrEqualTo(0)).toBe(true);
     }
     expect(new Set(REFERENCE_RATES.map((r) => r.id)).size).toBe(REFERENCE_RATES.length);
     for (const a of REFERENCE_RATES) {
@@ -181,6 +181,7 @@ describe('alíquotas de referência', () => {
   it('o IBS de teste é 0,1% em 2026 e se divide entre estado e município em 2027–2028', () => {
     expect(referenceRates('IBS', '2026-06-15').map((r) => [r.sphere, r.rate])).toEqual([
       ['estadual', '0.1'],
+      ['municipal', '0'],
     ]);
     const em2027 = referenceRates('IBS', '2027-01-01');
     expect(em2027.map((r) => r.sphere).sort()).toEqual(['estadual', 'municipal']);

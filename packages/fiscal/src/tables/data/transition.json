@@ -1,0 +1,60 @@
+{
+  "ibsCbsBase": [
+    {
+      "tax": "ICMS",
+      "effect": "exclude",
+      "validity": { "start": "2026-01-01", "end": "2033-01-01" },
+      "source": "LC 214/2025, art. 12, § 2º, V"
+    },
+    {
+      "tax": "ISS",
+      "effect": "exclude",
+      "validity": { "start": "2026-01-01", "end": "2033-01-01" },
+      "source": "LC 214/2025, art. 12, § 2º, V"
+    },
+    {
+      "tax": "PIS",
+      "effect": "exclude",
+      "validity": { "start": "2026-01-01", "end": "2033-01-01" },
+      "source": "LC 214/2025, art. 12, § 2º, V"
+    },
+    {
+      "tax": "COFINS",
+      "effect": "exclude",
+      "validity": { "start": "2026-01-01", "end": "2033-01-01" },
+      "source": "LC 214/2025, art. 12, § 2º, V"
+    },
+    {
+      "tax": "IS",
+      "effect": "include",
+      "validity": { "start": "2027-01-01" },
+      "source": "Constituição Federal, art. 153, § 6º, IV (EC 132/2023); cobrança a partir de 2027 (ADCT, art. 126, I, b)"
+    }
+  ],
+  "icmsIssProportions": [
+    {
+      "factor": "0.9",
+      "validity": { "start": "2029-01-01", "end": "2030-01-01" },
+      "source": "ADCT, art. 128, I (EC 132/2023)"
+    },
+    {
+      "factor": "0.8",
+      "validity": { "start": "2030-01-01", "end": "2031-01-01" },
+      "source": "ADCT, art. 128, II (EC 132/2023)"
+    },
+    {
+      "factor": "0.7",
+      "validity": { "start": "2031-01-01", "end": "2032-01-01" },
+      "source": "ADCT, art. 128, III (EC 132/2023)"
+    },
+    {
+      "factor": "0.6",
+      "validity": { "start": "2032-01-01", "end": "2033-01-01" },
+      "source": "ADCT, art. 128, IV (EC 132/2023)"
+    }
+  ],
+  "icmsIssEnd": {
+    "date": "2033-01-01",
+    "source": "ADCT, art. 129 (EC 132/2023)"
+  }
+}

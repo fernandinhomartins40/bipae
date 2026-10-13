@@ -67,6 +67,15 @@ Lidos no texto da **LC 214/2025** (Planalto, com as alterações da LC 227/2026)
 - **Art. 346:** CBS de 0,9% em 2026.
 - **Art. 347:** CBS de 2027–2028 = alíquota fixada nos termos do art. 14, **menos 0,1 ponto percentual**. O número ainda não foi publicado.
 - **Art. 349:** as alíquotas de referência de 2027 a 2033 saem por resolução do Senado.
+- **Art. 12, § 2º:** não integram a base do IBS e da CBS o próprio IBS/CBS, o IPI, os descontos incondicionais e, **de 2026 a 2032**, o ICMS, o ISS, o PIS e a COFINS.
+
+Lidos na **Constituição e no ADCT** (texto da EC 132/2023), para a F3-05:
+
+- **CF, art. 153, § 6º, IV e VI:** o Imposto Seletivo integra a base do ICMS, do ISS, do IBS e da CBS; suas alíquotas serão fixadas em **lei ordinária**, percentuais ou por unidade.
+- **ADCT, art. 125:** em 2026, IBS de 0,1% e CBS de 0,9%, compensáveis com PIS/COFINS.
+- **ADCT, art. 128:** ICMS e ISS a 9/10 (2029), 8/10 (2030), 7/10 (2031) e 6/10 (2032) das alíquotas da legislação.
+- **ADCT, art. 129:** ICMS e ISS extintos a partir de 2033.
+- **ADCT, art. 130:** resolução do Senado fixará as alíquotas de referência.
 
 Lidos no Planalto para o **PIS e a COFINS** (F3-04):
 
