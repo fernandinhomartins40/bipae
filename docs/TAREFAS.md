@@ -110,10 +110,12 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-12 · Numeração `nNF` a partir de `terminalSeq` na série do caixa — depende: F3-07
 - [~] F3-13 · QR Code e DANFE da NFC-e (80 mm) e DANFE da NF-e (PDF) — depende: F3-07
 - [x] F3-13.a · QR Code versão 3 (sem CSC) e grupo infNFeSupl no XML, validado contra o schema — depende: F3-28
-- [ ] F3-13.b · DANFE da NFC-e em 80 mm (impressora térmica e tela), com QR Code — depende: F3-13.a
+- [x] F3-13.b · DANFE da NFC-e em 80 mm (impressora térmica e tela), com QR Code — depende: F3-13.a
+  - `buildDanfeNfce` (pdv-core) nas divisões do manual 5.1; QR Code por GS ( k na térmica e em SVG na tela e no navegador (`receiptToHtml`). Ligar ao caixa e à reimpressão fica na F3-14.
 - [ ] F3-13.c · DANFE da NF-e em PDF — depende: F3-08
   - Seguir a NT 2025.001 (QR Code versão 3), a NT 2026.003 (DANFE Simplificado Tipo 2) e a NT 2026.010 (DANFE com tributos da Reforma); dúvida D-014.
 - [ ] F3-14 · Caixa emite NFC-e na venda (CPF na nota, fila, reimpressão) — depende: F3-11, F3-12, F3-13
+  - Imprimir com `buildDanfeNfce`: térmica por ESC/POS, navegador por `receiptToHtml` (job `html`). Nomes das formas de pagamento vindos da tabela tPag.
 - [ ] F3-15 · Contingência offline da NFC-e (emite sem rede e transmite no prazo) — depende: F3-14
   - Pronto quando: um E2E com rede desligada emite em contingência e transmite ao reconectar.
   - Antes de começar: ler a NT 2026.002 v1.10a (contingência com DANFE Simplificado Tipo 2) e resolver a dúvida D-013.

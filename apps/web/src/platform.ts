@@ -43,7 +43,7 @@ class LocalStoragePreferences implements PreferencesPort {
 /** Without the Bipaê Conector, receipts go through the browser print dialog. */
 class BrowserPrinter implements PrinterPort {
   async print(job: PrintJob) {
-    if (job.kind !== 'text') {
+    if (job.kind === 'escpos') {
       throw new Error('Impressão ESC/POS no navegador precisa do Bipaê Conector.');
     }
     const frame = document.createElement('iframe');
@@ -53,11 +53,17 @@ class BrowserPrinter implements PrinterPort {
     frame.style.border = '0';
     document.body.appendChild(frame);
     const doc = frame.contentDocument!;
-    const pre = doc.createElement('pre');
-    pre.style.font = '12px/1.3 monospace';
-    pre.style.width = '80mm';
-    pre.textContent = (job.data as string[]).join('\n');
-    doc.body.appendChild(pre);
+    if (job.kind === 'html') {
+      // HTML gerado pelo próprio Bipaê (receiptToHtml), com o texto já escapado.
+      doc.body.style.margin = '0';
+      doc.body.innerHTML = job.data as string;
+    } else {
+      const pre = doc.createElement('pre');
+      pre.style.font = '12px/1.3 monospace';
+      pre.style.width = '80mm';
+      pre.textContent = (job.data as string[]).join('\n');
+      doc.body.appendChild(pre);
+    }
     frame.contentWindow!.print();
     setTimeout(() => frame.remove(), 1000);
   }

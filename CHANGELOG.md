@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-13.b DANFE da NFC-e] — 13/10/2026
+
+### Adicionado
+- **DANFE da NFC-e em 80 mm** com as nove divisões do manual oficial (versão 5.1): cabeçalho, itens, totais e pagamentos, consulta pela chave em 11 blocos, consumidor (CPF, CNPJ, estrangeiro ou "não identificado"), número, série e protocolo no horário local, avisos de homologação e de contingência (duas vezes, sem protocolo, com a via do estabelecimento), mensagens e a carga tributária da Lei 12.741. Também na versão resumida, sem itens.
+- **QR Code na impressora térmica** pelos comandos próprios dela, com pelo menos 22 mm de conteúdo, como pede o manual. Na tela e na impressão pelo navegador, o QR Code sai em SVG; um teste lê o código de volta, como a câmera do celular.
+- A impressão pelo navegador aceita cupom em HTML (necessário para o QR Code).
+
 ## [F3-13.a QR Code da NFC-e] — 13/10/2026
 
 ### Adicionado

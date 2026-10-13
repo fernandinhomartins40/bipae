@@ -4,5 +4,7 @@ export * from './payments';
 export * from './cash';
 export * from './escpos';
 export * from './receipt';
+export * from './receipt-html';
+export * from './danfe-nfce';
 export * from './scale';
 export * from './service';

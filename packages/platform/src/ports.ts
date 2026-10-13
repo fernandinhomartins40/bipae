@@ -59,10 +59,13 @@ export interface PreferencesPort {
   remove(key: string): Promise<void>;
 }
 
+/**
+ * Bytes ESC/POS para a impressora térmica; linhas de texto ou um trecho HTML (cupom com QR
+ * Code, como o DANFE NFC-e) para a impressão pelo navegador.
+ */
 export interface PrintJob {
-  /** Raw ESC/POS bytes, or plain text lines for browser printing. */
-  kind: 'escpos' | 'text';
-  data: Uint8Array | string[];
+  kind: 'escpos' | 'text' | 'html';
+  data: Uint8Array | string[] | string;
 }
 
 export interface PrinterPort {
