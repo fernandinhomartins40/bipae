@@ -95,6 +95,7 @@ pub fn run() {
             peripherals::devices_get_config,
             peripherals::devices_set_config,
             peripherals::devices_list_ports,
+            peripherals::devices_list_printers,
             peripherals::devices_print,
             peripherals::devices_open_drawer,
             peripherals::devices_read_scale,

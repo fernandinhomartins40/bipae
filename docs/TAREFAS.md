@@ -169,7 +169,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F2-04 · Ao desativar um caixa, apagar os dados locais depois de enviar as pendências
 - [x] F2-05 · Fallback IndexedDB para navegadores sem OPFS
 - [x] F2-06 · Balança direto no navegador por WebSerial
-- [ ] F2-07 · Impressora USB pelo spooler do Windows (modo RAW)
+- [x] F2-07 · Impressora USB pelo spooler do Windows (modo RAW)
 - [ ] F2-08 · Conector: atalho no instalador e iniciar junto com o sistema
 - [ ] F2-09 · Caixa web oferece a atualização entre vendas (hoje só aplica ao sair da tela do caixa)
 - [ ] F2-10 · E2E dentro do WebView real com `tauri-driver` na CI (Windows e Linux)

@@ -47,11 +47,13 @@ function NativeDevices() {
   const { platform } = useApp();
   const devices = platform.devices!;
   const [ports, setPorts] = useState<string[]>([]);
+  const [printers, setPrinters] = useState<string[]>([]);
   const [config, setConfig] = useState<DeviceConfig | null>(null);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
     void devices.listSerialPorts().then(setPorts);
+    void devices.listPrinters?.().then(setPrinters);
     void devices.getConfig().then(setConfig);
   }, [devices]);
   if (!config) return null;
@@ -107,21 +109,47 @@ function NativeDevices() {
                           columns: printer.columns,
                           codePage: printer.codePage,
                         }
-                      : {
-                          transport: 'serial',
-                          port: '',
-                          baudRate: 9600,
-                          columns: printer.columns,
-                          codePage: printer.codePage,
-                        },
+                      : e.target.value === 'spooler'
+                        ? {
+                            transport: 'spooler',
+                            printerName: '',
+                            columns: printer.columns,
+                            codePage: printer.codePage,
+                          }
+                        : {
+                            transport: 'serial',
+                            port: '',
+                            baudRate: 9600,
+                            columns: printer.columns,
+                            codePage: printer.codePage,
+                          },
                 })
               }
               options={[
                 { value: 'tcp', label: 'Rede (IP)' },
                 { value: 'serial', label: 'USB ou serial (porta COM)' },
+                ...(devices.listPrinters
+                  ? [{ value: 'spooler', label: 'Impressora do Windows (USB)' }]
+                  : []),
               ]}
             />
-            {printer.transport === 'tcp' ? (
+            {printer.transport === 'spooler' ? (
+              <SelectField
+                label="Impressora instalada no Windows"
+                hint="A impressora térmica precisa estar instalada no Windows. O Bipaê manda os comandos dela sem conversão (modo RAW)."
+                value={printer.printerName}
+                onChange={(e) => setPrinter({ printerName: e.target.value })}
+                options={[
+                  {
+                    value: '',
+                    label: printers.length
+                      ? 'Escolha a impressora'
+                      : 'Nenhuma impressora encontrada',
+                  },
+                  ...printers.map((p) => ({ value: p, label: p })),
+                ]}
+              />
+            ) : printer.transport === 'tcp' ? (
               <div className="grid gap-4 sm:grid-cols-2">
                 <TextField
                   label="IP da impressora"

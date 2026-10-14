@@ -1,5 +1,11 @@
 # Changelog
 
+## [F2-07 Impressora USB pelo Windows] — 14/10/2026
+
+### Adicionado
+- **Impressora térmica USB instalada no Windows**: em Periféricos do Bipaê Desktop, a conexão "Impressora do Windows (USB)" lista as impressoras instaladas. O cupom vai pelo spooler do Windows em modo RAW, com os mesmos comandos ESC/POS da rede e da porta serial (gaveta inclusive).
+- Nos outros sistemas a opção não aparece; se a configuração vier de um Windows, a mensagem explica.
+
 ## [F2-06 Balança direto no navegador] — 14/10/2026
 
 ### Adicionado

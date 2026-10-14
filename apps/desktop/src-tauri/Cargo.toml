@@ -35,6 +35,10 @@ tauri-plugin-opener = "2"
 tauri-plugin-updater = { version = "2", optional = true }
 tauri-plugin-process = { version = "2", optional = true }
 
+# Impressora USB pelo spooler do Windows, em modo RAW (F2-07).
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Graphics_Printing"] }
+
 [profile.release]
 codegen-units = 1
 lto = true

@@ -5,7 +5,9 @@
  */
 export type PrinterConfig =
   | { transport: 'serial'; port: string; baudRate: number; columns: 32 | 42 | 48; codePage: number }
-  | { transport: 'tcp'; host: string; port: number; columns: 32 | 42 | 48; codePage: number };
+  | { transport: 'tcp'; host: string; port: number; columns: 32 | 42 | 48; codePage: number }
+  /** Impressora instalada no Windows (USB), pelo spooler em modo RAW (F2-07). */
+  | { transport: 'spooler'; printerName: string; columns: 32 | 42 | 48; codePage: number };
 
 export interface ScaleConfig {
   port: string;
@@ -34,6 +36,8 @@ export function parseDeviceConfig(raw: string | null): DeviceConfig {
 /** Device management a shell may offer (desktop natively; web through the Conector). */
 export interface DeviceManager {
   listSerialPorts(): Promise<string[]>;
+  /** Impressoras instaladas no Windows (F2-07); ausente onde não há spooler. */
+  listPrinters?(): Promise<string[]>;
   getConfig(): Promise<DeviceConfig>;
   setConfig(config: DeviceConfig): Promise<void>;
 }

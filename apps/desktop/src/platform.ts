@@ -49,6 +49,7 @@ class WebViewNotifications implements NotificationPort {
 /** Config lives in the app data folder (Rust), so the Conector uses the same devices. */
 const nativeDevices: DeviceManager = {
   listSerialPorts: () => invoke<string[]>('devices_list_ports'),
+  listPrinters: () => invoke<string[]>('devices_list_printers'),
   getConfig: () => invoke<DeviceConfig>('devices_get_config'),
   setConfig: (config) => invoke<void>('devices_set_config', { config }),
 };
