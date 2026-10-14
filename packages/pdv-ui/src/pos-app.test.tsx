@@ -185,3 +185,29 @@ describe('PosApp', () => {
     expect(catalogLookup).not.toHaveBeenCalled();
   });
 });
+
+describe('atualização entre vendas (F2-09)', () => {
+  it('com o carrinho vazio oferece a versão nova e instala sem venda em andamento', async () => {
+    const { platform } = setup();
+    const install = vi.fn(async () => undefined);
+    platform.updater = {
+      check: async () => ({ version: '1.2.3', channel: 'stable' as const }),
+      install,
+    } as unknown as typeof platform.updater;
+    await userEvent.click(await screen.findByRole('button', { name: /Caixa 1/ }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Abrir caixa' }));
+    expect(await screen.findByText('Nova versão do Bipaê pronta')).toBeInTheDocument();
+
+    // Com item no carrinho, o aviso some: nada de atualizar no meio da venda.
+    await userEvent.type(
+      screen.getByLabelText('Bipe o código ou digite o nome do produto'),
+      '78912342{Enter}',
+    );
+    expect(screen.queryByText('Nova versão do Bipaê pronta')).not.toBeInTheDocument();
+    vi.stubGlobal('confirm', () => true);
+    await userEvent.keyboard('{F12}');
+    vi.unstubAllGlobals();
+    await userEvent.click(await screen.findByRole('button', { name: 'Atualizar agora' }));
+    expect(install).toHaveBeenCalledWith({ saleInProgress: false });
+  });
+});

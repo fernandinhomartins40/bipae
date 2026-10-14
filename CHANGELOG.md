@@ -1,5 +1,10 @@
 # Changelog
 
+## [F2-09 Atualização entre vendas] — 14/10/2026
+
+### Adicionado
+- **O caixa oferece a versão nova entre uma venda e outra**: com o carrinho vazio aparece "Nova versão do Bipaê pronta" e o botão "Atualizar agora". Com item no carrinho o aviso some; o atualizador continua recusando instalar no meio de uma venda. Vale para o caixa no navegador e no desktop.
+
 ## [F2-07 Impressora USB pelo Windows] — 14/10/2026
 
 ### Adicionado

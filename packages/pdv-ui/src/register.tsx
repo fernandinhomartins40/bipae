@@ -21,7 +21,7 @@ import {
   type StoredSale,
   repriceLines,
 } from '@bipae/pdv-core';
-import type { Platform } from '@bipae/platform';
+import type { Platform, UpdateInfo } from '@bipae/platform';
 import { describeLastSync, type SyncStatus } from '@bipae/sync';
 import { Alert, Button, cx, Logo, parseDisplayPreferences, playBeep } from '@bipae/ui';
 import { CloudOff, RefreshCw } from 'lucide-react';
@@ -58,6 +58,9 @@ const SHORTCUTS = [
   ['F11', 'Vendas'],
   ['F12', 'Limpar venda'],
 ] as const;
+
+/** De quanto em quanto tempo o caixa pergunta se há versão nova (F2-09). */
+const UPDATE_CHECK_MS = 60_000;
 
 type Dialog =
   | { kind: 'none' }
@@ -132,6 +135,22 @@ export function Register({
     };
   }, [dialog.kind, customerTaxId, pdv]);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Atualização entre vendas (F2-09): o caixa pergunta de tempos em tempos e só oferece com o
+  // carrinho vazio; o atualizador recusa instalar no meio de uma venda.
+  const [update, setUpdate] = useState<UpdateInfo | null>(null);
+  const [updating, setUpdating] = useState(false);
+  useEffect(() => {
+    const updater = platform.updater;
+    if (!updater) return;
+    const check = () =>
+      void updater
+        .check()
+        .then(setUpdate)
+        .catch(() => undefined);
+    check();
+    const timer = setInterval(check, UPDATE_CHECK_MS);
+    return () => clearInterval(timer);
+  }, [platform]);
   const t = useMemo(() => totals(cart), [cart]);
   // Quem está operando agora (F2-03): começa com quem abriu o caixa e muda na troca de operador.
   const [operator, setOperator] = useState<Pick<PosUser, 'id' | 'name' | 'permissions'>>(user);
@@ -435,6 +454,29 @@ export function Register({
           </Button>
         </div>
       </header>
+      {update && cart.lines.length === 0 && (
+        <Alert tone="success" title="Nova versão do Bipaê pronta">
+          <div className="flex flex-wrap items-center gap-3">
+            <span>
+              Atualize agora, entre uma venda e outra. Leva poucos segundos; nada se perde.
+            </span>
+            <Button
+              loading={updating}
+              onClick={() => {
+                setUpdating(true);
+                void platform
+                  .updater!.install({ saleInProgress: cartRef.current.lines.length > 0 })
+                  .catch((error: unknown) => {
+                    setUpdating(false);
+                    fail(error);
+                  });
+              }}
+            >
+              Atualizar agora
+            </Button>
+          </div>
+        </Alert>
+      )}
       {!handle.persistent && (
         <Alert tone="warning">
           Este navegador não guarda dados no aparelho. Sem internet, as vendas podem ser perdidas se
