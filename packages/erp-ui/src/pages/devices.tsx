@@ -34,6 +34,7 @@ export function DevicesPage() {
       <div className="grid gap-6 xl:grid-cols-2">
         {platform.devices && <NativeDevices />}
         {platform.connectorHost && <ConnectorHost />}
+        {platform.serialScale?.supported && <SerialScale />}
         {platform.connector && <ConnectorPairing />}
         {platform.certificate?.install && <LocalCertificate />}
         <DeviceTests />
@@ -279,8 +280,9 @@ function ConnectorPairing() {
     <Card>
       <h2 className="text-lg font-bold">Bipaê Conector</h2>
       <p className="mt-1 text-muted">
-        O navegador não fala direto com impressora, balança e gaveta. Instale o Bipaê Desktop neste
-        computador; ele traz o Conector, que faz essa ponte com segurança.{' '}
+        O navegador não fala direto com a impressora térmica e a gaveta (a balança, no Chrome e no
+        Edge, pode). Instale o Bipaê Desktop neste computador; ele traz o Conector, que faz essa
+        ponte com segurança.{' '}
         <Link to="/baixar" className="font-semibold text-primary underline">
           Baixar o Bipaê Desktop
         </Link>
@@ -471,6 +473,77 @@ function LocalCertificate() {
           </form>
         )
       )}
+    </Card>
+  );
+}
+
+/**
+ * Balança direto no navegador (F2-06): Chrome e Edge do computador falam com a porta serial sem
+ * o Bipaê Conector. A pessoa escolhe a porta uma vez; o navegador lembra.
+ */
+function SerialScale() {
+  const { platform } = useApp();
+  const serial = platform.serialScale!;
+  const [paired, setPaired] = useState<boolean | null>(null);
+  const [baudRate, setBaudRate] = useState('9600');
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+
+  useEffect(() => {
+    void serial.isPaired().then(setPaired);
+  }, [serial]);
+
+  const choose = async () => {
+    setMessage(null);
+    try {
+      await serial.pair(Number(baudRate));
+      setPaired(await serial.isPaired());
+      setMessage({ ok: true, text: 'Balança escolhida. Use "Ler balança" para testar.' });
+    } catch (error) {
+      const name = (error as Error).name;
+      setMessage({
+        ok: false,
+        text: name === 'NotFoundError' ? 'Nenhuma porta foi escolhida.' : (error as Error).message,
+      });
+    }
+  };
+
+  return (
+    <Card>
+      <h2 className="text-lg font-bold">Balança neste navegador</h2>
+      <p className="mt-1 text-sm text-muted">
+        Ligue a balança no computador (cabo serial ou USB-serial) e escolha a porta. Funciona no
+        Chrome e no Edge, sem instalar nada.
+      </p>
+      {message && (
+        <div className="mt-3">
+          <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
+        </div>
+      )}
+      <div className="mt-4 flex flex-wrap items-end gap-2">
+        <SelectField
+          label="Velocidade (baud)"
+          value={baudRate}
+          onChange={(e) => setBaudRate(e.target.value)}
+          options={BAUD_RATES.map((b) => ({ value: b, label: b }))}
+        />
+        <Button onClick={() => void choose()}>
+          {paired ? 'Trocar a porta da balança' : 'Escolher a porta da balança'}
+        </Button>
+        {paired && (
+          <Button
+            variant="ghost"
+            onClick={() =>
+              void serial.forget().then(async () => {
+                setPaired(await serial.isPaired());
+                setMessage({ ok: true, text: 'Balança desligada deste navegador.' });
+              })
+            }
+          >
+            Esquecer
+          </Button>
+        )}
+      </div>
+      {paired && <p className="mt-3 text-sm text-success">Balança configurada neste navegador.</p>}
     </Card>
   );
 }

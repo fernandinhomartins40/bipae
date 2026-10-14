@@ -202,6 +202,9 @@ importers:
       '@bipae/local-db':
         specifier: workspace:*
         version: link:../../packages/local-db
+      '@bipae/pdv-core':
+        specifier: workspace:*
+        version: link:../../packages/pdv-core
       '@bipae/platform':
         specifier: workspace:*
         version: link:../../packages/platform

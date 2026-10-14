@@ -32,7 +32,15 @@ export function explainCapability(
 ): CapabilityExplanation | null {
   if (status.available) return null;
   const { name: label, article } = CAPABILITY_LABELS[name];
-  return explainGap(`${article} ${label}`, status.reason, platform);
+  const explanation = explainGap(`${article} ${label}`, status.reason, platform);
+  // A balança também funciona direto no Chrome e no Edge, pela Web Serial (F2-06).
+  if (name === 'scale' && status.reason === 'needs-connector' && platform === 'web') {
+    return {
+      ...explanation,
+      message: `${explanation.message} No Chrome ou no Edge, você também pode escolher a porta da balança em Configurações → Periféricos.`,
+    };
+  }
+  return explanation;
 }
 
 function explainGap(

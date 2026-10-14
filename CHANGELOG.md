@@ -1,5 +1,11 @@
 # Changelog
 
+## [F2-06 Balança direto no navegador] — 14/10/2026
+
+### Adicionado
+- **Balança pela Web Serial, sem o Bipaê Conector**: no Chrome e no Edge do computador, em Configurações → Periféricos, escolha a velocidade e a porta da balança uma vez. O caixa passa a ler o peso direto, com o mesmo protocolo (Toledo e Filizola) do desktop.
+- Com o Conector pareado, a balança continua indo por ele.
+
 ## [F2-05 Caixa em navegador sem OPFS] — 14/10/2026
 
 ### Adicionado

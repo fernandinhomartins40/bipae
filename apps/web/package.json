@@ -14,6 +14,7 @@
   "dependencies": {
     "@bipae/erp-ui": "workspace:*",
     "@bipae/local-db": "workspace:*",
+    "@bipae/pdv-core": "workspace:*",
     "@bipae/platform": "workspace:*",
     "@bipae/ui": "workspace:*",
     "react": "^19.3.0",

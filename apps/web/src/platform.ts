@@ -13,8 +13,10 @@ import {
   type PrinterPort,
   type PrintJob,
   type UpdaterPort,
+  WebSerialScale,
 } from '@bipae/platform';
 import { indexedDbStore } from '@bipae/platform/indexeddb';
+import { parseScaleResponse, SCALE_MESSAGES, SCALE_REQUEST } from '@bipae/pdv-core';
 
 /** Bipaê Online: implementations of the platform ports for the browser (ADR-0012). */
 
@@ -75,7 +77,8 @@ class BrowserNotifications implements NotificationPort {
   async notify(title: string, body: string) {
     if (!('Notification' in window)) return;
     if (Notification.permission === 'default') await Notification.requestPermission();
-    if (Notification.permission === 'granted') new Notification(title, { body, icon: `${import.meta.env.BASE_URL}icon.svg` });
+    if (Notification.permission === 'granted')
+      new Notification(title, { body, icon: `${import.meta.env.BASE_URL}icon.svg` });
   }
 }
 
@@ -105,6 +108,23 @@ export function createWebPlatform(updates: {
     import.meta.env.VITE_CONNECTOR_URL ?? CONNECTOR_URL,
   );
   const browserPrinter = new BrowserPrinter();
+  // Balança direto pela Web Serial (F2-06): o protocolo é o mesmo do desktop e do Conector.
+  const serialScale = new WebSerialScale(preferences, {
+    request: SCALE_REQUEST,
+    complete: (bytes) => {
+      const stx = bytes.indexOf(0x02);
+      return stx >= 0 && bytes.indexOf(0x03, stx + 1) > stx;
+    },
+    parse: (bytes) => {
+      const result = parseScaleResponse(bytes);
+      if (result.status !== 'ok') throw new Error(SCALE_MESSAGES[result.status]);
+      return { grams: result.grams, stable: true };
+    },
+  });
+  // Com o Conector pareado, a balança vai por ele; senão, pela Web Serial.
+  const scale = {
+    read: async () => ((await connector.isPaired()) ? connector.read() : serialScale.read()),
+  };
   // Certificado A1 instalado no aparelho, para assinar sem internet (F3-21).
   const certificate = new LocalCertificateStore(indexedDbStore());
 
@@ -112,14 +132,22 @@ export function createWebPlatform(updates: {
     kind: 'web',
     version: __APP_VERSION__,
     preferences,
-    // Only what is built is reported as available. Peripherals go through the Bipaê Conector;
-    // direct WebSerial access is not built yet, so the scale asks for the Conector too.
+    // Only what is built is reported as available. Printer and drawer go through the Bipaê
+    // Conector; the scale also works directly through Web Serial once a port is chosen.
     capabilities: async () => {
       const paired = await connector.isPaired();
-      const implemented: CapabilityName[] = ['storage', 'printer', 'certificateA1', 'updater', 'notifications'];
+      const serialPaired = await serialScale.isPaired();
+      const implemented: CapabilityName[] = [
+        'storage',
+        'printer',
+        'certificateA1',
+        'updater',
+        'notifications',
+      ];
       if (paired) implemented.push('cashDrawer', 'scale');
+      else if (serialPaired) implemented.push('scale');
       return implementedCapabilities(
-        baselineCapabilities('web', { connectorPaired: paired, webSerial: false }),
+        baselineCapabilities('web', { connectorPaired: paired, webSerial: serialPaired }),
         implemented,
       );
     },
@@ -130,10 +158,12 @@ export function createWebPlatform(updates: {
     },
     // ESC/POS goes to the thermal printer through the Conector; text uses the print dialog.
     printer: {
-      print: (job: PrintJob) => (job.kind === 'escpos' ? connector.print(job) : browserPrinter.print(job)),
+      print: (job: PrintJob) =>
+        job.kind === 'escpos' ? connector.print(job) : browserPrinter.print(job),
     },
     cashDrawer: connector,
-    scale: connector,
+    scale,
+    serialScale,
     connector,
     notifications: new BrowserNotifications(),
     updater: new ServiceWorkerUpdater(updates.applyUpdate, updates.waiting),

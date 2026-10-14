@@ -162,6 +162,13 @@ export interface Platform {
   notifications?: NotificationPort;
   /** Desktop: configure printer/scale on this computer (also used by the Conector). */
   devices?: DeviceManager;
+  /** Web: balança direto pela Web Serial (F2-06), sem o Conector. */
+  serialScale?: {
+    readonly supported: boolean;
+    isPaired(): Promise<boolean>;
+    pair(baudRate: number): Promise<void>;
+    forget(): Promise<void>;
+  };
   /** Web: pair this browser with the Bipaê Conector. */
   connector?: {
     isPaired(): Promise<boolean>;
