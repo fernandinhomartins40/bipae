@@ -33,6 +33,11 @@ import { FiscalController } from './modules/fiscal/fiscal.controller';
 import { MERCADOFLOW_CLIENT, MercadoflowClient } from './modules/mercadoflow/mercadoflow.client';
 import { MercadoflowCatalog, MercadoflowCatalogController } from './modules/mercadoflow/mercadoflow.catalog';
 import { MercadoflowAccounts } from './modules/mercadoflow/mercadoflow.accounts';
+import { MercadoflowConfere } from './modules/mercadoflow/mercadoflow.confere';
+import {
+  MercadoflowConfereController,
+  SupplierIssuesController,
+} from './modules/mercadoflow/mercadoflow.confere.controller';
 import { MercadoflowController } from './modules/mercadoflow/mercadoflow.controller';
 import { MercadoflowContributions } from './modules/mercadoflow/mercadoflow.contributions';
 import { MercadoflowOutbox } from './modules/mercadoflow/mercadoflow.outbox';
@@ -103,6 +108,8 @@ class AppModule {
         MercadoflowWebhookController,
         MercadoflowCatalogController,
         MercadoflowController,
+        MercadoflowConfereController,
+        SupplierIssuesController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -135,6 +142,7 @@ class AppModule {
         MercadoflowCatalog,
         MercadoflowContributions,
         MercadoflowAccounts,
+        MercadoflowConfere,
         MercadoflowWebhooks,
         PartiesService,
         SyncService,

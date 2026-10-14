@@ -201,7 +201,9 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [ ] MF-06 · Catálogo: imagens e fotos genéricas guardadas no Bipaê — depende: MF-02 · externo: E12
 - [x] MF-07 · Catálogo: cadastro rápido no caixa, com tempo limite de 1,5 s — depende: MF-02
 - [ ] MF-08 · Vendas: NFC-e autorizada e cancelamento pela outbox, e carga inicial de 90 dias — depende: MF-04, F3-14
-- [ ] MF-09 · Confere dentro do Bipaê (notas de entrada, conferência e entrada no estoque) — depende: MF-04, F3-19
+- [x] MF-09 · Confere dentro do Bipaê (notas de entrada, conferência e entrada no estoque) — depende: MF-04, F3-19
+  - Feito em 14/10/2026: rotas `/v1/mercadoflow/confere/:storeId/*`, entrada no estoque idempotente (nota + conferência, refeita lança a diferença), pendências com fornecedor e a tela Notas de entrada. O Bipaê registra só o último custo (custo médio fica com a F4-02).
+- [ ] MF-14 · Aviso "Chegou nota de X para conferir" (evento confere.document.received) com contador no menu Notas de entrada — depende: MF-09
 - [ ] MF-10 · Inteligência: card do Tino e preço da região — depende: MF-04
 - [ ] MF-11 · Inteligência: encartes, preço aprovado e pedido enviado viram pendências — depende: MF-10, F4-01, F5-02
 - [ ] MF-12 · Envio de produtos, preços, custos e estoque da loja vinculada — depende: MF-04

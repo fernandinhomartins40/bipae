@@ -396,7 +396,7 @@ export const stockMovements = pgTable('stock_movements', {
   productId: uuid('product_id').notNull(),
   deltaMilli: bigint('delta_milli', { mode: 'number' }).notNull(),
   reason: text('reason', {
-    enum: ['sale', 'sale_cancelled', 'return', 'adjustment', 'count', 'purchase'],
+    enum: ['sale', 'sale_cancelled', 'return', 'adjustment', 'count', 'purchase', 'confere'],
   }).notNull(),
   refId: uuid('ref_id'),
   note: text('note'),
@@ -518,6 +518,53 @@ export const mercadoflowCatalogCache = pgTable('mercadoflow_catalog_cache', {
   cacheKey: text('cache_key').primaryKey(),
   payload: jsonb('payload').notNull(),
   expiresAt: ts('expires_at').notNull(),
+});
+
+// ---------------------------------------------------------------- Confere (0013)
+
+/** O que entrou de um item da conferência. */
+export interface ConfereEntryItem {
+  item: number;
+  productId: string | null;
+  quantityMilli: number;
+  unitCostCents: number | null;
+}
+
+export const confereEntries = pgTable('confere_entries', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  marketId: text('market_id').notNull(),
+  documentId: text('document_id').notNull(),
+  accessKey: char('access_key', { length: 44 }).notNull(),
+  checkId: text('check_id').notNull(),
+  supplierId: uuid('supplier_id'),
+  status: text('status', { enum: ['applied', 'needs_products'] }).notNull(),
+  entry: jsonb('entry').notNull(),
+  items: jsonb('items').$type<ConfereEntryItem[]>().notNull().default([]),
+  appliedBy: uuid('applied_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  appliedAt: ts('applied_at'),
+});
+
+export const supplierIssues = pgTable('supplier_issues', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  supplierId: uuid('supplier_id'),
+  supplierName: text('supplier_name').notNull(),
+  accessKey: char('access_key', { length: 44 }).notNull(),
+  invoiceNumber: text('invoice_number'),
+  item: integer('item').notNull(),
+  description: text('description').notNull(),
+  kind: text('kind', { enum: ['FALTA', 'SOBRA', 'AVARIA', 'VALIDADE', 'TROCADO'] }).notNull(),
+  expectedMilli: bigint('expected_milli', { mode: 'number' }),
+  receivedMilli: bigint('received_milli', { mode: 'number' }),
+  unitCostCents: money('unit_cost_cents'),
+  status: text('status', { enum: ['aberta', 'resolvida'] }).notNull().default('aberta'),
+  note: text('note'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  resolvedAt: ts('resolved_at'),
 });
 
 // ---------------------------------------------------------------- SaaS platform (0003)

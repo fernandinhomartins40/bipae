@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   BarChart3,
   Building2,
+  ClipboardCheck,
   CreditCard,
   Download,
   Home,
@@ -34,6 +35,7 @@ const NAV = [
   { to: '/vendas', label: 'Vendas', icon: BarChart3, permission: 'catalog.read' },
   { to: '/produtos', label: 'Produtos', icon: Package, permission: 'catalog.read' },
   { to: '/compras', label: 'Compras', icon: PackagePlus, permission: 'catalog.read' },
+  { to: '/notas-de-entrada', label: 'Notas de entrada', icon: ClipboardCheck, permission: 'catalog.read' },
   { to: '/tabelas-de-preco', label: 'Tabelas de preço', icon: Tags, permission: 'catalog.read' },
   { to: '/perfis-fiscais', label: 'Perfis fiscais', icon: Landmark, permission: 'catalog.read' },
   { to: '/regras-icms', label: 'Regras de ICMS', icon: Percent, permission: 'catalog.read' },

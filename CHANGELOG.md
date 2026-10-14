@@ -1,5 +1,16 @@
 # Changelog
 
+## [MF-09 Confere no Bipaê] — 14/10/2026
+
+### Adicionado
+- **Compras → Notas de entrada (Confere):** aceite dos termos, certificado A1 (enviado direto ao MercadoFlow; o Bipaê não guarda o arquivo nem a senha) com aviso de vencimento, saldo de leituras e compra por Pix, ler a nota pela chave bipando o DANFE, importar o XML e buscar as notas na SEFAZ.
+- **Conferência pela tela:** cega ou aberta, bipando o produto ou a caixa (a caixa soma 1; a unidade avisa quando a nota está em caixa), divergências por item (avaria, validade, produto trocado), salva a cada item e resumo antes de concluir, com os itens que subiram mais de 5%.
+- **Entrada no estoque** já em unidades e com o custo da nota: o produto é achado pelo código de barras, pelo código da caixa ou pelo código do fornecedor (aprendido na primeira vez). Produtos que a loja ainda não tem são associados na hora. A mesma conferência nunca entra duas vezes; a conferência refeita lança só a diferença. Conferência concluída em outro aparelho entra sozinha pelo aviso do MercadoFlow.
+- **Pendências com fornecedor:** faltas, sobras, avarias, validade e produto trocado, para cobrar crédito ou devolução.
+
+### Pendente
+- MF-14: aviso de nota recebida com contador no menu.
+
 ## [MF-07 Cadastro rápido no caixa] — 14/10/2026
 
 ### Adicionado
