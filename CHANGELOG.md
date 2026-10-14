@@ -1,5 +1,10 @@
 # Changelog
 
+## [F2-05 Caixa em navegador sem OPFS] — 14/10/2026
+
+### Adicionado
+- **Navegadores sem OPFS também guardam o caixa no aparelho**: o banco local roda em memória e uma cópia vai para o IndexedDB ao fim de cada gravação, antes de a venda ser confirmada. Ao reabrir, a cópia é carregada. Antes, nesses navegadores, as vendas sem internet podiam se perder ao fechar a página.
+
 ## [F2-04 Caixa desativado apaga os dados do aparelho] — 14/10/2026
 
 ### Adicionado

@@ -22,7 +22,14 @@ export async function openWasmDatabase(name: string): Promise<SqlDriver> {
       worker.postMessage({ ...message, id });
     });
 
-  const { persistent } = await call<{ persistent: boolean }>({ op: 'open', name });
+  // Sem OPFS na página (navegadores antigos ou modo privado), o worker usa a cópia no IndexedDB.
+  const hasOpfs =
+    typeof navigator !== 'undefined' && typeof navigator.storage?.getDirectory === 'function';
+  const { persistent } = await call<{ persistent: boolean }>({
+    op: 'open',
+    name,
+    mode: hasOpfs ? 'opfs' : 'idb',
+  });
   return {
     persistent,
     run: (sql, params = []) => call<Record<string, unknown>[]>({ op: 'run', sql, params }),

@@ -167,7 +167,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: o caixa recusa venda acima do limite com mensagem clara, há saldo devedor por cliente e testes.
 - [x] F2-03 · Troca de operador no mesmo caixa sem sair da conta
 - [x] F2-04 · Ao desativar um caixa, apagar os dados locais depois de enviar as pendências
-- [ ] F2-05 · Fallback IndexedDB para navegadores sem OPFS
+- [x] F2-05 · Fallback IndexedDB para navegadores sem OPFS
 - [ ] F2-06 · Balança direto no navegador por WebSerial
 - [ ] F2-07 · Impressora USB pelo spooler do Windows (modo RAW)
 - [ ] F2-08 · Conector: atalho no instalador e iniciar junto com o sistema

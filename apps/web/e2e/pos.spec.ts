@@ -323,6 +323,42 @@ test('caixa desativado: envia o que falta, apaga os dados do aparelho e pede out
   await expect(page.getByRole('heading', { name: 'Qual caixa é este aparelho?' })).toBeVisible({
     timeout: 15_000,
   });
-  await page.goto('/vendas');
+  await page.getByRole('button', { name: 'Voltar' }).click();
+  await page.getByRole('link', { name: 'Vendas' }).click();
   await expect(page.getByRole('row', { name: /R\$ 2,99/ })).toBeVisible();
+});
+
+test('navegador sem OPFS guarda o caixa no IndexedDB e não perde a venda ao recarregar (F2-05)', async ({
+  page,
+  context,
+}) => {
+  // Simula um navegador sem OPFS: a página não oferece o sistema de arquivos privado.
+  await context.addInitScript(() => {
+    Object.defineProperty(StorageManager.prototype, 'getDirectory', { value: undefined });
+  });
+  await signupWithProducts(page);
+  await page.getByRole('link', { name: 'Abrir o caixa' }).click();
+  await page.getByLabel('Novo caixa').fill('Caixa 1');
+  await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByRole('button', { name: 'Abrir caixa' }).click();
+  await expect(page.getByText('Caixa livre')).toBeVisible();
+  await expect(page.getByText('Este navegador não guarda dados no aparelho.')).toHaveCount(0);
+
+  await context.setOffline(true);
+  await scan(page, '78912342');
+  await page.keyboard.press('F10');
+  await page.getByRole('button', { name: 'Adicionar dinheiro' }).click();
+  await page.getByRole('button', { name: 'Finalizar venda' }).click();
+  await expect(page.getByText('Bipaê! Venda nº 1 concluída.')).toBeVisible();
+
+  // Recarregar (o servidor de desenvolvimento não abre a página sem internet; em produção o PWA abre):
+  // o caixa continua aberto e a venda feita sem internet continua no aparelho.
+  await context.setOffline(false);
+  await page.reload();
+  await expect(page.getByText('Caixa livre')).toBeVisible({ timeout: 15_000 });
+  await page.keyboard.press('F11');
+  await expect(page.getByText(/Venda nº 1|nº 1/).first()).toBeVisible();
 });
