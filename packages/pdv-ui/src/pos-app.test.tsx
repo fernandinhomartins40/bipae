@@ -30,7 +30,11 @@ const water = {
   updatedAt: '2026-10-12T10:00:00.000Z',
 };
 
-function setup(permissions = ['pos.sell', 'pos.discount.above_limit']) {
+function setup(
+  permissions = ['pos.sell', 'pos.discount.above_limit'],
+  extra: Partial<PosBackend> = {},
+  catalog: SyncPullResult['products'] = [water],
+) {
   const received: TerminalEvent[] = [];
   const backend: PosBackend = {
     push: vi.fn(async (_id: string, events: TerminalEvent[]) => {
@@ -39,7 +43,7 @@ function setup(permissions = ['pos.sell', 'pos.discount.above_limit']) {
     }),
     pull: vi.fn(async (): Promise<SyncPullResult> => ({
       cursor: 'c1',
-      products: [water],
+      products: catalog,
       hasMore: false,
     })),
     listTerminals: async () => [terminal],
@@ -52,6 +56,7 @@ function setup(permissions = ['pos.sell', 'pos.discount.above_limit']) {
       taxId: null,
     }),
     authorize: async () => ({ userId: uuidv7(), name: 'Gerente' }),
+    ...extra,
   };
   const platform = {
     ...createSimulatedPlatform('web'),
@@ -109,5 +114,74 @@ describe('PosApp', () => {
       'agua{Enter}',
     );
     expect(screen.getByTestId('pdv-total')).toHaveTextContent('R$ 2,99');
+  });
+
+  it('cadastra no caixa um código desconhecido, com o catálogo preenchendo o nome (MF-07)', async () => {
+    const catalog = [water];
+    const createProduct = vi.fn(
+      async (input: { name: string; barcodes: string[]; priceCents: number }) => {
+        catalog.push({
+          ...water,
+          id: uuidv7(),
+          name: input.name,
+          barcodes: input.barcodes,
+          priceCents: input.priceCents,
+          updatedAt: new Date().toISOString(),
+        });
+        return { id: uuidv7() };
+      },
+    );
+    setup(
+      ['pos.sell', 'catalog.write'],
+      {
+        catalogLookup: async (gtin) => ({
+          gtin,
+          found: true,
+          description: 'Açúcar União Refinado 1kg',
+          brand: 'União',
+          unit: 'UN',
+          ncm: '17019900',
+          packs: [],
+        }),
+        createProduct,
+      },
+      catalog,
+    );
+    await userEvent.click(await screen.findByRole('button', { name: /Caixa 1/ }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Abrir caixa' }));
+    await userEvent.type(
+      await screen.findByLabelText('Bipe o código ou digite o nome do produto'),
+      '7891910000197{Enter}',
+    );
+    expect(await screen.findByText(/Achamos no catálogo/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Nome do produto')).toHaveValue('Açúcar União Refinado 1kg');
+    await userEvent.click(screen.getByRole('button', { name: 'Cadastrar e vender' }));
+    expect(await screen.findByText('Informe o preço de venda.')).toBeInTheDocument();
+    await userEvent.type(screen.getByLabelText('Preço de venda (R$)'), '5,99');
+    await userEvent.click(screen.getByRole('button', { name: 'Cadastrar e vender' }));
+    await waitFor(() => expect(screen.getByTestId('pdv-total')).toHaveTextContent('R$ 5,99'));
+    expect(createProduct).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'Açúcar União Refinado 1kg',
+        barcodes: ['7891910000197'],
+        priceCents: 599,
+        ncm: '17019900',
+      }),
+    );
+  });
+
+  it('sem permissão de cadastro, segue o aviso de código não encontrado', async () => {
+    const catalogLookup = vi.fn();
+    setup(['pos.sell'], { catalogLookup, createProduct: vi.fn() });
+    await userEvent.click(await screen.findByRole('button', { name: /Caixa 1/ }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Abrir caixa' }));
+    await userEvent.type(
+      await screen.findByLabelText('Bipe o código ou digite o nome do produto'),
+      '7891910000197{Enter}',
+    );
+    expect(
+      await screen.findByText('Código 7891910000197 não encontrado. Confira ou busque pelo nome.'),
+    ).toBeInTheDocument();
+    expect(catalogLookup).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import { formatTaxId } from '@bipae/domain';
+import { formatTaxId, type CatalogProduct as CatalogEntry } from '@bipae/domain';
 import {
   addItem,
   buildReceipt,
@@ -38,6 +38,7 @@ import {
   QuantityDialog,
   QuotesDialog,
 } from './dialogs';
+import { QuickProductDialog } from './quick-product';
 import type { RegisterHandle } from './use-register';
 
 export const DISCOUNT_LIMIT_PERCENT = 10;
@@ -66,7 +67,8 @@ type Dialog =
   | { kind: 'cash' }
   | { kind: 'closed'; result: CloseResult }
   | { kind: 'history' }
-  | { kind: 'quotes' };
+  | { kind: 'quotes' }
+  | { kind: 'quick-product'; code: string; catalog: CatalogEntry | null };
 
 export function Register({
   handle,
@@ -85,7 +87,7 @@ export function Register({
   platform: Platform;
   backend: PosBackend;
   syncStatus: SyncStatus | null;
-  onSyncNow: () => void;
+  onSyncNow: () => Promise<void> | void;
   onSessionClosed: () => void;
   onExit: () => void;
 }) {
@@ -212,10 +214,18 @@ export function Register({
       }
       if (scan.kind === 'barcode') {
         const product = await pdv.findByCode(scan.code, cartRef.current.customerTaxId);
-        if (!product)
+        if (!product) {
+          // Quem pode cadastrar e está com internet cadastra na hora, com o catálogo ajudando.
+          if (can('catalog.write') && backend.createProduct && navigator.onLine) {
+            const catalog = backend.catalogLookup
+              ? await backend.catalogLookup(scan.code).catch(() => null)
+              : null;
+            return setDialog({ kind: 'quick-product', code: scan.code, catalog });
+          }
           return fail(
             new Error(`Código ${scan.code} não encontrado. Confira ou busque pelo nome.`),
           );
+        }
         if (product.isWeighable && !explicitQuantity) return setDialog({ kind: 'weigh', product });
         return add(product, scan.quantityMilli);
       }
@@ -298,7 +308,7 @@ export function Register({
     ) {
       void platform.cashDrawer.open().catch(() => undefined);
     }
-    onSyncNow();
+    void onSyncNow();
     focusInput();
   };
 
@@ -393,7 +403,7 @@ export function Register({
           <span className="text-sm text-muted">· {user.name}</span>
         </div>
         <div className="flex items-center gap-3">
-          <SyncBadge status={syncStatus} onSync={onSyncNow} />
+          <SyncBadge status={syncStatus} onSync={() => void onSyncNow()} />
           <Button variant="ghost" onClick={onExit}>
             Sair do caixa
           </Button>
@@ -583,6 +593,21 @@ export function Register({
         ))}
       </footer>
 
+      {dialog.kind === 'quick-product' && (
+        <QuickProductDialog
+          code={dialog.code}
+          catalog={dialog.catalog}
+          onSave={async (input) => {
+            await backend.createProduct!(input);
+            // Traz o produto novo para o banco do caixa e já põe na venda.
+            await onSyncNow();
+            const product = await pdv.findByCode(dialog.code, cartRef.current.customerTaxId);
+            closeDialog();
+            if (product) add(product, 1000);
+          }}
+          onClose={closeDialog}
+        />
+      )}
       {dialog.kind === 'weigh' && (
         <QuantityDialog
           title={dialog.product.name}

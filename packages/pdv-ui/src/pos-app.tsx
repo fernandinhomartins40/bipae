@@ -62,7 +62,7 @@ export function PosApp({
       platform={platform}
       backend={backend}
       syncStatus={register.syncStatus}
-      onSyncNow={() => void register.syncNow()}
+      onSyncNow={() => register.syncNow()}
       onSessionClosed={() => void register.refreshSession()}
       onExit={onExit}
     />

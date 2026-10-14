@@ -199,7 +199,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] MF-05 · Rede compartilhada no compose da VPS, credenciais e registro do webhook — depende: MF-01
   - Compose e comandos prontos; ligar de fato depende das credenciais (E19). Passo a passo em `docs/deploy.md`.
 - [ ] MF-06 · Catálogo: imagens e fotos genéricas guardadas no Bipaê — depende: MF-02 · externo: E12
-- [ ] MF-07 · Catálogo: cadastro rápido no caixa, com tempo limite de 1,5 s — depende: MF-02
+- [x] MF-07 · Catálogo: cadastro rápido no caixa, com tempo limite de 1,5 s — depende: MF-02
 - [ ] MF-08 · Vendas: NFC-e autorizada e cancelamento pela outbox, e carga inicial de 90 dias — depende: MF-04, F3-14
 - [ ] MF-09 · Confere dentro do Bipaê (notas de entrada, conferência e entrada no estoque) — depende: MF-04, F3-19
 - [ ] MF-10 · Inteligência: card do Tino e preço da região — depende: MF-04

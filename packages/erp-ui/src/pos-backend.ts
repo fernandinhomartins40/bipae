@@ -1,4 +1,4 @@
-import type { SyncPullResult, SyncPushResult } from '@bipae/domain';
+import type { CatalogProduct, SyncPullResult, SyncPushResult } from '@bipae/domain';
 import type { PosBackend, PosTerminal, TerminalContext } from '@bipae/pdv-ui';
 import type { ApiClient } from './api-client';
 
@@ -22,5 +22,14 @@ export function createPosBackend(api: ApiClient): PosBackend {
         password,
         permission,
       }),
+    // O caixa nunca espera o catálogo: sem resposta em 1,5 s, segue sem ele.
+    catalogLookup: (gtin) =>
+      Promise.race([
+        api.get<CatalogProduct>(`/product-catalog/products/${gtin}?quick=1`),
+        new Promise<CatalogProduct>((resolve) =>
+          setTimeout(() => resolve({ gtin, found: false, reason: 'SEM_RESPOSTA' }), 1500),
+        ),
+      ]).catch((): CatalogProduct => ({ gtin, found: false, reason: 'SEM_RESPOSTA' })),
+    createProduct: (input) => api.post<{ id: string }>('/products', input),
   };
 }

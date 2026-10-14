@@ -1,3 +1,4 @@
+import type { CatalogProduct, ProductCatalog, ProductPack } from '@bipae/domain';
 import type { SyncTransport } from '@bipae/sync';
 
 /**
@@ -22,16 +23,39 @@ export interface TerminalContext {
 }
 
 export type AuthorizablePermission =
-  | 'pos.discount.above_limit'
-  | 'pos.sale.cancel'
-  | 'pos.cash.withdrawal';
+  'pos.discount.above_limit' | 'pos.sale.cancel' | 'pos.cash.withdrawal';
+
+/** Produto cadastrado pelo caixa (MF-07): o mínimo para vender, com o que veio do catálogo. */
+export interface QuickProductInput {
+  name: string;
+  barcodes: string[];
+  unit: string;
+  priceCents: number;
+  isWeighable: boolean;
+  ncm: string | null;
+  cest: string | null;
+  catalog: ProductCatalog | null;
+  packs: ProductPack[];
+}
 
 export interface PosBackend extends SyncTransport {
   listTerminals(): Promise<PosTerminal[]>;
-  createTerminal(input: { storeId: string; name: string; platform: 'web' | 'desktop' }): Promise<PosTerminal>;
+  createTerminal(input: {
+    storeId: string;
+    name: string;
+    platform: 'web' | 'desktop';
+  }): Promise<PosTerminal>;
   listStores(): Promise<{ id: string; name: string }[]>;
   terminalContext(terminalId: string): Promise<TerminalContext>;
-  authorize(email: string, password: string, permission: AuthorizablePermission): Promise<{ userId: string; name: string }>;
+  authorize(
+    email: string,
+    password: string,
+    permission: AuthorizablePermission,
+  ): Promise<{ userId: string; name: string }>;
+  /** Consulta rápida ao catálogo (tempo limite de 1,5 s). Ausente: o caixa não oferece o cadastro. */
+  catalogLookup?(gtin: string): Promise<CatalogProduct>;
+  /** Cadastra o produto no servidor (precisa de internet e da permissão de cadastro). */
+  createProduct?(input: QuickProductInput): Promise<{ id: string }>;
 }
 
 export interface PosUser {

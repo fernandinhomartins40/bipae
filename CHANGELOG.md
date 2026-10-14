@@ -1,5 +1,11 @@
 # Changelog
 
+## [MF-07 Cadastro rápido no caixa] — 14/10/2026
+
+### Adicionado
+- **Código desconhecido no caixa:** quem tem permissão de cadastrar produtos e está com internet vê o cadastro rápido, com o nome já preenchido pelo catálogo (consulta de no máximo 1,5 s). Informa o preço, salva e o produto entra direto na venda.
+- Sem permissão, sem internet ou sem resposta do catálogo, o caixa segue como antes (avisa que o código não foi encontrado). O caixa nunca espera o catálogo.
+
 ## [MF-05 MercadoFlow na VPS] — 14/10/2026
 
 ### Adicionado
