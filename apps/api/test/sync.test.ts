@@ -305,7 +305,7 @@ describe('supervisor authorization', () => {
       password: 'errada',
       permission: 'pos.sale.cancel',
     });
-    expect(wrong.statusCode).toBe(401);
+    expect(wrong.statusCode).toBe(422);
     const otherBusiness = await signup(t.app);
     const outsider = await admin.post('/auth/authorize', {
       email: otherBusiness.me.user.email,

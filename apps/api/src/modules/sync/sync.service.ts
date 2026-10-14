@@ -156,6 +156,26 @@ export class SyncService {
         });
         return;
       }
+      case 'cash_session.operator_changed': {
+        await this.requireSession(tx, event.payload.sessionId);
+        if (event.payload.toOperatorId !== event.operatorId) {
+          throw new Rejection(
+            'Troca de operador incoerente: o evento não está no nome de quem entrou.',
+          );
+        }
+        await this.requireMember(tx, event.payload.fromOperatorId);
+        await this.audit.record(tx, actor, {
+          action: 'pos.operator_changed',
+          entity: 'cash_session',
+          entityId: event.payload.sessionId,
+          data: {
+            terminalId: terminal.id,
+            fromOperatorId: event.payload.fromOperatorId,
+            toOperatorId: event.payload.toOperatorId,
+          },
+        });
+        return;
+      }
       case 'cash_session.movement': {
         await this.requireSession(tx, event.payload.sessionId);
         await tx.insert(cashMovements).values({

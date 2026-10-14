@@ -29,6 +29,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import type { AuthorizablePermission, PosBackend, PosUser } from './backend';
 import {
   AuthorizeDialog,
+  OperatorDialog,
   brl,
   CashDialog,
   CloseResultDialog,
@@ -69,7 +70,8 @@ type Dialog =
   | { kind: 'closed'; result: CloseResult }
   | { kind: 'history' }
   | { kind: 'quotes' }
-  | { kind: 'quick-product'; code: string; catalog: CatalogEntry | null };
+  | { kind: 'quick-product'; code: string; catalog: CatalogEntry | null }
+  | { kind: 'operator' };
 
 export function Register({
   handle,
@@ -131,7 +133,9 @@ export function Register({
   }, [dialog.kind, customerTaxId, pdv]);
   const inputRef = useRef<HTMLInputElement>(null);
   const t = useMemo(() => totals(cart), [cart]);
-  const can = (p: string) => user.permissions.includes(p);
+  // Quem está operando agora (F2-03): começa com quem abriu o caixa e muda na troca de operador.
+  const [operator, setOperator] = useState<Pick<PosUser, 'id' | 'name' | 'permissions'>>(user);
+  const can = (p: string) => operator.permissions.includes(p);
 
   const [caps, setCaps] = useState<Awaited<ReturnType<Platform['capabilities']>> | null>(null);
   useEffect(() => {
@@ -265,7 +269,7 @@ export function Register({
       let by: string | null = null;
       if (discountNeedsAuthorization(next, DISCOUNT_LIMIT_PERCENT)) {
         by = can('pos.discount.above_limit')
-          ? user.id
+          ? operator.id
           : await requestAuthorization('pos.discount.above_limit');
         if (!by) return fail(new Error('Desconto não autorizado.'));
       }
@@ -287,7 +291,7 @@ export function Register({
         businessName: context.businessName,
         taxId: context.taxId,
         terminalName: context.terminal.name,
-        operatorName: user.name,
+        operatorName: operator.name,
       },
       columns,
     );
@@ -417,7 +421,12 @@ export function Register({
         <div className="flex items-center gap-3">
           <Logo className="text-xl" />
           <span className="font-semibold">{context.terminal.name}</span>
-          <span className="text-sm text-muted">· {user.name}</span>
+          <span className="text-sm text-muted" data-testid="pdv-operator">
+            · {operator.name}
+          </span>
+          <Button variant="ghost" onClick={() => setDialog({ kind: 'operator' })}>
+            Trocar operador
+          </Button>
         </div>
         <div className="flex items-center gap-3">
           <SyncBadge status={syncStatus} onSync={() => void onSyncNow()} />
@@ -737,6 +746,18 @@ export function Register({
               })
               .catch(fail)
           }
+          onClose={closeDialog}
+        />
+      )}
+      {dialog.kind === 'operator' && (
+        <OperatorDialog
+          backend={backend}
+          onChanged={async (next) => {
+            await pdv.changeOperator(next.userId);
+            setOperator({ id: next.userId, name: next.name, permissions: next.permissions });
+            setMessage({ tone: 'success', text: `${next.name} está operando o caixa.` });
+            closeDialog();
+          }}
           onClose={closeDialog}
         />
       )}

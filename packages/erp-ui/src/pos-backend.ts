@@ -16,6 +16,11 @@ export function createPosBackend(api: ApiClient): PosBackend {
     createTerminal: (input) => api.post<PosTerminal>('/terminals', input),
     listStores: () => api.get<{ id: string; name: string }[]>('/stores'),
     terminalContext: (id) => api.get<TerminalContext>(`/pos/terminals/${id}/context`),
+    operator: (email, password) =>
+      api.post<{ userId: string; name: string; permissions: string[] }>('/auth/operator', {
+        email,
+        password,
+      }),
     authorize: (email, password, permission) =>
       api.post<{ userId: string; name: string }>('/auth/authorize', {
         email,

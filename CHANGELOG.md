@@ -1,5 +1,14 @@
 # Changelog
 
+## [F2-03 Troca de operador no caixa] — 14/10/2026
+
+### Adicionado
+- **Trocar operador sem fechar o caixa**: o botão no topo da tela pede o e-mail e a senha de quem vai operar (precisa de internet para conferir). A sessão e a gaveta continuam; as vendas seguintes saem no nome de quem entrou, com as permissões dela.
+- A troca vai para a auditoria (pos.operator_changed), com quem saiu e quem entrou.
+
+### Corrigido
+- Senha errada na autorização do gerente não derruba mais a sessão de quem está logado no caixa.
+
 ## [F2-02 Crediário com limite por cliente] — 14/10/2026
 
 ### Adicionado

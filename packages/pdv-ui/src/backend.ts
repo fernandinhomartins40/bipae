@@ -52,6 +52,11 @@ export interface PosBackend extends SyncTransport {
     password: string,
     permission: AuthorizablePermission,
   ): Promise<{ userId: string; name: string }>;
+  /** Confere quem entra na troca de operador (F2-03). Precisa de internet. */
+  operator?(
+    email: string,
+    password: string,
+  ): Promise<{ userId: string; name: string; permissions: string[] }>;
   /** Consulta rápida ao catálogo (tempo limite de 1,5 s). Ausente: o caixa não oferece o cadastro. */
   catalogLookup?(gtin: string): Promise<CatalogProduct>;
   /** Cadastra o produto no servidor (precisa de internet e da permissão de cadastro). */

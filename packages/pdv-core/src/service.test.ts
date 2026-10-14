@@ -502,3 +502,19 @@ describe('crediário no caixa (F2-02)', () => {
     ).rejects.toThrow('não tem crediário');
   });
 });
+
+describe('troca de operador (F2-03)', () => {
+  it('exige o caixa aberto, grava o evento no nome de quem entra e ignora a troca para si mesmo', async () => {
+    await expect(pdv.changeOperator(MANAGER)).rejects.toBeInstanceOf(PdvError);
+    const session = await pdv.openSession(0);
+    await pdv.changeOperator(OPERATOR);
+    await pdv.changeOperator(MANAGER);
+    const events = await pdv.pendingEvents();
+    const changes = events.filter((e) => e.type === 'cash_session.operator_changed');
+    expect(changes).toHaveLength(1);
+    expect(changes[0]).toMatchObject({
+      operatorId: MANAGER,
+      payload: { sessionId: session.id, fromOperatorId: OPERATOR, toOperatorId: MANAGER },
+    });
+  });
+});

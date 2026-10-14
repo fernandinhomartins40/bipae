@@ -74,6 +74,21 @@ export class AuthController {
     return this.auth.authorize(ctx.tenantId, input.email, input.password, input.permission);
   }
 
+  /** Troca de operador no caixa (F2-03): confere a senha de quem entra e devolve as permissões. */
+  @Post('operator')
+  @HttpCode(200)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  operator(@Ctx() ctx: RequestContext, @Body() body: unknown) {
+    const input = parse(
+      z.object({
+        email: z.string().trim().toLowerCase().email('E-mail inválido'),
+        password: z.string().min(1, 'Informe a senha'),
+      }),
+      body,
+    );
+    return this.auth.operator(ctx.tenantId, input.email, input.password);
+  }
+
   // Convite por link (F1-06): quem abre o link ainda não tem sessão.
   @Public()
   @Get('invites/:token')

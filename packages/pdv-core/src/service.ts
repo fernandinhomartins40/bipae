@@ -115,6 +115,24 @@ export class PdvService {
     this.ctx = { ...this.ctx, operatorId };
   }
 
+  /**
+   * Troca de operador com o caixa aberto (F2-03): a sessão e a gaveta continuam; daqui em diante
+   * as vendas saem no nome de quem entrou, e a troca vai para a auditoria.
+   */
+  async changeOperator(operatorId: string): Promise<void> {
+    const session = await this.requireSession();
+    const from = this.ctx.operatorId;
+    if (from === operatorId) return;
+    this.setOperator(operatorId);
+    await this.storage.transaction(async (tx) => {
+      await this.enqueue(tx, 'cash_session.operator_changed', {
+        sessionId: session.id,
+        fromOperatorId: from,
+        toOperatorId: operatorId,
+      });
+    });
+  }
+
   // ---------------------------------------------------------------- catalog
 
   /** O primeiro parâmetro é a tabela de preço em vigor (ou null para o preço do cadastro). */

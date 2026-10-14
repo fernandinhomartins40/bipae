@@ -353,14 +353,12 @@ export class AuthService {
       if (already) throw new AppError(409, 'already_member', 'Você já faz parte desta empresa.');
       await this.limits.assertCanAdd(tx, 'users');
       if (!found) {
-        await tx
-          .insert(users)
-          .values({
-            id: userId,
-            name: input.name!,
-            email: input.email,
-            passwordHash: passwordHash!,
-          });
+        await tx.insert(users).values({
+          id: userId,
+          name: input.name!,
+          email: input.email,
+          passwordHash: passwordHash!,
+        });
       }
       await tx.insert(memberships).values({
         tenantId: invite.tenant_id,
@@ -493,7 +491,8 @@ export class AuthService {
   async authorize(tenantId: string, email: string, password: string, permission: string) {
     const found = await this.findUserByEmail(email);
     const valid = await verify(found?.password_hash ?? (await this.dummyHash), password);
-    if (!found || !valid) throw new AppError(401, 'invalid_login', INVALID_LOGIN);
+    // 422, não 401: a senha errada é de outra pessoa; quem está logado continua logado.
+    if (!found || !valid) throw new AppError(422, 'invalid_login', INVALID_LOGIN);
     const granted = await withTenant(this.db, { tenantId, userId: found.id }, async (tx) => {
       const [row] = await tx
         .select({ permissions: roles.permissions, active: memberships.active })
@@ -506,6 +505,26 @@ export class AuthService {
       throw new AppError(403, 'forbidden', 'Esta pessoa não tem permissão para autorizar isso.');
     }
     return { userId: found.id, name: found.name };
+  }
+
+  /** Operador que entra no caixa (F2-03): senha certa, membro ativo e com permissão de vender. */
+  async operator(tenantId: string, email: string, password: string) {
+    const found = await this.findUserByEmail(email);
+    const valid = await verify(found?.password_hash ?? (await this.dummyHash), password);
+    // 422, não 401: a senha errada é de outra pessoa; quem está logado continua logado.
+    if (!found || !valid) throw new AppError(422, 'invalid_login', INVALID_LOGIN);
+    const permissions = await withTenant(this.db, { tenantId, userId: found.id }, async (tx) => {
+      const [row] = await tx
+        .select({ permissions: roles.permissions, active: memberships.active })
+        .from(memberships)
+        .innerJoin(roles, eq(roles.id, memberships.roleId))
+        .where(eq(memberships.userId, found.id));
+      return row?.active ? row.permissions : null;
+    });
+    if (!permissions?.includes('pos.sell')) {
+      throw new AppError(403, 'forbidden', 'Esta pessoa não pode vender no caixa desta empresa.');
+    }
+    return { userId: found.id, name: found.name, permissions };
   }
 
   async findUserByEmail(email: string) {

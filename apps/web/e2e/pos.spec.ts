@@ -247,3 +247,38 @@ test('crediário: limite no cadastro do cliente e venda no caixa com o CPF (F2-0
   await page.getByRole('button', { name: 'Adicionar crediário' }).click();
   await expect(page.getByRole('alert').filter({ hasText: 'Disponível no crediário' })).toBeVisible();
 });
+
+test('troca de operador no mesmo caixa, sem fechar a sessão (F2-03)', async ({ page }) => {
+  await signupWithProducts(page);
+  await page.getByRole('link', { name: 'Equipe' }).click();
+  await page.getByRole('button', { name: 'Adicionar pessoa' }).click();
+  const email = `ju-${unique()}@exemplo.com.br`;
+  await page.getByLabel('Nome').fill('Juliana');
+  await page.getByLabel('E-mail').fill(email);
+  await page.getByLabel('Senha inicial').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Adicionar' }).click();
+  await expect(page.getByRole('row', { name: /Juliana/ })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Abrir o caixa' }).click();
+  await page.getByLabel('Novo caixa').fill('Caixa 1');
+  await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByRole('button', { name: 'Abrir caixa' }).click();
+  await expect(page.getByTestId('pdv-operator')).toContainText('Rafael');
+
+  await page.getByRole('button', { name: 'Trocar operador' }).click();
+  await page.getByLabel('E-mail de quem vai operar').fill(email);
+  await page.getByLabel('Senha').fill('errada-123');
+  await page.getByRole('button', { name: 'Entrar no caixa' }).click();
+  await expect(page.getByText('E-mail ou senha incorretos.')).toBeVisible();
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Entrar no caixa' }).click();
+  await expect(page.getByText('Juliana está operando o caixa.')).toBeVisible();
+  await expect(page.getByTestId('pdv-operator')).toContainText('Juliana');
+
+  // A sessão continua: dá para vender direto, sem abrir o caixa de novo.
+  await scan(page, '78912342');
+  await expect(page.getByTestId('pdv-total')).toHaveText('R$ 2,99');
+});

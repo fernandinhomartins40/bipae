@@ -90,6 +90,52 @@ export function AuthorizeDialog({
   );
 }
 
+/** Troca de operador (F2-03): quem entra confirma com o e-mail e a senha dele. */
+export function OperatorDialog({
+  backend,
+  onChanged,
+  onClose,
+}: {
+  backend: PosBackend;
+  onChanged: (operator: { userId: string; name: string; permissions: string[] }) => Promise<void>;
+  onClose: () => void;
+}) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!backend.operator) return setError('Este caixa ainda não permite trocar o operador.');
+    setBusy(true);
+    setError(null);
+    try {
+      await onChanged(await backend.operator(email, password));
+    } catch (err) {
+      setError(
+        (err as { code?: string }).code === 'offline'
+          ? 'A troca de operador precisa de internet para conferir a senha.'
+          : errorMessage(err),
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Modal open onOpenChange={(o) => !o && onClose()} title="Trocar operador">
+      <form onSubmit={submit} className="flex flex-col gap-4">
+        <p className="text-muted">O caixa continua aberto. As próximas vendas saem no nome de quem entrar.</p>
+        {error && <Alert>{error}</Alert>}
+        <TextField label="E-mail de quem vai operar" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
+        <TextField label="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Button type="submit" loading={busy}>
+          Entrar no caixa
+        </Button>
+      </form>
+    </Modal>
+  );
+}
+
 // ---------------------------------------------------------------- quantity / weight
 
 export function QuantityDialog({

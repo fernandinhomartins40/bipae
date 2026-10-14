@@ -159,6 +159,13 @@ export const cashSessionClosedEvent = z.object({
   }),
 });
 
+/** Troca de operador no mesmo caixa (F2-03): a sessão continua; o evento já vem no nome de quem entra. */
+export const operatorChangedEvent = z.object({
+  ...base,
+  type: z.literal('cash_session.operator_changed'),
+  payload: z.object({ sessionId: uuid, fromOperatorId: uuid, toOperatorId: uuid }),
+});
+
 export const terminalEvent = z.discriminatedUnion('type', [
   saleCompletedEvent,
   saleCancelledEvent,
@@ -166,6 +173,7 @@ export const terminalEvent = z.discriminatedUnion('type', [
   cashSessionOpenedEvent,
   cashMovementEvent,
   cashSessionClosedEvent,
+  operatorChangedEvent,
 ]);
 export type TerminalEvent = z.infer<typeof terminalEvent>;
 export type TerminalEventType = TerminalEvent['type'];
@@ -230,7 +238,12 @@ export interface FiscalSnapshot {
     name: string;
     ncm: string[];
     validity: { start: string; end?: string };
-    effect: { rate?: string; baseReduction?: string; fcpRate?: string; st?: { mva: string; rate: string; baseReduction?: string } };
+    effect: {
+      rate?: string;
+      baseReduction?: string;
+      fcpRate?: string;
+      st?: { mva: string; rate: string; baseReduction?: string };
+    };
     source: string;
   }[];
 }
