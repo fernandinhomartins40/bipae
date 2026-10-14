@@ -196,7 +196,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] MF-03 · Catálogo: importação em massa revisada e devolução ao catálogo do que as lojas cadastram — depende: MF-02
   - A importação em massa é a entrada de compra pelo XML (F3-19): os itens sem produto consultam o catálogo em lote e o produto novo nasce com o nome, a marca e a caixa do catálogo. Planilha fica para quando houver importação por planilha.
 - [x] MF-04 · Tela "MercadoFlow" nas configurações: criar conta, vincular conta existente, cliente ativo e desconto — depende: MF-01
-- [ ] MF-13 · Desktop abre o link do MercadoFlow no navegador do sistema (plugin opener do Tauri; hoje mostra o link para copiar) — depende: MF-04
+- [x] MF-13 · Desktop abre o link do MercadoFlow no navegador do sistema (plugin opener do Tauri; hoje mostra o link para copiar) — depende: MF-04
 - [x] MF-05 · Rede compartilhada no compose da VPS, credenciais e registro do webhook — depende: MF-01
   - Compose e comandos prontos; ligar de fato depende das credenciais (E19). Passo a passo em `docs/deploy.md`.
 - [ ] MF-06 · Catálogo: imagens e fotos genéricas guardadas no Bipaê — depende: MF-02 · externo: E12

@@ -128,7 +128,8 @@ function StoreLink({
 
   const open = async (url: string) => {
     setConnectUrl(url);
-    if (platform.openExternal) await platform.openExternal(url);
+    // Se o navegador não abrir, o link continua na tela para copiar.
+    if (platform.openExternal) await platform.openExternal(url).catch(() => undefined);
   };
 
   const run = async (action: () => Promise<void>) => {

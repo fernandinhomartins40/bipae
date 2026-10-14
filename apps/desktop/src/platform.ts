@@ -102,7 +102,8 @@ export async function createDesktopPlatform(): Promise<Platform> {
       baselineCapabilities('desktop', { connectorPaired: false, webSerial: false }),
       implemented,
     );
-    if (!(await certificate.info())) caps.certificateA1 = { available: false, reason: 'not-configured' };
+    if (!(await certificate.info()))
+      caps.certificateA1 = { available: false, reason: 'not-configured' };
     if (native) {
       const config = await nativeDevices.getConfig();
       const notConfigured: CapabilityStatus = { available: false, reason: 'not-configured' };
@@ -123,6 +124,11 @@ export async function createDesktopPlatform(): Promise<Platform> {
     certificate,
     notifications: new WebViewNotifications(),
     ...(native && {
+      // Abre no navegador do sistema (plugin opener do Tauri, liberado só para https).
+      openExternal: async (url: string) => {
+        if (!/^https:\/\//i.test(url)) throw new Error('Só abrimos links seguros (https).');
+        await invoke('plugin:opener|open_url', { url });
+      },
       devices: nativeDevices,
       printer: {
         print: async (job: PrintJob) => {

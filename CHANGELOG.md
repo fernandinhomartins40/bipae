@@ -1,5 +1,10 @@
 # Changelog
 
+## [MF-13 Desktop abre o link do MercadoFlow] — 14/10/2026
+
+### Adicionado
+- **Bipaê Desktop abre o MercadoFlow no navegador do computador**: vincular a loja, ver as decisões do Tino e os demais links seguros (https) abrem direto. Se o navegador não abrir, o link continua na tela para copiar.
+
 ## [MF-14 Aviso de nota para conferir] — 14/10/2026
 
 ### Adicionado
