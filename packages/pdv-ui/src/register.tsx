@@ -11,6 +11,7 @@ import {
   removeLine,
   SCALE_MESSAGES,
   setQuantity,
+  setLineDiscount,
   setSaleDiscount,
   totals,
   type Cart,
@@ -61,7 +62,7 @@ type Dialog =
   | { kind: 'none' }
   | { kind: 'quantity'; line: number; title: string; unit: string; weighable: boolean }
   | { kind: 'weigh'; product: CatalogProduct }
-  | { kind: 'discount' }
+  | { kind: 'discount'; line: number | null }
   | { kind: 'customer' }
   | { kind: 'payment' }
   | { kind: 'cash' }
@@ -242,9 +243,12 @@ export function Register({
     }
   };
 
-  const applyDiscount = async (cents: number) => {
+  const applyDiscount = async (cents: number, line: number | null) => {
     try {
-      const next = setSaleDiscount(cartRef.current, cents);
+      const next =
+        line === null
+          ? setSaleDiscount(cartRef.current, cents)
+          : setLineDiscount(cartRef.current, line, cents);
       let by: string | null = null;
       if (discountNeedsAuthorization(next, DISCOUNT_LIMIT_PERCENT)) {
         by = can('pos.discount.above_limit')
@@ -328,7 +332,7 @@ export function Register({
             weighable: line.isWeighable,
           });
       },
-      F4: () => cart.lines.length > 0 && setDialog({ kind: 'discount' }),
+      F4: () => cart.lines.length > 0 && setDialog({ kind: 'discount', line: selected }),
       F5: () =>
         void pdv
           .saveQuote(cart)
@@ -503,7 +507,18 @@ export function Register({
                       )}
                     >
                       <td className="px-3 py-2 text-muted">{item.line}</td>
-                      <td className="px-3 py-2 font-medium">{item.name}</td>
+                      <td className="px-3 py-2 font-medium">
+                        {item.name}
+                        {(() => {
+                          const own =
+                            cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0;
+                          return own > 0 ? (
+                            <span className="block text-sm font-normal text-muted">
+                              Desconto no item: {brl(own)}
+                            </span>
+                          ) : null;
+                        })()}
+                      </td>
                       <td className="px-3 py-2 text-right tabular-nums">
                         {(item.quantityMilli / 1000).toLocaleString('pt-BR', {
                           maximumFractionDigits: 3,
@@ -556,7 +571,7 @@ export function Register({
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="secondary"
-              onClick={() => setDialog({ kind: 'discount' })}
+              onClick={() => setDialog({ kind: 'discount', line: selected })}
               disabled={cart.lines.length === 0}
             >
               Desconto (F4)
@@ -640,9 +655,13 @@ export function Register({
       {dialog.kind === 'discount' && (
         <DiscountDialog
           subtotalCents={t.subtotalCents - t.itemDiscountCents}
+          item={(() => {
+            const it = t.items.find((i) => i.line === dialog.line);
+            return it ? { name: it.name, grossCents: it.grossCents } : null;
+          })()}
           limitPercent={DISCOUNT_LIMIT_PERCENT}
           canExceed={can('pos.discount.above_limit')}
-          onConfirm={(c) => void applyDiscount(c)}
+          onConfirm={(c, scope) => void applyDiscount(c, scope === 'item' ? dialog.line : null)}
           onClose={closeDialog}
         />
       )}

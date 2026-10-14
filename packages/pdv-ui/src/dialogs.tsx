@@ -157,33 +157,49 @@ export function QuantityDialog({
 
 export function DiscountDialog({
   subtotalCents,
+  item,
   limitPercent,
   canExceed,
   onConfirm,
   onClose,
 }: {
   subtotalCents: number;
+  /** Item selecionado: o desconto pode ir só nele (F2-01). */
+  item?: { name: string; grossCents: number } | null;
   limitPercent: number;
   canExceed: boolean;
-  onConfirm: (discountCents: number) => void;
+  onConfirm: (discountCents: number, scope: 'item' | 'sale') => void;
   onClose: () => void;
 }) {
+  const [scope, setScope] = useState<'item' | 'sale'>(item ? 'item' : 'sale');
   const [mode, setMode] = useState<'percent' | 'value'>('percent');
   const [text, setText] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const base = scope === 'item' && item ? item.grossCents : subtotalCents;
   const submit = (e: FormEvent) => {
     e.preventDefault();
     let cents: number | null;
     if (mode === 'percent') {
       const pct = Number(text.replace(',', '.'));
-      cents = Number.isFinite(pct) && pct >= 0 && pct <= 100 ? Math.floor((subtotalCents * Math.round(pct * 100) + 5000) / 10000) : null;
+      cents = Number.isFinite(pct) && pct >= 0 && pct <= 100 ? Math.floor((base * Math.round(pct * 100) + 5000) / 10000) : null;
     } else cents = parseBRL(text);
-    if (cents === null || cents < 0 || cents > subtotalCents) return setError('Desconto inválido.');
-    onConfirm(cents);
+    if (cents === null || cents < 0 || cents > base) {
+      return setError(scope === 'item' ? 'O desconto não pode ser maior que o valor do item.' : 'Desconto inválido.');
+    }
+    onConfirm(cents, scope);
   };
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Desconto na venda">
+    <Modal open onOpenChange={(o) => !o && onClose()} title={scope === 'item' ? 'Desconto no item' : 'Desconto na venda'}>
       <form onSubmit={submit} className="flex flex-col gap-4">
+        {item && (
+          <div className="flex gap-2" role="radiogroup" aria-label="Onde aplicar o desconto">
+            {(['item', 'sale'] as const).map((s) => (
+              <Button key={s} variant={scope === s ? 'primary' : 'secondary'} role="radio" aria-checked={scope === s} onClick={() => setScope(s)}>
+                {s === 'item' ? `Neste item: ${item.name}` : 'Na venda toda'}
+              </Button>
+            ))}
+          </div>
+        )}
         <div className="flex gap-2" role="radiogroup" aria-label="Tipo de desconto">
           {(['percent', 'value'] as const).map((m) => (
             <Button key={m} variant={mode === m ? 'primary' : 'secondary'} role="radio" aria-checked={mode === m} onClick={() => setMode(m)}>

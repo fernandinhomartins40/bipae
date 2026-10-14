@@ -168,3 +168,39 @@ test('discount above the limit needs a manager, who approves on the cashier scre
   await page.getByRole('button', { name: 'Finalizar venda' }).click();
   await expect(page.getByText('Bipaê! Venda nº 1 concluída.')).toBeVisible();
 });
+
+test('desconto em um item só, escolhido na lista (F2-01)', async ({ page }) => {
+  await signupWithProducts(page);
+  await page.getByRole('link', { name: 'Abrir o caixa' }).click();
+  await page.getByLabel('Novo caixa').fill('Caixa 1');
+  await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByRole('button', { name: 'Abrir caixa' }).click();
+
+  await scan(page, '78912342');
+  await scan(page, 'banana');
+  await page.getByLabel('Peso (KG)').fill('1,000');
+  await page.getByRole('button', { name: 'Confirmar' }).click();
+  await expect(page.getByTestId('pdv-total')).toHaveText('R$ 9,98');
+
+  // A água (linha 1) recebe R$ 0,99 de desconto; a banana fica cheia.
+  await page.getByRole('row', { name: /Água Mineral/ }).click();
+  await page.keyboard.press('F4');
+  await expect(page.getByRole('heading', { name: 'Desconto no item' })).toBeVisible();
+  await page.getByRole('radio', { name: 'Valor (R$)' }).click();
+  await page.getByLabel('Desconto (R$)').fill('0,99');
+  await page.getByRole('button', { name: 'Aplicar desconto' }).click();
+  await expect(page.getByRole('row', { name: /Água Mineral/ })).toContainText(
+    'Desconto no item: R$ 0,99',
+  );
+  await expect(page.getByTestId('pdv-total')).toHaveText('R$ 8,99');
+
+  // Passar do valor do item é recusado.
+  await page.keyboard.press('F4');
+  await page.getByRole('radio', { name: 'Valor (R$)' }).click();
+  await page.getByLabel('Desconto (R$)').fill('5,00');
+  await page.getByRole('button', { name: 'Aplicar desconto' }).click();
+  await expect(page.getByText('O desconto não pode ser maior que o valor do item.')).toBeVisible();
+});

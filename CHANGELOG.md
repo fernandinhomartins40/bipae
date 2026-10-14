@@ -1,5 +1,11 @@
 # Changelog
 
+## [F2-01 Desconto por item no caixa] — 14/10/2026
+
+### Adicionado
+- **Desconto em um item só**: com o item escolhido na lista, o F4 (ou o botão Desconto) pergunta se o desconto vai "Neste item" ou "Na venda toda", em porcentagem ou em reais. A linha mostra o desconto do item.
+- Acima do limite, continua pedindo a autorização do gerente, contando todos os descontos da venda.
+
 ## [F3-31 Conferência das fontes oficiais] — 14/10/2026
 
 ### Adicionado

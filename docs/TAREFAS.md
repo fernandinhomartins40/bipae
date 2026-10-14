@@ -162,7 +162,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 
 ## Fase 2 — pendências
 
-- [ ] F2-01 · Desconto por item na tela do caixa (o núcleo já suporta)
+- [x] F2-01 · Desconto por item na tela do caixa (o núcleo já suporta)
 - [ ] F2-02 · Crediário com limite por cliente na venda
   - Pronto quando: o caixa recusa venda acima do limite com mensagem clara, há saldo devedor por cliente e testes.
 - [ ] F2-03 · Troca de operador no mesmo caixa sem sair da conta
