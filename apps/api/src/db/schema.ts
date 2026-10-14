@@ -683,3 +683,35 @@ export const announcements = pgTable('announcements', {
   createdBy: uuid('created_by'),
   createdAt: ts('created_at').notNull().defaultNow(),
 });
+
+/** Pedidos de compra (F4-01). */
+export const purchaseOrders = pgTable('purchase_orders', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  supplierId: uuid('supplier_id').notNull(),
+  number: integer('number').notNull(),
+  status: text('status', { enum: ['draft', 'sent', 'received', 'cancelled'] })
+    .notNull()
+    .default('draft'),
+  expectedAt: date('expected_at', { mode: 'string' }),
+  notes: text('notes'),
+  totalCents: money('total_cents').notNull().default(0),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+  sentAt: ts('sent_at'),
+  receivedAt: ts('received_at'),
+  cancelledAt: ts('cancelled_at'),
+  cancelReason: text('cancel_reason'),
+});
+
+export const purchaseOrderItems = pgTable('purchase_order_items', {
+  tenantId: uuid('tenant_id').notNull(),
+  orderId: uuid('order_id').notNull(),
+  line: integer('line').notNull(),
+  productId: uuid('product_id').notNull(),
+  quantityMilli: bigint('quantity_milli', { mode: 'number' }).notNull(),
+  unitCostCents: money('unit_cost_cents').notNull(),
+  totalCents: money('total_cents').notNull(),
+});

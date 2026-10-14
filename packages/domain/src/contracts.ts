@@ -850,3 +850,60 @@ export interface ConfereNotices {
     receivedAt: string;
   }[];
 }
+
+// ---------- Pedidos de compra (F4-01) ----------
+
+export const purchaseOrderInput = z.object({
+  storeId: z.string().uuid('Escolha a loja'),
+  supplierId: z.string().uuid('Escolha o fornecedor'),
+  expectedAt: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data de entrega inválida')
+    .nullish(),
+  notes: z.string().trim().max(500).nullish(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid(),
+        quantityMilli: z.number().int().positive('A quantidade precisa ser maior que zero'),
+        unitCostCents: z.number().int().nonnegative('Custo inválido'),
+      }),
+    )
+    .min(1, 'Coloque pelo menos um produto no pedido')
+    .max(500, 'Pedido com itens demais'),
+});
+export type PurchaseOrderInput = z.input<typeof purchaseOrderInput>;
+
+export const purchaseOrderCancelInput = z.object({
+  reason: z.string().trim().min(3, 'Diga o motivo do cancelamento').max(200),
+});
+
+export type PurchaseOrderStatus = 'draft' | 'sent' | 'received' | 'cancelled';
+
+export interface PurchaseOrderView {
+  id: string;
+  number: number;
+  status: PurchaseOrderStatus;
+  storeId: string;
+  storeName: string;
+  supplierId: string;
+  supplierName: string;
+  supplierTaxId: string | null;
+  expectedAt: string | null;
+  notes: string | null;
+  totalCents: number;
+  createdAt: string;
+  sentAt: string | null;
+  receivedAt: string | null;
+  cancelledAt: string | null;
+  cancelReason: string | null;
+  items: {
+    line: number;
+    productId: string;
+    productName: string;
+    unit: string;
+    quantityMilli: number;
+    unitCostCents: number;
+    totalCents: number;
+  }[];
+}

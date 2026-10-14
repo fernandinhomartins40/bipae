@@ -213,7 +213,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 
 ## Fase 4 — ERP
 
-- [ ] F4-01 · Pedidos de compra
+- [x] F4-01 · Pedidos de compra
 - [ ] F4-02 · Entrada de mercadoria com conferência por bipagem e custo médio — depende: F4-01
 - [ ] F4-03 · Formação de preço com margem e tributos — depende: F4-02, F3-04
 - [ ] F4-04 · Contas a pagar e a receber

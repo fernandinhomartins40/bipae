@@ -23,6 +23,7 @@ import { AdminApp } from './admin/admin-app';
 import { captureSupportHandoff, endSupportSession, readSupportSession } from './support';
 import { SalesPage } from './pages/sales';
 import { ProductsPage } from './pages/products';
+import { PurchaseOrdersPage } from './pages/purchase-orders';
 import { PurchasesPage } from './pages/purchases';
 import { ConferePage } from './pages/confere';
 import { MercadoflowPage } from './pages/mercadoflow';
@@ -148,6 +149,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="assinatura" element={<AccountPage />} />
               <Route path="produtos" element={<ProductsPage />} />
               <Route path="compras" element={<PurchasesPage />} />
+              <Route path="pedidos-de-compra" element={<PurchaseOrdersPage />} />
               <Route path="notas-de-entrada" element={<ConferePage />} />
               <Route path="perfis-fiscais" element={<FiscalProfilesPage />} />
               <Route path="regras-icms" element={<IcmsRulesPage />} />

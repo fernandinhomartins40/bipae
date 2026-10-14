@@ -1,5 +1,15 @@
 # Changelog
 
+## [F4-01 Pedidos de compra] — 14/10/2026
+
+### Adicionado
+- **Pedidos de compra** (menu Pedidos de compra):
+  - montar o pedido com fornecedor, loja que recebe, entrega prevista, produtos, quantidades e custo (sugerido pelo cadastro);
+  - salvar como rascunho e enviar ao fornecedor;
+  - imprimir;
+  - cancelar com motivo.
+- Numeração em sequência por empresa. O total de cada linha segue a mesma regra de arredondamento do caixa. Só o rascunho é editável. Envio e cancelamento ficam na auditoria.
+
 ## [P-06 PDV Embed no site] — 14/10/2026
 
 ### Adicionado

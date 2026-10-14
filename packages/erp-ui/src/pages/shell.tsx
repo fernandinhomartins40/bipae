@@ -5,6 +5,7 @@ import {
   BarChart3,
   Building2,
   ClipboardCheck,
+  ClipboardList,
   CreditCard,
   Download,
   Home,
@@ -35,6 +36,7 @@ const NAV = [
   { to: '/caixa', label: 'Abrir o caixa', icon: ScanBarcode, permission: 'pos.sell' },
   { to: '/vendas', label: 'Vendas', icon: BarChart3, permission: 'catalog.read' },
   { to: '/produtos', label: 'Produtos', icon: Package, permission: 'catalog.read' },
+  { to: '/pedidos-de-compra', label: 'Pedidos de compra', icon: ClipboardList, permission: 'catalog.read' },
   { to: '/compras', label: 'Compras', icon: PackagePlus, permission: 'catalog.read' },
   {
     to: '/notas-de-entrada',

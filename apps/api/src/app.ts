@@ -45,6 +45,8 @@ import { MercadoflowInsights } from './modules/mercadoflow/mercadoflow.insights'
 import { MercadoflowMarketSync } from './modules/mercadoflow/mercadoflow.market-sync';
 import { MercadoflowOutbox } from './modules/mercadoflow/mercadoflow.outbox';
 import { MercadoflowWebhookController, MercadoflowWebhooks } from './modules/mercadoflow/mercadoflow.webhook';
+import { PurchaseOrdersController } from './modules/purchases/purchase-orders.controller';
+import { PurchaseOrdersService } from './modules/purchases/purchase-orders.service';
 import { PurchasesController } from './modules/purchases/purchases.controller';
 import { PurchasesService } from './modules/purchases/purchases.service';
 import { CertificatesService } from './modules/fiscal/certificates.service';
@@ -108,6 +110,7 @@ class AppModule {
         DownloadsController,
         FiscalController,
         PurchasesController,
+        PurchaseOrdersController,
         MercadoflowWebhookController,
         MercadoflowCatalogController,
         MercadoflowController,
@@ -133,6 +136,7 @@ class AppModule {
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },
         SefazService,
         PurchasesService,
+        PurchaseOrdersService,
         {
           provide: MERCADOFLOW_CLIENT,
           useValue: new MercadoflowClient({
