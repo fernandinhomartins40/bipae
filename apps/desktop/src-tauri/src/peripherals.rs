@@ -122,7 +122,7 @@ mod spooler {
         let mut doc_name = wide("Bipaê");
         let mut datatype = wide("RAW");
         unsafe {
-            let mut handle = std::mem::zeroed();
+            let mut handle: windows_sys::Win32::Foundation::HANDLE = std::ptr::null_mut();
             if OpenPrinterW(name.as_ptr(), &mut handle, std::ptr::null()) == 0 {
                 return Err(format!("A impressora \"{printer}\" não foi encontrada no Windows."));
             }

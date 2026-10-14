@@ -171,9 +171,17 @@ jobs:
       # generate_context! embeds the frontend at compile time, so it must exist before cargo test.
       - name: Build do frontend desktop
         run: pnpm --filter @bipae/desktop build:web
+      # Em caso de falha, as linhas de erro do cargo viram anotação (legível sem abrir o log).
       - name: Testes Rust (banco local, periféricos, Conector)
         working-directory: apps/desktop/src-tauri
-        run: cargo test
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! cargo test 2>&1 | tee cargo.log; then
+            msg=$(grep -E -A8 '^(error|failures:|---- )' cargo.log | head -80 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
+            echo "::error title=cargo test::${msg}"
+            exit 1
+          fi
       - name: Testes Rust com o atualizador
         working-directory: apps/desktop/src-tauri
         run: cargo check --features updater
