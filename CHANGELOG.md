@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-31 Conferência das fontes oficiais] — 14/10/2026
+
+### Adicionado
+- **Rotina que confere as fontes fiscais oficiais toda segunda-feira** (GitHub Actions):
+  - baixa de novo a página do CEST, a do Portal Nacional da DIFAL, o NCM do Siscomex e os endereços da SEFAZ;
+  - compara linha a linha com o que gerou as tabelas do Bipaê;
+  - confere as listas do Portal da NF-e (planilhas, esquemas e notas técnicas).
+- Quando algo muda, abre um aviso no GitHub com o relatório em português e o passo a passo para atualizar. Nada é atualizado sozinho.
+- Para rodar à mão: `node packages/fiscal/scripts/check-sources.mjs`.
+
 ## [F3-30 Regras do MEI na nota] — 14/10/2026
 
 ### Adicionado

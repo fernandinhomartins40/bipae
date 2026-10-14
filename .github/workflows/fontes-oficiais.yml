@@ -1,0 +1,46 @@
+name: Fontes fiscais oficiais
+
+# F3-31: toda segunda-feira confere se as fontes oficiais (CEST, DIFAL, NCM, endereços da SEFAZ e
+# listas do Portal da NF-e) mudaram desde o que está guardado em packages/fiscal/sources. Se algo
+# mudou, abre (ou atualiza) um aviso com o relatório. Nada é atualizado sozinho.
+on:
+  schedule:
+    - cron: '0 11 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  NODE_VERSION: 24
+  TITLE: 'Fontes fiscais oficiais mudaram'
+
+jobs:
+  check:
+    name: Conferir as fontes oficiais
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Conferir
+        id: check
+        run: |
+          set +e
+          node packages/fiscal/scripts/check-sources.mjs --report report.md
+          code=$?
+          set -e
+          if [ "$code" = "2" ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; elif [ "$code" != "0" ]; then exit "$code"; fi
+      - name: Abrir ou atualizar o aviso
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          number=$(gh issue list --state open --search "$TITLE in:title" --json number --jq '.[0].number')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file report.md
+          else
+            gh issue create --title "$TITLE" --body-file report.md
+          fi

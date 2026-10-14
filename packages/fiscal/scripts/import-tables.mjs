@@ -7,6 +7,7 @@
 //
 // Para atualizar uma tabela: baixe a planilha nova no portal indicado em sources/manifest.json,
 // troque o arquivo, ajuste nome e datas no manifest e rode o comando. Os testes conferem o resto.
+// Para saber se alguma fonte mudou: node scripts/check-sources.mjs (roda toda semana no GitHub).
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
