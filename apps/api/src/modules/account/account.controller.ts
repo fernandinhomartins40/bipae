@@ -1,11 +1,14 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, Res, StreamableFile } from '@nestjs/common';
+import type { FastifyReply } from 'fastify';
 import type { AccountView, AnnouncementView, PlanLimits } from '@bipae/domain';
 import { asc, desc, eq, sql } from 'drizzle-orm';
-import { Ctx, type RequestContext } from '../../common/auth';
-import { DB } from '../../common/di';
+import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
+import { CONFIG, DB } from '../../common/di';
+import type { Config } from '../../config';
 import { withTenant, type Db } from '../../db/client';
 import { rowsOf } from '../../db/migrate';
 import { plans, tenantEvents, tenants } from '../../db/schema';
+import { DataExportService } from './data-export.service';
 import { LimitsService } from './limits.service';
 
 /** The client's own subscription: plan, limits, usage and history ("Minha assinatura"). */
@@ -13,8 +16,23 @@ import { LimitsService } from './limits.service';
 export class AccountController {
   constructor(
     @Inject(DB) private readonly db: Db,
+    @Inject(CONFIG) private readonly config: Config,
     @Inject(LimitsService) private readonly limits: LimitsService,
+    @Inject(DataExportService) private readonly dataExport: DataExportService,
   ) {}
+
+  /**
+   * LGPD (P-03): baixar todos os dados da conta num ZIP. Só quem gerencia a equipe (o dono, nos
+   * papéis padrão). Funciona também com a conta cancelada, até a exclusão definitiva.
+   */
+  @Get('account/export')
+  @RequirePermission('admin.users')
+  async export(@Ctx() ctx: RequestContext, @Res({ passthrough: true }) reply: FastifyReply) {
+    const { fileName, zip } = await this.dataExport.export(ctx);
+    reply.header('content-type', 'application/zip');
+    reply.header('content-disposition', `attachment; filename="${fileName}"`);
+    return new StreamableFile(zip);
+  }
 
   @Get('account')
   async account(@Ctx() ctx: RequestContext): Promise<AccountView> {
@@ -39,6 +57,12 @@ export class AccountController {
           status: tenant!.status,
           statusReason: tenant!.statusReason,
           trialEndsAt: tenant!.trialEndsAt?.toISOString() ?? null,
+          purgeAt:
+            tenant!.status === 'cancelled' && tenant!.statusChangedAt
+              ? new Date(
+                  tenant!.statusChangedAt.getTime() + this.config.ACCOUNT_PURGE_DAYS * 86_400_000,
+                ).toISOString()
+              : null,
         },
         plan: {
           id: plan.id,

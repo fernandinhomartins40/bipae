@@ -156,6 +156,10 @@ export class ApiClient {
   delete<T>(path: string) {
     return this.request<T>('DELETE', path);
   }
+  /** Baixa um arquivo (ZIP, PDF...) com a sessão de quem está logado. */
+  download(path: string) {
+    return this.request<Blob>('GET', path, undefined, true, 'blob');
+  }
 
   private async storeSession(result: AuthResult) {
     this.accessToken = result.accessToken;
@@ -191,7 +195,13 @@ export class ApiClient {
     return this.refreshing;
   }
 
-  private async request<T>(method: string, path: string, body?: unknown, auth = true): Promise<T> {
+  private async request<T>(
+    method: string,
+    path: string,
+    body?: unknown,
+    auth = true,
+    as: 'json' | 'blob' = 'json',
+  ): Promise<T> {
     const send = async () => {
       const headers: Record<string, string> = {
         [CLIENT_HEADER]: `${this.options.clientKind}/${this.options.clientVersion}`,
@@ -228,6 +238,7 @@ export class ApiClient {
       );
     }
     if (response.status === 204) return undefined as T;
+    if (as === 'blob') return (await response.blob()) as T;
     return (await response.json()) as T;
   }
 }

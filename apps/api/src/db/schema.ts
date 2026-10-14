@@ -30,6 +30,8 @@ export const tenants = pgTable('tenants', {
   trialEndsAt: ts('trial_ends_at'),
   statusReason: text('status_reason'),
   statusChangedAt: ts('status_changed_at'),
+  /** Exclusão definitiva dos dados (P-03); a linha fica anonimizada para a auditoria. */
+  purgedAt: ts('purged_at'),
   limitOverrides: jsonb('limit_overrides').$type<Partial<PlanLimits>>(),
   notes: text('notes'),
 });

@@ -5,14 +5,19 @@ import {
   type OnModuleDestroy,
   type OnModuleInit,
 } from '@nestjs/common';
-import { and, lt, or, sql } from 'drizzle-orm';
+import { and, eq, isNull, lt, or, sql } from 'drizzle-orm';
 import type { Config } from '../../config';
 import { CONFIG, DB, QUEUE } from '../../common/di';
 import type { JobQueue } from '../../common/queue';
-import { asPlatform, type Db } from '../../db/client';
-import { adminSessions, sessions } from '../../db/schema';
+import { asPlatform, type Db, type Tx } from '../../db/client';
+import { rowsOf } from '../../db/migrate';
+import { adminSessions, sessions, tenants } from '../../db/schema';
+import { tenantTables } from '../account/data-export.service';
+import { PlatformAuditService } from '../admin/platform-audit.service';
 
 export const SESSIONS_CLEANUP = 'manutencao.limpar-sessoes';
+export const ACCOUNT_PURGE = 'manutencao.excluir-contas-canceladas';
+const UM_DIA = 24 * 60 * 60_000;
 const SEIS_HORAS = 6 * 60 * 60_000;
 const DIAS_GUARDADOS = 30;
 
@@ -29,6 +34,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(DB) private readonly db: Db,
     @Inject(CONFIG) private readonly config: Config,
     @Inject(QUEUE) private readonly queue: JobQueue,
+    @Inject(PlatformAuditService) private readonly platformAudit: PlatformAuditService,
   ) {}
 
   async onModuleInit() {
@@ -37,6 +43,11 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
       this.queue.process(SESSIONS_CLEANUP, async () => {
         const removed = await this.cleanupSessions();
         if (removed > 0) this.logger.log(`${removed} registros de login antigos apagados`);
+      });
+      this.queue.process(ACCOUNT_PURGE, async () => {
+        const purged = await this.purgeCancelledAccounts();
+        if (purged.length > 0)
+          this.logger.log(`${purged.length} conta(s) cancelada(s) excluída(s)`);
       });
     } catch (error) {
       this.logger.error(`Fila de manutenção não iniciou: ${(error as Error).message}`);
@@ -49,6 +60,11 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .add(SESSIONS_CLEANUP, {}, { repeatEveryMs: SEIS_HORAS })
         .catch((error: Error) =>
           this.logger.warn(`Não foi possível agendar a limpeza: ${error.message}`),
+        );
+      void this.queue
+        .add(ACCOUNT_PURGE, {}, { repeatEveryMs: UM_DIA })
+        .catch((error: Error) =>
+          this.logger.warn(`Não foi possível agendar a exclusão de contas: ${error.message}`),
         );
     }
   }
@@ -81,5 +97,94 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .returning({ id: adminSessions.id });
       return clients.length + staff.length;
     });
+  }
+
+  /**
+   * LGPD (P-03): apaga de vez os dados das contas canceladas há mais de ACCOUNT_PURGE_DAYS. A
+   * linha do cliente fica, anonimizada, para a auditoria da plataforma. Uma transação por conta:
+   * se algo falhar, a conta fica para a próxima rodada, sem dado pela metade.
+   */
+  async purgeCancelledAccounts(now: Date = new Date()): Promise<string[]> {
+    const limit = new Date(now.getTime() - this.config.ACCOUNT_PURGE_DAYS * UM_DIA);
+    const due = await asPlatform(this.db, (tx) =>
+      tx
+        .select({ id: tenants.id })
+        .from(tenants)
+        .where(
+          and(
+            eq(tenants.status, 'cancelled'),
+            isNull(tenants.purgedAt),
+            lt(tenants.statusChangedAt, limit),
+          ),
+        ),
+    );
+    const done: string[] = [];
+    for (const { id } of due) {
+      await asPlatform(this.db, (tx) => this.purgeTenant(tx, id, now));
+      done.push(id);
+    }
+    return done;
+  }
+
+  private async purgeTenant(tx: Tx, tenantId: string, now: Date) {
+    // Libera a exclusão da trilha de auditoria só deste cliente, nesta transação.
+    await tx.execute(sql`select set_config('bipae.purge_tenant', ${tenantId}, true)`);
+    const tables = await tenantTables((q) => tx.execute(q));
+    // Quem referencia sai antes de quem é referenciado (chaves estrangeiras do banco).
+    const edges = rowsOf<{ child: string; parent: string }>(
+      await tx.execute(sql`
+        select c.relname as child, p.relname as parent
+        from pg_constraint k
+        join pg_class c on c.oid = k.conrelid
+        join pg_class p on p.oid = k.confrelid
+        where k.contype = 'f' and c.relname <> p.relname`),
+    ).filter((e) => tables.includes(e.child) && tables.includes(e.parent));
+    const remaining = new Set(tables);
+    const order: string[] = [];
+    while (remaining.size > 0) {
+      const free = [...remaining].filter(
+        (t) => !edges.some((e) => e.parent === t && remaining.has(e.child)),
+      );
+      if (free.length === 0)
+        throw new Error('Ciclo de chaves estrangeiras entre tabelas do cliente.');
+      for (const t of free) {
+        order.push(t);
+        remaining.delete(t);
+      }
+    }
+    const members = rowsOf<{ user_id: string }>(
+      await tx.execute(sql`select user_id from memberships where tenant_id = ${tenantId}`),
+    ).map((r) => r.user_id);
+    const counts: Record<string, number> = {};
+    for (const table of order) {
+      const result = await tx.execute(
+        sql`delete from ${sql.identifier(table)} where tenant_id = ${tenantId}`,
+      );
+      counts[table] = Number(
+        (result as { rowCount?: number; affectedRows?: number }).rowCount ??
+          (result as { affectedRows?: number }).affectedRows ??
+          0,
+      );
+    }
+    // Pessoas que não têm mais nenhuma empresa no Bipaê saem também.
+    let users = 0;
+    for (const userId of members) {
+      const removed = rowsOf<{ id: string }>(
+        await tx.execute(sql`
+          delete from users where id = ${userId}
+            and not exists (select 1 from memberships where user_id = ${userId})
+          returning id`),
+      );
+      users += removed.length;
+    }
+    await tx
+      .update(tenants)
+      .set({ name: 'Cliente excluído', notes: null, statusReason: null, purgedAt: now })
+      .where(eq(tenants.id, tenantId));
+    await this.platformAudit.record(
+      tx,
+      { userId: null },
+      { action: 'tenant.purged', tenantId, target: 'tenant', data: { tables: counts, users } },
+    );
   }
 }

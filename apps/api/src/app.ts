@@ -27,6 +27,7 @@ import { AdminPlatformService } from './modules/admin/admin-platform.service';
 import { AdminTenantsService } from './modules/admin/admin-tenants.service';
 import { PlatformAuditService } from './modules/admin/platform-audit.service';
 import { PlatformGuard } from './modules/admin/platform.guard';
+import { DataExportService } from './modules/account/data-export.service';
 import { LimitsService } from './modules/account/limits.service';
 import { DownloadsController, DownloadsService } from './modules/downloads/downloads.controller';
 import { FiscalController } from './modules/fiscal/fiscal.controller';
@@ -152,6 +153,7 @@ class AppModule {
         SyncService,
         SalesService,
         LimitsService,
+        DataExportService,
         PlatformAuditService,
         PlatformGuard,
         AdminAuthService,

@@ -236,6 +236,8 @@ export interface AccountView {
     status: TenantStatus;
     statusReason: string | null;
     trialEndsAt: string | null;
+    /** Conta cancelada: quando os dados serão excluídos de vez (P-03). */
+    purgeAt: string | null;
   };
   plan: {
     id: string;

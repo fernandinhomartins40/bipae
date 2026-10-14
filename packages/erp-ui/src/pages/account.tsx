@@ -7,10 +7,11 @@ import {
   type AccountView,
   type Cents,
 } from '@bipae/domain';
-import { Alert, Badge, Card, PageHeader } from '@bipae/ui';
+import { Alert, Badge, Button, Card, PageHeader } from '@bipae/ui';
 import { useQuery } from '@tanstack/react-query';
 import { UsageBar } from '../admin/charts';
-import { useApp } from '../context';
+import { useState } from 'react';
+import { useApp, useCan } from '../context';
 
 const dateOnly = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' });
 
@@ -112,6 +113,8 @@ export function AccountPage() {
             </ul>
           </Card>
 
+          <DataCard purgeAt={a.tenant.purgeAt} />
+
           <Card className="xl:col-span-2">
             <h2 className="mb-3 text-lg font-bold">Histórico da conta</h2>
             <ul className="flex flex-col gap-2">
@@ -128,5 +131,53 @@ export function AccountPage() {
         </div>
       )}
     </>
+  );
+}
+
+/** LGPD (P-03): baixar todos os dados da conta e saber quando a conta cancelada será excluída. */
+function DataCard({ purgeAt }: { purgeAt: string | null }) {
+  const { api } = useApp();
+  const canExport = useCan('admin.users');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const download = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const blob = await api.download('/account/export');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `bipae-dados-${new Date().toISOString().slice(0, 10)}.zip`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Card className="xl:col-span-2">
+      <h2 className="mb-1 text-lg font-bold">Seus dados</h2>
+      <p className="text-sm text-muted">
+        Baixe um arquivo ZIP com tudo o que a sua empresa guardou no Bipaê: produtos, clientes,
+        vendas, estoque e configurações. Senhas e certificados não vão no arquivo.
+      </p>
+      {purgeAt && (
+        <Alert tone="warning" title="Conta cancelada">
+          Os dados desta conta serão excluídos de vez em {dateOnly.format(new Date(purgeAt))}. Baixe
+          antes o que precisar guardar (as notas fiscais devem ser guardadas por 5 anos).
+        </Alert>
+      )}
+      {error && <Alert>{error}</Alert>}
+      {canExport ? (
+        <Button className="mt-3" loading={busy} onClick={() => void download()}>
+          Baixar meus dados (ZIP)
+        </Button>
+      ) : (
+        <p className="mt-3 text-sm text-muted">Só o dono da conta pode baixar os dados.</p>
+      )}
+    </Card>
   );
 }

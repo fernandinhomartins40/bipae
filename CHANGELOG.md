@@ -1,5 +1,12 @@
 # Changelog
 
+## [P-03 Dados do cliente (LGPD)] — 14/10/2026
+
+### Adicionado
+- **Baixar meus dados**: em Minha assinatura, o dono baixa um ZIP com todas as tabelas da conta (um JSON por tabela), sem senhas, segredos nem certificados. Funciona também com a conta cancelada e fica na auditoria.
+- **Exclusão definitiva com prazo**: a conta cancelada é apagada de vez 90 dias depois do cancelamento (configurável em ACCOUNT_PURGE_DAYS), por uma rotina diária. Reativar antes do prazo cancela a exclusão. A tela mostra a data e lembra de guardar as notas fiscais por 5 anos.
+- A exclusão apaga os dados da empresa e as pessoas que ficaram sem nenhuma empresa; a linha do cliente fica anonimizada e a exclusão vai para a auditoria da plataforma. A trilha de auditoria continua imutável fora desse caso.
+
 ## [F2-08 Conector no instalador e ao ligar o computador] — 14/10/2026
 
 ### Adicionado

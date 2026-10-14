@@ -181,7 +181,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 
 - [ ] P-01 · Páginas de privacidade e termos, com links no rodapé e no cadastro — externo: E7
 - [ ] P-02 · Preços dos planos na landing e no painel — externo: E8
-- [ ] P-03 · Exportação dos dados do cliente (LGPD) e exclusão definitiva após o cancelamento
+- [x] P-03 · Exportação dos dados do cliente (LGPD) e exclusão definitiva após o cancelamento
   - Pronto quando: o cliente baixa um ZIP com seus dados, a exclusão tem prazo e auditoria, e há testes.
 - [ ] P-04 · E-mails transacionais: confirmação de conta, recuperar senha, teste terminando, conta suspensa — externo: E11
 - [ ] P-05 · PDV Embed: autorização de gerente para desconto acima do limite (contrato v1 compatível)

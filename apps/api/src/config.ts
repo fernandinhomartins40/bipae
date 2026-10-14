@@ -30,6 +30,8 @@ const envSchema = z.object({
   ADMIN_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
   ADMIN_SESSION_HOURS: z.coerce.number().int().positive().default(12),
   SUPPORT_SESSION_MINUTES: z.coerce.number().int().positive().default(30),
+  /** LGPD (P-03): dias entre o cancelamento da conta e a exclusão definitiva dos dados. */
+  ACCOUNT_PURGE_DAYS: z.coerce.number().int().positive().default(90),
   /**
    * DEV/TEST ONLY: whoever signs up with this e-mail becomes the first platform owner (only if
    * there is none yet). Ignored in production, where e-mails are not verified: use admin-cli.
