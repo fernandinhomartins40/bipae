@@ -27,6 +27,7 @@ import { CatalogAssist, catalogSummary } from './catalog-assist';
 import { ApiError } from '../api-client';
 import { useForm } from '../forms';
 import { NcmCestHelp } from './fiscal-lookup';
+import { PricingHelper } from './pricing-helper';
 import { KitEditor, type KitComponent } from './product-kit';
 import { VariantsEditor } from './product-variants';
 
@@ -154,6 +155,8 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   const { api } = useApp();
   const queryClient = useQueryClient();
   const canChangePrice = useCan('catalog.price.write');
+  // Recria o campo de preço quando a formação de preço (F4-03) escolhe um valor.
+  const [priceKey, setPriceKey] = useState(0);
   const units = useQuery({ queryKey: ['units'], queryFn: () => api.get<Unit[]>('/units') });
   const [components, setComponents] = useState<KitComponent[]>(
     (product?.components ?? []).map((c) => ({
@@ -261,6 +264,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
         />
         <div className="grid gap-4 sm:grid-cols-2">
           <MoneyField
+            key={priceKey}
             label="Preço de venda"
             value={form.values.priceCents}
             onChange={(v) => form.set('priceCents', v)}
@@ -274,6 +278,16 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
             error={form.errors.costCents}
           />
         </div>
+        {product && canChangePrice && (
+          <PricingHelper
+            productId={product.id}
+            costCents={form.values.costCents}
+            onUse={(price) => {
+              form.set('priceCents', price);
+              setPriceKey((k) => k + 1);
+            }}
+          />
+        )}
         {product && !canChangePrice && (
           <p className="text-sm text-muted">Você pode editar o produto, mas não o preço.</p>
         )}

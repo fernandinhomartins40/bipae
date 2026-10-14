@@ -925,3 +925,21 @@ export const purchaseOrderReceiveInput = z.object({
     .max(500),
   note: z.string().trim().max(300).optional(),
 });
+
+/** Impostos da venda do produto em % do preço, para formar o preço (F4-03). */
+export interface ProductPricing {
+  productId: string;
+  productName: string;
+  costCents: number | null;
+  priceCents: number;
+  companyId: string;
+  regime: string | null;
+  /** Simples Nacional: os tributos estão no DAS; a alíquota efetiva vem da pessoa. */
+  simples: boolean;
+  /** Cada imposto em centésimos de ponto percentual (1250 = 12,5%). */
+  taxes: { label: string; bp: number }[];
+  taxesBp: number;
+  /** O que falta configurar para o cálculo ficar completo. */
+  pending: string[];
+  notes: string[];
+}

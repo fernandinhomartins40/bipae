@@ -1,5 +1,11 @@
 # Changelog
 
+## [F4-03 Formação de preço] — 14/10/2026
+
+### Adicionado
+- **Formar preço no cadastro do produto**: a partir do custo, com margem, impostos da venda e despesas em % do preço (divisor de markup), mostra o preço sugerido e quanto vai para cada parte. "Usar este preço" leva o valor para o campo.
+- Os impostos vêm do motor fiscal para o regime da empresa e o perfil do produto (ICMS, FCP, PIS e COFINS; IBS e CBS a partir de 2027). No Simples Nacional, a pessoa informa a alíquota efetiva do DAS.
+
 ## [F4-02 Entrada de mercadoria do pedido] — 14/10/2026
 
 ### Adicionado
