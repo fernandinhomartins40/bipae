@@ -107,7 +107,8 @@ Checklist que cada UF precisa ter preenchido para ser considerada "coberta". Os 
 | Alíquota geral | Seção 2.1 | Lei do ICMS de cada UF | 20 ✅, 6 🟡, 1 🔴 |
 | Alíquotas por produto | Cesta básica, bebidas, cosméticos, combustíveis etc. | Portal da DIFAL (860 linhas nas 27 UFs em 13/10/2026) e lei de cada UF | 🟡 importado como referência, com data e marcação de defasado (F3-25); vira regra só pela empresa ou contador |
 | FCP | Seção 2.2 | Portal da NF-e e lei de cada UF | ✅ alíquotas; ⬜ produtos |
-| Substituição tributária | Quais CEST a UF adota e com que MVA | Regulamento de cada UF e protocolos do CONFAZ | ⬜ |
+| Partilha do ICMS (DIFAL) | Venda interestadual a consumidor final não contribuinte (EC 87/2015, grupo ICMSUFDest) | Leiaute da NF-e, alíquotas internas confirmadas (seção 2.1) e lei de cada UF | 🟡 calculada (F3-32) com base única por padrão; base única × dupla por UF na dúvida D-025 |
+| Substituição tributária | Quais CEST a UF adota e com que MVA | Regulamento de cada UF e protocolos do CONFAZ | ⬜ o motor calcula a ST com a MVA cadastrada pela empresa; a tabela oficial por UF exige ler resolução por resolução (ex.: PR, Resolução SEFA 571/2019) |
 | Código de benefício (cBenef) | Obrigatório em algumas UFs quando há isenção ou redução | Tabela cBenef × CST do Portal da NF-e e tabela de cada UF | ⬜ |
 | Sublimite do Simples | R$ 3,6 milhões em regra (LC 123, art. 13-A); o art. 19 deixa UFs pequenas adotarem valor menor | Resolução anual do Comitê Gestor do Simples | ⬜ |
 | NFC-e: endereços | Autorização, consulta, evento e inutilização, em produção e homologação | Portal da SVRS e Portal Nacional da NFC-e (ENCAT) | ✅ 27 UFs (F3-28; MG na dúvida D-022) |

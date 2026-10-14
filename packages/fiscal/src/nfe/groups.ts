@@ -1,5 +1,6 @@
 import { format, fromCents } from '../decimal';
 import type { ContributionResult } from '../taxes/contributions';
+import type { DifalResult } from '../taxes/difal';
 import type { IbsCbsResult } from '../taxes/ibs-cbs';
 import type { IcmsResult } from '../taxes/icms';
 import type { IpiResult } from '../taxes/ipi';
@@ -59,6 +60,8 @@ export interface NfeItem {
   pis?: ContributionResult | null;
   cofins?: ContributionResult | null;
   ibsCbs?: IbsCbsResult | null;
+  /** Partilha do ICMS (EC 87/2015): venda interestadual a consumidor final não contribuinte. */
+  difal?: DifalResult | null;
   /** Pedido de compra do cliente (xPed) e o item dele (nItemPed). */
   order?: { number: string; item?: string };
 }
@@ -268,11 +271,29 @@ export function detGroup(item: NfeItem, index: number, model: '55' | '65'): stri
         ipiGroup(item.ipi),
         contributionGroup('PIS', item.pis),
         contributionGroup('COFINS', item.cofins),
+        difalGroup(item.difal),
         ibsCbsGroup(item.ibsCbs),
       ]),
     ],
     { nItem: String(index + 1) },
   );
+}
+
+/** Grupo ICMSUFDest (partilha do ICMS), na ordem do leiaute. */
+function difalGroup(d: DifalResult | null | undefined): string {
+  if (!d) return '';
+  const fcp = d.fcpCents > 0;
+  return el('ICMSUFDest', [
+    req('vBCUFDest', money(d.baseCents)),
+    fcp ? req('vBCFCPUFDest', money(d.fcpBaseCents)) : '',
+    fcp ? req('pFCPUFDest', d.fcpRate) : '',
+    req('pICMSUFDest', d.destinationRate),
+    req('pICMSInter', d.interstateRate),
+    req('pICMSInterPart', d.sharePercent),
+    fcp ? req('vFCPUFDest', money(d.fcpCents)) : '',
+    req('vICMSUFDest', money(d.destinationCents)),
+    req('vICMSUFRemet', money(d.originCents)),
+  ]);
 }
 
 export interface NfeTotals {
@@ -289,6 +310,9 @@ export interface NfeTotals {
   vIPI: number;
   vPIS: number;
   vCOFINS: number;
+  vFCPUFDest: number;
+  vICMSUFDest: number;
+  vICMSUFRemet: number;
   vNF: number;
 }
 
@@ -309,6 +333,9 @@ export function computeTotals(items: NfeItem[]): NfeTotals {
     vIPI: sum((i) => i.ipi?.result.amountCents),
     vPIS: sum((i) => i.pis?.amountCents),
     vCOFINS: sum((i) => i.cofins?.amountCents),
+    vFCPUFDest: sum((i) => i.difal?.fcpCents),
+    vICMSUFDest: sum((i) => i.difal?.destinationCents),
+    vICMSUFRemet: sum((i) => i.difal?.originCents),
   };
   // Fórmula do vNF no Manual de Orientação do Contribuinte. Em 2026 o IBS e a CBS não somam no
   // total da nota (dúvida D-001).
@@ -325,6 +352,13 @@ export function totalGroup(items: NfeItem[], t: NfeTotals): string {
       req('vBC', money(t.vBC)),
       req('vICMS', money(t.vICMS)),
       req('vICMSDeson', money(0)),
+      ...(items.some((i) => i.difal)
+        ? [
+            req('vFCPUFDest', money(t.vFCPUFDest)),
+            req('vICMSUFDest', money(t.vICMSUFDest)),
+            req('vICMSUFRemet', money(t.vICMSUFRemet)),
+          ]
+        : []),
       req('vFCP', money(t.vFCP)),
       req('vBCST', money(t.vBCST)),
       req('vST', money(t.vST)),

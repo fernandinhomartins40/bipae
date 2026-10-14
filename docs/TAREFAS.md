@@ -150,13 +150,14 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-25 · Importar as alíquotas por produto das 27 UFs do Portal Nacional da DIFAL, com a data de cada linha e marcação do que está defasado — depende: F3-06.c
   - Feito em 13/10/2026: `icms-products.json` gerado da página oficial guardada, rota `/v1/fiscal/icms-products` e referência na tela Regras de ICMS. Referência, não regra do motor.
 - [ ] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
+  - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
 - [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
   - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entraram com a F3-08.b (Portal Nacional da NF-e).
 - [ ] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c
 - [ ] F3-30 · Regras do MEI na nota (CRT 4, CFOP permitidos) — depende: F3-06.c
 - [ ] F3-33 · Retaguarda emite NF-e (modelo 55): tela da nota com destinatário, itens, transporte e cobrança, envio pela fila e DANFE em PDF — depende: F3-11, F3-08, F3-13.c
-- [ ] F3-32 · Partilha do ICMS (DIFAL, grupo ICMSUFDest) na venda interestadual para consumidor final não contribuinte — depende: F3-08.a
+- [x] F3-32 · Partilha do ICMS (DIFAL, grupo ICMSUFDest) na venda interestadual para consumidor final não contribuinte — depende: F3-08.a
 - [ ] F3-31 · Rotina que baixa de novo as fontes oficiais, compara com o que está guardado e avisa quando uma tabela ou alíquota mudou — depende: F3-25
 
 ## Fase 2 — pendências

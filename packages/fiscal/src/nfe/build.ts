@@ -186,12 +186,25 @@ export function buildNfe(input: NfeInput): NfeDocument {
   if (input.items.length > 990) throw new NfeBuildError('A NF-e aceita no máximo 990 itens.');
   checkRecipient(input);
   const idDest = destinationOf(input);
-  if (idDest === '2' && input.finalConsumer && input.recipient.ieIndicator === 9) {
-    // EC 87/2015: exige o grupo ICMSUFDest, que depende da alíquota interna do destino (F3-32).
-    throw new NfeBuildError(
-      'Venda para consumidor final não contribuinte de outro estado exige a partilha do ICMS (DIFAL), que o Bipaê ainda não calcula.',
-    );
-  }
+  // EC 87/2015: venda interestadual a consumidor final não contribuinte leva a partilha do ICMS
+  // (grupo ICMSUFDest) em cada item; em qualquer outra operação o grupo não pode aparecer.
+  const needsDifal =
+    idDest === '2' &&
+    input.finalConsumer &&
+    input.recipient.ieIndicator === 9 &&
+    input.direction === 'saida';
+  input.items.forEach((item, index) => {
+    if (needsDifal && !item.difal) {
+      throw new NfeBuildError(
+        `Item ${index + 1}: falta a partilha do ICMS (DIFAL) da venda para consumidor final de outro estado.`,
+      );
+    }
+    if (!needsDifal && item.difal) {
+      throw new NfeBuildError(
+        `Item ${index + 1}: a partilha do ICMS só vale na venda para consumidor final não contribuinte de outro estado.`,
+      );
+    }
+  });
   const references = input.references ?? [];
   if (input.purpose === 'devolucao' && references.length === 0) {
     throw new NfeBuildError('A nota de devolução precisa da chave da nota devolvida.');

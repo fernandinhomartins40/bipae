@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-32 Partilha do ICMS (DIFAL)] — 14/10/2026
+
+### Adicionado
+- **Partilha do ICMS na venda para consumidor final de outro estado** (EC 87/2015): o motor fiscal calcula o valor que vai para a UF de destino (`calculateDifal`), com a alíquota interestadual certa (4%, 7% ou 12%) e a alíquota interna confirmada do destino.
+- A NF-e leva o grupo `ICMSUFDest` em cada item e os totais da partilha, validados contra o leiaute oficial. Antes, esse tipo de venda era recusado.
+- Base única por padrão e base dupla disponível; qual UF usa qual ficou na dúvida D-025 para o contador. O FCP do destino só entra com regra do produto, com aviso quando ficou de fora.
+
 ## [MF-13 Desktop abre o link do MercadoFlow] — 14/10/2026
 
 ### Adicionado

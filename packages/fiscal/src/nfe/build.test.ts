@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { validateNfeXml as validate } from '../../test/schema';
 import { calculateContribution } from '../taxes/contributions';
+import { calculateDifal } from '../taxes/difal';
 import { calculateIbsCbs } from '../taxes/ibs-cbs';
 import { calculateIcms } from '../taxes/icms';
 import { calculateIpi } from '../taxes/ipi';
@@ -308,6 +309,57 @@ describe('XML da NF-e contra o schema oficial', () => {
   });
 });
 
+describe('partilha do ICMS na NF-e (F3-32)', () => {
+  it('venda de SP para consumidor de MG: grupo ICMSUFDest e totais, válidos no XSD', async () => {
+    const base = { baseCents: 10_000 };
+    const icms = calculateIcms({ cst: '00', rate: '12' }, base);
+    const difal = calculateDifal({
+      ufOrigem: 'SP',
+      ufDestino: 'MG',
+      baseCents: 10_000,
+      fcpRate: '2',
+    });
+    const item = itemComSt({
+      cfop: '6108',
+      cest: null,
+      freightCents: undefined,
+      icms,
+      ipi: null,
+      order: undefined,
+      difal,
+    });
+    const doc = buildNfe(
+      nota({
+        finalConsumer: true,
+        presence: 'internet',
+        recipient: {
+          cpf: '52998224725',
+          name: 'Ana Souza',
+          ieIndicator: 9,
+          address: {
+            ...CLIENTE.address,
+            uf: 'MG',
+            cityCode: '3106200',
+            cityName: 'Belo Horizonte',
+          },
+        },
+        items: [item],
+        billing: undefined,
+        payments: [{ code: '03', amountCents: 10_000 }],
+      }),
+    );
+    expect(await validate(doc.xml)).toEqual([]);
+    expect(doc.xml).toContain(
+      '<ICMSUFDest><vBCUFDest>100.00</vBCUFDest><vBCFCPUFDest>100.00</vBCFCPUFDest><pFCPUFDest>2.00</pFCPUFDest><pICMSUFDest>18.00</pICMSUFDest><pICMSInter>12.00</pICMSInter><pICMSInterPart>100.00</pICMSInterPart><vFCPUFDest>2.00</vFCPUFDest><vICMSUFDest>6.00</vICMSUFDest><vICMSUFRemet>0.00</vICMSUFRemet></ICMSUFDest>',
+    );
+    expect(doc.xml).toContain(
+      '<vICMSDeson>0.00</vICMSDeson><vFCPUFDest>2.00</vFCPUFDest><vICMSUFDest>6.00</vICMSUFDest><vICMSUFRemet>0.00</vICMSUFRemet><vFCP>',
+    );
+    // A partilha não soma no total da nota: é recolhida pelo remetente à parte.
+    expect(doc.totalCents).toBe(10_000);
+  });
+});
+
 describe('NF-e incoerente vira erro claro, antes da SEFAZ', () => {
   const erro = (over: Partial<NfeInput>) => () => buildNfe(nota(over));
 
@@ -322,19 +374,21 @@ describe('NF-e incoerente vira erro claro, antes da SEFAZ', () => {
     expect(erro({ items: [itemComSt({ cfop: '51' })] })).toThrow('CFOP 51 inválido');
   });
 
-  it('venda interestadual a não contribuinte espera a partilha do ICMS (F3-32)', () => {
+  it('venda interestadual a não contribuinte exige a partilha em cada item (F3-32)', () => {
+    const anaRj = {
+      cpf: '52998224725',
+      name: 'Ana',
+      ieIndicator: 9 as const,
+      address: { ...CLIENTE.address, uf: 'RJ' },
+    };
     expect(
-      erro({
-        finalConsumer: true,
-        recipient: {
-          cpf: '52998224725',
-          name: 'Ana',
-          ieIndicator: 9,
-          address: { ...CLIENTE.address, uf: 'RJ' },
-        },
-        items: [itemComSt({ cfop: '6108' })],
-      }),
-    ).toThrow(NfeBuildError);
+      erro({ finalConsumer: true, recipient: anaRj, items: [itemComSt({ cfop: '6108' })] }),
+    ).toThrow('Item 1: falta a partilha do ICMS (DIFAL)');
+    const difal = calculateDifal({ ufOrigem: 'SP', ufDestino: 'RJ', baseCents: 10_000 });
+    expect(erro({ items: [itemComSt({ difal })] })).toThrow(
+      'só vale na venda para consumidor final não contribuinte',
+    );
+    expect(NfeBuildError).toBeDefined();
   });
 
   it('confere destinatário, referências, fatura, itens e IPI', () => {

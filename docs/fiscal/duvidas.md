@@ -201,3 +201,9 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a entrada pelo XML de compra (F3-19) grava o custo de cada produto. Empresas do regime normal recuperam o ICMS destacado, o PIS e a COFINS (e, a partir de 2027, o IBS e a CBS), o que muda o custo contábil.
 - **Implementação provisória:** custo = valor dos produtos − desconto + frete + seguro + outras despesas + ICMS-ST + IPI, dividido pelas unidades de estoque, **sem abater nenhum crédito**. Os tributos de cada item ficam guardados com a nota, para a apuração (F4-13) e para recalcular o custo quando a regra for definida.
 - **Pergunta (contador, E3):** o custo do produto deve abater os créditos recuperáveis conforme o regime (Simples não abate; Presumido e Real abatem ICMS, e o Real abate PIS/COFINS)? O IPI entra no custo de quem não é contribuinte do IPI?
+
+### D-025 — Partilha do ICMS (DIFAL) a não contribuinte: base única ou base dupla?
+
+- **Contexto:** na venda interestadual a consumidor final não contribuinte (EC 87/2015), a diferença entre a alíquota interna do destino e a interestadual vai toda para a UF de destino desde 2019 (pICMSInterPart = 100, como diz o próprio leiaute da NF-e). A forma de calcular a base varia: algumas UFs aplicam a base única (DIFAL = valor × diferença de alíquotas) e outras a base dupla, refazendo a base "por dentro" com a alíquota interna do destino.
+- **Implementação provisória (F3-32):** o motor calcula as duas formas (`calculateDifal`, `baseMode`), com **base única como padrão**. A alíquota interna do destino é a geral confirmada da UF, ou a do produto quando a empresa informa. O FCP do destino **só entra com regra do produto**, porque a lei de cada UF lista os produtos sujeitos a ele; sem regra, o resultado traz um aviso.
+- **Pergunta (contador, E3):** quais UFs exigem a base dupla para não contribuinte, e o FCP entra no divisor "por dentro"? Com a resposta, a forma vira tabela por UF com data de vigência.
