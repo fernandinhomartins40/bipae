@@ -119,7 +119,8 @@ jobs:
           git diff --exit-code -- kits/pdv-embed/dist || { echo 'Rode pnpm --filter @bipae/pdv-embed build e versione o dist.'; exit 1; }
       - run: pnpm --filter @bipae/pdv-embed exec playwright install --with-deps chromium
       - name: E2E do componente
-        run: pnpm --filter @bipae/pdv-embed e2e
+        shell: bash
+        run: bash scripts/ci-annotate.sh "E2E do componente" pnpm --filter @bipae/pdv-embed e2e
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -192,7 +193,8 @@ jobs:
       - name: Build do app desktop (instaladores sem assinatura)
         env:
           VITE_API_URL: https://www.bipae.com.br
-        run: pnpm --filter @bipae/desktop tauri build
+        shell: bash
+        run: bash scripts/ci-annotate.sh "tauri build" pnpm --filter @bipae/desktop tauri build
       - uses: actions/upload-artifact@v4
         with:
           name: bipae-desktop-${{ runner.os }}
