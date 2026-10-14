@@ -151,6 +151,11 @@ export async function createDesktopPlatform(): Promise<Platform> {
           }>('connector_status'),
         newCode: () => invoke<string>('connector_new_code'),
         revoke: (id: string) => invoke<void>('connector_revoke', { id }),
+        autostart: {
+          isEnabled: () => invoke<boolean>('plugin:autostart|is_enabled'),
+          setEnabled: (enabled: boolean) =>
+            invoke<void>(enabled ? 'plugin:autostart|enable' : 'plugin:autostart|disable'),
+        },
       },
     }),
     ...(updaterBuilt && { updater: new TauriUpdater() }),

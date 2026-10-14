@@ -1,5 +1,11 @@
 # Changelog
 
+## [F2-08 Conector no instalador e ao ligar o computador] — 14/10/2026
+
+### Adicionado
+- **Atalho "Bipaê Conector" no menu Iniciar**, criado pelo instalador do Windows: abre o app direto na bandeja, como Conector.
+- **Iniciar o Bipaê Conector junto com o computador**: opção no cartão do Conector, em Periféricos do Bipaê Desktop.
+
 ## [F2-09 Atualização entre vendas] — 14/10/2026
 
 ### Adicionado

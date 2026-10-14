@@ -40,9 +40,17 @@
       "icons/icon.ico"
     ],
     "windows": {
-      "webviewInstallMode": { "type": "embedBootstrapper" },
-      "nsis": { "languages": ["PortugueseBR"], "displayLanguageSelector": false },
-      "wix": { "language": "pt-BR" }
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      },
+      "nsis": {
+        "languages": ["PortugueseBR"],
+        "displayLanguageSelector": false,
+        "installerHooks": "./windows/hooks.nsh"
+      },
+      "wix": {
+        "language": "pt-BR"
+      }
     }
   }
 }

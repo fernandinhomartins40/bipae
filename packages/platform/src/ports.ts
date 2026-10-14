@@ -185,6 +185,11 @@ export interface Platform {
     }>;
     newCode(): Promise<string>;
     revoke(id: string): Promise<void>;
+    /** Iniciar o Conector junto com o computador (F2-08). */
+    autostart?: {
+      isEnabled(): Promise<boolean>;
+      setEnabled(enabled: boolean): Promise<void>;
+    };
   };
 }
 

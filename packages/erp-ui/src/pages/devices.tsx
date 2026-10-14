@@ -237,8 +237,15 @@ function ConnectorHost() {
   const { platform } = useApp();
   const host = platform.connectorHost!;
   const [status, setStatus] = useState<Awaited<ReturnType<typeof host.status>> | null>(null);
+  const [autostart, setAutostart] = useState<boolean | null>(null);
   const reload = () => void host.status().then(setStatus);
   useEffect(reload, [host]);
+  useEffect(() => {
+    void host.autostart
+      ?.isEnabled()
+      .then(setAutostart)
+      .catch(() => setAutostart(null));
+  }, [host]);
   if (!status) return null;
   return (
     <Card>
@@ -254,6 +261,20 @@ function ConnectorHost() {
           <Badge tone="warning">Desligado</Badge>
         )}
       </div>
+      {host.autostart && autostart !== null && (
+        <div className="mt-4">
+          <Checkbox
+            label="Iniciar o Bipaê Conector junto com o computador"
+            hint="Ele abre sozinho na bandeja, perto do relógio, para o caixa do navegador usar os periféricos."
+            checked={autostart}
+            onChange={(v) =>
+              void host
+                .autostart!.setEnabled(v)
+                .then(() => host.autostart!.isEnabled().then(setAutostart))
+            }
+          />
+        </div>
+      )}
       <p className="mt-4 text-sm font-semibold">Código de pareamento</p>
       <p className="font-mono text-4xl font-bold tracking-widest" data-testid="connector-code">
         {status.code}

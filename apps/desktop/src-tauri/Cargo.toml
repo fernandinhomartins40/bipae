@@ -32,12 +32,14 @@ base64 = "0.22"
 getrandom = "0.3"
 # Abre links (MercadoFlow, termos) no navegador do sistema; só https, ver capabilities.
 tauri-plugin-opener = "2"
+# Iniciar o Bipaê Conector junto com o computador (F2-08).
+tauri-plugin-autostart = "2"
 tauri-plugin-updater = { version = "2", optional = true }
 tauri-plugin-process = { version = "2", optional = true }
 
 # Impressora USB pelo spooler do Windows, em modo RAW (F2-07).
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Graphics_Printing"] }
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Graphics_Printing"] }
 
 [profile.release]
 codegen-units = 1
