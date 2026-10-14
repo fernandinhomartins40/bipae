@@ -4,6 +4,8 @@
  *   node dist/admin-cli.js revoke <email>
  *   node dist/admin-cli.js reset-totp <email>
  *   node dist/admin-cli.js list
+ *   node dist/admin-cli.js mercadoflow-status        (confere as credenciais e as lojas vinculadas)
+ *   node dist/admin-cli.js mercadoflow-webhook [url] (registra o aviso do MercadoFlow; mostra o segredo uma vez)
  * The person must already have a Bipaê account (sign up at /app/criar-conta). Every change is
  * written to the platform audit as done by "cli". After this, use the panel (/app/admin).
  */
@@ -14,6 +16,7 @@ import { asPlatform, openDatabase } from './db/client';
 import { migrate, rowsOf } from './db/migrate';
 import { platformAdmins, users } from './db/schema';
 import { PlatformAuditService } from './modules/admin/platform-audit.service';
+import { MercadoflowClient } from './modules/mercadoflow/mercadoflow.client';
 
 const [command, email, roleArg] = process.argv.slice(2);
 const config = loadConfig();
@@ -21,6 +24,20 @@ const database = await openDatabase(config.DATABASE_URL);
 await migrate(database);
 const audit = new PlatformAuditService(database.db);
 const cli = { userId: null, ip: 'cli' };
+
+function mercadoflow() {
+  const client = new MercadoflowClient({
+    apiUrl: config.MERCADOFLOW_API_URL,
+    clientId: config.MERCADOFLOW_CLIENT_ID,
+    clientSecret: config.MERCADOFLOW_CLIENT_SECRET,
+  });
+  if (!client.enabled) {
+    throw new Error(
+      'Defina MERCADOFLOW_API_URL, MERCADOFLOW_CLIENT_ID e MERCADOFLOW_CLIENT_SECRET no .env.',
+    );
+  }
+  return client;
+}
 
 async function findUser(address: string) {
   const result = await asPlatform(database.db, (tx) =>
@@ -113,9 +130,28 @@ try {
       console.table(rows);
       break;
     }
+    case 'mercadoflow-status': {
+      const client = mercadoflow();
+      const me = await client.get<{ markets?: unknown[] }>('/me');
+      console.log('Credenciais aceitas pelo MercadoFlow.');
+      console.log(JSON.stringify(me, null, 2));
+      break;
+    }
+    case 'mercadoflow-webhook': {
+      // Registro único (seção 8 do contrato). O segredo só aparece nesta resposta: vai para o
+      // .env da VPS (MERCADOFLOW_WEBHOOK_SECRET) e não é gravado em nenhum outro lugar.
+      const url = email ?? 'http://bipae-api:3333/v1/integrations/mercadoflow/webhook';
+      const result = await mercadoflow().put<{ secret?: string }>('/webhook', { url });
+      console.log(`Aviso registrado em ${url}.`);
+      console.log('Coloque no /root/bipae/.env e faça um novo deploy:');
+      console.log(
+        `MERCADOFLOW_WEBHOOK_SECRET=${result.secret ?? '(o MercadoFlow não devolveu o segredo)'}`,
+      );
+      break;
+    }
     default:
       console.log(
-        'Comandos: grant <email> [owner|support|viewer] · revoke <email> · reset-totp <email> · list',
+        'Comandos: grant <email> [owner|support|viewer] · revoke <email> · reset-totp <email> · list · mercadoflow-status · mercadoflow-webhook [url]',
       );
   }
 } catch (error) {

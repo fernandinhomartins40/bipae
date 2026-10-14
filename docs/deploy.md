@@ -80,6 +80,24 @@ No primeiro acesso a https://www.bipae.com.br/app/admin, o painel pede para ativ
 
 Os demais membros da equipe podem ser adicionados pelo próprio painel (Equipe Bipaê), por quem é Administrador.
 
+## Integração com o MercadoFlow (ADR-0015)
+
+A API do Bipaê entra também na rede `mercadoflow-web_default` (projeto compose do MercadoFlow, na mesma VPS) com o nome `bipae-api`. Nenhuma porta nova no host. Enquanto o `.env` não tiver as credenciais, a integração fica desligada e o Bipaê funciona como sempre.
+
+Para ligar (uma vez):
+
+1. O super admin do MercadoFlow gera as credenciais em Parceiros → Bipaê.
+2. Na VPS, acrescente ao `/root/bipae/.env` (nunca no repositório):
+   ```
+   MERCADOFLOW_CLIENT_ID=...
+   MERCADOFLOW_CLIENT_SECRET=...
+   MERCADOFLOW_TERMS_URL=...      # opcional, quando a página de termos for publicada
+   ```
+3. Faça um novo deploy (Actions) e confira: `$C exec api node dist/admin-cli.js mercadoflow-status`.
+4. Registre o aviso: `$C exec api node dist/admin-cli.js mercadoflow-webhook`. O segredo aparece só nessa resposta: copie para `MERCADOFLOW_WEBHOOK_SECRET=` no `.env` e faça outro deploy.
+
+Se a rede do MercadoFlow sumir, a API do Bipaê não sobe; o deploy volta sozinho para a versão anterior.
+
 ## Configuração única já feita
 
 - `deploy/setup-host.sh`: site `/etc/nginx/sites-available/bipae.com.br` + certificado. Não precisa rodar de novo.

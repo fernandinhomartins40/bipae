@@ -1,5 +1,14 @@
 # Changelog
 
+## [MF-05 MercadoFlow na VPS] — 14/10/2026
+
+### Adicionado
+- A API do Bipaê passa a estar também na rede do MercadoFlow na VPS (nome `bipae-api`), sem porta nova no host, com as variáveis `MERCADOFLOW_*` vazias: a integração continua desligada até as credenciais irem para o `.env`.
+- Comandos `mercadoflow-status` e `mercadoflow-webhook` na `admin-cli`, e o passo a passo para ligar em `docs/deploy.md`.
+
+### Pendente
+- E19: credenciais do parceiro Bipaê no MercadoFlow.
+
 ## [MF-04 Contas MercadoFlow e desconto] — 14/10/2026
 
 ### Adicionado

@@ -36,6 +36,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] E15 · Participantes para o teste de usabilidade e decisão sobre pentest externo
 - [ ] E16 · Primeira aplicação real para integrar o PDV Embed
 - [ ] E17 · Decisão sobre instalar a REA para benchmark (`docs/benchmark/README.md`)
+- [ ] E19 · Credenciais do parceiro Bipaê no MercadoFlow (client id e secret, gerados em Parceiros → Bipaê) no `.env` da VPS
 - [ ] E18 · Token ou cartão A3 de teste (com a leitora) para a assinatura pelo desktop
 
 ---
@@ -195,7 +196,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - A importação em massa é a entrada de compra pelo XML (F3-19): os itens sem produto consultam o catálogo em lote e o produto novo nasce com o nome, a marca e a caixa do catálogo. Planilha fica para quando houver importação por planilha.
 - [x] MF-04 · Tela "MercadoFlow" nas configurações: criar conta, vincular conta existente, cliente ativo e desconto — depende: MF-01
 - [ ] MF-13 · Desktop abre o link do MercadoFlow no navegador do sistema (plugin opener do Tauri; hoje mostra o link para copiar) — depende: MF-04
-- [ ] MF-05 · Rede compartilhada no compose da VPS, credenciais e registro do webhook — depende: MF-01
+- [x] MF-05 · Rede compartilhada no compose da VPS, credenciais e registro do webhook — depende: MF-01
+  - Compose e comandos prontos; ligar de fato depende das credenciais (E19). Passo a passo em `docs/deploy.md`.
 - [ ] MF-06 · Catálogo: imagens e fotos genéricas guardadas no Bipaê — depende: MF-02 · externo: E12
 - [ ] MF-07 · Catálogo: cadastro rápido no caixa, com tempo limite de 1,5 s — depende: MF-02
 - [ ] MF-08 · Vendas: NFC-e autorizada e cancelamento pela outbox, e carga inicial de 90 dias — depende: MF-04, F3-14
