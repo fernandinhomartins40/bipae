@@ -11,3 +11,4 @@ export * from './icms-uf';
 export * from './payment-means';
 export * from './nfce-endpoints';
 export * from './nfe-endpoints';
+export * from './icms-products';

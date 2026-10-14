@@ -16,6 +16,7 @@ import Decimal from 'decimal.js';
 import { parseCest } from './cest.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
+import { markStale, parseDifal } from './difal.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -409,6 +410,15 @@ function importIcpBrasil() {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+// Alíquotas internas por mercadoria do Portal Nacional da DIFAL, conferidas contra a alíquota
+// geral confirmada na lei de cada UF (icms-uf.json, mantido à mão com a fonte de cada UF).
+function importIcmsProducts(fcp) {
+  const html = gunzipSync(readFileSync(join(sourcesDir, manifest.difal.file))).toString('utf8');
+  const ufByCode = Object.fromEntries(fcp.map((f) => [f.cUF, f.uf]));
+  const confirmed = JSON.parse(readFileSync(join(dataDir, 'icms-uf.json'), 'utf8')).general;
+  return markStale(parseDifal(html, ufByCode), confirmed);
+}
+
 const tables = {
   'cfop.json': importCfop(),
   'class-trib.json': importClassTrib(),
@@ -422,6 +432,9 @@ const tables = {
   'nfe-endpoints.json': importNfeEndpoints(),
   'icp-brasil.json': importIcpBrasil(),
 };
+
+// Depende do FCP (para o código de cada UF).
+tables['icms-products.json'] = importIcmsProducts(tables['fcp.json']);
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha
 // sem regerar os dados.

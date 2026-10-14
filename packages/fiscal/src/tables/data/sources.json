@@ -142,5 +142,14 @@
   "publishedAt": "2026-10-13",
   "downloadedAt": "2026-10-13",
   "sha256": "d7f977c68fed76090dc58c32684716f4a8863bb94cb2d9fd663328c01eeaaf7d"
+ },
+ "difal": {
+  "file": "DIFAL_aliquotas_2026-10-13.html.gz",
+  "title": "Alíquotas internas de ICMS por mercadoria das 27 UFs (Portal Nacional da DIFAL)",
+  "publisher": "Portal DF-e da SEFAZ Virtual do RS (mantido pelas SEFAZ)",
+  "page": "https://dfe-portal.svrs.rs.gov.br/Difal/Aliquotas",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-10-13",
+  "sha256": "5cc3d3c03745c9d1a75cb7f6e02126a4c479a524d90104be85052e4efe72303a"
  }
 }

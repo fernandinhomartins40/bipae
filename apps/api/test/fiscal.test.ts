@@ -24,6 +24,16 @@ describe('consulta às tabelas fiscais', () => {
     expect(arroz.path).toContain('Arroz.');
   });
 
+  it('mostra as alíquotas por mercadoria do Portal da DIFAL, com a marcação de defasado (F3-25)', async () => {
+    const ma = (await cliente.get('/fiscal/icms-products?uf=ma')).json();
+    expect(ma).toMatchObject({ uf: 'MA', generalMatches: false, confirmedGeneralRate: '23' });
+    expect(ma.items.length).toBeGreaterThan(0);
+    expect(ma.items.some((i: { stale: boolean }) => i.stale)).toBe(true);
+    expect(ma.source.page).toBe('https://dfe-portal.svrs.rs.gov.br/Difal/Aliquotas');
+    expect((await cliente.get('/fiscal/icms-products?uf=XX')).statusCode).toBe(404);
+    expect((await cliente.get('/fiscal/icms-products')).json().message).toBe('Informe a UF');
+  });
+
   it('busca NCM pelo começo do código e respeita o limite', async () => {
     const res = await cliente.get('/fiscal/ncm?q=2203&limit=5');
     expect(res.json().items.map((n: { code: string }) => n.code)).toEqual(['22030000']);
@@ -84,14 +94,26 @@ describe('consulta às tabelas fiscais', () => {
 
 describe('conferência dos códigos fiscais do produto', () => {
   it('recusa NCM e CEST que não existem na tabela, com mensagem clara', async () => {
-    const ncm = await cliente.post('/products', { name: 'Produto A', priceCents: 100, ncm: '99999999' });
+    const ncm = await cliente.post('/products', {
+      name: 'Produto A',
+      priceCents: 100,
+      ncm: '99999999',
+    });
     expect(ncm.statusCode).toBe(400);
-    expect(ncm.json().message).toBe('O NCM 99999999 não existe na tabela vigente. Confira o código.');
+    expect(ncm.json().message).toBe(
+      'O NCM 99999999 não existe na tabela vigente. Confira o código.',
+    );
     expect(ncm.json().issues[0].path).toBe('ncm');
 
-    const cest = await cliente.post('/products', { name: 'Produto B', priceCents: 100, cest: '9999999' });
+    const cest = await cliente.post('/products', {
+      name: 'Produto B',
+      priceCents: 100,
+      cest: '9999999',
+    });
     expect(cest.statusCode).toBe(400);
-    expect(cest.json().message).toBe('O CEST 9999999 não existe na tabela vigente. Confira o código.');
+    expect(cest.json().message).toBe(
+      'O CEST 9999999 não existe na tabela vigente. Confira o código.',
+    );
   });
 
   it('aceita NCM e CEST válidos e produto sem código fiscal', async () => {
@@ -103,20 +125,31 @@ describe('conferência dos códigos fiscais do produto', () => {
     });
     expect(cerveja.statusCode).toBe(201);
     expect(cerveja.json()).toMatchObject({ ncm: '22030000', cest: '0302100' });
-    expect((await cliente.post('/products', { name: 'Sem fiscal', priceCents: 100 })).statusCode).toBe(201);
+    expect(
+      (await cliente.post('/products', { name: 'Sem fiscal', priceCents: 100 })).statusCode,
+    ).toBe(201);
   });
 
   it('NCM antigo já gravado não impede alterar o produto; trocar por outro inválido, sim', async () => {
-    const criado = (await cliente.post('/products', { name: 'Antigo', priceCents: 100, ncm: '22030000' })).json();
+    const criado = (
+      await cliente.post('/products', { name: 'Antigo', priceCents: 100, ncm: '22030000' })
+    ).json();
     // Simula um NCM que foi extinto depois do cadastro.
     await asPlatform(t.database.db, (tx) =>
       tx.execute(sql`update products set ncm = '99999999' where id = ${criado.id}`),
     );
-    const novoPreco = await cliente.put(`/products/${criado.id}`, { ...criado, ncm: '99999999', priceCents: 150 });
+    const novoPreco = await cliente.put(`/products/${criado.id}`, {
+      ...criado,
+      ncm: '99999999',
+      priceCents: 150,
+    });
     expect(novoPreco.statusCode).toBe(200);
     expect(novoPreco.json().priceCents).toBe(150);
 
-    const outroInvalido = await cliente.put(`/products/${criado.id}`, { ...criado, ncm: '88888888' });
+    const outroInvalido = await cliente.put(`/products/${criado.id}`, {
+      ...criado,
+      ncm: '88888888',
+    });
     expect(outroInvalido.statusCode).toBe(400);
     const corrigido = await cliente.put(`/products/${criado.id}`, { ...criado, ncm: '10063021' });
     expect(corrigido.statusCode).toBe(200);
@@ -136,14 +169,27 @@ describe('conferência dos códigos do perfil fiscal', () => {
   it('aceita um perfil com códigos oficiais', async () => {
     const res = await cliente.post('/fiscal-profiles', valido);
     expect(res.statusCode).toBe(201);
-    expect(res.json().data).toMatchObject({ cfopInterna: '5102', csosn: '102', cClassTrib: '000001' });
+    expect(res.json().data).toMatchObject({
+      cfopInterna: '5102',
+      csosn: '102',
+      cClassTrib: '000001',
+    });
   });
 
   it('explica o que está errado em cada código', async () => {
     const casos: [Record<string, unknown>, string][] = [
-      [{ cfopInterna: '6102' }, 'O CFOP 6102 não é de venda dentro do estado. Os CFOP de venda dentro do estado começam com 5.'],
-      [{ cfopInterestadual: '5102' }, 'O CFOP 5102 não é de venda para outro estado. Os CFOP de venda para outro estado começam com 6.'],
-      [{ cfopInterna: '1102' }, 'O CFOP 1102 não é de venda dentro do estado. Os CFOP de venda dentro do estado começam com 5.'],
+      [
+        { cfopInterna: '6102' },
+        'O CFOP 6102 não é de venda dentro do estado. Os CFOP de venda dentro do estado começam com 5.',
+      ],
+      [
+        { cfopInterestadual: '5102' },
+        'O CFOP 5102 não é de venda para outro estado. Os CFOP de venda para outro estado começam com 6.',
+      ],
+      [
+        { cfopInterna: '1102' },
+        'O CFOP 1102 não é de venda dentro do estado. Os CFOP de venda dentro do estado começam com 5.',
+      ],
       [{ cfopInterna: '5999' }, 'O CFOP 5999 não existe na tabela vigente.'],
       [{ csosn: '999' }, 'O CSOSN 999 não existe.'],
       [{ csosn: null, cstIcms: '99' }, 'O CST de ICMS 99 não existe.'],
@@ -151,17 +197,31 @@ describe('conferência dos códigos do perfil fiscal', () => {
       [{ cClassTrib: '220001' }, 'A classificação tributária 220001 não está em vigor.'],
     ];
     for (const [troca, mensagem] of casos) {
-      const res = await cliente.post('/fiscal-profiles', { ...valido, name: `Perfil ${mensagem.slice(0, 30)}`, ...troca });
+      const res = await cliente.post('/fiscal-profiles', {
+        ...valido,
+        name: `Perfil ${mensagem.slice(0, 30)}`,
+        ...troca,
+      });
       expect(res.statusCode, mensagem).toBe(400);
       expect(res.json().message, mensagem).toBe(mensagem);
     }
   });
 
   it('confere também na alteração', async () => {
-    const criado = (await cliente.post('/fiscal-profiles', { ...valido, name: 'Para alterar' })).json();
-    const res = await cliente.put(`/fiscal-profiles/${criado.id}`, { ...valido, name: 'Para alterar', csosn: '777' });
+    const criado = (
+      await cliente.post('/fiscal-profiles', { ...valido, name: 'Para alterar' })
+    ).json();
+    const res = await cliente.put(`/fiscal-profiles/${criado.id}`, {
+      ...valido,
+      name: 'Para alterar',
+      csosn: '777',
+    });
     expect(res.statusCode).toBe(400);
-    const ok = await cliente.put(`/fiscal-profiles/${criado.id}`, { ...valido, name: 'Para alterar', csosn: '500' });
+    const ok = await cliente.put(`/fiscal-profiles/${criado.id}`, {
+      ...valido,
+      name: 'Para alterar',
+      csosn: '500',
+    });
     expect(ok.statusCode).toBe(200);
   });
 });
@@ -171,11 +231,20 @@ describe('regime tributário e UF da empresa (F3-06.c)', () => {
     const opcoes = (await cliente.get('/fiscal/options')).json();
     // O domínio e o motor fiscal precisam listar os mesmos regimes.
     expect(opcoes.regimes.map((r: { id: string }) => r.id)).toEqual([...COMPANY_TAX_REGIMES]);
-    expect(opcoes.regimes.find((r: { id: string }) => r.id === 'mei')).toMatchObject({ crt: 4, icmsCode: 'csosn' });
+    expect(opcoes.regimes.find((r: { id: string }) => r.id === 'mei')).toMatchObject({
+      crt: 4,
+      icmsCode: 'csosn',
+    });
     expect(opcoes.ufRates).toHaveLength(27);
-    expect(opcoes.ufRates.find((u: { uf: string }) => u.uf === 'SP')).toMatchObject({ status: 'confirmado', rate: '18' });
+    expect(opcoes.ufRates.find((u: { uf: string }) => u.uf === 'SP')).toMatchObject({
+      status: 'confirmado',
+      rate: '18',
+    });
     // UF sem confirmação oficial vem sem número, nunca com valor suposto.
-    expect(opcoes.ufRates.find((u: { uf: string }) => u.uf === 'AL')).toMatchObject({ status: 'divergente', rate: null });
+    expect(opcoes.ufRates.find((u: { uf: string }) => u.uf === 'AL')).toMatchObject({
+      status: 'divergente',
+      rate: null,
+    });
   });
 
   it('a empresa guarda o regime e recusa valor fora da lista', async () => {

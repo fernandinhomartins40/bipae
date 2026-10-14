@@ -105,7 +105,7 @@ Checklist que cada UF precisa ter preenchido para ser considerada "coberta". Os 
 | Item | O que é | Fonte oficial | Situação |
 |---|---|---|---|
 | Alíquota geral | Seção 2.1 | Lei do ICMS de cada UF | 20 ✅, 6 🟡, 1 🔴 |
-| Alíquotas por produto | Cesta básica, bebidas, cosméticos, combustíveis etc. | Portal da DIFAL (712 itens nas 27 UFs) e lei de cada UF | 🟡 baixado; ver seção 3 |
+| Alíquotas por produto | Cesta básica, bebidas, cosméticos, combustíveis etc. | Portal da DIFAL (860 linhas nas 27 UFs em 13/10/2026) e lei de cada UF | 🟡 importado como referência, com data e marcação de defasado (F3-25); vira regra só pela empresa ou contador |
 | FCP | Seção 2.2 | Portal da NF-e e lei de cada UF | ✅ alíquotas; ⬜ produtos |
 | Substituição tributária | Quais CEST a UF adota e com que MVA | Regulamento de cada UF e protocolos do CONFAZ | ⬜ |
 | Código de benefício (cBenef) | Obrigatório em algumas UFs quando há isenção ou redução | Tabela cBenef × CST do Portal da NF-e e tabela de cada UF | ⬜ |
@@ -125,6 +125,8 @@ O **Portal Nacional da DIFAL** (<https://dfe-portal.svrs.rs.gov.br/Difal/Aliquot
 - AP tem só a regra geral; SC tem 225 itens.
 
 Por isso o plano usa o portal como **ponto de partida e lista de conferência**, e a lei de cada UF como confirmação.
+
+**Atualização de 13/10/2026 (F3-25):** o portal foi importado de novo (860 linhas). MG, PI e RO já têm linhas. Comparando a linha geral do portal com a lei de cada UF, o portal está defasado em AM, CE, MA, PA, PE, PI, PR, RJ, RN, RO e TO; nessas UFs as linhas com data até a da linha geral aparecem como "defasadas" na tela Regras de ICMS. A tabela abaixo é do levantamento anterior.
 
 | UF | Itens no portal | Atualizado em | | UF | Itens no portal | Atualizado em |
 |---|---|---|---|---|---|---|

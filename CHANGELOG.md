@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-25 Alíquotas por produto] — 13/10/2026
+
+### Adicionado
+- **Alíquotas de ICMS por mercadoria das 27 UFs**, importadas do Portal Nacional da DIFAL (860 linhas), com NCM quando o portal informa, FCP, base legal e a data de cada linha.
+- **Marcação de defasado:** quando a alíquota geral do portal não bate com a lei vigente da UF, as linhas antigas daquela UF aparecem como "Defasada". Hoje isso acontece em 11 UFs.
+- Na tela **Regras de ICMS**, a referência do portal para a UF da empresa, com busca. Serve de ponto de partida para o contador: só vira regra o que a empresa cadastrar.
+
 ## [F3-21.a Certificado no aparelho] — 13/10/2026
 
 ### Adicionado

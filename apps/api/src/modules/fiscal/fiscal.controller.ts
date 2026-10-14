@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { certificateUploadInput, companyIcmsRuleInput, sefazStatusInput } from '@bipae/domain';
 import { COMPANY_REGIMES } from '@bipae/fiscal';
 import {
@@ -13,6 +24,7 @@ import {
   TAX_SITUATIONS,
   cestsForNcm,
   cfopGroup,
+  icmsProductRates,
   classTribStatus,
   findCestSegment,
   isCfopValidOn,
@@ -88,7 +100,10 @@ export class FiscalController {
 
   @Delete('certificates/:companyId')
   @RequirePermission('fiscal.profile.write')
-  removeCertificate(@Ctx() ctx: RequestContext, @Param('companyId', new ParseUUIDPipe()) companyId: string) {
+  removeCertificate(
+    @Ctx() ctx: RequestContext,
+    @Param('companyId', new ParseUUIDPipe()) companyId: string,
+  ) {
     return this.certificates.remove(ctx, companyId);
   }
 
@@ -110,7 +125,10 @@ export class FiscalController {
   @Get('icms-rules')
   @RequirePermission('catalog.read')
   listRules(@Ctx() ctx: RequestContext, @Query('companyId') companyId?: string) {
-    return this.rules.list(ctx, companyId && /^[0-9a-f-]{36}$/.test(companyId) ? companyId : undefined);
+    return this.rules.list(
+      ctx,
+      companyId && /^[0-9a-f-]{36}$/.test(companyId) ? companyId : undefined,
+    );
   }
 
   @Post('icms-rules')
@@ -121,7 +139,11 @@ export class FiscalController {
 
   @Put('icms-rules/:id')
   @RequirePermission('fiscal.profile.write')
-  updateRule(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
+  updateRule(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
     return this.rules.save(ctx, id, parse(companyIcmsRuleInput, body));
   }
 
@@ -138,7 +160,11 @@ export class FiscalController {
   searchNcm(@Query() query: unknown) {
     const { q, limit } = parse(ncmQuery, query);
     const date = today();
-    return { items: searchNcm(q, limit).filter((ncm) => isNcmValidOn(ncm, date)).map(ncmView) };
+    return {
+      items: searchNcm(q, limit)
+        .filter((ncm) => isNcmValidOn(ncm, date))
+        .map(ncmView),
+    };
   }
 
   @Get('ncm/:code')
@@ -147,6 +173,27 @@ export class FiscalController {
     const ncm = findNcm(code);
     if (!ncm) throw notFound('NCM');
     return ncmView(ncm);
+  }
+
+  /**
+   * Alíquotas por mercadoria que o Portal Nacional da DIFAL publica para a UF (F3-25), com a data
+   * e a marcação de defasado. Referência para o contador, não regra do motor.
+   */
+  @Get('icms-products')
+  @RequirePermission('catalog.read')
+  icmsProducts(@Query() query: unknown) {
+    const { uf } = parse(
+      z.object({
+        uf: z.string({ message: 'Informe a UF' }).trim().toUpperCase().length(2, 'Informe a UF'),
+      }),
+      query,
+    );
+    const found = icmsProductRates(uf);
+    if (!found) throw notFound('UF');
+    return {
+      ...found,
+      source: { page: TABLE_SOURCES.difal.page, downloadedAt: TABLE_SOURCES.difal.downloadedAt },
+    };
   }
 
   @Get('cest')
@@ -164,7 +211,12 @@ export class FiscalController {
     const sale = (scope: 'interna' | 'interestadual') =>
       CFOPS.filter((cfop) => {
         const group = cfopGroup(cfop.code);
-        return cfop.nfe && isCfopValidOn(cfop, date) && group?.direction === 'saida' && group.scope === scope;
+        return (
+          cfop.nfe &&
+          isCfopValidOn(cfop, date) &&
+          group?.direction === 'saida' &&
+          group.scope === scope
+        );
       }).map((cfop) => ({ code: cfop.code, description: cfop.title }));
     const situations = (kind: 'icms' | 'csosn' | 'pis') =>
       TAX_SITUATIONS[kind].map((item) => ({ code: item.code, description: item.description }));
@@ -177,7 +229,8 @@ export class FiscalController {
       cfopInterestadual: sale('interestadual'),
       // Só as classificações em vigor e aceitas em NF-e ou NFC-e, que é o que o Bipaê emite.
       classTrib: CLASS_TRIBS.filter(
-        (item) => classTribStatus(item, date) === 'vigente' && (item.documents.nfce || item.documents.nfe),
+        (item) =>
+          classTribStatus(item, date) === 'vigente' && (item.documents.nfce || item.documents.nfe),
       ).map((item) => ({
         code: item.cClassTrib,
         cst: item.cst,

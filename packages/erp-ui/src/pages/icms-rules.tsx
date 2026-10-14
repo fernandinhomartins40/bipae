@@ -1,6 +1,7 @@
 import type { CompanyIcmsRuleRow } from '@bipae/domain';
 import {
   Alert,
+  Badge,
   Button,
   DataTable,
   Drawer,
@@ -120,6 +121,7 @@ export function IcmsRulesPage() {
             ]}
           />
         ))}
+      {company?.uf && <PortalReference uf={company.uf} />}
       {editing && companyId && (
         <RuleForm
           companyId={companyId}
@@ -288,5 +290,101 @@ function RuleForm({
         </div>
       </form>
     </Drawer>
+  );
+}
+
+interface PortalLine {
+  description: string;
+  general: boolean;
+  ncmText?: string;
+  rateText: string;
+  fcpText?: string;
+  note: string;
+  updatedAt: string | null;
+  stale: boolean;
+}
+
+interface PortalRates {
+  uf: string;
+  portalGeneralRate: string | null;
+  confirmedGeneralRate: string | null;
+  generalMatches: boolean | null;
+  items: PortalLine[];
+  source: { page: string; downloadedAt: string };
+}
+
+/**
+ * Referência do Portal Nacional da DIFAL (F3-25): as alíquotas por mercadoria que a SEFAZ da UF
+ * publica, com a data de cada linha. Ajuda o contador a cadastrar as regras; não muda o cálculo.
+ */
+function PortalReference({ uf }: { uf: string }) {
+  const { api } = useApp();
+  const portal = useQuery({
+    queryKey: ['icms-products', uf],
+    queryFn: () => api.get<PortalRates>(`/fiscal/icms-products?uf=${uf}`),
+  });
+  const [filter, setFilter] = useState('');
+  if (!portal.data) return null;
+  const p = portal.data;
+  const term = filter.trim().toLowerCase();
+  const lines = p.items
+    .map((line, index) => ({ ...line, id: String(index) }))
+    .filter((l) => !term || `${l.description} ${l.ncmText ?? ''}`.toLowerCase().includes(term));
+  return (
+    <section className="mt-8 flex flex-col gap-3" aria-labelledby="portal-difal">
+      <h2 id="portal-difal" className="text-xl font-bold">
+        Referência: alíquotas por produto de {uf} no Portal da DIFAL
+      </h2>
+      <p className="text-sm text-muted">
+        Publicado pelas SEFAZ e conferido em {toDate(p.source.downloadedAt)}. Serve de ponto de
+        partida para o contador: só vira regra o que você cadastrar acima.
+      </p>
+      {p.generalMatches === false && (
+        <Alert tone="warning" title={`O portal está desatualizado para ${uf}`}>
+          A alíquota geral no portal é {formatRate(p.portalGeneralRate!)}, mas a lei vigente diz{' '}
+          {formatRate(p.confirmedGeneralRate!)}. As linhas marcadas como defasadas são de antes da
+          mudança: confira cada uma na legislação da UF.
+        </Alert>
+      )}
+      <TextField
+        label="Procurar no portal"
+        placeholder="Mercadoria ou NCM"
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+      />
+      <DataTable
+        caption={`Alíquotas por produto de ${uf} no Portal da DIFAL`}
+        rows={lines}
+        columns={[
+          {
+            header: 'Mercadoria',
+            cell: (l) => (
+              <span>
+                {l.description}
+                {l.general && (
+                  <>
+                    {' '}
+                    <Badge>Geral</Badge>
+                  </>
+                )}
+                {l.stale && (
+                  <>
+                    {' '}
+                    <Badge tone="warning">Defasada</Badge>
+                  </>
+                )}
+              </span>
+            ),
+          },
+          { header: 'NCM', cell: (l) => l.ncmText ?? '—' },
+          { header: 'Alíquota', cell: (l) => l.rateText || '—' },
+          { header: 'FCP', cell: (l) => l.fcpText ?? '—' },
+          {
+            header: 'Atualizado em',
+            cell: (l) => (l.updatedAt ? toDate(l.updatedAt) : 'sem data'),
+          },
+        ]}
+      />
+    </section>
   );
 }

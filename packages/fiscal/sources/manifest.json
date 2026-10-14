@@ -126,5 +126,13 @@
     "page": "https://www.gov.br/iti/pt-br/assuntos/repositorio/certificados-das-acs-da-icp-brasil-arquivo-unico-compactado",
     "publishedAt": "2026-10-13",
     "downloadedAt": "2026-10-13"
+  },
+  "difal": {
+    "file": "DIFAL_aliquotas_2026-10-13.html.gz",
+    "title": "Alíquotas internas de ICMS por mercadoria das 27 UFs (Portal Nacional da DIFAL)",
+    "publisher": "Portal DF-e da SEFAZ Virtual do RS (mantido pelas SEFAZ)",
+    "page": "https://dfe-portal.svrs.rs.gov.br/Difal/Aliquotas",
+    "publishedAt": "2026-10-13",
+    "downloadedAt": "2026-10-13"
   }
 }
