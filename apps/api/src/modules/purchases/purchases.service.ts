@@ -42,6 +42,7 @@ import { AuditService } from '../audit/audit.service';
 import { assertProductFiscal } from '../fiscal/fiscal-validation';
 import { MercadoflowCatalog } from '../mercadoflow/mercadoflow.catalog';
 import { MercadoflowContributions } from '../mercadoflow/mercadoflow.contributions';
+import { MercadoflowMarketSync } from '../mercadoflow/mercadoflow.market-sync';
 
 const DSIG_NS = 'http://www.w3.org/2000/09/xmldsig#';
 
@@ -107,6 +108,7 @@ export class PurchasesService {
     @Inject(LimitsService) private readonly limits: LimitsService,
     @Inject(MercadoflowCatalog) private readonly catalog: MercadoflowCatalog,
     @Inject(MercadoflowContributions) private readonly contributions: MercadoflowContributions,
+    @Inject(MercadoflowMarketSync) private readonly marketSync: MercadoflowMarketSync,
   ) {}
 
   private read(xml: string): PurchaseNfe {
@@ -434,6 +436,17 @@ export class PurchasesService {
           note: `NF-e ${nfe.number} série ${nfe.series}`,
           actorId: ctx.userId,
           occurredAt: now,
+        });
+        // Entrada fora do Confere: o custo novo vai às lojas vinculadas ao MercadoFlow.
+        const [saved] = await tx.select().from(products).where(eq(products.id, productId));
+        const codes = await tx
+          .select({ code: productBarcodes.code })
+          .from(productBarcodes)
+          .where(eq(productBarcodes.productId, productId));
+        await this.marketSync.enqueueProduct(tx, ctx.tenantId, {
+          ...saved!,
+          catalog: saved!.catalog ?? null,
+          barcodes: codes.map((c) => c.code),
         });
         lines.push({
           line: item.line,

@@ -1,5 +1,16 @@
 # Changelog
 
+## [MF-12 Cadastro, preço, custo e estoque no MercadoFlow] — 14/10/2026
+
+### Adicionado
+- **Lojas vinculadas mandam ao MercadoFlow**, sempre pela fila, só o que a loja autorizou:
+  - o cadastro dos produtos com código de barras;
+  - o preço (o da tabela de preço da loja, quando há);
+  - o custo (cadastro e compra pelo XML);
+  - os fornecedores;
+  - o estoque em unidades de venda, uma vez por dia.
+- **Carga inicial ao vincular** a loja: fornecedores, produtos, preços, custos e estoque, nesta ordem. Repetir um envio não duplica nada (chave de idempotência).
+
 ## [MF-09 Confere no Bipaê] — 14/10/2026
 
 ### Adicionado

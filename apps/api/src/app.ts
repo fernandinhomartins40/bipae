@@ -40,6 +40,7 @@ import {
 } from './modules/mercadoflow/mercadoflow.confere.controller';
 import { MercadoflowController } from './modules/mercadoflow/mercadoflow.controller';
 import { MercadoflowContributions } from './modules/mercadoflow/mercadoflow.contributions';
+import { MercadoflowMarketSync } from './modules/mercadoflow/mercadoflow.market-sync';
 import { MercadoflowOutbox } from './modules/mercadoflow/mercadoflow.outbox';
 import { MercadoflowWebhookController, MercadoflowWebhooks } from './modules/mercadoflow/mercadoflow.webhook';
 import { PurchasesController } from './modules/purchases/purchases.controller';
@@ -141,6 +142,7 @@ class AppModule {
         MercadoflowOutbox,
         MercadoflowCatalog,
         MercadoflowContributions,
+        MercadoflowMarketSync,
         MercadoflowAccounts,
         MercadoflowConfere,
         MercadoflowWebhooks,

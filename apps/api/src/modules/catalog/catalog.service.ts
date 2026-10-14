@@ -29,6 +29,7 @@ import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 import { assertFiscalProfile, assertProductFiscal } from '../fiscal/fiscal-validation';
 import { MercadoflowContributions } from '../mercadoflow/mercadoflow.contributions';
+import { MercadoflowMarketSync } from '../mercadoflow/mercadoflow.market-sync';
 
 type ProductData = z.output<typeof productInput>;
 
@@ -39,6 +40,7 @@ export class CatalogService {
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(LimitsService) private readonly limits: LimitsService,
     @Inject(MercadoflowContributions) private readonly contributions: MercadoflowContributions,
+    @Inject(MercadoflowMarketSync) private readonly marketSync: MercadoflowMarketSync,
   ) {}
 
   // ---------------------------------------------------------------- products
@@ -86,6 +88,7 @@ export class CatalogService {
       await tx.insert(products).values({ id, tenantId: ctx.tenantId, ...this.columns(input) });
       await this.replaceChildren(tx, ctx.tenantId, id, input);
       await this.contributions.enqueue(tx, ctx.tenantId, input);
+      await this.marketSync.enqueueProduct(tx, ctx.tenantId, { id, ...this.columns(input), barcodes: input.barcodes });
       await this.audit.record(tx, ctx, {
         action: 'product.created',
         entity: 'product',
@@ -126,6 +129,8 @@ export class CatalogService {
       if (!priceChanged || current.name !== input.name || current.ncm !== (input.ncm ?? null)) {
         await this.contributions.enqueue(tx, ctx.tenantId, input);
       }
+      // Lojas vinculadas ao MercadoFlow recebem o cadastro, o preço e o custo novos.
+      await this.marketSync.enqueueProduct(tx, ctx.tenantId, { id, ...this.columns(input), barcodes: input.barcodes });
       await this.audit.record(tx, ctx, {
         action: priceChanged ? 'product.price_changed' : 'product.updated',
         entity: 'product',

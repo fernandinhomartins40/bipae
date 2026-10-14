@@ -206,7 +206,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [ ] MF-14 · Aviso "Chegou nota de X para conferir" (evento confere.document.received) com contador no menu Notas de entrada — depende: MF-09
 - [ ] MF-10 · Inteligência: card do Tino e preço da região — depende: MF-04
 - [ ] MF-11 · Inteligência: encartes, preço aprovado e pedido enviado viram pendências — depende: MF-10, F4-01, F5-02
-- [ ] MF-12 · Envio de produtos, preços, custos e estoque da loja vinculada — depende: MF-04
+- [x] MF-12 · Envio de produtos, preços, custos e estoque da loja vinculada — depende: MF-04
 
 ## Fase 4 — ERP
 

@@ -22,6 +22,7 @@ import {
   MercadoflowUnavailableError,
   type MercadoflowClient,
 } from './mercadoflow.client';
+import { MercadoflowMarketSync } from './mercadoflow.market-sync';
 import { MercadoflowWebhooks } from './mercadoflow.webhook';
 
 /** Permissões que o Bipaê pede ao criar ou vincular a conta (seção 5.2 do contrato). */
@@ -68,6 +69,7 @@ export class MercadoflowAccounts implements OnModuleInit {
     @Inject(MERCADOFLOW_CLIENT) private readonly client: MercadoflowClient,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(MercadoflowWebhooks) webhooks: MercadoflowWebhooks,
+    @Inject(MercadoflowMarketSync) private readonly marketSync: MercadoflowMarketSync,
   ) {
     // Depois que o webhook ativa o vínculo, avisa que a loja é cliente ativo.
     webhooks.after('connection.authorized', (event) => this.afterActivation(event.marketId));
@@ -435,10 +437,13 @@ export class MercadoflowAccounts implements OnModuleInit {
     if (!marketId) return;
     const [link] = await asPlatform(this.db, (tx) =>
       tx
-        .select({ tenantId: mercadoflowLinks.tenantId })
+        .select({ tenantId: mercadoflowLinks.tenantId, storeId: mercadoflowLinks.storeId })
         .from(mercadoflowLinks)
         .where(inArray(mercadoflowLinks.marketId, [marketId])),
     );
-    if (link) await this.syncCustomers(link.tenantId);
+    if (!link) return;
+    await this.syncCustomers(link.tenantId);
+    // Carga inicial (seção 7.4): vai pela fila, sem segurar quem ativou.
+    await this.marketSync.initialLoad(link.tenantId, link.storeId);
   }
 }
