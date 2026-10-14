@@ -360,6 +360,49 @@ describe('partilha do ICMS na NF-e (F3-32)', () => {
   });
 });
 
+describe('NF-e do MEI (F3-30)', () => {
+  const meiItem = (cfop: string) =>
+    itemComSt({
+      cfop,
+      cest: null,
+      freightCents: undefined,
+      icms: calculateIcms({ csosn: '102' }, { baseCents: 10_000 }),
+      ipi: null,
+      pis: null,
+      cofins: null,
+      order: undefined,
+    });
+  const anaRj = {
+    cpf: '52998224725',
+    name: 'Ana Souza',
+    ieIndicator: 9 as const,
+    address: { ...CLIENTE.address, uf: 'RJ', cityCode: '3304557', cityName: 'Rio de Janeiro' },
+  };
+
+  it('venda para outro estado: CRT 4, CFOP 6102, sem a partilha do ICMS (regra NA01-20)', async () => {
+    const doc = buildNfe(
+      nota({
+        issuer: { ...EMITENTE, crt: 4 },
+        finalConsumer: true,
+        presence: 'internet',
+        recipient: anaRj,
+        items: [meiItem('6102')],
+        billing: undefined,
+        payments: [{ code: '03', amountCents: 10_000 }],
+      }),
+    );
+    expect(await validate(doc.xml)).toEqual([]);
+    expect(doc.xml).toContain('<CRT>4</CRT>');
+    expect(doc.xml).not.toContain('ICMSUFDest');
+  });
+
+  it('CFOP fora da lista do MEI vira erro antes da SEFAZ (rejeição 337)', () => {
+    expect(() =>
+      buildNfe(nota({ issuer: { ...EMITENTE, crt: 4 }, items: [meiItem('5405')] })),
+    ).toThrow('Item 1: Com o CSOSN 102, o MEI só usa os CFOP 5102, 6102 (está 5405).');
+  });
+});
+
 describe('NF-e incoerente vira erro claro, antes da SEFAZ', () => {
   const erro = (over: Partial<NfeInput>) => () => buildNfe(nota(over));
 

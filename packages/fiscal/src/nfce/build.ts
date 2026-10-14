@@ -6,6 +6,7 @@ import {
   detGroup,
   emitGroup,
   infAdicGroup,
+  assertMeiItems,
   NfeBuildError,
   pagGroup,
   totalGroup,
@@ -60,6 +61,7 @@ const NS = 'http://www.portalfiscal.inf.br/nfe';
 export function buildNfce(input: NfceInput): NfceDocument {
   if (input.items.length === 0) throw new NfeBuildError('A NFC-e precisa de pelo menos um item.');
   if (input.items.length > 990) throw new NfeBuildError('A NFC-e aceita no máximo 990 itens.');
+  assertMeiItems(input.issuer, input.items, '65');
   const accessKey = buildAccessKey({
     cUF: input.cUF,
     yearMonth: input.issuedAt.slice(2, 4) + input.issuedAt.slice(5, 7),

@@ -4,6 +4,7 @@ import type { DifalResult } from '../taxes/difal';
 import type { IbsCbsResult } from '../taxes/ibs-cbs';
 import type { IcmsResult } from '../taxes/icms';
 import type { IpiResult } from '../taxes/ipi';
+import { meiItemProblem } from '../tables/mei';
 import { findPaymentMeans } from '../tables/payment-means';
 import { el, opt, text, type XmlNode } from '../nfce/xml';
 
@@ -75,6 +76,20 @@ export interface NfePayment {
 }
 
 export class NfeBuildError extends Error {}
+
+/** Regras da nota do MEI (CRT 4, NT 2024.001): CSOSN e CFOP permitidos, antes de ir à SEFAZ. */
+export function assertMeiItems(
+  issuer: NfeIssuer,
+  items: NfeItem[],
+  model: '55' | '65',
+  options: { isReturn?: boolean; exterior?: boolean } = {},
+): void {
+  if (issuer.crt !== 4) return;
+  items.forEach((item, index) => {
+    const problem = meiItemProblem({ model, csosn: item.icms.csosn, cfop: item.cfop, ...options });
+    if (problem) throw new NfeBuildError(`Item ${index + 1}: ${problem}`);
+  });
+}
 
 export const money = (cents: number) => format(fromCents(cents), 2);
 export const req = (name: string, value: string | number) =>

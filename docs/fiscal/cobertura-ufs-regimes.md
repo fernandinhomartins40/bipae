@@ -17,7 +17,7 @@ Uma confusão comum: **MEI, EI, SLU, LTDA e S.A. são naturezas jurídicas**; o 
 
 | Regime | Quem é | CRT na nota | ICMS | PIS e COFINS | Situação no motor |
 |---|---|---|---|---|---|
-| **MEI** | Receita até R$ 81 mil por ano (LC 123/2006, art. 18-A, § 1º) | **4** (NT 2024.001) | CSOSN, sem destaque; valor fixo no DAS | No DAS | Cálculo pronto (CSOSN 102, 500...). Falta: CRT 4 no cadastro e as regras próprias do MEI na nota (CFOP permitidos) |
+| **MEI** | Receita até R$ 81 mil por ano (LC 123/2006, art. 18-A, § 1º) | **4** (NT 2024.001) | CSOSN, sem destaque; valor fixo no DAS | No DAS | Pronto (F3-30): CRT 4 no cadastro e as regras da NT 2024.001 v1.20 na nota (CSOSN 102/300 na NFC-e e 102/300/400/900 na NF-e, CFOP permitidos, sem a partilha do ICMS), conferidas antes da SEFAZ |
 | **Simples Nacional** (ME e EPP) | Receita até R$ 4,8 milhões por ano (LC 123, art. 3º) | **1** | CSOSN; ICMS dentro do DAS, **exceto** substituição tributária, antecipação e outros casos do art. 13, § 1º, XIII | No DAS | Cálculo pronto: CSOSN 101, 102, 103, 201, 202, 203, 300, 400 e 500, com crédito (art. 23) e ST. Falta: CSOSN 900 |
 | **Simples acima do sublimite** | Receita acima de R$ 3,6 milhões (LC 123, art. 13-A): o ICMS e o ISS saem do Simples | **2** | **CST**, como no regime normal | No DAS | Pronto: o cadastro tem o regime "Simples acima do sublimite" (CRT 2, CST no ICMS, PIS/COFINS no DAS) e a tela da empresa avisa quando a receita do ano passa do sublimite (F3-29) |
 | **Lucro Presumido** | Regime normal, PIS/COFINS cumulativos | **3** | CST | 0,65% e 3% (Leis 9.715/98 e 9.718/98) | Cálculo pronto (F3-04) |

@@ -295,3 +295,23 @@ describe('impostos de todos os itens da venda', () => {
     }
   });
 });
+
+describe('MEI no caixa (F3-30)', () => {
+  it('perfil com CSOSN ou CFOP fora das regras do MEI vira "falta configurar" com a explicação', () => {
+    const st = calculateSaleItemTaxes({
+      company: { uf: 'SP', regime: 'mei' },
+      profile: { ...REVENDA, csosn: '500', cfopInterna: '5405' },
+      item: CEM_REAIS,
+      date: HOJE,
+    });
+    expect(st.icms).toMatchObject({ status: 'falta-configurar' });
+    expect(st.pending[0]).toContain('O MEI só usa o CSOSN 102, 300 na NFC-e');
+    const cfop = calculateSaleItemTaxes({
+      company: { uf: 'SP', regime: 'mei' },
+      profile: { ...REVENDA, cfopInterna: '5405' },
+      item: CEM_REAIS,
+      date: HOJE,
+    });
+    expect(cfop.pending[0]).toContain('só usa o CFOP 5102');
+  });
+});

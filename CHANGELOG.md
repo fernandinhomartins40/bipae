@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-30 Regras do MEI na nota] — 14/10/2026
+
+### Adicionado
+- **Nota do MEI (CRT 4) pelas regras oficiais** da NT 2024.001 v1.20, guardada nas fontes do motor fiscal:
+  - NFC-e: CSOSN 102 ou 300 e CFOP 5102;
+  - NF-e: CSOSN 102, 300, 400 ou 900, com a lista de CFOP permitidos para o 102, para o 900 e para a devolução;
+  - sem a partilha do ICMS na venda para outro estado.
+- O Bipaê confere antes de enviar à SEFAZ (evita as rejeições 337 e 782). No caixa, o produto do MEI com perfil fiscal fora dessas regras aparece como "falta configurar", com a explicação.
+
 ## [F3-29 Sublimite do Simples e CRT 2] — 14/10/2026
 
 ### Adicionado

@@ -7,6 +7,7 @@ import {
   emitGroup,
   infAdicGroup,
   money,
+  assertMeiItems,
   NfeBuildError,
   pagGroup,
   req,
@@ -188,11 +189,16 @@ export function buildNfe(input: NfeInput): NfeDocument {
   const idDest = destinationOf(input);
   // EC 87/2015: venda interestadual a consumidor final não contribuinte leva a partilha do ICMS
   // (grupo ICMSUFDest) em cada item; em qualquer outra operação o grupo não pode aparecer.
+  // O MEI não leva a partilha (NT 2024.001, regra NA01-20).
   const needsDifal =
+    input.issuer.crt !== 4 &&
     idDest === '2' &&
     input.finalConsumer &&
     input.recipient.ieIndicator === 9 &&
     input.direction === 'saida';
+  assertMeiItems(input.issuer, input.items, '55', {
+    isReturn: input.purpose === 'devolucao',
+  });
   input.items.forEach((item, index) => {
     if (needsDifal && !item.difal) {
       throw new NfeBuildError(

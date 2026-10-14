@@ -134,5 +134,13 @@
     "page": "https://dfe-portal.svrs.rs.gov.br/Difal/Aliquotas",
     "publishedAt": "2026-10-13",
     "downloadedAt": "2026-10-13"
+  },
+  "ntMei": {
+    "file": "NT_2024.001_v1.20_CRT4_MEI.pdf",
+    "title": "Nota Técnica 2024.001 v1.20: CRT 4 (MEI) e denegação",
+    "publisher": "Portal Nacional da NF-e",
+    "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+    "publishedAt": "2024-08-29",
+    "downloadedAt": "2026-10-14"
   }
 }

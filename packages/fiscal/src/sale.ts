@@ -2,6 +2,7 @@ import { companyIcmsSettings, type CompanyIcmsRule } from './company-rules';
 import { findCompanyRegime, type CompanyRegime } from './regimes';
 import type { Crt } from './rules';
 import { icmsGeneralRate, interstateRate } from './tables/icms-uf';
+import { meiItemProblem } from './tables/mei';
 import { pisCofinsRate } from './tables/rates';
 import { calculateContribution, type ContributionResult, type ContributionTax } from './taxes/contributions';
 import { calculateIbsCbs, MissingRateError, type IbsCbsResult } from './taxes/ibs-cbs';
@@ -124,8 +125,13 @@ export function calculateSaleItemTaxes(input: {
   // ---------------------------------------------------------------- ICMS
   let icms: TaxOutcome<IcmsResult>;
   const code = regime.icmsCode === 'csosn' ? profile.csosn : profile.cstIcms;
+  // MEI (CRT 4): a NFC-e do caixa só aceita CSOSN 102 ou 300 e CFOP 5102 (NT 2024.001).
+  const meiProblem =
+    regime.id === 'mei' && code && cfop ? meiItemProblem({ model: '65', csosn: code, cfop }) : null;
   if (settings.icmsBlocked) {
     icms = missing(settings.icmsBlocked);
+  } else if (meiProblem) {
+    icms = missing(`${meiProblem} Ajuste o perfil fiscal do produto.`);
   } else if (!code) {
     icms = missing(
       regime.icmsCode === 'csosn'
