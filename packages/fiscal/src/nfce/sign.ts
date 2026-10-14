@@ -21,6 +21,15 @@ export interface SigningKey {
   certificate: string;
 }
 
+/**
+ * Quem assina sem entregar a chave: o certificado instalado no aparelho (F3-21) ou, no futuro, o
+ * token A3. Recebe o SignedInfo canônico e devolve a assinatura RSA-SHA1 em base64.
+ */
+export interface NfeSigner {
+  certificate: string;
+  sign(data: Uint8Array): Promise<string>;
+}
+
 const encoder = new TextEncoder();
 
 function toBase64(bytes: ArrayBuffer): string {
@@ -53,20 +62,18 @@ function signedInfo(id: string, digest: string, withNamespace: boolean): string 
   );
 }
 
-export async function signNfe(xml: string, key: SigningKey): Promise<string> {
+export async function signNfe(xml: string, key: SigningKey | NfeSigner): Promise<string> {
   if (xml.includes('<Signature')) throw new Error('Este XML já está assinado');
   if (!/^[A-Za-z0-9+/=]+$/.test(key.certificate))
     throw new Error('Certificado precisa estar em base64, sem cabeçalhos');
   const { canonical, id } = canonicalInfNfe(xml);
   const digest = toBase64(await crypto.subtle.digest('SHA-1', encoder.encode(canonical)));
   // A assinatura é sobre o SignedInfo canônico, que carrega o namespace herdado de Signature.
-  const signature = toBase64(
-    await crypto.subtle.sign(
-      'RSASSA-PKCS1-v1_5',
-      key.privateKey,
-      encoder.encode(signedInfo(id, digest, true)),
-    ),
-  );
+  const data = encoder.encode(signedInfo(id, digest, true));
+  const signature =
+    'privateKey' in key
+      ? toBase64(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key.privateKey, data))
+      : await key.sign(data);
   const block =
     `<Signature xmlns="${DSIG_NS}">${signedInfo(id, digest, false)}` +
     `<SignatureValue>${signature}</SignatureValue>` +

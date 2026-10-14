@@ -36,6 +36,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] E15 · Participantes para o teste de usabilidade e decisão sobre pentest externo
 - [ ] E16 · Primeira aplicação real para integrar o PDV Embed
 - [ ] E17 · Decisão sobre instalar a REA para benchmark (`docs/benchmark/README.md`)
+- [ ] E18 · Token ou cartão A3 de teste (com a leitora) para a assinatura pelo desktop
 
 ---
 
@@ -135,6 +136,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Custo sem abater créditos até o contador decidir (dúvida D-024).
 - [ ] F3-20 · Distribuição DF-e e manifestação do destinatário — depende: F3-11, F3-19
 - [ ] F3-21 · Desktop: assinatura A1 local e A3 pelo Conector — depende: F3-09
+- [x] F3-21.a · Certificado A1 instalado no aparelho (web e desktop): chave não exportável no armazenamento local, assinatura da nota sem internet e tela em Periféricos, com E2E nas duas cascas — depende: F3-09
+- [ ] F3-21.b · Certificado A3 (token ou cartão) pelo desktop e pelo Conector, via PKCS#11 — depende: F3-21.a · externo: E18
 - [ ] F3-22 · Validação com contador e teste de emissão com pessoas leigas — depende: F3-14 · externo: E3, E15
 - [x] F3-23 · Matriz de cobertura UF × regime: teste que falha se alguma das 27 UFs ou dos 5 regimes ficar sem regra ou sem "falta configurar" explícito, e mapa no painel — depende: F3-06.c
   - Pronto quando: as 135 combinações (27 UFs × MEI, Simples, Simples acima do sublimite, Presumido e Real) estão no teste.

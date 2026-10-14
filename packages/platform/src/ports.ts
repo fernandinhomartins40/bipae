@@ -117,6 +117,11 @@ export interface CertificatePort {
   info(): Promise<CertificateInfo | null>;
   /** Signs the SHA-1/SHA-256 digest input per the fiscal manual; returns base64 signature. */
   sign(data: Uint8Array, algorithm: 'RSA-SHA1' | 'RSA-SHA256'): Promise<string>;
+  /** Certificado do titular em base64 (DER), para o KeyInfo da assinatura. */
+  certificate(): Promise<string | null>;
+  /** A1 instalado no aparelho a partir do .pfx (F3-21). O A3 não tem instalação. */
+  install?(pfx: Uint8Array, password: string): Promise<CertificateInfo>;
+  remove?(): Promise<void>;
 }
 
 export interface UpdateInfo {
@@ -156,10 +161,19 @@ export interface Platform {
   /** Desktop: configure printer/scale on this computer (also used by the Conector). */
   devices?: DeviceManager;
   /** Web: pair this browser with the Bipaê Conector. */
-  connector?: { isPaired(): Promise<boolean>; pair(code: string, clientName: string): Promise<void>; unpair(): Promise<void> };
+  connector?: {
+    isPaired(): Promise<boolean>;
+    pair(code: string, clientName: string): Promise<void>;
+    unpair(): Promise<void>;
+  };
   /** Desktop: the Conector this app serves to browsers on this computer. */
   connectorHost?: {
-    status(): Promise<{ running: boolean; port: number; code: string; clients: { id: string; name: string }[] }>;
+    status(): Promise<{
+      running: boolean;
+      port: number;
+      code: string;
+      clients: { id: string; name: string }[];
+    }>;
     newCode(): Promise<string>;
     revoke(id: string): Promise<void>;
   };

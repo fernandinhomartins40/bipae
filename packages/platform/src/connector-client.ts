@@ -1,4 +1,9 @@
-import { CONNECTOR_URL, toBase64, type ConnectorRequest, type ConnectorResponse } from './connector';
+import {
+  CONNECTOR_URL,
+  toBase64,
+  type ConnectorRequest,
+  type ConnectorResponse,
+} from './connector';
 import type { CashDrawerPort, PreferencesPort, PrinterPort, PrintJob, ScalePort } from './ports';
 
 /** Minimal socket surface (browser WebSocket or a test double). */
@@ -21,7 +26,11 @@ export const browserSocket: SocketFactory = (url) =>
 
 const TOKEN_KEY = 'bipae.connectorToken';
 
-type Request = ConnectorRequest extends infer R ? (R extends { id: number } ? Omit<R, 'id'> : never) : never;
+type Request = ConnectorRequest extends infer R
+  ? R extends { id: number }
+    ? Omit<R, 'id'>
+    : never
+  : never;
 
 export class ConnectorError extends Error {
   constructor(
@@ -99,7 +108,11 @@ export class ConnectorClient implements PrinterPort, CashDrawerPort, ScalePort {
     this.socket = socket;
     if (authenticate) {
       const token = await this.preferences.get(TOKEN_KEY);
-      if (!token) throw new ConnectorError('Pareie este navegador com o Bipaê Conector primeiro.', 'unpaired');
+      if (!token)
+        throw new ConnectorError(
+          'Pareie este navegador com o Bipaê Conector primeiro.',
+          'unpaired',
+        );
       await this.send({ type: 'auth', token });
     }
     return socket;

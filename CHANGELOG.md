@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-21.a Certificado no aparelho] — 13/10/2026
+
+### Adicionado
+- **Certificado A1 instalado no próprio aparelho** (navegador e desktop), em Periféricos: base para emitir a nota mesmo sem internet (contingência, F3-15).
+- A chave privada fica guardada como **não exportável**: nem o Bipaê consegue lê-la de volta, só usá-la para assinar. O arquivo .pfx e a senha não ficam salvos. Certificado vencido não é instalado e para de assinar quando vence.
+- A assinatura da nota aceita um assinador externo (o certificado do aparelho e, depois, o token A3) e gera exatamente a mesma assinatura.
+
+### Pendente
+- A3 por token ou cartão (F3-21.b) depende de um token de teste (item E18).
+
 ## [F3-19 Compras pelo XML] — 13/10/2026
 
 ### Adicionado

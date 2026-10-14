@@ -92,6 +92,25 @@ describe('assinatura XML da NF-e/NFC-e', () => {
     }
   });
 
+  it('assina com quem não entrega a chave (certificado do aparelho, F3-21) e confere igual', async () => {
+    const assinador = {
+      certificate: CERTIFICADO,
+      sign: async (data: Uint8Array) =>
+        btoa(
+          String.fromCharCode(
+            ...new Uint8Array(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', keys.privateKey, data)),
+          ),
+        ),
+    };
+    const pelaPorta = await signNfe(buildNfce(nota('Arroz')).xml, assinador);
+    const direto = await signNfe(buildNfce(nota('Arroz')).xml, {
+      privateKey: keys.privateKey,
+      certificate: CERTIFICADO,
+    });
+    expect(verify(pelaPorta)).toBe(true);
+    expect(pelaPorta).toBe(direto);
+  });
+
   it('qualquer alteração depois de assinar invalida a assinatura', async () => {
     const assinado = await signNfe(buildNfce(nota('Cerveja')).xml, {
       privateKey: keys.privateKey,

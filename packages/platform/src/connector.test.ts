@@ -36,9 +36,9 @@ function socketTo(core: ConnectorCore) {
       onmessage: null,
       onclose: null,
       send: (data) => {
-        void core.handle(session, JSON.parse(data) as ConnectorRequest).then((r) =>
-          socket.onmessage?.({ data: JSON.stringify(r) }),
-        );
+        void core
+          .handle(session, JSON.parse(data) as ConnectorRequest)
+          .then((r) => socket.onmessage?.({ data: JSON.stringify(r) }));
       },
       close: () => socket.onclose?.(),
     };
@@ -65,7 +65,9 @@ describe('Bipaê Conector', () => {
     const client = new ConnectorClient(prefs, socketTo(core));
 
     expect(await client.isPaired()).toBe(false);
-    await expect(client.print({ kind: 'escpos', data: Uint8Array.from([1]) })).rejects.toMatchObject({ code: 'unpaired' });
+    await expect(
+      client.print({ kind: 'escpos', data: Uint8Array.from([1]) }),
+    ).rejects.toMatchObject({ code: 'unpaired' });
     await expect(client.pair('000000', 'Chrome')).rejects.toMatchObject({ code: 'bad_code' });
     await client.pair('123456', 'Chrome');
     expect(await client.isPaired()).toBe(true);
@@ -101,27 +103,49 @@ describe('Bipaê Conector', () => {
     const core = new ConnectorCore('111111', simulatedDevices().devices);
     const session = { authed: false };
     for (let i = 0; i < 5; i++) {
-      expect((await core.handle(session, { id: i, type: 'pair', code: '999999', clientName: 'x' })).ok).toBe(false);
+      expect(
+        (await core.handle(session, { id: i, type: 'pair', code: '999999', clientName: 'x' })).ok,
+      ).toBe(false);
     }
-    const locked = await core.handle(session, { id: 9, type: 'pair', code: '111111', clientName: 'x' });
+    const locked = await core.handle(session, {
+      id: 9,
+      type: 'pair',
+      code: '111111',
+      clientName: 'x',
+    });
     expect(locked).toMatchObject({ ok: false, code: 'locked' });
     core.regenerateCode('222222');
-    expect((await core.handle(session, { id: 10, type: 'pair', code: '222222', clientName: 'x' })).ok).toBe(true);
+    expect(
+      (await core.handle(session, { id: 10, type: 'pair', code: '222222', clientName: 'x' })).ok,
+    ).toBe(true);
   });
 
   it('rejects unknown commands and reports a dropped connection', async () => {
     const core = new ConnectorCore('1', simulatedDevices().devices);
     const session = { authed: true };
-    const response = await core.handle(session, { id: 1, type: 'shell' } as unknown as ConnectorRequest);
+    const response = await core.handle(session, {
+      id: 1,
+      type: 'shell',
+    } as unknown as ConnectorRequest);
     expect(response).toMatchObject({ ok: false, code: 'unknown_command' });
 
     const prefs = new MemoryPreferences();
     await prefs.set('bipae.connectorToken', 't');
     let captured: ConnectorSocket | null = null;
-    const client = new ConnectorClient(prefs, async () => {
-      captured = { onmessage: null, onclose: null, send: () => {}, close: () => captured!.onclose?.() };
-      return captured;
-    }, 'ws://x', 50);
+    const client = new ConnectorClient(
+      prefs,
+      async () => {
+        captured = {
+          onmessage: null,
+          onclose: null,
+          send: () => {},
+          close: () => captured!.onclose?.(),
+        };
+        return captured;
+      },
+      'ws://x',
+      50,
+    );
     await expect(client.open()).rejects.toMatchObject({ code: 'timeout' });
     await client.unpair();
     expect(await client.isPaired()).toBe(false);

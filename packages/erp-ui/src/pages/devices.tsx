@@ -1,5 +1,5 @@
 import { encodeReceipt, type ReceiptBlock } from '@bipae/pdv-core';
-import type { DeviceConfig, PrinterConfig } from '@bipae/platform';
+import type { CertificateInfo, DeviceConfig, PrinterConfig } from '@bipae/platform';
 import {
   Alert,
   Badge,
@@ -35,6 +35,7 @@ export function DevicesPage() {
         {platform.devices && <NativeDevices />}
         {platform.connectorHost && <ConnectorHost />}
         {platform.connector && <ConnectorPairing />}
+        {platform.certificate?.install && <LocalCertificate />}
         <DeviceTests />
       </div>
     </>
@@ -375,6 +376,101 @@ function DeviceTests() {
           Ler balança
         </Button>
       </div>
+    </Card>
+  );
+}
+
+/**
+ * Certificado A1 instalado neste aparelho (F3-21), para assinar a nota mesmo sem internet. A
+ * chave fica guardada aqui sem poder ser copiada; o arquivo e a senha não ficam guardados.
+ */
+function LocalCertificate() {
+  const { platform } = useApp();
+  const certificate = platform.certificate!;
+  const [info, setInfo] = useState<CertificateInfo | null | undefined>(undefined);
+  const [file, setFile] = useState<File | null>(null);
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    void certificate.info().then(setInfo);
+  }, [certificate]);
+
+  const install = async (event: FormEvent) => {
+    event.preventDefault();
+    setMessage(null);
+    if (!file)
+      return setMessage({ ok: false, text: 'Escolha o arquivo do certificado (.pfx ou .p12).' });
+    setBusy(true);
+    try {
+      const installed = await certificate.install!(
+        new Uint8Array(await file.arrayBuffer()),
+        password,
+      );
+      setInfo(installed);
+      setPassword('');
+      setFile(null);
+      setMessage({ ok: true, text: 'Certificado instalado neste aparelho.' });
+    } catch (error) {
+      setMessage({ ok: false, text: (error as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async () => {
+    await certificate.remove!();
+    setInfo(null);
+    setMessage({ ok: true, text: 'Certificado removido deste aparelho.' });
+  };
+
+  return (
+    <Card>
+      <h2 className="text-lg font-bold">Certificado digital neste aparelho</h2>
+      <p className="mt-1 text-sm text-muted">
+        Para emitir a nota mesmo sem internet. A chave fica guardada aqui sem poder ser copiada, e o
+        arquivo e a senha não ficam salvos.
+      </p>
+      {message && (
+        <div className="mt-3">
+          <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
+        </div>
+      )}
+      {info ? (
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <p className="text-sm">
+            <Badge tone="success">Instalado</Badge> {info.subject}, válido até{' '}
+            {new Date(info.notAfter).toLocaleDateString('pt-BR')}.
+          </p>
+          <Button variant="ghost" onClick={() => void remove()}>
+            Remover deste aparelho
+          </Button>
+        </div>
+      ) : (
+        info === null && (
+          <form onSubmit={install} className="mt-4 flex flex-col gap-3" noValidate>
+            <label className="flex flex-col gap-1">
+              <span className="font-semibold">Arquivo do certificado A1</span>
+              <input
+                type="file"
+                accept=".pfx,.p12,application/x-pkcs12"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              />
+            </label>
+            <TextField
+              label="Senha do certificado A1"
+              type="password"
+              autoComplete="off"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button type="submit" disabled={busy}>
+              {busy ? 'Instalando...' : 'Instalar neste aparelho'}
+            </Button>
+          </form>
+        )
+      )}
     </Card>
   );
 }

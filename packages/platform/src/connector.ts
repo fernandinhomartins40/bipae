@@ -39,7 +39,12 @@ export type ConnectorRequest =
 
 export type ConnectorResponse =
   | { id: number; ok: true; result?: unknown }
-  | { id: number; ok: false; error: string; code: 'unpaired' | 'bad_code' | 'unknown_command' | 'device' | 'locked' };
+  | {
+      id: number;
+      ok: false;
+      error: string;
+      code: 'unpaired' | 'bad_code' | 'unknown_command' | 'device' | 'locked';
+    };
 
 /** What the Conector does with the real hardware (Rust in the app; simulators in tests). */
 export interface ConnectorDevices {
@@ -93,17 +98,30 @@ export class ConnectorCore {
   }
 
   /** Handles one request; `session.authed` is per WebSocket connection. */
-  async handle(session: { authed: boolean }, request: ConnectorRequest): Promise<ConnectorResponse> {
+  async handle(
+    session: { authed: boolean },
+    request: ConnectorRequest,
+  ): Promise<ConnectorResponse> {
     const { id } = request;
     try {
       switch (request.type) {
         case 'pair': {
           if (this.attempts >= 5) {
-            return { id, ok: false, code: 'locked', error: 'Muitas tentativas. Gere um novo código no Bipaê Conector.' };
+            return {
+              id,
+              ok: false,
+              code: 'locked',
+              error: 'Muitas tentativas. Gere um novo código no Bipaê Conector.',
+            };
           }
           if (request.code !== this.pairingCode) {
             this.attempts++;
-            return { id, ok: false, code: 'bad_code', error: 'Código incorreto. Confira o código mostrado no Bipaê Conector.' };
+            return {
+              id,
+              ok: false,
+              code: 'bad_code',
+              error: 'Código incorreto. Confira o código mostrado no Bipaê Conector.',
+            };
           }
           const token = this.newToken();
           this.tokens.set(token, request.clientName.slice(0, 60));
@@ -112,7 +130,12 @@ export class ConnectorCore {
         }
         case 'auth':
           if (!this.tokens.has(request.token)) {
-            return { id, ok: false, code: 'unpaired', error: 'Este navegador precisa ser pareado de novo com o Bipaê Conector.' };
+            return {
+              id,
+              ok: false,
+              code: 'unpaired',
+              error: 'Este navegador precisa ser pareado de novo com o Bipaê Conector.',
+            };
           }
           session.authed = true;
           return { id, ok: true };
@@ -120,7 +143,12 @@ export class ConnectorCore {
           break;
       }
       if (!session.authed) {
-        return { id, ok: false, code: 'unpaired', error: 'Pareie este navegador com o Bipaê Conector primeiro.' };
+        return {
+          id,
+          ok: false,
+          code: 'unpaired',
+          error: 'Pareie este navegador com o Bipaê Conector primeiro.',
+        };
       }
       switch (request.type) {
         case 'print':

@@ -2,6 +2,7 @@ import { openWasmDatabase } from '@bipae/local-db/wasm';
 import {
   baselineCapabilities,
   implementedCapabilities,
+  LocalCertificateStore,
   ConnectorClient,
   CONNECTOR_URL,
   type CapabilityName,
@@ -13,6 +14,7 @@ import {
   type PrintJob,
   type UpdaterPort,
 } from '@bipae/platform';
+import { indexedDbStore } from '@bipae/platform/indexeddb';
 
 /** Bipaê Online: implementations of the platform ports for the browser (ADR-0012). */
 
@@ -103,6 +105,8 @@ export function createWebPlatform(updates: {
     import.meta.env.VITE_CONNECTOR_URL ?? CONNECTOR_URL,
   );
   const browserPrinter = new BrowserPrinter();
+  // Certificado A1 instalado no aparelho, para assinar sem internet (F3-21).
+  const certificate = new LocalCertificateStore(indexedDbStore());
 
   return {
     kind: 'web',
@@ -120,6 +124,7 @@ export function createWebPlatform(updates: {
       );
     },
     openLocalDatabase: openWasmDatabase,
+    certificate,
     // ESC/POS goes to the thermal printer through the Conector; text uses the print dialog.
     printer: {
       print: (job: PrintJob) => (job.kind === 'escpos' ? connector.print(job) : browserPrinter.print(job)),

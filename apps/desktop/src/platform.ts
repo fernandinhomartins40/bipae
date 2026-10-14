@@ -3,6 +3,7 @@ import { openWasmDatabase } from '@bipae/local-db/wasm';
 import {
   baselineCapabilities,
   implementedCapabilities,
+  LocalCertificateStore,
   SaleInProgressError,
   type CapabilityName,
   type CapabilityStatus,
@@ -15,6 +16,7 @@ import {
   type UpdateInfo,
   type UpdaterPort,
 } from '@bipae/platform';
+import { indexedDbStore } from '@bipae/platform/indexeddb';
 import { openNativeDatabase } from './sqlite';
 
 /**
@@ -89,14 +91,18 @@ export async function createDesktopPlatform(): Promise<Platform> {
     updaterBuilt = (await invoke<{ updater: boolean }>('platform_info')).updater;
   }
 
+  // Certificado A1 instalado neste computador, para assinar sem internet (F3-21).
+  const certificate = new LocalCertificateStore(indexedDbStore());
+
   const capabilities = async (): Promise<Record<CapabilityName, CapabilityStatus>> => {
-    const implemented: CapabilityName[] = ['storage', 'notifications'];
+    const implemented: CapabilityName[] = ['storage', 'notifications', 'certificateA1'];
     if (native) implemented.push('printer', 'cashDrawer', 'scale');
     if (updaterBuilt) implemented.push('updater');
     const caps = implementedCapabilities(
       baselineCapabilities('desktop', { connectorPaired: false, webSerial: false }),
       implemented,
     );
+    if (!(await certificate.info())) caps.certificateA1 = { available: false, reason: 'not-configured' };
     if (native) {
       const config = await nativeDevices.getConfig();
       const notConfigured: CapabilityStatus = { available: false, reason: 'not-configured' };
@@ -114,6 +120,7 @@ export async function createDesktopPlatform(): Promise<Platform> {
     // Native SQLite inside the app; the WASM driver only when the UI runs outside Tauri (dev/E2E).
     openLocalDatabase: native ? openNativeDatabase : openWasmDatabase,
     capabilities,
+    certificate,
     notifications: new WebViewNotifications(),
     ...(native && {
       devices: nativeDevices,
