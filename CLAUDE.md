@@ -65,7 +65,7 @@ Bipaê é um PDV + ERP brasileiro, offline-first e pronto para a Reforma Tribut�
 - Trabalho em segundo plano (envio à SEFAZ, limpezas, e-mails) vai pela fila `QUEUE` (`common/queue.ts`): em memória no desenvolvimento e nos testes, BullMQ + Redis em produção (`REDIS_URL`). A tarefa precisa poder rodar duas vezes sem estrago, porque há nova tentativa automática.
 - Validação com os schemas Zod de `@bipae/domain` via `parse()`; erros sempre com mensagem pt-BR para o usuário.
 - Migrações em `apps/api/src/db/migrations/*.sql` (fonte da verdade); `schema.ts` é o espelho tipado. Nunca editar migração já aplicada.
-- Tabela nova com `tenant_id`: além de RLS e grants para `bipae_app`, dê `grant delete ... to bipae_platform`, senão a exclusão definitiva das contas canceladas (LGPD, P-03) falha. Colunas com segredo usam nomes com hash/secret/token/sealed para ficarem fora da exportação.
+- Tabela nova com `tenant_id`: além de RLS e grants para `bipae_app`, dê `grant select, delete ... to bipae_platform`, senão a exclusão definitiva das contas canceladas (LGPD, P-03) falha. Colunas com segredo usam nomes com hash/secret/token/sealed para ficarem fora da exportação.
 
 ## Backlog (execução automática)
 

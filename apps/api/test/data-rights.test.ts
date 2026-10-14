@@ -1,7 +1,8 @@
 import { inflateRawSync } from 'node:zlib';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { asPlatform } from '../src/db/client';
+import { asPlatform, withTenant } from '../src/db/client';
+import { tenantTables } from '../src/modules/account/data-export.service';
 import { rowsOf } from '../src/db/migrate';
 import { MaintenanceService } from '../src/modules/maintenance/maintenance.service';
 import { api, createTestApp, signup, type TestApp } from './helpers';
@@ -131,6 +132,18 @@ describe('dados do cliente (P-03)', () => {
     expect(trilha[0]?.action).toBe('tenant.purged');
     // Rodar de novo não faz nada: a conta já foi excluída.
     expect(await manutencao.purgeCancelledAccounts()).not.toContain(alvo.tenantId);
+  });
+
+  it('a rotina de exclusão enxerga as mesmas tabelas do cliente que a aplicação', async () => {
+    const { tenantId } = await contaComDados();
+    const daPlataforma = await asPlatform(t.database.db, (tx) =>
+      tenantTables((q) => tx.execute(q)),
+    );
+    const daAplicacao = await withTenant(t.database.db, { tenantId } as never, (tx) =>
+      tenantTables((q) => tx.execute(q)),
+    );
+    expect(daPlataforma).toEqual(daAplicacao);
+    expect(daPlataforma).toContain('purchase_invoices');
   });
 
   it('a trilha de auditoria continua imutável fora da exclusão definitiva', async () => {
