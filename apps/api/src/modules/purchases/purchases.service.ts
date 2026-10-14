@@ -2,6 +2,7 @@ import { X509Certificate } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
 import {
   uuidv7,
+  type CatalogProduct,
   type PurchasePreview,
   type PurchaseSummary,
   type purchaseImportInput,
@@ -26,6 +27,7 @@ import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   companies,
   productBarcodes,
+  productPacks,
   products,
   purchaseInvoices,
   stockMovements,
@@ -38,6 +40,8 @@ import {
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 import { assertProductFiscal } from '../fiscal/fiscal-validation';
+import { MercadoflowCatalog } from '../mercadoflow/mercadoflow.catalog';
+import { MercadoflowContributions } from '../mercadoflow/mercadoflow.contributions';
 
 const DSIG_NS = 'http://www.w3.org/2000/09/xmldsig#';
 
@@ -101,6 +105,8 @@ export class PurchasesService {
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(LimitsService) private readonly limits: LimitsService,
+    @Inject(MercadoflowCatalog) private readonly catalog: MercadoflowCatalog,
+    @Inject(MercadoflowContributions) private readonly contributions: MercadoflowContributions,
   ) {}
 
   private read(xml: string): PurchaseNfe {
@@ -182,9 +188,18 @@ export class PurchasesService {
     return { company, supplier, alreadyImported: !!already, suggestions };
   }
 
+  /** O que o catálogo sabe dos itens da nota (por GTIN), para cadastrar o que for novo. */
+  private async catalogFor(ctx: RequestContext, nfe: PurchaseNfe) {
+    const gtins = nfe.items.map((i) => i.gtin).filter((g): g is string => !!g);
+    if (gtins.length === 0) return new Map<string, CatalogProduct>();
+    const found = await this.catalog.lookup(ctx, gtins);
+    return new Map(found.filter((p) => p.found).map((p) => [p.gtin, p]));
+  }
+
   async preview(ctx: RequestContext, xml: string): Promise<PurchasePreview> {
     const nfe = this.read(xml);
     const signature = checkNfeSignature(xml, nfe.accessKey);
+    const catalog = await this.catalogFor(ctx, nfe);
     return withTenant(this.db, ctx, async (tx) => {
       const { company, supplier, alreadyImported, suggestions } = await this.analyze(tx, nfe);
       return {
@@ -212,6 +227,16 @@ export class PurchasesService {
           quantity: item.quantity,
           totalCents: item.totalCents,
           suggestion: suggestions[i] ?? null,
+          catalog: (() => {
+            const found = item.gtin ? catalog.get(item.gtin) : undefined;
+            return found
+              ? {
+                  description: found.description ?? item.description,
+                  brand: found.brand ?? null,
+                  packageDescription: found.packageDescription ?? null,
+                }
+              : null;
+          })(),
         })),
       };
     });
@@ -227,6 +252,7 @@ export class PurchasesService {
         'A assinatura digital da nota não confere: o XML foi alterado ou não é o original do fornecedor.',
       );
     }
+    const catalog = await this.catalogFor(ctx, nfe);
     return withTenant(this.db, ctx, async (tx) => {
       const { company, supplier, alreadyImported } = await this.analyze(tx, nfe);
       if (alreadyImported)
@@ -318,10 +344,23 @@ export class PurchasesService {
             fiscal.ncm = '';
             fiscal.cest = null;
           }
+          const known = item.gtin ? catalog.get(item.gtin) : undefined;
+          const name = (decision.name ?? known?.description ?? item.description).slice(0, 120);
           await tx.insert(products).values({
             id: productId,
             tenantId: ctx.tenantId,
-            name: item.description.slice(0, 120),
+            name,
+            catalog: known
+              ? {
+                  brand: known.brand ?? null,
+                  manufacturer: known.manufacturer ?? null,
+                  department: known.department ?? null,
+                  category: known.category ?? null,
+                  packageDescription: known.packageDescription ?? null,
+                  content: known.content ?? null,
+                  source: known.source ?? null,
+                }
+              : null,
             sku: null,
             unit,
             priceCents: decision.priceCents ?? unitCostCents,
@@ -339,6 +378,31 @@ export class PurchasesService {
                 .insert(productBarcodes)
                 .values({ tenantId: ctx.tenantId, code: item.gtin, productId });
           }
+          for (const pack of known?.packs ?? []) {
+            await tx
+              .insert(productPacks)
+              .values({
+                tenantId: ctx.tenantId,
+                packGtin: pack.packGtin,
+                productId,
+                unitsPerPack: pack.unitsPerPack,
+              })
+              .onConflictDoNothing();
+          }
+          await this.contributions.enqueue(tx, ctx.tenantId, {
+            barcodes: item.gtin ? [item.gtin] : [],
+            name,
+            unit,
+            ncm: fiscal.ncm || null,
+            cest: fiscal.cest,
+            catalog: known
+              ? {
+                  brand: known.brand ?? null,
+                  department: known.department ?? null,
+                  packageDescription: known.packageDescription ?? null,
+                }
+              : null,
+          });
         }
         // Na próxima nota deste fornecedor, o item já vem associado.
         await tx

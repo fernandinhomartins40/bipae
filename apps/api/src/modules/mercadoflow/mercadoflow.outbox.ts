@@ -33,7 +33,12 @@ const MAX_BACKOFF_MS = 6 * 3_600_000;
 @Injectable()
 export class MercadoflowOutbox implements OnModuleInit {
   private readonly logger = new Logger('MercadoFlow');
-  private readonly senders = new Map<string, { batch: number; send: OutboxSender }>();
+  private readonly senders = new Map<
+    string,
+    { batch: number; send: OutboxSender; everyMs: number }
+  >();
+  /** Quando cada tipo foi enviado pela última vez (para respeitar o intervalo de cada um). */
+  private readonly lastFlush = new Map<string, number>();
 
   constructor(
     @Inject(DB) private readonly db: Db,
@@ -61,9 +66,12 @@ export class MercadoflowOutbox implements OnModuleInit {
     }
   }
 
-  /** Cada módulo registra como envia o seu tipo de item e o tamanho do lote. */
-  register(kind: string, batch: number, send: OutboxSender) {
-    this.senders.set(kind, { batch, send });
+  /**
+   * Cada módulo registra como envia o seu tipo de item, o tamanho do lote e o intervalo mínimo
+   * entre dois envios (o catálogo, por exemplo, vai a cada 5 minutos).
+   */
+  register(kind: string, batch: number, send: OutboxSender, everyMs = 0) {
+    this.senders.set(kind, { batch, send, everyMs });
   }
 
   /**
@@ -109,7 +117,9 @@ export class MercadoflowOutbox implements OnModuleInit {
   ): Promise<{ sent: number; rejected: number; retried: number }> {
     const totals = { sent: 0, rejected: 0, retried: 0 };
     if (!this.client.enabled) return totals;
-    for (const [kind, { batch, send }] of this.senders) {
+    for (const [kind, { batch, send, everyMs }] of this.senders) {
+      const last = this.lastFlush.get(kind);
+      if (everyMs > 0 && last !== undefined && now.getTime() - last < everyMs) continue;
       const rows = await asPlatform(this.db, (tx) =>
         tx
           .select()
@@ -125,6 +135,7 @@ export class MercadoflowOutbox implements OnModuleInit {
           .limit(batch),
       );
       if (rows.length === 0) continue;
+      this.lastFlush.set(kind, now.getTime());
       let results: OutboxResult[];
       try {
         results = await send(rows, this.client);

@@ -636,6 +636,8 @@ export const purchaseImportInput = purchaseXmlInput.extend({
         unit: z.string().trim().min(1).max(6).optional(),
         /** Preço de venda do produto novo, em centavos. */
         priceCents: z.number().int().nonnegative().optional(),
+        /** Nome do produto novo (padrão: o do catálogo, senão o da nota). */
+        name: z.string().trim().min(1, 'Nome do produto é obrigatório').max(120).optional(),
       }),
     )
     .min(1, 'A nota precisa de pelo menos um item'),
@@ -669,6 +671,12 @@ export interface PurchasePreview {
       unit: string;
       factor: string;
       via: 'fornecedor' | 'codigo-de-barras';
+    } | null;
+    /** O que o catálogo sabe do produto, para o cadastro novo (MF-03). */
+    catalog: {
+      description: string;
+      brand: string | null;
+      packageDescription: string | null;
     } | null;
   }[];
 }

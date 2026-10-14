@@ -148,6 +148,7 @@ interface Decision {
   factor: string;
   unit: string;
   priceCents: number | null;
+  name: string;
 }
 
 function ImportDrawer({
@@ -185,6 +186,7 @@ function ImportDrawer({
           factor: item.suggestion?.factor ?? '1',
           unit: item.unit.toUpperCase(),
           priceCents: null,
+          name: item.catalog?.description ?? item.description,
         },
       ]),
     ),
@@ -212,6 +214,7 @@ function ImportDrawer({
                 productId: null,
                 factor: d.factor,
                 unit: unitCodes.has(d.unit) ? d.unit : 'UN',
+                ...(d.name.trim() && { name: d.name.trim() }),
                 ...(d.priceCents !== null && { priceCents: d.priceCents }),
               };
         }),
@@ -297,6 +300,14 @@ function ImportDrawer({
                   {item.supplierCode}
                   {item.gtin && ` · EAN ${item.gtin}`}
                 </p>
+                {item.catalog && !d.productId && (
+                  <p className="text-sm">
+                    <Badge tone="success">No catálogo</Badge>{' '}
+                    {[item.catalog.description, item.catalog.brand, item.catalog.packageDescription]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </p>
+                )}
                 <div className="mt-2 grid gap-2 sm:grid-cols-2">
                   <SelectField
                     label={`Produto do item ${item.line}`}
@@ -322,6 +333,11 @@ function ImportDrawer({
                   />
                   {!d.productId && (
                     <>
+                      <TextField
+                        label={`Nome do produto novo (item ${item.line})`}
+                        value={d.name}
+                        onChange={(e) => set(item.line, { name: e.target.value })}
+                      />
                       <SelectField
                         label={`Unidade do produto novo (item ${item.line})`}
                         value={unitCodes.has(d.unit) ? d.unit : 'UN'}

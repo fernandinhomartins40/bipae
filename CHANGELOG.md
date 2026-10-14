@@ -1,5 +1,11 @@
 # Changelog
 
+## [MF-03 Catálogo em lote e devolução ao catálogo] — 14/10/2026
+
+### Adicionado
+- **Compra pelo XML com o catálogo:** os itens sem produto associado são consultados no catálogo em lote. A tela mostra "No catálogo" com o nome padronizado, e o produto novo já nasce com esse nome (editável), a marca, o fabricante e o código da caixa.
+- **Os produtos cadastrados ajudam a melhorar o catálogo:** produto criado ou alterado com código de barras válido vai para a fila e é enviado em lotes a cada 5 minutos, só com dados cadastrais (nunca preço nem custo). Mudar só o preço não gera envio, e item recusado pelo catálogo não é reenviado.
+
 ## [MF-02 Catálogo no cadastro de produto] — 14/10/2026
 
 ### Adicionado

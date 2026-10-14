@@ -1,7 +1,12 @@
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { eq } from 'drizzle-orm';
+import { withTenant } from '../src/db/client';
+import { mercadoflowOutbox } from '../src/db/schema';
+import { MercadoflowOutbox } from '../src/modules/mercadoflow/mercadoflow.outbox';
 import { api, createTestApp, signup, type TestApp } from './helpers';
+import { item, notaDoFornecedor } from './support/supplier-nfe';
 
 /** MF-02: catálogo nativo no cadastro de produto, contra um MercadoFlow simulado. */
 
@@ -33,6 +38,7 @@ let mf: Server;
 let t: TestApp;
 let modo: 'ok' | 'fora' | 'lento' = 'ok';
 const chamadas: string[] = [];
+const contribuicoes: { items: Record<string, unknown>[] }[] = [];
 
 beforeAll(async () => {
   mf = createServer((req, res) => {
@@ -48,6 +54,19 @@ beforeAll(async () => {
       if (modo === 'fora') return send(503, {});
       const responder = () => {
         const path = url.pathname.replace('/api/v1/partner', '');
+        if (path === '/catalog/contributions') {
+          const body = JSON.parse(Buffer.concat(chunks).toString('utf8')) as {
+            items: Record<string, unknown>[];
+          };
+          contribuicoes.push(body);
+          return send(200, {
+            items: body.items.map((i) =>
+              i.gtin === '7891000100103'
+                ? { gtin: i.gtin, status: 'RECUSADO', error: 'Descrição muito curta' }
+                : { gtin: i.gtin, status: 'CRIADO' },
+            ),
+          });
+        }
         if (path === '/catalog/products/lookup') {
           const { gtins } = JSON.parse(Buffer.concat(chunks).toString('utf8')) as {
             gtins: string[];
@@ -92,9 +111,23 @@ afterAll(async () => {
 beforeEach(() => {
   modo = 'ok';
   chamadas.length = 0;
+  contribuicoes.length = 0;
 });
 
 const cliente = async () => api(t.app, (await signup(t.app)).auth);
+
+/** Dono com o contexto do cliente, para ler a fila. */
+async function dono() {
+  const d = await signup(t.app);
+  return {
+    c: api(t.app, d.auth),
+    ctx: { tenantId: d.me.tenant.id as string, userId: d.me.user.id as string },
+  };
+}
+const fila = (ctx: { tenantId: string }) =>
+  withTenant(t.database.db, ctx as never, (tx) =>
+    tx.select().from(mercadoflowOutbox).where(eq(mercadoflowOutbox.kind, 'catalog.contribution')),
+  );
 
 describe('catálogo nativo (MF-02)', () => {
   it('acha o produto pelo código, confere NCM e CEST na tabela oficial e usa o cache', async () => {
@@ -237,6 +270,108 @@ describe('catálogo nativo (MF-02)', () => {
       packs: [{ packGtin: '123', unitsPerPack: 0 }],
     });
     expect(invalido.statusCode).toBe(400);
+  });
+});
+
+describe('devolução ao catálogo e compra com o catálogo (MF-03)', () => {
+  it('produto criado ou alterado com GTIN válido vai ao catálogo, sem preço, e a recusa não se repete', async () => {
+    const { c, ctx } = await dono();
+    const criado = (
+      await c.post('/products', {
+        name: 'Biscoito Recheado Chocolate 130g',
+        priceCents: 399,
+        costCents: 210,
+        barcodes: ['7891000100103', '2000001000005', '78912342'],
+        ncm: '19053100',
+        catalog: {
+          brand: 'Marca X',
+          department: 'Mercearia > Biscoitos',
+          packageDescription: '130 g',
+        },
+      })
+    ).json();
+    let itens = await fila(ctx);
+    // Código interno de peso (começa com 2) não vai.
+    expect(itens.map((i) => i.dedupeKey).sort()).toEqual(['7891000100103', '78912342']);
+    expect(itens[0]!.payload).toMatchObject({
+      storeId: ctx.tenantId,
+      description: 'Biscoito Recheado Chocolate 130g',
+      brand: 'Marca X',
+      department: 'Mercearia > Biscoitos',
+      unit: 'UN',
+      packageDescription: '130 g',
+      ncm: '19053100',
+    });
+    expect(JSON.stringify(itens.map((i) => i.payload))).not.toMatch(/price|cost|399|210/i);
+
+    const outbox = t.app.get(MercadoflowOutbox);
+    const agora = new Date(Date.now() + 10 * 60_000);
+    await outbox.flush(agora);
+    expect(contribuicoes).toHaveLength(1);
+    // Recusado não volta: o próximo envio não manda nada deste cliente.
+    await outbox.flush(new Date(agora.getTime() + 10 * 60_000));
+    expect(contribuicoes).toHaveLength(1);
+    itens = await fila(ctx);
+    expect(itens.find((i) => i.dedupeKey === '78912342')).toMatchObject({ status: 'sent' });
+    expect(itens.find((i) => i.dedupeKey === '7891000100103')).toMatchObject({
+      status: 'rejected',
+      lastError: 'Descrição muito curta',
+    });
+
+    // Só mudar o preço não manda nada de novo ao catálogo.
+    await c.put(`/products/${criado.id}`, { ...(criado as object), priceCents: 449 });
+    expect((await fila(ctx)).filter((i) => i.status === 'pending')).toEqual([]);
+    // Mudar o nome manda de novo (e volta para a fila mesmo o que tinha sido recusado).
+    await c.put(`/products/${criado.id}`, {
+      ...(criado as object),
+      name: 'Biscoito Recheado de Chocolate Marca X 130g',
+    });
+    expect((await fila(ctx)).filter((i) => i.status === 'pending')).toHaveLength(2);
+  });
+
+  it('a compra pelo XML mostra o que o catálogo sabe e cadastra o produto novo com nome, marca e caixa', async () => {
+    const { c, ctx } = await dono();
+    const [empresa] = (await c.get('/companies')).json();
+    await c.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      taxId: '11.222.333/0001-81',
+      uf: 'SP',
+    });
+    const [loja] = (await c.get('/stores')).json();
+    const xml = await notaDoFornecedor(5001, {
+      items: [
+        item({
+          code: 'F-ACU',
+          gtin: ACUCAR.gtin,
+          description: 'ACUCAR REF UNIAO 1KG',
+          unit: 'UN',
+          quantityMilli: 10_000,
+          unitPriceCents: 400,
+          grossCents: 4000,
+        }),
+      ],
+      payments: [{ code: '15', amountCents: 4000 }],
+    });
+    const previa = (await c.post('/purchases/preview', { xml })).json();
+    expect(previa.items[0].catalog).toEqual({
+      description: 'Açúcar União Refinado 1kg',
+      brand: 'União',
+      packageDescription: '1 kg',
+    });
+    const entrada = await c.post('/purchases', {
+      xml,
+      storeId: loja.id,
+      items: [{ line: 1, productId: null, priceCents: 599 }],
+    });
+    expect(entrada.statusCode).toBe(201);
+    const [produto] = (await c.get(`/products?q=${ACUCAR.gtin}`)).json().items;
+    expect(produto).toMatchObject({
+      name: 'Açúcar União Refinado 1kg',
+      priceCents: 599,
+      catalog: { brand: 'União', manufacturer: 'Camil', department: 'Mercearia' },
+      packs: [{ packGtin: '17891910000194', unitsPerPack: 10 }],
+    });
+    expect((await fila(ctx)).map((i) => i.dedupeKey)).toEqual([ACUCAR.gtin]);
   });
 });
 

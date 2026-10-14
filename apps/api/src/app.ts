@@ -32,6 +32,7 @@ import { DownloadsController, DownloadsService } from './modules/downloads/downl
 import { FiscalController } from './modules/fiscal/fiscal.controller';
 import { MERCADOFLOW_CLIENT, MercadoflowClient } from './modules/mercadoflow/mercadoflow.client';
 import { MercadoflowCatalog, MercadoflowCatalogController } from './modules/mercadoflow/mercadoflow.catalog';
+import { MercadoflowContributions } from './modules/mercadoflow/mercadoflow.contributions';
 import { MercadoflowOutbox } from './modules/mercadoflow/mercadoflow.outbox';
 import { MercadoflowWebhookController, MercadoflowWebhooks } from './modules/mercadoflow/mercadoflow.webhook';
 import { PurchasesController } from './modules/purchases/purchases.controller';
@@ -129,6 +130,7 @@ class AppModule {
         },
         MercadoflowOutbox,
         MercadoflowCatalog,
+        MercadoflowContributions,
         MercadoflowWebhooks,
         PartiesService,
         SyncService,

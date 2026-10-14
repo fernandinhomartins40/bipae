@@ -28,6 +28,7 @@ import {
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 import { assertFiscalProfile, assertProductFiscal } from '../fiscal/fiscal-validation';
+import { MercadoflowContributions } from '../mercadoflow/mercadoflow.contributions';
 
 type ProductData = z.output<typeof productInput>;
 
@@ -37,6 +38,7 @@ export class CatalogService {
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(LimitsService) private readonly limits: LimitsService,
+    @Inject(MercadoflowContributions) private readonly contributions: MercadoflowContributions,
   ) {}
 
   // ---------------------------------------------------------------- products
@@ -83,6 +85,7 @@ export class CatalogService {
       const id = uuidv7();
       await tx.insert(products).values({ id, tenantId: ctx.tenantId, ...this.columns(input) });
       await this.replaceChildren(tx, ctx.tenantId, id, input);
+      await this.contributions.enqueue(tx, ctx.tenantId, input);
       await this.audit.record(tx, ctx, {
         action: 'product.created',
         entity: 'product',
@@ -119,6 +122,10 @@ export class CatalogService {
         })
         .where(eq(products.id, id));
       await this.replaceChildren(tx, ctx.tenantId, id, input);
+      // Só dado cadastral vai ao catálogo: mudar só o preço não gera envio.
+      if (!priceChanged || current.name !== input.name || current.ncm !== (input.ncm ?? null)) {
+        await this.contributions.enqueue(tx, ctx.tenantId, input);
+      }
       await this.audit.record(tx, ctx, {
         action: priceChanged ? 'product.price_changed' : 'product.updated',
         entity: 'product',
