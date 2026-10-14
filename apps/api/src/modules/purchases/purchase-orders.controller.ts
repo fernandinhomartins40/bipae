@@ -12,6 +12,7 @@ import {
 import {
   purchaseOrderCancelInput,
   purchaseOrderInput,
+  purchaseOrderReceiveInput,
   type PurchaseOrderStatus,
 } from '@bipae/domain';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
@@ -60,6 +61,17 @@ export class PurchaseOrdersController {
   @RequirePermission('catalog.write')
   send(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.orders.send(ctx, id);
+  }
+
+  /** Entrada da mercadoria do pedido, conferida (F4-02). */
+  @Post(':id/receive')
+  @RequirePermission('catalog.write')
+  receive(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.orders.receive(ctx, id, parse(purchaseOrderReceiveInput, body));
   }
 
   @Post(':id/cancel')

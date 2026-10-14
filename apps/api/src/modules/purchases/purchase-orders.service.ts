@@ -4,6 +4,7 @@ import {
   type PurchaseOrderStatus,
   type PurchaseOrderView,
   type purchaseOrderInput,
+  type purchaseOrderReceiveInput,
 } from '@bipae/domain';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { z } from 'zod';
@@ -12,10 +13,39 @@ import { DB } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
 import { assertStore, storeCondition } from '../../common/stores';
 import { withTenant, type Db, type Tx } from '../../db/client';
-import { products, purchaseOrderItems, purchaseOrders, stores, suppliers } from '../../db/schema';
+import {
+  productBarcodes,
+  products,
+  purchaseOrderItems,
+  purchaseOrders,
+  stockMovements,
+  stores,
+  suppliers,
+} from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { MercadoflowMarketSync } from '../mercadoflow/mercadoflow.market-sync';
 
 type OrderInput = z.output<typeof purchaseOrderInput>;
+type ReceiveInput = z.output<typeof purchaseOrderReceiveInput>;
+
+/**
+ * Custo médio ponderado (F4-02): (estoque atual × custo atual + recebido × custo do pedido) ÷
+ * (estoque atual + recebido), arredondando meio para cima. Sem estoque ou sem custo anterior,
+ * vale o custo do pedido. Contas em BigInt: milésimos × centavos passam do limite do número.
+ */
+export function averageCost(
+  stockMilli: number,
+  currentCostCents: number | null,
+  receivedMilli: number,
+  unitCostCents: number,
+): number {
+  if (receivedMilli <= 0) return currentCostCents ?? unitCostCents;
+  if (stockMilli <= 0 || currentCostCents === null) return unitCostCents;
+  const total = BigInt(stockMilli) + BigInt(receivedMilli);
+  const value =
+    BigInt(stockMilli) * BigInt(currentCostCents) + BigInt(receivedMilli) * BigInt(unitCostCents);
+  return Number((value * 2n + total) / (total * 2n));
+}
 
 /** Custo × quantidade (milésimos) ÷ 1000, arredondando meio para cima, em centavos. */
 export const orderLineTotal = (unitCostCents: number, quantityMilli: number) =>
@@ -38,6 +68,7 @@ export class PurchaseOrdersService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(MercadoflowMarketSync) private readonly marketSync: MercadoflowMarketSync,
   ) {}
 
   async list(ctx: RequestContext, status?: PurchaseOrderStatus): Promise<PurchaseOrderView[]> {
@@ -91,6 +122,14 @@ export class PurchaseOrdersService {
       .innerJoin(products, eq(products.id, purchaseOrderItems.productId))
       .where(inArray(purchaseOrderItems.orderId, ids))
       .orderBy(asc(purchaseOrderItems.line));
+    const codes = items.length
+      ? await tx
+          .select({ productId: productBarcodes.productId, code: productBarcodes.code })
+          .from(productBarcodes)
+          .where(
+            inArray(productBarcodes.productId, [...new Set(items.map((i) => i.item.productId))]),
+          )
+      : [];
     return orders.map(({ order: o, storeName, supplierName, supplierTaxId }) => ({
       id: o.id,
       number: o.number,
@@ -118,6 +157,10 @@ export class PurchaseOrdersService {
           quantityMilli: item.quantityMilli,
           unitCostCents: item.unitCostCents,
           totalCents: item.totalCents,
+          receivedMilli: item.receivedMilli,
+          barcodes: codes
+            .filter((code) => code.productId === item.productId)
+            .map((code) => code.code),
         })),
     }));
   }
@@ -266,6 +309,110 @@ export class PurchaseOrdersService {
         entity: 'purchase_order',
         entityId: id,
         data: { number: order.number, reason, previousStatus: order.status },
+      });
+      return this.view(tx, ctx, id);
+    });
+  }
+
+  /**
+   * Entrada de mercadoria do pedido enviado (F4-02): o que chegou entra no estoque da loja, o
+   * custo do produto vira o custo médio e o pedido fica recebido. Diferenças contra o pedido
+   * ficam registradas no item e na auditoria.
+   */
+  async receive(ctx: RequestContext, id: string, input: ReceiveInput): Promise<PurchaseOrderView> {
+    return withTenant(this.db, ctx, async (tx) => {
+      const order = await this.requireStatus(tx, ctx, id, ['sent']);
+      const items = await tx
+        .select()
+        .from(purchaseOrderItems)
+        .where(eq(purchaseOrderItems.orderId, id))
+        .orderBy(asc(purchaseOrderItems.line));
+      const received = new Map(input.items.map((i) => [i.line, i.receivedMilli]));
+      for (const line of received.keys()) {
+        if (!items.some((i) => i.line === line)) {
+          throw new AppError(422, 'invalid_line', `O pedido não tem a linha ${line}.`);
+        }
+      }
+      const now = new Date();
+      const divergences: {
+        line: number;
+        productId: string;
+        orderedMilli: number;
+        receivedMilli: number;
+      }[] = [];
+      for (const item of items) {
+        const got = received.get(item.line) ?? 0;
+        const [product] = await tx.select().from(products).where(eq(products.id, item.productId));
+        if (!product) continue;
+        if (!product.isWeighable && got % 1000 !== 0) {
+          throw new AppError(
+            422,
+            'invalid_quantity',
+            `${product.name} é recebido por unidade inteira.`,
+          );
+        }
+        if (got !== item.quantityMilli) {
+          divergences.push({
+            line: item.line,
+            productId: item.productId,
+            orderedMilli: item.quantityMilli,
+            receivedMilli: got,
+          });
+        }
+        await tx
+          .update(purchaseOrderItems)
+          .set({ receivedMilli: got })
+          .where(and(eq(purchaseOrderItems.orderId, id), eq(purchaseOrderItems.line, item.line)));
+        if (got === 0) continue;
+        const [stock] = await tx
+          .select({ milli: sql<string>`coalesce(sum(${stockMovements.deltaMilli}), 0)::text` })
+          .from(stockMovements)
+          .where(eq(stockMovements.productId, item.productId));
+        const costCents = averageCost(
+          Number(stock?.milli ?? 0),
+          product.costCents,
+          got,
+          item.unitCostCents,
+        );
+        await tx.insert(stockMovements).values({
+          id: uuidv7(),
+          tenantId: ctx.tenantId,
+          storeId: order.storeId,
+          productId: item.productId,
+          deltaMilli: got,
+          reason: 'purchase',
+          refId: id,
+          note: `Pedido de compra nº ${order.number}`,
+          actorId: ctx.userId,
+          occurredAt: now,
+        });
+        if (costCents !== product.costCents) {
+          await tx
+            .update(products)
+            .set({ costCents, updatedAt: now })
+            .where(eq(products.id, product.id));
+          // O custo novo vai às lojas vinculadas ao MercadoFlow, como na entrada pelo XML.
+          const productCodes = await tx
+            .select({ code: productBarcodes.code })
+            .from(productBarcodes)
+            .where(eq(productBarcodes.productId, product.id));
+          await this.marketSync.enqueueProduct(tx, ctx.tenantId, {
+            ...product,
+            costCents,
+            catalog: product.catalog ?? null,
+            barcodes: productCodes.map((code) => code.code),
+          });
+        }
+      }
+      await tx
+        .update(purchaseOrders)
+        .set({ status: 'received', receivedAt: now, updatedAt: now })
+        .where(eq(purchaseOrders.id, id));
+      await this.audit.record(tx, ctx, {
+        action: 'purchase_order.received',
+        entity: 'purchase_order',
+        entityId: id,
+        data: { number: order.number, divergences, note: input.note ?? null },
       });
       return this.view(tx, ctx, id);
     });

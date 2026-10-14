@@ -1,5 +1,16 @@
 # Changelog
 
+## [F4-02 Entrada de mercadoria do pedido] — 14/10/2026
+
+### Adicionado
+- **Receber o pedido de compra conferindo por bipagem**: cada bipe soma uma unidade, dá para digitar a quantidade, e a diferença contra o pedido aparece em destaque. Código que não é do pedido é avisado.
+- **Ao confirmar**:
+  - o que chegou entra no estoque da loja;
+  - o custo do produto vira o custo médio ponderado (estoque atual e custo atual com o recebido e o custo do pedido);
+  - o pedido fica recebido;
+  - faltas e sobras vão para a auditoria.
+- O custo novo também vai às lojas vinculadas ao MercadoFlow.
+
 ## [F4-01 Pedidos de compra] — 14/10/2026
 
 ### Adicionado

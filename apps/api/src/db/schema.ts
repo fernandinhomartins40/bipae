@@ -714,4 +714,6 @@ export const purchaseOrderItems = pgTable('purchase_order_items', {
   quantityMilli: bigint('quantity_milli', { mode: 'number' }).notNull(),
   unitCostCents: money('unit_cost_cents').notNull(),
   totalCents: money('total_cents').notNull(),
+  /** Quanto chegou na entrada (F4-02); nulo enquanto o pedido não foi recebido. */
+  receivedMilli: bigint('received_milli', { mode: 'number' }),
 });

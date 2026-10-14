@@ -127,3 +127,74 @@ describe('pedidos de compra (F4-01)', () => {
     expect((await outro.admin.get('/purchase-orders')).json()).toEqual([]);
   });
 });
+
+describe('entrada de mercadoria do pedido (F4-02)', () => {
+  it('custo médio ponderado, arredondando meio para cima', async () => {
+    const { averageCost } = await import('../src/modules/purchases/purchase-orders.service');
+    // 10 un a R$ 20,00 + 10 un a R$ 23,00 → R$ 21,50
+    expect(averageCost(10_000, 2000, 10_000, 2300)).toBe(2150);
+    // 3 un a R$ 10,00 + 1 un a R$ 10,01 → 10,0025 → R$ 10,00
+    expect(averageCost(3000, 1000, 1000, 1001)).toBe(1000);
+    // 1 un a R$ 10,00 + 1 un a R$ 10,01 → 10,005 → R$ 10,01 (meio para cima)
+    expect(averageCost(1000, 1000, 1000, 1001)).toBe(1001);
+    // Sem estoque, estoque negativo ou sem custo anterior: vale o do pedido.
+    expect(averageCost(0, 1000, 5000, 1200)).toBe(1200);
+    expect(averageCost(-2000, 1000, 5000, 1200)).toBe(1200);
+    expect(averageCost(5000, null, 5000, 1200)).toBe(1200);
+    // Números grandes não perdem precisão.
+    expect(averageCost(900_000_000_000, 99_999_999, 1, 1)).toBe(99_999_999);
+  });
+
+  it('entra no estoque, recalcula o custo médio, fecha o pedido e registra a falta', async () => {
+    const { admin, loja, fornecedor, arroz } = await cenario();
+    // Já há 10 un no estoque com custo de R$ 21,00 (do cadastro).
+    await admin.post('/stock/adjustments', {
+      productId: arroz.id,
+      storeId: loja.id,
+      mode: 'count',
+      quantityMilli: 10_000,
+    });
+    const pedido = (
+      await admin.post('/purchase-orders', {
+        storeId: loja.id,
+        supplierId: fornecedor.id,
+        items: [{ productId: arroz.id, quantityMilli: 12_000, unitCostCents: 2400 }],
+      })
+    ).json();
+    expect(
+      (
+        await admin.post(`/purchase-orders/${pedido.id}/receive`, {
+          items: [{ line: 1, receivedMilli: 10_000 }],
+        })
+      ).statusCode,
+    ).toBe(409);
+    await admin.post(`/purchase-orders/${pedido.id}/send`);
+    expect(pedido.items[0].barcodes).toEqual([]);
+
+    const r = await admin.post(`/purchase-orders/${pedido.id}/receive`, {
+      items: [{ line: 1, receivedMilli: 10_000 }],
+      note: 'Faltaram 2 fardos',
+    });
+    expect(r.statusCode).toBe(201);
+    expect(r.json()).toMatchObject({
+      status: 'received',
+      items: [expect.objectContaining({ receivedMilli: 10_000 })],
+    });
+    const [saldo] = (await admin.get(`/stock?productId=${arroz.id}`)).json();
+    expect(saldo.quantityMilli).toBe(20_000);
+    // (10 × 21,00 + 10 × 24,00) ÷ 20 = 22,50
+    expect((await admin.get(`/products/${arroz.id}`)).json().costCents).toBe(2250);
+    const trilha = JSON.stringify(
+      (await admin.get('/audit?action=purchase_order.received')).json(),
+    );
+    expect(trilha).toContain('"orderedMilli":12000');
+    // Recebido não recebe de novo.
+    expect(
+      (
+        await admin.post(`/purchase-orders/${pedido.id}/receive`, {
+          items: [{ line: 1, receivedMilli: 1000 }],
+        })
+      ).statusCode,
+    ).toBe(409);
+  });
+});

@@ -364,6 +364,28 @@ function OrderDrawer({
           onChange={(e) => setNotes(e.target.value)}
         />
 
+        {order?.status === 'sent' && canWrite && (
+          <ReceivePanel
+            order={order}
+            onDone={() =>
+              void queryClient.invalidateQueries({ queryKey: ['purchase-orders'] }).then(onClose)
+            }
+          />
+        )}
+        {order?.status === 'received' && (
+          <ul className="flex flex-col gap-1 text-sm" aria-label="O que chegou">
+            {order.items.map((i) => (
+              <li
+                key={i.line}
+                className={i.receivedMilli !== i.quantityMilli ? 'font-semibold text-danger' : ''}
+              >
+                {i.productName}: chegou {quantityText(i.receivedMilli ?? 0)} de{' '}
+                {quantityText(i.quantityMilli)} {i.unit}
+              </li>
+            ))}
+          </ul>
+        )}
+
         <div className="flex flex-wrap gap-2 pt-2">
           {editable && (
             <>
@@ -410,5 +432,103 @@ function OrderDrawer({
         </div>
       </div>
     </Drawer>
+  );
+}
+
+/**
+ * Entrada de mercadoria conferida (F4-02): bipe cada volume (soma 1 unidade) ou digite a
+ * quantidade. Ao confirmar, entra no estoque e o custo vira o custo médio.
+ */
+function ReceivePanel({ order, onDone }: { order: PurchaseOrderView; onDone: () => void }) {
+  const { api } = useApp();
+  const [counts, setCounts] = useState<Record<number, string>>(
+    Object.fromEntries(order.items.map((i) => [i.line, '0'])),
+  );
+  const [scan, setScan] = useState('');
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState('');
+
+  const bipar = () => {
+    const code = scan.trim();
+    setScan('');
+    if (!code) return;
+    const item = order.items.find((i) => i.barcodes.includes(code));
+    if (!item) return setMessage({ ok: false, text: `O código ${code} não está neste pedido.` });
+    const current = parseQuantity(counts[item.line] ?? '0') ?? 0;
+    setCounts((c) => ({ ...c, [item.line]: quantityText(current + 1000) }));
+    setMessage({ ok: true, text: `${item.productName}: ${quantityText(current + 1000)}` });
+  };
+
+  const confirm = async () => {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const items = order.items.map((i) => {
+        const text = counts[i.line] ?? '0';
+        const milli = text.trim() === '0' ? 0 : parseQuantity(text);
+        if (milli === null) throw new Error(`Quantidade inválida em ${i.productName}.`);
+        return { line: i.line, receivedMilli: milli };
+      });
+      await api.post(`/purchase-orders/${order.id}/receive`, {
+        items,
+        ...(note.trim() && { note: note.trim() }),
+      });
+      onDone();
+    } catch (e) {
+      setMessage({ ok: false, text: (e as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section
+      aria-label="Entrada da mercadoria"
+      className="flex flex-col gap-3 rounded-ui bg-surface-2 p-4"
+    >
+      <h3 className="font-semibold">Entrada da mercadoria</h3>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          bipar();
+        }}
+      >
+        <TextField
+          label="Bipe o produto que chegou"
+          value={scan}
+          onChange={(e) => setScan(e.target.value)}
+          autoFocus
+        />
+      </form>
+      {message && <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>}
+      <ul className="flex flex-col gap-2">
+        {order.items.map((i) => {
+          const got = parseQuantity(counts[i.line] ?? '0') ?? 0;
+          const diff = got !== i.quantityMilli;
+          return (
+            <li key={i.line} className="grid grid-cols-[1fr_8rem] items-end gap-2">
+              <span className={diff ? 'text-danger' : 'text-success'}>
+                {i.productName} · pedido {quantityText(i.quantityMilli)} {i.unit}
+              </span>
+              <TextField
+                label={`Chegou de ${i.productName}`}
+                inputMode="decimal"
+                value={counts[i.line] ?? '0'}
+                onChange={(e) => setCounts((c) => ({ ...c, [i.line]: e.target.value }))}
+              />
+            </li>
+          );
+        })}
+      </ul>
+      <TextField
+        label="Observação da entrada"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+      />
+      <Button loading={busy} onClick={() => void confirm()}>
+        Confirmar entrada no estoque
+      </Button>
+    </section>
   );
 }

@@ -905,5 +905,23 @@ export interface PurchaseOrderView {
     quantityMilli: number;
     unitCostCents: number;
     totalCents: number;
+    /** Quanto chegou na entrada (F4-02); nulo antes do recebimento. */
+    receivedMilli: number | null;
+    /** Códigos de barras do produto, para conferir bipando. */
+    barcodes: string[];
   }[];
 }
+
+/** Entrada de mercadoria do pedido (F4-02): quanto chegou de cada linha. */
+export const purchaseOrderReceiveInput = z.object({
+  items: z
+    .array(
+      z.object({
+        line: z.number().int().positive(),
+        receivedMilli: z.number().int().nonnegative('Quantidade recebida inválida'),
+      }),
+    )
+    .min(1)
+    .max(500),
+  note: z.string().trim().max(300).optional(),
+});
