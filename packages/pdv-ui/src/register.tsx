@@ -116,6 +116,19 @@ export function Register({
     resolve: (id: string | null) => void;
   } | null>(null);
   const [beep, setBeep] = useState(true);
+  // Crediário do cliente da venda (F2-02), lido do banco local quando o pagamento abre.
+  const [creditInfo, setCreditInfo] = useState<{ availableCents: number } | null>(null);
+  const customerTaxId = cart.customerTaxId;
+  useEffect(() => {
+    if (dialog.kind !== 'payment' || !customerTaxId) return;
+    let alive = true;
+    void pdv.creditAvailable(customerTaxId).then((info) => {
+      if (alive) setCreditInfo(info);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [dialog.kind, customerTaxId, pdv]);
   const inputRef = useRef<HTMLInputElement>(null);
   const t = useMemo(() => totals(cart), [cart]);
   const can = (p: string) => user.permissions.includes(p);
@@ -676,7 +689,12 @@ export function Register({
         />
       )}
       {dialog.kind === 'payment' && (
-        <PaymentDialog totalCents={t.totalCents} onPaid={pay} onClose={closeDialog} />
+        <PaymentDialog
+          totalCents={t.totalCents}
+          credit={cart.customerTaxId ? creditInfo : undefined}
+          onPaid={pay}
+          onClose={closeDialog}
+        />
       )}
       {dialog.kind === 'cash' && (
         <CashDialog

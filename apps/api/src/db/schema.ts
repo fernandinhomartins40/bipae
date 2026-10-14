@@ -255,6 +255,21 @@ export const customers = pgTable('customers', {
   marketingConsentAt: ts('marketing_consent_at'),
   /** Price table for this customer, above the store's (F1-03). */
   priceTableId: uuid('price_table_id'),
+  /** Limite do crediário (F2-02); nulo = o cliente não compra no crediário. */
+  creditLimitCents: money('credit_limit_cents'),
+});
+
+/** Extrato do crediário pelo CPF/CNPJ (F2-02): venda soma, o resto vem negativo. */
+export const customerCreditEntries = pgTable('customer_credit_entries', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  customerTaxId: text('customer_tax_id').notNull(),
+  kind: text('kind', { enum: ['sale', 'cancel', 'return', 'payment'] }).notNull(),
+  amountCents: money('amount_cents').notNull(),
+  saleId: uuid('sale_id'),
+  note: text('note'),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
 });
 
 export const suppliers = pgTable('suppliers', partyColumns());

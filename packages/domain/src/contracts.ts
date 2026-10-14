@@ -347,6 +347,13 @@ export const customerInput = partyInput.extend({
   marketingConsent: z.boolean().default(false),
   /** Tabela de preço do cliente (atacado, funcionário...). Nula usa a tabela da loja. */
   priceTableId: z.string().uuid().nullish(),
+  /** Limite do crediário em centavos (F2-02). Nulo: o cliente não compra no crediário. */
+  creditLimitCents: z
+    .number()
+    .int('Limite do crediário inválido')
+    .nonnegative('O limite do crediário não pode ser negativo')
+    .max(100_000_000_00, 'Limite do crediário alto demais')
+    .nullish(),
 });
 export type CustomerInput = z.input<typeof customerInput>;
 
@@ -360,7 +367,29 @@ export interface Party {
   notes: string | null;
   marketingConsent?: boolean;
   priceTableId?: string | null;
+  creditLimitCents?: number | null;
   updatedAt: string;
+}
+
+/** Recebimento de uma parcela do crediário (F2-02). */
+export const creditPaymentInput = z.object({
+  amountCents: z.number().int('Valor inválido').positive('Informe o valor recebido'),
+  note: z.string().trim().max(200).optional(),
+});
+
+/** Crediário do cliente: limite, saldo devedor e o extrato (F2-02). */
+export interface CustomerCredit {
+  limitCents: number | null;
+  balanceCents: number;
+  availableCents: number | null;
+  entries: {
+    id: string;
+    kind: 'sale' | 'cancel' | 'return' | 'payment';
+    amountCents: number;
+    saleId: string | null;
+    note: string | null;
+    createdAt: string;
+  }[];
 }
 
 // ---------- Organization ----------

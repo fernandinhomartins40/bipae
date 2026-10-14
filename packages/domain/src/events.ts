@@ -245,4 +245,9 @@ export interface PricingSnapshot {
   storePriceTableId: string | null;
   tables: { id: string; name: string; items: { productId: string; priceCents: number }[] }[];
   customers: { taxId: string; priceTableId: string }[];
+  /**
+   * Crediário (F2-02): limite e saldo devedor de cada cliente com crediário, no momento do
+   * retrato. O caixa soma as vendas no crediário que ainda não subiram.
+   */
+  credit?: { taxId: string; limitCents: number; balanceCents: number }[];
 }

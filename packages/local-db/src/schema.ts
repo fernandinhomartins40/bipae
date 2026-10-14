@@ -101,6 +101,13 @@ export const LOCAL_MIGRATIONS: string[] = [
   /* 4 — F3-06: perfis fiscais (retrato inteiro vindo do servidor; veja FiscalSnapshot) */ `
   CREATE TABLE fiscal_profiles (id TEXT PRIMARY KEY, data TEXT NOT NULL);
   `,
+  /* 5 — F2-02: crediário (limite e saldo devedor no momento do retrato de preços) */ `
+  CREATE TABLE customer_credit (
+    tax_id TEXT PRIMARY KEY,
+    limit_cents INTEGER NOT NULL,
+    balance_cents INTEGER NOT NULL
+  );
+  `,
 ];
 
 /**

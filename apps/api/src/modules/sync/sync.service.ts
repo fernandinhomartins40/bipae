@@ -22,6 +22,7 @@ import {
   cashSessions,
   companies,
   companyIcmsRules,
+  customerCreditEntries,
   customers,
   fiscalProfiles,
   memberships,
@@ -255,6 +256,20 @@ export class SyncService {
           p.saleId,
           p.items.map((i) => [i.productId, -i.quantityMilli]),
         );
+        const onCredit = p.payments
+          .filter((pay) => pay.method === 'store_credit')
+          .reduce((sum, pay) => sum + pay.amountCents, 0);
+        if (onCredit > 0) {
+          await this.creditEntry(
+            tx,
+            ctx,
+            p.customerTaxId ?? '',
+            'sale',
+            onCredit,
+            p.saleId,
+            event.operatorId,
+          );
+        }
         if (p.discountAuthorizedBy) {
           await this.audit.record(tx, actor, {
             action: 'sale.discount_authorized',
@@ -278,6 +293,23 @@ export class SyncService {
           .update(sales)
           .set({ status: 'cancelled', cancelledAt: at, cancelReason: event.payload.reason })
           .where(eq(sales.id, sale.id));
+        const [credit] = await tx
+          .select()
+          .from(customerCreditEntries)
+          .where(
+            and(eq(customerCreditEntries.saleId, sale.id), eq(customerCreditEntries.kind, 'sale')),
+          );
+        if (credit) {
+          await this.creditEntry(
+            tx,
+            ctx,
+            credit.customerTaxId,
+            'cancel',
+            -credit.amountCents,
+            sale.id,
+            event.operatorId,
+          );
+        }
         const items = await tx.select().from(saleItems).where(eq(saleItems.saleId, sale.id));
         await this.moveStock(
           tx,
@@ -334,6 +366,17 @@ export class SyncService {
           p.returnId,
           p.items.map((i) => [i.productId, i.quantityMilli]),
         );
+        if (p.refundMethod === 'store_credit' && original.customerTaxId) {
+          await this.creditEntry(
+            tx,
+            ctx,
+            original.customerTaxId,
+            'return',
+            -p.refundCents,
+            p.returnId,
+            event.operatorId,
+          );
+        }
         await this.audit.record(tx, actor, {
           action: 'sale.returned',
           entity: 'sale',
@@ -379,7 +422,9 @@ export class SyncService {
         .select({ id: products.id, fiscalProfileId: products.fiscalProfileId, ncm: products.ncm })
         .from(products)
         .where(inArray(products.id, [...new Set(items.map((item) => item.productId))]));
-      const profileIds = [...new Set(sold.flatMap((p) => (p.fiscalProfileId ? [p.fiscalProfileId] : [])))];
+      const profileIds = [
+        ...new Set(sold.flatMap((p) => (p.fiscalProfileId ? [p.fiscalProfileId] : []))),
+      ];
       const profiles = profileIds.length
         ? await tx
             .select({ id: fiscalProfiles.id, data: fiscalProfiles.data })
@@ -388,7 +433,10 @@ export class SyncService {
         : [];
       const profileOf = (productId: string) => {
         const id = sold.find((p) => p.id === productId)?.fiscalProfileId;
-        return (profiles.find((profile) => profile.id === id)?.data as SaleFiscalProfile | undefined) ?? null;
+        return (
+          (profiles.find((profile) => profile.id === id)?.data as SaleFiscalProfile | undefined) ??
+          null
+        );
       };
       const expected = saleTaxSummaries({
         company: { uf: company?.uf ?? null, taxRegime: company?.taxRegime ?? null },
@@ -403,12 +451,16 @@ export class SyncService {
       });
       const same =
         expected !== null &&
-        items.every((item, index) => item.taxes !== undefined && sameTaxSummary(item.taxes, expected[index]!));
+        items.every(
+          (item, index) => item.taxes !== undefined && sameTaxSummary(item.taxes, expected[index]!),
+        );
       if (!same) this.logger.warn('Impostos da venda diferentes entre o caixa e o servidor');
       return same ? 'ok' : 'divergente';
     } catch (error) {
       // A conferência é um extra: falha nela não pode impedir a venda de entrar.
-      this.logger.warn(`Não foi possível conferir os impostos da venda: ${(error as Error).message}`);
+      this.logger.warn(
+        `Não foi possível conferir os impostos da venda: ${(error as Error).message}`,
+      );
       return null;
     }
   }
@@ -584,9 +636,17 @@ export class SyncService {
       })
       .from(customers)
       .where(sql`${customers.priceTableId} is not null`);
+    const [creditState] = await tx
+      .select({
+        limits: sql<string>`coalesce((select string_agg(${customers.taxId} || ':' || ${customers.creditLimitCents}, ',' order by ${customers.taxId}) from ${customers} where ${customers.creditLimitCents} is not null), '')`,
+        entries: sql<string>`(select count(*) || ':' || coalesce(max(${customerCreditEntries.createdAt})::text, '') from ${customerCreditEntries})`,
+      })
+      .from(sql`(select 1) as one`);
     const version = createHash('sha256')
       .update(
         [
+          creditState?.limits ?? '',
+          creditState?.entries ?? '',
           store?.priceTableId ?? '',
           store?.updatedAt?.toISOString() ?? '',
           tables?.last,
@@ -613,9 +673,26 @@ export class SyncService {
       .select({ taxId: customers.taxId, priceTableId: customers.priceTableId })
       .from(customers)
       .where(sql`${customers.priceTableId} is not null and ${customers.taxId} is not null`);
+    const creditCustomers = await tx
+      .select({ taxId: customers.taxId, limitCents: customers.creditLimitCents })
+      .from(customers)
+      .where(sql`${customers.creditLimitCents} is not null and ${customers.taxId} is not null`);
+    const balances = await tx
+      .select({
+        taxId: customerCreditEntries.customerTaxId,
+        cents: sql<string>`sum(${customerCreditEntries.amountCents})::text`,
+      })
+      .from(customerCreditEntries)
+      .groupBy(customerCreditEntries.customerTaxId);
+    const balanceOf = new Map(balances.map((b) => [b.taxId, Number(b.cents)]));
     return {
       pricing: {
         version,
+        credit: creditCustomers.map((cc) => ({
+          taxId: cc.taxId!,
+          limitCents: cc.limitCents!,
+          balanceCents: balanceOf.get(cc.taxId!) ?? 0,
+        })),
         storePriceTableId: store?.priceTableId ?? null,
         tables: allTables.map((t) => ({
           id: t.id,
@@ -629,6 +706,30 @@ export class SyncService {
     };
   }
 
+  /** Lançamento no extrato do crediário (F2-02); a mesma venda não entra duas vezes. */
+  private async creditEntry(
+    tx: Tx,
+    ctx: RequestContext,
+    taxId: string,
+    kind: 'sale' | 'cancel' | 'return',
+    amountCents: number,
+    saleId: string,
+    operatorId: string,
+  ) {
+    await tx
+      .insert(customerCreditEntries)
+      .values({
+        id: uuidv7(),
+        tenantId: ctx.tenantId,
+        customerTaxId: taxId,
+        kind,
+        amountCents,
+        saleId,
+        createdBy: operatorId,
+      })
+      .onConflictDoNothing();
+  }
+
   /**
    * Retrato fiscal para o caixa (F3-06): UF e regime da empresa do caixa e os perfis fiscais. Só
    * vai quando algo mudou, como o retrato de preços.
@@ -640,7 +741,12 @@ export class SyncService {
   ): Promise<{ fiscal?: FiscalSnapshot }> {
     const [company] = terminalId
       ? await tx
-          .select({ id: companies.id, uf: companies.uf, taxRegime: companies.taxRegime, updatedAt: companies.updatedAt })
+          .select({
+            id: companies.id,
+            uf: companies.uf,
+            taxRegime: companies.taxRegime,
+            updatedAt: companies.updatedAt,
+          })
           .from(terminals)
           .innerJoin(companies, eq(companies.id, terminals.companyId))
           .where(eq(terminals.id, terminalId))
@@ -654,14 +760,23 @@ export class SyncService {
     const rules = company
       ? await tx.select().from(companyIcmsRules).where(eq(companyIcmsRules.companyId, company.id))
       : [];
-    const rulesStamp = rules.map((r) => `${r.id}@${r.updatedAt.toISOString()}`).sort().join(',');
+    const rulesStamp = rules
+      .map((r) => `${r.id}@${r.updatedAt.toISOString()}`)
+      .sort()
+      .join(',');
     const version = createHash('sha256')
-      .update([company?.uf ?? '', company?.taxRegime ?? '', profiles?.last, profiles?.n, rulesStamp].join('|'))
+      .update(
+        [company?.uf ?? '', company?.taxRegime ?? '', profiles?.last, profiles?.n, rulesStamp].join(
+          '|',
+        ),
+      )
       .digest('hex')
       .slice(0, 24);
     if (version === known) return {};
 
-    const rows = await tx.select({ id: fiscalProfiles.id, data: fiscalProfiles.data }).from(fiscalProfiles);
+    const rows = await tx
+      .select({ id: fiscalProfiles.id, data: fiscalProfiles.data })
+      .from(fiscalProfiles);
     const text = (value: unknown) => (typeof value === 'string' && value !== '' ? value : null);
     return {
       fiscal: {

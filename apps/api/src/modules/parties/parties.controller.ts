@@ -9,7 +9,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { customerInput, listQuery, partyInput } from '@bipae/domain';
+import { creditPaymentInput, customerInput, listQuery, partyInput } from '@bipae/domain';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { parse } from '../../common/errors';
 import { PartiesService } from './parties.service';
@@ -34,6 +34,23 @@ export class PartiesController {
   @RequirePermission('parties.write')
   createCustomer(@Ctx() ctx: RequestContext, @Body() body: unknown) {
     return this.parties.save(ctx, 'customer', null, parse(customerInput, body));
+  }
+
+  /** Crediário do cliente (F2-02): limite, saldo e extrato. */
+  @Get('customers/:id/credit')
+  @RequirePermission('parties.read')
+  customerCredit(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.parties.credit(ctx, id);
+  }
+
+  @Post('customers/:id/credit/payments')
+  @RequirePermission('parties.credit')
+  receiveCredit(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.parties.receiveCredit(ctx, id, parse(creditPaymentInput, body));
   }
 
   @Put('customers/:id')

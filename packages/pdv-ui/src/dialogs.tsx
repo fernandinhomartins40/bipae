@@ -274,7 +274,20 @@ const METHOD_KEYS: { method: PaymentMethod; key: string }[] = [
   { method: 'debit', key: 'B' },
   { method: 'credit', key: 'C' },
   { method: 'voucher', key: 'V' },
+  { method: 'store_credit', key: 'R' },
 ];
+
+/**
+ * Crediário no pagamento (F2-02): sem cliente (undefined), cliente sem crediário (null) ou o
+ * valor disponível no limite.
+ */
+export type CreditInfo = { availableCents: number } | null | undefined;
+
+function creditHint(credit: CreditInfo): string {
+  if (credit === undefined) return 'Para vender no crediário, informe o CPF ou CNPJ do cliente (F6).';
+  if (credit === null) return 'Este cliente não tem crediário. O limite é liberado no cadastro do cliente.';
+  return `Disponível no crediário: ${brl(credit.availableCents)}.`;
+}
 
 /**
  * Several payments on one sale. Pix and cards use simulators until the real PSP/TEF
@@ -282,10 +295,12 @@ const METHOD_KEYS: { method: PaymentMethod; key: string }[] = [
  */
 export function PaymentDialog({
   totalCents,
+  credit,
   onPaid,
   onClose,
 }: {
   totalCents: number;
+  credit?: CreditInfo;
   onPaid: (tenders: TenderInput[]) => Promise<void>;
   onClose: () => void;
 }) {
@@ -315,6 +330,11 @@ export function PaymentDialog({
     if (received === null || received <= 0) return setError('Informe um valor válido.');
     if (method !== 'cash' && received > remaining) return setError('Só pagamento em dinheiro pode passar do valor (para dar troco).');
     if (method === 'pix') return setPixPending(received);
+    if (method === 'store_credit') {
+      const used = tenders.filter((t) => t.method === 'store_credit').reduce((a, t) => a + t.receivedCents, 0);
+      if (!credit) return setError(creditHint(credit));
+      if (used + received > credit.availableCents) return setError(creditHint(credit));
+    }
     if (method === 'credit' || method === 'debit' || method === 'voucher') {
       setBusy(true);
       const result = await tef.pay({ amountCents: received, method, saleId: 'pending' });
@@ -374,7 +394,8 @@ export function PaymentDialog({
                   ))}
                 </div>
               )}
-              {method !== 'cash' && <p className="text-sm text-muted">Simulador: a integração real com Pix e maquininhas chega na Fase 6.</p>}
+              {method === 'store_credit' && <p className="text-sm text-muted">{creditHint(credit)}</p>}
+              {method !== 'cash' && method !== 'store_credit' && <p className="text-sm text-muted">Simulador: a integração real com Pix e maquininhas chega na Fase 6.</p>}
               <Button type="submit" loading={busy}>
                 Adicionar {PAYMENT_LABELS[method].toLowerCase()}
               </Button>

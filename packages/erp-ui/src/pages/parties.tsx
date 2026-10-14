@@ -1,4 +1,13 @@
-import { formatTaxId, type Page, type Party, type PriceTable } from '@bipae/domain';
+import {
+  cents,
+  formatBRL,
+  formatTaxId,
+  parseBRL,
+  type CustomerCredit,
+  type Page,
+  type Party,
+  type PriceTable,
+} from '@bipae/domain';
 import {
   Alert,
   Button,
@@ -125,7 +134,12 @@ function PartyForm({
     notes: party?.notes ?? '',
     marketingConsent: party?.marketingConsent ?? false,
     priceTableId: party?.priceTableId ?? '',
+    creditLimit:
+      party?.creditLimitCents != null
+        ? formatBRL(cents(party.creditLimitCents)).replace('R$ ', '')
+        : '',
   });
+  const canCredit = useCan('parties.credit');
   const tables = useQuery({
     queryKey: ['price-tables'],
     queryFn: () => api.get<PriceTable[]>('/price-tables'),
@@ -134,9 +148,18 @@ function PartyForm({
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    void form.submit(async (v) => {
+    void form.submit(async ({ creditLimit, ...v }) => {
+      // Limite do crediário: só quem tem a permissão manda o campo (sem ele, fica o atual).
+      let creditLimitCents: number | null | undefined;
+      if (kind === 'customer' && canCredit) {
+        creditLimitCents = creditLimit.trim() ? parseBRL(creditLimit) : null;
+        if (creditLimitCents === null && creditLimit.trim()) {
+          throw new Error('Limite do crediário inválido. Use reais, por exemplo 500,00.');
+        }
+      }
       const body = {
         ...v,
+        ...(creditLimitCents !== undefined && { creditLimitCents }),
         taxId: v.taxId || null,
         address: party?.address ?? null,
         priceTableId: kind === 'customer' ? v.priceTableId || null : undefined,
@@ -204,6 +227,21 @@ function PartyForm({
           />
         )}
         {kind === 'customer' && (
+          <TextField
+            label="Limite do crediário (R$)"
+            hint={
+              canCredit
+                ? 'Deixe em branco para não vender no crediário. Precisa do CPF ou CNPJ.'
+                : 'Só quem pode liberar crediário muda o limite.'
+            }
+            inputMode="decimal"
+            value={form.values.creditLimit}
+            onChange={(e) => form.set('creditLimit', e.target.value)}
+            disabled={!canCredit}
+          />
+        )}
+        {kind === 'customer' && party?.taxId && <CreditPanel customerId={party.id} />}
+        {kind === 'customer' && (
           <Checkbox
             label="Aceita receber ofertas por WhatsApp ou e-mail"
             hint="Marque só se o cliente autorizou. Fica registrado (LGPD)."
@@ -221,5 +259,83 @@ function PartyForm({
         </div>
       </form>
     </Drawer>
+  );
+}
+
+const ENTRY_LABEL: Record<CustomerCredit['entries'][number]['kind'], string> = {
+  sale: 'Compra no crediário',
+  cancel: 'Venda cancelada',
+  return: 'Devolução',
+  payment: 'Pagamento recebido',
+};
+
+/** Crediário do cliente (F2-02): saldo, disponível, extrato e recebimento. */
+function CreditPanel({ customerId }: { customerId: string }) {
+  const { api } = useApp();
+  const queryClient = useQueryClient();
+  const canReceive = useCan('parties.credit');
+  const credit = useQuery({
+    queryKey: ['customer-credit', customerId],
+    queryFn: () => api.get<CustomerCredit>(`/customers/${customerId}/credit`),
+  });
+  const [amount, setAmount] = useState('');
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const data = credit.data;
+  if (!data || (data.limitCents === null && data.entries.length === 0)) return null;
+
+  const receive = async () => {
+    const value = parseBRL(amount);
+    if (!value) return setMessage({ ok: false, text: 'Informe o valor recebido.' });
+    setBusy(true);
+    setMessage(null);
+    try {
+      await api.post(`/customers/${customerId}/credit/payments`, { amountCents: value });
+      setAmount('');
+      setMessage({ ok: true, text: `Recebido ${formatBRL(cents(value))}.` });
+      await queryClient.invalidateQueries({ queryKey: ['customer-credit', customerId] });
+    } catch (error) {
+      setMessage({ ok: false, text: (error as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section aria-label="Crediário" className="flex flex-col gap-3 rounded-ui bg-surface-2 p-4">
+      <h3 className="font-semibold">Crediário</h3>
+      <p>
+        Saldo devedor: <strong>{formatBRL(cents(data.balanceCents))}</strong>
+        {data.availableCents !== null && (
+          <> · disponível: {formatBRL(cents(data.availableCents))}</>
+        )}
+      </p>
+      {data.entries.length > 0 && (
+        <ul className="flex flex-col gap-1 text-sm">
+          {data.entries.slice(0, 10).map((entry) => (
+            <li key={entry.id} className="flex justify-between gap-2">
+              <span>
+                {new Date(entry.createdAt).toLocaleDateString('pt-BR')} · {ENTRY_LABEL[entry.kind]}
+              </span>
+              <span className="tabular-nums">{formatBRL(cents(entry.amountCents))}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {canReceive && data.balanceCents > 0 && (
+        <div className="flex flex-wrap items-end gap-2">
+          <TextField
+            label="Receber (R$)"
+            inputMode="decimal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <Button variant="secondary" loading={busy} onClick={() => void receive()}>
+            Registrar pagamento
+          </Button>
+        </div>
+      )}
+      {message && <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>}
+    </section>
   );
 }

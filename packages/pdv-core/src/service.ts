@@ -1,4 +1,6 @@
 import {
+  cents,
+  formatBRL,
   terminalEvent,
   uuidv7,
   type FiscalSnapshot,
@@ -198,7 +200,10 @@ export class PdvService {
     await this.storage.transaction(async (tx) => {
       await tx.execute('DELETE FROM fiscal_profiles');
       for (const { id, ...data } of fiscal.profiles) {
-        await tx.execute('INSERT INTO fiscal_profiles (id, data) VALUES (?, ?)', [id, JSON.stringify(data)]);
+        await tx.execute('INSERT INTO fiscal_profiles (id, data) VALUES (?, ?)', [
+          id,
+          JSON.stringify(data),
+        ]);
       }
       await setMeta(tx, 'company_uf', fiscal.company.uf ?? '');
       await setMeta(tx, 'company_tax_regime', fiscal.company.taxRegime ?? '');
@@ -212,7 +217,9 @@ export class PdvService {
     profiles: Map<string, Omit<FiscalSnapshot['profiles'][number], 'id'>>;
     icmsRules: NonNullable<FiscalSnapshot['icmsRules']>;
   }> {
-    const rows = await this.storage.query<{ id: string; data: string }>('SELECT id, data FROM fiscal_profiles');
+    const rows = await this.storage.query<{ id: string; data: string }>(
+      'SELECT id, data FROM fiscal_profiles',
+    );
     return {
       company: {
         uf: (await getMeta(this.storage, 'company_uf')) || null,
@@ -229,6 +236,13 @@ export class PdvService {
       await tx.execute('DELETE FROM price_table_items');
       await tx.execute('DELETE FROM price_tables');
       await tx.execute('DELETE FROM customer_price_tables');
+      await tx.execute('DELETE FROM customer_credit');
+      for (const c of pricing.credit ?? []) {
+        await tx.execute(
+          'INSERT INTO customer_credit (tax_id, limit_cents, balance_cents) VALUES (?, ?, ?)',
+          [c.taxId, c.limitCents, c.balanceCents],
+        );
+      }
       for (const table of pricing.tables) {
         await tx.execute('INSERT INTO price_tables (id, name) VALUES (?, ?)', [
           table.id,
@@ -251,6 +265,43 @@ export class PdvService {
         await setMeta(tx, 'store_price_table_id', pricing.storePriceTableId);
       else await tx.execute("DELETE FROM meta WHERE key = 'store_price_table_id'");
     });
+  }
+
+  /**
+   * Crediário do cliente no caixa (F2-02): o limite e o saldo do último retrato, menos as vendas
+   * no crediário deste caixa que ainda não subiram. Null quando o cliente não tem crediário.
+   */
+  async creditAvailable(
+    taxId: string,
+  ): Promise<{ limitCents: number; availableCents: number } | null> {
+    const [row] = await this.storage.query<{ limit_cents: number; balance_cents: number }>(
+      'SELECT limit_cents, balance_cents FROM customer_credit WHERE tax_id = ?',
+      [taxId],
+    );
+    if (!row) return null;
+    const pending = await this.storage.query<{ payload: string }>(
+      "SELECT payload FROM outbox WHERE sent_at IS NULL AND type = 'sale.completed'",
+    );
+    let pendingCents = 0;
+    for (const { payload } of pending) {
+      // A coluna guarda o evento inteiro; a venda está em `payload`.
+      const sale = (
+        JSON.parse(payload) as {
+          payload: {
+            customerTaxId?: string | null;
+            payments?: { method: string; amountCents: number }[];
+          };
+        }
+      ).payload;
+      if (sale.customerTaxId !== taxId) continue;
+      for (const p of sale.payments ?? [])
+        if (p.method === 'store_credit') pendingCents += p.amountCents;
+    }
+    const limitCents = Number(row.limit_cents);
+    return {
+      limitCents,
+      availableCents: Math.max(0, limitCents - Number(row.balance_cents) - pendingCents),
+    };
   }
 
   async catalogSize(): Promise<number> {
@@ -438,6 +489,25 @@ export class PdvService {
     const summary = summarizePayments(t.totalCents, tenders);
     if (summary.remainingCents > 0)
       throw new PdvError('Ainda falta receber parte do valor da venda.');
+    const onCredit = summary.payments
+      .filter((p) => p.method === 'store_credit')
+      .reduce((sum, p) => sum + p.amountCents, 0);
+    if (onCredit > 0) {
+      if (!cart.customerTaxId) {
+        throw new PdvError('Para vender no crediário, informe o CPF ou CNPJ do cliente (F6).');
+      }
+      const credit = await this.creditAvailable(cart.customerTaxId);
+      if (!credit) {
+        throw new PdvError(
+          'Este cliente não tem crediário. O limite é liberado no cadastro do cliente.',
+        );
+      }
+      if (onCredit > credit.availableCents) {
+        throw new PdvError(
+          `O crediário deste cliente tem só ${formatBRL(cents(credit.availableCents))} disponíveis.`,
+        );
+      }
+    }
 
     const sale: StoredSale = {
       id: this.newId(),
@@ -486,7 +556,11 @@ export class PdvService {
       const { company, profiles, icmsRules } = await this.fiscalContext();
       if (!company.uf && !company.taxRegime) return items;
       const ids = [...new Set(items.map((item) => item.productId))];
-      const rows = await this.storage.query<{ id: string; fiscal_profile_id: string | null; ncm: string | null }>(
+      const rows = await this.storage.query<{
+        id: string;
+        fiscal_profile_id: string | null;
+        ncm: string | null;
+      }>(
         `SELECT id, fiscal_profile_id, ncm FROM products WHERE id IN (${ids.map(() => '?').join(', ')})`,
         ids,
       );
@@ -502,7 +576,9 @@ export class PdvService {
         date: localDate(this.now()),
         rules: icmsRules,
       });
-      return summaries ? items.map((item, index) => ({ ...item, taxes: summaries[index]! })) : items;
+      return summaries
+        ? items.map((item, index) => ({ ...item, taxes: summaries[index]! }))
+        : items;
     } catch {
       return items;
     }

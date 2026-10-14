@@ -339,7 +339,9 @@ describe('impostos calculados ao fechar a venda (F3-06.d3)', () => {
     await pdv.openSession(0);
     const carrinho = itens.reduce((cart, item) => addItem(cart, item), EMPTY_CART);
     const total = itens.reduce((soma, item) => soma + item.priceCents, 0);
-    return pdv.completeSale(carrinho, [{ method: 'pix', receivedCents: total }], { discountLimitPercent: 10 });
+    return pdv.completeSale(carrinho, [{ method: 'pix', receivedCents: total }], {
+      discountLimitPercent: 10,
+    });
   };
 
   it('empresa sem UF e sem regime: a venda sai sem resumo de impostos', async () => {
@@ -353,7 +355,10 @@ describe('impostos calculados ao fechar a venda (F3-06.d3)', () => {
       company: { uf: 'SP', taxRegime: 'real' },
       profiles: [{ id: PERFIL, ...perfil }],
     });
-    const comPerfil = { ...product({ name: 'Arroz', priceCents: 10_000 }), fiscalProfileId: PERFIL };
+    const comPerfil = {
+      ...product({ name: 'Arroz', priceCents: 10_000 }),
+      fiscalProfileId: PERFIL,
+    };
     const semPerfil = product({ name: 'Sem perfil', priceCents: 5000 });
     const venda = await vender([comPerfil, semPerfil]);
 
@@ -378,7 +383,9 @@ describe('impostos calculados ao fechar a venda (F3-06.d3)', () => {
     // O evento que vai para o servidor leva os mesmos impostos e passa na validação do domínio.
     const evento = (await pdv.pendingEvents()).find((e) => e.type === 'sale.completed')!;
     expect(terminalEvent.safeParse(evento).success).toBe(true);
-    expect((evento.payload as { items: { taxes?: unknown }[] }).items[0]!.taxes).toEqual(venda.items[0]!.taxes);
+    expect((evento.payload as { items: { taxes?: unknown }[] }).items[0]!.taxes).toEqual(
+      venda.items[0]!.taxes,
+    );
     // E a venda guardada no caixa também.
     expect((await pdv.getSale(venda.id))!.items[0]!.taxes).toEqual(venda.items[0]!.taxes);
   });
@@ -399,11 +406,19 @@ describe('impostos calculados ao fechar a venda (F3-06.d3)', () => {
     );
     // 90,00 × 18% = 16,20
     expect(venda.items[0]!.totalCents).toBe(9000);
-    expect(venda.items[0]!.taxes).toMatchObject({ icmsCents: 1620, pisCents: 59, cofinsCents: 270 });
+    expect(venda.items[0]!.taxes).toMatchObject({
+      icmsCents: 1620,
+      pisCents: 59,
+      cofinsCents: 270,
+    });
   });
 
   it('um problema nos dados fiscais nunca impede a venda', async () => {
-    await pdv.applyFiscal({ version: 'v1', company: { uf: 'SP', taxRegime: 'real' }, profiles: [] });
+    await pdv.applyFiscal({
+      version: 'v1',
+      company: { uf: 'SP', taxRegime: 'real' },
+      profiles: [],
+    });
     // Dado corrompido no aparelho: o cálculo falha, a venda acontece do mesmo jeito.
     await storage.execute("INSERT INTO fiscal_profiles (id, data) VALUES ('x', 'isto não é JSON')");
     const venda = await vender([product({ priceCents: 10_000 })]);
@@ -418,11 +433,72 @@ describe('numeração alinhada com o servidor (F3-12)', () => {
     const p = product();
     await pdv.applyCatalog([p]);
     await pdv.openSession(0);
-    const vender = () => pdv.completeSale(addItem(EMPTY_CART, p), [{ method: 'pix', receivedCents: p.priceCents }], { discountLimitPercent: 10 });
+    const vender = () =>
+      pdv.completeSale(addItem(EMPTY_CART, p), [{ method: 'pix', receivedCents: p.priceCents }], {
+        discountLimitPercent: 10,
+      });
     await pdv.alignSaleSequence(41);
     expect((await vender()).terminalSeq).toBe(42);
     await pdv.alignSaleSequence(10);
     await pdv.alignSaleSequence(-1);
     expect((await vender()).terminalSeq).toBe(43);
+  });
+});
+
+describe('crediário no caixa (F2-02)', () => {
+  const CPF = '52998224725';
+  const pricing = (balanceCents: number) => ({
+    version: 'v1',
+    storePriceTableId: null,
+    tables: [],
+    customers: [],
+    credit: [{ taxId: CPF, limitCents: 10_000, balanceCents }],
+  });
+
+  it('confere o limite com o saldo do servidor e as vendas que ainda não subiram', async () => {
+    const arroz = product({ priceCents: 4000 });
+    await pdv.applyCatalog([arroz]);
+    await pdv.applyPricing(pricing(2000));
+    await pdv.openSession(0);
+    const item = (await pdv.findByCode(arroz.id)) ?? (await pdv.search('arroz'))[0]!;
+    const cart = { ...addItem(EMPTY_CART, item, 1000), customerTaxId: CPF };
+    const options = { discountLimitPercent: 10 };
+
+    expect(await pdv.creditAvailable(CPF)).toEqual({ limitCents: 10_000, availableCents: 8000 });
+    expect(await pdv.creditAvailable('11144477735')).toBeNull();
+    await pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 4000 }], options);
+    expect((await pdv.creditAvailable(CPF))!.availableCents).toBe(4000);
+    await pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 4000 }], options);
+    await expect(
+      pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 4000 }], options),
+    ).rejects.toThrow('R$ 0,00 disponíveis');
+    // Parte no crediário, parte em dinheiro: só a parte do crediário conta.
+    await pdv.applyPricing(pricing(9000));
+    await expect(
+      pdv.completeSale(
+        cart,
+        [
+          { method: 'store_credit', receivedCents: 100 },
+          { method: 'cash', receivedCents: 3900 },
+        ],
+        options,
+      ),
+    ).rejects.toBeInstanceOf(PdvError);
+  });
+
+  it('sem CPF ou cliente sem crediário, a venda no crediário é recusada', async () => {
+    const arroz = product({ priceCents: 1000 });
+    await pdv.applyCatalog([arroz]);
+    await pdv.applyPricing({ ...pricing(0), credit: undefined });
+    await pdv.openSession(0);
+    const item = (await pdv.search('arroz'))[0]!;
+    const options = { discountLimitPercent: 10 };
+    const tender = [{ method: 'store_credit' as const, receivedCents: 1000 }];
+    await expect(
+      pdv.completeSale(addItem(EMPTY_CART, item, 1000), tender, options),
+    ).rejects.toThrow('informe o CPF ou CNPJ');
+    await expect(
+      pdv.completeSale({ ...addItem(EMPTY_CART, item, 1000), customerTaxId: CPF }, tender, options),
+    ).rejects.toThrow('não tem crediário');
   });
 });

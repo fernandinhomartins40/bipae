@@ -1,12 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { customerInput, partyInput, uuidv7, type Page, type Party } from '@bipae/domain';
-import { asc, count, eq, ilike, or, sql, type SQL } from 'drizzle-orm';
+import {
+  creditPaymentInput,
+  customerInput,
+  partyInput,
+  uuidv7,
+  type CustomerCredit,
+  type Page,
+  type Party,
+} from '@bipae/domain';
+import { asc, count, desc, eq, ilike, or, sql, type SQL } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
-import { withTenant, type Db } from '../../db/client';
-import { customers, priceTables, suppliers } from '../../db/schema';
+import { withTenant, type Db, type Tx } from '../../db/client';
+import { customerCreditEntries, customers, priceTables, suppliers } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 
 export type PartyKind = 'customer' | 'supplier';
@@ -27,6 +35,7 @@ function toParty(row: typeof customers.$inferSelect | typeof suppliers.$inferSel
     ...('marketingConsent' in row && {
       marketingConsent: row.marketingConsent,
       priceTableId: row.priceTableId,
+      creditLimitCents: row.creditLimitCents,
     }),
     updatedAt: row.updatedAt.toISOString(),
   };
@@ -98,15 +107,35 @@ export class PartiesService {
     };
     return withTenant(this.db, ctx, async (tx) => {
       let consentChanged = false;
+      let limitChanged = false;
+      let creditLimit: number | null = null;
       let values: Record<string, unknown> = base;
       if (kind === 'customer' && 'marketingConsent' in input) {
         const [current] = id
           ? await tx
-              .select({ consent: customers.marketingConsent })
+              .select({ consent: customers.marketingConsent, limit: customers.creditLimitCents })
               .from(customers)
               .where(eq(customers.id, id))
           : [];
         consentChanged = (current?.consent ?? false) !== input.marketingConsent;
+        // Limite do crediário: campo ausente mantém o atual; mudar exige a permissão própria.
+        const asked = (input as CustomerData).creditLimitCents;
+        creditLimit = asked === undefined ? (current?.limit ?? null) : asked;
+        limitChanged = creditLimit !== (current?.limit ?? null);
+        if (limitChanged && !ctx.permissions.includes('parties.credit')) {
+          throw new AppError(
+            403,
+            'forbidden',
+            'Você não tem permissão para mudar o limite do crediário.',
+          );
+        }
+        if (creditLimit !== null && !base.taxId) {
+          throw new AppError(
+            422,
+            'credit_needs_tax_id',
+            'Para vender no crediário, informe o CPF ou CNPJ do cliente.',
+          );
+        }
         const priceTableId = (input as CustomerData).priceTableId ?? null;
         if (priceTableId) {
           // FK checks ignore RLS: confirm the table belongs to this client.
@@ -121,6 +150,7 @@ export class PartiesService {
           ...base,
           priceTableId,
           marketingConsent: input.marketingConsent,
+          creditLimitCents: creditLimit,
           ...(consentChanged && { marketingConsentAt: new Date() }),
         };
       }
@@ -152,7 +182,94 @@ export class PartiesService {
           data: { consent: (input as CustomerData).marketingConsent, channel: 'backoffice' },
         });
       }
+      if (limitChanged) {
+        await this.audit.record(tx, ctx, {
+          action: 'customer.credit_limit_changed',
+          entity: 'customer',
+          entityId: row.id,
+          data: { limitCents: creditLimit },
+        });
+      }
       return toParty(row);
     });
+  }
+
+  /** Saldo devedor do crediário pelo CPF/CNPJ: a soma do extrato. */
+  private async balance(tx: Tx, taxId: string): Promise<number> {
+    const [sum] = await tx
+      .select({ cents: sql<string>`coalesce(sum(${customerCreditEntries.amountCents}), 0)::text` })
+      .from(customerCreditEntries)
+      .where(eq(customerCreditEntries.customerTaxId, taxId));
+    return Number(sum?.cents ?? 0);
+  }
+
+  /** Crediário do cliente (F2-02): limite, saldo devedor e o extrato, mais novo primeiro. */
+  async credit(ctx: RequestContext, id: string): Promise<CustomerCredit> {
+    return withTenant(this.db, ctx, async (tx) => {
+      const [customer] = await tx.select().from(customers).where(eq(customers.id, id));
+      if (!customer) throw notFound('Cliente');
+      const limitCents = customer.creditLimitCents;
+      if (!customer.taxId)
+        return { limitCents, balanceCents: 0, availableCents: null, entries: [] };
+      const balanceCents = await this.balance(tx, customer.taxId);
+      const entries = await tx
+        .select()
+        .from(customerCreditEntries)
+        .where(eq(customerCreditEntries.customerTaxId, customer.taxId))
+        .orderBy(desc(customerCreditEntries.createdAt))
+        .limit(100);
+      return {
+        limitCents,
+        balanceCents,
+        availableCents: limitCents === null ? null : Math.max(0, limitCents - balanceCents),
+        entries: entries.map((e) => ({
+          id: e.id,
+          kind: e.kind,
+          amountCents: e.amountCents,
+          saleId: e.saleId,
+          note: e.note,
+          createdAt: e.createdAt.toISOString(),
+        })),
+      };
+    });
+  }
+
+  /** Recebe uma parcela do crediário: diminui o saldo e fica na auditoria. */
+  async receiveCredit(
+    ctx: RequestContext,
+    id: string,
+    input: z.output<typeof creditPaymentInput>,
+  ): Promise<CustomerCredit> {
+    await withTenant(this.db, ctx, async (tx) => {
+      const [customer] = await tx.select().from(customers).where(eq(customers.id, id));
+      if (!customer) throw notFound('Cliente');
+      if (!customer.taxId) {
+        throw new AppError(422, 'credit_needs_tax_id', 'O cliente não tem CPF ou CNPJ cadastrado.');
+      }
+      if (input.amountCents > (await this.balance(tx, customer.taxId))) {
+        throw new AppError(
+          422,
+          'credit_overpaid',
+          'O valor é maior que o saldo devedor do cliente no crediário.',
+        );
+      }
+      const entryId = uuidv7();
+      await tx.insert(customerCreditEntries).values({
+        id: entryId,
+        tenantId: ctx.tenantId,
+        customerTaxId: customer.taxId,
+        kind: 'payment',
+        amountCents: -input.amountCents,
+        note: input.note ?? null,
+        createdBy: ctx.userId,
+      });
+      await this.audit.record(tx, ctx, {
+        action: 'customer.credit_payment',
+        entity: 'customer',
+        entityId: id,
+        data: { amountCents: input.amountCents, entryId },
+      });
+    });
+    return this.credit(ctx, id);
   }
 }

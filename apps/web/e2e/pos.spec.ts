@@ -204,3 +204,46 @@ test('desconto em um item só, escolhido na lista (F2-01)', async ({ page }) => 
   await page.getByRole('button', { name: 'Aplicar desconto' }).click();
   await expect(page.getByText('O desconto não pode ser maior que o valor do item.')).toBeVisible();
 });
+
+test('crediário: limite no cadastro do cliente e venda no caixa com o CPF (F2-02)', async ({
+  page,
+}) => {
+  await signupWithProducts(page);
+  await page.getByRole('link', { name: 'Clientes', exact: true }).click();
+  await page.getByRole('button', { name: 'Novo cliente' }).click();
+  await page.getByLabel('Nome').first().fill('Dona Cida');
+  await page.getByLabel('CPF ou CNPJ').fill('52998224725');
+  await page.getByLabel('Limite do crediário (R$)').fill('5,00');
+  await page.getByRole('button', { name: 'Salvar', exact: true }).click();
+  await expect(page.getByRole('row', { name: /Dona Cida/ })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Abrir o caixa' }).click();
+  await page.getByLabel('Novo caixa').fill('Caixa 1');
+  await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByRole('button', { name: 'Abrir caixa' }).click();
+  await scan(page, '78912342');
+  await page.keyboard.press('F6');
+  await page.getByLabel('CPF ou CNPJ do cliente').fill('52998224725');
+  await page.getByRole('button', { name: 'Confirmar' }).click();
+
+  await page.keyboard.press('F10');
+  await page.getByRole('radio', { name: 'Crediário' }).click();
+  await expect(page.getByText('Disponível no crediário: R$ 5,00.')).toBeVisible();
+  await page.getByRole('button', { name: 'Adicionar crediário' }).click();
+  await page.getByRole('button', { name: 'Finalizar venda' }).click();
+  await expect(page.getByText('Bipaê! Venda nº 1 concluída.')).toBeVisible();
+
+  // Segunda venda: só sobram R$ 2,01, menos que a água.
+  await scan(page, '78912342');
+  await page.keyboard.press('F6');
+  await page.getByLabel('CPF ou CNPJ do cliente').fill('52998224725');
+  await page.getByRole('button', { name: 'Confirmar' }).click();
+  await page.keyboard.press('F10');
+  await page.getByRole('radio', { name: 'Crediário' }).click();
+  await expect(page.getByText('Disponível no crediário: R$ 2,01.')).toBeVisible();
+  await page.getByRole('button', { name: 'Adicionar crediário' }).click();
+  await expect(page.getByRole('alert').filter({ hasText: 'Disponível no crediário' })).toBeVisible();
+});

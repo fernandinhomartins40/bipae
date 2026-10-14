@@ -1,5 +1,12 @@
 # Changelog
 
+## [F2-02 Crediário com limite por cliente] — 14/10/2026
+
+### Adicionado
+- **Limite do crediário no cadastro do cliente** (precisa do CPF ou CNPJ). Só quem tem a permissão nova "Definir limite e receber no crediário" muda o limite; Dono e Gerente já a recebem. A mudança fica na auditoria.
+- **Crediário no caixa, mesmo sem internet**: com o CPF na nota (F6), a forma "Crediário" (tecla R) mostra o disponível e não deixa passar do limite, contando as vendas que ainda não subiram.
+- **Extrato do crediário** na ficha do cliente: compras, cancelamentos, devoluções e pagamentos. O botão "Registrar pagamento" baixa o saldo e fica na auditoria.
+
 ## [F2-01 Desconto por item no caixa] — 14/10/2026
 
 ### Adicionado
