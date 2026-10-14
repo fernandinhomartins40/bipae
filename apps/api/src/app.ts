@@ -30,6 +30,9 @@ import { PlatformGuard } from './modules/admin/platform.guard';
 import { LimitsService } from './modules/account/limits.service';
 import { DownloadsController, DownloadsService } from './modules/downloads/downloads.controller';
 import { FiscalController } from './modules/fiscal/fiscal.controller';
+import { MERCADOFLOW_CLIENT, MercadoflowClient } from './modules/mercadoflow/mercadoflow.client';
+import { MercadoflowOutbox } from './modules/mercadoflow/mercadoflow.outbox';
+import { MercadoflowWebhookController, MercadoflowWebhooks } from './modules/mercadoflow/mercadoflow.webhook';
 import { PurchasesController } from './modules/purchases/purchases.controller';
 import { PurchasesService } from './modules/purchases/purchases.service';
 import { CertificatesService } from './modules/fiscal/certificates.service';
@@ -93,6 +96,7 @@ class AppModule {
         DownloadsController,
         FiscalController,
         PurchasesController,
+        MercadoflowWebhookController,
       ],
       providers: [
         { provide: CONFIG, useValue: config },
@@ -113,6 +117,16 @@ class AppModule {
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },
         SefazService,
         PurchasesService,
+        {
+          provide: MERCADOFLOW_CLIENT,
+          useValue: new MercadoflowClient({
+            apiUrl: config.MERCADOFLOW_API_URL,
+            clientId: config.MERCADOFLOW_CLIENT_ID,
+            clientSecret: config.MERCADOFLOW_CLIENT_SECRET,
+          }),
+        },
+        MercadoflowOutbox,
+        MercadoflowWebhooks,
         PartiesService,
         SyncService,
         SalesService,
@@ -134,7 +148,8 @@ export async function createApp(config: Config, database: Database) {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule.forRoot(config, database),
     new FastifyAdapter({ trustProxy: true, bodyLimit: 2 * 1024 * 1024 }),
-    { logger: config.NODE_ENV === 'test' ? false : ['error', 'warn', 'log'] },
+    // rawBody: o aviso do MercadoFlow é conferido pela assinatura do corpo como chegou.
+    { logger: config.NODE_ENV === 'test' ? false : ['error', 'warn', 'log'], rawBody: true },
   );
   app.setGlobalPrefix('v1');
 

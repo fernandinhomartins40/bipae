@@ -21,7 +21,14 @@ const PLATFORM_TABLES = [
   'admin_sessions',
   'platform_audit_log',
   'announcements',
+  // Avisos do MercadoFlow: chegam sem cliente; só a plataforma lê (ADR-0015).
+  'mercadoflow_webhook_deliveries',
+  // Cache do catálogo: dado público de produto, sem informação de cliente (ADR-0015).
+  'mercadoflow_catalog_cache',
 ];
+
+/** Tabelas da plataforma que o cliente pode ler: o catálogo de planos e o cache do catálogo. */
+const SHARED_TABLES = ['plans', 'mercadoflow_catalog_cache'];
 
 /** Every table protected by tenant RLS (must match the list in 0001_init.sql). */
 const TENANT_TABLES = [
@@ -74,7 +81,7 @@ describe('row-level security (ADR-0003)', () => {
 
   it('client code has no access at all to platform tables (no RLS needed there)', async () => {
     const owner = await signup(t.app);
-    for (const table of PLATFORM_TABLES.filter((t) => t !== 'plans')) {
+    for (const table of PLATFORM_TABLES.filter((t) => !SHARED_TABLES.includes(t))) {
       await expect(
         withTenant(t.database.db, { tenantId: owner.me.tenant.id }, (tx) =>
           tx.execute(sql.raw(`select 1 from ${table} limit 1`)),

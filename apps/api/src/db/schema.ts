@@ -189,6 +189,8 @@ export const products = pgTable('products', {
   fiscalProfileId: uuid('fiscal_profile_id'),
   parentId: uuid('parent_id'),
   attributes: jsonb('attributes').$type<Record<string, string>>(),
+  /** Marca, fabricante, departamento, categoria e conteúdo (catálogo, MF-02). */
+  catalog: jsonb('catalog').$type<Record<string, unknown>>(),
   version: integer('version').notNull().default(1),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
@@ -449,6 +451,74 @@ export const supplierProductCodes = pgTable(
   },
   (t) => [primaryKey({ columns: [t.tenantId, t.supplierId, t.supplierCode] })],
 );
+
+// ---------------------------------------------------------------- MercadoFlow (0012)
+
+export const mercadoflowLinks = pgTable('mercadoflow_links', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  marketId: text('market_id'),
+  status: text('status', {
+    enum: ['PENDENTE', 'ATIVA', 'REVOGADA', 'RECUSADA', 'EXPIRADA'],
+  }).notNull(),
+  connectCode: text('connect_code'),
+  connectUrl: text('connect_url'),
+  scopes: text('scopes').array().notNull().default([]),
+  createdVia: text('created_via', { enum: ['ACCOUNT', 'CONNECT'] }).notNull(),
+  customerActiveSent: boolean('customer_active_sent'),
+  connectedAt: ts('connected_at'),
+  revokedAt: ts('revoked_at'),
+  lastSalesSyncAt: ts('last_sales_sync_at'),
+  lastError: text('last_error'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+export const mercadoflowOutbox = pgTable('mercadoflow_outbox', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id'),
+  kind: text('kind').notNull(),
+  dedupeKey: text('dedupe_key').notNull(),
+  payload: jsonb('payload').notNull(),
+  status: text('status', { enum: ['pending', 'sent', 'rejected'] })
+    .notNull()
+    .default('pending'),
+  attempts: integer('attempts').notNull().default(0),
+  nextAttemptAt: ts('next_attempt_at').notNull().defaultNow(),
+  lastError: text('last_error'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  sentAt: ts('sent_at'),
+});
+
+export const productPacks = pgTable(
+  'product_packs',
+  {
+    tenantId: uuid('tenant_id').notNull(),
+    packGtin: text('pack_gtin').notNull(),
+    productId: uuid('product_id').notNull(),
+    unitsPerPack: integer('units_per_pack').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.tenantId, t.packGtin] })],
+);
+
+export const mercadoflowWebhookDeliveries = pgTable('mercadoflow_webhook_deliveries', {
+  deliveryId: text('delivery_id').primaryKey(),
+  event: text('event').notNull(),
+  marketId: text('market_id'),
+  payload: jsonb('payload').notNull(),
+  receivedAt: ts('received_at').notNull().defaultNow(),
+  processedAt: ts('processed_at'),
+  error: text('error'),
+});
+
+export const mercadoflowCatalogCache = pgTable('mercadoflow_catalog_cache', {
+  cacheKey: text('cache_key').primaryKey(),
+  payload: jsonb('payload').notNull(),
+  expiresAt: ts('expires_at').notNull(),
+});
 
 // ---------------------------------------------------------------- SaaS platform (0003)
 

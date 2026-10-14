@@ -1,5 +1,14 @@
 # Changelog
 
+## [MF-01 Base da integração MercadoFlow] — 13/10/2026
+
+### Adicionado
+- **Base da integração com o MercadoFlow** (ADR-0015), desligada enquanto as credenciais não forem configuradas: sem elas, nada muda no Bipaê.
+- Cliente da API de parceiro com token em memória (renovado antes de vencer), nova tentativa com espera crescente e tempo limite por chamada.
+- **Fila de envio em tabela (outbox):** o caixa nunca espera o MercadoFlow; com ele fora do ar, o envio fica guardado e é repetido depois. Recusa por dado errado não entra em laço.
+- **Webhook** com assinatura conferida (HMAC do corpo) e entrega repetida ignorada. Já trata o vínculo aprovado e o vínculo encerrado.
+- Tabelas do vínculo por loja, das embalagens de compra (caixa e fardo) e do cache do catálogo.
+
 ## [F3-25 Alíquotas por produto] — 13/10/2026
 
 ### Adicionado

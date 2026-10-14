@@ -185,6 +185,23 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] P-06 · PDV Embed: publicar o `bipae-pdv.js` em endereço fixo versionado no site
 - [ ] P-07 · PDV Embed: integrar na primeira aplicação real e rodar a conformidade — externo: E16
 
+## Integração MercadoFlow
+
+Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pronto). Sem as variáveis `MERCADOFLOW_*`, o Bipaê funciona como hoje.
+
+- [x] MF-01 · Base: configuração, cliente HTTP com cache de token e nova tentativa, outbox em tabela, vínculos por loja e webhook com HMAC e idempotência
+- [ ] MF-02 · Catálogo nativo no cadastro de produto: bipar o código ou buscar pelo nome preenche tudo (sem imagem até o E12), com cache e NCM/CEST conferidos na tabela oficial — depende: MF-01
+- [ ] MF-03 · Catálogo: importação em massa revisada e devolução ao catálogo do que as lojas cadastram — depende: MF-02
+- [ ] MF-04 · Tela "MercadoFlow" nas configurações: criar conta, vincular conta existente, cliente ativo e desconto — depende: MF-01
+- [ ] MF-05 · Rede compartilhada no compose da VPS, credenciais e registro do webhook — depende: MF-01
+- [ ] MF-06 · Catálogo: imagens e fotos genéricas guardadas no Bipaê — depende: MF-02 · externo: E12
+- [ ] MF-07 · Catálogo: cadastro rápido no caixa, com tempo limite de 1,5 s — depende: MF-02
+- [ ] MF-08 · Vendas: NFC-e autorizada e cancelamento pela outbox, e carga inicial de 90 dias — depende: MF-04, F3-14
+- [ ] MF-09 · Confere dentro do Bipaê (notas de entrada, conferência e entrada no estoque) — depende: MF-04, F3-19
+- [ ] MF-10 · Inteligência: card do Tino e preço da região — depende: MF-04
+- [ ] MF-11 · Inteligência: encartes, preço aprovado e pedido enviado viram pendências — depende: MF-10, F4-01, F5-02
+- [ ] MF-12 · Envio de produtos, preços, custos e estoque da loja vinculada — depende: MF-04
+
 ## Fase 4 — ERP
 
 - [ ] F4-01 · Pedidos de compra

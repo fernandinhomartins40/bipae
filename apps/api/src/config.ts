@@ -35,6 +35,17 @@ const envSchema = z.object({
    * there is none yet). Ignored in production, where e-mails are not verified: use admin-cli.
    */
   PLATFORM_BOOTSTRAP_EMAIL: z.string().email().optional(),
+  /**
+   * Integração com o MercadoFlow (catálogo, contas, vendas e Confere). Sem URL, id e segredo, a
+   * integração fica desligada e o Bipaê funciona como sempre.
+   */
+  MERCADOFLOW_API_URL: z.string().optional(),
+  MERCADOFLOW_INTERNAL_URL: z.string().optional(),
+  MERCADOFLOW_PUBLIC_URL: z.string().default('https://mercadoflow.com'),
+  MERCADOFLOW_CLIENT_ID: z.string().optional(),
+  MERCADOFLOW_CLIENT_SECRET: z.string().optional(),
+  MERCADOFLOW_WEBHOOK_SECRET: z.string().optional(),
+  MERCADOFLOW_TERMS_URL: z.string().optional(),
   /** GitHub "owner/repo" whose public Releases carry the desktop installers ('' disables). */
   DESKTOP_RELEASES_REPO: z.string().default('fernandinhomartins40/bipae'),
   /** Bipaê staff must enable 2FA before using the admin panel (always true in production). */
