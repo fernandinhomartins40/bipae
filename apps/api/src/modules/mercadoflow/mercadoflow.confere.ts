@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { uuidv7 } from '@bipae/domain';
 import { dec, toCents } from '@bipae/fiscal';
-import { and, eq, ne, sql } from 'drizzle-orm';
+import { and, desc, eq, isNull, ne, sql } from 'drizzle-orm';
 import type { RequestContext } from '../../common/auth';
-import { assertStore } from '../../common/stores';
+import { assertStore, storeCondition } from '../../common/stores';
 import { DB } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   confereEntries,
+  confereNotices,
   mercadoflowLinks,
   productBarcodes,
   productPacks,
@@ -76,6 +77,48 @@ export interface EntryResult {
 
 const ISSUE_KINDS = new Set(['AVARIA', 'VALIDADE', 'TROCADO']);
 
+/** Cabeçalho da nota no aviso confere.document.received (seção 8 do contrato). */
+interface NoticeData {
+  documentId?: string;
+  accessKey?: string;
+  supplierName?: string;
+  number?: string | number;
+  issuedAt?: string;
+  totalValue?: number | string;
+  itemsCount?: number;
+}
+
+const validDate = (value: string | undefined) => {
+  const date = value ? new Date(value) : null;
+  return date && !Number.isNaN(date.getTime()) ? date : null;
+};
+
+/** Valor em reais do JSON → centavos, pelo decimal. */
+const reaisToCents = (value: number | string | undefined) => {
+  if (value === undefined || value === null || value === '') return null;
+  try {
+    return toCents(dec(value));
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Roda o trabalho do aviso no escopo do cliente (isolamento e auditoria por cliente) e volta
+ * para o papel da plataforma, para o webhook registrar que tratou o aviso.
+ */
+async function asTenant<T>(tx: Tx, tenantId: string, fn: () => Promise<T>): Promise<T> {
+  await tx.execute(
+    sql`select set_config('app.tenant_id', ${tenantId}, true), set_config('app.user_id', '', true)`,
+  );
+  await tx.execute(sql`set local role bipae_app`);
+  try {
+    return await fn();
+  } finally {
+    await tx.execute(sql`set local role bipae_platform`);
+  }
+}
+
 /** Número do JSON (unidades, custo) para decimal sem passar por conta de ponto flutuante. */
 const decimal = (value: number | string | null | undefined) =>
   value === null || value === undefined || value === '' ? null : dec(String(value));
@@ -108,25 +151,84 @@ export class MercadoflowConfere {
         .from(mercadoflowLinks)
         .where(eq(mercadoflowLinks.marketId, event.marketId));
       if (!link) throw new Error('Nenhuma loja do Bipaê tem este mercado.');
-      // A entrada roda no escopo do cliente (isolamento e auditoria por cliente) e volta para o
-      // papel da plataforma para o webhook registrar que tratou o aviso.
-      await tx.execute(
-        sql`select set_config('app.tenant_id', ${link.tenantId}, true), set_config('app.user_id', '', true)`,
-      );
-      await tx.execute(sql`set local role bipae_app`);
-      try {
-        await this.applyEntry(
+      await asTenant(tx, link.tenantId, () =>
+        this.applyEntry(
           tx,
           { tenantId: link.tenantId, userId: null },
           link.storeId,
           link.marketId!,
           entry,
           {},
-        );
-      } finally {
-        await tx.execute(sql`set local role bipae_platform`);
-      }
+        ),
+      );
     });
+
+    // Nota nova no Confere (MF-14): guarda o aviso para a notificação e o contador do menu.
+    webhooks.on('confere.document.received', async (tx, event) => {
+      const doc = event.data as NoticeData;
+      if (!event.marketId || !doc?.documentId) throw new Error('Aviso sem o documento.');
+      const [link] = await tx
+        .select()
+        .from(mercadoflowLinks)
+        .where(eq(mercadoflowLinks.marketId, event.marketId));
+      if (!link) throw new Error('Nenhuma loja do Bipaê tem este mercado.');
+      await asTenant(tx, link.tenantId, () =>
+        tx
+          .insert(confereNotices)
+          .values({
+            id: uuidv7(),
+            tenantId: link.tenantId,
+            storeId: link.storeId,
+            documentId: String(doc.documentId).slice(0, 80),
+            accessKey: /^\d{44}$/.test(doc.accessKey ?? '') ? doc.accessKey! : null,
+            supplierName: doc.supplierName ? String(doc.supplierName).slice(0, 200) : null,
+            invoiceNumber: doc.number ? String(doc.number).slice(0, 20) : null,
+            issuedAt: validDate(doc.issuedAt),
+            totalCents: reaisToCents(doc.totalValue),
+            itemsCount: Number.isSafeInteger(doc.itemsCount) ? doc.itemsCount! : null,
+          })
+          .onConflictDoNothing(),
+      );
+    });
+  }
+
+  /** Avisos de nota ainda não vistos, das lojas que a pessoa enxerga (mais novos primeiro). */
+  async notices(ctx: RequestContext) {
+    return withTenant(this.db, ctx, async (tx) => {
+      const where = and(isNull(confereNotices.seenAt), storeCondition(ctx, confereNotices.storeId));
+      const [{ count }] = (await tx
+        .select({ count: sql<number>`count(*)::int` })
+        .from(confereNotices)
+        .where(where)) as [{ count: number }];
+      const items = await tx
+        .select({
+          id: confereNotices.id,
+          storeId: confereNotices.storeId,
+          documentId: confereNotices.documentId,
+          supplierName: confereNotices.supplierName,
+          invoiceNumber: confereNotices.invoiceNumber,
+          totalCents: confereNotices.totalCents,
+          itemsCount: confereNotices.itemsCount,
+          receivedAt: confereNotices.receivedAt,
+        })
+        .from(confereNotices)
+        .where(where)
+        .orderBy(desc(confereNotices.receivedAt))
+        .limit(20);
+      return { unseen: count, items };
+    });
+  }
+
+  /** A tela de Notas de entrada da loja abriu: os avisos dela deixam de contar no menu. */
+  async markNoticesSeen(ctx: RequestContext, storeId: string) {
+    assertStore(ctx, storeId);
+    await withTenant(this.db, ctx, (tx) =>
+      tx
+        .update(confereNotices)
+        .set({ seenAt: new Date() })
+        .where(and(eq(confereNotices.storeId, storeId), isNull(confereNotices.seenAt))),
+    );
+    return { ok: true };
   }
 
   /** Vínculo ativo da loja com a permissão do Confere. */

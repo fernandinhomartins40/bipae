@@ -204,7 +204,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [ ] MF-08 · Vendas: NFC-e autorizada e cancelamento pela outbox, e carga inicial de 90 dias — depende: MF-04, F3-14
 - [x] MF-09 · Confere dentro do Bipaê (notas de entrada, conferência e entrada no estoque) — depende: MF-04, F3-19
   - Feito em 14/10/2026: rotas `/v1/mercadoflow/confere/:storeId/*`, entrada no estoque idempotente (nota + conferência, refeita lança a diferença), pendências com fornecedor e a tela Notas de entrada. O Bipaê registra só o último custo (custo médio fica com a F4-02).
-- [ ] MF-14 · Aviso "Chegou nota de X para conferir" (evento confere.document.received) com contador no menu Notas de entrada — depende: MF-09
+- [x] MF-14 · Aviso "Chegou nota de X para conferir" (evento confere.document.received) com contador no menu Notas de entrada — depende: MF-09
 - [x] MF-10.a · Inteligência: card do Tino no painel inicial (decisões por loja, cache de 15 min, abre no MercadoFlow) — depende: MF-04
 - [ ] MF-10.b · Inteligência: preço da região na tela de preço e na ficha do produto (cache de 24 h) — depende: MF-10.a · externo: E20
 - [ ] MF-11 · Inteligência: encartes, preço aprovado e pedido enviado viram pendências — depende: MF-10.a, F4-01, F5-02

@@ -13,8 +13,9 @@ import {
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
+import { CONFERE_NOTICES_KEY } from '../confere-notices';
 import { useApp, useCan } from '../context';
 
 // ---------------------------------------------------------------- tipos do contrato (seção 6)
@@ -377,6 +378,16 @@ function Documents({ storeId }: { storeId: string }) {
   const [key, setKey] = useState('');
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [open, setOpen] = useState<string | null>(null);
+
+  // A lista abriu: as notas que chegaram desta loja deixam de contar no menu (MF-14).
+  const loaded = documents.isSuccess;
+  useEffect(() => {
+    if (!loaded) return;
+    void api
+      .post(`/mercadoflow/confere/${storeId}/notices/seen`, {})
+      .then(() => queryClient.invalidateQueries({ queryKey: CONFERE_NOTICES_KEY }))
+      .catch(() => {});
+  }, [api, queryClient, storeId, loaded]);
   const reload = () => queryClient.invalidateQueries({ queryKey: ['confere', storeId] });
 
   const run = async (fn: () => Promise<string>) => {

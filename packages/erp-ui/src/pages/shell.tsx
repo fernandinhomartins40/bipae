@@ -26,6 +26,7 @@ import {
   Users,
 } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
+import { useConfereNotices } from '../confere-notices';
 import { useApp, useMe } from '../context';
 import { endSupportSession, readSupportSession } from '../support';
 
@@ -35,7 +36,12 @@ const NAV = [
   { to: '/vendas', label: 'Vendas', icon: BarChart3, permission: 'catalog.read' },
   { to: '/produtos', label: 'Produtos', icon: Package, permission: 'catalog.read' },
   { to: '/compras', label: 'Compras', icon: PackagePlus, permission: 'catalog.read' },
-  { to: '/notas-de-entrada', label: 'Notas de entrada', icon: ClipboardCheck, permission: 'catalog.read' },
+  {
+    to: '/notas-de-entrada',
+    label: 'Notas de entrada',
+    icon: ClipboardCheck,
+    permission: 'catalog.read',
+  },
   { to: '/tabelas-de-preco', label: 'Tabelas de preço', icon: Tags, permission: 'catalog.read' },
   { to: '/perfis-fiscais', label: 'Perfis fiscais', icon: Landmark, permission: 'catalog.read' },
   { to: '/regras-icms', label: 'Regras de ICMS', icon: Percent, permission: 'catalog.read' },
@@ -65,6 +71,7 @@ export function Shell() {
       !(n.to === '/baixar' && platform.kind === 'desktop'),
   );
   const support = me.support ? readSupportSession() : null;
+  const unseenNotes = useConfereNotices();
 
   const account = useQuery({
     queryKey: ['account'],
@@ -142,6 +149,18 @@ export function Shell() {
               >
                 <Icon className="size-5" aria-hidden />
                 {label}
+                {to === '/notas-de-entrada' && unseenNotes > 0 && (
+                  <span
+                    className="ml-auto rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-accent-contrast"
+                    aria-label={
+                      unseenNotes === 1
+                        ? '1 nota nova para conferir'
+                        : `${unseenNotes} notas novas para conferir`
+                    }
+                  >
+                    {unseenNotes > 99 ? '99+' : unseenNotes}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>

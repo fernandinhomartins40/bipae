@@ -806,3 +806,18 @@ export interface MercadoflowDecisions {
   enabled: boolean;
   stores: MercadoflowStoreDecisions[];
 }
+
+/** Notas que chegaram no Confere e ainda não foram vistas (GET /mercadoflow/confere-notices, MF-14). */
+export interface ConfereNotices {
+  unseen: number;
+  items: {
+    id: string;
+    storeId: string;
+    documentId: string;
+    supplierName: string | null;
+    invoiceNumber: string | null;
+    totalCents: number | null;
+    itemsCount: number | null;
+    receivedAt: string;
+  }[];
+}

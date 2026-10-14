@@ -1,5 +1,12 @@
 # Changelog
 
+## [MF-14 Aviso de nota para conferir] — 14/10/2026
+
+### Adicionado
+- **"Chegou nota de Distribuidora X (R$ 1.834,50) para conferir"**: quando o MercadoFlow avisa que uma nota chegou no Confere, o Bipaê guarda o aviso (um por nota, mesmo se o aviso vier repetido).
+- **Contador no menu Notas de entrada** com as notas novas das lojas que a pessoa enxerga. Ele zera quando a tela de notas da loja abre.
+- Com o Bipaê aberto, cada nota nova também aparece como notificação do sistema.
+
 ## [MF-10.a Card do Tino] — 14/10/2026
 
 ### Adicionado

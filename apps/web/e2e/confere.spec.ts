@@ -145,3 +145,65 @@ test('ler pela chave, conferir bipando e dar entrada no estoque', async ({ page 
   await expect(page.getByRole('cell', { name: '1. Coca-Cola Lata 350ml' })).toBeVisible();
   await expect(page.getByText('Avaria')).toBeVisible();
 });
+
+test('nota chegando: contador no menu some quando a tela de notas abre (MF-14)', async ({
+  page,
+}) => {
+  let visto = false;
+  await page.route('**/v1/mercadoflow/confere-notices', (route) =>
+    route.fulfill({
+      json: visto
+        ? { unseen: 0, items: [] }
+        : {
+            unseen: 2,
+            items: [
+              {
+                id: '00000000-0000-7000-8000-0000000000a1',
+                storeId: '00000000-0000-7000-8000-000000000001',
+                documentId: 'doc1',
+                supplierName: 'Distribuidora X',
+                invoiceNumber: '12345',
+                totalCents: 183450,
+                itemsCount: 12,
+                receivedAt: '2026-10-14T08:00:00Z',
+              },
+            ],
+          },
+    }),
+  );
+  await page.route('**/mercadoflow/confere/*/notices/seen', (route) => {
+    visto = true;
+    return route.fulfill({ json: { ok: true } });
+  });
+  await page.route('**/mercadoflow/confere/*/status', (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        termsAccepted: true,
+        termsVersion: 'v1',
+        termsText: 'Termos',
+        balance: 10,
+        plans: [],
+        certificate: null,
+      },
+    }),
+  );
+  await page.route('**/mercadoflow/confere/*/documents', (route) =>
+    route.fulfill({ json: { items: [], entries: [] } }),
+  );
+  await page.route('**/mercadoflow/supplier-issues', (route) => route.fulfill({ json: [] }));
+
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Rita Dona');
+  await page.getByLabel('Nome do negócio').fill(`Mercado ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`rita-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Rita!' })).toBeVisible();
+
+  const menu = page.getByRole('navigation', { name: 'Menu principal' });
+  await expect(menu.getByLabel('2 notas novas para conferir')).toBeVisible();
+  await menu.getByRole('link', { name: /Notas de entrada/ }).click();
+  await expect(menu.getByLabel('2 notas novas para conferir')).toHaveCount(0);
+  expect(visto).toBe(true);
+});

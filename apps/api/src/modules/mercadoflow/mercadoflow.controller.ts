@@ -3,6 +3,7 @@ import { mercadoflowAccountInput, mercadoflowConnectInput } from '@bipae/domain'
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { parse } from '../../common/errors';
 import { MercadoflowAccounts } from './mercadoflow.accounts';
+import { MercadoflowConfere } from './mercadoflow.confere';
 import { MercadoflowInsights } from './mercadoflow.insights';
 
 /**
@@ -15,6 +16,7 @@ export class MercadoflowController {
   constructor(
     @Inject(MercadoflowAccounts) private readonly accounts: MercadoflowAccounts,
     @Inject(MercadoflowInsights) private readonly insights: MercadoflowInsights,
+    @Inject(MercadoflowConfere) private readonly confere: MercadoflowConfere,
   ) {}
 
   @Get()
@@ -46,5 +48,12 @@ export class MercadoflowController {
   @RequirePermission('catalog.price.write')
   decisions(@Ctx() ctx: RequestContext) {
     return this.insights.decisions(ctx);
+  }
+
+  /** Notas que chegaram no Confere e ainda não foram vistas (MF-14): contador do menu. */
+  @Get('confere-notices')
+  @RequirePermission('catalog.read')
+  notices(@Ctx() ctx: RequestContext) {
+    return this.confere.notices(ctx);
   }
 }

@@ -154,6 +154,13 @@ export class MercadoflowConfereController {
     return this.confere.proxy(ctx, storeId, 'POST', '/sync', {});
   }
 
+  /** A tela de Notas de entrada abriu: zera o contador do menu para esta loja (MF-14). */
+  @Post('notices/seen')
+  @RequirePermission('catalog.read')
+  seen(@Ctx() ctx: RequestContext, @Param('storeId', new ParseUUIDPipe()) storeId: string) {
+    return this.confere.markNoticesSeen(ctx, storeId);
+  }
+
   @Get('ledger')
   @RequirePermission('catalog.read')
   ledger(@Ctx() ctx: RequestContext, @Param('storeId', new ParseUUIDPipe()) storeId: string) {

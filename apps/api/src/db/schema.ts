@@ -547,6 +547,21 @@ export const confereEntries = pgTable('confere_entries', {
   appliedAt: ts('applied_at'),
 });
 
+export const confereNotices = pgTable('confere_notices', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  documentId: text('document_id').notNull(),
+  accessKey: char('access_key', { length: 44 }),
+  supplierName: text('supplier_name'),
+  invoiceNumber: text('invoice_number'),
+  issuedAt: ts('issued_at'),
+  totalCents: money('total_cents'),
+  itemsCount: integer('items_count'),
+  receivedAt: ts('received_at').notNull().defaultNow(),
+  seenAt: ts('seen_at'),
+});
+
 export const supplierIssues = pgTable('supplier_issues', {
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),
@@ -561,7 +576,9 @@ export const supplierIssues = pgTable('supplier_issues', {
   expectedMilli: bigint('expected_milli', { mode: 'number' }),
   receivedMilli: bigint('received_milli', { mode: 'number' }),
   unitCostCents: money('unit_cost_cents'),
-  status: text('status', { enum: ['aberta', 'resolvida'] }).notNull().default('aberta'),
+  status: text('status', { enum: ['aberta', 'resolvida'] })
+    .notNull()
+    .default('aberta'),
   note: text('note'),
   createdAt: ts('created_at').notNull().defaultNow(),
   resolvedAt: ts('resolved_at'),

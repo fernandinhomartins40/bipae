@@ -161,18 +161,16 @@ async function lojaVinculada(vincular = true) {
   const [store] = (await admin.get('/stores')).json();
   if (vincular) {
     await withTenant(t.database.db, ctx as never, (tx) =>
-      tx
-        .insert(mercadoflowLinks)
-        .values({
-          id: uuidv7(),
-          tenantId: ctx.tenantId,
-          companyId: empresa.id,
-          storeId: store.id,
-          marketId: 'mk_conf',
-          status: 'ATIVA',
-          createdVia: 'ACCOUNT',
-          scopes: ['confere:use'],
-        }),
+      tx.insert(mercadoflowLinks).values({
+        id: uuidv7(),
+        tenantId: ctx.tenantId,
+        companyId: empresa.id,
+        storeId: store.id,
+        marketId: 'mk_conf',
+        status: 'ATIVA',
+        createdVia: 'ACCOUNT',
+        scopes: ['confere:use'],
+      }),
     );
   }
   // O cadastro de teste usa o nome "Dono N".
@@ -256,14 +254,12 @@ describe('Confere no Bipaê (MF-09)', () => {
       await admin.post('/products', { name: 'Leite em pó 400g', priceCents: 2290 })
     ).json();
     await withTenant(t.database.db, ctx as never, (tx) =>
-      tx
-        .insert(productPacks)
-        .values({
-          tenantId: ctx.tenantId,
-          packGtin: '17891000055127',
-          productId: leite.id,
-          unitsPerPack: 12,
-        }),
+      tx.insert(productPacks).values({
+        tenantId: ctx.tenantId,
+        packGtin: '17891000055127',
+        productId: leite.id,
+        unitsPerPack: 12,
+      }),
     );
     const ovos = (await admin.post('/products', { name: 'Ovos bandeja', priceCents: 1290 })).json();
     const novo = (await admin.post('/products', { name: 'Produto novo', priceCents: 500 })).json();
@@ -406,18 +402,16 @@ describe('vínculo sem permissão do Confere', () => {
     const { admin, store, ctx } = await lojaVinculada(false);
     const [empresa] = (await admin.get('/companies')).json();
     await withTenant(t.database.db, ctx as never, (tx) =>
-      tx
-        .insert(mercadoflowLinks)
-        .values({
-          id: uuidv7(),
-          tenantId: ctx.tenantId,
-          companyId: empresa.id,
-          storeId: store.id,
-          marketId: 'mk_x',
-          status: 'ATIVA',
-          createdVia: 'CONNECT',
-          scopes: ['sales:write'],
-        }),
+      tx.insert(mercadoflowLinks).values({
+        id: uuidv7(),
+        tenantId: ctx.tenantId,
+        companyId: empresa.id,
+        storeId: store.id,
+        marketId: 'mk_x',
+        status: 'ATIVA',
+        createdVia: 'CONNECT',
+        scopes: ['sales:write'],
+      }),
     );
     const r = await admin.get(`/mercadoflow/confere/${store.id}/status`);
     expect(r.statusCode).toBe(403);
@@ -426,5 +420,64 @@ describe('vínculo sem permissão do Confere', () => {
         tx.select().from(mercadoflowLinks).where(eq(mercadoflowLinks.storeId, store.id)),
       ),
     ).toHaveLength(1);
+  });
+});
+
+describe('aviso de nota chegando (MF-14)', () => {
+  it('guarda o aviso uma vez, conta no menu e zera quando a tela abre', async () => {
+    const { admin, store, ctx } = await lojaVinculada();
+    await withTenant(t.database.db, ctx as never, (tx) =>
+      tx
+        .update(mercadoflowLinks)
+        .set({ marketId: 'mk_nota' })
+        .where(eq(mercadoflowLinks.storeId, store.id)),
+    );
+    const evento = JSON.stringify({
+      event: 'confere.document.received',
+      marketId: 'mk_nota',
+      data: {
+        documentId: 'doc-novo',
+        accessKey: CHAVE,
+        supplierName: 'Distribuidora X',
+        number: '12345',
+        issuedAt: '2026-10-14T08:00:00-03:00',
+        totalValue: 1834.5,
+        itemsCount: 12,
+      },
+    });
+    const avisar = (entrega: string) =>
+      t.app.inject({
+        method: 'POST',
+        url: '/v1/integrations/mercadoflow/webhook',
+        headers: {
+          'content-type': 'application/json',
+          'x-mercadoflow-signature': signWebhook(evento, SEGREDO),
+          'x-mercadoflow-delivery': entrega,
+        },
+        payload: evento,
+      });
+    expect((await avisar(`nota-${store.id}-1`)).statusCode).toBe(200);
+    // O MercadoFlow pode mandar o mesmo documento de novo (outra entrega): não duplica.
+    expect((await avisar(`nota-${store.id}-2`)).statusCode).toBe(200);
+
+    const avisos = (await admin.get('/mercadoflow/confere-notices')).json();
+    expect(avisos.unseen).toBe(1);
+    expect(avisos.items).toEqual([
+      expect.objectContaining({
+        storeId: store.id,
+        supplierName: 'Distribuidora X',
+        totalCents: 183450,
+        itemsCount: 12,
+      }),
+    ]);
+
+    // Outro cliente não vê o aviso.
+    const outro = await lojaVinculada(false);
+    expect((await outro.admin.get('/mercadoflow/confere-notices')).json().unseen).toBe(0);
+
+    expect((await admin.post(`/mercadoflow/confere/${store.id}/notices/seen`, {})).statusCode).toBe(
+      201,
+    );
+    expect((await admin.get('/mercadoflow/confere-notices')).json().unseen).toBe(0);
   });
 });
