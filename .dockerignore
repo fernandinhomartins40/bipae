@@ -1,5 +1,8 @@
 **/node_modules
 **/dist
+# O componente do PDV Embed é versionado e publicado no site (P-06).
+!kits/pdv-embed/dist
+!kits/pdv-embed/dist/bipae-pdv.js
 **/.turbo
 **/coverage
 .data
