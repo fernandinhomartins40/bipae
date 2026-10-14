@@ -68,7 +68,8 @@ const publicKey = await crypto.subtle.importKey(
   ['verify'],
 );
 
-describe('certificado A1 neste aparelho', () => {
+// Gerar e abrir chaves RSA é lento nas máquinas do CI: 5 s não bastam.
+describe('certificado A1 neste aparelho', { timeout: 30_000 }, () => {
   it('instala, mostra os dados, assina e a assinatura confere com a chave pública', async () => {
     const store = memoryStore();
     const local = new LocalCertificateStore(store);
