@@ -1,5 +1,14 @@
 # Changelog
 
+## [P-06 PDV Embed no site] — 14/10/2026
+
+### Adicionado
+- **O componente do PDV Embed publicado em endereço fixo**:
+  - `www.bipae.com.br/pdv/1.0.0/bipae-pdv.js` (versão exata, cache de um ano);
+  - `www.bipae.com.br/pdv/1/bipae-pdv.js` (a mais nova do contrato 1, cache curto);
+  - `pdv/versions.json` com o hash de integridade (SRI).
+- Libera CORS para outros sites, e o deploy confere o endereço a cada publicação.
+
 ## [P-05 PDV Embed: autorização do gerente] — 14/10/2026
 
 ### Adicionado

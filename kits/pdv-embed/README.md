@@ -182,6 +182,23 @@ No Fastify e nos route handlers do App Router do Next.js, use direto as funçõe
 <bipae-pdv api="/api/pdv" style="height: calc(100vh - 120px)"></bipae-pdv>
 ```
 
+**Sem copiar o arquivo:** carregue do site do Bipaê.
+
+- `https://www.bipae.com.br/pdv/1.0.0/bipae-pdv.js`: a versão exata; nunca muda.
+- `https://www.bipae.com.br/pdv/1/bipae-pdv.js`: sempre a mais nova do contrato 1, com as correções.
+
+Com a versão exata, use o hash de integridade publicado em
+`https://www.bipae.com.br/pdv/versions.json`. Assim, o navegador recusa o arquivo se ele for
+alterado:
+
+```html
+<script
+  src="https://www.bipae.com.br/pdv/1.0.0/bipae-pdv.js"
+  integrity="sha384-... (de versions.json)"
+  crossorigin="anonymous"
+></script>
+```
+
 | Framework | Como |
 |---|---|
 | **Blade (Laravel)** | `<bipae-pdv api="/api/pdv" csrf-token="{{ csrf_token() }}" csrf-header="X-CSRF-TOKEN"></bipae-pdv>` |

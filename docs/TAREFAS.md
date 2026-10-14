@@ -185,7 +185,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: o cliente baixa um ZIP com seus dados, a exclusão tem prazo e auditoria, e há testes.
 - [ ] P-04 · E-mails transacionais: confirmação de conta, recuperar senha, teste terminando, conta suspensa — externo: E11
 - [x] P-05 · PDV Embed: autorização de gerente para desconto acima do limite (contrato v1 compatível)
-- [ ] P-06 · PDV Embed: publicar o `bipae-pdv.js` em endereço fixo versionado no site
+- [x] P-06 · PDV Embed: publicar o `bipae-pdv.js` em endereço fixo versionado no site
 - [ ] P-07 · PDV Embed: integrar na primeira aplicação real e rodar a conformidade — externo: E16
 
 ## Integração MercadoFlow

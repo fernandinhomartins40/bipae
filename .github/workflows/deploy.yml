@@ -203,3 +203,7 @@ jobs:
             [ "$code" = "200" ] || { echo "ERRO: $path não respondeu 200."; exit 1; }
           done
           curl -fsS https://www.bipae.com.br/v1/health
+          # PDV Embed (P-06): o componente responde e libera CORS para outros sites.
+          cors=$(curl -fsS -D - -o /dev/null --max-time 20 https://www.bipae.com.br/pdv/1/bipae-pdv.js | tr -d '\r' | grep -i '^access-control-allow-origin:' || true)
+          echo "pdv/1/bipae-pdv.js -> $cors"
+          [ -n "$cors" ] || { echo 'ERRO: /pdv/1/bipae-pdv.js sem CORS.'; exit 1; }

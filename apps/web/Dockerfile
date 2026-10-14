@@ -8,9 +8,11 @@ WORKDIR /app
 ARG VITE_API_URL=
 ENV VITE_API_URL=$VITE_API_URL
 COPY . .
+# O último passo publica o PDV Embed em endereço fixo (P-06): /pdv/<versão>/ e /pdv/<maior>/.
 RUN pnpm install --frozen-lockfile \
   && pnpm --filter @bipae/site build \
-  && BIPAE_BASE=/app/ pnpm --filter @bipae/web build
+  && BIPAE_BASE=/app/ pnpm --filter @bipae/web build \
+  && node kits/pdv-embed/scripts/publish.mjs apps/site/dist/pdv
 
 FROM nginx:1.27-alpine
 ARG VITE_API_URL=
