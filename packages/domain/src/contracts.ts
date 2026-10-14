@@ -750,7 +750,10 @@ export const mercadoflowConnectInput = z.object({
   returnUrl: z
     .string()
     .url('Endereço de volta inválido')
-    .refine((v) => v.startsWith('https://') || v.startsWith('http://localhost'), 'Endereço de volta inválido'),
+    .refine(
+      (v) => v.startsWith('https://') || v.startsWith('http://localhost'),
+      'Endereço de volta inválido',
+    ),
 });
 
 export interface MercadoflowLinkView {
@@ -774,4 +777,32 @@ export interface MercadoflowOverview {
   stores: MercadoflowLinkView[];
   queue: { pending: number; sent: number; rejected: number };
   errors: { kind: string; error: string }[];
+}
+
+/** Decisões do Tino de uma loja vinculada (GET /mercadoflow/decisions, MF-10). */
+export interface MercadoflowStoreDecisions {
+  storeId: string;
+  storeName: string;
+  /** unavailable: o MercadoFlow não respondeu agora. */
+  status: 'ok' | 'unavailable';
+  total: number;
+  byActionType: Record<string, number>;
+  expectedImpactCents: number;
+  lockedByPlan: boolean;
+  url: string | null;
+  items: {
+    id: string;
+    actionType: string;
+    title: string;
+    rationale: string | null;
+    gtin: string | null;
+    productName: string | null;
+    expectedImpactCents: number | null;
+    url: string | null;
+  }[];
+}
+
+export interface MercadoflowDecisions {
+  enabled: boolean;
+  stores: MercadoflowStoreDecisions[];
 }

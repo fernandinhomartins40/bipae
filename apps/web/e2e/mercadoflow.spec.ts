@@ -85,3 +85,54 @@ test('criar a conta MercadoFlow pela loja e ver o desconto', async ({ page }) =>
   ).toBeVisible();
   await expect(page.getByText('0 na fila · 3 enviados · 0 recusados')).toBeVisible();
 });
+
+test('card do Tino no painel inicial abre as decisões no MercadoFlow (MF-10)', async ({ page }) => {
+  await page.route('**/v1/mercadoflow/decisions', (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        stores: [
+          {
+            storeId: '00000000-0000-7000-8000-000000000001',
+            storeName: 'Loja Centro',
+            status: 'ok',
+            total: 7,
+            byActionType: { COMPRAR: 4, PRECIFICAR: 3 },
+            expectedImpactCents: 123450,
+            lockedByPlan: false,
+            url: 'https://mercadoflow.com/app/decisoes',
+            items: [
+              {
+                id: 'd1',
+                actionType: 'COMPRAR',
+                title: 'Comprar arroz antes de acabar',
+                rationale: 'Gira 30 por semana e restam 8',
+                gtin: '7891000315507',
+                productName: 'Arroz 5kg',
+                expectedImpactCents: 21010,
+                url: 'https://mercadoflow.com/app/decisoes/d1',
+              },
+            ],
+          },
+        ],
+      },
+    }),
+  );
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Joana Dona');
+  await page.getByLabel('Nome do negócio').fill(`Mercado ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`joana-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Joana!' })).toBeVisible();
+
+  const card = page.getByRole('region', { name: 'Tino: Loja Centro' });
+  await expect(card.getByText('7 decisões')).toBeVisible();
+  await expect(card.getByText('(R$ 1.234,50 em jogo)')).toBeVisible();
+  await expect(card.getByText('Comprar: 4')).toBeVisible();
+  await expect(card.getByText('Comprar arroz antes de acabar')).toBeVisible();
+  await expect(card.getByRole('link', { name: 'Ver no MercadoFlow' })).toHaveAttribute(
+    'href',
+    'https://mercadoflow.com/app/decisoes/d1',
+  );
+});

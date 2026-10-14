@@ -36,6 +36,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] E15 · Participantes para o teste de usabilidade e decisão sobre pentest externo
 - [ ] E16 · Primeira aplicação real para integrar o PDV Embed
 - [ ] E17 · Decisão sobre instalar a REA para benchmark (`docs/benchmark/README.md`)
+- [ ] E20 · Formato da resposta de `GET /markets/{id}/local-prices` (nomes dos campos da mediana, p25, p75, menor preço e loja, raio), a combinar com o MercadoFlow
 - [ ] E19 · Credenciais do parceiro Bipaê no MercadoFlow (client id e secret, gerados em Parceiros → Bipaê) no `.env` da VPS
 - [ ] E18 · Token ou cartão A3 de teste (com a leitora) para a assinatura pelo desktop
 
@@ -204,8 +205,9 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] MF-09 · Confere dentro do Bipaê (notas de entrada, conferência e entrada no estoque) — depende: MF-04, F3-19
   - Feito em 14/10/2026: rotas `/v1/mercadoflow/confere/:storeId/*`, entrada no estoque idempotente (nota + conferência, refeita lança a diferença), pendências com fornecedor e a tela Notas de entrada. O Bipaê registra só o último custo (custo médio fica com a F4-02).
 - [ ] MF-14 · Aviso "Chegou nota de X para conferir" (evento confere.document.received) com contador no menu Notas de entrada — depende: MF-09
-- [ ] MF-10 · Inteligência: card do Tino e preço da região — depende: MF-04
-- [ ] MF-11 · Inteligência: encartes, preço aprovado e pedido enviado viram pendências — depende: MF-10, F4-01, F5-02
+- [x] MF-10.a · Inteligência: card do Tino no painel inicial (decisões por loja, cache de 15 min, abre no MercadoFlow) — depende: MF-04
+- [ ] MF-10.b · Inteligência: preço da região na tela de preço e na ficha do produto (cache de 24 h) — depende: MF-10.a · externo: E20
+- [ ] MF-11 · Inteligência: encartes, preço aprovado e pedido enviado viram pendências — depende: MF-10.a, F4-01, F5-02
 - [x] MF-12 · Envio de produtos, preços, custos e estoque da loja vinculada — depende: MF-04
 
 ## Fase 4 — ERP

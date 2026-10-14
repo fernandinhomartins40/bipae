@@ -3,6 +3,7 @@ import { mercadoflowAccountInput, mercadoflowConnectInput } from '@bipae/domain'
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { parse } from '../../common/errors';
 import { MercadoflowAccounts } from './mercadoflow.accounts';
+import { MercadoflowInsights } from './mercadoflow.insights';
 
 /**
  * Tela "MercadoFlow" nas configurações (seção 5): criar ou vincular a conta, situação, desconto,
@@ -11,7 +12,10 @@ import { MercadoflowAccounts } from './mercadoflow.accounts';
  */
 @Controller('mercadoflow')
 export class MercadoflowController {
-  constructor(@Inject(MercadoflowAccounts) private readonly accounts: MercadoflowAccounts) {}
+  constructor(
+    @Inject(MercadoflowAccounts) private readonly accounts: MercadoflowAccounts,
+    @Inject(MercadoflowInsights) private readonly insights: MercadoflowInsights,
+  ) {}
 
   @Get()
   @RequirePermission('admin.stores')
@@ -35,5 +39,12 @@ export class MercadoflowController {
   @RequirePermission('admin.stores')
   refresh(@Ctx() ctx: RequestContext, @Param('storeId', new ParseUUIDPipe()) storeId: string) {
     return this.accounts.refresh(ctx, storeId);
+  }
+
+  /** Card do Tino no painel inicial (MF-10): decisões de cada loja vinculada, só para ver. */
+  @Get('decisions')
+  @RequirePermission('catalog.price.write')
+  decisions(@Ctx() ctx: RequestContext) {
+    return this.insights.decisions(ctx);
   }
 }

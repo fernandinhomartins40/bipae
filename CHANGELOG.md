@@ -1,5 +1,11 @@
 # Changelog
 
+## [MF-10.a Card do Tino] — 14/10/2026
+
+### Adicionado
+- **Card do Tino no painel inicial**: para dono e gerente, cada loja vinculada mostra quantas decisões o MercadoFlow sugere, o valor em jogo, os tipos (comprar, precificar…) e as primeiras decisões. Cada uma abre no MercadoFlow, onde a decisão é tomada.
+- As decisões ficam guardadas por 15 minutos. Se o MercadoFlow não responder, o card avisa e o resto do painel segue normal.
+
 ## [MF-12 Cadastro, preço, custo e estoque no MercadoFlow] — 14/10/2026
 
 ### Adicionado
