@@ -193,7 +193,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] MF-02 · Catálogo nativo no cadastro de produto: bipar o código ou buscar pelo nome preenche tudo (sem imagem até o E12), com cache e NCM/CEST conferidos na tabela oficial — depende: MF-01
 - [x] MF-03 · Catálogo: importação em massa revisada e devolução ao catálogo do que as lojas cadastram — depende: MF-02
   - A importação em massa é a entrada de compra pelo XML (F3-19): os itens sem produto consultam o catálogo em lote e o produto novo nasce com o nome, a marca e a caixa do catálogo. Planilha fica para quando houver importação por planilha.
-- [ ] MF-04 · Tela "MercadoFlow" nas configurações: criar conta, vincular conta existente, cliente ativo e desconto — depende: MF-01
+- [x] MF-04 · Tela "MercadoFlow" nas configurações: criar conta, vincular conta existente, cliente ativo e desconto — depende: MF-01
+- [ ] MF-13 · Desktop abre o link do MercadoFlow no navegador do sistema (plugin opener do Tauri; hoje mostra o link para copiar) — depende: MF-04
 - [ ] MF-05 · Rede compartilhada no compose da VPS, credenciais e registro do webhook — depende: MF-01
 - [ ] MF-06 · Catálogo: imagens e fotos genéricas guardadas no Bipaê — depende: MF-02 · externo: E12
 - [ ] MF-07 · Catálogo: cadastro rápido no caixa, com tempo limite de 1,5 s — depende: MF-02

@@ -24,6 +24,7 @@ import { captureSupportHandoff, endSupportSession, readSupportSession } from './
 import { SalesPage } from './pages/sales';
 import { ProductsPage } from './pages/products';
 import { PurchasesPage } from './pages/purchases';
+import { MercadoflowPage } from './pages/mercadoflow';
 import { loadDisplayPreferences, SettingsPage } from './pages/settings';
 import { Shell } from './pages/shell';
 
@@ -155,6 +156,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="equipe" element={<TeamPage />} />
               <Route path="auditoria" element={<AuditPage />} />
               <Route path="configuracoes" element={<SettingsPage />} />
+              <Route path="mercadoflow" element={<MercadoflowPage />} />
               <Route path="perifericos" element={<DevicesPage />} />
               <Route path="baixar" element={<DownloadsPage />} />
             </Route>

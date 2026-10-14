@@ -43,6 +43,11 @@ export function signWebhook(rawBody: Buffer | string, secret: string): string {
 export class MercadoflowWebhooks {
   private readonly logger = new Logger('MercadoFlow');
   private readonly handlers = new Map<string, WebhookHandler>();
+  /** Tarefas depois que o aviso foi gravado (chamadas ao MercadoFlow ficam fora da transação). */
+  private readonly afterHandlers = new Map<
+    string,
+    ((event: MercadoflowEvent) => Promise<void>)[]
+  >();
 
   constructor(
     @Inject(DB) private readonly db: Db,
@@ -54,6 +59,10 @@ export class MercadoflowWebhooks {
 
   on(event: string, handler: WebhookHandler) {
     this.handlers.set(event, handler);
+  }
+
+  after(event: string, fn: (event: MercadoflowEvent) => Promise<void>) {
+    this.afterHandlers.set(event, [...(this.afterHandlers.get(event) ?? []), fn]);
   }
 
   verify(rawBody: Buffer | undefined, signature: string | undefined) {
@@ -88,6 +97,11 @@ export class MercadoflowWebhooks {
           .set({ processedAt: new Date() })
           .where(eq(mercadoflowWebhookDeliveries.deliveryId, deliveryId));
       });
+      for (const fn of this.afterHandlers.get(event.event) ?? []) {
+        await fn(event).catch((error: Error) =>
+          this.logger.warn(`Depois do aviso ${event.event}: ${error.message}`),
+        );
+      }
     } catch (error) {
       this.logger.error(`Aviso ${event.event} falhou: ${(error as Error).message}`);
       await asPlatform(this.db, (tx) =>

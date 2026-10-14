@@ -156,6 +156,8 @@ export interface Platform {
   scale?: ScalePort;
   tef?: TefPort;
   certificate?: CertificatePort;
+  /** Abre um endereço no navegador do sistema (o vínculo com o MercadoFlow, por exemplo). */
+  openExternal?: (url: string) => Promise<void>;
   updater?: UpdaterPort;
   notifications?: NotificationPort;
   /** Desktop: configure printer/scale on this computer (also used by the Conector). */

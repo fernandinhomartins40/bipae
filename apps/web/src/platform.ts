@@ -125,6 +125,9 @@ export function createWebPlatform(updates: {
     },
     openLocalDatabase: openWasmDatabase,
     certificate,
+    openExternal: async (url: string) => {
+      window.open(url, '_blank', 'noopener');
+    },
     // ESC/POS goes to the thermal printer through the Conector; text uses the print dialog.
     printer: {
       print: (job: PrintJob) => (job.kind === 'escpos' ? connector.print(job) : browserPrinter.print(job)),

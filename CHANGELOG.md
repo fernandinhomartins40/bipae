@@ -1,5 +1,17 @@
 # Changelog
 
+## [MF-04 Contas MercadoFlow e desconto] — 14/10/2026
+
+### Adicionado
+- **Tela "MercadoFlow"** (menu, para quem gerencia empresas e lojas): por loja, "Criar minha conta MercadoFlow" ou "Já tenho conta MercadoFlow", a situação do vínculo, as permissões, o desconto de cliente Bipaê, a fila de envio e os erros.
+- **Criar a conta** usa o CNPJ e o nome da empresa e o nome e o e-mail do dono, com o aceite obrigatório. O Bipaê nunca define nem vê a senha: o MercadoFlow manda o link por e-mail. Se o CNPJ já tem conta, a tela segue direto para o vínculo.
+- **Vincular conta existente:** o link abre no navegador (no desktop, aparece para copiar). O vínculo fica ativo pelo aviso do MercadoFlow ou pela consulta a cada 30 segundos; expirado ou recusado aparece com o motivo.
+- **Cliente ativo e desconto:** o Bipaê avisa o MercadoFlow quando a assinatura muda (troca de plano, suspensão, reativação) e uma vez por dia.
+- Criar a conta e iniciar o vínculo ficam na auditoria.
+
+### Pendente
+- MF-13: o desktop abrir o link no navegador do sistema.
+
 ## [MF-03 Catálogo em lote e devolução ao catálogo] — 14/10/2026
 
 ### Adicionado

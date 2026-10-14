@@ -730,3 +730,48 @@ export const catalogLookupInput = z.object({
     .min(1)
     .max(200),
 });
+
+// ---------------------------------------------------------------- MercadoFlow: contas (MF-04)
+
+export const mercadoflowAccountInput = z.object({
+  storeId: z.string().uuid('Escolha a loja'),
+  phone: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, ''))
+    .pipe(z.string().regex(/^\d{10,11}$/, 'Telefone com DDD: 10 ou 11 dígitos')),
+  acceptTerms: z.literal(true, {
+    message: 'Para criar a conta, marque a autorização e o aceite dos termos do MercadoFlow',
+  }),
+});
+
+export const mercadoflowConnectInput = z.object({
+  storeId: z.string().uuid('Escolha a loja'),
+  returnUrl: z
+    .string()
+    .url('Endereço de volta inválido')
+    .refine((v) => v.startsWith('https://') || v.startsWith('http://localhost'), 'Endereço de volta inválido'),
+});
+
+export interface MercadoflowLinkView {
+  storeId: string;
+  storeName: string;
+  status: 'PENDENTE' | 'ATIVA' | 'REVOGADA' | 'RECUSADA' | 'EXPIRADA' | null;
+  marketId: string | null;
+  scopes: string[];
+  createdVia: 'ACCOUNT' | 'CONNECT' | null;
+  connectUrl: string | null;
+  connectedAt: string | null;
+  lastError: string | null;
+  customerActive: boolean | null;
+  discount: { active: boolean; partner?: string; percent?: number } | null;
+}
+
+export interface MercadoflowOverview {
+  enabled: boolean;
+  termsUrl: string | null;
+  publicUrl: string;
+  stores: MercadoflowLinkView[];
+  queue: { pending: number; sent: number; rejected: number };
+  errors: { kind: string; error: string }[];
+}

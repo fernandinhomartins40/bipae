@@ -49,6 +49,7 @@ import { AuditService } from '../audit/audit.service';
 import { AuthService } from '../auth/auth.service';
 import type { AdminContext } from './platform.guard';
 import { PlatformAuditService } from './platform-audit.service';
+import { MercadoflowAccounts } from '../mercadoflow/mercadoflow.accounts';
 
 const DAY = 86_400_000;
 
@@ -65,7 +66,13 @@ export class AdminTenantsService {
     @Inject(AuthService) private readonly auth: AuthService,
     @Inject(AuditService) private readonly tenantAudit: AuditService,
     @Inject(PlatformAuditService) private readonly audit: PlatformAuditService,
+    @Inject(MercadoflowAccounts) private readonly mercadoflow: MercadoflowAccounts,
   ) {}
+
+  /** A assinatura mudou: avisa o MercadoFlow (liga ou desliga o desconto de cliente Bipaê). */
+  private notifyMercadoflow(tenantId: string) {
+    void this.mercadoflow.syncCustomers(tenantId).catch(() => undefined);
+  }
 
   // ---------------------------------------------------------------- overview
 
@@ -367,7 +374,7 @@ export class AdminTenantsService {
   }
 
   async changePlan(admin: AdminContext, id: string, input: z.output<typeof changePlanInput>) {
-    return asPlatform(this.db, async (tx) => {
+    const result = await asPlatform(this.db, async (tx) => {
       const current = await this.requireTenant(tx, id);
       const [plan] = await tx.select().from(plans).where(eq(plans.id, input.planId));
       if (!plan) throw notFound('Plano');
@@ -405,6 +412,8 @@ export class AdminTenantsService {
       );
       return { planId: plan.id, status, trialEndsAt: trialEndsAt?.toISOString() ?? null };
     });
+    this.notifyMercadoflow(id);
+    return result;
   }
 
   async setStatus(
@@ -413,7 +422,7 @@ export class AdminTenantsService {
     status: 'active' | 'suspended' | 'cancelled',
     reason: string,
   ) {
-    return asPlatform(this.db, async (tx) => {
+    const result = await asPlatform(this.db, async (tx) => {
       const current = await this.requireTenant(tx, id);
       if (current.status === status) {
         throw new AppError(409, 'conflict', 'O cliente já está nesse status.');
@@ -445,6 +454,8 @@ export class AdminTenantsService {
       );
       return { status };
     });
+    this.notifyMercadoflow(id);
+    return result;
   }
 
   async setLimits(admin: AdminContext, id: string, overrides: Partial<PlanLimits>, reason: string) {

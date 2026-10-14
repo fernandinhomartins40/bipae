@@ -17,6 +17,7 @@ import {
   Printer,
   ScanBarcode,
   Settings,
+  Sparkles,
   Tags,
   ShieldCheck,
   Truck,
@@ -45,6 +46,7 @@ const NAV = [
   { to: '/perifericos', label: 'Periféricos', icon: Printer, permission: 'pos.sell' },
   { to: '/baixar', label: 'Baixar o desktop', icon: Download, permission: null },
   { to: '/assinatura', label: 'Minha assinatura', icon: CreditCard, permission: 'admin.users' },
+  { to: '/mercadoflow', label: 'MercadoFlow', icon: Sparkles, permission: 'admin.stores' },
   { to: '/configuracoes', label: 'Configurações', icon: Settings, permission: null },
 ] as const;
 
