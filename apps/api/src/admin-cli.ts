@@ -28,7 +28,9 @@ async function findUser(address: string) {
   );
   const [user] = rowsOf<{ id: string; name: string; email: string }>(result);
   if (!user) {
-    console.error(`Não existe conta com o e-mail ${address}. Crie a conta em /app/criar-conta primeiro.`);
+    console.error(
+      `Não existe conta com o e-mail ${address}. Crie a conta em /app/criar-conta primeiro.`,
+    );
     process.exit(1);
   }
   return user;
@@ -38,24 +40,41 @@ try {
   switch (command) {
     case 'grant': {
       const role = (roleArg ?? 'owner') as PlatformRole;
-      if (!email || !PLATFORM_ROLES.includes(role)) throw new Error('Uso: grant <email> [owner|support|viewer]');
+      if (!email || !PLATFORM_ROLES.includes(role))
+        throw new Error('Uso: grant <email> [owner|support|viewer]');
       const user = await findUser(email);
       await asPlatform(database.db, async (tx) => {
         await tx
           .insert(platformAdmins)
           .values({ userId: user.id, role })
-          .onConflictDoUpdate({ target: platformAdmins.userId, set: { role, active: true, updatedAt: new Date() } });
-        await audit.record(tx, cli, { action: 'admin.granted', target: user.id, data: { email: user.email, role, via: 'cli' } });
+          .onConflictDoUpdate({
+            target: platformAdmins.userId,
+            set: { role, active: true, updatedAt: new Date() },
+          });
+        await audit.record(tx, cli, {
+          action: 'admin.granted',
+          target: user.id,
+          data: { email: user.email, role, via: 'cli' },
+        });
       });
-      console.log(`${user.email} agora é ${role} da equipe Bipaê. Entre em /app/admin e ative a verificação em duas etapas.`);
+      console.log(
+        `${user.email} agora é ${role} da equipe Bipaê. Entre em /app/admin e ative a verificação em duas etapas.`,
+      );
       break;
     }
     case 'revoke': {
       if (!email) throw new Error('Uso: revoke <email>');
       const user = await findUser(email);
       await asPlatform(database.db, async (tx) => {
-        await tx.update(platformAdmins).set({ active: false, updatedAt: new Date() }).where(eq(platformAdmins.userId, user.id));
-        await audit.record(tx, cli, { action: 'admin.updated', target: user.id, data: { active: false, via: 'cli' } });
+        await tx
+          .update(platformAdmins)
+          .set({ active: false, updatedAt: new Date() })
+          .where(eq(platformAdmins.userId, user.id));
+        await audit.record(tx, cli, {
+          action: 'admin.updated',
+          target: user.id,
+          data: { active: false, via: 'cli' },
+        });
       });
       console.log(`Acesso ao painel removido de ${user.email}.`);
       break;
@@ -64,16 +83,30 @@ try {
       if (!email) throw new Error('Uso: reset-totp <email>');
       const user = await findUser(email);
       await asPlatform(database.db, async (tx) => {
-        await tx.update(platformAdmins).set({ totpEnabled: false, totpSecret: null, updatedAt: new Date() }).where(eq(platformAdmins.userId, user.id));
-        await audit.record(tx, cli, { action: 'admin.totp_reset', target: user.id, data: { via: 'cli' } });
+        await tx
+          .update(platformAdmins)
+          .set({ totpEnabled: false, totpSecret: null, updatedAt: new Date() })
+          .where(eq(platformAdmins.userId, user.id));
+        await audit.record(tx, cli, {
+          action: 'admin.totp_reset',
+          target: user.id,
+          data: { via: 'cli' },
+        });
       });
-      console.log(`Verificação em duas etapas zerada para ${user.email}. Ative de novo no próximo acesso.`);
+      console.log(
+        `Verificação em duas etapas zerada para ${user.email}. Ative de novo no próximo acesso.`,
+      );
       break;
     }
     case 'list': {
       const rows = await asPlatform(database.db, (tx) =>
         tx
-          .select({ email: users.email, role: platformAdmins.role, active: platformAdmins.active, totp: platformAdmins.totpEnabled })
+          .select({
+            email: users.email,
+            role: platformAdmins.role,
+            active: platformAdmins.active,
+            totp: platformAdmins.totpEnabled,
+          })
           .from(platformAdmins)
           .innerJoin(users, eq(users.id, platformAdmins.userId)),
       );
@@ -81,7 +114,9 @@ try {
       break;
     }
     default:
-      console.log('Comandos: grant <email> [owner|support|viewer] · revoke <email> · reset-totp <email> · list');
+      console.log(
+        'Comandos: grant <email> [owner|support|viewer] · revoke <email> · reset-totp <email> · list',
+      );
   }
 } catch (error) {
   console.error((error as Error).message);

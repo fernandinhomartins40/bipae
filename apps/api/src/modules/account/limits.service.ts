@@ -9,7 +9,15 @@ import {
 import { and, count, eq } from 'drizzle-orm';
 import { AppError } from '../../common/errors';
 import type { Tx } from '../../db/client';
-import { companies, memberships, plans, products, stores, terminals, tenants } from '../../db/schema';
+import {
+  companies,
+  memberships,
+  plans,
+  products,
+  stores,
+  terminals,
+  tenants,
+} from '../../db/schema';
 
 /**
  * Plan limits (docs/saas/plano.md). Checked inside the same tenant transaction that creates the
@@ -23,7 +31,10 @@ export class LimitsService {
       .from(tenants)
       .innerJoin(plans, eq(plans.id, tenants.planId));
     if (!row) throw new AppError(404, 'not_found', 'Conta não encontrada.');
-    return { plan: row.plan, limits: effectiveLimits(row.plan.limits as PlanLimits, row.overrides) };
+    return {
+      plan: row.plan,
+      limits: effectiveLimits(row.plan.limits as PlanLimits, row.overrides),
+    };
   }
 
   async usage(tx: Tx): Promise<Record<LimitResource, number>> {
@@ -31,9 +42,18 @@ export class LimitsService {
     return {
       companies: await n(tx.select({ n: count() }).from(companies)),
       stores: await n(tx.select({ n: count() }).from(stores)),
-      terminals: await n(tx.select({ n: count() }).from(terminals).where(eq(terminals.status, 'active'))),
-      users: await n(tx.select({ n: count() }).from(memberships).where(eq(memberships.active, true))),
-      products: await n(tx.select({ n: count() }).from(products).where(and(eq(products.active, true)))),
+      terminals: await n(
+        tx.select({ n: count() }).from(terminals).where(eq(terminals.status, 'active')),
+      ),
+      users: await n(
+        tx.select({ n: count() }).from(memberships).where(eq(memberships.active, true)),
+      ),
+      products: await n(
+        tx
+          .select({ n: count() })
+          .from(products)
+          .where(and(eq(products.active, true))),
+      ),
     };
   }
 

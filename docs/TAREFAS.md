@@ -190,7 +190,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pronto). Sem as variáveis `MERCADOFLOW_*`, o Bipaê funciona como hoje.
 
 - [x] MF-01 · Base: configuração, cliente HTTP com cache de token e nova tentativa, outbox em tabela, vínculos por loja e webhook com HMAC e idempotência
-- [ ] MF-02 · Catálogo nativo no cadastro de produto: bipar o código ou buscar pelo nome preenche tudo (sem imagem até o E12), com cache e NCM/CEST conferidos na tabela oficial — depende: MF-01
+- [x] MF-02 · Catálogo nativo no cadastro de produto: bipar o código ou buscar pelo nome preenche tudo (sem imagem até o E12), com cache e NCM/CEST conferidos na tabela oficial — depende: MF-01
 - [ ] MF-03 · Catálogo: importação em massa revisada e devolução ao catálogo do que as lojas cadastram — depende: MF-02
 - [ ] MF-04 · Tela "MercadoFlow" nas configurações: criar conta, vincular conta existente, cliente ativo e desconto — depende: MF-01
 - [ ] MF-05 · Rede compartilhada no compose da VPS, credenciais e registro do webhook — depende: MF-01

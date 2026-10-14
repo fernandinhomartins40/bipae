@@ -42,8 +42,15 @@ export class TokenService {
     return this.config.ACCESS_TOKEN_TTL_SECONDS;
   }
 
-  async signAccess(claims: AccessClaims, ttlSeconds = this.config.ACCESS_TOKEN_TTL_SECONDS): Promise<string> {
-    return new SignJWT({ tid: claims.tid, ...(claims.imp && { imp: claims.imp }), ...(claims.ro && { ro: true }) })
+  async signAccess(
+    claims: AccessClaims,
+    ttlSeconds = this.config.ACCESS_TOKEN_TTL_SECONDS,
+  ): Promise<string> {
+    return new SignJWT({
+      tid: claims.tid,
+      ...(claims.imp && { imp: claims.imp }),
+      ...(claims.ro && { ro: true }),
+    })
       .setProtectedHeader({ alg: 'HS256' })
       .setSubject(claims.sub)
       .setIssuedAt()

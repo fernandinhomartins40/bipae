@@ -9,7 +9,20 @@ import {
   type PlanLimits,
   type TenantStatus,
 } from '@bipae/domain';
-import { and, asc, count, desc, eq, gte, ilike, inArray, isNull, or, sql, type SQL } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  isNull,
+  or,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 import type { z } from 'zod';
 import type { Config } from '../../config';
 import { CONFIG, DB } from '../../common/di';
@@ -58,15 +71,26 @@ export class AdminTenantsService {
 
   async dashboard() {
     return asPlatform(this.db, async (tx) => {
-      const byStatus = await tx.select({ status: tenants.status, n: count() }).from(tenants).groupBy(tenants.status);
+      const byStatus = await tx
+        .select({ status: tenants.status, n: count() })
+        .from(tenants)
+        .groupBy(tenants.status);
       const byPlan = await tx
-        .select({ planId: tenants.planId, name: plans.name, priceCents: plans.priceCents, n: count() })
+        .select({
+          planId: tenants.planId,
+          name: plans.name,
+          priceCents: plans.priceCents,
+          n: count(),
+        })
         .from(tenants)
         .innerJoin(plans, eq(plans.id, tenants.planId))
         .where(inArray(tenants.status, ['active', 'trial']))
         .groupBy(tenants.planId, plans.name, plans.priceCents);
       const signups = await tx
-        .select({ day: sql<string>`to_char(${tenants.createdAt} at time zone 'America/Sao_Paulo', 'YYYY-MM-DD')`, n: count() })
+        .select({
+          day: sql<string>`to_char(${tenants.createdAt} at time zone 'America/Sao_Paulo', 'YYYY-MM-DD')`,
+          n: count(),
+        })
         .from(tenants)
         .where(gte(tenants.createdAt, daysAgo(30)))
         .groupBy(sql`1`)
@@ -78,7 +102,13 @@ export class AdminTenantsService {
           totalCents: sql<number>`coalesce(sum(${sales.totalCents}), 0)`,
         })
         .from(sales)
-        .where(and(gte(sales.occurredAt, daysAgo(30)), eq(sales.kind, 'sale'), eq(sales.status, 'completed')))
+        .where(
+          and(
+            gte(sales.occurredAt, daysAgo(30)),
+            eq(sales.kind, 'sale'),
+            eq(sales.status, 'completed'),
+          ),
+        )
         .groupBy(sql`1`)
         .orderBy(sql`1`);
       const [activeTerminals] = await tx
@@ -92,26 +122,43 @@ export class AdminTenantsService {
       const trialsEnding = await tx
         .select({ id: tenants.id, name: tenants.name, trialEndsAt: tenants.trialEndsAt })
         .from(tenants)
-        .where(and(eq(tenants.status, 'trial'), sql`${tenants.trialEndsAt} < now() + interval '7 days'`))
+        .where(
+          and(eq(tenants.status, 'trial'), sql`${tenants.trialEndsAt} < now() + interval '7 days'`),
+        )
         .orderBy(asc(tenants.trialEndsAt))
         .limit(10);
       const mrrCents = byPlan.reduce((sum, p) => sum + Number(p.priceCents ?? 0) * Number(p.n), 0);
       return {
-        tenants: Object.fromEntries(byStatus.map((s) => [s.status, Number(s.n)])) as Partial<Record<TenantStatus, number>>,
+        tenants: Object.fromEntries(byStatus.map((s) => [s.status, Number(s.n)])) as Partial<
+          Record<TenantStatus, number>
+        >,
         byPlan: byPlan.map((p) => ({ planId: p.planId, name: p.name, tenants: Number(p.n) })),
         mrrCents,
         activeTerminals24h: Number(activeTerminals?.n ?? 0),
         activeTenants7d: Number(activeTenants7d?.n ?? 0),
         signups: signups.map((s) => ({ day: s.day, count: Number(s.n) })),
-        sales: salesByDay.map((s) => ({ day: s.day, count: Number(s.n), totalCents: Number(s.totalCents) })),
-        trialsEnding: trialsEnding.map((t) => ({ ...t, trialEndsAt: t.trialEndsAt?.toISOString() ?? null })),
+        sales: salesByDay.map((s) => ({
+          day: s.day,
+          count: Number(s.n),
+          totalCents: Number(s.totalCents),
+        })),
+        trialsEnding: trialsEnding.map((t) => ({
+          ...t,
+          trialEndsAt: t.trialEndsAt?.toISOString() ?? null,
+        })),
       };
     });
   }
 
   // ---------------------------------------------------------------- list and detail
 
-  async list(query: { q?: string | undefined; status?: string | undefined; planId?: string | undefined; limit: number; offset: number }) {
+  async list(query: {
+    q?: string | undefined;
+    status?: string | undefined;
+    planId?: string | undefined;
+    limit: number;
+    offset: number;
+  }) {
     return asPlatform(this.db, async (tx) => {
       const where: SQL[] = [];
       if (query.status) where.push(eq(tenants.status, query.status as TenantStatus));
@@ -136,12 +183,16 @@ export class AdminTenantsService {
           planName: plans.name,
           trialEndsAt: tenants.trialEndsAt,
           createdAt: tenants.createdAt,
-          owner: sql<string | null>`(select u.email from memberships m join roles r on r.id = m.role_id join users u on u.id = m.user_id where m.tenant_id = ${tenants.id} and r.system_key = 'owner' order by m.created_at limit 1)`,
+          owner: sql<
+            string | null
+          >`(select u.email from memberships m join roles r on r.id = m.role_id join users u on u.id = m.user_id where m.tenant_id = ${tenants.id} and r.system_key = 'owner' order by m.created_at limit 1)`,
           users: sql<number>`(select count(*) from memberships m where m.tenant_id = ${tenants.id} and m.active)`,
           terminals: sql<number>`(select count(*) from terminals t where t.tenant_id = ${tenants.id} and t.status = 'active')`,
           products: sql<number>`(select count(*) from products p where p.tenant_id = ${tenants.id})`,
           sales30d: sql<number>`(select count(*) from sales s where s.tenant_id = ${tenants.id} and s.kind = 'sale' and s.occurred_at > now() - interval '30 days')`,
-          lastActivity: sql<string | null>`greatest((select max(e.received_at) from sync_events e where e.tenant_id = ${tenants.id}), (select max(s.created_at) from sessions s where s.tenant_id = ${tenants.id}))`,
+          lastActivity: sql<
+            string | null
+          >`greatest((select max(e.received_at) from sync_events e where e.tenant_id = ${tenants.id}), (select max(s.created_at) from sessions s where s.tenant_id = ${tenants.id}))`,
         })
         .from(tenants)
         .innerJoin(plans, eq(plans.id, tenants.planId))
@@ -174,8 +225,16 @@ export class AdminTenantsService {
         .innerJoin(plans, eq(plans.id, tenants.planId))
         .where(eq(tenants.id, id));
       if (!row) throw notFound('Cliente');
-      const companyRows = await tx.select().from(companies).where(eq(companies.tenantId, id)).orderBy(asc(companies.createdAt));
-      const storeRows = await tx.select().from(stores).where(eq(stores.tenantId, id)).orderBy(asc(stores.createdAt));
+      const companyRows = await tx
+        .select()
+        .from(companies)
+        .where(eq(companies.tenantId, id))
+        .orderBy(asc(companies.createdAt));
+      const storeRows = await tx
+        .select()
+        .from(stores)
+        .where(eq(stores.tenantId, id))
+        .orderBy(asc(stores.createdAt));
       const terminalRows = await tx
         .select({
           id: terminals.id,
@@ -184,7 +243,9 @@ export class AdminTenantsService {
           nfceSeries: terminals.nfceSeries,
           status: terminals.status,
           storeId: terminals.storeId,
-          lastSync: sql<string | null>`(select max(e.received_at) from sync_events e where e.terminal_id = "terminals"."id")`,
+          lastSync: sql<
+            string | null
+          >`(select max(e.received_at) from sync_events e where e.terminal_id = "terminals"."id")`,
           lastSeq: sql<number>`(select coalesce(max(e.device_seq), 0) from sync_events e where e.terminal_id = "terminals"."id")`,
         })
         .from(terminals)
@@ -198,7 +259,9 @@ export class AdminTenantsService {
           role: roles.name,
           systemKey: roles.systemKey,
           active: memberships.active,
-          lastLogin: sql<string | null>`(select max(s.created_at) from sessions s where s.user_id = ${users.id} and s.tenant_id = ${id})`,
+          lastLogin: sql<
+            string | null
+          >`(select max(s.created_at) from sessions s where s.user_id = ${users.id} and s.tenant_id = ${id})`,
         })
         .from(memberships)
         .innerJoin(users, eq(users.id, memberships.userId))
@@ -210,12 +273,26 @@ export class AdminTenantsService {
         stores: storeRows.length,
         terminals: terminalRows.filter((t) => t.status === 'active').length,
         users: members.filter((m) => m.active).length,
-        products: Number((await tx.select({ n: count() }).from(products).where(and(eq(products.tenantId, id), eq(products.active, true))))[0]?.n ?? 0),
+        products: Number(
+          (
+            await tx
+              .select({ n: count() })
+              .from(products)
+              .where(and(eq(products.tenantId, id), eq(products.active, true)))
+          )[0]?.n ?? 0,
+        ),
       };
       const [sales30] = await tx
         .select({ n: count(), totalCents: sql<number>`coalesce(sum(${sales.totalCents}), 0)` })
         .from(sales)
-        .where(and(eq(sales.tenantId, id), eq(sales.kind, 'sale'), eq(sales.status, 'completed'), gte(sales.occurredAt, daysAgo(30))));
+        .where(
+          and(
+            eq(sales.tenantId, id),
+            eq(sales.kind, 'sale'),
+            eq(sales.status, 'completed'),
+            gte(sales.occurredAt, daysAgo(30)),
+          ),
+        );
       const events = await tx
         .select({ event: tenantEvents, adminName: users.name })
         .from(tenantEvents)
@@ -224,7 +301,13 @@ export class AdminTenantsService {
         .orderBy(desc(tenantEvents.createdAt))
         .limit(100);
       const recentAudit = await tx
-        .select({ seq: auditLog.seq, action: auditLog.action, data: auditLog.data, createdAt: auditLog.createdAt, actorId: auditLog.actorId })
+        .select({
+          seq: auditLog.seq,
+          action: auditLog.action,
+          data: auditLog.data,
+          createdAt: auditLog.createdAt,
+          actorId: auditLog.actorId,
+        })
         .from(auditLog)
         .where(eq(auditLog.tenantId, id))
         .orderBy(desc(auditLog.seq))
@@ -242,9 +325,20 @@ export class AdminTenantsService {
         sales30d: { count: Number(sales30?.n ?? 0), totalCents: Number(sales30?.totalCents ?? 0) },
         companies: companyRows,
         stores: storeRows,
-        terminals: terminalRows.map((t) => ({ ...t, lastSeq: Number(t.lastSeq), lastSync: t.lastSync ? new Date(t.lastSync).toISOString() : null })),
-        members: members.map((m) => ({ ...m, lastLogin: m.lastLogin ? new Date(m.lastLogin).toISOString() : null })),
-        events: events.map((e) => ({ ...e.event, createdAt: e.event.createdAt.toISOString(), adminName: e.adminName })),
+        terminals: terminalRows.map((t) => ({
+          ...t,
+          lastSeq: Number(t.lastSeq),
+          lastSync: t.lastSync ? new Date(t.lastSync).toISOString() : null,
+        })),
+        members: members.map((m) => ({
+          ...m,
+          lastLogin: m.lastLogin ? new Date(m.lastLogin).toISOString() : null,
+        })),
+        events: events.map((e) => ({
+          ...e.event,
+          createdAt: e.event.createdAt.toISOString(),
+          adminName: e.adminName,
+        })),
         audit: recentAudit.map((a) => ({ ...a, createdAt: a.createdAt.toISOString() })),
       };
     });
@@ -258,8 +352,17 @@ export class AdminTenantsService {
     return row;
   }
 
-  private async event(tx: Tx, admin: AdminContext, tenantId: string, kind: string, data: unknown, action: string) {
-    await tx.insert(tenantEvents).values({ id: uuidv7(), tenantId, kind, data, adminId: admin.userId });
+  private async event(
+    tx: Tx,
+    admin: AdminContext,
+    tenantId: string,
+    kind: string,
+    data: unknown,
+    action: string,
+  ) {
+    await tx
+      .insert(tenantEvents)
+      .values({ id: uuidv7(), tenantId, kind, data, adminId: admin.userId });
     await this.audit.record(tx, admin, { action, tenantId, target: 'tenant', data });
   }
 
@@ -280,21 +383,36 @@ export class AdminTenantsService {
           : current.status;
       await tx
         .update(tenants)
-        .set({ planId: plan.id, trialEndsAt, status, statusChangedAt: status !== current.status ? new Date() : current.statusChangedAt })
+        .set({
+          planId: plan.id,
+          trialEndsAt,
+          status,
+          statusChangedAt: status !== current.status ? new Date() : current.statusChangedAt,
+        })
         .where(eq(tenants.id, id));
       await this.event(
         tx,
         admin,
         id,
         trialEndsAt ? 'trial_set' : 'plan_changed',
-        { from: current.planId, to: plan.id, trialEndsAt: trialEndsAt?.toISOString() ?? null, reason: input.reason },
+        {
+          from: current.planId,
+          to: plan.id,
+          trialEndsAt: trialEndsAt?.toISOString() ?? null,
+          reason: input.reason,
+        },
         trialEndsAt ? 'tenant.trial_set' : 'tenant.plan_changed',
       );
       return { planId: plan.id, status, trialEndsAt: trialEndsAt?.toISOString() ?? null };
     });
   }
 
-  async setStatus(admin: AdminContext, id: string, status: 'active' | 'suspended' | 'cancelled', reason: string) {
+  async setStatus(
+    admin: AdminContext,
+    id: string,
+    status: 'active' | 'suspended' | 'cancelled',
+    reason: string,
+  ) {
     return asPlatform(this.db, async (tx) => {
       const current = await this.requireTenant(tx, id);
       if (current.status === status) {
@@ -302,14 +420,29 @@ export class AdminTenantsService {
       }
       await tx
         .update(tenants)
-        .set({ status, statusReason: status === 'active' ? null : reason, statusChangedAt: new Date(), ...(status === 'active' && { trialEndsAt: null }) })
+        .set({
+          status,
+          statusReason: status === 'active' ? null : reason,
+          statusChangedAt: new Date(),
+          ...(status === 'active' && { trialEndsAt: null }),
+        })
         .where(eq(tenants.id, id));
       if (status !== 'active') {
         // Suspending or cancelling ends every open session at once.
-        await tx.update(sessions).set({ revokedAt: new Date() }).where(and(eq(sessions.tenantId, id), isNull(sessions.revokedAt)));
+        await tx
+          .update(sessions)
+          .set({ revokedAt: new Date() })
+          .where(and(eq(sessions.tenantId, id), isNull(sessions.revokedAt)));
       }
       const kind = status === 'active' ? 'reactivated' : status;
-      await this.event(tx, admin, id, kind, { from: current.status, to: status, reason }, `tenant.${kind}`);
+      await this.event(
+        tx,
+        admin,
+        id,
+        kind,
+        { from: current.status, to: status, reason },
+        `tenant.${kind}`,
+      );
       return { status };
     });
   }
@@ -319,7 +452,14 @@ export class AdminTenantsService {
       const current = await this.requireTenant(tx, id);
       const clean = Object.keys(overrides).length ? overrides : null;
       await tx.update(tenants).set({ limitOverrides: clean }).where(eq(tenants.id, id));
-      await this.event(tx, admin, id, 'limits_changed', { from: current.limitOverrides, to: clean, reason }, 'tenant.limits_changed');
+      await this.event(
+        tx,
+        admin,
+        id,
+        'limits_changed',
+        { from: current.limitOverrides, to: clean, reason },
+        'tenant.limits_changed',
+      );
       return { limitOverrides: clean };
     });
   }
@@ -339,9 +479,20 @@ export class AdminTenantsService {
       const revoked = await tx
         .update(sessions)
         .set({ revokedAt: new Date() })
-        .where(and(eq(sessions.tenantId, tenantId), eq(sessions.userId, userId), isNull(sessions.revokedAt)))
+        .where(
+          and(
+            eq(sessions.tenantId, tenantId),
+            eq(sessions.userId, userId),
+            isNull(sessions.revokedAt),
+          ),
+        )
         .returning({ id: sessions.id });
-      await this.audit.record(tx, admin, { action: 'tenant.user_sessions_revoked', tenantId, target: userId, data: { sessions: revoked.length } });
+      await this.audit.record(tx, admin, {
+        action: 'tenant.user_sessions_revoked',
+        tenantId,
+        target: userId,
+        data: { sessions: revoked.length },
+      });
       return { revoked: revoked.length };
     });
   }
@@ -352,7 +503,11 @@ export class AdminTenantsService {
    */
   async impersonate(admin: AdminContext, id: string, input: z.output<typeof impersonateInput>) {
     if (!input.readOnly && !platformCan(admin.role, 'platform.tenants.manage')) {
-      throw new AppError(403, 'forbidden', 'Seu papel só permite acesso de suporte somente leitura.');
+      throw new AppError(
+        403,
+        'forbidden',
+        'Seu papel só permite acesso de suporte somente leitura.',
+      );
     }
     const owner = await asPlatform(this.db, async (tx) => {
       const tenant = await this.requireTenant(tx, id);
@@ -360,25 +515,50 @@ export class AdminTenantsService {
         .select({ userId: memberships.userId })
         .from(memberships)
         .innerJoin(roles, eq(roles.id, memberships.roleId))
-        .where(and(eq(memberships.tenantId, id), eq(roles.systemKey, 'owner'), eq(memberships.active, true)))
+        .where(
+          and(
+            eq(memberships.tenantId, id),
+            eq(roles.systemKey, 'owner'),
+            eq(memberships.active, true),
+          ),
+        )
         .orderBy(asc(memberships.createdAt))
         .limit(1);
-      if (!row) throw new AppError(409, 'conflict', 'Este cliente não tem um dono ativo para o acesso de suporte.');
-      await this.event(tx, admin, id, 'support_session', { reason: input.reason, readOnly: input.readOnly }, 'tenant.support_session');
+      if (!row)
+        throw new AppError(
+          409,
+          'conflict',
+          'Este cliente não tem um dono ativo para o acesso de suporte.',
+        );
+      await this.event(
+        tx,
+        admin,
+        id,
+        'support_session',
+        { reason: input.reason, readOnly: input.readOnly },
+        'tenant.support_session',
+      );
       return { userId: row.userId, tenantName: tenant.name };
     });
     // Also visible in the client's own audit trail.
     await withTenant(this.db, { tenantId: id, userId: owner.userId }, (tx) =>
-      this.tenantAudit.record(tx, { tenantId: id, userId: owner.userId, impersonatedBy: admin.userId }, {
-        action: 'support.session_started',
-        entity: 'tenant',
-        entityId: id,
-        data: { reason: input.reason, readOnly: input.readOnly },
-      }),
+      this.tenantAudit.record(
+        tx,
+        { tenantId: id, userId: owner.userId, impersonatedBy: admin.userId },
+        {
+          action: 'support.session_started',
+          entity: 'tenant',
+          entityId: id,
+          data: { reason: input.reason, readOnly: input.readOnly },
+        },
+      ),
     );
     const ttl = this.config.SUPPORT_SESSION_MINUTES * 60;
     return {
-      accessToken: await this.tokens.signAccess({ sub: owner.userId, tid: id, imp: admin.userId, ro: input.readOnly }, ttl),
+      accessToken: await this.tokens.signAccess(
+        { sub: owner.userId, tid: id, imp: admin.userId, ro: input.readOnly },
+        ttl,
+      ),
       expiresIn: ttl,
       tenantName: owner.tenantName,
       readOnly: input.readOnly,
@@ -403,7 +583,11 @@ export class AdminTenantsService {
       });
     }
     await asPlatform(this.db, (tx) =>
-      this.audit.record(tx, admin, { action: 'tenant.created_by_admin', tenantId, data: { businessName: input.businessName, ownerEmail: input.ownerEmail } }),
+      this.audit.record(tx, admin, {
+        action: 'tenant.created_by_admin',
+        tenantId,
+        data: { businessName: input.businessName, ownerEmail: input.ownerEmail },
+      }),
     );
     return { id: tenantId };
   }

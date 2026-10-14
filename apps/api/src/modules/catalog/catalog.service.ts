@@ -20,6 +20,7 @@ import {
   priceTableItems,
   priceTables,
   productBarcodes,
+  productPacks,
   productComponents,
   products,
   units,
@@ -146,6 +147,7 @@ export class CatalogService {
       fiscalProfileId: input.fiscalProfileId ?? null,
       parentId: input.parentId ?? null,
       attributes: input.attributes ?? null,
+      catalog: input.catalog ?? null,
     };
   }
 
@@ -154,6 +156,24 @@ export class CatalogService {
     const codes = [...new Set(input.barcodes)];
     if (codes.length > 0) {
       await tx.insert(productBarcodes).values(codes.map((code) => ({ tenantId, code, productId })));
+    }
+    // Embalagens de compra (caixa, fardo): um código só pode ser de um produto.
+    await tx.delete(productPacks).where(eq(productPacks.productId, productId));
+    if (input.packs.length > 0) {
+      await tx
+        .insert(productPacks)
+        .values(
+          input.packs.map((p) => ({
+            tenantId,
+            productId,
+            packGtin: p.packGtin,
+            unitsPerPack: p.unitsPerPack,
+          })),
+        )
+        .onConflictDoUpdate({
+          target: [productPacks.tenantId, productPacks.packGtin],
+          set: { productId, unitsPerPack: sql`excluded.units_per_pack` },
+        });
     }
     await tx.delete(productComponents).where(eq(productComponents.productId, productId));
     if (input.components.length > 0) {
@@ -220,6 +240,7 @@ export class CatalogService {
       .from(productComponents)
       .innerJoin(products, eq(products.id, productComponents.componentId))
       .where(inArray(productComponents.productId, ids));
+    const packs = await tx.select().from(productPacks).where(inArray(productPacks.productId, ids));
     return rows.map((r) => ({
       id: r.id,
       name: r.name,
@@ -239,6 +260,10 @@ export class CatalogService {
       components: components
         .filter((c) => c.productId === r.id)
         .map((c) => ({ productId: c.componentId, quantity: Number(c.quantity), name: c.name })),
+      catalog: (r.catalog as Product['catalog']) ?? null,
+      packs: packs
+        .filter((p) => p.productId === r.id)
+        .map((p) => ({ packGtin: p.packGtin, unitsPerPack: p.unitsPerPack })),
       updatedAt: r.updatedAt.toISOString(),
     }));
   }

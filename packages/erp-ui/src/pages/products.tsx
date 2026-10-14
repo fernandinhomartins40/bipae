@@ -1,4 +1,11 @@
-import { formatBRL, type Cents, type FiscalProfile, type Page, type Product } from '@bipae/domain';
+import {
+  formatBRL,
+  type CatalogProduct,
+  type Cents,
+  type FiscalProfile,
+  type Page,
+  type Product,
+} from '@bipae/domain';
 import {
   Alert,
   Badge,
@@ -16,6 +23,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search } from 'lucide-react';
 import { useDeferredValue, useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
+import { CatalogAssist, catalogSummary } from './catalog-assist';
 import { ApiError } from '../api-client';
 import { useForm } from '../forms';
 import { NcmCestHelp } from './fiscal-lookup';
@@ -172,6 +180,34 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
     active: product?.active ?? true,
   });
 
+  // Dados que vieram do catálogo: marca, fabricante, conteúdo e códigos de caixa.
+  const [catalog, setCatalog] = useState(product?.catalog ?? null);
+  const [packs, setPacks] = useState(product?.packs ?? []);
+  const [fromCatalog, setFromCatalog] = useState(false);
+  const applyCatalog = (found: CatalogProduct) => {
+    form.set('name', found.description ?? form.values.name);
+    const codes = new Set(form.values.barcodes.split(/[s,;]+/).filter(Boolean));
+    codes.add(found.gtin);
+    form.set('barcodes', [...codes].join(', '));
+    const unit = found.unit ?? 'UN';
+    if (units.data?.some((u) => u.code === unit)) form.set('unit', unit);
+    form.set('isWeighable', found.weighable === true);
+    // NCM e CEST são sugestões do catálogo, já conferidas na tabela oficial.
+    if (found.ncm) form.set('ncm', found.ncm);
+    if (found.cest) form.set('cest', found.cest);
+    setCatalog({
+      brand: found.brand ?? null,
+      manufacturer: found.manufacturer ?? null,
+      department: found.department ?? null,
+      category: found.category ?? null,
+      packageDescription: found.packageDescription ?? null,
+      content: found.content ?? null,
+      source: found.source ?? null,
+    });
+    setPacks(found.packs ?? []);
+    setFromCatalog(true);
+  };
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     void form.submit(async (v) => {
@@ -184,6 +220,8 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
         ...v,
         fiscalProfileId: v.fiscalProfileId || null,
         components: components.map(({ productId, quantity }) => ({ productId, quantity })),
+        catalog,
+        packs,
         barcodes: v.barcodes
           .split(/[\s,;]+/)
           .map((b) => b.trim())
@@ -204,6 +242,16 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
     >
       <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
         {form.formError && <Alert>{form.formError}</Alert>}
+        {!product && <CatalogAssist onPick={applyCatalog} />}
+        {fromCatalog && (
+          <Alert tone="success" title="Preenchido pelo catálogo">
+            Confira os dados, informe o preço e salve. O NCM e o CEST são sugestões: confirme com o
+            seu contador.
+          </Alert>
+        )}
+        {catalogSummary(catalog, packs) && (
+          <p className="text-sm text-muted">{catalogSummary(catalog, packs)}</p>
+        )}
         <TextField
           label="Nome"
           value={form.values.name}

@@ -52,7 +52,11 @@ export class AccountController {
         // Internal notes and staff ids never reach the client.
         events: events
           .filter((e) => e.kind !== 'note')
-          .map((e) => ({ kind: e.kind, data: publicEventData(e.data), createdAt: e.createdAt.toISOString() })),
+          .map((e) => ({
+            kind: e.kind,
+            data: publicEventData(e.data),
+            createdAt: e.createdAt.toISOString(),
+          })),
         plans: catalog
           .filter((p) => p.active)
           .map((p) => ({
@@ -71,7 +75,9 @@ export class AccountController {
   async announcements(@Ctx() ctx: RequestContext): Promise<AnnouncementView[]> {
     return withTenant(this.db, ctx, async (tx) => {
       const [tenant] = await tx.select({ planId: tenants.planId }).from(tenants);
-      const result = await tx.execute(sql`select * from active_announcements(${tenant?.planId ?? ''})`);
+      const result = await tx.execute(
+        sql`select * from active_announcements(${tenant?.planId ?? ''})`,
+      );
       return rowsOf<AnnouncementView>(result);
     });
   }

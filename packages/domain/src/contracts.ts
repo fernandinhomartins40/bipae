@@ -142,6 +142,35 @@ export const barcodeSchema = z
     'Dígito verificador do código de barras inválido',
   );
 
+// ---------------------------------------------------------------- catálogo (MercadoFlow, MF-02)
+
+/** Dados de catálogo guardados no produto: nada disso muda o imposto nem o preço. */
+export const productCatalogSchema = z.object({
+  brand: optionalText(80),
+  manufacturer: optionalText(120),
+  department: optionalText(80),
+  category: optionalText(160),
+  packageDescription: optionalText(40),
+  /** Conteúdo da embalagem, para o preço por kg ou litro na etiqueta. */
+  content: z
+    .object({
+      quantity: z.string().regex(/^\d+(\.\d+)?$/, 'Quantidade do conteúdo inválida'),
+      unit: z.string().trim().toUpperCase().min(1).max(6),
+      packs: z.number().int().positive().default(1),
+    })
+    .nullish(),
+  /** De onde veio o cadastro (auditoria; não aparece para o lojista). */
+  source: optionalText(60),
+});
+export type ProductCatalog = z.output<typeof productCatalogSchema>;
+
+/** Código de caixa ou fardo do produto e quantas unidades leva. */
+export const productPackSchema = z.object({
+  packGtin: barcodeSchema,
+  unitsPerPack: z.number().int().positive().max(100_000),
+});
+export type ProductPack = z.output<typeof productPackSchema>;
+
 export const productInput = z.object({
   name: trimmed(1, 120, 'Nome do produto'),
   sku: optionalText(60),
@@ -171,6 +200,8 @@ export const productInput = z.object({
     .array(z.object({ productId: z.string().uuid(), quantity: z.number().positive() }))
     .max(50)
     .default([]),
+  catalog: productCatalogSchema.nullish(),
+  packs: z.array(productPackSchema).max(20).default([]),
 });
 export type ProductInput = z.input<typeof productInput>;
 
@@ -192,6 +223,10 @@ export interface Product {
   attributes: Record<string, string> | null;
   /** Composição do kit; `name` vem da API para exibir. */
   components: { productId: string; quantity: number; name?: string }[];
+  /** Marca, fabricante, departamento e conteúdo (catálogo). */
+  catalog?: ProductCatalog | null;
+  /** Códigos de caixa ou fardo, com as unidades de cada um. */
+  packs?: ProductPack[];
   updatedAt: string;
 }
 
@@ -651,3 +686,39 @@ export interface PurchaseSummary {
   itemCount: number;
   createdAt: string;
 }
+
+// ---------------------------------------------------------------- catálogo (MercadoFlow, MF-02)
+
+/** Produto como o catálogo devolve, já com o NCM e o CEST conferidos na tabela oficial. */
+export interface CatalogProduct {
+  gtin: string;
+  found: boolean;
+  reason?: 'NAO_ENCONTRADO' | 'GTIN_INVALIDO' | 'SEM_RESPOSTA';
+  description?: string;
+  brand?: string | null;
+  manufacturer?: string | null;
+  department?: string | null;
+  category?: string | null;
+  unit?: string;
+  weighable?: boolean;
+  packageDescription?: string | null;
+  content?: { quantity: string; unit: string; packs: number } | null;
+  /** Sugestões: só vêm quando o código existe na tabela oficial vigente. */
+  ncm?: string | null;
+  ncmConfidence?: number | null;
+  cest?: string | null;
+  packs?: ProductPack[];
+  source?: string | null;
+}
+
+export const catalogLookupInput = z.object({
+  gtins: z
+    .array(
+      z
+        .string()
+        .trim()
+        .regex(/^\d{8,14}$/, 'Código de barras inválido'),
+    )
+    .min(1)
+    .max(200),
+});

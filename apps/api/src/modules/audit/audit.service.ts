@@ -22,7 +22,10 @@ export interface AuditInput {
 function withSupportMark(data: unknown, impersonatedBy: string | undefined) {
   const plain = data === undefined ? null : JSON.parse(JSON.stringify(data));
   if (!impersonatedBy) return plain;
-  return { ...(plain && typeof plain === 'object' ? plain : { value: plain }), suporteBipae: impersonatedBy };
+  return {
+    ...(plain && typeof plain === 'object' ? plain : { value: plain }),
+    suporteBipae: impersonatedBy,
+  };
 }
 
 /** Deterministic JSON (sorted keys) so hashes are reproducible. */

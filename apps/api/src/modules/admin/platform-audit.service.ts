@@ -21,8 +21,14 @@ export interface PlatformAuditInput {
 export class PlatformAuditService {
   constructor(@Inject(DB) private readonly db: Db) {}
 
-  async record(tx: Tx, actor: { userId: string | null; ip?: string | null }, input: PlatformAuditInput) {
-    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended('bipae-platform-audit', 0))`);
+  async record(
+    tx: Tx,
+    actor: { userId: string | null; ip?: string | null },
+    input: PlatformAuditInput,
+  ) {
+    await tx.execute(
+      sql`select pg_advisory_xact_lock(hashtextextended('bipae-platform-audit', 0))`,
+    );
     const [last] = await tx
       .select({ seq: platformAuditLog.seq, hash: platformAuditLog.hash })
       .from(platformAuditLog)

@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Headers, HttpCode, Inject, Ip, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  Inject,
+  Ip,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { RouteConfig } from '@nestjs/platform-fastify';
 import { adminLoginInput, refreshInput, totpCodeInput } from '@bipae/domain';
 import { Public } from '../../common/auth';
@@ -19,13 +29,19 @@ export class AdminAuthController {
   @RouteConfig(RATE_LIMIT)
   login(@Body() body: unknown, @Ip() ip: string, @Headers('user-agent') userAgent?: string) {
     const input = parse(adminLoginInput, body);
-    return this.auth.login(input.email, input.password, input.totp, { ip, ...(userAgent && { userAgent }) });
+    return this.auth.login(input.email, input.password, input.totp, {
+      ip,
+      ...(userAgent && { userAgent }),
+    });
   }
 
   @Post('refresh')
   @HttpCode(200)
   refresh(@Body() body: unknown, @Ip() ip: string, @Headers('user-agent') userAgent?: string) {
-    return this.auth.refresh(parse(refreshInput, body).refreshToken, { ip, ...(userAgent && { userAgent }) });
+    return this.auth.refresh(parse(refreshInput, body).refreshToken, {
+      ip,
+      ...(userAgent && { userAgent }),
+    });
   }
 
   @Post('logout')
@@ -54,7 +70,11 @@ export class AdminAuthController {
   @UseGuards(PlatformGuard)
   @AllowWithoutMfa()
   @RouteConfig(RATE_LIMIT)
-  totpEnable(@Admin() admin: AdminContext, @Body() body: unknown, @Headers('user-agent') userAgent?: string) {
+  totpEnable(
+    @Admin() admin: AdminContext,
+    @Body() body: unknown,
+    @Headers('user-agent') userAgent?: string,
+  ) {
     return this.auth.totpEnable(admin.userId, parse(totpCodeInput, body).code, {
       ip: admin.ip,
       ...(userAgent && { userAgent }),

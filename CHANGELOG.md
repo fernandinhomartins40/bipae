@@ -1,5 +1,17 @@
 # Changelog
 
+## [MF-02 Catálogo no cadastro de produto] — 14/10/2026
+
+### Adicionado
+- **"Buscar no catálogo" no cadastro de produto:** bipar o código de barras ou digitar o nome traz nome, marca, fabricante, departamento, unidade, conteúdo, NCM e CEST sugeridos e os códigos de caixa. O usuário confere, informa o preço e salva: nada é cadastrado sozinho.
+- **NCM e CEST do catálogo só são sugeridos quando existem na tabela oficial vigente.**
+- O produto passa a guardar os dados de catálogo e as embalagens de compra (caixa ou fardo com a quantidade).
+- Cache do catálogo (30 dias para achado, 1 dia para não achado, 10 minutos para busca por nome), consulta em lote de até 200 códigos e modo rápido de 1,5 s para o caixa.
+- Vale para toda loja, com ou sem conta no MercadoFlow. Com a integração desligada ou o MercadoFlow fora do ar, o cadastro segue manual.
+
+### Pendente
+- Imagens do catálogo (MF-06) dependem de onde guardar arquivos (item E12).
+
 ## [MF-01 Base da integração MercadoFlow] — 13/10/2026
 
 ### Adicionado
