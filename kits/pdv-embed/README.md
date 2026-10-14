@@ -92,6 +92,26 @@ O backend recebe duas funções suas:
 - **`auth`**: quem está logado, de qual loja e com quais regras;
 - **`onStockChange`**: como mexer no estoque da sua tabela.
 
+Opcional: **autorização do gerente** para desconto acima do limite. Passe também
+`authorizeManager` (confere login e senha do gerente no SEU cadastro e devolve
+`{ id, name, maxDiscountPercent }` ou `null`) e um `secret` forte, guardado fora do código. Com os
+dois, o caixa pede a senha do gerente em vez de só recusar. O código de autorização vale 5 minutos,
+só para aquela loja e aquele desconto. Sem eles, nada muda.
+
+```js
+createPdvHandler({
+  db, auth, onStockChange,
+  authorizeManager: async (req, { login, password }) => {
+    const manager = await meusUsuarios.conferirSenha(login, password);
+    return manager?.podeAutorizarDesconto ? { id: manager.id, name: manager.nome, maxDiscountPercent: 50 } : null;
+  },
+  secret: process.env.PDV_SECRET,
+});
+```
+
+No PHP: `new BipaePdv($pdo, $auth, $stock, $authorizeManager, getenv('PDV_SECRET'))`, com
+`$authorizeManager = fn (string $login, string $senha, array $operador): ?array => ...`.
+
 **Laravel** (`routes/web.php`, usa o login e a sessão do Laravel):
 
 ```php
@@ -194,7 +214,7 @@ node conformance/run.mjs --url http://localhost:8000/api/pdv --cookie "laravel_s
 node conformance/run.mjs --url http://localhost:3000/api/pdv --token SEU_TOKEN --q arroz
 ```
 
-`--q` é um texto que encontre um produto vendido por unidade. Quando aparecer "Tudo certo", a integração está pronta.
+`--q` é um texto que encontre um produto vendido por unidade. Com a autorização do gerente ligada, acrescente `--manager login:senha` de um gerente de teste. Quando aparecer "Tudo certo", a integração está pronta.
 
 ---
 
@@ -271,7 +291,7 @@ e corrija até aparecer "Tudo certo".
 - Precisa de internet: venda sem conexão é recurso do Bipaê completo.
 - **Não emite nota fiscal (NFC-e).** O comprovante diz "NÃO É DOCUMENTO FISCAL".
 - Impressão pelo diálogo do navegador. Impressoras térmicas instaladas no sistema funcionam; não há ESC/POS direto, gaveta nem balança.
-- Um caixa aberto por operador. Desconto acima do limite não tem autorização de gerente: só é recusado.
+- Um caixa aberto por operador. Desconto acima do limite só passa com a autorização do gerente, se a sua aplicação ligar `authorizeManager`; senão, é recusado.
 
 ## Atualizar
 

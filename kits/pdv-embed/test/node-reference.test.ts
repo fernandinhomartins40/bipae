@@ -2,7 +2,13 @@ import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { runConformance } from '../conformance/run.mjs';
-import { createDemoDatabase, demoAuth } from '../demo/demo-db.mjs';
+import {
+  createDemoDatabase,
+  demoAuth,
+  demoAuthorizeManager,
+  DEMO_MANAGER,
+  DEMO_SECRET,
+} from '../demo/demo-db.mjs';
 import { createPdvHandler } from '../server/node/bipae-pdv.mjs';
 
 describe('Node reference implementation', () => {
@@ -15,6 +21,8 @@ describe('Node reference implementation', () => {
     const pdv = createPdvHandler({
       db: demo.db,
       auth: demoAuth,
+      authorizeManager: demoAuthorizeManager,
+      secret: DEMO_SECRET,
       onStockChange: demo.onStockChange,
       basePath: '/api/pdv',
     });
@@ -40,6 +48,7 @@ describe('Node reference implementation', () => {
       url,
       headers: { authorization: 'Bearer token-ana' },
       q: 'arroz',
+      manager: DEMO_MANAGER,
       log: (l: string) => lines.push(l),
     });
     expect(result.failed, lines.join('\n')).toEqual([]);

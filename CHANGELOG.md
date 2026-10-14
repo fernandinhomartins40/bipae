@@ -1,5 +1,11 @@
 # Changelog
 
+## [P-05 PDV Embed: autorização do gerente] — 14/10/2026
+
+### Adicionado
+- **Desconto acima do limite com a senha do gerente no PDV Embed**: quando a aplicação liga `authorizeManager` e um `secret`, o caixa pede o login e a senha do gerente. A rota nova `POST /authorize` devolve um código assinado que vale 5 minutos, só para aquela loja e aquele desconto, e a venda o leva em `discountAuthorization`.
+- Compatível com o contrato v1: tudo é opcional (`settings.managerAuthorization`); quem não liga continua igual. Implementado no Node e no PHP de referência, no componente e no teste de conformidade (`--manager login:senha`).
+
 ## [P-03 Dados do cliente (LGPD)] — 14/10/2026
 
 ### Adicionado

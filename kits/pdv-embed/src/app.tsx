@@ -241,6 +241,8 @@ function Register(props: {
 }) {
   const { api, me, events } = props;
   const [cart, setCart] = useState<Cart>(EMPTY_CART);
+  // Autorização do gerente para o desconto desta venda (P-05); vai junto ao registrar.
+  const [discountAuth, setDiscountAuth] = useState<string | null>(null);
   const [modal, setModal] = useState<Modal | null>(null);
   const [notice, setNotice] = useState<{
     tone: 'danger' | 'success' | 'info';
@@ -561,6 +563,7 @@ function Register(props: {
               disabled={cart.lines.length === 0}
               onClick={() => {
                 setCart(EMPTY_CART);
+                setDiscountAuth(null);
                 setNotice(null);
                 focusScan();
               }}
@@ -600,11 +603,14 @@ function Register(props: {
       )}
       {modal?.kind === 'discount' && (
         <DiscountDialog
+          api={api}
           cart={cart}
           maxPercent={me.settings.maxDiscountPercent}
+          managerAuthorization={me.settings.managerAuthorization === true}
           onClose={closeModal}
-          onApply={(next) => {
+          onApply={(next, authorization) => {
             setCart(next);
+            setDiscountAuth(authorization);
             closeModal();
           }}
         />
@@ -613,6 +619,7 @@ function Register(props: {
         <PayDialog
           api={api}
           cart={cart}
+          discountAuthorization={discountAuth}
           methods={me.settings.paymentMethods}
           onClose={closeModal}
           onPriceChanged={(productId, priceCents, text) => {
@@ -627,6 +634,7 @@ function Register(props: {
           }}
           onDone={(sale) => {
             setCart(EMPTY_CART);
+            setDiscountAuth(null);
             setNotice(null);
             setModal({ kind: 'done', sale });
             events.emit('sale', sale);
@@ -763,11 +771,17 @@ function QuantityDialog(props: {
 }
 
 function DiscountDialog(props: {
+  api: PdvApi;
   cart: Cart;
   maxPercent: number;
+  managerAuthorization: boolean;
   onClose: () => void;
-  onApply: (c: Cart) => void;
+  onApply: (c: Cart, authorization: string | null) => void;
 }) {
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authorizing, setAuthorizing] = useState(false);
   const subtotal = totals({ ...props.cart, saleDiscountCents: 0 }).subtotalCents;
   const [mode, setMode] = useState<'percent' | 'value'>('percent');
   const [percent, setPercent] = useState('');
@@ -776,21 +790,46 @@ function DiscountDialog(props: {
     mode === 'percent' ? percentOf(subtotal, Number(percent.replace(',', '.')) || 0) : cents;
   let error: string | null = null;
   let next: Cart | null = null;
+  let needsManager = false;
   try {
     next = setSaleDiscount(props.cart, value);
     if (discountNeedsAuthorization(next, props.maxPercent)) {
-      error = `O limite deste caixa é ${props.maxPercent}% (${brl(percentOf(subtotal, props.maxPercent))}).`;
+      // Acima do limite: com a senha do gerente, se a aplicação oferece (P-05).
+      if (props.managerAuthorization) needsManager = true;
+      else
+        error = `O limite deste caixa é ${props.maxPercent}% (${brl(percentOf(subtotal, props.maxPercent))}).`;
     }
   } catch (e) {
     error = message(e);
   }
+  const authorize = async () => {
+    if (!next) return;
+    setAuthorizing(true);
+    setAuthError(null);
+    try {
+      const t = totals(next);
+      const result = await props.api.authorize({
+        login,
+        password,
+        discountCents: t.discountCents,
+        subtotalCents: t.subtotalCents,
+      });
+      props.onApply(next, result.authorization);
+    } catch (e) {
+      setAuthError(message(e));
+    } finally {
+      setAuthorizing(false);
+    }
+  };
   return (
     <Dialog title="Desconto na venda" onClose={props.onClose}>
       <form
         class="stack"
         onSubmit={(e) => {
           e.preventDefault();
-          if (next && !error) props.onApply(next);
+          if (!next || error) return;
+          if (needsManager) void authorize();
+          else props.onApply(next, null);
         }}
       >
         <div class="segmented" role="radiogroup" aria-label="Tipo de desconto">
@@ -828,8 +867,35 @@ function DiscountDialog(props: {
           Desconto de {brl(value)} · total fica {brl(subtotal - value)}
         </p>
         {error && <Alert>{error}</Alert>}
-        <button type="submit" class="primary" disabled={!!error}>
-          Aplicar desconto
+        {needsManager && (
+          <>
+            <p class="muted">Acima de {props.maxPercent}% precisa da autorização de um gerente.</p>
+            <label class="field">
+              <span>Login do gerente</span>
+              <input
+                autoComplete="off"
+                value={login}
+                onInput={(e) => setLogin((e.currentTarget as HTMLInputElement).value)}
+              />
+            </label>
+            <label class="field">
+              <span>Senha do gerente</span>
+              <input
+                type="password"
+                autoComplete="off"
+                value={password}
+                onInput={(e) => setPassword((e.currentTarget as HTMLInputElement).value)}
+              />
+            </label>
+            {authError && <Alert>{authError}</Alert>}
+          </>
+        )}
+        <button
+          type="submit"
+          class="primary"
+          disabled={!!error || authorizing || (needsManager && (!login || !password))}
+        >
+          {needsManager ? 'Autorizar e aplicar' : 'Aplicar desconto'}
         </button>
       </form>
     </Dialog>
@@ -839,6 +905,7 @@ function DiscountDialog(props: {
 function PayDialog(props: {
   api: PdvApi;
   cart: Cart;
+  discountAuthorization: string | null;
   methods: PaymentMethod[];
   onClose: () => void;
   onDone: (sale: Sale) => void;
@@ -900,6 +967,7 @@ function PayDialog(props: {
               }))
             : [{ method: 'cash', amountCents: 0, changeCents: 0 }], // total zero (100% de desconto)
         customerDocument: docDigits || null,
+        ...(props.discountAuthorization && { discountAuthorization: props.discountAuthorization }),
       });
       props.onDone(sale);
     } catch (e) {

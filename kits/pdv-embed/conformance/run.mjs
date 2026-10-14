@@ -5,6 +5,8 @@
 //   node conformance/run.mjs --url http://localhost:8000/api/pdv --token SEU_TOKEN
 //   node conformance/run.mjs --url http://localhost:8000/api/pdv --cookie "laravel_session=..."
 //   opções: --q <texto que encontra um produto vendido por unidade>   (padrão: "a")
+//           --manager login:senha   gerente que autoriza desconto acima do limite (se a
+//                                   aplicação oferece; sem isso, essa parte é pulada)
 
 const METHODS = ['cash', 'pix', 'credit', 'debit', 'voucher', 'store_credit'];
 
@@ -74,7 +76,7 @@ function checkSession(s) {
 
 /**
  * @param {{ url: string, headers?: Record<string, string>, q?: string, fetch?: typeof fetch,
- *           log?: (line: string) => void }} options
+ *           log?: (line: string) => void, manager?: { login: string, password: string } }} options
  * @returns {Promise<{ passed: number, failed: { name: string, message: string }[] }>}
  */
 export async function runConformance(options) {
@@ -376,6 +378,120 @@ export async function runConformance(options) {
     );
   });
 
+  // ---------------------------------------------------------------- autorização do gerente (P-05)
+  const discounted = (percent) => {
+    const p = ctx.product;
+    const gross = lineGross(p.priceCents, 2000);
+    const discount = Math.floor((gross * percent) / 100);
+    return saleBody({
+      items: [
+        {
+          productId: p.id,
+          quantityMilli: 2000,
+          unitPriceCents: p.priceCents,
+          discountCents: discount,
+        },
+      ],
+      subtotalCents: gross,
+      discountCents: discount,
+      totalCents: gross - discount,
+      payments: [cash(gross - discount)],
+    });
+  };
+  if (!ctx.settings.managerAuthorization) {
+    await step('sem autorização de gerente, POST /authorize responde 404', async () => {
+      const r = await call('POST', '/authorize', {
+        login: 'x',
+        password: 'y',
+        discountCents: 1,
+        subtotalCents: 2,
+      });
+      check(r.status === 404, `esperava HTTP 404, veio ${r.status}`);
+    });
+  } else if (!options.manager) {
+    log('  - autorização de gerente oferecida, mas sem --manager: parte pulada');
+  } else if (!ctx.settings.canCancelSales) {
+    log(
+      '  - autorização de gerente: parte pulada (o caixa não cancela vendas para desfazer o teste)',
+    );
+  } else if (ctx.settings.maxDiscountPercent < 50) {
+    await step('settings.managerAuthorization é booleano', async () => {
+      check(
+        typeof ctx.settings.managerAuthorization === 'boolean',
+        'managerAuthorization não é booleano',
+      );
+    });
+    await step('senha errada do gerente responde 403 invalid_manager', async () => {
+      const body = discounted(50);
+      checkError(
+        await call('POST', '/authorize', {
+          login: options.manager.login,
+          password: `${options.manager.password}-errada`,
+          discountCents: body.discountCents,
+          subtotalCents: body.subtotalCents,
+        }),
+        403,
+        'invalid_manager',
+      );
+    });
+    const body = discounted(50);
+    let authorization = '';
+    await step('gerente autoriza o desconto acima do limite', async () => {
+      const r = await call('POST', '/authorize', {
+        ...options.manager,
+        discountCents: body.discountCents,
+        subtotalCents: body.subtotalCents,
+      });
+      check(r.status === 200, `esperava HTTP 200, veio ${r.status} (${JSON.stringify(r.body)})`);
+      check(
+        typeof r.body?.authorization === 'string' && r.body.authorization.length > 10,
+        'authorization ausente',
+      );
+      check(typeof r.body?.manager?.name === 'string', 'manager.name ausente');
+      authorization = r.body.authorization;
+    });
+    await step(
+      'venda com o desconto autorizado é aceita, e o reenvio devolve a mesma',
+      async () => {
+        const r = await call('POST', '/sales', { ...body, discountAuthorization: authorization });
+        check(r.status === 201, `esperava HTTP 201, veio ${r.status} (${JSON.stringify(r.body)})`);
+        checkSale(r.body.sale);
+        check(
+          r.body.sale.discountCents === body.discountCents,
+          'desconto da venda diferente do enviado',
+        );
+        const again = await call('POST', '/sales', {
+          ...body,
+          discountAuthorization: authorization,
+        });
+        check(
+          again.status === 200 && again.body.sale.id === body.id,
+          'reenvio não devolveu a mesma venda',
+        );
+        // Cancela em seguida para não mexer nos totais conferidos no fim da sessão.
+        const cancel = await call('POST', `/sales/${encodeURIComponent(body.id)}/cancel`, {
+          reason: 'Teste da autorização do gerente',
+        });
+        check(cancel.status === 200, `cancelar a venda autorizada deu HTTP ${cancel.status}`);
+      },
+    );
+    await step('autorização não vale para desconto maior nem adulterada', async () => {
+      const bigger = discounted(60);
+      checkError(
+        await call('POST', '/sales', { ...bigger, discountAuthorization: authorization }),
+        403,
+        'discount_not_allowed',
+      );
+      const [data, signature] = authorization.split('.');
+      const forged = `${data}x.${signature}`;
+      checkError(
+        await call('POST', '/sales', { ...discounted(50), discountAuthorization: forged }),
+        403,
+        'discount_not_allowed',
+      );
+    });
+  }
+
   let otherMethod = ctx.settings.paymentMethods.find((m) => m !== 'cash') ?? 'cash';
   await step(`segunda venda paga com ${otherMethod}`, async () => {
     const b = saleBody();
@@ -486,13 +602,15 @@ if (invokedDirectly) {
   );
   if (!args.url) {
     console.error(
-      'Uso: node conformance/run.mjs --url http://localhost:8000/api/pdv [--token X | --cookie "nome=valor"] [--q texto]',
+      'Uso: node conformance/run.mjs --url http://localhost:8000/api/pdv [--token X | --cookie "nome=valor"] [--q texto] [--manager login:senha]',
     );
     process.exit(2);
   }
   const headers = {};
   if (args.token) headers.authorization = `Bearer ${args.token}`;
   if (args.cookie) headers.cookie = args.cookie;
-  const result = await runConformance({ url: args.url, headers, q: args.q });
+  const [login, ...rest] = (args.manager ?? '').split(':');
+  const manager = args.manager ? { login, password: rest.join(':') } : undefined;
+  const result = await runConformance({ url: args.url, headers, q: args.q, manager });
   process.exit(result.failed.length === 0 ? 0 : 1);
 }

@@ -26,6 +26,8 @@ final class BipaePdv
 {
     private const METHODS = ['cash', 'pix', 'credit', 'debit', 'voucher', 'store_credit'];
     private const UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
+    /** Validade da autorização do gerente (segundos). */
+    private const AUTHORIZATION_TTL = 300;
 
     /**
      * @param PDO $pdo conexão do seu sistema (ERRMODE_EXCEPTION é ligado aqui)
@@ -35,9 +37,17 @@ final class BipaePdv
      *    'settings' => ['paymentMethods' => ['cash','pix','credit','debit'], 'maxDiscountPercent' => 10, 'canCancelSales' => true]]
      * @param null|callable(PDO, array):void $onStockChange baixa/devolve estoque na SUA tabela:
      *   recebe ['storeId', 'productId', 'deltaMilli' (negativo na venda), 'saleId'], dentro da transação.
+     * @param null|callable(string, string, array):(?array) $authorizeManager desconto acima do limite
+     *   (P-05): recebe login, senha e o operador; devolve ['id', 'name', 'maxDiscountPercent'?] ou null.
+     * @param null|string $secret segredo da aplicação para assinar a autorização (obrigatório com o anterior).
      */
-    public function __construct(private PDO $pdo, private $auth, private $onStockChange = null)
-    {
+    public function __construct(
+        private PDO $pdo,
+        private $auth,
+        private $onStockChange = null,
+        private $authorizeManager = null,
+        private ?string $secret = null,
+    ) {
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
@@ -80,6 +90,7 @@ final class BipaePdv
                 ['POST', '#^/cash-session/close$#', fn ($u) => $this->close($u, $body)],
                 ['GET', '#^/sales$#', fn ($u) => $this->listSales($u, $query)],
                 ['POST', '#^/sales$#', fn ($u) => $this->createSale($u, $body)],
+                ['POST', '#^/authorize$#', fn ($u) => $this->authorize($u, $body)],
                 ['POST', '#^/sales/([^/]+)/cancel$#', fn ($u, $m) => $this->cancelSale($u, rawurldecode($m[1]), $body)],
             ];
             foreach ($routes as [$verb, $pattern, $run]) {
@@ -176,6 +187,8 @@ final class BipaePdv
         $s = $user['settings'] ?? [];
         $methods = array_values(array_intersect($s['paymentMethods'] ?? ['cash', 'pix', 'credit', 'debit'], self::METHODS));
         return [
+            // Desconto acima do limite com a senha do gerente (P-05): só quando a aplicação liga.
+            'managerAuthorization' => $this->authorizeManager !== null && $this->secret !== null,
             'paymentMethods' => $methods,
             'maxDiscountPercent' => $s['maxDiscountPercent'] ?? 10,
             'canCancelSales' => (bool) ($s['canCancelSales'] ?? true),
@@ -281,6 +294,85 @@ final class BipaePdv
     }
 
     // ------------------------------------------------------------------ rotas
+
+    private static function b64(string $raw): string
+    {
+        return rtrim(strtr(base64_encode($raw), '+/', '-_'), '=');
+    }
+
+    private static function unb64(string $text): string|false
+    {
+        return base64_decode(strtr($text, '-_', '+/') . str_repeat('=', (4 - strlen($text) % 4) % 4), true);
+    }
+
+    /** Código de autorização: dados em base64url + assinatura HMAC-SHA256 com o segredo da aplicação. */
+    private function signAuthorization(array $payload): string
+    {
+        $body = self::b64(json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        return $body . '.' . self::b64(hash_hmac('sha256', $body, (string) $this->secret, true));
+    }
+
+    private function readAuthorization(mixed $token): ?array
+    {
+        if (!is_string($token) || strlen($token) > 2000 || $this->secret === null) {
+            return null;
+        }
+        $parts = explode('.', $token);
+        if (count($parts) !== 2) {
+            return null;
+        }
+        $expected = self::b64(hash_hmac('sha256', $parts[0], $this->secret, true));
+        if (!hash_equals($expected, $parts[1])) {
+            return null;
+        }
+        $json = self::unb64($parts[0]);
+        $data = $json === false ? null : json_decode($json, true);
+        return is_array($data) ? $data : null;
+    }
+
+    private static function overLimit(int $discount, int $subtotal, float|int $percent): bool
+    {
+        return $discount * 10000 > (int) round($percent * 100) * $subtotal;
+    }
+
+    /** Autorização do gerente para desconto acima do limite (P-05). */
+    private function authorize(array $u, array $b): array
+    {
+        if ($this->authorizeManager === null || $this->secret === null) {
+            throw new BipaePdvError(404, 'not_supported', 'Esta aplicação não oferece autorização de gerente.');
+        }
+        $login = is_string($b['login'] ?? null) ? trim($b['login']) : '';
+        $password = is_string($b['password'] ?? null) ? $b['password'] : '';
+        if ($login === '' || $password === '') {
+            throw self::bad('Informe o login e a senha do gerente.');
+        }
+        $discount = $b['discountCents'] ?? null;
+        $subtotal = $b['subtotalCents'] ?? null;
+        if (!is_int($discount) || !is_int($subtotal) || $discount < 0 || $subtotal < 1 || $discount > $subtotal) {
+            throw self::bad('Desconto ou subtotal inválido.');
+        }
+        $manager = ($this->authorizeManager)($login, $password, $u);
+        if (!$manager) {
+            throw new BipaePdvError(403, 'invalid_manager', 'Login ou senha do gerente incorretos, ou esta pessoa não pode autorizar descontos.');
+        }
+        $limit = $manager['maxDiscountPercent'] ?? 100;
+        if (self::overLimit($discount, $subtotal, $limit)) {
+            throw new BipaePdvError(403, 'discount_not_allowed', "O desconto passa do limite de {$limit}% do gerente.");
+        }
+        $exp = time() + self::AUTHORIZATION_TTL;
+        $who = ['id' => (string) $manager['id'], 'name' => $manager['name']];
+        return [
+            'authorization' => $this->signAuthorization([
+                'store' => (string) $u['storeId'],
+                'manager' => $who,
+                'discountCents' => $discount,
+                'subtotalCents' => $subtotal,
+                'exp' => $exp,
+            ]),
+            'manager' => $who,
+            'expiresAt' => gmdate('Y-m-d\TH:i:s\Z', $exp),
+        ];
+    }
 
     private function me(array $u): array
     {
@@ -495,8 +587,21 @@ final class BipaePdv
                     if ($subtotal !== $b['subtotalCents'] || $discount !== $b['discountCents'] || $total !== $b['totalCents']) {
                         throw new BipaePdvError(422, 'totals_mismatch', 'Os totais da venda não conferem. Atualize a tela e tente de novo.');
                     }
-                    if ($discount * 10000 > (int) round($settings['maxDiscountPercent'] * 100) * $subtotal) {
-                        throw new BipaePdvError(403, 'discount_not_allowed', "O desconto passa do limite de {$settings['maxDiscountPercent']}% deste caixa.");
+                    if (self::overLimit($discount, $subtotal, $settings['maxDiscountPercent'])) {
+                        // Acima do limite só com a autorização do gerente (P-05), presa a esta loja e a
+                        // este desconto, dentro da validade.
+                        $token = $b['discountAuthorization'] ?? null;
+                        $grant = $token === null ? null : $this->readAuthorization($token);
+                        $valid = $grant !== null
+                            && ($grant['store'] ?? null) === (string) $storeId
+                            && (int) ($grant['exp'] ?? 0) > time()
+                            && $discount <= (int) ($grant['discountCents'] ?? -1)
+                            && $subtotal === (int) ($grant['subtotalCents'] ?? -1);
+                        if (!$valid) {
+                            throw new BipaePdvError(403, 'discount_not_allowed', $token !== null
+                                ? 'A autorização do gerente venceu ou não vale para este desconto. Peça de novo.'
+                                : "O desconto passa do limite de {$settings['maxDiscountPercent']}% deste caixa.");
+                        }
                     }
                     $paid = array_sum(array_map(fn ($p) => $p['amountCents'], $b['payments']));
                     if ($paid !== $total) {

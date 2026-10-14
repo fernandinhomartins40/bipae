@@ -3,13 +3,15 @@
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { createPdvHandler } from '../server/node/bipae-pdv.mjs';
-import { createDemoDatabase, demoAuth } from './demo-db.mjs';
+import { createDemoDatabase, demoAuth, demoAuthorizeManager, DEMO_SECRET } from './demo-db.mjs';
 
 const port = Number(process.env.PORT ?? 4600);
 const demo = await createDemoDatabase();
 const pdv = createPdvHandler({
   db: demo.db,
   auth: demoAuth,
+  authorizeManager: demoAuthorizeManager,
+  secret: DEMO_SECRET,
   onStockChange: demo.onStockChange,
   basePath: '/api/pdv',
 });

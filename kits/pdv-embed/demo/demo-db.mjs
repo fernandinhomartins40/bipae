@@ -81,3 +81,14 @@ export function demoAuth(req) {
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
   return (token && DEMO_USERS[token]) || null;
 }
+
+/** Gerente de demonstração que autoriza desconto acima do limite (P-05). */
+export const DEMO_MANAGER = { login: 'gerente@demo', password: 'senha-gerente' };
+/** Segredo da demonstração. Na sua aplicação, use um segredo forte guardado fora do código. */
+export const DEMO_SECRET = 'segredo-da-demonstracao-bipae-pdv';
+
+export function demoAuthorizeManager(_req, { login, password }) {
+  return login === DEMO_MANAGER.login && password === DEMO_MANAGER.password
+    ? { id: 'g1', name: 'Gerente Demonstração', maxDiscountPercent: 100 }
+    : null;
+}

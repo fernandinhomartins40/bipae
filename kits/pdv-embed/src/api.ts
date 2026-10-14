@@ -8,6 +8,8 @@ export interface Me {
     paymentMethods: PaymentMethod[];
     maxDiscountPercent: number;
     canCancelSales: boolean;
+    /** A aplicação aceita a senha do gerente para desconto acima do limite (P-05). */
+    managerAuthorization?: boolean;
   };
 }
 export interface Product {
@@ -74,6 +76,8 @@ export interface SaleInput {
   totalCents: number;
   payments: SalePaymentLine[];
   customerDocument: string | null;
+  /** Código devolvido por POST /authorize quando o desconto passa do limite (P-05). */
+  discountAuthorization?: string | null;
 }
 
 export class PdvApiError extends Error {
@@ -190,6 +194,19 @@ export class PdvApi {
   }
   sales(limit = 20) {
     return this.request<{ items: Sale[] }>('GET', `/sales?limit=${limit}`).then((r) => r.items);
+  }
+  /** Gerente autoriza desconto acima do limite (P-05). */
+  authorize(body: {
+    login: string;
+    password: string;
+    discountCents: number;
+    subtotalCents: number;
+  }) {
+    return this.request<{ authorization: string; manager: { id: string; name: string } }>(
+      'POST',
+      '/authorize',
+      body,
+    );
   }
   cancelSale(id: string, reason: string) {
     return this.request<{ sale: Sale }>('POST', `/sales/${encodeURIComponent(id)}/cancel`, {

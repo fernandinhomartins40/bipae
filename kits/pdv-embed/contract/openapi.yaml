@@ -202,7 +202,10 @@ paths:
         2. conferir que cada produto existe e que `unitPriceCents` é o preço atual
            (422 `price_changed`, com o preço novo na mensagem);
         3. recalcular cada item e conferir que a soma bate com `totalCents` (422 `totals_mismatch`);
-        4. conferir desconto total ≤ `maxDiscountPercent` do subtotal (403 `discount_not_allowed`);
+        4. conferir desconto total ≤ `maxDiscountPercent` do subtotal (403 `discount_not_allowed`).
+           Acima disso, aceitar só com `discountAuthorization` válido (veja `POST /authorize`):
+           assinatura confere, mesma loja, dentro da validade, desconto ≤ o autorizado e o mesmo
+           subtotal; senão, 403 `discount_not_allowed`;
         5. conferir que a soma dos pagamentos (`amountCents`) é igual a `totalCents` (422 `payments_mismatch`);
         6. gravar a venda, numerar em sequência por loja e baixar o estoque — tudo numa transação.
         Se o `id` já existe, devolver a venda existente com status 200, sem gravar de novo.
@@ -232,6 +235,50 @@ paths:
                   sale: { $ref: '#/components/schemas/Sale' }
         '403': { $ref: '#/components/responses/Error' }
         '409': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+
+  /authorize:
+    post:
+      summary: Gerente autoriza desconto acima do limite (opcional, desde a revisão 1.1)
+      description: |
+        Só existe quando `settings.managerAuthorization` é verdadeiro; sem isso, responda 404.
+        A aplicação confere o login e a senha do gerente no próprio cadastro e devolve um código
+        de uso curto (5 minutos), preso à loja, ao desconto e ao subtotal informados, que o
+        componente manda em `POST /sales` como `discountAuthorization`. Na implementação de
+        referência o código é assinado com HMAC-SHA256 (segredo da aplicação), sem tabela nova.
+        Senha errada ou pessoa sem permissão: 403 `invalid_manager`. Desconto acima do limite do
+        próprio gerente: 403 `discount_not_allowed`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [login, password, discountCents, subtotalCents]
+              properties:
+                login: { type: string }
+                password: { type: string }
+                discountCents: { type: integer, minimum: 0 }
+                subtotalCents: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [authorization, manager]
+                properties:
+                  authorization: { type: string, maxLength: 2000 }
+                  manager:
+                    type: object
+                    required: [id, name]
+                    properties:
+                      id: { type: string }
+                      name: { type: string }
+                  expiresAt: { type: string, format: date-time }
+        '403': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
         '422': { $ref: '#/components/responses/Error' }
 
   /sales/{id}/cancel:
@@ -333,6 +380,11 @@ components:
               items: { $ref: '#/components/schemas/PaymentMethod' }
             maxDiscountPercent: { type: number, minimum: 0, maximum: 100 }
             canCancelSales: { type: boolean }
+            managerAuthorization:
+              type: boolean
+              description: |
+                Opcional (revisão 1.1). Verdadeiro quando a aplicação implementa POST /authorize:
+                o componente pede a senha do gerente para desconto acima do limite. Ausente = falso.
 
     Product:
       type: object
@@ -421,6 +473,10 @@ components:
         customerDocument:
           type: [string, 'null']
           description: CPF/CNPJ do cliente, só dígitos (opcional)
+        discountAuthorization:
+          type: [string, 'null']
+          maxLength: 2000
+          description: Código de POST /authorize, quando o desconto passa do limite (opcional, revisão 1.1)
 
     SaleItem:
       type: object

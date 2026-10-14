@@ -54,10 +54,20 @@ test('full register day: open, sell with weight, discount and split payment, can
   // 28,90 + 3 × 5,59 + 1,255 × 6,99 (8,77) = 54,44
   await expect(page.getByTestId('total')).toHaveText('R$ 54,44');
 
-  // Discount above the 10% limit is refused; 5% is fine.
+  // Acima do limite de 10% pede o gerente (P-05): senha errada é recusada, a certa autoriza.
   await shortcut(page, 'F4');
   await page.getByLabel('Percentual').fill('15');
-  await expect(page.getByText('O limite deste caixa é 10%')).toBeVisible();
+  await expect(page.getByText('Acima de 10% precisa da autorização de um gerente.')).toBeVisible();
+  await page.getByLabel('Login do gerente').fill('gerente@demo');
+  await page.getByLabel('Senha do gerente').fill('errada');
+  await page.getByRole('button', { name: 'Autorizar e aplicar' }).click();
+  await expect(page.getByText(/Login ou senha do gerente incorretos/)).toBeVisible();
+  await page.getByLabel('Senha do gerente').fill('senha-gerente');
+  await page.getByRole('button', { name: 'Autorizar e aplicar' }).click();
+  // 54,44 − 15% (8,17) = 46,27
+  await expect(page.getByTestId('total')).toHaveText('R$ 46,27');
+  // Volta para 5%, dentro do limite, sem precisar do gerente.
+  await shortcut(page, 'F4');
   await page.getByLabel('Percentual').fill('5');
   await page.getByRole('button', { name: 'Aplicar desconto' }).click();
   await expect(page.getByTestId('total')).toHaveText('R$ 51,72');

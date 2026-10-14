@@ -8,7 +8,11 @@
 //
 // O banco precisa das tabelas de sql/postgres.sql e da view pdv_products (veja o README).
 
+import { createHmac, timingSafeEqual } from 'node:crypto';
+
 const METHODS = ['cash', 'pix', 'credit', 'debit', 'voucher', 'store_credit'];
+/** Validade da autorização do gerente (segundos). */
+const AUTHORIZATION_TTL = 300;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** Erro com status HTTP e mensagem para o operador. */
@@ -87,12 +91,16 @@ export function pgDatabase(pool) {
  *   db: Database,
  *   auth: (req: any) => Promise<PdvUser | null> | PdvUser | null,
  *   onStockChange?: (tx: Queryable, change: { storeId: string, productId: string, deltaMilli: number, saleId: string }) => Promise<void>,
+ *   authorizeManager?: (req: any, login: { login: string, password: string }, user: PdvUser) => Promise<{ id: string, name: string, maxDiscountPercent?: number } | null> | { id: string, name: string, maxDiscountPercent?: number } | null,
+ *   secret?: string,
  * }} PdvOptions
  */
 
-function settingsOf(user) {
+function settingsOf(user, options = {}) {
   const s = user.settings ?? {};
   return {
+    // Desconto acima do limite com a senha do gerente (P-05): só quando a aplicação liga.
+    managerAuthorization: Boolean(options.authorizeManager && options.secret),
     paymentMethods: (s.paymentMethods ?? ['cash', 'pix', 'credit', 'debit']).filter((m) =>
       METHODS.includes(m),
     ),
@@ -100,6 +108,32 @@ function settingsOf(user) {
     canCancelSales: s.canCancelSales ?? true,
   };
 }
+
+const b64 = (buffer) => Buffer.from(buffer).toString('base64url');
+
+/** Código de autorização: dados em base64url + assinatura HMAC-SHA256 com o segredo da aplicação. */
+export function signAuthorization(secret, payload) {
+  const body = b64(JSON.stringify(payload));
+  return `${body}.${b64(createHmac('sha256', secret).update(body).digest())}`;
+}
+
+/** Devolve os dados do código, ou null se a assinatura não confere. */
+export function readAuthorization(secret, token) {
+  if (typeof token !== 'string' || token.length > 2000) return null;
+  const [body, signature] = token.split('.');
+  if (!body || !signature) return null;
+  const expected = createHmac('sha256', secret).update(body).digest();
+  const given = Buffer.from(signature, 'base64url');
+  if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;
+  try {
+    return JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+  } catch {
+    return null;
+  }
+}
+
+const overLimit = (discount, subtotal, percent) =>
+  discount * 10000 > Math.round(percent * 100) * subtotal;
 
 async function openSession(q, user) {
   const [row] = await q.query(
@@ -234,6 +268,9 @@ function validateSaleInput(body, settings) {
     if (!isInt(p.amountCents) || !isInt(p.changeCents)) throw bad('Valor de pagamento inválido.');
     if (p.changeCents > 0 && p.method !== 'cash') throw bad('Só pagamento em dinheiro tem troco.');
   }
+  const grant = body.discountAuthorization;
+  if (grant !== undefined && grant !== null && (typeof grant !== 'string' || grant.length > 2000))
+    throw bad('Autorização do gerente inválida.');
   const doc = body.customerDocument;
   if (doc !== undefined && doc !== null && !/^(\d{11}|\d{14})$/.test(String(doc))) {
     throw bad('CPF ou CNPJ do cliente inválido (só números, 11 ou 14 dígitos).');
@@ -255,7 +292,56 @@ export function createPdvRoutes(options) {
           document: user.store.document ?? null,
           address: user.store.address ?? null,
         },
-        settings: settingsOf(user),
+        settings: settingsOf(user, options),
+      };
+    },
+
+    /** Autorização do gerente para desconto acima do limite (P-05). */
+    async authorize(user, req, body) {
+      if (!options.authorizeManager || !options.secret) {
+        throw new PdvError(
+          404,
+          'not_supported',
+          'Esta aplicação não oferece autorização de gerente.',
+        );
+      }
+      const login = typeof body?.login === 'string' ? body.login.trim() : '';
+      const password = typeof body?.password === 'string' ? body.password : '';
+      if (!login || !password) throw bad('Informe o login e a senha do gerente.');
+      if (
+        !isInt(body.discountCents) ||
+        !isInt(body.subtotalCents, 1) ||
+        body.discountCents > body.subtotalCents
+      ) {
+        throw bad('Desconto ou subtotal inválido.');
+      }
+      const manager = await options.authorizeManager(req, { login, password }, user);
+      if (!manager) {
+        throw new PdvError(
+          403,
+          'invalid_manager',
+          'Login ou senha do gerente incorretos, ou esta pessoa não pode autorizar descontos.',
+        );
+      }
+      const limit = manager.maxDiscountPercent ?? 100;
+      if (overLimit(body.discountCents, body.subtotalCents, limit)) {
+        throw new PdvError(
+          403,
+          'discount_not_allowed',
+          `O desconto passa do limite de ${limit}% do gerente.`,
+        );
+      }
+      const exp = Math.floor(Date.now() / 1000) + AUTHORIZATION_TTL;
+      return {
+        authorization: signAuthorization(options.secret, {
+          store: user.storeId,
+          manager: { id: String(manager.id), name: manager.name },
+          discountCents: body.discountCents,
+          subtotalCents: body.subtotalCents,
+          exp,
+        }),
+        manager: { id: String(manager.id), name: manager.name },
+        expiresAt: new Date(exp * 1000).toISOString(),
       };
     },
 
@@ -468,12 +554,28 @@ export function createPdvRoutes(options) {
                 'Os totais da venda não conferem. Atualize a tela e tente de novo.',
               );
             }
-            if (discount * 10000 > Math.round(settings.maxDiscountPercent * 100) * subtotal) {
-              throw new PdvError(
-                403,
-                'discount_not_allowed',
-                `O desconto passa do limite de ${settings.maxDiscountPercent}% deste caixa.`,
-              );
+            if (overLimit(discount, subtotal, settings.maxDiscountPercent)) {
+              // Acima do limite só com a autorização do gerente (P-05), presa a esta loja e a
+              // este desconto, dentro da validade.
+              const grant =
+                options.secret && body.discountAuthorization
+                  ? readAuthorization(options.secret, body.discountAuthorization)
+                  : null;
+              const valid =
+                grant &&
+                grant.store === user.storeId &&
+                grant.exp * 1000 > Date.now() &&
+                discount <= grant.discountCents &&
+                subtotal === grant.subtotalCents;
+              if (!valid) {
+                throw new PdvError(
+                  403,
+                  'discount_not_allowed',
+                  body.discountAuthorization
+                    ? 'A autorização do gerente venceu ou não vale para este desconto. Peça de novo.'
+                    : `O desconto passa do limite de ${settings.maxDiscountPercent}% deste caixa.`,
+                );
+              }
             }
             const paid = body.payments.reduce((s, p) => s + p.amountCents, 0);
             if (paid !== total) {
@@ -656,6 +758,7 @@ export function createPdvHandler(options) {
       ['POST', '/cash-session/close', async (u) => routes.close(u, await readJson(req))],
       ['GET', '/sales', (u) => routes.listSales(u, query)],
       ['POST', '/sales', async (u) => routes.createSale(u, await readJson(req))],
+      ['POST', '/authorize', async (u) => routes.authorize(u, req, await readJson(req))],
       [
         'POST',
         '/sales/:id/cancel',

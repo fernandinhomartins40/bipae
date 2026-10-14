@@ -53,6 +53,7 @@ describe.skipIf(!hasPhp)('PHP reference implementation', () => {
       url: `http://127.0.0.1:${port}/api/pdv`,
       headers: { authorization: 'Bearer token-ana' },
       q: 'arroz',
+      manager: { login: 'gerente@demo', password: 'senha-gerente' },
       log: (l: string) => lines.push(l),
     });
     expect(result.failed, lines.join('\n')).toEqual([]);

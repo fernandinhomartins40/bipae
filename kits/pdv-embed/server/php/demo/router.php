@@ -43,4 +43,10 @@ $stock = function (PDO $pdo, array $change): void {
         ->execute([$change['deltaMilli'], $change['productId'], $change['storeId']]);
 };
 
-(new BipaePdv($pdo, $auth, $stock))->serve('/api/pdv');
+// Gerente de demonstração (P-05). Na sua aplicação, confira a senha no seu cadastro.
+$manager = fn (string $login, string $password, array $operator): ?array =>
+    $login === 'gerente@demo' && $password === 'senha-gerente'
+        ? ['id' => 'g1', 'name' => 'Gerente Demonstração', 'maxDiscountPercent' => 100]
+        : null;
+
+(new BipaePdv($pdo, $auth, $stock, $manager, 'segredo-da-demonstracao-bipae-pdv'))->serve('/api/pdv');
