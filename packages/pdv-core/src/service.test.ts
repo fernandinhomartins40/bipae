@@ -518,3 +518,28 @@ describe('troca de operador (F2-03)', () => {
     });
   });
 });
+
+describe('caixa desativado (F2-04)', () => {
+  it('só apaga os dados do aparelho depois que tudo subiu', async () => {
+    const arroz = product({ priceCents: 1000 });
+    await pdv.applyCatalog([arroz]);
+    await pdv.openSession(0);
+    const item = (await pdv.search('arroz'))[0]!;
+    await pdv.completeSale(
+      addItem(EMPTY_CART, item, 1000),
+      [{ method: 'cash', receivedCents: 1000 }],
+      {
+        discountLimitPercent: 10,
+      },
+    );
+    await expect(pdv.wipeLocalData()).rejects.toThrow('Ainda há 2 registro(s) para enviar');
+    expect(await pdv.catalogSize()).toBe(1);
+
+    const events = await pdv.pendingEvents();
+    await pdv.markSent(events.map((e) => e.id));
+    await pdv.wipeLocalData();
+    expect(await pdv.catalogSize()).toBe(0);
+    expect(await pdv.listSales()).toEqual([]);
+    expect(await pdv.currentSession()).toBeNull();
+  });
+});

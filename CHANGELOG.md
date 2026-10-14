@@ -1,5 +1,11 @@
 # Changelog
 
+## [F2-04 Caixa desativado apaga os dados do aparelho] — 14/10/2026
+
+### Adicionado
+- **Caixa desativado na retaguarda**: na próxima vez que o aparelho abrir o caixa, ele envia as vendas e os registros que faltam, apaga os dados locais (vendas, catálogo, clientes, preços) e volta a pedir um caixa.
+- Sem internet e com pendências, nada é apagado: a tela avisa quantos registros faltam e oferece "Enviar agora".
+
 ## [F2-03 Troca de operador no caixa] — 14/10/2026
 
 ### Adicionado

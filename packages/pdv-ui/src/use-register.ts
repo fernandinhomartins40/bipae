@@ -23,6 +23,8 @@ type State =
   | { phase: 'loading' }
   | { phase: 'needs-terminal' }
   | { phase: 'error'; message: string }
+  /** Caixa desativado com vendas que ainda não subiram (F2-04): nada é apagado até enviar. */
+  | { phase: 'revoked-pending'; pending: number }
   | { phase: 'ready'; handle: RegisterHandle };
 
 /**
@@ -61,7 +63,10 @@ export function useRegister(platform: Platform, backend: PosBackend, user: PosUs
       }
       if (!platform.openLocalDatabase) {
         closeAndRelease();
-        return setState({ phase: 'error', message: 'Este aparelho não tem banco local para o caixa.' });
+        return setState({
+          phase: 'error',
+          message: 'Este aparelho não tem banco local para o caixa.',
+        });
       }
       const driver = await platform.openLocalDatabase(`pdv-${user.tenantId}-${terminalId}.db`);
       const storage = createStorage(driver);
@@ -78,12 +83,22 @@ export function useRegister(platform: Platform, backend: PosBackend, user: PosUs
         if (!cached) throw error;
         context = JSON.parse(cached) as TerminalContext;
       }
+      const pdv = new PdvService(storage, { terminalId, operatorId: user.id });
       if (context.terminal.status === 'revoked') {
+        // Desativado: primeiro envia o que falta; só então apaga os dados do aparelho.
+        const sync = new SyncClient(storage, pdv, backend, terminalId);
+        if ((await pdv.pendingCount()) > 0) await sync.sync();
+        const pending = await pdv.pendingCount();
+        if (pending > 0) {
+          closeAndRelease();
+          return setState({ phase: 'revoked-pending', pending });
+        }
+        await pdv.wipeLocalData();
+        closeAndRelease();
         await platform.preferences.remove(TERMINAL_KEY);
         return setState({ phase: 'needs-terminal' });
       }
 
-      const pdv = new PdvService(storage, { terminalId, operatorId: user.id });
       await pdv.alignSaleSequence(context.lastTerminalSeq ?? 0);
       const sync = new SyncClient(storage, pdv, backend, terminalId);
       const handle = { pdv, sync, storage, context, persistent: driver.persistent };
@@ -136,5 +151,13 @@ export function useRegister(platform: Platform, backend: PosBackend, user: PosUs
     if (handle) await handle.sync.sync();
   }, []);
 
-  return { state, session, syncStatus, linkTerminal, refreshSession, syncNow, retry: () => setAttempt((a) => a + 1) };
+  return {
+    state,
+    session,
+    syncStatus,
+    linkTerminal,
+    refreshSession,
+    syncNow,
+    retry: () => setAttempt((a) => a + 1),
+  };
 }

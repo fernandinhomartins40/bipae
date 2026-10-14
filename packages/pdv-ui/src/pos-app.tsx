@@ -48,6 +48,22 @@ export function PosApp({
       </Centered>
     );
   }
+  if (state.phase === 'revoked-pending') {
+    return (
+      <Centered>
+        <Alert tone="warning" title="Este caixa foi desativado">
+          Ainda há {state.pending} registro(s) de venda ou de caixa que não chegaram à nuvem. Conecte este
+          aparelho à internet: assim que tudo for enviado, os dados dele são apagados.
+        </Alert>
+        <div className="flex gap-2">
+          <Button onClick={register.retry}>Enviar agora</Button>
+          <Button variant="secondary" onClick={onExit}>
+            Voltar
+          </Button>
+        </div>
+      </Centered>
+    );
+  }
   if (state.phase === 'needs-terminal') {
     return <TerminalPicker platform={platform} backend={backend} user={user} onLinked={register.linkTerminal} onExit={onExit} />;
   }

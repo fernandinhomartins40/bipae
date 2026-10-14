@@ -245,7 +245,9 @@ test('crediário: limite no cadastro do cliente e venda no caixa com o CPF (F2-0
   await page.getByRole('radio', { name: 'Crediário' }).click();
   await expect(page.getByText('Disponível no crediário: R$ 2,01.')).toBeVisible();
   await page.getByRole('button', { name: 'Adicionar crediário' }).click();
-  await expect(page.getByRole('alert').filter({ hasText: 'Disponível no crediário' })).toBeVisible();
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'Disponível no crediário' }),
+  ).toBeVisible();
 });
 
 test('troca de operador no mesmo caixa, sem fechar a sessão (F2-03)', async ({ page }) => {
@@ -281,4 +283,46 @@ test('troca de operador no mesmo caixa, sem fechar a sessão (F2-03)', async ({ 
   // A sessão continua: dá para vender direto, sem abrir o caixa de novo.
   await scan(page, '78912342');
   await expect(page.getByTestId('pdv-total')).toHaveText('R$ 2,99');
+});
+
+test('caixa desativado: envia o que falta, apaga os dados do aparelho e pede outro caixa (F2-04)', async ({
+  page,
+  context,
+}) => {
+  await signupWithProducts(page);
+  await page.getByRole('link', { name: 'Abrir o caixa' }).click();
+  await page.getByLabel('Novo caixa').fill('Caixa velho');
+  await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByRole('button', { name: 'Abrir caixa' }).click();
+  await expect(page.getByText('Caixa livre')).toBeVisible();
+
+  // Uma venda sem internet fica pendente no aparelho.
+  await context.setOffline(true);
+  await scan(page, '78912342');
+  await page.keyboard.press('F10');
+  await page.getByRole('button', { name: 'Adicionar dinheiro' }).click();
+  await page.getByRole('button', { name: 'Finalizar venda' }).click();
+  await expect(page.getByText('Bipaê! Venda nº 1 concluída.')).toBeVisible();
+  await context.setOffline(false);
+  await page.getByRole('button', { name: 'Sair do caixa' }).click();
+
+  // O dono desativa o caixa na retaguarda.
+  await page.getByRole('link', { name: 'Caixas' }).click();
+  page.once('dialog', (d) => void d.accept());
+  await page
+    .getByRole('row', { name: /Caixa velho/ })
+    .getByRole('button', { name: 'Desativar' })
+    .click();
+  await expect(page.getByRole('row', { name: /Caixa velho/ })).toContainText('Desativado');
+
+  // Ao abrir o caixa de novo, a venda pendente sobe, os dados são apagados e o aparelho pede um caixa.
+  await page.getByRole('link', { name: 'Abrir o caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Qual caixa é este aparelho?' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.goto('/vendas');
+  await expect(page.getByRole('row', { name: /R\$ 2,99/ })).toBeVisible();
 });

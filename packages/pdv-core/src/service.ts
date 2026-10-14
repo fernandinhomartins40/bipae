@@ -23,6 +23,23 @@ import {
 } from './cash';
 import { summarizePayments, type TenderInput } from './payments';
 
+/** Tabelas do banco local apagadas quando o caixa é desativado (F2-04). */
+const WIPE_TABLES = [
+  'products',
+  'barcodes',
+  'cash_movements',
+  'cash_sessions',
+  'sales',
+  'quotes',
+  'outbox',
+  'price_table_items',
+  'price_tables',
+  'customer_price_tables',
+  'customer_credit',
+  'fiscal_profiles',
+  'meta',
+] as const;
+
 /** User-facing error from register operations (pt-BR). */
 export class PdvError extends Error {}
 
@@ -130,6 +147,22 @@ export class PdvService {
         fromOperatorId: from,
         toOperatorId: operatorId,
       });
+    });
+  }
+
+  /**
+   * Caixa desativado (F2-04): apaga os dados do aparelho (vendas, catálogo, clientes, preços e
+   * configuração) depois que tudo subiu. Com evento pendente, recusa: nada se perde.
+   */
+  async wipeLocalData(): Promise<void> {
+    const pending = await this.pendingCount();
+    if (pending > 0) {
+      throw new PdvError(
+        `Ainda há ${pending} registro(s) para enviar. Conecte à internet antes de apagar.`,
+      );
+    }
+    await this.storage.transaction(async (tx) => {
+      for (const table of WIPE_TABLES) await tx.execute(`DELETE FROM ${table}`);
     });
   }
 
