@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-29 Sublimite do Simples e CRT 2] — 14/10/2026
+
+### Adicionado
+- **Limites do MEI e do Simples Nacional com fonte oficial**: limite do MEI (R$ 81 mil), teto do Simples (R$ 4,8 milhões) e sublimite do ICMS e do ISS de 2026 (R$ 3,6 milhões nas 27 UFs, Portaria CGSN nº 54/2025). Ano sem portaria conferida aparece como "confira com o contador".
+- **Aviso na tela Empresas e lojas** quando a receita do ano registrada no Bipaê chega a 90% de um limite ou passa dele. Acima do sublimite, o aviso orienta mudar para "Simples Nacional acima do sublimite" (CRT 2) com o contador.
+
 ## [F3-32 Partilha do ICMS (DIFAL)] — 14/10/2026
 
 ### Adicionado

@@ -8,14 +8,16 @@ import {
   uuidv7,
   type Terminal,
 } from '@bipae/domain';
-import { asc, eq, sql } from 'drizzle-orm';
+import { findCompanyRegime } from '@bipae/fiscal';
+import { revenueAlerts } from '@bipae/fiscal/tables';
+import { and, asc, eq, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { assertStore, storeCondition } from '../../common/stores';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
-import { companies, priceTables, stores, terminals } from '../../db/schema';
+import { companies, priceTables, sales, stores, terminals } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 
@@ -43,6 +45,42 @@ export class OrganizationService {
     return withTenant(this.db, ctx, (tx) =>
       tx.select().from(companies).orderBy(asc(companies.createdAt)),
     );
+  }
+
+  /**
+   * Receita do ano da empresa (vendas menos devoluções registradas no Bipaê, no fuso de Brasília)
+   * e os avisos dos limites do regime (F3-29): MEI, teto do Simples e sublimite do ICMS e do ISS.
+   */
+  async revenue(ctx: RequestContext, id: string) {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(
+      new Date(),
+    );
+    const year = today.slice(0, 4);
+    return withTenant(this.db, ctx, async (tx) => {
+      const [company] = await tx.select().from(companies).where(eq(companies.id, id));
+      if (!company) throw notFound('Empresa');
+      const [row] = await tx
+        .select({
+          cents: sql<string>`coalesce(sum(case when ${sales.kind} = 'return' then -${sales.totalCents} else ${sales.totalCents} end), 0)::text`,
+        })
+        .from(sales)
+        .innerJoin(stores, eq(stores.id, sales.storeId))
+        .where(
+          and(
+            eq(stores.companyId, id),
+            eq(sales.status, 'completed'),
+            sql`to_char(${sales.occurredAt} at time zone 'America/Sao_Paulo', 'YYYY') = ${year}`,
+          ),
+        );
+      const yearRevenueCents = Number(row?.cents ?? 0);
+      const regime = company.taxRegime ? findCompanyRegime(company.taxRegime) : null;
+      return {
+        year: Number(year),
+        yearRevenueCents,
+        alerts: regime ? revenueAlerts({ regime: regime.id, yearRevenueCents, date: today }) : [],
+        note: 'Conta só as vendas registradas no Bipaê neste ano. Se a empresa vende por outros canais, o contador soma o resto.',
+      };
+    });
   }
 
   async updateCompany(ctx: RequestContext, id: string, input: z.output<typeof companyInput>) {

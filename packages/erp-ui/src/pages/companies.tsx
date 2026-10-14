@@ -104,6 +104,7 @@ export function CompaniesPage() {
                       . O Bipaê vai precisar disso para calcular os impostos e emitir notas.
                     </p>
                   )}
+                  {canManage && c.taxRegime && <RevenueAlerts companyId={c.id} />}
                   <CertificateLine
                     companyId={c.id}
                     certificate={certificates?.find((cert) => cert.companyId === c.id)}
@@ -330,5 +331,35 @@ function StoreForm({
         <Button type="submit">{store ? 'Salvar loja' : 'Criar loja'}</Button>
       </form>
     </Drawer>
+  );
+}
+
+interface CompanyRevenue {
+  year: number;
+  yearRevenueCents: number;
+  alerts: { level: 'info' | 'warning' | 'critical'; message: string }[];
+  note: string;
+}
+
+const ALERT_TONE = { info: 'warning', warning: 'warning', critical: 'danger' } as const;
+
+/** Avisos dos limites do regime pela receita do ano (F3-29): MEI, teto e sublimite do Simples. */
+function RevenueAlerts({ companyId }: { companyId: string }) {
+  const { api } = useApp();
+  const revenue = useQuery({
+    queryKey: ['companies', companyId, 'revenue'],
+    queryFn: () => api.get<CompanyRevenue>(`/companies/${companyId}/revenue`),
+    staleTime: 10 * 60_000,
+    retry: false,
+  });
+  if (!revenue.data || revenue.data.alerts.length === 0) return null;
+  return (
+    <div className="mt-2 flex flex-col gap-2">
+      {revenue.data.alerts.map((alert) => (
+        <Alert key={alert.message} tone={ALERT_TONE[alert.level]} title="Limite do regime">
+          {alert.message} <span className="text-sm text-muted">{revenue.data.note}</span>
+        </Alert>
+      ))}
+    </div>
   );
 }

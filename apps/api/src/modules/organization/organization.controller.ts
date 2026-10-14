@@ -19,6 +19,13 @@ export class OrganizationController {
     return this.org.createCompany(ctx, parse(companyInput, body));
   }
 
+  /** Receita do ano e avisos de limite do regime (F3-29). */
+  @Get('companies/:id/revenue')
+  @RequirePermission('admin.stores')
+  revenue(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.org.revenue(ctx, id);
+  }
+
   @Patch('companies/:id')
   @RequirePermission('admin.stores')
   updateCompany(

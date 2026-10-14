@@ -66,6 +66,23 @@ test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código
   await expect(page.getByRole('row', { name: /Teste de códigos/ })).toContainText('5102 / 6102');
 
   // ---------------------------------------------------------------- empresa: UF e regime (F3-06.c)
+  // Receita do ano simulada (F3-29): a conta real da receita é testada na API.
+  await page.route('**/v1/companies/*/revenue', (route) =>
+    route.fulfill({
+      json: {
+        year: 2026,
+        yearRevenueCents: 8_200_000,
+        alerts: [
+          {
+            level: 'critical',
+            message:
+              'A receita do ano passou do limite do MEI. Fale com o contador sobre o desenquadramento e a data em que ele vale (R$ 82.000,00 no ano; Limite do MEI: R$ 81.000,00).',
+          },
+        ],
+        note: 'Conta só as vendas registradas no Bipaê neste ano.',
+      },
+    }),
+  );
   await page.getByRole('link', { name: 'Empresas e lojas' }).click();
   await expect(page.getByText(/Falta configurar: UF e regime tributário/)).toBeVisible();
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
@@ -81,4 +98,5 @@ test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código
   await page.getByRole('button', { name: 'Salvar empresa' }).click();
   await expect(page.getByText(/· SP · MEI/)).toBeVisible();
   await expect(page.getByText(/Falta configurar/)).toHaveCount(0);
+  await expect(page.getByText(/passou do limite do MEI/)).toBeVisible();
 });

@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-10-14",
+  "limits": [
+    {
+      "id": "mei",
+      "label": "Limite do MEI",
+      "cents": 8100000,
+      "validity": { "start": "2018-01-01" },
+      "source": "LC 123/2006, art. 18-A, § 1º (redação da LC 155/2016)",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp123.htm#art18a"
+    },
+    {
+      "id": "simples",
+      "label": "Teto do Simples Nacional (EPP)",
+      "cents": 480000000,
+      "validity": { "start": "2018-01-01" },
+      "source": "LC 123/2006, art. 3º, II (redação da LC 155/2016)",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp123.htm#art3"
+    },
+    {
+      "id": "sublimite",
+      "label": "Sublimite do ICMS e do ISS",
+      "cents": 360000000,
+      "validity": { "start": "2026-01-01", "end": "2027-01-01" },
+      "ufs": "todas",
+      "source": "LC 123/2006, art. 13-A; Portaria CGSN nº 54/2025 (DOU de 19/11/2025): R$ 3.600.000,00 em todos os Estados e no Distrito Federal para 2026",
+      "url": "https://www8.receita.fazenda.gov.br/simplesnacional/noticias/NoticiaCompleta.aspx?id=94c10cc2-7eb5-4ef0-bfb2-5479e72caff8"
+    }
+  ]
+}
