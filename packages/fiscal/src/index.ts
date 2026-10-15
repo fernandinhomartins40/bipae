@@ -14,6 +14,7 @@ export { NfeBuildError, type NfeIssuer, type NfeItem, type NfePayment, type NfeT
 export * from './nfce/sign';
 export * from './nfce/numbering';
 export * from './nfce/qrcode';
+export * from './nfce/sale';
 export * from './xml-reader';
 export * from './sefaz';
 export * from './purchase/read';

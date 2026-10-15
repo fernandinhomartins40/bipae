@@ -160,5 +160,14 @@
   "publishedAt": "2024-08-29",
   "downloadedAt": "2026-10-14",
   "sha256": "fc5e648cac11ed84e1107f273893776af2b9cfa748a0a5332748100e82e05b86"
+ },
+ "municipios": {
+  "file": "IBGE_municipios_2026-10-15.json.gz",
+  "title": "Municípios do Brasil com o código IBGE (API de localidades, visão nivelada)",
+  "publisher": "Instituto Brasileiro de Geografia e Estatística (IBGE)",
+  "page": "https://servicodados.ibge.gov.br/api/v1/localidades/municipios?view=nivelado",
+  "publishedAt": "2026-10-15",
+  "downloadedAt": "2026-10-15",
+  "sha256": "193031871a4f0d7c3a09b845f1315e8ba9fb130354119e4d61a781e14a530a94"
  }
 }

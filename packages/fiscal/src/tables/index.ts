@@ -15,3 +15,4 @@ export * from './icms-products';
 export * from './simples-limits';
 export * from './mei';
 export * from './ibs-cbs-settlement';
+export * from './pdv-payments';

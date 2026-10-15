@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-14.a Venda vira NFC-e] — 15/10/2026
+
+### Adicionado
+- **O motor fiscal monta a NFC-e a partir da venda do caixa** (`buildSaleNfce`):
+  - empresa emitente, série e número do caixa;
+  - impostos completos de cada item;
+  - formas de pagamento com o código oficial (tPag) e troco;
+  - CPF ou CNPJ do cliente na nota.
+- **XML validado contra o schema oficial.** A mesma venda gera sempre a mesma chave de acesso, para uma nova tentativa nunca criar outra nota.
+- **O que impede a emissão vira lista de pendências**, com a mensagem para quem resolve. Por exemplo: falta a inscrição estadual, o produto não tem NCM, o perfil fiscal não tem cClassTrib.
+- **Tabela oficial de municípios do IBGE** (5.571 municípios, com o código usado na nota), guardada nas fontes oficiais com data e hash.
+- Dúvidas novas para o contador: D-029 (código do Pix e do vale) e D-030 (texto do primeiro item em homologação).
+
 ## [F5-04 Lote e validade] — 15/10/2026
 
 ### Adicionado

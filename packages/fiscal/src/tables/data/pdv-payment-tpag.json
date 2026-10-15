@@ -1,0 +1,11 @@
+{
+ "source": "Tabela de meios de pagamento (tPag) do Portal Nacional da NF-e, guardada em sources (paymentMeans)",
+ "methods": {
+  "cash": { "code": "01" },
+  "credit": { "code": "03" },
+  "debit": { "code": "04" },
+  "store_credit": { "code": "05" },
+  "pix": { "code": "20", "options": ["17", "20"], "doubt": "D-029" },
+  "voucher": { "code": "10", "options": ["10", "11", "12", "13"], "doubt": "D-029" }
+ }
+}

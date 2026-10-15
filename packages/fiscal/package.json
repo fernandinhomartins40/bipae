@@ -8,7 +8,8 @@
     ".": "./src/index.ts",
     "./tables": "./src/tables/index.ts",
     "./tables/ncm": "./src/tables/ncm.ts",
-    "./icp-brasil": "./src/tables/icp-brasil.ts"
+    "./icp-brasil": "./src/tables/icp-brasil.ts",
+    "./tables/municipios": "./src/tables/municipios.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

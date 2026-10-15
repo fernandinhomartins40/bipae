@@ -234,3 +234,22 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - o Bipaê lê o `qLote` na unidade comercial do item e converte para a unidade de estoque com o mesmo fator usado na entrada (ex.: caixa com 12);
   - se o mesmo número de lote já existir com outra validade, a compra não trava: o lote entra separado, com a validade no nome.
 - **Pergunta (contador ou fornecedor):** qual unidade os emissores usam no `qLote`? Se for a tributável, a conversão passa a usar a relação entre `qCom` e `qTrib` do item.
+
+### D-029 — Pix e vale do caixa: qual código tPag
+
+- **Contexto:** a tabela oficial de meios de pagamento separa:
+  - Pix **dinâmico** (17) de Pix **estático** (20), desde 01/07/2024;
+  - vale **alimentação** (10), **refeição** (11), **presente** (12) e **combustível** (13).
+
+  O caixa do Bipaê tem um só "Pix" e um só "vale".
+- **Implementação provisória (F3-14.a):**
+  - Pix vai como **20 (estático)**, porque o caixa ainda não gera cobrança Pix por um PSP (E9);
+  - vale vai como **10 (alimentação)**;
+  - a empresa pode escolher outro código, mas só entre as opções da tabela (`pdv-payment-tpag.json`).
+- **Pergunta (contador, E3):** quando o Pix é pago por QR Code com valor gerado na hora pelo caixa (sem PSP), ele é estático ou dinâmico? O vale deve ser separado por tipo no caixa?
+
+### D-030 — Descrição do primeiro item da NFC-e em homologação
+
+- **Contexto:** em homologação, a SEFAZ recusa a NFC-e quando a descrição do primeiro item não é "NOTA FISCAL EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL" (rejeição 373). O texto da regra não está nos arquivos oficiais guardados em `packages/fiscal/sources`.
+- **Implementação provisória (F3-14.a):** como o Bipaê só emite em homologação (regra 4), a NFC-e montada da venda sempre leva esse texto no primeiro item; os outros itens mantêm a descrição do produto.
+- **Pergunta:** confirmar na primeira emissão real (F3-11.b, com o certificado) e guardar o Manual de Orientação do Contribuinte vigente em `sources`.

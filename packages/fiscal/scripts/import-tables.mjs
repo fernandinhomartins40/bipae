@@ -420,6 +420,20 @@ function importIcmsProducts(fcp) {
   return markStale(parseDifal(html, ufByCode), confirmed);
 }
 
+// Municípios do IBGE (F3-14.a): código de 7 dígitos (cMun da NF-e), nome e UF.
+function importMunicipios() {
+  const raw = JSON.parse(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.municipios.file))).toString('utf8'),
+  );
+  const items = raw.map((m) => {
+    const code = String(m['municipio-id']);
+    if (!/^\d{7}$/.test(code)) throw new Error(`Código de município inesperado: ${code}`);
+    return [code, clean(m['municipio-nome']), m['UF-sigla']];
+  });
+  items.sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  return { items };
+}
+
 const tables = {
   'cfop.json': importCfop(),
   'class-trib.json': importClassTrib(),
@@ -432,6 +446,7 @@ const tables = {
   'nfce-endpoints.json': importNfceEndpoints(),
   'nfe-endpoints.json': importNfeEndpoints(),
   'icp-brasil.json': importIcpBrasil(),
+  'municipios.json': importMunicipios(),
 };
 
 // Depende do FCP (para o código de cada UF).
@@ -457,7 +472,9 @@ for (const [name, data] of Object.entries(tables)) {
   const next =
     name === 'ncm.json'
       ? `{"updatedAt":${JSON.stringify(data.updatedAt)},"act":${JSON.stringify(data.act)},"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
-      : name === 'cest.json'
+      : name === 'municipios.json'
+        ? `{"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
+        : name === 'cest.json'
         ? `{"segments":${JSON.stringify(data.segments)},"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
         : `${JSON.stringify(data, null, 1)}\n`;
   if (check) {

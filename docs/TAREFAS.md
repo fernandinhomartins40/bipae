@@ -123,7 +123,11 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-13.c · DANFE da NF-e em PDF — depende: F3-08
   - Pacote `@bipae/danfe`: lê o XML autorizado (nfeProc), monta o A4 retrato do Anexo II do MOC 7.0 com os quadros da NT 2026.010 e gera o PDF (pdf-lib). Chave com letras sai sem código de barras (D-023).
   - Seguir a NT 2025.001 (QR Code versão 3), a NT 2026.003 (DANFE Simplificado Tipo 2) e a NT 2026.010 (DANFE com tributos da Reforma); dúvida D-014.
-- [ ] F3-14 · Caixa emite NFC-e na venda (CPF na nota, fila, reimpressão) — depende: F3-11, F3-12, F3-13
+- [~] F3-14 · Caixa emite NFC-e na venda (CPF na nota, fila, reimpressão) — depende: F3-11, F3-12, F3-13
+  - Sem o certificado A1 (E1), tudo é feito e testado contra a SEFAZ simulada da F3-11.a; a primeira emissão real fica na F3-11.b.
+  - [x] F3-14.a · Motor: venda → NFC-e (impostos completos de cada item, tPag das formas de pagamento, CPF/CNPJ do cliente, série e número do caixa), com "falta configurar" explícito e XML validado no schema — depende: F3-11.a
+  - [~] F3-14.b · API: fila de emissão no servidor (assina com o A1, envia, consulta pela chave antes de reenviar, guarda o nfeProc), documento fiscal por venda e nova tentativa; sem certificado, "falta configurar" — depende: F3-14.a
+  - [ ] F3-14.c · Caixa e retaguarda: situação da nota, DANFE da NFC-e na impressão e na reimpressão, XML para baixar e reenvio — depende: F3-14.b
   - Imprimir com `buildDanfeNfce`: térmica por ESC/POS, navegador por `receiptToHtml` (job `html`). Nomes das formas de pagamento vindos da tabela tPag.
 - [ ] F3-15 · Contingência offline da NFC-e (emite sem rede e transmite no prazo) — depende: F3-14
   - Pronto quando: um E2E com rede desligada emite em contingência e transmite ao reconectar.
