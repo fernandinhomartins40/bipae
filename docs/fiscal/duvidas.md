@@ -1,24 +1,24 @@
-# Dúvidas fiscais para validar com contador
+| D-007 | ✅ resolvida || D-015 | ✅ resolvida || D-013 | ✅ resolvida || D-011 | ✅ resolvida || D-010 | ✅ resolvida || D-009 | 🟡 parcial || D-003 | ✅ resolvida || D-002 | ✅ resolvida || D-001 | ✅ resolvida |# Dúvidas fiscais para validar com contador
 
 Cada dúvida vira **configuração** no sistema até ser respondida: nada é decidido em silêncio no código. Ao responder, registre data, quem respondeu e a fonte, e atualize o status.
 
 | ID | Status | Tema |
 |---|---|---|
-| D-001 | 🔴 aberta | IBS/CBS compõem o total da nota em 2026? |
-| D-002 | 🔴 aberta | Simples Nacional: preencher IBS/CBS antes de 01/01/2027? |
-| D-003 | 🔴 aberta | Quando a rejeição por ausência do grupo IBS/CBS volta? |
+| D-001 | ✅ resolvida | IBS/CBS compõem o total da nota em 2026? |
+| D-002 | ✅ resolvida | Simples Nacional: preencher IBS/CBS antes de 01/01/2027? |
+| D-003 | ✅ resolvida | Quando a rejeição por ausência do grupo IBS/CBS volta? |
 | D-004 | 🔴 aberta | Alíquotas de CBS/IBS de 2027–2028 |
 | D-005 | 🔴 aberta | Simples Nacional "por fora" em 2027: como o ERP deve tratar |
 | D-006 | 🔴 aberta | Data da NFS-e Nacional para o Simples Nacional |
-| D-007 | 🟡 parcial | Escopo das NT 2026.007 e 2026.008 |
+| D-007 | ✅ resolvida | Escopo das NT 2026.007 e 2026.008 |
 | D-008 | 🔴 aberta | Arredondamento de IBS/CBS por item × total |
-| D-009 | 🔴 aberta | Devolução no PDV com referência por item (VC02-14) |
-| D-010 | 🔴 aberta | Faixa de séries de NFC-e permitida para série por terminal |
-| D-011 | 🔴 aberta | Datas de homologação e produção da NT 2025.002 v1.52 |
+| D-009 | 🟡 parcial | Devolução no PDV com referência por item (VC02-14) |
+| D-010 | ✅ resolvida | Faixa de séries de NFC-e permitida para série por terminal |
+| D-011 | ✅ resolvida | Datas de homologação e produção da NT 2025.002 v1.52 |
 | D-012 | ✅ resolvida | Qual pacote de schemas (XSD) vale para a v1.52 |
-| D-013 | 🔴 aberta | Contingência off-line da NFC-e depois da NT 2026.002 |
+| D-013 | ✅ resolvida | Contingência off-line da NFC-e depois da NT 2026.002 |
 | D-014 | 🟡 parcial | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
-| D-015 | 🔴 aberta | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
+| D-015 | ✅ resolvida | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
 | D-016 | 🔴 aberta | cClassTrib: o dia do fim da vigência ainda vale? |
 | D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
@@ -26,6 +26,14 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-020 | 🔴 aberta | IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação |
 | D-022 | 🔴 aberta | NFC-e em MG: ambiente próprio ou SVRS? |
 | D-021 | 🟡 parcial | Alíquota geral do ICMS: AL divergente e AP sem fonte oficial |
+| D-023 | 🔴 aberta | Código de barras do DANFE com o CNPJ alfanumérico |
+| D-024 | 🔴 aberta | Custo de aquisição na compra: com ou sem os créditos (contador) |
+| D-025 | 🔴 aberta | DIFAL a não contribuinte: base única ou base dupla por UF (contador) |
+| D-026 | 🔴 aberta | NF-e na transferência entre lojas (contador) |
+| D-027 | 🔴 aberta | Apuração do IBS e da CBS: quando o crédito entra (contador) |
+| D-028 | 🟡 parcial | Unidade do qLote na NF-e de compra |
+| D-029 | ✅ resolvida | Pix e vale do caixa: qual código tPag |
+| D-030 | ✅ resolvida | Descrição do primeiro item da NFC-e em homologação |
 
 ---
 
@@ -253,3 +261,57 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** em homologação, a SEFAZ recusa a NFC-e quando a descrição do primeiro item não é "NOTA FISCAL EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL" (rejeição 373). O texto da regra não está nos arquivos oficiais guardados em `packages/fiscal/sources`.
 - **Implementação provisória (F3-14.a):** como o Bipaê só emite em homologação (regra 4), a NFC-e montada da venda sempre leva esse texto no primeiro item; os outros itens mantêm a descrição do produto.
 - **Pergunta:** confirmar na primeira emissão real (F3-11.b, com o certificado) e guardar o Manual de Orientação do Contribuinte vigente em `sources`.
+
+
+---
+
+## Pesquisa em fontes oficiais — 15/10/2026
+
+Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta data:
+- MOC 7.0 e o Anexo I (Leiaute e Regras de Validação);
+- NT 2016.002 v1.61, NT 2023.004 v1.20, NT 2025.002 v1.52;
+- NT 2026.002 v1.11, NT 2026.006 v1.00, NT 2026.007 v1.10, NT 2026.008 v1.00;
+- Informe Técnico 2024.002 v1.11;
+- Tabela de Meios de Pagamento, já guardada em `packages/fiscal/sources`.
+
+- **D-001 — resolvida.**
+  - **Fonte:** NT 2025.002 v1.52, regra VB01-20 (vItem): "Exceção 1: Em 2025 e 2026 não somar vIBS, vCBS, vIS, vTotIBSMonoItem, vTotCBSMonoItem".
+  - **O que vale:** o total novo `vNFTot` (W60) é a soma dos vItem. Em 2026, o IBS e a CBS **não compõem** o total, como já faz a flag por vigência.
+  - **A partir de 2027:** a NT 2026.008 (homologação em 01/02/2027, produção em 01/03/2027) manda somar o IBS e a CBS no `vProd`, com os campos novos de valor líquido. Isso entra como regra nova antes de 2027.
+- **D-002 — resolvida.**
+  - **Fonte:** NT 2025.002 v1.52, cronograma. "As orientações para CRT=1-Simples Nacional, CRT=2-Simples Nacional-Excesso de Sublimite, CRT=4-MEI e Tributação Monofásica serão publicadas em NT futura, tendo em vista que a tributação do IBS/CBS/IS para estes contribuintes ocorre somente a partir de 2027, conforme disposto no Art. 348 da LC 214/25."
+  - **Consequência:** em 2026, o Simples e o MEI **não** preenchem o IBS/CBS. Corrigido no motor (o cálculo exigia o cClassTrib também deles).
+- **D-003 — resolvida.**
+  - **Fonte:** NT 2025.002 v1.52, cronograma.
+  - **Regime normal (CRT 3):** a partir de 03/08/2026 o preenchimento do IBS/CBS é obrigatório e as regras de validação são aplicadas, valendo desde 01/01/2026.
+- **D-007 — resolvida.**
+  - A NT 2026.007 trata da emissão por contribuinte exclusivo do IBS/CBS (sem inscrição estadual). Não se aplica ao varejo com IE.
+  - A NT 2026.008 (valor líquido do produto) vale a partir de 2027 (homologação em 01/02/2027, produção em 01/03/2027).
+- **D-009 — parcial.**
+  - **Fonte:** NT 2025.002 v1.52, regra VC02-14.
+  - **Regra:** na NF-e de devolução (finNFe=4, modelo 55), a referência é feita **só** no grupo `DFeReferenciado`, item a item, e o `refNFe` fica proibido. Em produção desde 03/11/2026 (data alterada na v1.52).
+  - **Continua para o contador:** o fluxo da devolução de consumidor sem identificação.
+- **D-010 — resolvida.**
+  - **Fonte:** Anexo I do MOC 7.0, campo B07 e regra B28-30 (rejeição 244).
+  - **Faixas:** emitente com CNPJ pelo aplicativo do contribuinte usa as séries 000 a 889; 890 a 919 são do fisco (avulsa); 920 a 969, de emitente CPF.
+  - **No Bipaê:** a faixa 1..889 está certa.
+- **D-011 — resolvida.**
+  - **Fonte:** NT 2025.002 v1.52, cronograma.
+  - **Datas:** correção da VC02-50 em homologação até 05/10/2026 e em produção até 03/11/2026; a VC02-14 entra em produção em 03/11/2026.
+- **D-013 — resolvida.**
+  - **Fonte:** NT 2026.002 v1.11, regra B10-10 e Observação 1, com base nos Ajustes SINIEF 32/25 e 13/26.
+  - **Emissão normal:** a NFC-e normal deve ser emitida em tempo real, com tolerância de 5 minutos; passado isso vem a rejeição 704.
+  - **Contingência off-line (`tpEmis=9`):** na transmissão em até 24 horas a SEFAZ autoriza normalmente; depois, a critério da UF, autoriza "fora de prazo" (cStat 150).
+  - **Consequência:** a venda feita sem internet e emitida depois precisa ir em contingência off-line (F3-15).
+- **D-015 — resolvida.** Fonte: NT 2026.006 v1.00. "A implantação do split payment está prevista para ocorrer a partir de 2027." Nada muda em 2026.
+- **D-028 — parcial.**
+  - **Fontes:** Anexo I do MOC 7.0 (campo I82) e NT 2016.002 v1.61. Os dois só descrevem o `qLote` como "Quantidade de produto no Lote", formato 8v3, e não há regra de validação ligando o `qLote` ao `qCom` ou ao `qTrib`.
+  - **Decisão pelos dados da própria nota:** se a soma dos `qLote` bate com o `qTrib` (e não com o `qCom`), o Bipaê converte pela relação qCom/qTrib; senão, usa a unidade comercial.
+- **D-029 — resolvida.**
+  - **Fonte:** Tabela de Meios de Pagamento oficial, coluna "Observações". Código 17: "PIX realizado com a geração do Qr-Code de forma dinâmica ou URL dinâmica". Código 20: "Pix realizado com QR code estático, ou chave Pix, ou informações de agência e conta".
+  - **Pix:** como o caixa ainda não gera QR Code dinâmico (depende de PSP, E9), o Pix sai sempre como 20; a opção "dinâmico" saiu da tela.
+  - **Vale:** é escolha da loja entre os quatro códigos oficiais.
+  - **Achado:** a regra YA04-10 da NT 2023.004 (rejeição 391, padrão nacional e opcional por UF) exige o grupo de cartões (`card`) quando o tPag é 03, 04 ou 17. Corrigido: cartão vai com `tpIntegra=2` (não integrado).
+- **D-030 — resolvida.**
+  - **Fonte:** Anexo I do MOC 7.0, regra I04-10 (NT 2015.002), rejeição 373. O texto é exatamente "NOTA FISCAL EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL".
+  - **Achado:** a regra 598 (modelos 55 e 65) também exige, em homologação, o nome do destinatário "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL". Corrigido.

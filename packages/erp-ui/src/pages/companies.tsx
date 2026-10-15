@@ -208,7 +208,6 @@ function CompanyForm({
     cityCode: company?.cityCode ?? '',
     cep: company?.cep ?? '',
     phone: company?.phone ?? '',
-    pix: company?.nfcePaymentCodes?.pix ?? '20',
     voucher: company?.nfcePaymentCodes?.voucher ?? '10',
   });
   const fiscal = useFiscalOptions().data;
@@ -233,7 +232,7 @@ function CompanyForm({
       cityCode: v.cityCode || null,
       cep: v.cep || null,
       phone: v.phone || null,
-      nfcePaymentCodes: { pix: v.pix, voucher: v.voucher },
+      nfcePaymentCodes: { voucher: v.voucher },
     };
     try {
       if (company) await api.patch(`/companies/${company.id}`, body);
@@ -351,16 +350,10 @@ function CompanyForm({
             />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField
-              label="Pix na nota"
-              value={v.pix}
-              onChange={(e) => setV({ ...v, pix: e.target.value })}
-              options={[
-                { value: '20', label: 'Pix estático (chave ou QR fixo)' },
-                { value: '17', label: 'Pix dinâmico (cobrança com valor)' },
-              ]}
-              hint="Na dúvida, pergunte ao contador (dúvida D-029)."
-            />
+            <p className="text-sm text-muted">
+              Pix sai na nota como Pix estático (código 20): o caixa ainda não gera QR Code
+              dinâmico, que depende da integração com um banco (PSP).
+            </p>
             <SelectField
               label="Vale na nota"
               value={v.voucher}

@@ -22,8 +22,18 @@ const REVENDA: SaleFiscalProfile = {
   cClassTrib: '000001',
 };
 
-const venda = (regime: CompanyRegime | null, uf: string | null, extra: Partial<Parameters<typeof calculateSaleItemTaxes>[0]> = {}) =>
-  calculateSaleItemTaxes({ company: { uf, regime }, profile: REVENDA, item: CEM_REAIS, date: HOJE, ...extra });
+const venda = (
+  regime: CompanyRegime | null,
+  uf: string | null,
+  extra: Partial<Parameters<typeof calculateSaleItemTaxes>[0]> = {},
+) =>
+  calculateSaleItemTaxes({
+    company: { uf, regime },
+    profile: REVENDA,
+    item: CEM_REAIS,
+    date: HOJE,
+    ...extra,
+  });
 
 describe('impostos do item de venda, por regime (empresa de SP)', () => {
   it('MEI: CRT 4, CSOSN sem destaque, PIS e COFINS no DAS', () => {
@@ -32,8 +42,12 @@ describe('impostos do item de venda, por regime (empresa de SP)', () => {
     expect(r.icms).toMatchObject({ status: 'calculado', result: { csosn: '102', amountCents: 0 } });
     expect(r.pis).toMatchObject({ status: 'nao-se-aplica' });
     expect(r.cofins.status).toBe('nao-se-aplica');
-    // IBS/CBS de teste em 2026 sobre o valor cheio: não há ICMS destacado para tirar da base.
-    expect(r.ibsCbs).toMatchObject({ status: 'calculado', result: { baseCents: 10_000, cbsAmountCents: 90, ibsAmountCents: 10 } });
+    // Em 2026 o MEI e o Simples não preenchem o IBS/CBS (NT 2025.002 v1.52; LC 214/2025, art. 348).
+    expect(r.ibsCbs).toMatchObject({ status: 'nao-se-aplica' });
+    expect((r.ibsCbs as { reason: string }).reason).toContain('só passam a valer em 2027');
+    // Em 2027 o MEI entra no cálculo; hoje cai em "falta configurar" porque a alíquota da CBS de
+    // 2027 ainda depende de resolução do Senado (D-004).
+    expect(venda('mei', 'SP', { date: '2027-03-01' }).ibsCbs.status).toBe('falta-configurar');
   });
 
   it('Simples Nacional: CRT 1, igual ao MEI no cálculo', () => {
@@ -45,17 +59,26 @@ describe('impostos do item de venda, por regime (empresa de SP)', () => {
   it('Simples acima do sublimite: CRT 2, ICMS por CST com a alíquota da UF, PIS e COFINS no DAS', () => {
     const r = venda('simples-excesso', 'SP');
     expect(r).toMatchObject({ crt: 2, complete: true });
-    expect(r.icms).toMatchObject({ status: 'calculado', result: { cst: '00', rate: '18.00', amountCents: 1800 } });
+    expect(r.icms).toMatchObject({
+      status: 'calculado',
+      result: { cst: '00', rate: '18.00', amountCents: 1800 },
+    });
     expect(r.pis.status).toBe('nao-se-aplica');
     // Só o ICMS sai da base do IBS/CBS: 100,00 − 18,00.
-    expect(r.ibsCbs).toMatchObject({ status: 'calculado', result: { baseCents: 8200 } });
+    expect(r.ibsCbs.status).toBe('nao-se-aplica');
+    expect(venda('simples-excesso', 'SP', { date: '2027-03-01' }).ibsCbs.status).toBe(
+      'falta-configurar',
+    );
   });
 
   it('Lucro Presumido: CRT 3, PIS 0,65% e COFINS 3% sobre o valor cheio', () => {
     const r = venda('presumido', 'SP');
     expect(r).toMatchObject({ crt: 3, complete: true });
     expect(r.icms).toMatchObject({ status: 'calculado', result: { amountCents: 1800 } });
-    expect(r.pis).toMatchObject({ status: 'calculado', result: { baseCents: 10_000, amountCents: 65 } });
+    expect(r.pis).toMatchObject({
+      status: 'calculado',
+      result: { baseCents: 10_000, amountCents: 65 },
+    });
     expect(r.cofins).toMatchObject({ status: 'calculado', result: { amountCents: 300 } });
     // 100,00 − 18,00 − 0,65 − 3,00 = 78,35
     expect(r.ibsCbs).toMatchObject({ status: 'calculado', result: { baseCents: 7835 } });
@@ -65,8 +88,14 @@ describe('impostos do item de venda, por regime (empresa de SP)', () => {
   it('Lucro Real: PIS 1,65% e COFINS 7,6% sem o ICMS na base', () => {
     const r = venda('real', 'SP');
     expect(r).toMatchObject({ crt: 3, complete: true });
-    expect(r.pis).toMatchObject({ status: 'calculado', result: { baseCents: 8200, amountCents: 135 } });
-    expect(r.cofins).toMatchObject({ status: 'calculado', result: { baseCents: 8200, amountCents: 623 } });
+    expect(r.pis).toMatchObject({
+      status: 'calculado',
+      result: { baseCents: 8200, amountCents: 135 },
+    });
+    expect(r.cofins).toMatchObject({
+      status: 'calculado',
+      result: { baseCents: 8200, amountCents: 623 },
+    });
     expect(r.assumptions.join(' ')).not.toContain('D-019');
   });
 
@@ -76,7 +105,10 @@ describe('impostos do item de venda, por regime (empresa de SP)', () => {
     );
     // No Simples com CSOSN 102 a alíquota não entra na conta, então não há o que avisar.
     expect(venda('simples', 'SP').assumptions).toEqual([]);
-    expect(venda('real', 'BA').icms).toMatchObject({ status: 'calculado', result: { rate: '20.50', amountCents: 2050 } });
+    expect(venda('real', 'BA').icms).toMatchObject({
+      status: 'calculado',
+      result: { rate: '20.50', amountCents: 2050 },
+    });
   });
 });
 
@@ -84,7 +116,9 @@ describe('o que falta configurar aparece com todas as letras', () => {
   it('empresa sem UF ou sem regime', () => {
     for (const r of [venda(null, 'SP'), venda('simples', null)]) {
       expect(r).toMatchObject({ crt: r.crt, cfop: null, complete: false });
-      expect(r.pending).toEqual(['Informe a UF e o regime tributário da empresa em Empresas e lojas.']);
+      expect(r.pending).toEqual([
+        'Informe a UF e o regime tributário da empresa em Empresas e lojas.',
+      ]);
       expect(r.icms.status).toBe('falta-configurar');
       expect(r.ibsCbs.status).toBe('falta-configurar');
     }
@@ -92,7 +126,9 @@ describe('o que falta configurar aparece com todas as letras', () => {
 
   it('produto sem perfil fiscal', () => {
     const r = venda('simples', 'SP', { profile: null });
-    expect(r.pending).toEqual(['O produto não tem perfil fiscal. Escolha um no cadastro do produto.']);
+    expect(r.pending).toEqual([
+      'O produto não tem perfil fiscal. Escolha um no cadastro do produto.',
+    ]);
     expect(r.crt).toBe(1);
   });
 
@@ -103,26 +139,36 @@ describe('o que falta configurar aparece com todas as letras', () => {
       reason: 'O perfil fiscal não tem CSOSN, exigido no regime Simples Nacional.',
     });
     const semCst = venda('real', 'SP', { profile: { ...REVENDA, cstIcms: null } });
-    expect(semCst.icms).toMatchObject({ reason: 'O perfil fiscal não tem CST do ICMS, exigido no regime Lucro Real.' });
+    expect(semCst.icms).toMatchObject({
+      reason: 'O perfil fiscal não tem CST do ICMS, exigido no regime Lucro Real.',
+    });
     // Sem ICMS calculado, o PIS/COFINS e o IBS/CBS seguem com o que dá para calcular.
     expect(semCst.pis.status).toBe('calculado');
     expect(semCst.complete).toBe(false);
   });
 
   it('perfil sem CST de PIS/COFINS ou sem cClassTrib', () => {
-    const r = venda('real', 'SP', { profile: { ...REVENDA, cstPisCofins: null, cClassTrib: null } });
-    expect(r.pis).toMatchObject({ status: 'falta-configurar', reason: 'O perfil fiscal não tem o CST do PIS e da COFINS.' });
+    const r = venda('real', 'SP', {
+      profile: { ...REVENDA, cstPisCofins: null, cClassTrib: null },
+    });
+    expect(r.pis).toMatchObject({
+      status: 'falta-configurar',
+      reason: 'O perfil fiscal não tem o CST do PIS e da COFINS.',
+    });
     expect(r.ibsCbs).toMatchObject({ status: 'falta-configurar' });
     expect(r.pending).toHaveLength(2);
     // No Simples o CST de PIS/COFINS não faz falta para o cálculo.
-    expect(venda('simples', 'SP', { profile: { ...REVENDA, cstPisCofins: null } }).complete).toBe(true);
+    expect(venda('simples', 'SP', { profile: { ...REVENDA, cstPisCofins: null } }).complete).toBe(
+      true,
+    );
   });
 
   it('UF sem alíquota confirmada: pede a alíquota ao contador, sem número suposto', () => {
     const r = venda('real', 'AL');
     expect(r.icms).toEqual({
       status: 'falta-configurar',
-      reason: 'A alíquota geral de ICMS de AL ainda não foi confirmada em fonte oficial. Peça a alíquota ao contador.',
+      reason:
+        'A alíquota geral de ICMS de AL ainda não foi confirmada em fonte oficial. Peça a alíquota ao contador.',
     });
     expect(r.complete).toBe(false);
     // Com a alíquota informada pela empresa, o cálculo sai.
@@ -139,7 +185,10 @@ describe('o que falta configurar aparece com todas as letras', () => {
       profile: { ...REVENDA, cstIcms: '10' },
       settings: { icms: { st: { mva: '40', rate: '18' } } },
     });
-    expect(comMva.icms).toMatchObject({ status: 'calculado', result: { st: { amountCents: 720 } } });
+    expect(comMva.icms).toMatchObject({
+      status: 'calculado',
+      result: { st: { amountCents: 720 } },
+    });
 
     const outras = venda('real', 'SP', { profile: { ...REVENDA, cstIcms: '90' } });
     expect(outras.icms.status).toBe('nao-disponivel');
@@ -148,7 +197,10 @@ describe('o que falta configurar aparece com todas as letras', () => {
 
   it('em 2027: PIS e COFINS deixam de existir e a CBS sem alíquota publicada bloqueia', () => {
     const r = venda('real', 'SP', { date: '2027-03-01' });
-    expect(r.pis).toMatchObject({ status: 'nao-se-aplica', reason: 'PIS extinto a partir de 2027 (EC 132/2023).' });
+    expect(r.pis).toMatchObject({
+      status: 'nao-se-aplica',
+      reason: 'PIS extinto a partir de 2027 (EC 132/2023).',
+    });
     expect(r.ibsCbs.status).toBe('falta-configurar');
     expect(r.pending[0]).toContain('A alíquota da CBS para 2027 ainda não está na tabela');
   });
@@ -158,13 +210,20 @@ describe('venda para outra UF', () => {
   it('usa o CFOP e a alíquota interestaduais', () => {
     const paraBahia = venda('real', 'SP', { item: { operationCents: 10_000, ufDestino: 'BA' } });
     expect(paraBahia.cfop).toBe('6102');
-    expect(paraBahia.icms).toMatchObject({ status: 'calculado', result: { rate: '7.00', amountCents: 700 } });
+    expect(paraBahia.icms).toMatchObject({
+      status: 'calculado',
+      result: { rate: '7.00', amountCents: 700 },
+    });
     const paraRio = venda('real', 'SP', { item: { operationCents: 10_000, ufDestino: 'RJ' } });
     expect(paraRio.icms).toMatchObject({ result: { rate: '12.00' } });
-    const importado = venda('real', 'SP', { item: { operationCents: 10_000, ufDestino: 'RJ', imported: true } });
+    const importado = venda('real', 'SP', {
+      item: { operationCents: 10_000, ufDestino: 'RJ', imported: true },
+    });
     expect(importado.icms).toMatchObject({ result: { rate: '4.00' } });
     // A alíquota interestadual não depende de a UF de origem ter a alíquota interna confirmada.
-    expect(venda('real', 'AL', { item: { operationCents: 10_000, ufDestino: 'SP' } }).icms.status).toBe('calculado');
+    expect(
+      venda('real', 'AL', { item: { operationCents: 10_000, ufDestino: 'SP' } }).icms.status,
+    ).toBe('calculado');
   });
 });
 
@@ -184,7 +243,10 @@ describe('matriz de cobertura: 27 UFs × 5 regimes (F3-23)', () => {
         if (confirmada || !dependeDaAliquota) {
           expect(r.complete, caso).toBe(true);
           expect(r.icms.status, caso).toBe('calculado');
-          expect(r.ibsCbs.status, caso).toBe('calculado');
+          // Simples e MEI só preenchem o IBS/CBS a partir de 2027 (D-002).
+          expect(r.ibsCbs.status, caso).toBe(
+            regime.pisCofins === 'das' ? 'nao-se-aplica' : 'calculado',
+          );
         } else {
           expect(r.complete, caso).toBe(false);
           expect(r.pending, caso).toEqual([
@@ -198,7 +260,9 @@ describe('matriz de cobertura: 27 UFs × 5 regimes (F3-23)', () => {
   });
 
   it('o retrato de hoje: 129 combinações completas e 6 esperando a alíquota da UF', () => {
-    const completas = UFS.flatMap((uf) => COMPANY_REGIMES.map((regime) => venda(regime.id, uf).complete)).filter(Boolean);
+    const completas = UFS.flatMap((uf) =>
+      COMPANY_REGIMES.map((regime) => venda(regime.id, uf).complete),
+    ).filter(Boolean);
     // 25 UFs × 5 regimes + 2 UFs pendentes × 2 regimes que não dependem da alíquota (MEI e Simples).
     expect(completas).toHaveLength(129);
   });
@@ -280,7 +344,9 @@ describe('impostos de todos os itens da venda', () => {
     expect(r).toHaveLength(2);
     expect(r[0]).toMatchObject({ icmsCents: 1800, complete: true });
     expect(r[1]).toMatchObject({ icmsCents: null, complete: false });
-    expect(r[1]!.pending).toEqual(['O produto não tem perfil fiscal. Escolha um no cadastro do produto.']);
+    expect(r[1]!.pending).toEqual([
+      'O produto não tem perfil fiscal. Escolha um no cadastro do produto.',
+    ]);
   });
 
   it('só a UF, ou regime que o motor não conhece: pede para completar o cadastro', () => {
@@ -289,9 +355,15 @@ describe('impostos de todos os itens da venda', () => {
       { uf: null, taxRegime: 'simples' },
       { uf: 'SP', taxRegime: 'regime-inexistente' },
     ]) {
-      const [r] = saleTaxSummaries({ company, items: [{ operationCents: 1000, profile: REVENDA }], date: HOJE })!;
+      const [r] = saleTaxSummaries({
+        company,
+        items: [{ operationCents: 1000, profile: REVENDA }],
+        date: HOJE,
+      })!;
       expect(r!.complete).toBe(false);
-      expect(r!.pending).toEqual(['Informe a UF e o regime tributário da empresa em Empresas e lojas.']);
+      expect(r!.pending).toEqual([
+        'Informe a UF e o regime tributário da empresa em Empresas e lojas.',
+      ]);
     }
   });
 });

@@ -2,9 +2,14 @@ import { companyIcmsSettings, type CompanyIcmsRule } from './company-rules';
 import { findCompanyRegime, type CompanyRegime } from './regimes';
 import type { Crt } from './rules';
 import { icmsGeneralRate, interstateRate } from './tables/icms-uf';
+import { ibsCbsNotFilled } from './tables/ibs-cbs-scope';
 import { meiItemProblem } from './tables/mei';
 import { pisCofinsRate } from './tables/rates';
-import { calculateContribution, type ContributionResult, type ContributionTax } from './taxes/contributions';
+import {
+  calculateContribution,
+  type ContributionResult,
+  type ContributionTax,
+} from './taxes/contributions';
 import { calculateIbsCbs, MissingRateError, type IbsCbsResult } from './taxes/ibs-cbs';
 import { calculateIcms, type IcmsEffect, type IcmsResult } from './taxes/icms';
 import { TaxRuleDataError, UnsupportedTaxSituationError } from './taxes/shared';
@@ -82,8 +87,10 @@ function outcome<R>(run: () => R): TaxOutcome<R> {
   try {
     return { status: 'calculado', result: run() };
   } catch (error) {
-    if (error instanceof UnsupportedTaxSituationError) return { status: 'nao-disponivel', reason: error.message };
-    if (error instanceof TaxRuleDataError || error instanceof MissingRateError) return missing(error.message);
+    if (error instanceof UnsupportedTaxSituationError)
+      return { status: 'nao-disponivel', reason: error.message };
+    if (error instanceof TaxRuleDataError || error instanceof MissingRateError)
+      return missing(error.message);
     throw error;
   }
 }
@@ -107,15 +114,33 @@ export function calculateSaleItemTaxes(input: {
     const outcomes = [parts.icms, parts.pis, parts.cofins, parts.ibsCbs];
     const pending = [
       ...new Set(
-        outcomes.flatMap((o) => (o.status === 'falta-configurar' || o.status === 'nao-disponivel' ? [o.reason] : [])),
+        outcomes.flatMap((o) =>
+          o.status === 'falta-configurar' || o.status === 'nao-disponivel' ? [o.reason] : [],
+        ),
       ),
     ];
-    return { crt: regime?.crt ?? null, cfop, ...parts, pending, assumptions, complete: pending.length === 0 };
+    return {
+      crt: regime?.crt ?? null,
+      cfop,
+      ...parts,
+      pending,
+      assumptions,
+      complete: pending.length === 0,
+    };
   };
   const all = (reason: string) =>
-    finish({ icms: missing(reason), pis: missing(reason), cofins: missing(reason), ibsCbs: missing(reason) }, null);
+    finish(
+      {
+        icms: missing(reason),
+        pis: missing(reason),
+        cofins: missing(reason),
+        ibsCbs: missing(reason),
+      },
+      null,
+    );
 
-  if (!company.uf || !regime) return all('Informe a UF e o regime tributário da empresa em Empresas e lojas.');
+  if (!company.uf || !regime)
+    return all('Informe a UF e o regime tributário da empresa em Empresas e lojas.');
   if (!profile) return all('O produto não tem perfil fiscal. Escolha um no cadastro do produto.');
 
   const ufDestino = item.ufDestino ?? company.uf;
@@ -152,13 +177,16 @@ export function calculateSaleItemTaxes(input: {
           rateProblem = `A alíquota geral de ICMS de ${company.uf} ainda não foi confirmada em fonte oficial. Peça a alíquota ao contador.`;
         }
       } else {
-        effect.rate = interstateRate(company.uf, ufDestino, { imported: item.imported ?? false }).rate;
+        effect.rate = interstateRate(company.uf, ufDestino, {
+          imported: item.imported ?? false,
+        }).rate;
       }
     }
     Object.assign(effect, settings.icms);
     icms = outcome(() => calculateIcms(effect, { baseCents: item.operationCents }));
     // Sem alíquota, a regra fica "incompleta"; a mensagem útil é a da UF, não a genérica.
-    if (icms.status === 'falta-configurar' && rateProblem && effect.rate === undefined) icms = missing(rateProblem);
+    if (icms.status === 'falta-configurar' && rateProblem && effect.rate === undefined)
+      icms = missing(rateProblem);
     // O aviso só vale quando a alíquota entrou mesmo na conta (no Simples sem destaque, não entra).
     if (icms.status === 'calculado' && icms.result.rate !== null && usedGeneralRate !== null) {
       assumptions.push(
@@ -171,10 +199,14 @@ export function calculateSaleItemTaxes(input: {
   // ---------------------------------------------------------------- PIS e COFINS
   const contribution = (tax: ContributionTax): TaxOutcome<ContributionResult> => {
     if (regime.pisCofins === 'das') {
-      return { status: 'nao-se-aplica', reason: `${tax} recolhido no documento de arrecadação do Simples Nacional.` };
+      return {
+        status: 'nao-se-aplica',
+        reason: `${tax} recolhido no documento de arrecadação do Simples Nacional.`,
+      };
     }
     const general = pisCofinsRate(tax, regime.pisCofins, date);
-    if (!general) return { status: 'nao-se-aplica', reason: `${tax} extinto a partir de 2027 (EC 132/2023).` };
+    if (!general)
+      return { status: 'nao-se-aplica', reason: `${tax} extinto a partir de 2027 (EC 132/2023).` };
     if (!profile.cstPisCofins) return missing('O perfil fiscal não tem o CST do PIS e da COFINS.');
     const excludeIcms =
       regime.pisCofins === 'nao-cumulativo' ? true : (settings.excludeIcmsFromCumulative ?? false);
@@ -189,21 +221,28 @@ export function calculateSaleItemTaxes(input: {
   const pis = contribution('PIS');
   const cofins = contribution('COFINS');
   if (regime.pisCofins === 'cumulativo' && settings.excludeIcmsFromCumulative === undefined) {
-    assumptions.push('PIS e COFINS cumulativos calculados com o ICMS na base (dúvida D-019, a confirmar com o contador).');
+    assumptions.push(
+      'PIS e COFINS cumulativos calculados com o ICMS na base (dúvida D-019, a confirmar com o contador).',
+    );
   }
 
   // ---------------------------------------------------------------- IBS e CBS
-  const amount = (o: TaxOutcome<ContributionResult>) => (o.status === 'calculado' ? o.result.amountCents : 0);
-  const ibsCbs: TaxOutcome<IbsCbsResult> = profile.cClassTrib
-    ? outcome(() =>
-        calculateIbsCbs({
-          cClassTrib: profile.cClassTrib!,
-          date,
-          operationCents: item.operationCents,
-          taxes: { ICMS: icmsCents, PIS: amount(pis), COFINS: amount(cofins) },
-        }),
-      )
-    : missing('O perfil fiscal não tem a classificação tributária do IBS e da CBS (cClassTrib).');
+  const amount = (o: TaxOutcome<ContributionResult>) =>
+    o.status === 'calculado' ? o.result.amountCents : 0;
+  // Simples e MEI só entram no IBS/CBS em 2027 (D-002): a regra vem da tabela, com a fonte.
+  const notFilled = ibsCbsNotFilled(regime.id, date);
+  const ibsCbs: TaxOutcome<IbsCbsResult> = notFilled
+    ? { status: 'nao-se-aplica', reason: notFilled }
+    : profile.cClassTrib
+      ? outcome(() =>
+          calculateIbsCbs({
+            cClassTrib: profile.cClassTrib!,
+            date,
+            operationCents: item.operationCents,
+            taxes: { ICMS: icmsCents, PIS: amount(pis), COFINS: amount(cofins) },
+          }),
+        )
+      : missing('O perfil fiscal não tem a classificação tributária do IBS e da CBS (cClassTrib).');
 
   return finish({ icms, pis, cofins, ibsCbs }, cfop);
 }
@@ -274,7 +313,11 @@ export function sameTaxSummary(a: SaleItemTaxSummary, b: SaleItemTaxSummary): bo
  */
 export function saleTaxSummaries(input: {
   company: { uf: string | null; taxRegime: string | null };
-  items: readonly { operationCents: number; profile: SaleFiscalProfile | null; ncm?: string | null }[];
+  items: readonly {
+    operationCents: number;
+    profile: SaleFiscalProfile | null;
+    ncm?: string | null;
+  }[];
   /** Data do fato gerador (AAAA-MM-DD). */
   date: string;
   /** Regras de ICMS próprias da empresa (F3-06.e), por NCM. */

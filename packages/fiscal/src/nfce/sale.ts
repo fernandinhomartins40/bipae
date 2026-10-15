@@ -3,7 +3,7 @@ import type { NfeItem, NfePayment } from '../nfe/groups';
 import { findCompanyRegime } from '../regimes';
 import { calculateSaleItemTaxes, type SaleFiscalProfile, type TaxOutcome } from '../sale';
 import { findFcp } from '../tables/rates';
-import { PdvPaymentError, pdvPaymentCode } from '../tables/pdv-payments';
+import { PdvPaymentError, pdvPaymentRule } from '../tables/pdv-payments';
 import { buildNfce, NfceBuildError, type NfceDocument, type NfceInput } from './build';
 import { nfceNumbering } from './numbering';
 
@@ -60,7 +60,13 @@ export interface SaleNfceInput {
   /** Momento da venda (ISO). */
   occurredAt: string;
   items: SaleNfceItem[];
-  payments: { method: string; amountCents: number; changeCents?: number }[];
+  payments: {
+    method: string;
+    amountCents: number;
+    changeCents?: number;
+    /** Código de autorização da maquininha, quando o operador informou. */
+    authorizationCode?: string | null;
+  }[];
   customerTaxId?: string | null;
   rules?: readonly CompanyIcmsRule[];
   /** Escolhas da empresa para Pix e vale (dúvida D-029). */
@@ -77,6 +83,10 @@ export type SaleNfceResult =
  */
 export const HOMOLOGATION_FIRST_ITEM =
   'NOTA FISCAL EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL';
+
+/** Nome do destinatário exigido em homologação (regra 598, Anexo I do MOC 7.0, NT 2011/002). */
+export const HOMOLOGATION_RECIPIENT_NAME =
+  'NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL';
 
 const onlyDigits = (text: string | null | undefined) => (text ?? '').replace(/\D/g, '');
 
@@ -180,9 +190,17 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
   const payments: NfePayment[] = [];
   for (const p of input.payments) {
     try {
+      const rule = pdvPaymentRule(p.method, date, input.paymentCodes);
       payments.push({
-        code: pdvPaymentCode(p.method, date, input.paymentCodes),
+        code: rule.code,
         amountCents: p.amountCents + (p.changeCents ?? 0),
+        // Cartão sem TEF integrado (E10): tpIntegra 2, como uma maquininha avulsa.
+        ...(rule.card && {
+          card: {
+            integration: '2' as const,
+            ...(p.authorizationCode && { authorizationCode: p.authorizationCode }),
+          },
+        }),
       });
     } catch (error) {
       if (error instanceof PdvPaymentError) pending.push(error.message);
@@ -218,8 +236,12 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
     number: numbering.number,
     issuedAt: brasiliaDateTime(input.occurredAt),
     numericCode: saleNumericCode(input.saleId, numbering.number),
+    // Em homologação, o nome do destinatário é o texto oficial (regra 598 do MOC 7.0).
     ...(taxId && {
-      customer: taxId.length === 11 ? { cpf: taxId } : { cnpj: taxId },
+      customer:
+        taxId.length === 11
+          ? { cpf: taxId, name: HOMOLOGATION_RECIPIENT_NAME }
+          : { cnpj: taxId, name: HOMOLOGATION_RECIPIENT_NAME },
     }),
     items,
     payments,

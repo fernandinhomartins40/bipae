@@ -196,6 +196,7 @@ export class NfceEmissionService implements OnModuleInit {
         method: p.method,
         amountCents: p.amountCents,
         changeCents: p.changeCents,
+        authorizationCode: p.authorizationCode,
       })),
       customerTaxId: sale.customerTaxId,
       rules,

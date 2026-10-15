@@ -1,5 +1,18 @@
 # Changelog
 
+## [Dúvidas fiscais pesquisadas em fonte oficial] — 15/10/2026
+
+### Corrigido (com base nos documentos oficiais do Portal da NF-e)
+- **Simples e MEI não preenchem o IBS/CBS em 2026** (NT 2025.002 v1.52; LC 214/2025, art. 348). Antes o motor pedia o cClassTrib também deles, e a NFC-e do Simples ficava parada em "falta configurar". A regra está na tabela fiscal, com a fonte.
+- **NFC-e paga com cartão leva o grupo de cartões** (tpIntegra 2, com o código de autorização quando houver), como pede a regra YA04-10 da NT 2023.004 (rejeição 391).
+- **Em homologação, o destinatário identificado sai com o nome oficial** "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL" (regra 598 do MOC 7.0).
+- **Pix sai sempre como estático (código 20).** Pela definição oficial da tabela de meios de pagamento, o código 17 é só para QR Code dinâmico, que o caixa ainda não gera. A opção saiu da tela da empresa.
+- **Lote da nota de compra:** quando a soma dos lotes bate com a quantidade tributável, o Bipaê converte pela relação entre a quantidade comercial e a tributável (D-028).
+
+### Documentação
+- **`docs/fiscal/duvidas.md`:** nova seção "Pesquisa em fontes oficiais" com a fonte exata de cada resposta. Resolvidas: D-001, D-002, D-003, D-007, D-010, D-011, D-013, D-015, D-029 e D-030. Parciais: D-009 e D-028.
+- **D-013 definiu a contingência off-line (F3-15):** a NFC-e normal deve ser emitida em até 5 minutos; venda feita sem internet vai em contingência off-line (`tpEmis=9`) e é transmitida em até 24 horas.
+
 ## [F3-14 NFC-e na venda] — 15/10/2026
 
 ### Adicionado

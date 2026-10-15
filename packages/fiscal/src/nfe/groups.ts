@@ -73,6 +73,11 @@ export interface NfePayment {
   amountCents: number;
   /** Descrição do meio de pagamento; obrigatória com o código 99 (outros). */
   description?: string;
+  /**
+   * Grupo de cartões: tpIntegra 1 (integrado ao sistema, TEF) ou 2 (não integrado, ex.: POS) e o
+   * código de autorização, quando houver.
+   */
+  card?: { integration: '1' | '2'; authorizationCode?: string };
 }
 
 export class NfeBuildError extends Error {}
@@ -501,6 +506,12 @@ export function pagGroup(
         req('tPag', payment.code),
         opt('xPag', payment.code === OUTROS ? payment.description : undefined),
         req('vPag', money(payment.amountCents)),
+        payment.card
+          ? el('card', [
+              req('tpIntegra', payment.card.integration),
+              opt('cAut', payment.card.authorizationCode),
+            ])
+          : '',
       ]),
     ),
     changeCents ? req('vTroco', money(changeCents)) : '',

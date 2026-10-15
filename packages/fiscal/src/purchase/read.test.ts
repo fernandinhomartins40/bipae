@@ -220,3 +220,26 @@ describe('lote e validade do fornecedor (F5-04.b)', () => {
     expect(readPurchaseNfe(doc.xml).items[0]!.lots).toBeUndefined();
   });
 });
+
+describe('unidade do lote pela própria nota (D-028)', () => {
+  const lote = (quantity: string) => ({
+    code: 'L',
+    quantity,
+    manufacturedOn: '2026-09-01',
+    expiresOn: '2027-03-31',
+  });
+
+  it('lotes que somam o qTrib são convertidos pela relação qCom/qTrib', () => {
+    // 2 caixas (qCom) = 24 unidades (qTrib); lotes de 10 e 14 unidades; caixa com 12 no estoque.
+    const item = { quantity: '2.0000', taxableQuantity: '24.0000', lots: [lote('10'), lote('14')] };
+    expect(purchaseLotMilli(item.lots[0]!, '12', item)).toBe(10_000);
+    expect(purchaseLotMilli(item.lots[1]!, '12', item)).toBe(14_000);
+  });
+
+  it('lotes que somam o qCom ficam na unidade comercial', () => {
+    const item = { quantity: '2.0000', taxableQuantity: '24.0000', lots: [lote('1'), lote('1')] };
+    expect(purchaseLotMilli(item.lots[0]!, '12', item)).toBe(12_000);
+    // Sem o item, vale a unidade comercial.
+    expect(purchaseLotMilli(lote('1'), '12')).toBe(12_000);
+  });
+});

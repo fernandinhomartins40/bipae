@@ -9,12 +9,26 @@ import { findPaymentMeans } from './payment-means';
 export interface PdvPaymentRule {
   code: string;
   options?: string[];
-  doubt?: string;
+  /** Vai com o grupo de cartões (regra YA04-10, rejeição 391). */
+  card?: boolean;
+  note?: string;
 }
 
 export const PDV_PAYMENT_TPAG = data.methods as Record<string, PdvPaymentRule>;
 
 export class PdvPaymentError extends Error {}
+
+/** Código tPag e se a forma vai com o grupo de cartões. */
+export function pdvPaymentRule(
+  method: string,
+  date: string,
+  overrides: Partial<Record<string, string>> = {},
+): { code: string; card: boolean } {
+  return {
+    code: pdvPaymentCode(method, date, overrides),
+    card: PDV_PAYMENT_TPAG[method]?.card === true,
+  };
+}
 
 export function pdvPaymentCode(
   method: string,

@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-10-15",
+  "rules": [
+    {
+      "regimes": ["mei", "simples", "simples-excesso"],
+      "validity": { "start": "2026-01-01", "end": "2027-01-01" },
+      "fill": false,
+      "reason": "No Simples Nacional e no MEI, o IBS e a CBS só passam a valer em 2027: a nota de 2026 vai sem esse grupo.",
+      "source": "NT 2025.002 v1.52 (cronograma: orientações para CRT 1, 2 e 4 em NT futura); LC 214/2025, art. 348, III, c",
+      "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY="
+    }
+  ]
+}

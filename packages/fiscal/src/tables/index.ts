@@ -16,3 +16,4 @@ export * from './simples-limits';
 export * from './mei';
 export * from './ibs-cbs-settlement';
 export * from './pdv-payments';
+export * from './ibs-cbs-scope';

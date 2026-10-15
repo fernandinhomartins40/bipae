@@ -40,6 +40,8 @@ export interface PurchaseItem {
   unit: string;
   /** Quantidade comercial como veio no XML ("12.0000"). */
   quantity: string;
+  /** Quantidade tributável (qTrib), para conferir em que unidade veio o lote (D-028). */
+  taxableQuantity?: string;
   unitPrice: string;
   totalCents: number;
   discountCents: number;
@@ -158,6 +160,7 @@ function item(det: XmlElement): PurchaseItem {
     cfop: need('CFOP'),
     unit: need('uCom'),
     quantity: need('qCom'),
+    ...(textOf(prod, 'qTrib') && { taxableQuantity: textOf(prod, 'qTrib') }),
     unitPrice: need('vUnCom'),
     totalCents: cents(prod, 'vProd'),
     discountCents: cents(prod, 'vDesc'),
@@ -245,10 +248,25 @@ export function purchaseStockMilli(item: PurchaseItem, factor: string | number =
 
 /**
  * Quantidade de um lote em unidades de estoque (milésimos). O leiaute não diz a unidade do
- * `qLote`; o Bipaê usa a unidade comercial do item, com o mesmo fator do estoque (dúvida D-028).
+ * `qLote` (D-028, MOC 7.0 e NT 2016.002): o Bipaê decide pelos dados da nota. Se a soma dos
+ * lotes bate com a quantidade tributável (e não com a comercial), converte pela relação
+ * qCom/qTrib; senão, usa a unidade comercial. Depois aplica o fator do estoque.
  */
-export function purchaseLotMilli(lot: PurchaseLot, factor: string | number = 1): number {
-  const total = dec(lot.quantity).mul(dec(factor)).mul(1000);
+export function purchaseLotMilli(
+  lot: PurchaseLot,
+  factor: string | number = 1,
+  item?: Pick<PurchaseItem, 'quantity' | 'taxableQuantity' | 'lots'>,
+): number {
+  let quantity = dec(lot.quantity);
+  if (item?.taxableQuantity && item.lots?.length) {
+    const sum = item.lots.reduce((s, l) => s.add(dec(l.quantity)), dec(0));
+    const qCom = dec(item.quantity);
+    const qTrib = dec(item.taxableQuantity);
+    if (!sum.eq(qCom) && sum.eq(qTrib) && !qTrib.isZero()) {
+      quantity = quantity.mul(qCom).div(qTrib);
+    }
+  }
+  const total = quantity.mul(dec(factor)).mul(1000);
   return total.lte(0) ? 0 : total.toDecimalPlaces(0).toNumber();
 }
 

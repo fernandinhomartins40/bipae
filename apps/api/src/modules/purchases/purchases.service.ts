@@ -445,7 +445,7 @@ export class PurchasesService {
         // Lote e validade (F5-04.b): o que o fornecedor informou no grupo rastro.
         if (saved!.tracksLot) {
           for (const lot of item.lots ?? []) {
-            const lotMilli = purchaseLotMilli(lot, factor);
+            const lotMilli = purchaseLotMilli(lot, factor, item);
             if (lotMilli <= 0 || !lot.code) continue;
             await this.lots.register(
               ctx,

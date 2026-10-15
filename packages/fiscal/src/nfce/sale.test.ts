@@ -109,6 +109,22 @@ describe('venda → NFC-e (F3-14.a)', () => {
     expect(again.ok && again.document.accessKey).toBe(r.document.accessKey);
   });
 
+  it('cartão vai com o grupo card (tpIntegra 2) e o CPF com o nome de homologação', async () => {
+    const r = buildSaleNfce(
+      venda({
+        payments: [{ method: 'credit', amountCents: 6580, authorizationCode: 'A1B2C3' }],
+      }),
+    );
+    if (!r.ok) throw new Error(r.pending.join('; '));
+    expect(await validate(r.document.xml)).toEqual([]);
+    expect(r.document.xml).toContain(
+      '<tPag>03</tPag><vPag>65.80</vPag><card><tpIntegra>2</tpIntegra><cAut>A1B2C3</cAut></card>',
+    );
+    expect(r.document.xml).toContain(
+      '<xNome>NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL</xNome>',
+    );
+  });
+
   it('lista tudo o que falta, sem montar nota pela metade', () => {
     const r = buildSaleNfce(
       venda({
@@ -141,7 +157,10 @@ describe('venda → NFC-e (F3-14.a)', () => {
     const foraDaFaixa = buildSaleNfce(venda({ terminalSeq: 1_000_000_000 }));
     expect(foraDaFaixa.ok).toBe(false);
     const cnpj = buildSaleNfce(venda({ customerTaxId: '11222333000181' }));
-    expect(cnpj.ok && cnpj.input.customer).toEqual({ cnpj: '11222333000181' });
+    expect(cnpj.ok && cnpj.input.customer).toEqual({
+      cnpj: '11222333000181',
+      name: 'NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL',
+    });
   });
 });
 
@@ -155,7 +174,8 @@ describe('detalhes da NFC-e da venda', () => {
 
   it('Pix e vale seguem a escolha da empresa, só entre as opções da tabela', () => {
     expect(pdvPaymentCode('pix', '2026-10-15')).toBe('20');
-    expect(pdvPaymentCode('pix', '2026-10-15', { pix: '17' })).toBe('17');
+    // Pix dinâmico (17) só com cobrança por PSP, que o caixa ainda não faz (D-029).
+    expect(pdvPaymentCode('pix', '2026-10-15', { pix: '17' })).toBe('20');
     expect(pdvPaymentCode('pix', '2026-10-15', { pix: '99' })).toBe('20');
     expect(pdvPaymentCode('voucher', '2026-10-15', { voucher: '11' })).toBe('11');
     // O código 05 só vale a partir de 01/07/2024.
