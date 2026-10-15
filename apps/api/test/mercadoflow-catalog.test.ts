@@ -302,7 +302,13 @@ describe('devolução ao catálogo e compra com o catálogo (MF-03)', () => {
       packageDescription: '130 g',
       ncm: '19053100',
     });
-    expect(JSON.stringify(itens.map((i) => i.payload))).not.toMatch(/price|cost|399|210/i);
+    // Sem preço nem custo no envio. O id da loja fica fora da conferência: por ser aleatório,
+    // ele às vezes contém "399" ou "210" e derrubava o teste por acaso.
+    const semId = itens.map((i) => {
+      const { storeId: _loja, ...resto } = i.payload as Record<string, unknown>;
+      return resto;
+    });
+    expect(JSON.stringify(semId)).not.toMatch(/price|cost|\b399\b|\b210\b/i);
 
     const outbox = t.app.get(MercadoflowOutbox);
     const agora = new Date(Date.now() + 10 * 60_000);
