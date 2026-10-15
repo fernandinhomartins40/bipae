@@ -1058,3 +1058,40 @@ export interface BankImportResult {
   imported: number;
   repeated: number;
 }
+
+// ---------- Recebíveis de cartão e Pix (F4-08) ----------
+
+export const SETTLEMENT_METHODS = ['credit', 'debit', 'pix', 'voucher'] as const;
+export type SettlementMethod = (typeof SETTLEMENT_METHODS)[number];
+
+export const settlementRulesInput = z.object({
+  rules: z
+    .array(
+      z.object({
+        method: z.enum(SETTLEMENT_METHODS),
+        feeBp: z.number().int().min(0).max(10_000, 'Taxa acima de 100%'),
+        days: z.number().int().min(0).max(120, 'Prazo de até 120 dias'),
+      }),
+    )
+    .min(1),
+});
+
+export interface SettlementRuleView {
+  method: SettlementMethod;
+  feeBp: number;
+  days: number;
+  /** Ainda não configurada pela loja: vale o prazo usual com taxa zero. */
+  configured: boolean;
+}
+
+export interface SettlementDay {
+  /** Data prevista do recebimento (AAAA-MM-DD). */
+  date: string;
+  method: SettlementMethod;
+  salesCount: number;
+  grossCents: number;
+  feeCents: number;
+  netCents: number;
+  /** Achou entrada no extrato com o valor líquido, na data ou um dia depois. */
+  received: boolean;
+}

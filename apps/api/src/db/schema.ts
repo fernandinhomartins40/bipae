@@ -773,3 +773,12 @@ export const bankTransactions = pgTable('bank_transactions', {
   resolvedAt: ts('resolved_at'),
   importedAt: ts('imported_at').notNull().defaultNow(),
 });
+
+/** Taxa e prazo de recebimento por forma de pagamento (F4-08). */
+export const settlementRules = pgTable('settlement_rules', {
+  tenantId: uuid('tenant_id').notNull(),
+  method: text('method', { enum: ['credit', 'debit', 'pix', 'voucher'] }).notNull(),
+  feeBp: integer('fee_bp').notNull(),
+  days: integer('days').notNull(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});

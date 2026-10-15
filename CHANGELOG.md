@@ -1,5 +1,13 @@
 # Changelog
 
+## [F4-08 Recebíveis de cartão e Pix] — 14/10/2026
+
+### Adicionado
+- **Recebíveis de cartão e Pix** (menu próprio):
+  - a loja cadastra a taxa e o prazo de cada forma (débito, crédito, Pix e vale); sem cadastro, valem prazos usuais com taxa zero e o aviso "falta configurar";
+  - as vendas viram recebimentos previstos por data, com bruto, taxa e líquido;
+  - cada previsto é conferido com o extrato importado (mesmo valor líquido, na data ou no dia seguinte).
+
 ## [F4-07 Conciliação bancária por OFX] — 14/10/2026
 
 ### Adicionado
