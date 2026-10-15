@@ -25,6 +25,15 @@ interface Company {
   uf: string | null;
   taxRegime: string | null;
   ibsCbsRegular?: boolean;
+  ie?: string | null;
+  street?: string | null;
+  streetNumber?: string | null;
+  complement?: string | null;
+  district?: string | null;
+  cityCode?: string | null;
+  cep?: string | null;
+  phone?: string | null;
+  nfcePaymentCodes?: Record<string, string>;
 }
 interface StoreRow {
   id: string;
@@ -191,6 +200,16 @@ function CompanyForm({
     uf: company?.uf ?? '',
     taxRegime: company?.taxRegime ?? '',
     ibsCbsRegular: company?.ibsCbsRegular ?? false,
+    ie: company?.ie ?? '',
+    street: company?.street ?? '',
+    streetNumber: company?.streetNumber ?? '',
+    complement: company?.complement ?? '',
+    district: company?.district ?? '',
+    cityCode: company?.cityCode ?? '',
+    cep: company?.cep ?? '',
+    phone: company?.phone ?? '',
+    pix: company?.nfcePaymentCodes?.pix ?? '20',
+    voucher: company?.nfcePaymentCodes?.voucher ?? '10',
   });
   const fiscal = useFiscalOptions().data;
   const regime = fiscal?.regimes.find((r) => r.id === v.taxRegime);
@@ -206,6 +225,15 @@ function CompanyForm({
       uf: v.uf || null,
       taxRegime: v.taxRegime || null,
       ibsCbsRegular: v.ibsCbsRegular,
+      ie: v.ie || null,
+      street: v.street || null,
+      streetNumber: v.streetNumber || null,
+      complement: v.complement || null,
+      district: v.district || null,
+      cityCode: v.cityCode || null,
+      cep: v.cep || null,
+      phone: v.phone || null,
+      nfcePaymentCodes: { pix: v.pix, voucher: v.voucher },
     };
     try {
       if (company) await api.patch(`/companies/${company.id}`, body);
@@ -271,9 +299,147 @@ function CompanyForm({
             hint="Só se a empresa fez essa opção (LC 214/2025, art. 41, § 3º). Sem ela, o IBS e a CBS vão no DAS. Na dúvida, pergunte ao contador."
           />
         )}
+        <fieldset className="flex flex-col gap-4 rounded-ui border border-border p-4">
+          <legend className="px-1 font-semibold">Dados para a nota fiscal (NFC-e)</legend>
+          <TextField
+            label="Inscrição estadual"
+            inputMode="numeric"
+            value={v.ie}
+            onChange={(e) => setV({ ...v, ie: e.target.value })}
+          />
+          <div className="grid gap-4 sm:grid-cols-[1fr_8rem]">
+            <TextField
+              label="Rua"
+              value={v.street}
+              onChange={(e) => setV({ ...v, street: e.target.value })}
+            />
+            <TextField
+              label="Número"
+              value={v.streetNumber}
+              onChange={(e) => setV({ ...v, streetNumber: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField
+              label="Complemento (opcional)"
+              value={v.complement}
+              onChange={(e) => setV({ ...v, complement: e.target.value })}
+            />
+            <TextField
+              label="Bairro"
+              value={v.district}
+              onChange={(e) => setV({ ...v, district: e.target.value })}
+            />
+          </div>
+          <CityPicker
+            uf={v.uf}
+            value={v.cityCode}
+            onChange={(cityCode) => setV({ ...v, cityCode })}
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField
+              label="CEP"
+              inputMode="numeric"
+              value={v.cep}
+              onChange={(e) => setV({ ...v, cep: e.target.value })}
+            />
+            <TextField
+              label="Telefone (opcional)"
+              inputMode="tel"
+              value={v.phone}
+              onChange={(e) => setV({ ...v, phone: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <SelectField
+              label="Pix na nota"
+              value={v.pix}
+              onChange={(e) => setV({ ...v, pix: e.target.value })}
+              options={[
+                { value: '20', label: 'Pix estático (chave ou QR fixo)' },
+                { value: '17', label: 'Pix dinâmico (cobrança com valor)' },
+              ]}
+              hint="Na dúvida, pergunte ao contador (dúvida D-029)."
+            />
+            <SelectField
+              label="Vale na nota"
+              value={v.voucher}
+              onChange={(e) => setV({ ...v, voucher: e.target.value })}
+              options={[
+                { value: '10', label: 'Vale alimentação' },
+                { value: '11', label: 'Vale refeição' },
+                { value: '12', label: 'Vale presente' },
+                { value: '13', label: 'Vale combustível' },
+              ]}
+            />
+          </div>
+        </fieldset>
         <Button type="submit">Salvar empresa</Button>
       </form>
     </Drawer>
+  );
+}
+
+/** Município da tabela do IBGE, buscado dentro da UF da empresa (F3-14). */
+function CityPicker({
+  uf,
+  value,
+  onChange,
+}: {
+  uf: string;
+  value: string;
+  onChange: (code: string) => void;
+}) {
+  const { api } = useApp();
+  const [search, setSearch] = useState('');
+  const current = useQuery({
+    queryKey: ['municipio', value],
+    queryFn: () =>
+      api.get<{ code: string; name: string; uf: string }>(`/fiscal/municipios/${value}`),
+    enabled: /^\d{7}$/.test(value),
+  });
+  const found = useQuery({
+    queryKey: ['municipios', uf, search],
+    queryFn: () =>
+      api.get<{ code: string; name: string }[]>(
+        `/fiscal/municipios?uf=${uf}&q=${encodeURIComponent(search.trim())}`,
+      ),
+    enabled: Boolean(uf) && search.trim().length >= 2,
+  });
+  if (!uf) return <p className="text-sm text-muted">Escolha a UF para informar o município.</p>;
+  return (
+    <div className="flex flex-col gap-2">
+      <TextField
+        label="Município"
+        placeholder="Digite o nome da cidade"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        hint={
+          current.data
+            ? `Escolhido: ${current.data.name} - ${current.data.uf} (IBGE ${current.data.code})`
+            : 'Busca na tabela oficial do IBGE.'
+        }
+      />
+      {found.data && search.trim().length >= 2 && (
+        <ul className="rounded-ui border border-border" aria-label="Municípios encontrados">
+          {found.data.length === 0 && <li className="p-3 text-muted">Nenhum município.</li>}
+          {found.data.map((m) => (
+            <li key={m.code}>
+              <button
+                type="button"
+                className="w-full p-3 text-left hover:bg-surface-2"
+                onClick={() => {
+                  onChange(m.code);
+                  setSearch('');
+                }}
+              >
+                {m.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 

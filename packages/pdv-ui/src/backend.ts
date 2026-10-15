@@ -1,4 +1,9 @@
-import type { CatalogProduct, ProductCatalog, ProductPack } from '@bipae/domain';
+import type {
+  CatalogProduct,
+  FiscalDocumentStatus,
+  ProductCatalog,
+  ProductPack,
+} from '@bipae/domain';
 import type { SyncTransport } from '@bipae/sync';
 
 /**
@@ -61,6 +66,13 @@ export interface PosBackend extends SyncTransport {
   catalogLookup?(gtin: string): Promise<CatalogProduct>;
   /** Cadastra o produto no servidor (precisa de internet e da permissão de cadastro). */
   createProduct?(input: QuickProductInput): Promise<{ id: string }>;
+  /**
+   * NFC-e da venda (F3-14.c): situação e, se autorizada, o XML para o cupom fiscal. Precisa de
+   * internet; sem ela, a reimpressão sai com o comprovante simples.
+   */
+  fiscalDocument?(
+    saleId: string,
+  ): Promise<{ status: FiscalDocumentStatus; xml: string | null; pendingItems: string[] } | null>;
 }
 
 export interface PosUser {

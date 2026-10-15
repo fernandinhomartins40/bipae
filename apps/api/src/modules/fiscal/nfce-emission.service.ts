@@ -13,7 +13,7 @@ import {
   StreamableFile,
   type OnModuleInit,
 } from '@nestjs/common';
-import { uuidv7 } from '@bipae/domain';
+import { uuidv7, type FiscalDocumentView } from '@bipae/domain';
 import { buildNfeProc, buildSaleNfce, signNfe, type SaleFiscalProfile } from '@bipae/fiscal';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
@@ -42,24 +42,6 @@ import { SefazService } from './sefaz.service';
 
 export const NFCE_EMIT_JOB = 'nfce.emit';
 const APP_VERSION = 'Bipaê 1.0';
-
-export interface FiscalDocumentView {
-  id: string;
-  saleId: string;
-  model: string;
-  series: number | null;
-  number: number | null;
-  accessKey: string | null;
-  status: 'pending' | 'error' | 'not_configured' | 'authorized' | 'rejected' | 'denied';
-  pendingItems: string[];
-  cStat: string | null;
-  xMotivo: string | null;
-  protocol: string | null;
-  attempts: number;
-  lastError: string | null;
-  authorizedAt: string | null;
-  updatedAt: string;
-}
 
 const toView = (d: typeof fiscalDocuments.$inferSelect): FiscalDocumentView => ({
   id: d.id,

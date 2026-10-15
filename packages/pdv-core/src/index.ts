@@ -8,5 +8,6 @@ export * from './escpos';
 export * from './receipt';
 export * from './receipt-html';
 export * from './danfe-nfce';
+export * from './danfe-nfce-xml';
 export * from './scale';
 export * from './service';

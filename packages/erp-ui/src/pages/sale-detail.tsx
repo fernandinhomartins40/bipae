@@ -1,7 +1,14 @@
-import { formatBRL, PAYMENT_LABELS, type Cents, type PaymentMethod, type SaleItemTaxes } from '@bipae/domain';
+import {
+  formatBRL,
+  PAYMENT_LABELS,
+  type Cents,
+  type PaymentMethod,
+  type SaleItemTaxes,
+} from '@bipae/domain';
 import { Alert, Drawer } from '@bipae/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useApp } from '../context';
+import { FiscalDocumentSection } from './fiscal-document';
 
 /**
  * Detalhe de uma venda (F3-06.d4): os itens, os pagamentos e os impostos que o caixa calculou no
@@ -57,7 +64,11 @@ export function SaleDetailDrawer({ saleId, onClose }: { saleId: string; onClose:
   const pending = [...new Set(withTaxes.flatMap((item) => item.taxes!.pending))];
 
   return (
-    <Drawer open onOpenChange={(open) => !open && onClose()} title={data ? `Venda nº ${data.terminalSeq}` : 'Venda'}>
+    <Drawer
+      open
+      onOpenChange={(open) => !open && onClose()}
+      title={data ? `Venda nº ${data.terminalSeq}` : 'Venda'}
+    >
       {sale.error && <Alert>{(sale.error as Error).message}</Alert>}
       {data && (
         <div className="flex flex-col gap-5">
@@ -69,7 +80,10 @@ export function SaleDetailDrawer({ saleId, onClose }: { saleId: string; onClose:
                   <div className="flex justify-between gap-3">
                     <span>
                       <span className="font-semibold">{item.name}</span>
-                      <span className="text-muted"> · {quantity(item.quantityMilli, item.unit)}</span>
+                      <span className="text-muted">
+                        {' '}
+                        · {quantity(item.quantityMilli, item.unit)}
+                      </span>
                     </span>
                     <span className="tabular-nums">{money(item.totalCents)}</span>
                   </div>
@@ -90,8 +104,9 @@ export function SaleDetailDrawer({ saleId, onClose }: { saleId: string; onClose:
             <h3 className="mb-2 font-semibold">Impostos calculados pelo caixa</h3>
             {withTaxes.length === 0 ? (
               <p className="text-sm text-muted">
-                Esta venda não tem impostos calculados. Isso acontece quando a empresa ainda não tinha UF e regime
-                tributário informados em Empresas e lojas, ou quando o caixa estava numa versão anterior.
+                Esta venda não tem impostos calculados. Isso acontece quando a empresa ainda não
+                tinha UF e regime tributário informados em Empresas e lojas, ou quando o caixa
+                estava numa versão anterior.
               </p>
             ) : (
               <>
@@ -106,7 +121,8 @@ export function SaleDetailDrawer({ saleId, onClose }: { saleId: string; onClose:
                   </dl>
                 )}
                 <p className="mt-2 text-sm text-muted">
-                  Valores para conferência com o contador. O Bipaê ainda não emite a nota fiscal desta venda.
+                  Valores para conferência com o contador. A nota fiscal da venda aparece logo
+                  abaixo.
                 </p>
                 {pending.length > 0 && (
                   <div className="mt-3">
@@ -122,15 +138,18 @@ export function SaleDetailDrawer({ saleId, onClose }: { saleId: string; onClose:
                 {data.taxCheck === 'divergente' && (
                   <div className="mt-3">
                     <Alert tone="warning" title="O cadastro mudou depois desta venda">
-                      O caixa calculou com os dados fiscais que tinha no momento, e eles já eram diferentes dos da
-                      retaguarda (por exemplo, o regime ou o perfil fiscal foi alterado e o caixa ainda não tinha
-                      sincronizado). Os valores acima são os que o caixa calculou.
+                      O caixa calculou com os dados fiscais que tinha no momento, e eles já eram
+                      diferentes dos da retaguarda (por exemplo, o regime ou o perfil fiscal foi
+                      alterado e o caixa ainda não tinha sincronizado). Os valores acima são os que
+                      o caixa calculou.
                     </Alert>
                   </div>
                 )}
               </>
             )}
           </section>
+
+          <FiscalDocumentSection saleId={saleId} />
 
           <section aria-label="Pagamentos">
             <h3 className="mb-2 font-semibold">Pagamento</h3>

@@ -1415,3 +1415,27 @@ export interface PromotionView {
   createdAt: string;
   updatedAt: string;
 }
+
+// ---------- NFC-e da venda (F3-14) ----------
+
+export type FiscalDocumentStatus =
+  'pending' | 'error' | 'not_configured' | 'authorized' | 'rejected' | 'denied';
+
+export interface FiscalDocumentView {
+  id: string;
+  saleId: string;
+  model: string;
+  series: number | null;
+  number: number | null;
+  accessKey: string | null;
+  status: FiscalDocumentStatus;
+  /** O que falta configurar para emitir (status not_configured). */
+  pendingItems: string[];
+  cStat: string | null;
+  xMotivo: string | null;
+  protocol: string | null;
+  attempts: number;
+  lastError: string | null;
+  authorizedAt: string | null;
+  updatedAt: string;
+}

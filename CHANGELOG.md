@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-14 NFC-e na venda] — 15/10/2026
+
+### Adicionado
+- **Detalhe da venda na retaguarda:** novo quadro "Nota fiscal (NFC-e)" com:
+  - a situação: na fila, autorizada, recusada (com o motivo da SEFAZ), falha temporária ou falta configurar (com a lista);
+  - número, série, chave de acesso e protocolo;
+  - os botões "Baixar XML", "Ver cupom" e "Tentar de novo".
+- **Reimpressão no caixa:** com a NFC-e autorizada, sai o cupom fiscal (DANFE da NFC-e com QR Code), lido do XML que a SEFAZ autorizou. Sem internet ou sem nota autorizada, sai o comprovante simples e o caixa diz o porquê.
+- **Cadastro da empresa:** novo bloco "Dados para a nota fiscal", com inscrição estadual, endereço, município buscado na tabela do IBGE, CEP, telefone e o tipo de Pix e de vale da nota.
+
+### Observação
+- Tudo é emitido só em homologação. Sem o certificado A1 (E1), a nota fica em "falta configurar: certificado". Com ele, falta só a primeira conversa real com a SEFAZ (F3-11.b).
+
 ## [F3-14.b Emissão da NFC-e no servidor] — 15/10/2026
 
 ### Adicionado

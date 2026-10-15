@@ -1,12 +1,15 @@
 import { formatTaxId, type CatalogProduct as CatalogEntry } from '@bipae/domain';
 import {
   addItem,
+  buildDanfeNfce,
   buildReceipt,
+  danfeNfceFromXml,
   discountNeedsAuthorization,
   EMPTY_CART,
   encodeReceipt,
   parseScan,
   quantityFromLabelPrice,
+  receiptToHtml,
   receiptToText,
   removeLine,
   SCALE_MESSAGES,
@@ -46,7 +49,18 @@ import {
 import { QuickProductDialog } from './quick-product';
 import type { RegisterHandle } from './use-register';
 
-export const DISCOUNT_LIMIT_PERCENT = 10;
+export /** O que dizer ao operador quando a nota ainda não pode sair como cupom fiscal (F3-14.c). */
+const FISCAL_NOTICE: Record<string, string> = {
+  pending: 'A NFC-e desta venda ainda está na fila. Saiu o comprovante simples.',
+  error: 'A SEFAZ não respondeu ainda; a NFC-e será enviada de novo. Saiu o comprovante simples.',
+  not_configured:
+    'A NFC-e não foi emitida: falta configurar dados fiscais na retaguarda. Saiu o comprovante simples.',
+  rejected:
+    'A SEFAZ recusou a NFC-e desta venda; veja o motivo na retaguarda. Saiu o comprovante simples.',
+  denied: 'A SEFAZ denegou a NFC-e desta venda. Saiu o comprovante simples.',
+};
+
+const DISCOUNT_LIMIT_PERCENT = 10;
 
 const SHORTCUTS = [
   ['F2', 'Buscar'],
@@ -311,6 +325,40 @@ export function Register({
       setCart(next);
       setDiscountAuthorizedBy(by);
       setDialog({ kind: 'none' });
+    } catch (error) {
+      fail(error);
+    }
+  };
+
+  /**
+   * Reimpressão (F3-14.c): com a NFC-e autorizada, sai o cupom fiscal (DANFE da NFC-e) lido do
+   * XML autorizado; sem internet ou sem nota autorizada, sai o comprovante e o aviso da situação.
+   */
+  const reprint = async (sale: StoredSale) => {
+    const fiscal = backend.fiscalDocument
+      ? await Promise.race([
+          backend.fiscalDocument(sale.id).catch(() => null),
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000)),
+        ])
+      : null;
+    if (!fiscal?.xml) {
+      if (fiscal)
+        setMessage({
+          tone: 'warning',
+          text: FISCAL_NOTICE[fiscal.status] ?? 'Saiu o comprovante simples.',
+        });
+      return print(sale);
+    }
+    if (!platform.printer) return fail(new Error('Nenhuma impressora disponível neste aparelho.'));
+    const caps = await platform.capabilities();
+    const columns = 48;
+    try {
+      const blocks = buildDanfeNfce(danfeNfceFromXml(fiscal.xml), { columns });
+      if (caps.printer.available && caps.printer.via === 'browser') {
+        await platform.printer.print({ kind: 'html', data: receiptToHtml(blocks, columns) });
+      } else {
+        await platform.printer.print({ kind: 'escpos', data: encodeReceipt(blocks) });
+      }
     } catch (error) {
       fail(error);
     }
@@ -810,7 +858,7 @@ export function Register({
           sessionId={session.id}
           canCancel={can('pos.sale.cancel')}
           requestAuthorization={requestAuthorization}
-          onReprint={(s) => void print(s)}
+          onReprint={(s) => void reprint(s)}
           onClose={closeDialog}
         />
       )}

@@ -1,4 +1,9 @@
-import type { CatalogProduct, SyncPullResult, SyncPushResult } from '@bipae/domain';
+import type {
+  CatalogProduct,
+  FiscalDocumentView,
+  SyncPullResult,
+  SyncPushResult,
+} from '@bipae/domain';
 import type { PosBackend, PosTerminal, TerminalContext } from '@bipae/pdv-ui';
 import type { ApiClient } from './api-client';
 
@@ -36,5 +41,14 @@ export function createPosBackend(api: ApiClient): PosBackend {
         ),
       ]).catch((): CatalogProduct => ({ gtin, found: false, reason: 'SEM_RESPOSTA' })),
     createProduct: (input) => api.post<{ id: string }>('/products', input),
+    fiscalDocument: async (saleId) => {
+      const doc = await api.get<FiscalDocumentView | null>(`/sales/${saleId}/fiscal`);
+      if (!doc) return null;
+      const xml =
+        doc.status === 'authorized'
+          ? await (await api.download(`/fiscal/documents/${doc.id}/xml`)).text()
+          : null;
+      return { status: doc.status, xml, pendingItems: doc.pendingItems };
+    },
   };
 }

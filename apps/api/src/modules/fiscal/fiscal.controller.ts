@@ -31,10 +31,11 @@ import {
   type Cest,
 } from '@bipae/fiscal/tables';
 import { IBS_CBS_REGIME_RULES } from '@bipae/fiscal/tables';
+import { findMunicipio, searchMunicipios } from '@bipae/fiscal/tables/municipios';
 import { findNcm, isNcmValidOn, ncmPath, searchNcm, type Ncm } from '@bipae/fiscal/tables/ncm';
 import { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
-import { notFound, parse } from '../../common/errors';
+import { AppError, notFound, parse } from '../../common/errors';
 import { today } from './fiscal-validation';
 import { CertificatesService } from './certificates.service';
 import { SefazService } from './sefaz.service';
@@ -166,6 +167,22 @@ export class FiscalController {
         .filter((ncm) => isNcmValidOn(ncm, date))
         .map(ncmView),
     };
+  }
+
+  /** Municípios do IBGE da UF (F3-14): ?uf=SP&q=campinas. */
+  @Get('municipios')
+  @RequirePermission('catalog.read')
+  municipios(@Query('uf') uf?: string, @Query('q') q?: string) {
+    if (!uf || !/^[A-Z]{2}$/.test(uf)) throw new AppError(422, 'invalid_uf', 'Informe a UF.');
+    return searchMunicipios(uf, q ?? '', 20);
+  }
+
+  @Get('municipios/:code')
+  @RequirePermission('catalog.read')
+  municipio(@Param('code') code: string) {
+    const city = findMunicipio(code);
+    if (!city) throw new AppError(404, 'not_found', 'Município não encontrado.');
+    return city;
   }
 
   @Get('ncm/:code')
