@@ -77,6 +77,13 @@ describe('extrato OFX', () => {
     });
   });
 
+  it('não come a primeira letra do histórico (ex.: SALARIO)', () => {
+    const r = parseOfx(
+      '<OFX><ACCTID>1<STMTTRN><DTPOSTED>20261010<TRNAMT>1<FITID>S1<MEMO>SALARIO</STMTTRN></OFX>',
+    );
+    expect(r.transactions[0]).toMatchObject({ fitId: 'S1', memo: 'SALARIO' });
+  });
+
   it('valores sem ponto flutuante, com vírgula decimal e erros claros', () => {
     expect(ofxAmountToCents('0.1')).toBe(10);
     expect(ofxAmountToCents('-1.234,56')).toBe(-123_456);

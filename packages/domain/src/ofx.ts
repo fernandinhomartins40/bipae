@@ -25,7 +25,7 @@ export class OfxError extends Error {}
 
 /** Valor do campo (OFX 1.x pode não fechar a tag; termina na próxima tag). */
 function field(block: string, tag: string): string | null {
-  const match = new RegExp(`<${tag}>\s*([^<\r\n]*)`, 'i').exec(block);
+  const match = new RegExp(`<${tag}>\\s*([^<\\r\\n]*)`, 'i').exec(block);
   const value = match?.[1]?.trim();
   return value ? value : null;
 }
