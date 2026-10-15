@@ -1,5 +1,15 @@
 # Changelog
 
+## [F4-09 Crediário com controle de inadimplência] — 15/10/2026
+
+### Adicionado
+- **Cada venda no crediário vira conta a receber** do cliente, com vencimento em 30 dias:
+  - cancelar a venda cancela a conta;
+  - devolver abate da conta;
+  - o pagamento no crediário baixa as parcelas da mais antiga para a mais nova (pagamento parcial reduz a parcela).
+- **Tela de inadimplência** com quem está em atraso, quanto e há quantos dias.
+- **Bloqueio no caixa, mesmo sem internet**: com parcela vencida há mais de 5 dias, o cliente não compra mais no crediário até pagar.
+
 ## [F4-08 Recebíveis de cartão e Pix] — 14/10/2026
 
 ### Adicionado

@@ -108,6 +108,9 @@ export const LOCAL_MIGRATIONS: string[] = [
     balance_cents INTEGER NOT NULL
   );
   `,
+  /* 6 — F4-09: cliente com parcela do crediário vencida além da tolerância */ `
+  ALTER TABLE customer_credit ADD COLUMN blocked INTEGER NOT NULL DEFAULT 0;
+  `,
 ];
 
 /**

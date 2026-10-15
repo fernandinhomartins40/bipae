@@ -40,6 +40,14 @@ import {
   terminals,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import {
+  cancelCreditReceivable,
+  createCreditReceivable,
+  OVERDUE_BLOCK_DAYS,
+  overdueCredit,
+  reduceCreditReceivable,
+  todayInBrazil,
+} from '../finance/credit-receivables';
 import { toMotorRule } from '../fiscal/icms-rules.service';
 
 /** A business rule says this event can never be applied; the terminal stops retrying it. */
@@ -289,6 +297,19 @@ export class SyncService {
             p.saleId,
             event.operatorId,
           );
+          // F4-09: vira conta a receber do cliente, com vencimento.
+          if (p.customerTaxId) {
+            await createCreditReceivable(tx, {
+              tenantId: ctx.tenantId,
+              companyId: terminal.companyId,
+              taxId: p.customerTaxId,
+              saleId: p.saleId,
+              saleNumber: p.terminalSeq,
+              amountCents: onCredit,
+              at,
+              createdBy: event.operatorId,
+            });
+          }
         }
         if (p.discountAuthorizedBy) {
           await this.audit.record(tx, actor, {
@@ -329,6 +350,7 @@ export class SyncService {
             sale.id,
             event.operatorId,
           );
+          await cancelCreditReceivable(tx, sale.id);
         }
         const items = await tx.select().from(saleItems).where(eq(saleItems.saleId, sale.id));
         await this.moveStock(
@@ -396,6 +418,7 @@ export class SyncService {
             p.returnId,
             event.operatorId,
           );
+          await reduceCreditReceivable(tx, p.originalSaleId, p.refundCents);
         }
         await this.audit.record(tx, actor, {
           action: 'sale.returned',
@@ -667,6 +690,8 @@ export class SyncService {
         [
           creditState?.limits ?? '',
           creditState?.entries ?? '',
+          // O atraso muda com o passar dos dias, mesmo sem nada novo no banco.
+          creditState?.limits ? todayInBrazil() : '',
           store?.priceTableId ?? '',
           store?.updatedAt?.toISOString() ?? '',
           tables?.last,
@@ -705,6 +730,9 @@ export class SyncService {
       .from(customerCreditEntries)
       .groupBy(customerCreditEntries.customerTaxId);
     const balanceOf = new Map(balances.map((b) => [b.taxId, Number(b.cents)]));
+    const late = new Map(
+      (await overdueCredit(tx, todayInBrazil())).map((o) => [o.taxId, o.daysLate]),
+    );
     return {
       pricing: {
         version,
@@ -712,6 +740,7 @@ export class SyncService {
           taxId: cc.taxId!,
           limitCents: cc.limitCents!,
           balanceCents: balanceOf.get(cc.taxId!) ?? 0,
+          blocked: (late.get(cc.taxId!) ?? 0) > OVERDUE_BLOCK_DAYS,
         })),
         storePriceTableId: store?.priceTableId ?? null,
         tables: allTables.map((t) => ({

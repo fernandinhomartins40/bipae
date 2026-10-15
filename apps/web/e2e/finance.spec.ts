@@ -111,3 +111,15 @@ test('importa o extrato OFX e concilia com a conta sugerida (F4-07)', async ({ p
   await expect(page.getByText('Conciliado com Internet.')).toBeVisible();
   await expect(page.getByText('Nada para conciliar')).toBeVisible();
 });
+
+test('inadimplência sem atrasos mostra que está tudo em dia (F4-09)', async ({ page }) => {
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Gil Dono');
+  await page.getByLabel('Nome do negócio').fill(`Armazém ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`gil-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Gil!' })).toBeVisible();
+  await page.getByRole('link', { name: 'Inadimplência' }).click();
+  await expect(page.getByText('Ninguém em atraso')).toBeVisible();
+});

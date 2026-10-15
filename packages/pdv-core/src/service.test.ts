@@ -464,7 +464,7 @@ describe('crediário no caixa (F2-02)', () => {
     const cart = { ...addItem(EMPTY_CART, item, 1000), customerTaxId: CPF };
     const options = { discountLimitPercent: 10 };
 
-    expect(await pdv.creditAvailable(CPF)).toEqual({ limitCents: 10_000, availableCents: 8000 });
+    expect(await pdv.creditAvailable(CPF)).toEqual({ limitCents: 10_000, availableCents: 8000, blocked: false });
     expect(await pdv.creditAvailable('11144477735')).toBeNull();
     await pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 4000 }], options);
     expect((await pdv.creditAvailable(CPF))!.availableCents).toBe(4000);
@@ -541,5 +541,34 @@ describe('caixa desativado (F2-04)', () => {
     expect(await pdv.catalogSize()).toBe(0);
     expect(await pdv.listSales()).toEqual([]);
     expect(await pdv.currentSession()).toBeNull();
+  });
+});
+
+describe('crediário bloqueado por atraso (F4-09)', () => {
+  it('cliente com parcela vencida não compra no crediário, nem com limite sobrando', async () => {
+    const CPF = '52998224725';
+    const arroz = product({ priceCents: 1000 });
+    await pdv.applyCatalog([arroz]);
+    await pdv.applyPricing({
+      version: 'v2',
+      storePriceTableId: null,
+      tables: [],
+      customers: [],
+      credit: [{ taxId: CPF, limitCents: 50_000, balanceCents: 2000, blocked: true }],
+    });
+    await pdv.openSession(0);
+    const item = (await pdv.search('arroz'))[0]!;
+    expect(await pdv.creditAvailable(CPF)).toEqual({
+      limitCents: 50_000,
+      availableCents: 48_000,
+      blocked: true,
+    });
+    await expect(
+      pdv.completeSale(
+        { ...addItem(EMPTY_CART, item, 1000), customerTaxId: CPF },
+        [{ method: 'store_credit', receivedCents: 1000 }],
+        { discountLimitPercent: 10 },
+      ),
+    ).rejects.toThrow('parcela do crediário vencida');
   });
 });

@@ -16,6 +16,7 @@ import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import { customerCreditEntries, customers, priceTables, suppliers } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { applyCreditPayment, todayInBrazil } from '../finance/credit-receivables';
 
 export type PartyKind = 'customer' | 'supplier';
 type CustomerData = z.output<typeof customerInput>;
@@ -262,6 +263,13 @@ export class PartiesService {
         amountCents: -input.amountCents,
         note: input.note ?? null,
         createdBy: ctx.userId,
+      });
+      await applyCreditPayment(tx, {
+        tenantId: ctx.tenantId,
+        taxId: customer.taxId,
+        amountCents: input.amountCents,
+        paidAt: todayInBrazil(),
+        userId: ctx.userId,
       });
       await this.audit.record(tx, ctx, {
         action: 'customer.credit_payment',

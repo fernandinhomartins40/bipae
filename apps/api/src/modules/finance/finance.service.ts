@@ -16,12 +16,13 @@ import {
   purchaseOrderCancelInput,
   uuidv7,
   type CashFlowRow,
+  type DelinquentCustomer,
   type DreMonth,
   type DreReport,
   type FinancialEntryView,
   type FinancialSummary,
 } from '@bipae/domain';
-import { and, asc, eq, gte, lte, sql, type SQL } from 'drizzle-orm';
+import { and, asc, eq, gte, inArray, lte, sql, type SQL } from 'drizzle-orm';
 import type { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
@@ -39,6 +40,7 @@ import {
   suppliers,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { OVERDUE_BLOCK_DAYS, overdueCredit, todayInBrazil } from './credit-receivables';
 
 type EntryInput = z.output<typeof financialEntryInput>;
 type PaymentInput = z.output<typeof financialPaymentInput>;
@@ -380,6 +382,44 @@ export class FinanceService {
     });
   }
 
+  /** Inadimplência do crediário (F4-09): clientes com parcela vencida, do maior atraso ao menor. */
+  async delinquency(ctx: RequestContext): Promise<DelinquentCustomer[]> {
+    return withTenant(this.db, ctx, async (tx) => {
+      const late = await overdueCredit(tx, todayInBrazil());
+      if (late.length === 0) return [];
+      const people = await tx
+        .select({
+          id: customers.id,
+          name: customers.name,
+          taxId: customers.taxId,
+          phone: customers.phone,
+        })
+        .from(customers)
+        .where(
+          inArray(
+            customers.taxId,
+            late.map((l) => l.taxId),
+          ),
+        );
+      return late
+        .map((l) => {
+          const person = people.find((p) => p.taxId === l.taxId);
+          return {
+            customerId: person?.id ?? null,
+            name: person?.name ?? 'Cliente sem cadastro',
+            taxId: l.taxId,
+            phone: person?.phone ?? null,
+            overdueCents: l.overdueCents,
+            installments: l.count,
+            oldestDue: l.oldestDue,
+            daysLate: l.daysLate,
+            blocked: l.daysLate > OVERDUE_BLOCK_DAYS,
+          };
+        })
+        .sort((a, b) => b.daysLate - a.daysLate || b.overdueCents - a.overdueCents);
+    });
+  }
+
   async summary(ctx: RequestContext): Promise<FinancialSummary> {
     const today = todayBr();
     const week = new Date(`${today}T12:00:00Z`);
@@ -597,6 +637,13 @@ export class FinanceController {
       throw new AppError(422, 'invalid_period', 'Informe os meses (de e até) no formato AAAA-MM.');
     }
     return this.finance.dre(ctx, from, to);
+  }
+
+  /** Inadimplência do crediário (F4-09). */
+  @Get('delinquency')
+  @RequirePermission('finance.read')
+  delinquency(@Ctx() ctx: RequestContext) {
+    return this.finance.delinquency(ctx);
   }
 
   @Get('summary')

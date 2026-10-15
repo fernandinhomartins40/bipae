@@ -262,5 +262,11 @@ export interface PricingSnapshot {
    * Crediário (F2-02): limite e saldo devedor de cada cliente com crediário, no momento do
    * retrato. O caixa soma as vendas no crediário que ainda não subiram.
    */
-  credit?: { taxId: string; limitCents: number; balanceCents: number }[];
+  credit?: {
+    taxId: string;
+    limitCents: number;
+    balanceCents: number;
+    /** Parcela vencida há mais do que a tolerância (F4-09): sem nova compra no crediário. */
+    blocked?: boolean;
+  }[];
 }

@@ -221,7 +221,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] F4-06 · DRE gerencial — depende: F4-04
 - [x] F4-07 · Conciliação bancária por OFX — depende: F4-04
 - [x] F4-08 · Conciliação de cartões e Pix — depende: F4-04
-- [ ] F4-09 · Crediário com controle de inadimplência — depende: F2-02, F4-04
+- [x] F4-09 · Crediário com controle de inadimplência — depende: F2-02, F4-04
 - [ ] F4-10 · Relatórios por período, produto, operador, loja, forma de pagamento, margem, ticket médio e curva ABC, exportáveis (CSV, XLSX, PDF)
 - [ ] F4-11 · Inventário pelo celular
 - [ ] F4-12 · Transferência entre lojas — depende: F1-05

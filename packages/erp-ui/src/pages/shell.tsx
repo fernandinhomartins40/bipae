@@ -2,6 +2,7 @@ import { accountAccess, type AccountView, type AnnouncementView } from '@bipae/d
 import { Alert, Button, cx, Logo } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  AlertTriangle,
   BarChart3,
   Building2,
   ClipboardCheck,
@@ -52,6 +53,7 @@ const NAV = [
   { to: '/dre', label: 'DRE gerencial', icon: FileBarChart, permission: 'finance.read' },
   { to: '/conciliacao-bancaria', label: 'Conciliação bancária', icon: Landmark, permission: 'finance.read' },
   { to: '/recebiveis', label: 'Recebíveis de cartão e Pix', icon: CreditCard, permission: 'finance.read' },
+  { to: '/inadimplencia', label: 'Inadimplência', icon: AlertTriangle, permission: 'finance.read' },
   { to: '/tabelas-de-preco', label: 'Tabelas de preço', icon: Tags, permission: 'catalog.read' },
   { to: '/perfis-fiscais', label: 'Perfis fiscais', icon: Landmark, permission: 'catalog.read' },
   { to: '/regras-icms', label: 'Regras de ICMS', icon: Percent, permission: 'catalog.read' },

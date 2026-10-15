@@ -290,8 +290,8 @@ export class PdvService {
       await tx.execute('DELETE FROM customer_credit');
       for (const c of pricing.credit ?? []) {
         await tx.execute(
-          'INSERT INTO customer_credit (tax_id, limit_cents, balance_cents) VALUES (?, ?, ?)',
-          [c.taxId, c.limitCents, c.balanceCents],
+          'INSERT INTO customer_credit (tax_id, limit_cents, balance_cents, blocked) VALUES (?, ?, ?, ?)',
+          [c.taxId, c.limitCents, c.balanceCents, c.blocked ? 1 : 0],
         );
       }
       for (const table of pricing.tables) {
@@ -324,11 +324,12 @@ export class PdvService {
    */
   async creditAvailable(
     taxId: string,
-  ): Promise<{ limitCents: number; availableCents: number } | null> {
-    const [row] = await this.storage.query<{ limit_cents: number; balance_cents: number }>(
-      'SELECT limit_cents, balance_cents FROM customer_credit WHERE tax_id = ?',
-      [taxId],
-    );
+  ): Promise<{ limitCents: number; availableCents: number; blocked: boolean } | null> {
+    const [row] = await this.storage.query<{
+      limit_cents: number;
+      balance_cents: number;
+      blocked: number;
+    }>('SELECT limit_cents, balance_cents, blocked FROM customer_credit WHERE tax_id = ?', [taxId]);
     if (!row) return null;
     const pending = await this.storage.query<{ payload: string }>(
       "SELECT payload FROM outbox WHERE sent_at IS NULL AND type = 'sale.completed'",
@@ -352,6 +353,7 @@ export class PdvService {
     return {
       limitCents,
       availableCents: Math.max(0, limitCents - Number(row.balance_cents) - pendingCents),
+      blocked: Number(row.blocked) === 1,
     };
   }
 
@@ -551,6 +553,11 @@ export class PdvService {
       if (!credit) {
         throw new PdvError(
           'Este cliente não tem crediário. O limite é liberado no cadastro do cliente.',
+        );
+      }
+      if (credit.blocked) {
+        throw new PdvError(
+          'Este cliente tem parcela do crediário vencida. Receba o atrasado antes de vender no crediário.',
         );
       }
       if (onCredit > credit.availableCents) {

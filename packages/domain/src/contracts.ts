@@ -1095,3 +1095,17 @@ export interface SettlementDay {
   /** Achou entrada no extrato com o valor líquido, na data ou um dia depois. */
   received: boolean;
 }
+
+/** Cliente com parcela do crediário vencida (F4-09). */
+export interface DelinquentCustomer {
+  customerId: string | null;
+  name: string;
+  taxId: string;
+  phone: string | null;
+  overdueCents: number;
+  installments: number;
+  oldestDue: string;
+  daysLate: number;
+  /** Atraso acima da tolerância: o caixa não vende mais no crediário. */
+  blocked: boolean;
+}

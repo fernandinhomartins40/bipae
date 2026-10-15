@@ -742,6 +742,8 @@ export const financialEntries = pgTable('financial_entries', {
   paymentMethod: text('payment_method'),
   cancelReason: text('cancel_reason'),
   notes: text('notes'),
+  /** Venda no crediário que gerou a conta (F4-09). */
+  saleId: uuid('sale_id'),
   createdBy: uuid('created_by'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),

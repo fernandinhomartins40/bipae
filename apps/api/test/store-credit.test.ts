@@ -3,7 +3,9 @@ import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { addItem, EMPTY_CART, PdvService } from '@bipae/pdv-core';
 import { SyncClient, type SyncTransport } from '@bipae/sync';
+import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { withTenant } from '../src/db/client';
 import { api, createTestApp, signup, type TestApp } from './helpers';
 
 /** F2-02: crediário com limite por cliente, do cadastro ao caixa sem internet e de volta. */
@@ -73,7 +75,11 @@ describe('crediário (F2-02)', () => {
     const net = transport(owner.auth, terminal.id);
     const sync = new SyncClient(storage, pdv, net.impl, terminal.id);
     expect((await sync.sync()).lastError).toBeNull();
-    expect(await pdv.creditAvailable(CPF)).toEqual({ limitCents: 10_000, availableCents: 10_000 });
+    expect(await pdv.creditAvailable(CPF)).toEqual({
+      limitCents: 10_000,
+      availableCents: 10_000,
+      blocked: false,
+    });
     expect(await pdv.creditAvailable('11144477735')).toBeNull();
 
     net.state.online = false;
@@ -168,5 +174,59 @@ describe('crediário (F2-02)', () => {
       (await cashier.post(`/customers/${cliente.id}/credit/payments`, { amountCents: 100 }))
         .statusCode,
     ).toBe(403);
+  });
+});
+
+describe('crediário com controle de inadimplência (F4-09)', () => {
+  it('venda vira conta a receber, pagamento baixa, atraso aparece e bloqueia o caixa', async () => {
+    const owner = await signup(t.app);
+    const admin = api(t.app, owner.auth);
+    await admin.post('/products', { name: 'Feijão', priceCents: 1000, barcodes: ['78912342'] });
+    const cliente = (
+      await admin.post('/customers', { name: 'Zé', taxId: CPF, creditLimitCents: 50_000 })
+    ).json();
+    const store = (await admin.get('/stores')).json()[0];
+    const terminal = (
+      await admin.post('/terminals', { storeId: store.id, name: 'Caixa', platform: 'web' })
+    ).json();
+    const storage = createStorage(nodeSqliteDriver());
+    await migrateLocal(storage);
+    const pdv = new PdvService(storage, { terminalId: terminal.id, operatorId: owner.me.user.id });
+    const sync = new SyncClient(storage, pdv, transport(owner.auth, terminal.id).impl, terminal.id);
+    await sync.sync();
+    await pdv.openSession(0);
+    const item = (await pdv.findByCode('78912342'))!;
+    const cart = { ...addItem(EMPTY_CART, item, 3000), customerTaxId: CPF };
+    const options = { discountLimitPercent: 10 };
+    await pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 3000 }], options);
+    await pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 3000 }], options);
+    await sync.sync();
+
+    const contas = (await admin.get('/finance/entries?kind=receivable')).json();
+    expect(contas).toHaveLength(2);
+    expect(contas[0]).toMatchObject({ category: 'Crediário', partyName: 'Zé', amountCents: 3000 });
+
+    // Paga R$ 40: quita a primeira e deixa R$ 20 em aberto na segunda.
+    await admin.post(`/customers/${cliente.id}/credit/payments`, { amountCents: 4000 });
+    const abertas = (await admin.get('/finance/entries?kind=receivable&status=open')).json();
+    expect(abertas).toEqual([expect.objectContaining({ amountCents: 2000 })]);
+
+    // A parcela que sobrou vence e passa da tolerância.
+    await withTenant(t.database.db, { tenantId: owner.me.tenant.id } as never, (tx) =>
+      tx.execute(
+        sql`update financial_entries set due_date = current_date - 10 where id = ${abertas[0].id}`,
+      ),
+    );
+    const atrasados = (await admin.get('/finance/entries/delinquency')).json();
+    expect(atrasados).toEqual([
+      expect.objectContaining({ name: 'Zé', overdueCents: 2000, blocked: true, installments: 1 }),
+    ]);
+    expect(atrasados[0].daysLate).toBeGreaterThanOrEqual(9);
+
+    await sync.sync();
+    expect((await pdv.creditAvailable(CPF))!.blocked).toBe(true);
+    await expect(
+      pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 3000 }], options),
+    ).rejects.toThrow('parcela do crediário vencida');
   });
 });
