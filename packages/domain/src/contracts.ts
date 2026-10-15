@@ -1175,3 +1175,66 @@ export interface InventoryView {
     systemMilli: number;
   }[];
 }
+
+// ---------- Transferência entre lojas (F4-12) ----------
+
+export const stockTransferInput = z
+  .object({
+    fromStoreId: z.string().uuid('Escolha a loja de origem'),
+    toStoreId: z.string().uuid('Escolha a loja de destino'),
+    note: z.string().trim().max(200).optional(),
+    items: z
+      .array(
+        z.object({
+          productId: z.string().uuid(),
+          quantityMilli: z.number().int().positive('Quantidade inválida'),
+        }),
+      )
+      .min(1, 'Inclua pelo menos um produto')
+      .max(500),
+  })
+  .refine((v) => v.fromStoreId !== v.toStoreId, {
+    message: 'A origem e o destino precisam ser lojas diferentes',
+  })
+  .refine((v) => new Set(v.items.map((i) => i.productId)).size === v.items.length, {
+    message: 'O mesmo produto aparece duas vezes',
+  });
+
+/** Sem itens: chegou tudo. Com itens: o que chegou de fato de cada produto. */
+export const stockTransferReceiveInput = z.object({
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid(),
+        receivedMilli: z.number().int().nonnegative('Quantidade inválida'),
+      }),
+    )
+    .optional(),
+});
+
+export const stockTransferCancelInput = z.object({
+  reason: z.string().trim().min(3, 'Diga o motivo do cancelamento').max(200),
+});
+
+export interface StockTransferView {
+  id: string;
+  fromStoreId: string;
+  fromStoreName: string;
+  toStoreId: string;
+  toStoreName: string;
+  status: 'in_transit' | 'received' | 'cancelled';
+  note: string | null;
+  /** Lojas de CNPJs diferentes: a mercadoria precisa de NF-e de transferência. */
+  needsInvoice: boolean;
+  createdAt: string;
+  receivedAt: string | null;
+  cancelledAt: string | null;
+  cancelReason: string | null;
+  items: {
+    productId: string;
+    productName: string;
+    unit: string;
+    quantityMilli: number;
+    receivedMilli: number | null;
+  }[];
+}

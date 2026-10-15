@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inventoryCountInput } from './contracts';
+import { inventoryCountInput, stockTransferInput } from './contracts';
 
 describe('contagem de inventário (F4-11)', () => {
   it('aceita o código bipado ou o produto escolhido', () => {
@@ -22,5 +22,41 @@ describe('contagem de inventário (F4-11)', () => {
     expect(
       inventoryCountInput.safeParse({ code: '789', mode: 'add', quantityMilli: -1 }).success,
     ).toBe(false);
+  });
+});
+
+describe('transferência entre lojas (F4-12)', () => {
+  const a = '0190a0e4-0000-7000-8000-000000000001';
+  const b = '0190a0e4-0000-7000-8000-000000000002';
+  const p = '0190a0e4-0000-7000-8000-000000000003';
+
+  it('aceita lojas diferentes com produtos sem repetição', () => {
+    expect(
+      stockTransferInput.safeParse({
+        fromStoreId: a,
+        toStoreId: b,
+        items: [{ productId: p, quantityMilli: 1000 }],
+      }).success,
+    ).toBe(true);
+  });
+
+  it('recusa a mesma loja nos dois lados e produto repetido', () => {
+    const mesma = stockTransferInput.safeParse({
+      fromStoreId: a,
+      toStoreId: a,
+      items: [{ productId: p, quantityMilli: 1000 }],
+    });
+    expect(mesma.error?.issues[0]?.message).toBe(
+      'A origem e o destino precisam ser lojas diferentes',
+    );
+    const repetido = stockTransferInput.safeParse({
+      fromStoreId: a,
+      toStoreId: b,
+      items: [
+        { productId: p, quantityMilli: 1000 },
+        { productId: p, quantityMilli: 2000 },
+      ],
+    });
+    expect(repetido.error?.issues[0]?.message).toBe('O mesmo produto aparece duas vezes');
   });
 });

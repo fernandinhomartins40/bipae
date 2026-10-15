@@ -413,7 +413,17 @@ export const stockMovements = pgTable('stock_movements', {
   productId: uuid('product_id').notNull(),
   deltaMilli: bigint('delta_milli', { mode: 'number' }).notNull(),
   reason: text('reason', {
-    enum: ['sale', 'sale_cancelled', 'return', 'adjustment', 'count', 'purchase', 'confere'],
+    enum: [
+      'sale',
+      'sale_cancelled',
+      'return',
+      'adjustment',
+      'count',
+      'purchase',
+      'confere',
+      'transfer_out',
+      'transfer_in',
+    ],
   }).notNull(),
   refId: uuid('ref_id'),
   note: text('note'),
@@ -808,3 +818,37 @@ export const inventoryCounts = pgTable('inventory_counts', {
   updatedBy: uuid('updated_by'),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
+
+// ---------------------------------------------------------------- transferências (0025)
+
+/** Transferência entre lojas (F4-12). */
+export const stockTransfers = pgTable('stock_transfers', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  fromStoreId: uuid('from_store_id').notNull(),
+  toStoreId: uuid('to_store_id').notNull(),
+  status: text('status', { enum: ['in_transit', 'received', 'cancelled'] })
+    .notNull()
+    .default('in_transit'),
+  note: text('note'),
+  needsInvoice: boolean('needs_invoice').notNull().default(false),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  receivedBy: uuid('received_by'),
+  receivedAt: ts('received_at'),
+  cancelledBy: uuid('cancelled_by'),
+  cancelledAt: ts('cancelled_at'),
+  cancelReason: text('cancel_reason'),
+});
+
+export const stockTransferItems = pgTable(
+  'stock_transfer_items',
+  {
+    tenantId: uuid('tenant_id').notNull(),
+    transferId: uuid('transfer_id').notNull(),
+    productId: uuid('product_id').notNull(),
+    quantityMilli: bigint('quantity_milli', { mode: 'number' }).notNull(),
+    receivedMilli: bigint('received_milli', { mode: 'number' }),
+  },
+  (t) => [primaryKey({ columns: [t.transferId, t.productId] })],
+);

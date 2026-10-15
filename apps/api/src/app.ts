@@ -32,7 +32,10 @@ import { LimitsService } from './modules/account/limits.service';
 import { DownloadsController, DownloadsService } from './modules/downloads/downloads.controller';
 import { FiscalController } from './modules/fiscal/fiscal.controller';
 import { MERCADOFLOW_CLIENT, MercadoflowClient } from './modules/mercadoflow/mercadoflow.client';
-import { MercadoflowCatalog, MercadoflowCatalogController } from './modules/mercadoflow/mercadoflow.catalog';
+import {
+  MercadoflowCatalog,
+  MercadoflowCatalogController,
+} from './modules/mercadoflow/mercadoflow.catalog';
 import { MercadoflowAccounts } from './modules/mercadoflow/mercadoflow.accounts';
 import { MercadoflowConfere } from './modules/mercadoflow/mercadoflow.confere';
 import {
@@ -44,7 +47,10 @@ import { MercadoflowContributions } from './modules/mercadoflow/mercadoflow.cont
 import { MercadoflowInsights } from './modules/mercadoflow/mercadoflow.insights';
 import { MercadoflowMarketSync } from './modules/mercadoflow/mercadoflow.market-sync';
 import { MercadoflowOutbox } from './modules/mercadoflow/mercadoflow.outbox';
-import { MercadoflowWebhookController, MercadoflowWebhooks } from './modules/mercadoflow/mercadoflow.webhook';
+import {
+  MercadoflowWebhookController,
+  MercadoflowWebhooks,
+} from './modules/mercadoflow/mercadoflow.webhook';
 import { PurchaseOrdersController } from './modules/purchases/purchase-orders.controller';
 import { PurchaseOrdersService } from './modules/purchases/purchase-orders.service';
 import { PurchasesController } from './modules/purchases/purchases.controller';
@@ -64,6 +70,7 @@ import { BankController, BankService } from './modules/finance/bank.service';
 import { FinanceController, FinanceService } from './modules/finance/finance.service';
 import { ReportsController, ReportsService } from './modules/reports/reports.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
+import { TransferController, TransferService } from './modules/stock/transfer.service';
 import { SettlementController, SettlementService } from './modules/finance/settlement.service';
 import { MaintenanceService } from './modules/maintenance/maintenance.service';
 import { OrganizationController } from './modules/organization/organization.controller';
@@ -112,6 +119,7 @@ class AppModule {
         SettlementController,
         ReportsController,
         InventoryController,
+        TransferController,
         PartiesController,
         AuditController,
         SyncController,
@@ -149,6 +157,7 @@ class AppModule {
         SettlementService,
         ReportsService,
         InventoryService,
+        TransferService,
         IcmsRulesService,
         CertificatesService,
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },

@@ -1,5 +1,14 @@
 # Changelog
 
+## [F4-12 Transferência entre lojas] — 15/10/2026
+
+### Adicionado
+- **Transferências entre lojas** (menu próprio):
+  - ao enviar, o estoque sai da loja de origem e a mercadoria fica "em trânsito";
+  - a loja de destino confirma o que chegou de fato; a diferença fica registrada na auditoria;
+  - cancelar antes do recebimento devolve tudo à origem, com o motivo.
+- Entre lojas de empresas (CNPJs) diferentes, a transferência avisa que precisa de NF-e de transferência. A emissão pelo Bipaê chega em breve (dúvida fiscal D-026).
+
 ## [F4-11 Inventário pelo celular] — 15/10/2026
 
 ### Adicionado
