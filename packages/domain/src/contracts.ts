@@ -202,6 +202,13 @@ export const productInput = z.object({
     .default([]),
   catalog: productCatalogSchema.nullish(),
   packs: z.array(productPackSchema).max(20).default([]),
+  /** Atacarejo (F5-03): a partir de tal quantidade, cada unidade sai por tal preço. */
+  wholesale: z
+    .object({
+      minQuantityMilli: z.number().int().min(2000, 'O atacado começa em pelo menos 2 unidades'),
+      priceCents: centsSchema,
+    })
+    .nullish(),
 });
 export type ProductInput = z.input<typeof productInput>;
 
@@ -227,6 +234,8 @@ export interface Product {
   catalog?: ProductCatalog | null;
   /** Códigos de caixa ou fardo, com as unidades de cada um. */
   packs?: ProductPack[];
+  /** Atacarejo (F5-03): preço de atacado a partir de uma quantidade. */
+  wholesale?: { minQuantityMilli: number; priceCents: number } | null;
   updatedAt: string;
 }
 

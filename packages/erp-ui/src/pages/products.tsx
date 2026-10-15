@@ -22,6 +22,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search } from 'lucide-react';
 import { useDeferredValue, useState, type FormEvent } from 'react';
+import { parseQuantity } from './purchase-orders';
 import { useApp, useCan } from '../context';
 import { CatalogAssist, catalogSummary } from './catalog-assist';
 import { ApiError } from '../api-client';
@@ -176,6 +177,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
     unit: product?.unit ?? 'UN',
     priceCents: product?.priceCents ?? (null as number | null),
     costCents: product?.costCents ?? (null as number | null),
+    wholesalePriceCents: product?.wholesale?.priceCents ?? (null as number | null),
+    wholesaleMin: product?.wholesale
+      ? (product.wholesale.minQuantityMilli / 1000).toLocaleString('pt-BR', {
+          maximumFractionDigits: 3,
+        })
+      : '',
     ncm: product?.ncm ?? '',
     fiscalProfileId: product?.fiscalProfileId ?? '',
     cest: product?.cest ?? '',
@@ -189,7 +196,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   const [fromCatalog, setFromCatalog] = useState(false);
   const applyCatalog = (found: CatalogProduct) => {
     form.set('name', found.description ?? form.values.name);
-    const codes = new Set(form.values.barcodes.split(/[s,;]+/).filter(Boolean));
+    const codes = new Set(form.values.barcodes.split(/[\s,;]+/).filter(Boolean));
     codes.add(found.gtin);
     form.set('barcodes', [...codes].join(', '));
     const unit = found.unit ?? 'UN';
@@ -218,9 +225,23 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
         const message = 'Informe o preço de venda';
         throw new ApiError(400, 'validation', message, [{ path: 'priceCents', message }]);
       }
+      const { wholesalePriceCents, wholesaleMin, ...rest } = v;
+      // Atacarejo (F5-03): os dois campos juntos, ou nenhum.
+      let wholesale: { minQuantityMilli: number; priceCents: number } | null = null;
+      if (wholesalePriceCents !== null || wholesaleMin.trim()) {
+        const minQuantityMilli = parseQuantity(wholesaleMin);
+        if (wholesalePriceCents === null || !minQuantityMilli) {
+          const message = 'Para o atacado, informe o preço e a partir de quantas unidades';
+          throw new ApiError(400, 'validation', message, [
+            { path: 'wholesalePriceCents', message },
+          ]);
+        }
+        wholesale = { minQuantityMilli, priceCents: wholesalePriceCents };
+      }
       const body = {
         ...(product ?? {}),
-        ...v,
+        ...rest,
+        wholesale,
         fiscalProfileId: v.fiscalProfileId || null,
         components: components.map(({ productId, quantity }) => ({ productId, quantity })),
         catalog,
@@ -276,6 +297,22 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
             value={form.values.costCents}
             onChange={(v) => form.set('costCents', v)}
             error={form.errors.costCents}
+          />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <MoneyField
+            label="Preço de atacado (opcional)"
+            value={form.values.wholesalePriceCents}
+            onChange={(v) => form.set('wholesalePriceCents', v)}
+            error={form.errors.wholesalePriceCents}
+          />
+          <TextField
+            label="Atacado a partir de"
+            inputMode="decimal"
+            placeholder="Ex.: 6"
+            hint="Quantidade em que o caixa passa a cobrar o preço de atacado."
+            value={form.values.wholesaleMin}
+            onChange={(e) => form.set('wholesaleMin', e.target.value)}
           />
         </div>
         {product && canChangePrice && (

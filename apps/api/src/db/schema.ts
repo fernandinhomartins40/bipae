@@ -190,6 +190,9 @@ export const products = pgTable('products', {
   cest: char('cest', { length: 7 }),
   isWeighable: boolean('is_weighable').notNull().default(false),
   tracksLot: boolean('tracks_lot').notNull().default(false),
+  /** Atacarejo (F5-03): preço de atacado a partir de uma quantidade (em milésimos). */
+  wholesalePriceCents: money('wholesale_price_cents'),
+  wholesaleMinMilli: bigint('wholesale_min_milli', { mode: 'number' }),
   active: boolean('active').notNull().default(true),
   fiscalProfileId: uuid('fiscal_profile_id'),
   parentId: uuid('parent_id'),

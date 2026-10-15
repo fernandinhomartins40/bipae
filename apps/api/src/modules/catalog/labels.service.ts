@@ -170,6 +170,12 @@ export class LabelsService {
             price: brl(price),
             details: [
               product.unit === 'UN' ? 'Preço por unidade' : `Preço por ${product.unit}`,
+              // Atacarejo (F5-03): o preço de atacado vai na etiqueta.
+              ...(product.wholesalePriceCents !== null && product.wholesaleMinMilli !== null
+                ? [
+                    `Atacado: a partir de ${(product.wholesaleMinMilli / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 3 })} ${product.unit}, ${brl(product.wholesalePriceCents)} cada`,
+                  ]
+                : []),
               `Preço de ${date}`,
             ],
             code:

@@ -686,6 +686,14 @@ export class SyncService {
         n: sql<number>`count(*)`,
       })
       .from(promotions);
+    // Atacarejo (F5-03): produtos com preço de atacado também mudam o retrato.
+    const [wholesale] = await tx
+      .select({
+        last: sql<string>`coalesce(max(${products.updatedAt})::text, '')`,
+        n: sql<number>`count(*)`,
+      })
+      .from(products)
+      .where(sql`${products.wholesalePriceCents} is not null`);
     const [creditState] = await tx
       .select({
         limits: sql<string>`coalesce((select string_agg(${customers.taxId} || ':' || ${customers.creditLimitCents}, ',' order by ${customers.taxId}) from ${customers} where ${customers.creditLimitCents} is not null), '')`,
@@ -707,6 +715,8 @@ export class SyncService {
           linked?.n,
           promos?.last,
           promos?.n,
+          wholesale?.last,
+          wholesale?.n,
         ].join('|'),
       )
       .digest('hex')
@@ -739,6 +749,15 @@ export class SyncService {
       .from(customerCreditEntries)
       .groupBy(customerCreditEntries.customerTaxId);
     const balanceOf = new Map(balances.map((b) => [b.taxId, Number(b.cents)]));
+    const wholesaleProducts = await tx
+      .select({
+        id: products.id,
+        name: products.name,
+        priceCents: products.wholesalePriceCents,
+        minMilli: products.wholesaleMinMilli,
+      })
+      .from(products)
+      .where(sql`${products.active} and ${products.wholesalePriceCents} is not null`);
     // Promoções ligadas e que ainda não acabaram; o caixa confere a vigência no dia da venda.
     const activePromotions = await tx
       .select()
@@ -767,13 +786,27 @@ export class SyncService {
             .map(({ productId, priceCents }) => ({ productId, priceCents })),
         })),
         customers: people.map((p) => ({ taxId: p.taxId!, priceTableId: p.priceTableId! })),
-        promotions: activePromotions.map((p) => ({
-          id: p.id,
-          name: p.name,
-          startsOn: p.startsOn,
-          endsOn: p.endsOn,
-          rule: p.rule,
-        })),
+        promotions: [
+          ...activePromotions.map((p) => ({
+            id: p.id,
+            name: p.name,
+            startsOn: p.startsOn,
+            endsOn: p.endsOn,
+            rule: p.rule,
+          })),
+          // O preço de atacado vai como faixa de quantidade do próprio produto, sem fim.
+          ...wholesaleProducts.map((p) => ({
+            id: p.id,
+            name: `Atacado: ${p.name}`,
+            startsOn: '2000-01-01',
+            endsOn: null,
+            rule: {
+              kind: 'quantity_tier' as const,
+              productIds: [p.id],
+              tiers: [{ minQuantityMilli: p.minMilli!, unitPriceCents: p.priceCents! }],
+            },
+          })),
+        ],
       },
     };
   }

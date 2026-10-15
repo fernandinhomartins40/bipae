@@ -1,5 +1,18 @@
 # Changelog
 
+## [F5-03 Atacarejo] — 15/10/2026
+
+### Adicionado
+- **Preço de atacado no cadastro do produto**: "a partir de N unidades, cada uma sai por R$ X".
+  - O preço de atacado precisa ser menor que o de varejo.
+  - Para produto vendido por unidade, a quantidade precisa ser inteira.
+  - Mudar o atacado é mudança de preço: pede a mesma permissão e entra na auditoria com o antes e o depois.
+- **O caixa cobra o preço de atacado sozinho**, mesmo sem internet, quando a quantidade chega ao mínimo. O resumo mostra "Atacado: nome do produto".
+- **A etiqueta de gôndola mostra o preço de atacado.**
+
+### Corrigido
+- No cadastro de produto, os códigos de barras separados por espaço não eram separados ao trazer os dados do catálogo.
+
 ## [F5-02 Promoções avançadas] — 15/10/2026
 
 ### Adicionado

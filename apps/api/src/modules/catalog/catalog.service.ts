@@ -33,6 +33,25 @@ import { MercadoflowMarketSync } from '../mercadoflow/mercadoflow.market-sync';
 
 type ProductData = z.output<typeof productInput>;
 
+/** Preço de atacado (F5-03): mais barato que o de varejo e, no produto por unidade, inteiro. */
+function assertWholesale(input: ProductData) {
+  if (!input.wholesale) return;
+  if (input.wholesale.priceCents >= input.priceCents) {
+    throw new AppError(
+      422,
+      'invalid_wholesale',
+      'O preço de atacado precisa ser menor que o preço de venda.',
+    );
+  }
+  if (!input.isWeighable && input.wholesale.minQuantityMilli % 1000 !== 0) {
+    throw new AppError(
+      422,
+      'invalid_wholesale',
+      'A quantidade do atacado precisa ser inteira para produto vendido por unidade.',
+    );
+  }
+}
+
 @Injectable()
 export class CatalogService {
   constructor(
@@ -82,13 +101,18 @@ export class CatalogService {
 
   async createProduct(ctx: RequestContext, input: ProductData): Promise<Product> {
     assertProductFiscal(input);
+    assertWholesale(input);
     return withTenant(this.db, ctx, async (tx) => {
       await this.limits.assertCanAdd(tx, 'products');
       const id = uuidv7();
       await tx.insert(products).values({ id, tenantId: ctx.tenantId, ...this.columns(input) });
       await this.replaceChildren(tx, ctx.tenantId, id, input);
       await this.contributions.enqueue(tx, ctx.tenantId, input);
-      await this.marketSync.enqueueProduct(tx, ctx.tenantId, { id, ...this.columns(input), barcodes: input.barcodes });
+      await this.marketSync.enqueueProduct(tx, ctx.tenantId, {
+        id,
+        ...this.columns(input),
+        barcodes: input.barcodes,
+      });
       await this.audit.record(tx, ctx, {
         action: 'product.created',
         entity: 'product',
@@ -113,7 +137,12 @@ export class CatalogService {
         ncm: (input.ncm ?? null) === current.ncm ? null : input.ncm,
         cest: (input.cest ?? null) === current.cest ? null : input.cest,
       });
-      const priceChanged = current.priceCents !== input.priceCents;
+      // Preço de atacado também é preço: pede a mesma permissão e entra na auditoria.
+      const wholesaleChanged =
+        current.wholesalePriceCents !== (input.wholesale?.priceCents ?? null) ||
+        current.wholesaleMinMilli !== (input.wholesale?.minQuantityMilli ?? null);
+      const priceChanged = current.priceCents !== input.priceCents || wholesaleChanged;
+      assertWholesale(input);
       if (priceChanged && !hasPermission(ctx.permissions, 'catalog.price.write')) throw forbidden();
 
       await tx
@@ -130,13 +159,30 @@ export class CatalogService {
         await this.contributions.enqueue(tx, ctx.tenantId, input);
       }
       // Lojas vinculadas ao MercadoFlow recebem o cadastro, o preço e o custo novos.
-      await this.marketSync.enqueueProduct(tx, ctx.tenantId, { id, ...this.columns(input), barcodes: input.barcodes });
+      await this.marketSync.enqueueProduct(tx, ctx.tenantId, {
+        id,
+        ...this.columns(input),
+        barcodes: input.barcodes,
+      });
       await this.audit.record(tx, ctx, {
         action: priceChanged ? 'product.price_changed' : 'product.updated',
         entity: 'product',
         entityId: id,
         data: priceChanged
-          ? { before: current.priceCents, after: input.priceCents }
+          ? {
+              before: current.priceCents,
+              after: input.priceCents,
+              ...(wholesaleChanged && {
+                wholesaleBefore:
+                  current.wholesalePriceCents === null
+                    ? null
+                    : {
+                        minQuantityMilli: current.wholesaleMinMilli,
+                        priceCents: current.wholesalePriceCents,
+                      },
+                wholesaleAfter: input.wholesale ?? null,
+              }),
+            }
           : { name: input.name },
       });
       const [row] = await tx.select().from(products).where(eq(products.id, id));
@@ -160,6 +206,8 @@ export class CatalogService {
       parentId: input.parentId ?? null,
       attributes: input.attributes ?? null,
       catalog: input.catalog ?? null,
+      wholesalePriceCents: input.wholesale?.priceCents ?? null,
+      wholesaleMinMilli: input.wholesale?.minQuantityMilli ?? null,
     };
   }
 
@@ -276,6 +324,10 @@ export class CatalogService {
       packs: packs
         .filter((p) => p.productId === r.id)
         .map((p) => ({ packGtin: p.packGtin, unitsPerPack: p.unitsPerPack })),
+      wholesale:
+        r.wholesalePriceCents !== null && r.wholesaleMinMilli !== null
+          ? { minQuantityMilli: r.wholesaleMinMilli, priceCents: r.wholesalePriceCents }
+          : null,
       updatedAt: r.updatedAt.toISOString(),
     }));
   }

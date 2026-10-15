@@ -237,7 +237,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F5-02.b · API: cadastro com vigência e auditoria, e envio ao caixa junto com o catálogo — depende: F5-02.a
   - [x] F5-02.c · Caixa aplica as promoções sem internet, mostra o desconto e o leva no evento da venda (fora do limite de desconto do operador) — depende: F5-02.b
   - [x] F5-02.d · Tela de promoções na retaguarda, com E2E — depende: F5-02.c
-- [ ] F5-03 · Atacarejo (preço por quantidade) — depende: F5-02
+- [x] F5-03 · Atacarejo (preço por quantidade) — depende: F5-02
 - [ ] F5-04 · Lote e validade com FEFO (farmácia, pet, mercado)
 - [ ] F5-05 · Painel de prevenção de perdas — depende: F4-10
 - [ ] F5-06 · Self-checkout — depende: F3-14
