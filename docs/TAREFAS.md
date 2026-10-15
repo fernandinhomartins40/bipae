@@ -232,7 +232,11 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 ## Fase 5 — Verticais
 
 - [x] F5-01 · Etiquetas de gôndola e de balança
-- [ ] F5-02 · Promoções avançadas (`packages/promotions`: leve X pague Y, faixa de quantidade, combo)
+- [~] F5-02 · Promoções avançadas (`packages/promotions`: leve X pague Y, faixa de quantidade, combo)
+  - [x] F5-02.a · Motor puro (`packages/promotions`): as três regras, sem acumular promoções no mesmo item, centavos inteiros
+  - [ ] F5-02.b · API: cadastro com vigência e auditoria, e envio ao caixa junto com o catálogo — depende: F5-02.a
+  - [ ] F5-02.c · Caixa aplica as promoções sem internet, mostra o desconto e o leva no evento da venda (fora do limite de desconto do operador) — depende: F5-02.b
+  - [ ] F5-02.d · Tela de promoções na retaguarda, com E2E — depende: F5-02.c
 - [ ] F5-03 · Atacarejo (preço por quantidade) — depende: F5-02
 - [ ] F5-04 · Lote e validade com FEFO (farmácia, pet, mercado)
 - [ ] F5-05 · Painel de prevenção de perdas — depende: F4-10

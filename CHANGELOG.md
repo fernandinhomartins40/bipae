@@ -1,5 +1,17 @@
 # Changelog
 
+## [F5-02.a Motor de promoções] — 15/10/2026
+
+### Adicionado
+- **Novo pacote `@bipae/promotions`**, o motor das promoções do caixa. Funciona sem internet e calcula tudo em centavos inteiros. Três regras:
+  - **leve X pague Y**, contando produtos do mesmo grupo juntos; a unidade mais barata sai de graça;
+  - **faixa de quantidade**: a partir de N unidades (ou quilos), cada uma sai por um preço menor;
+  - **combo**: um conjunto de produtos por um preço fechado, com o desconto repartido entre os itens.
+- **Promoções não acumulam:** cada unidade entra em uma só, na ordem combo, leve-pague e faixa.
+  - Item com desconto manual do operador fica fora.
+  - Promoção que não baixaria o preço não é aplicada.
+- O cadastro, o caixa e a tela chegam nas próximas etapas (F5-02.b a F5-02.d).
+
 ## [F5-01 Etiquetas de gôndola e de balança] — 15/10/2026
 
 ### Adicionado
