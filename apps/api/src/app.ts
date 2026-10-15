@@ -62,6 +62,7 @@ import { CatalogService } from './modules/catalog/catalog.service';
 import { PricingController, PricingService } from './modules/catalog/pricing.service';
 import { BankController, BankService } from './modules/finance/bank.service';
 import { FinanceController, FinanceService } from './modules/finance/finance.service';
+import { ReportsController, ReportsService } from './modules/reports/reports.service';
 import { SettlementController, SettlementService } from './modules/finance/settlement.service';
 import { MaintenanceService } from './modules/maintenance/maintenance.service';
 import { OrganizationController } from './modules/organization/organization.controller';
@@ -108,6 +109,7 @@ class AppModule {
         FinanceController,
         BankController,
         SettlementController,
+        ReportsController,
         PartiesController,
         AuditController,
         SyncController,
@@ -143,6 +145,7 @@ class AppModule {
         FinanceService,
         BankService,
         SettlementService,
+        ReportsService,
         IcmsRulesService,
         CertificatesService,
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },

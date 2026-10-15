@@ -1109,3 +1109,34 @@ export interface DelinquentCustomer {
   /** Atraso acima da tolerância: o caixa não vende mais no crediário. */
   blocked: boolean;
 }
+
+// ---------- Relatórios (F4-10) ----------
+
+export type SalesReportGroup = 'product' | 'operator' | 'store' | 'payment' | 'day';
+
+export interface SalesReportRow {
+  key: string;
+  label: string;
+  /** Só por produto. */
+  quantityMilli: number | null;
+  salesCount: number;
+  revenueCents: number;
+  /** Nulo quando algum item não tem custo no cadastro (ou por forma de pagamento). */
+  costCents: number | null;
+  marginCents: number | null;
+  /** Margem sobre a receita em centésimos de ponto (2500 = 25%). */
+  marginBp: number | null;
+  avgTicketCents: number;
+  /** Curva ABC (só por produto). */
+  abc: 'A' | 'B' | 'C' | null;
+}
+
+export interface SalesReport {
+  from: string;
+  to: string;
+  group: SalesReportGroup;
+  salesCount: number;
+  revenueCents: number;
+  avgTicketCents: number;
+  rows: SalesReportRow[];
+}

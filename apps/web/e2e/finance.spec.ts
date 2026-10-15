@@ -123,3 +123,18 @@ test('inadimplência sem atrasos mostra que está tudo em dia (F4-09)', async ({
   await page.getByRole('link', { name: 'Inadimplência' }).click();
   await expect(page.getByText('Ninguém em atraso')).toBeVisible();
 });
+
+test('relatórios de vendas abrem e exportam em CSV (F4-10)', async ({ page }) => {
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Ivo Dono');
+  await page.getByLabel('Nome do negócio').fill(`Bazar ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`ivo-rel-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Ivo!' })).toBeVisible();
+  await page.getByRole('link', { name: 'Relatórios' }).click();
+  await expect(page.getByTestId('report-revenue')).toHaveText('R$ 0,00');
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'CSV' }).click();
+  expect((await download).suggestedFilename()).toMatch(/^bipae-vendas-product-.*\.csv$/);
+});

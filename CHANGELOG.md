@@ -1,5 +1,13 @@
 # Changelog
 
+## [F4-10 Relatórios de vendas] — 15/10/2026
+
+### Adicionado
+- **Relatórios de vendas** por período, agrupados por produto, operador, loja, forma de pagamento ou dia:
+  - quantidade, número de vendas, receita, margem (pelo custo do cadastro) e ticket médio;
+  - curva ABC dos produtos.
+- **Exportação em CSV** (pronto para o Excel em português), **XLSX e PDF**.
+
 ## [F4-09 Crediário com controle de inadimplência] — 15/10/2026
 
 ### Adicionado
