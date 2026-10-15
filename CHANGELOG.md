@@ -1,5 +1,14 @@
 # Changelog
 
+## [F4-06 DRE gerencial] — 14/10/2026
+
+### Adicionado
+- **DRE gerencial** mês a mês (menu próprio):
+  - receita bruta, devoluções e impostos sobre a venda (os que o caixa calculou; IBS e CBS a partir de 2027), chegando à receita líquida;
+  - custo da mercadoria vendida, pelo custo atual do cadastro, e o lucro bruto;
+  - despesas por categoria (contas a pagar do mês, sem a compra de mercadoria) e o resultado.
+- Avisa quantos itens vendidos ficaram sem custo.
+
 ## [F4-05 Fluxo de caixa] — 14/10/2026
 
 ### Adicionado

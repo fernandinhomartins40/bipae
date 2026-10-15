@@ -1014,3 +1014,22 @@ export interface CashFlowRow {
   /** Saldo acumulado do realizado desde o início do período. */
   balanceCents: number;
 }
+
+/** Um mês da DRE gerencial (F4-06), em centavos. */
+export interface DreMonth {
+  month: string;
+  grossRevenueCents: number;
+  returnsCents: number;
+  taxesCents: number;
+  netRevenueCents: number;
+  cogsCents: number;
+  grossProfitCents: number;
+  expenses: { category: string; cents: number }[];
+  expensesCents: number;
+  resultCents: number;
+}
+
+export interface DreReport {
+  months: DreMonth[];
+  notes: string[];
+}

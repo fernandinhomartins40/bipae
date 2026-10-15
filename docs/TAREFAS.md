@@ -218,7 +218,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] F4-03 · Formação de preço com margem e tributos — depende: F4-02, F3-04
 - [x] F4-04 · Contas a pagar e a receber
 - [x] F4-05 · Fluxo de caixa — depende: F4-04
-- [ ] F4-06 · DRE gerencial — depende: F4-04
+- [x] F4-06 · DRE gerencial — depende: F4-04
 - [ ] F4-07 · Conciliação bancária por OFX — depende: F4-04
 - [ ] F4-08 · Conciliação de cartões e Pix — depende: F4-04
 - [ ] F4-09 · Crediário com controle de inadimplência — depende: F2-02, F4-04

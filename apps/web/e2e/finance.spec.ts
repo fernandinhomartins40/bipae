@@ -53,3 +53,26 @@ test('fluxo de caixa mostra a conta paga hoje (F4-05)', async ({ page }) => {
   await page.getByRole('link', { name: 'Fluxo de caixa' }).click();
   await expect(page.getByTestId('cash-flow-net')).toHaveText('-R$ 150,00');
 });
+
+test('DRE gerencial mostra a despesa do mês por categoria (F4-06)', async ({ page }) => {
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Edu Dono');
+  await page.getByLabel('Nome do negócio').fill(`Açougue ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`edu-dre-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Edu!' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Contas a pagar e receber' }).click();
+  await page.getByRole('button', { name: 'Nova conta' }).click();
+  await page.getByLabel('Descrição').fill('Aluguel da loja');
+  await page.getByLabel('Categoria').fill('Aluguel');
+  await page.getByLabel('Valor total').fill('2.000,00');
+  await page.getByLabel('Valor total').blur();
+  await page.getByRole('button', { name: 'Lançar conta' }).click();
+  await expect(page.getByRole('row', { name: /Aluguel da loja/ })).toBeVisible();
+
+  await page.getByRole('link', { name: 'DRE gerencial' }).click();
+  await expect(page.getByRole('row', { name: /^Aluguel/ })).toContainText('R$ 2.000,00');
+  await expect(page.getByRole('row', { name: /Resultado/ })).toContainText('-R$ 2.000,00');
+});

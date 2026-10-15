@@ -16,6 +16,8 @@ import {
   purchaseOrderCancelInput,
   uuidv7,
   type CashFlowRow,
+  type DreMonth,
+  type DreReport,
   type FinancialEntryView,
   type FinancialSummary,
 } from '@bipae/domain';
@@ -25,10 +27,13 @@ import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
+import { rowsOf } from '../../db/migrate';
 import {
   companies,
   customers,
   financialEntries,
+  products,
+  saleItems,
   salePayments,
   sales,
   suppliers,
@@ -247,6 +252,134 @@ export class FinanceService {
     });
   }
 
+  /**
+   * DRE gerencial (F4-06) mês a mês, entre AAAA-MM e AAAA-MM. Receita das vendas menos
+   * devoluções; impostos sobre a venda calculados pelo caixa em cada item (IBS e CBS só a
+   * partir de 2027, quando deixam de ser teste); CMV pelo custo atual do cadastro; despesas são
+   * as contas a pagar do mês (pelo vencimento), por categoria, sem a compra de mercadoria, que
+   * já está no CMV.
+   */
+  async dre(ctx: RequestContext, from: string, to: string): Promise<DreReport> {
+    const month = (column: unknown) =>
+      sql<string>`to_char(${column} at time zone 'America/Sao_Paulo', 'YYYY-MM')`;
+    return withTenant(this.db, ctx, async (tx) => {
+      const m = month(sales.occurredAt);
+      const inRange = and(sql`${m} >= ${from}`, sql`${m} <= ${to}`, eq(sales.status, 'completed'));
+      const revenue = await tx
+        .select({
+          month: m,
+          sold: sql<string>`coalesce(sum(${sales.totalCents}) filter (where ${sales.kind} = 'sale'), 0)::text`,
+          returned: sql<string>`coalesce(sum(${sales.totalCents}) filter (where ${sales.kind} = 'return'), 0)::text`,
+        })
+        .from(sales)
+        .where(inRange)
+        .groupBy(m);
+      const tax = (field: string) => sql`coalesce((${saleItems.taxes} ->> ${field})::bigint, 0)`;
+      const taxes = await tx
+        .select({
+          month: m,
+          current: sql<string>`sum(${tax('icmsCents')} + ${tax('fcpCents')} + ${tax('pisCents')} + ${tax('cofinsCents')})::text`,
+          reform: sql<string>`sum(${tax('ibsCents')} + ${tax('cbsCents')})::text`,
+        })
+        .from(saleItems)
+        .innerJoin(sales, eq(sales.id, saleItems.saleId))
+        .where(and(inRange, eq(sales.kind, 'sale')))
+        .groupBy(m);
+      const cogs = await tx
+        .select({
+          month: m,
+          // milésimos × centavos ÷ 1000, arredondando meio para cima no total do mês.
+          milliCents: sql<string>`coalesce(sum(${saleItems.quantityMilli} * ${products.costCents}), 0)::text`,
+          missing: sql<string>`count(*) filter (where ${products.costCents} is null)::text`,
+        })
+        .from(saleItems)
+        .innerJoin(sales, eq(sales.id, saleItems.saleId))
+        .innerJoin(products, eq(products.id, saleItems.productId))
+        .where(and(inRange, eq(sales.kind, 'sale')))
+        .groupBy(m);
+      const returnedCogs = rowsOf<{ month: string; milli_cents: string }>(
+        await tx.execute(sql`
+          select to_char(s.occurred_at at time zone 'America/Sao_Paulo', 'YYYY-MM') as month,
+                 coalesce(sum((i ->> 'quantityMilli')::bigint * p.cost_cents), 0)::text as milli_cents
+          from sales s
+          cross join lateral jsonb_array_elements(coalesce(s.data -> 'items', '[]'::jsonb)) i
+          join products p on p.id = (i ->> 'productId')::uuid
+          where s.kind = 'return' and s.status = 'completed'
+            and to_char(s.occurred_at at time zone 'America/Sao_Paulo', 'YYYY-MM') between ${from} and ${to}
+          group by 1`),
+      );
+      const d = sql<string>`substr(${financialEntries.dueDate}::text, 1, 7)`;
+      const expenses = await tx
+        .select({
+          month: d,
+          category: sql<string>`coalesce(nullif(trim(${financialEntries.category}), ''), 'Sem categoria')`,
+          cents: sql<string>`sum(${financialEntries.amountCents})::text`,
+        })
+        .from(financialEntries)
+        .where(
+          and(
+            eq(financialEntries.kind, 'payable'),
+            sql`${financialEntries.status} <> 'cancelled'`,
+            sql`${d} >= ${from} and ${d} <= ${to}`,
+            sql`lower(coalesce(${financialEntries.category}, '')) not in ('mercadoria', 'mercadorias', 'compra de mercadoria', 'compras')`,
+          ),
+        )
+        .groupBy(d, sql`2`);
+
+      const months = new Map<string, DreMonth>();
+      const at = (key: string) => {
+        let row = months.get(key);
+        if (!row) {
+          row = {
+            month: key,
+            grossRevenueCents: 0,
+            returnsCents: 0,
+            taxesCents: 0,
+            netRevenueCents: 0,
+            cogsCents: 0,
+            grossProfitCents: 0,
+            expenses: [],
+            expensesCents: 0,
+            resultCents: 0,
+          };
+          months.set(key, row);
+        }
+        return row;
+      };
+      const half = (milliCents: bigint) => Number((milliCents * 2n + 1000n) / 2000n);
+      for (const r of revenue) {
+        at(r.month).grossRevenueCents += Number(r.sold);
+        at(r.month).returnsCents += Number(r.returned);
+      }
+      for (const t of taxes) {
+        at(t.month).taxesCents += Number(t.current) + (t.month >= '2027-01' ? Number(t.reform) : 0);
+      }
+      let missingCost = 0;
+      for (const g of cogs) {
+        at(g.month).cogsCents += half(BigInt(g.milliCents));
+        missingCost += Number(g.missing);
+      }
+      for (const g of returnedCogs) at(g.month).cogsCents -= half(BigInt(g.milli_cents));
+      for (const e of expenses) {
+        const row = at(e.month);
+        row.expenses.push({ category: e.category, cents: Number(e.cents) });
+        row.expensesCents += Number(e.cents);
+      }
+      const list = [...months.values()].sort((a, b) => a.month.localeCompare(b.month));
+      for (const r of list) {
+        r.expenses.sort((a, b) => b.cents - a.cents);
+        r.netRevenueCents = r.grossRevenueCents - r.returnsCents - r.taxesCents;
+        r.grossProfitCents = r.netRevenueCents - r.cogsCents;
+        r.resultCents = r.grossProfitCents - r.expensesCents;
+      }
+      const notes = ['CMV pelo custo atual do cadastro de cada produto.'];
+      if (missingCost > 0) {
+        notes.push(`${missingCost} item(ns) vendido(s) sem custo no cadastro ficaram fora do CMV.`);
+      }
+      return { months: list, notes };
+    });
+  }
+
   async summary(ctx: RequestContext): Promise<FinancialSummary> {
     const today = todayBr();
     const week = new Date(`${today}T12:00:00Z`);
@@ -453,6 +586,17 @@ export class FinanceController {
       throw new AppError(422, 'invalid_period', 'Informe o período (de e até) em datas válidas.');
     }
     return this.finance.cashFlow(ctx, from, to, group === 'month' ? 'month' : 'day');
+  }
+
+  /** DRE gerencial (F4-06): ?from=AAAA-MM&to=AAAA-MM */
+  @Get('dre')
+  @RequirePermission('finance.read')
+  dre(@Ctx() ctx: RequestContext, @Query('from') from?: string, @Query('to') to?: string) {
+    const ym = /^\d{4}-\d{2}$/;
+    if (!from || !to || !ym.test(from) || !ym.test(to) || from > to) {
+      throw new AppError(422, 'invalid_period', 'Informe os meses (de e até) no formato AAAA-MM.');
+    }
+    return this.finance.dre(ctx, from, to);
   }
 
   @Get('summary')
