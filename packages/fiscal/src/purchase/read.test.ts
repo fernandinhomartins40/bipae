@@ -6,6 +6,7 @@ import { calculateIcms } from '../taxes/icms';
 import { calculateIpi } from '../taxes/ipi';
 import {
   decimalTextToCents,
+  purchaseLotMilli,
   purchaseStockMilli,
   purchaseUnitCostCents,
   readPurchaseNfe,
@@ -196,5 +197,26 @@ describe('XML de compra (F3-19.a)', () => {
     expect(decimalTextToCents('1.005')).toBe(101);
     expect(decimalTextToCents(undefined)).toBe(0);
     expect(() => decimalTextToCents('1,50')).toThrow('Valor inválido');
+  });
+});
+
+describe('lote e validade do fornecedor (F5-04.b)', () => {
+  it('lê os lotes do grupo rastro e converte a quantidade pelo fator do estoque', () => {
+    const doc = notaDoFornecedor();
+    const comLotes = doc.xml.replace(
+      '</prod>',
+      '<rastro><nLote>A123</nLote><qLote>4.000</qLote><dFab>2026-09-01</dFab><dVal>2027-03-31</dVal></rastro>' +
+        '<rastro><nLote>B456</nLote><qLote>2.500</qLote><dFab>2026-09-15</dFab><dVal>2027-04-30</dVal><cAgreg>X</cAgreg></rastro></prod>',
+    );
+    const [item] = readPurchaseNfe(comLotes).items;
+    expect(item!.lots).toEqual([
+      { code: 'A123', quantity: '4.000', manufacturedOn: '2026-09-01', expiresOn: '2027-03-31' },
+      { code: 'B456', quantity: '2.500', manufacturedOn: '2026-09-15', expiresOn: '2027-04-30' },
+    ]);
+    // Caixa com 12 unidades: 4 caixas = 48 unidades de estoque.
+    expect(purchaseLotMilli(item!.lots![0]!, '12')).toBe(48_000);
+    expect(purchaseLotMilli({ ...item!.lots![0]!, quantity: '0' })).toBe(0);
+    // Sem rastro, o item não traz lotes.
+    expect(readPurchaseNfe(doc.xml).items[0]!.lots).toBeUndefined();
   });
 });

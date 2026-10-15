@@ -226,3 +226,11 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - Em que mês o crédito deve entrar: na emissão da nota, na entrada da mercadoria ou na extinção do débito informada pelo Comitê Gestor e pela Receita?
   - Como a empresa marca as compras de uso e consumo pessoal?
   - O estorno da devolução deve vir do documento de devolução, em vez da proporção?
+
+### D-028 — Unidade da quantidade do lote (`qLote`) na NF-e de compra
+
+- **Contexto:** o grupo `rastro` do item (leiaute 4.00, PL_010f) traz `nLote`, `qLote`, `dFab` e `dVal`. O XSD descreve o `qLote` como "Quantidade de produto no lote", sem dizer se é na unidade comercial (`uCom`) ou na tributável (`uTrib`).
+- **Implementação provisória (F5-04.b):**
+  - o Bipaê lê o `qLote` na unidade comercial do item e converte para a unidade de estoque com o mesmo fator usado na entrada (ex.: caixa com 12);
+  - se o mesmo número de lote já existir com outra validade, a compra não trava: o lote entra separado, com a validade no nome.
+- **Pergunta (contador ou fornecedor):** qual unidade os emissores usam no `qLote`? Se for a tributável, a conversão passa a usar a relação entre `qCom` e `qTrib` do item.

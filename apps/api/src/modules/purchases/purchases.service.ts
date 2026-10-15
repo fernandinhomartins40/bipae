@@ -8,6 +8,7 @@ import {
   type purchaseImportInput,
 } from '@bipae/domain';
 import {
+  purchaseLotMilli,
   purchaseStockMilli,
   purchaseUnitCostCents,
   readPurchaseNfe,
@@ -43,6 +44,7 @@ import { assertProductFiscal } from '../fiscal/fiscal-validation';
 import { MercadoflowCatalog } from '../mercadoflow/mercadoflow.catalog';
 import { MercadoflowContributions } from '../mercadoflow/mercadoflow.contributions';
 import { MercadoflowMarketSync } from '../mercadoflow/mercadoflow.market-sync';
+import { LotsService } from '../stock/lots.service';
 
 const DSIG_NS = 'http://www.w3.org/2000/09/xmldsig#';
 
@@ -109,6 +111,7 @@ export class PurchasesService {
     @Inject(MercadoflowCatalog) private readonly catalog: MercadoflowCatalog,
     @Inject(MercadoflowContributions) private readonly contributions: MercadoflowContributions,
     @Inject(MercadoflowMarketSync) private readonly marketSync: MercadoflowMarketSync,
+    @Inject(LotsService) private readonly lots: LotsService,
   ) {}
 
   private read(xml: string): PurchaseNfe {
@@ -439,6 +442,28 @@ export class PurchasesService {
         });
         // Entrada fora do Confere: o custo novo vai às lojas vinculadas ao MercadoFlow.
         const [saved] = await tx.select().from(products).where(eq(products.id, productId));
+        // Lote e validade (F5-04.b): o que o fornecedor informou no grupo rastro.
+        if (saved!.tracksLot) {
+          for (const lot of item.lots ?? []) {
+            const lotMilli = purchaseLotMilli(lot, factor);
+            if (lotMilli <= 0 || !lot.code) continue;
+            await this.lots.register(
+              ctx,
+              {
+                storeId: store.id,
+                productId,
+                lotCode: lot.code,
+                expiresOn: lot.expiresOn || null,
+                manufacturedOn: lot.manufacturedOn || null,
+                quantityMilli: lotMilli,
+                addsStock: false,
+              },
+              tx,
+              'purchase',
+              invoiceId,
+            );
+          }
+        }
         const codes = await tx
           .select({ code: productBarcodes.code })
           .from(productBarcodes)

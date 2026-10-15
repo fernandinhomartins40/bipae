@@ -224,7 +224,8 @@ export class LotsService {
           `Ative "controla lote e validade" no cadastro de ${product.name} antes de informar o lote.`,
         );
       }
-      if (!product.weighable && input.quantityMilli % 1000 !== 0) {
+      // Na compra, a quantidade do lote vem do fornecedor e pode ser fracionada pelo fator.
+      if (reason === 'entry' && !product.weighable && input.quantityMilli % 1000 !== 0) {
         throw new AppError(
           422,
           'invalid_quantity',
@@ -236,27 +237,37 @@ export class LotsService {
         .from(stores)
         .where(eq(stores.id, input.storeId));
       if (!store) throw notFound('Loja');
-      const [existing] = await t
-        .select()
-        .from(stockLots)
-        .where(
-          and(
-            eq(stockLots.storeId, input.storeId),
-            eq(stockLots.productId, input.productId),
-            eq(stockLots.lotCode, input.lotCode),
-          ),
-        );
+      const lookup = async (code: string) =>
+        (
+          await t
+            .select()
+            .from(stockLots)
+            .where(
+              and(
+                eq(stockLots.storeId, input.storeId),
+                eq(stockLots.productId, input.productId),
+                eq(stockLots.lotCode, code),
+              ),
+            )
+        )[0];
+      let lotCode = input.lotCode;
+      let existing = await lookup(lotCode);
       if (
         existing &&
         existing.expiresOn &&
         input.expiresOn &&
         existing.expiresOn !== input.expiresOn
       ) {
-        throw new AppError(
-          409,
-          'lot_expiry_mismatch',
-          `O lote ${input.lotCode} já está cadastrado com outra validade.`,
-        );
+        if (reason === 'entry') {
+          throw new AppError(
+            409,
+            'lot_expiry_mismatch',
+            `O lote ${input.lotCode} já está cadastrado com outra validade.`,
+          );
+        }
+        // Na nota de compra não trava a entrada: o lote fica separado, com a validade no nome.
+        lotCode = `${input.lotCode} (val. ${input.expiresOn.split('-').reverse().join('/')})`;
+        existing = await lookup(lotCode);
       }
       const lotId = existing?.id ?? uuidv7();
       if (!existing) {
@@ -265,7 +276,7 @@ export class LotsService {
           tenantId: ctx.tenantId,
           storeId: input.storeId,
           productId: input.productId,
-          lotCode: input.lotCode,
+          lotCode,
           expiresOn: input.expiresOn,
           manufacturedOn: input.manufacturedOn,
         });

@@ -1,5 +1,13 @@
 # Changelog
 
+## [F5-04.b Lotes na compra pelo XML] — 15/10/2026
+
+### Adicionado
+- **A compra pelo XML da NF-e dá entrada nos lotes que o fornecedor informou** (grupo `rastro`: número, quantidade, fabricação e validade), para os produtos que controlam lote.
+  - A quantidade do lote é convertida para a unidade de estoque com o mesmo fator da entrada (ex.: caixa com 12).
+  - Se o número de lote já existir com outra validade, a compra não trava: o lote entra separado, com a validade no nome.
+  - A unidade do `qLote` não está definida no leiaute: ficou registrada como dúvida D-028.
+
 ## [F5-04.a Lote e validade] — 15/10/2026
 
 ### Adicionado

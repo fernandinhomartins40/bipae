@@ -60,7 +60,12 @@ export function item(over: Partial<NfeItem> = {}): NfeItem {
 }
 
 /** XML autorizado (nota assinada mais protocolo), como o fornecedor manda por e-mail. */
-export async function notaDoFornecedor(numero: number, over: Partial<NfeInput> = {}) {
+/** `beforeSign` muda o XML antes da assinatura (ex.: acrescentar o grupo rastro). */
+export async function notaDoFornecedor(
+  numero: number,
+  over: Partial<NfeInput> = {},
+  beforeSign: (xml: string) => string = (xml) => xml,
+) {
   const items = over.items ?? [
     item(),
     item({
@@ -128,7 +133,7 @@ export async function notaDoFornecedor(numero: number, over: Partial<NfeInput> =
     appVersion: 'ERP do fornecedor',
     ...over,
   });
-  const assinada = await signNfe(doc.xml, {
+  const assinada = await signNfe(beforeSign(doc.xml), {
     privateKey: fornecedorKey,
     certificate: fornecedorCert,
   });

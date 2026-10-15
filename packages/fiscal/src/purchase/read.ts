@@ -49,6 +49,11 @@ export interface PurchaseItem {
   /** ICMS retido por substituição tributária e FCP-ST: somam ao custo. */
   stCents: number;
   ipiCents: number;
+  /**
+   * Lotes do item (grupo `rastro`, até 500): número, quantidade como veio no XML, fabricação e
+   * validade. Ausente quando o fornecedor não informou.
+   */
+  lots?: PurchaseLot[];
   /** Tributos destacados, guardados para a apuração de créditos (F4-13). */
   taxes: {
     icms?: { cst: string; baseCents: number; rate?: string; amountCents: number };
@@ -56,6 +61,17 @@ export interface PurchaseItem {
     cofinsCents: number;
     ibsCbs?: { cst: string; cClassTrib: string; ibsCents: number; cbsCents: number };
   };
+}
+
+export interface PurchaseLot {
+  /** nLote */
+  code: string;
+  /** qLote, como veio no XML ("12.000"). */
+  quantity: string;
+  /** dFab (AAAA-MM-DD) */
+  manufacturedOn: string;
+  /** dVal (AAAA-MM-DD) */
+  expiresOn: string;
 }
 
 export interface PurchaseNfe {
@@ -125,6 +141,12 @@ function item(det: XmlElement): PurchaseItem {
   const cofins = find(imposto, 'COFINS')?.children[0] ?? null;
   const ibsCbs = find(imposto, 'IBSCBS');
   const gtin = textOf(prod, 'cEAN');
+  const lots = findAll(prod, 'rastro').map((r) => ({
+    code: textOf(r, 'nLote') ?? '',
+    quantity: textOf(r, 'qLote') ?? '0',
+    manufacturedOn: textOf(r, 'dFab') ?? '',
+    expiresOn: textOf(r, 'dVal') ?? '',
+  }));
   const icmsCst = textOf(icms, 'CST') ?? textOf(icms, 'CSOSN');
   return {
     line: Number(det.attrs.nItem ?? 0),
@@ -144,6 +166,7 @@ function item(det: XmlElement): PurchaseItem {
     otherCents: cents(prod, 'vOutro'),
     stCents: cents(icms, 'vICMSST') + cents(icms, 'vFCPST'),
     ipiCents: cents(ipi, 'vIPI'),
+    ...(lots.length > 0 && { lots }),
     taxes: {
       ...(icms &&
         icmsCst && {
@@ -218,6 +241,15 @@ export function purchaseStockMilli(item: PurchaseItem, factor: string | number =
   const total = dec(item.quantity).mul(dec(factor)).mul(1000);
   if (total.lte(0)) throw new PurchaseXmlError(`Quantidade inválida no item ${item.line}.`);
   return total.toDecimalPlaces(0).toNumber();
+}
+
+/**
+ * Quantidade de um lote em unidades de estoque (milésimos). O leiaute não diz a unidade do
+ * `qLote`; o Bipaê usa a unidade comercial do item, com o mesmo fator do estoque (dúvida D-028).
+ */
+export function purchaseLotMilli(lot: PurchaseLot, factor: string | number = 1): number {
+  const total = dec(lot.quantity).mul(dec(factor)).mul(1000);
+  return total.lte(0) ? 0 : total.toDecimalPlaces(0).toNumber();
 }
 
 /**
