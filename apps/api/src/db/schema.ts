@@ -945,6 +945,12 @@ export const fiscalDocuments = pgTable('fiscal_documents', {
   attempts: integer('attempts').notNull().default(0),
   lastError: text('last_error'),
   authorizedAt: ts('authorized_at'),
+  /** Emitida em contingência off-line (tpEmis 9, F3-15). */
+  contingency: boolean('contingency').notNull().default(false),
+  /** Quem assinou: o servidor ou o caixa sem internet. */
+  origin: text('origin', { enum: ['server', 'terminal'] })
+    .notNull()
+    .default('server'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });

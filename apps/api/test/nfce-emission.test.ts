@@ -3,6 +3,7 @@ import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { addItem, EMPTY_CART, PdvService } from '@bipae/pdv-core';
 import { SyncClient, type SyncTransport } from '@bipae/sync';
+import { brasiliaDateTime, buildSaleNfceContingency, signNfe } from '@bipae/fiscal';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
 import { withTenant } from '../src/db/client';
@@ -47,7 +48,8 @@ function transport(auth: Record<string, string>, terminalId: string): SyncTransp
 }
 
 /** Empresa e caixa prontos; `completa: false` deixa de fora a inscrição estadual e o endereço. */
-async function loja(completa = true) {
+/** `agora`: relógio do caixa (para simular a venda feita sem internet minutos antes). */
+async function loja(completa = true, agora?: () => Date) {
   const dono = await signup(t.app);
   const admin = api(t.app, dono.auth);
   const [empresa] = (await admin.get('/companies')).json();
@@ -94,22 +96,41 @@ async function loja(completa = true) {
   ).json();
   const storage = createStorage(nodeSqliteDriver());
   await migrateLocal(storage);
-  const pdv = new PdvService(storage, { terminalId: caixa.id, operatorId: dono.me.user.id });
+  const pdv = new PdvService(storage, {
+    terminalId: caixa.id,
+    operatorId: dono.me.user.id,
+    ...(agora && { now: agora }),
+  });
   const sync = new SyncClient(storage, pdv, transport(dono.auth, caixa.id), caixa.id);
   await sync.sync();
   await pdv.openSession(0);
-  const vender = async (cpf: string | null = null) => {
+  /** `antesDeEnviar` mexe no evento da venda na outbox antes da sincronização. */
+  const vender = async (
+    cpf: string | null = null,
+    antesDeEnviar?: (payload: Record<string, unknown>) => Promise<void>,
+  ) => {
     const produto = (await pdv.findByCode('7891000315507'))!;
     const venda = await pdv.completeSale(
       { ...addItem(EMPTY_CART, produto, 2000), customerTaxId: cpf },
       [{ method: 'cash', receivedCents: 6000 }],
       { discountLimitPercent: 10 },
     );
+    if (antesDeEnviar) {
+      const [row] = await storage.query<{ seq: number; payload: string }>(
+        "SELECT seq, payload FROM outbox WHERE sent_at IS NULL AND type = 'sale.completed' ORDER BY seq DESC LIMIT 1",
+      );
+      const event = JSON.parse(row!.payload) as { payload: Record<string, unknown> };
+      await antesDeEnviar(event.payload);
+      await storage.execute('UPDATE outbox SET payload = ? WHERE seq = ?', [
+        JSON.stringify(event),
+        row!.seq,
+      ]);
+    }
     expect((await sync.sync()).lastError).toBeNull();
     return venda;
   };
   const ctx = { tenantId: dono.me.tenant.id as string, userId: dono.me.user.id as string };
-  return { admin, empresa, caixa, vender, ctx };
+  return { admin, empresa, caixa, vender, ctx, dono };
 }
 
 /** Espera a fila mexer na nota (a emissão roda em segundo plano). */
@@ -145,6 +166,18 @@ describe('emissão da NFC-e no servidor (F3-14.b)', () => {
     expect(xml.body).toContain('<protNFe');
     // Nota autorizada não volta para a fila.
     expect((await admin.post(`/fiscal/documents/${doc.id}/retry`)).statusCode).toBe(409);
+  });
+
+  it('o caixa recebe os dados do emitente e a série no retrato fiscal', async () => {
+    const { caixa, dono } = await loja();
+    const terminal = api(t.app, { ...dono.auth, 'x-bipae-terminal': caixa.id });
+    const fiscal = (await terminal.get('/sync/pull?limit=1')).json().fiscal;
+    expect(fiscal.issuer).toMatchObject({
+      cnpj: '11222333000181',
+      ie: '111222333444',
+      nfceSeries: caixa.nfceSeries,
+      address: { cityCode: '3550308', cityName: 'São Paulo', cep: '01001000' },
+    });
   });
 
   it('a resposta se perde: a nova tentativa consulta pela chave e não autoriza duas vezes', async () => {
@@ -191,6 +224,98 @@ describe('emissão da NFC-e no servidor (F3-14.b)', () => {
     const depois = (await admin.post(`/fiscal/documents/${recusada.id}/retry`)).json();
     expect(depois.status).toBe('authorized');
     expect(depois.accessKey).toBe(recusada.accessKey);
+  });
+
+  it('venda que chega depois dos 5 minutos sai em contingência (tpEmis 9) e é autorizada', async () => {
+    sefaz.mode = 'normal';
+    const { admin, vender } = await loja(true, () => new Date(Date.now() - 10 * 60_000));
+    const venda = await vender();
+    const doc = await nota(admin, venda.id, (s) => s !== 'pending');
+    expect(doc).toMatchObject({ status: 'authorized', contingency: true });
+    expect(doc.accessKey[34]).toBe('9');
+    const xml = (await admin.get(`/fiscal/documents/${doc.id}/xml`)).body;
+    expect(xml).toContain('<tpEmis>9</tpEmis>');
+    expect(xml).toContain(
+      '<xJust>Venda registrada sem conexão com a internet; NFC-e transmitida ao reconectar</xJust>',
+    );
+  });
+
+  it('a NFC-e que o caixa assinou em contingência é transmitida como veio', async () => {
+    sefaz.mode = 'normal';
+    const { admin, vender } = await loja();
+    const chaves = (await crypto.subtle.generateKey(
+      {
+        name: 'RSASSA-PKCS1-v1_5',
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: 'SHA-1',
+      },
+      false,
+      ['sign', 'verify'],
+    )) as { privateKey: Parameters<typeof crypto.subtle.sign>[1] };
+    const chave = { privateKey: chaves.privateKey, certificate: 'AAAA' };
+    let enviada = { accessKey: '', xml: '' };
+    const venda = await vender(null, async (payload) => {
+      const r = await buildSaleNfceContingency(
+        {
+          saleId: payload.saleId as string,
+          company: {
+            cnpj: '11222333000181',
+            legalName: 'Mercadinho Bipaê LTDA',
+            ie: '111222333444',
+            uf: 'SP',
+            regime: 'simples',
+            address: {
+              street: 'Rua das Flores',
+              number: '100',
+              district: 'Centro',
+              cityCode: '3550308',
+              cityName: 'São Paulo',
+              cep: '01001000',
+            },
+          },
+          series: 1,
+          terminalSeq: payload.terminalSeq as number,
+          occurredAt: new Date().toISOString(),
+          items: [
+            {
+              code: 'ARROZ',
+              barcodes: [],
+              description: 'Arroz tipo 1 5kg',
+              ncm: '10063021',
+              unit: 'UN',
+              quantityMilli: 2000,
+              unitPriceCents: 2890,
+              grossCents: 5780,
+              discountCents: 0,
+              profile: { cfopInterna: '5102', cfopInterestadual: '6102', csosn: '102' },
+            },
+          ],
+          payments: [{ method: 'cash', amountCents: 5780, changeCents: 220 }],
+          appVersion: 'Bipaê caixa',
+        },
+        {
+          enteredAt: brasiliaDateTime(new Date().toISOString()),
+          reason: 'Caixa sem conexão com a internet',
+        },
+        chave,
+      );
+      if (!r.ok) throw new Error(r.pending.join('; '));
+      enviada = { accessKey: r.document.accessKey, xml: await signNfe(r.document.xml, chave) };
+      payload.nfce = enviada;
+    });
+    const doc = await nota(admin, venda.id, (s) => s !== 'pending');
+    expect(doc).toMatchObject({
+      status: 'authorized',
+      contingency: true,
+      accessKey: enviada.accessKey,
+    });
+    // O servidor mandou o XML do caixa, sem montar outro.
+    const daChave = sefaz.calls.filter(
+      (call) => call.service === 'autorizacao' && call.body.includes(enviada.accessKey),
+    );
+    expect(daChave).toHaveLength(1);
+    expect(daChave[0]!.body).toContain('<xJust>Caixa sem conexão com a internet</xJust>');
   });
 
   it('empresa sem os dados do emitente: "falta configurar", com a lista, sem ir à SEFAZ', async () => {

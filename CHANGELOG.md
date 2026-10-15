@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-15.b1 Contingência da NFC-e no servidor] — 15/10/2026
+
+### Adicionado
+- **Venda que chega ao servidor mais de 4 minutos depois de feita é emitida em contingência off-line** (`tpEmis=9`), com a data de entrada em contingência e a justificativa. A emissão normal tem 5 minutos de tolerância (NT 2026.002); assim a venda feita sem internet não é recusada por atraso.
+- **NFC-e que o caixa assinou em contingência é transmitida exatamente como veio**, sem mudar a chave, como manda o manual de contingência.
+- **O caixa recebe no retrato fiscal os dados do emitente** (CNPJ, IE, endereço, município), a série do caixa e a origem da mercadoria de cada perfil. É o que ele vai precisar para montar a nota sozinho, sem internet (F3-15.b2).
+- **A situação da nota mostra se ela foi emitida em contingência.**
+- **Sem certificado no servidor, a lista de "falta configurar" continua completa**, com o certificado junto das outras pendências.
+
 ## [F3-15.a NFC-e em contingência no motor] — 15/10/2026
 
 ### Adicionado

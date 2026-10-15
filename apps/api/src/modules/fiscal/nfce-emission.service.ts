@@ -14,7 +14,15 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 import { uuidv7, type FiscalDocumentView } from '@bipae/domain';
-import { buildNfeProc, buildSaleNfce, signNfe, type SaleFiscalProfile } from '@bipae/fiscal';
+import {
+  brasiliaDateTime,
+  buildNfeProc,
+  buildSaleNfce,
+  buildSaleNfceContingency,
+  signNfe,
+  type SaleFiscalProfile,
+  type SaleNfceInput,
+} from '@bipae/fiscal';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';
@@ -41,6 +49,9 @@ import { toMotorRule } from './icms-rules.service';
 import { SefazService } from './sefaz.service';
 
 export const NFCE_EMIT_JOB = 'nfce.emit';
+/** Passado isso, a emissão normal arrisca a rejeição 704; vai em contingência (D-013). */
+const LATE_EMISSION_MS = 4 * 60_000;
+const LATE_REASON = 'Venda registrada sem conexão com a internet; NFC-e transmitida ao reconectar';
 const APP_VERSION = 'Bipaê 1.0';
 
 const toView = (d: typeof fiscalDocuments.$inferSelect): FiscalDocumentView => ({
@@ -52,6 +63,7 @@ const toView = (d: typeof fiscalDocuments.$inferSelect): FiscalDocumentView => (
   accessKey: d.accessKey,
   status: d.status,
   pendingItems: d.pendingItems,
+  contingency: d.contingency,
   cStat: d.cStat,
   xMotivo: d.xMotivo,
   protocol: d.protocol,
@@ -100,11 +112,37 @@ export class NfceEmissionService implements OnModuleInit {
   }
 
   /** Na mesma transação da venda: cria o documento; a tarefa é posta na fila logo depois. */
-  async prepare(tx: Tx, ctx: RequestContext, saleId: string, companyId: string) {
+  async prepare(
+    tx: Tx,
+    ctx: RequestContext,
+    saleId: string,
+    companyId: string,
+    /** NFC-e já emitida pelo caixa em contingência (F3-15): transmitida como veio. */
+    terminalNfce?: { accessKey: string; xml: string },
+  ) {
     const id = uuidv7();
+    const fromTerminal =
+      terminalNfce && terminalNfce.xml.includes(`Id="NFe${terminalNfce.accessKey}"`)
+        ? terminalNfce
+        : null;
     const [row] = await tx
       .insert(fiscalDocuments)
-      .values({ id, tenantId: ctx.tenantId, saleId, companyId, model: '65' })
+      .values({
+        id,
+        tenantId: ctx.tenantId,
+        saleId,
+        companyId,
+        model: '65',
+        ...(fromTerminal && {
+          origin: 'terminal' as const,
+          contingency: true,
+          accessKey: fromTerminal.accessKey,
+          // Série e número estão na própria chave (posições 23 a 25 e 26 a 34).
+          series: Number(fromTerminal.accessKey.slice(22, 25)),
+          number: Number(fromTerminal.accessKey.slice(25, 34)),
+          signedXml: fromTerminal.xml,
+        }),
+      })
       .onConflictDoNothing()
       .returning({ id: fiscalDocuments.id });
     return row?.id ?? null;
@@ -119,8 +157,11 @@ export class NfceEmissionService implements OnModuleInit {
     );
   }
 
-  /** Monta a nota da venda; volta as pendências quando falta configurar algo. */
-  private async build(tx: Tx, doc: typeof fiscalDocuments.$inferSelect) {
+  /** Os dados da venda para a NFC-e, e quando ela aconteceu. */
+  private async saleInput(
+    tx: Tx,
+    doc: typeof fiscalDocuments.$inferSelect,
+  ): Promise<{ input: SaleNfceInput; occurredAt: Date }> {
     const [sale] = await tx.select().from(sales).where(eq(sales.id, doc.saleId));
     if (!sale) throw notFound('Venda');
     const [terminal] = await tx
@@ -151,7 +192,7 @@ export class NfceEmissionService implements OnModuleInit {
     const rules = (
       await tx.select().from(companyIcmsRules).where(eq(companyIcmsRules.companyId, company.id))
     ).map(toMotorRule);
-    return buildSaleNfce({
+    const input: SaleNfceInput = {
       saleId: sale.id,
       company: {
         cnpj: company.taxId,
@@ -202,7 +243,8 @@ export class NfceEmissionService implements OnModuleInit {
       rules,
       paymentCodes: company.nfcePaymentCodes,
       appVersion: APP_VERSION,
-    });
+    };
+    return { input, occurredAt: sale.occurredAt };
   }
 
   private async update(
@@ -228,17 +270,49 @@ export class NfceEmissionService implements OnModuleInit {
       // Ainda não visível: a transação da venda não terminou. A fila tenta de novo.
       if (!doc) throw new Error('Documento fiscal ainda não disponível.');
       if (doc.status === 'authorized' || doc.status === 'denied') return null;
-      const built = await this.build(tx, doc);
-      if (!built.ok) return { doc, pending: built.pending };
+      // O certificado da empresa no servidor é a conexão com a SEFAZ, mesmo para a nota que o
+      // caixa assinou: sem ele, a nota fica em "falta configurar".
       let key;
       try {
         key = await this.certificates.signingKey(tx, doc.companyId);
       } catch (error) {
-        if (error instanceof AppError) return { doc, pending: [error.message] };
-        throw error;
+        if (!(error instanceof AppError)) throw error;
+        // Sem certificado, a lista mostra também o que mais falta para emitir.
+        const { input } = await this.saleInput(tx, doc);
+        const draft = buildSaleNfce(input);
+        return { doc, pending: [...(draft.ok ? [] : draft.pending), error.message] };
       }
-      const signedXml = doc.signedXml ?? (await signNfe(built.document.xml, key));
-      return { doc, signedXml, built };
+      // Nota já assinada (pelo caixa em contingência, ou numa tentativa anterior): vai como está.
+      if (doc.signedXml && doc.accessKey && doc.series !== null && doc.number !== null) {
+        return {
+          doc,
+          signedXml: doc.signedXml,
+          accessKey: doc.accessKey,
+          series: doc.series,
+          number: doc.number,
+          contingency: doc.contingency,
+        };
+      }
+      const { input, occurredAt } = await this.saleInput(tx, doc);
+      // A emissão normal tem 5 minutos de tolerância (NT 2026.002, B10-10); depois disso, a
+      // venda vai em contingência off-line, com a data de entrada em contingência (D-013).
+      const late = Date.now() - occurredAt.getTime() > LATE_EMISSION_MS;
+      const built = late
+        ? await buildSaleNfceContingency(
+            input,
+            { enteredAt: brasiliaDateTime(occurredAt.toISOString()), reason: LATE_REASON },
+            key,
+          )
+        : buildSaleNfce(input);
+      if (!built.ok) return { doc, pending: built.pending };
+      return {
+        doc,
+        signedXml: await signNfe(built.document.xml, key),
+        accessKey: built.document.accessKey,
+        series: built.input.series,
+        number: built.input.number,
+        contingency: late,
+      };
     });
     if (!prepared) return;
     const { doc } = prepared;
@@ -250,12 +324,13 @@ export class NfceEmissionService implements OnModuleInit {
       });
       return;
     }
-    const { signedXml, built } = prepared;
+    const { signedXml, accessKey } = prepared;
     await this.update(ctx, doc.id, {
-      series: built.input.series,
-      number: built.input.number,
-      accessKey: built.document.accessKey,
+      series: prepared.series,
+      number: prepared.number,
+      accessKey,
       signedXml,
+      contingency: prepared.contingency,
       pendingItems: [],
       attempts: doc.attempts + 1,
     });
@@ -263,7 +338,7 @@ export class NfceEmissionService implements OnModuleInit {
     try {
       // 2. Já houve tentativa: a nota pode ter sido autorizada sem a resposta ter chegado.
       if (doc.attempts > 0) {
-        const consult = await this.sefaz.consult(ctx, doc.companyId, built.document.accessKey);
+        const consult = await this.sefaz.consult(ctx, doc.companyId, accessKey);
         if (consult.protocol && consult.outcome === 'authorized') {
           await this.finish(ctx, doc.id, signedXml, consult.protocol);
           return;
@@ -293,7 +368,7 @@ export class NfceEmissionService implements OnModuleInit {
     } catch (error) {
       // Falha temporária (rede, SEFAZ fora): fica marcada e a fila tenta de novo.
       await this.update(ctx, doc.id, { status: 'error', lastError: (error as Error).message });
-      this.logger.warn(`NFC-e ${built.document.accessKey}: ${(error as Error).message}`);
+      this.logger.warn(`NFC-e ${accessKey}: ${(error as Error).message}`);
       throw error;
     }
   }

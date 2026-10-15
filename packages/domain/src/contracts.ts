@@ -1431,6 +1431,8 @@ export interface FiscalDocumentView {
   status: FiscalDocumentStatus;
   /** O que falta configurar para emitir (status not_configured). */
   pendingItems: string[];
+  /** Emitida em contingência off-line (F3-15). */
+  contingency: boolean;
   cStat: string | null;
   xMotivo: string | null;
   protocol: string | null;

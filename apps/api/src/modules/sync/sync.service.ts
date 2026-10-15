@@ -42,6 +42,7 @@ import {
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 import { LotsService } from '../stock/lots.service';
+import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import {
   cancelCreditReceivable,
@@ -308,7 +309,7 @@ export class SyncService {
           .from(stores)
           .where(eq(stores.id, terminal.storeId));
         const documentId = store
-          ? await this.emission.prepare(tx, ctx, p.saleId, store.companyId)
+          ? await this.emission.prepare(tx, ctx, p.saleId, store.companyId, p.nfce)
           : null;
         if (documentId) {
           afterCommit.push(() =>
@@ -886,18 +887,14 @@ export class SyncService {
     terminalId: string | null,
     known: string | undefined,
   ): Promise<{ fiscal?: FiscalSnapshot }> {
-    const [company] = terminalId
+    const [joined] = terminalId
       ? await tx
-          .select({
-            id: companies.id,
-            uf: companies.uf,
-            taxRegime: companies.taxRegime,
-            updatedAt: companies.updatedAt,
-          })
+          .select({ company: companies, nfceSeries: terminals.nfceSeries })
           .from(terminals)
           .innerJoin(companies, eq(companies.id, terminals.companyId))
           .where(eq(terminals.id, terminalId))
       : [];
+    const company = joined?.company;
     const [profiles] = await tx
       .select({
         last: sql<string>`coalesce(max(${fiscalProfiles.updatedAt})::text, '')`,
@@ -913,9 +910,16 @@ export class SyncService {
       .join(',');
     const version = createHash('sha256')
       .update(
-        [company?.uf ?? '', company?.taxRegime ?? '', profiles?.last, profiles?.n, rulesStamp].join(
-          '|',
-        ),
+        [
+          company?.uf ?? '',
+          company?.taxRegime ?? '',
+          // Dados do emitente e série do caixa (F3-15): mudar a empresa muda o retrato.
+          company?.updatedAt.toISOString() ?? '',
+          joined?.nfceSeries ?? '',
+          profiles?.last,
+          profiles?.n,
+          rulesStamp,
+        ].join('|'),
       )
       .digest('hex')
       .slice(0, 24);
@@ -939,9 +943,31 @@ export class SyncService {
             cstIcms: text(data.cstIcms),
             cstPisCofins: text(data.cstPisCofins),
             cClassTrib: text(data.cClassTrib),
+            ...(typeof data.origem === 'number' && { origem: data.origem }),
           };
         }),
         icmsRules: rules.map(toMotorRule),
+        ...(company &&
+          joined && {
+            issuer: {
+              cnpj: company.taxId,
+              legalName: company.legalName,
+              tradeName: company.tradeName,
+              ie: company.ie,
+              address: {
+                street: company.street,
+                number: company.streetNumber,
+                complement: company.complement,
+                district: company.district,
+                cityCode: company.cityCode,
+                cityName: company.cityCode ? (findMunicipio(company.cityCode)?.name ?? null) : null,
+                cep: company.cep,
+                phone: company.phone,
+              },
+              paymentCodes: company.nfcePaymentCodes,
+              nfceSeries: joined.nfceSeries,
+            },
+          }),
       },
     };
   }

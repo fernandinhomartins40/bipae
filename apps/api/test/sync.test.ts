@@ -592,6 +592,8 @@ describe('dados fiscais no caixa (F3-06.d2)', () => {
       cstIcms: '00',
       cstPisCofins: '01',
       cClassTrib: '000001',
+      // Origem da mercadoria (padrão 0), que vai no ICMS da NFC-e de contingência (F3-15).
+      origem: 0,
     });
 
     // Nada mudou: o retrato fiscal não vem de novo.

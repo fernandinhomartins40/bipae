@@ -91,6 +91,16 @@ export const saleCompletedEvent = z.object({
       .nullish(),
     discountAuthorizedBy: uuid.nullish(),
     quoteId: uuid.nullish(),
+    /**
+     * NFC-e emitida pelo caixa em contingência off-line (F3-15), já assinada com o certificado
+     * do aparelho. O servidor transmite este mesmo XML, sem mudar a chave.
+     */
+    nfce: z
+      .object({
+        accessKey: z.string().regex(/^[0-9A-Z]{44}$/),
+        xml: z.string().min(1).max(1_000_000),
+      })
+      .optional(),
     /** Promoções aplicadas (F5-02); o desconto de cada uma já está nos itens. */
     promotions: z
       .array(z.object({ promotionId: uuid, name: z.string().max(80), discountCents: cents }))
@@ -229,6 +239,28 @@ export interface SyncPullResult {
 export interface FiscalSnapshot {
   version: string;
   company: { uf: string | null; taxRegime: string | null };
+  /**
+   * Emitente da NFC-e e série do caixa (F3-15): o que o caixa sem internet precisa para montar
+   * a nota em contingência. Ausente quando o caixa ainda não está ligado a uma empresa.
+   */
+  issuer?: {
+    cnpj: string | null;
+    legalName: string;
+    tradeName: string | null;
+    ie: string | null;
+    address: {
+      street: string | null;
+      number: string | null;
+      complement: string | null;
+      district: string | null;
+      cityCode: string | null;
+      cityName: string | null;
+      cep: string | null;
+      phone: string | null;
+    };
+    paymentCodes: Record<string, string>;
+    nfceSeries: number;
+  };
   profiles: {
     id: string;
     cfopInterna: string;
@@ -237,6 +269,8 @@ export interface FiscalSnapshot {
     cstIcms: string | null;
     cstPisCofins: string | null;
     cClassTrib: string | null;
+    /** Origem da mercadoria (0 a 8), que vai no ICMS da nota. */
+    origem?: number;
   }[];
   /** Regras de ICMS próprias da empresa do caixa (F3-06.e), no formato do motor fiscal. */
   icmsRules?: {
