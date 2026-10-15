@@ -66,8 +66,13 @@ test('full register day: open, sell with weight, discount and split payment, can
   await page.getByRole('button', { name: 'Autorizar e aplicar' }).click();
   // 54,44 − 15% (8,17) = 46,27
   await expect(page.getByTestId('total')).toHaveText('R$ 46,27');
-  // Volta para 5%, dentro do limite, sem precisar do gerente.
-  await shortcut(page, 'F4');
+  // Volta para 5%, dentro do limite, sem precisar do gerente. Espera o diálogo anterior fechar;
+  // numa máquina lenta o F4 pode chegar antes de o foco voltar, então tenta de novo.
+  await expect(page.getByRole('dialog', { name: 'Desconto na venda' })).toHaveCount(0);
+  await expect(async () => {
+    await shortcut(page, 'F4');
+    await expect(page.getByLabel('Percentual')).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 15_000 });
   await page.getByLabel('Percentual').fill('5');
   await page.getByRole('button', { name: 'Aplicar desconto' }).click();
   await expect(page.getByTestId('total')).toHaveText('R$ 51,72');
