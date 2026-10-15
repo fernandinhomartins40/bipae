@@ -25,6 +25,7 @@ import {
   Truck,
   UserRound,
   Users,
+  Wallet,
 } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
 import { useConfereNotices } from '../confere-notices';
@@ -44,6 +45,7 @@ const NAV = [
     icon: ClipboardCheck,
     permission: 'catalog.read',
   },
+  { to: '/financeiro', label: 'Contas a pagar e receber', icon: Wallet, permission: 'finance.read' },
   { to: '/tabelas-de-preco', label: 'Tabelas de preço', icon: Tags, permission: 'catalog.read' },
   { to: '/perfis-fiscais', label: 'Perfis fiscais', icon: Landmark, permission: 'catalog.read' },
   { to: '/regras-icms', label: 'Regras de ICMS', icon: Percent, permission: 'catalog.read' },

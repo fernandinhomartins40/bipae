@@ -18,6 +18,8 @@ export const PERMISSIONS = {
   'admin.terminals': { label: 'Gerenciar caixas (terminais)', sensitive: true },
   'admin.stores': { label: 'Gerenciar empresas e lojas', sensitive: true },
   'audit.read': { label: 'Ver trilha de auditoria', sensitive: false },
+  'finance.read': { label: 'Ver contas a pagar e a receber', sensitive: false },
+  'finance.write': { label: 'Lançar e dar baixa em contas a pagar e a receber', sensitive: true },
 } as const satisfies Record<string, { label: string; sensitive: boolean }>;
 
 export type Permission = keyof typeof PERMISSIONS;
@@ -42,7 +44,7 @@ export const SYSTEM_ROLES: Record<SystemRoleKey, { name: string; permissions: Pe
   },
   accountant: {
     name: 'Contador',
-    permissions: ['catalog.read', 'parties.read', 'audit.read'],
+    permissions: ['catalog.read', 'parties.read', 'audit.read', 'finance.read'],
   },
 };
 

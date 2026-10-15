@@ -717,3 +717,32 @@ export const purchaseOrderItems = pgTable('purchase_order_items', {
   /** Quanto chegou na entrada (F4-02); nulo enquanto o pedido não foi recebido. */
   receivedMilli: bigint('received_milli', { mode: 'number' }),
 });
+
+/** Contas a pagar e a receber (F4-04): uma linha por parcela. */
+export const financialEntries = pgTable('financial_entries', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  kind: text('kind', { enum: ['payable', 'receivable'] }).notNull(),
+  status: text('status', { enum: ['open', 'paid', 'cancelled'] })
+    .notNull()
+    .default('open'),
+  description: text('description').notNull(),
+  category: text('category'),
+  supplierId: uuid('supplier_id'),
+  customerId: uuid('customer_id'),
+  document: text('document'),
+  amountCents: money('amount_cents').notNull(),
+  dueDate: date('due_date', { mode: 'string' }).notNull(),
+  groupId: uuid('group_id').notNull(),
+  installment: integer('installment').notNull().default(1),
+  installments: integer('installments').notNull().default(1),
+  paidAt: date('paid_at', { mode: 'string' }),
+  paidCents: money('paid_cents'),
+  paymentMethod: text('payment_method'),
+  cancelReason: text('cancel_reason'),
+  notes: text('notes'),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});

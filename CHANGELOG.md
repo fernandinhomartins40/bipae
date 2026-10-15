@@ -1,5 +1,15 @@
 # Changelog
 
+## [F4-04 Contas a pagar e a receber] — 14/10/2026
+
+### Adicionado
+- **Contas a pagar e receber** (menu próprio):
+  - lançar a conta com fornecedor ou cliente, categoria, documento e parcelas mensais;
+  - acompanhar o que está em aberto, o que vence em 7 dias e o que está vencido;
+  - dar baixa com data, valor efetivo (juros ou desconto) e forma;
+  - cancelar com motivo.
+- Permissões novas: "Ver contas a pagar e a receber" (dono, gerente e contador) e "Lançar e dar baixa" (dono e gerente, sensível). O operador de caixa não vê. Baixas, cancelamentos e mudança de valor ficam na auditoria.
+
 ## [F4-03 Formação de preço] — 14/10/2026
 
 ### Adicionado

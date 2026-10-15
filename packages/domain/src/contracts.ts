@@ -943,3 +943,61 @@ export interface ProductPricing {
   pending: string[];
   notes: string[];
 }
+
+// ---------- Contas a pagar e a receber (F4-04) ----------
+
+
+export const financialEntryInput = z
+  .object({
+    kind: z.enum(['payable', 'receivable']),
+    companyId: z.string().uuid().optional(),
+    description: z.string().trim().min(2, 'Descreva a conta').max(200),
+    category: z.string().trim().max(60).nullish(),
+    supplierId: z.string().uuid().nullish(),
+    customerId: z.string().uuid().nullish(),
+    document: z.string().trim().max(60).nullish(),
+    amountCents: z.number().int().positive('Informe o valor'),
+    dueDate: isoDay,
+    installments: z.number().int().min(1).max(60).default(1),
+    notes: z.string().trim().max(500).nullish(),
+  })
+  .refine((v) => !(v.supplierId && v.customerId), {
+    message: 'Escolha fornecedor ou cliente, não os dois',
+  });
+export type FinancialEntryInput = z.input<typeof financialEntryInput>;
+
+export const financialPaymentInput = z.object({
+  paidAt: isoDay,
+  paidCents: z.number().int().nonnegative('Valor pago inválido'),
+  paymentMethod: z.string().trim().max(40).nullish(),
+});
+
+export type FinancialEntryStatus = 'open' | 'paid' | 'cancelled';
+
+export interface FinancialEntryView {
+  id: string;
+  kind: 'payable' | 'receivable';
+  status: FinancialEntryStatus;
+  /** Em aberto e vencida (antes de hoje, no fuso de Brasília). */
+  overdue: boolean;
+  description: string;
+  category: string | null;
+  partyName: string | null;
+  supplierId: string | null;
+  customerId: string | null;
+  document: string | null;
+  amountCents: number;
+  dueDate: string;
+  installment: number;
+  installments: number;
+  groupId: string;
+  paidAt: string | null;
+  paidCents: number | null;
+  paymentMethod: string | null;
+  cancelReason: string | null;
+}
+
+export interface FinancialSummary {
+  payable: { openCents: number; overdueCents: number; dueNext7Cents: number };
+  receivable: { openCents: number; overdueCents: number; dueNext7Cents: number };
+}
