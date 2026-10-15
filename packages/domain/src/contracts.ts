@@ -946,7 +946,6 @@ export interface ProductPricing {
 
 // ---------- Contas a pagar e a receber (F4-04) ----------
 
-
 export const financialEntryInput = z
   .object({
     kind: z.enum(['payable', 'receivable']),
@@ -1000,4 +999,18 @@ export interface FinancialEntryView {
 export interface FinancialSummary {
   payable: { openCents: number; overdueCents: number; dueNext7Cents: number };
   receivable: { openCents: number; overdueCents: number; dueNext7Cents: number };
+}
+
+/** Uma linha do fluxo de caixa (F4-05): dia (AAAA-MM-DD) ou mês (AAAA-MM). */
+export interface CashFlowRow {
+  period: string;
+  /** Vendas recebidas (sem crediário), menos devoluções pagas. */
+  salesCents: number;
+  receivedCents: number;
+  paidCents: number;
+  netCents: number;
+  projectedInCents: number;
+  projectedOutCents: number;
+  /** Saldo acumulado do realizado desde o início do período. */
+  balanceCents: number;
 }

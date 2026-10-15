@@ -15,6 +15,7 @@ import {
   financialPaymentInput,
   purchaseOrderCancelInput,
   uuidv7,
+  type CashFlowRow,
   type FinancialEntryView,
   type FinancialSummary,
 } from '@bipae/domain';
@@ -24,7 +25,14 @@ import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
-import { companies, customers, financialEntries, suppliers } from '../../db/schema';
+import {
+  companies,
+  customers,
+  financialEntries,
+  salePayments,
+  sales,
+  suppliers,
+} from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 
 type EntryInput = z.output<typeof financialEntryInput>;
@@ -122,6 +130,121 @@ export class FinanceService {
         ),
       ),
     );
+  }
+
+  /**
+   * Fluxo de caixa (F4-05) entre duas datas, por dia ou por mês, no fuso de Brasília.
+   * Realizado: o que as vendas receberam (menos crediário, que ainda não é dinheiro, e menos as
+   * devoluções pagas), mais as contas recebidas, menos as contas pagas. Previsto: contas em
+   * aberto pelo vencimento. O saldo acumula só o realizado.
+   */
+  async cashFlow(
+    ctx: RequestContext,
+    from: string,
+    to: string,
+    group: 'day' | 'month',
+  ): Promise<CashFlowRow[]> {
+    const key = (iso: string) => (group === 'month' ? iso.slice(0, 7) : iso);
+    const localDay = (column: unknown) =>
+      sql<string>`to_char(${column} at time zone 'America/Sao_Paulo', 'YYYY-MM-DD')`;
+    return withTenant(this.db, ctx, async (tx) => {
+      const day = localDay(sales.occurredAt);
+      const inRange = and(sql`${day} >= ${from}`, sql`${day} <= ${to}`);
+      const salesIn = await tx
+        .select({ day, cents: sql<string>`sum(${salePayments.amountCents})::text` })
+        .from(salePayments)
+        .innerJoin(sales, eq(sales.id, salePayments.saleId))
+        .where(
+          and(
+            inRange,
+            eq(sales.kind, 'sale'),
+            eq(sales.status, 'completed'),
+            sql`${salePayments.method} <> 'store_credit'`,
+          ),
+        )
+        .groupBy(day);
+      const refunds = await tx
+        .select({ day, cents: sql<string>`sum(${sales.totalCents})::text` })
+        .from(sales)
+        .where(
+          and(
+            inRange,
+            eq(sales.kind, 'return'),
+            eq(sales.status, 'completed'),
+            sql`coalesce(${sales.data} ->> 'refundMethod', '') <> 'store_credit'`,
+          ),
+        )
+        .groupBy(day);
+      const settled = await tx
+        .select({
+          day: financialEntries.paidAt,
+          kind: financialEntries.kind,
+          cents: sql<string>`sum(${financialEntries.paidCents})::text`,
+        })
+        .from(financialEntries)
+        .where(
+          and(
+            eq(financialEntries.status, 'paid'),
+            gte(financialEntries.paidAt, from),
+            lte(financialEntries.paidAt, to),
+          ),
+        )
+        .groupBy(financialEntries.paidAt, financialEntries.kind);
+      const projected = await tx
+        .select({
+          day: financialEntries.dueDate,
+          kind: financialEntries.kind,
+          cents: sql<string>`sum(${financialEntries.amountCents})::text`,
+        })
+        .from(financialEntries)
+        .where(
+          and(
+            eq(financialEntries.status, 'open'),
+            gte(financialEntries.dueDate, from),
+            lte(financialEntries.dueDate, to),
+          ),
+        )
+        .groupBy(financialEntries.dueDate, financialEntries.kind);
+
+      const rows = new Map<string, CashFlowRow>();
+      const row = (iso: string) => {
+        const period = key(iso);
+        let r = rows.get(period);
+        if (!r) {
+          r = {
+            period,
+            salesCents: 0,
+            receivedCents: 0,
+            paidCents: 0,
+            netCents: 0,
+            projectedInCents: 0,
+            projectedOutCents: 0,
+            balanceCents: 0,
+          };
+          rows.set(period, r);
+        }
+        return r;
+      };
+      for (const s of salesIn) row(s.day).salesCents += Number(s.cents);
+      for (const s of refunds) row(s.day).salesCents -= Number(s.cents);
+      for (const s of settled) {
+        if (!s.day) continue;
+        if (s.kind === 'receivable') row(s.day).receivedCents += Number(s.cents);
+        else row(s.day).paidCents += Number(s.cents);
+      }
+      for (const p of projected) {
+        if (p.kind === 'receivable') row(p.day).projectedInCents += Number(p.cents);
+        else row(p.day).projectedOutCents += Number(p.cents);
+      }
+      let balance = 0;
+      return [...rows.values()]
+        .sort((a, b) => a.period.localeCompare(b.period))
+        .map((r) => {
+          r.netCents = r.salesCents + r.receivedCents - r.paidCents;
+          balance += r.netCents;
+          return { ...r, balanceCents: balance };
+        });
+    });
   }
 
   async summary(ctx: RequestContext): Promise<FinancialSummary> {
@@ -314,6 +437,22 @@ export class FinanceController {
     @Query('overdue') overdue?: string,
   ) {
     return this.finance.list(ctx, { kind, status, from, to, overdue: overdue === 'true' });
+  }
+
+  /** Fluxo de caixa (F4-05): ?from=AAAA-MM-DD&to=AAAA-MM-DD&group=day|month */
+  @Get('cash-flow')
+  @RequirePermission('finance.read')
+  cashFlow(
+    @Ctx() ctx: RequestContext,
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+    @Query('group') group?: string,
+  ) {
+    const iso = /^\d{4}-\d{2}-\d{2}$/;
+    if (!from || !to || !iso.test(from) || !iso.test(to) || from > to) {
+      throw new AppError(422, 'invalid_period', 'Informe o período (de e até) em datas válidas.');
+    }
+    return this.finance.cashFlow(ctx, from, to, group === 'month' ? 'month' : 'day');
   }
 
   @Get('summary')

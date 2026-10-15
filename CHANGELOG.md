@@ -1,5 +1,14 @@
 # Changelog
 
+## [F4-05 Fluxo de caixa] — 14/10/2026
+
+### Adicionado
+- **Fluxo de caixa** (menu próprio), por dia ou por mês:
+  - vendas recebidas, com o crediário de fora até o cliente pagar e menos as devoluções pagas;
+  - contas recebidas e pagas;
+  - resultado e saldo acumulado;
+  - o previsto das contas em aberto pelo vencimento.
+
 ## [F4-04 Contas a pagar e a receber] — 14/10/2026
 
 ### Adicionado
