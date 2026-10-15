@@ -7,6 +7,7 @@ import {
   ArrowLeftRight,
   BarChart3,
   Building2,
+  CalendarClock,
   ClipboardCheck,
   ClipboardList,
   CreditCard,
@@ -54,6 +55,7 @@ const NAV = [
   },
   { to: '/compras', label: 'Compras', icon: PackagePlus, permission: 'catalog.read' },
   { to: '/inventario', label: 'Inventário', icon: ListChecks, permission: 'catalog.read' },
+  { to: '/lotes', label: 'Lote e validade', icon: CalendarClock, permission: 'catalog.read' },
   { to: '/etiquetas', label: 'Etiquetas', icon: Tag, permission: 'catalog.read' },
   { to: '/promocoes', label: 'Promoções', icon: BadgePercent, permission: 'catalog.read' },
   {

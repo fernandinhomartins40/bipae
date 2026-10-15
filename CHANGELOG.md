@@ -1,5 +1,17 @@
 # Changelog
 
+## [F5-04 Lote e validade] — 15/10/2026
+
+### Adicionado
+- **Tela "Lote e validade"** (menu próprio):
+  - **vencendo e vencidos**, em até 7, 15, 30, 60 ou 90 dias, com os dias que faltam ou que já passaram;
+  - **lotes de cada produto**, com loja, validade e saldo;
+  - **informar lote**: mercadoria nova ou só identificação do estoque que já existe;
+  - **descarte** com motivo (o vencido já vem com "Vencido");
+  - **recall**: "Quem levou este lote", com o número da venda, a data e o CPF/CNPJ quando houver.
+- **Cadastro do produto:** nova opção "Controla lote e validade".
+- Com as etapas anteriores (F5-04.a e F5-04.b), a venda sai sempre do lote que vence primeiro e a compra pelo XML já traz os lotes do fornecedor.
+
 ## [F5-04.b Lotes na compra pelo XML] — 15/10/2026
 
 ### Adicionado

@@ -187,6 +187,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
     fiscalProfileId: product?.fiscalProfileId ?? '',
     cest: product?.cest ?? '',
     isWeighable: product?.isWeighable ?? false,
+    tracksLot: product?.tracksLot ?? false,
     active: product?.active ?? true,
   });
 
@@ -397,6 +398,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
             if (v && form.values.unit === 'UN') form.set('unit', 'KG');
             if (!v && form.values.unit === 'KG') form.set('unit', 'UN');
           }}
+        />
+        <Checkbox
+          label="Controla lote e validade"
+          hint="A venda sai do lote que vence primeiro, e a tela Lote e validade avisa o que está vencendo."
+          checked={form.values.tracksLot}
+          onChange={(v) => form.set('tracksLot', v)}
         />
         <KitEditor productId={product?.id ?? null} value={components} onChange={setComponents} />
         <Checkbox
