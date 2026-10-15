@@ -11,7 +11,13 @@ import {
   type SyncPullResult,
   type TerminalEvent,
 } from '@bipae/domain';
-import { saleTaxSummaries } from '@bipae/fiscal';
+import {
+  brasiliaDateTime,
+  buildSaleNfceContingency,
+  saleTaxSummaries,
+  signNfe,
+  type NfeSigner,
+} from '@bipae/fiscal';
 import type { Promotion } from '@bipae/promotions';
 import { getMeta, searchKey, setMeta, type LocalStorage, type Tx } from '@bipae/local-db';
 import { discountNeedsAuthorization, totals, type Cart, type CatalogItem } from './cart';
@@ -41,6 +47,9 @@ const WIPE_TABLES = [
   'fiscal_profiles',
   'meta',
 ] as const;
+
+/** Justificativa da contingência off-line da NFC-e emitida pelo caixa (xJust, F3-15). */
+const OFFLINE_REASON = 'Caixa sem conexão com a internet no momento da venda';
 
 /** User-facing error from register operations (pt-BR). */
 export class PdvError extends Error {}
@@ -82,6 +91,8 @@ export interface StoredSale {
   originalSaleId?: string;
   refundMethod?: PaymentMethod;
   returnedItems?: { line: number; productId: string; quantityMilli: number; refundCents: number }[];
+  /** NFC-e emitida pelo caixa em contingência off-line (F3-15), já assinada. */
+  nfce?: { accessKey: string; xml: string };
 }
 
 export interface CatalogProduct extends CatalogItem {
@@ -95,6 +106,11 @@ export interface CompleteSaleOptions {
   discountLimitPercent: number;
   /** Set when someone with pos.discount.above_limit approved (or the operator has it). */
   discountAuthorizedBy?: string | null;
+  /**
+   * Caixa sem internet com o certificado A1 no aparelho (F3-15): a NFC-e sai em contingência
+   * off-line, assinada aqui. Sem isso, o servidor emite quando a venda chegar.
+   */
+  contingencySigner?: NfeSigner;
 }
 
 type Row = Record<string, unknown>;
@@ -261,6 +277,8 @@ export class PdvService {
       await setMeta(tx, 'company_uf', fiscal.company.uf ?? '');
       await setMeta(tx, 'company_tax_regime', fiscal.company.taxRegime ?? '');
       await setMeta(tx, 'company_icms_rules', JSON.stringify(fiscal.icmsRules ?? []));
+      // Emitente e série do caixa, para a NFC-e em contingência (F3-15).
+      await setMeta(tx, 'fiscal_issuer', fiscal.issuer ? JSON.stringify(fiscal.issuer) : '');
     });
   }
 
@@ -269,6 +287,7 @@ export class PdvService {
     company: FiscalSnapshot['company'];
     profiles: Map<string, Omit<FiscalSnapshot['profiles'][number], 'id'>>;
     icmsRules: NonNullable<FiscalSnapshot['icmsRules']>;
+    issuer: FiscalSnapshot['issuer'] | null;
   }> {
     const rows = await this.storage.query<{ id: string; data: string }>(
       'SELECT id, data FROM fiscal_profiles',
@@ -280,6 +299,7 @@ export class PdvService {
       },
       profiles: new Map(rows.map((row) => [row.id, JSON.parse(row.data)])),
       icmsRules: JSON.parse((await getMeta(this.storage, 'company_icms_rules')) || '[]'),
+      issuer: JSON.parse((await getMeta(this.storage, 'fiscal_issuer')) || 'null'),
     };
   }
 
@@ -598,8 +618,16 @@ export class PdvService {
       payments: summary.payments,
       customerTaxId: cart.customerTaxId,
     };
+    // NFC-e em contingência (F3-15): montada e assinada antes de gravar, com o próximo número.
+    // Se o número reservado não for o mesmo, a nota fica para o servidor. Nunca impede a venda.
+    const expectedSeq = Number((await getMeta(this.storage, 'sale_seq')) ?? '0') + 1;
+    let nfce = options.contingencySigner
+      ? await this.contingencyNfce({ ...sale, terminalSeq: expectedSeq }, options.contingencySigner)
+      : null;
     await this.storage.transaction(async (tx) => {
       sale.terminalSeq = await this.nextCounter(tx, 'sale_seq');
+      if (nfce && sale.terminalSeq !== expectedSeq) nfce = null;
+      if (nfce) sale.nfce = nfce;
       await this.insertSale(tx, sale);
       if (cart.quoteId) {
         await tx.execute("UPDATE quotes SET status = 'converted' WHERE id = ?", [cart.quoteId]);
@@ -616,10 +644,90 @@ export class PdvService {
         customerTaxId: sale.customerTaxId,
         discountAuthorizedBy: t.discountCents > 0 ? (options.discountAuthorizedBy ?? null) : null,
         ...(cart.appliedPromotions?.length && { promotions: cart.appliedPromotions }),
+        ...(nfce && { nfce }),
         quoteId: cart.quoteId,
       });
     });
     return sale;
+  }
+
+  /**
+   * A NFC-e da venda em contingência off-line, montada e assinada no caixa com os dados do
+   * retrato fiscal (F3-15). Null quando falta algo: aí o servidor emite quando a venda chegar.
+   */
+  private async contingencyNfce(
+    sale: StoredSale,
+    signer: NfeSigner,
+  ): Promise<{ accessKey: string; xml: string } | null> {
+    try {
+      const { company, profiles, icmsRules, issuer } = await this.fiscalContext();
+      if (!issuer) return null;
+      const ids = [...new Set(sale.items.map((item) => item.productId))];
+      const place = ids.map(() => '?').join(', ');
+      const rows = await this.storage.query<{
+        id: string;
+        sku: string | null;
+        ncm: string | null;
+        cest: string | null;
+        fiscal_profile_id: string | null;
+      }>(`SELECT id, sku, ncm, cest, fiscal_profile_id FROM products WHERE id IN (${place})`, ids);
+      const codes = await this.storage.query<{ code: string; product_id: string }>(
+        `SELECT code, product_id FROM barcodes WHERE product_id IN (${place})`,
+        ids,
+      );
+      const result = await buildSaleNfceContingency(
+        {
+          saleId: sale.id,
+          company: {
+            cnpj: issuer.cnpj,
+            legalName: issuer.legalName,
+            tradeName: issuer.tradeName,
+            ie: issuer.ie,
+            uf: company.uf,
+            regime: company.taxRegime,
+            address: issuer.address,
+          },
+          series: issuer.nfceSeries,
+          terminalSeq: sale.terminalSeq,
+          occurredAt: sale.createdAt,
+          items: sale.items.map((item) => {
+            const row = rows.find((r) => r.id === item.productId);
+            return {
+              code: row?.sku ?? item.productId.slice(0, 60),
+              barcodes: codes.filter((b) => b.product_id === item.productId).map((b) => b.code),
+              description: item.name,
+              ncm: row?.ncm ?? null,
+              cest: row?.cest ?? null,
+              unit: item.unit,
+              quantityMilli: item.quantityMilli,
+              unitPriceCents: item.unitPriceCents,
+              grossCents: item.grossCents,
+              discountCents: item.discountCents,
+              profile: profiles.get(row?.fiscal_profile_id ?? '') ?? null,
+            };
+          }),
+          payments: sale.payments.map((p) => ({
+            method: p.method,
+            amountCents: p.amountCents,
+            changeCents: p.changeCents,
+            authorizationCode: p.authorizationCode ?? null,
+          })),
+          customerTaxId: sale.customerTaxId,
+          rules: icmsRules,
+          paymentCodes: issuer.paymentCodes,
+          appVersion: 'Bipaê caixa',
+        },
+        { enteredAt: brasiliaDateTime(sale.createdAt), reason: OFFLINE_REASON },
+        signer,
+      );
+      if (!result.ok) return null;
+      return {
+        accessKey: result.document.accessKey,
+        xml: await signNfe(result.document.xml, signer),
+      };
+    } catch {
+      return null;
+    }
   }
 
   /**

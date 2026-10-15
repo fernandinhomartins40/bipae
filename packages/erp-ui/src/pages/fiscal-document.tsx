@@ -89,6 +89,12 @@ export function FiscalDocumentSection({ saleId }: { saleId: string }) {
             <Badge tone={STATUS[d.status].tone}>{STATUS[d.status].label}</Badge>
             <span className="ml-2 text-muted">Ambiente de homologação (sem valor fiscal)</span>
           </p>
+          {d.contingency && (
+            <p className="font-semibold">
+              Emitida em contingência off-line (venda feita sem internet). A transmissão à SEFAZ tem
+              prazo de 24 horas.
+            </p>
+          )}
           {d.number !== null && (
             <p>
               NFC-e nº {d.number}, série {d.series}

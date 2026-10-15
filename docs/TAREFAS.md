@@ -129,12 +129,12 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [x] F3-14.b · API: fila de emissão no servidor (assina com o A1, envia, consulta pela chave antes de reenviar, guarda o nfeProc), documento fiscal por venda e nova tentativa; sem certificado, "falta configurar" — depende: F3-14.a
   - [x] F3-14.c · Caixa e retaguarda: situação da nota, DANFE da NFC-e na impressão e na reimpressão, XML para baixar e reenvio — depende: F3-14.b
   - Imprimir com `buildDanfeNfce`: térmica por ESC/POS, navegador por `receiptToHtml` (job `html`). Nomes das formas de pagamento vindos da tabela tPag.
-- [~] F3-15 · Contingência offline da NFC-e (emite sem rede e transmite no prazo) — depende: F3-14
+- [x] F3-15 · Contingência offline da NFC-e (emite sem rede e transmite no prazo) — depende: F3-14
   - Regras (pesquisadas em 15/10/2026, D-013): Manual de Especificações da Contingência Off-line v2.0, Anexo IV do MOC 7.0, Manual do DANFE NFC-e e QR Code v6.0 (QR versão 3 com assinatura RSA-SHA1 dos parâmetros) e NT 2026.002 v1.11 (emissão normal em até 5 minutos; contingência transmitida em até 24 horas).
   - [x] F3-15.a · Motor: NFC-e em contingência (tpEmis 9, dhCont, xJust, chave com tpEmis 9) e QR Code versão 3 de contingência assinado; validada no schema
   - [x] F3-15.b1 · Servidor: dados do emitente no retrato fiscal do caixa; aceita a NFC-e de contingência assinada pelo caixa e transmite o mesmo XML; venda que chega depois dos 5 minutos é emitida em contingência (tpEmis 9) — depende: F3-15.a
-  - [~] F3-15.b2 · Caixa: sem internet e com o A1 no aparelho, monta e assina a NFC-e em contingência, imprime o DANFE "EMITIDA EM CONTINGÊNCIA" com a via do estabelecimento e manda o XML no evento — depende: F3-15.b1
-  - [ ] F3-15.c · E2E com a rede desligada: emite em contingência e transmite ao reconectar
+  - [x] F3-15.b2 · Caixa: sem internet e com o A1 no aparelho, monta e assina a NFC-e em contingência, imprime o DANFE "EMITIDA EM CONTINGÊNCIA" com a via do estabelecimento e manda o XML no evento — depende: F3-15.b1
+  - [x] F3-15.c · E2E com a rede desligada: emite em contingência e transmite ao reconectar
   - Pronto quando: um E2E com rede desligada emite em contingência e transmite ao reconectar.
   - Antes de começar: ler a NT 2026.002 v1.10a (contingência com DANFE Simplificado Tipo 2) e resolver a dúvida D-013.
 - [ ] F3-16 · SVC para NF-e — depende: F3-11, F3-08

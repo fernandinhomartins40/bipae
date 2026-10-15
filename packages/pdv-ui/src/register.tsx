@@ -341,6 +341,10 @@ export function Register({
           new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000)),
         ])
       : null;
+    // Nota de contingência ainda não transmitida: sai o DANFE de contingência guardado no caixa.
+    if (!fiscal?.xml && sale.nfce) {
+      return printDanfe(sale.nfce.xml, false).catch(fail);
+    }
     if (!fiscal?.xml) {
       if (fiscal)
         setMessage({
@@ -389,10 +393,45 @@ export function Register({
     }
   };
 
+  /**
+   * Sem internet e com o certificado no aparelho (F3-15), o caixa assina a NFC-e em contingência.
+   * Com internet, quem emite é o servidor; sem certificado, a nota sai quando a venda subir.
+   */
+  const contingencySigner = async () => {
+    const offline = !navigator.onLine || Boolean(syncStatus?.lastError);
+    const cert = platform.certificate;
+    if (!offline || !cert) return undefined;
+    const [info, certificate] = await Promise.all([
+      cert.info().catch(() => null),
+      cert.certificate().catch(() => null),
+    ]);
+    if (!info || !certificate) return undefined;
+    return { certificate, sign: (data: Uint8Array) => cert.sign(data, 'RSA-SHA1') };
+  };
+
+  /** DANFE da NFC-e a partir do XML; em contingência, com a via do estabelecimento. */
+  const printDanfe = async (xml: string, establishmentCopy: boolean) => {
+    if (!platform.printer) throw new Error('Nenhuma impressora disponível neste aparelho.');
+    const capabilities = await platform.capabilities();
+    const columns = 48;
+    const data = danfeNfceFromXml(xml);
+    const copies = [buildDanfeNfce(data, { columns })];
+    if (establishmentCopy) copies.push(buildDanfeNfce(data, { columns, establishmentCopy: true }));
+    for (const blocks of copies) {
+      if (capabilities.printer.available && capabilities.printer.via === 'browser') {
+        await platform.printer.print({ kind: 'html', data: receiptToHtml(blocks, columns) });
+      } else {
+        await platform.printer.print({ kind: 'escpos', data: encodeReceipt(blocks) });
+      }
+    }
+  };
+
   const pay = async (tenders: Parameters<typeof pdv.completeSale>[1]) => {
+    const signer = await contingencySigner();
     const sale = await pdv.completeSale(cart, tenders, {
       discountLimitPercent: DISCOUNT_LIMIT_PERCENT,
       discountAuthorizedBy,
+      ...(signer && { contingencySigner: signer }),
     });
     playBeep(beep);
     setLastSale(sale);
@@ -403,8 +442,16 @@ export function Register({
     const change = sale.payments.reduce((a, p) => a + p.changeCents, 0);
     setMessage({
       tone: 'success',
-      text: `Bipaê! Venda nº ${sale.terminalSeq} concluída.${change > 0 ? ` Troco: ${brl(change)}.` : ''}`,
+      text: `Bipaê! Venda nº ${sale.terminalSeq} concluída.${change > 0 ? ` Troco: ${brl(change)}.` : ''}${
+        sale.nfce
+          ? ' NFC-e emitida em contingência: será transmitida quando a internet voltar (prazo de 24 horas).'
+          : ''
+      }`,
     });
+    // Contingência: o DANFE é obrigatório, com a via do estabelecimento (Manual de Contingência).
+    if (sale.nfce && caps?.printer.available) {
+      void printDanfe(sale.nfce.xml, true).catch(fail);
+    }
     if (
       platform.cashDrawer &&
       caps?.cashDrawer.available &&

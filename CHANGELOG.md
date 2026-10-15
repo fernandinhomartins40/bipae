@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-15 Contingência off-line da NFC-e] — 15/10/2026
+
+### Adicionado
+- **O caixa sem internet emite a NFC-e em contingência off-line** quando há certificado A1 instalado no aparelho:
+  - monta a nota com os dados do emitente que recebeu na última sincronização;
+  - assina com o certificado do aparelho;
+  - imprime o DANFE "EMITIDA EM CONTINGÊNCIA" e a via do estabelecimento, como manda o manual oficial.
+- **A nota vai junto com a venda.** Quando a internet volta, o servidor transmite à SEFAZ exatamente o XML que o caixa assinou, sem mudar a chave.
+- **Na reimpressão, enquanto a nota não sobe**, sai o DANFE de contingência guardado no caixa.
+- **A retaguarda mostra "Emitida em contingência off-line"**, com o prazo de 24 horas.
+- **A venda nunca trava por causa da nota.** Sem certificado no aparelho, ou se algo falhar, a venda segue e o servidor emite em contingência quando ela chegar.
+- **Teste de ponta a ponta com a rede desligada:** vende sem internet, emite em contingência e a nota aparece na retaguarda ao reconectar.
+
 ## [F3-15.b1 Contingência da NFC-e no servidor] — 15/10/2026
 
 ### Adicionado
