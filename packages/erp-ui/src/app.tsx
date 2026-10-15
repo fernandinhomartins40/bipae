@@ -28,6 +28,7 @@ import { SettlementsPage } from './pages/settlements';
 import { InventoryPage } from './pages/inventory';
 import { TransfersPage } from './pages/transfers';
 import { IbsCbsPage } from './pages/ibs-cbs';
+import { LabelsPage } from './pages/labels';
 import { CashFlowPage } from './pages/cash-flow';
 import { DelinquencyPage } from './pages/delinquency';
 import { DrePage } from './pages/dre';
@@ -160,6 +161,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="produtos" element={<ProductsPage />} />
               <Route path="compras" element={<PurchasesPage />} />
               <Route path="inventario" element={<InventoryPage />} />
+              <Route path="etiquetas" element={<LabelsPage />} />
               <Route path="transferencias" element={<TransfersPage />} />
               <Route path="pedidos-de-compra" element={<PurchaseOrdersPage />} />
               <Route path="financeiro" element={<FinancePage />} />

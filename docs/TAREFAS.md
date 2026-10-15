@@ -231,7 +231,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 
 ## Fase 5 — Verticais
 
-- [ ] F5-01 · Etiquetas de gôndola e de balança
+- [x] F5-01 · Etiquetas de gôndola e de balança
 - [ ] F5-02 · Promoções avançadas (`packages/promotions`: leve X pague Y, faixa de quantidade, combo)
 - [ ] F5-03 · Atacarejo (preço por quantidade) — depende: F5-02
 - [ ] F5-04 · Lote e validade com FEFO (farmácia, pet, mercado)

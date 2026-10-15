@@ -7,4 +7,5 @@ export * from './payments';
 export * from './cash';
 export * from './receipt';
 export * from './scan';
+export * from './labels';
 export { receiptToText, type ReceiptBlock } from './escpos';

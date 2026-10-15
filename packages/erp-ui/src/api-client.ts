@@ -161,6 +161,11 @@ export class ApiClient {
     return this.request<Blob>('GET', path, undefined, true, 'blob');
   }
 
+  /** Arquivo gerado a partir de um pedido (ex.: o PDF das etiquetas). */
+  downloadPost(path: string, body: unknown) {
+    return this.request<Blob>('POST', path, body, true, 'blob');
+  }
+
   private async storeSession(result: AuthResult) {
     this.accessToken = result.accessToken;
     await this.options.preferences.set(this.refreshKey, result.refreshToken);

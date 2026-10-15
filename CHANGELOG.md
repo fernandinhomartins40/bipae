@@ -1,5 +1,13 @@
 # Changelog
 
+## [F5-01 Etiquetas de gôndola e de balança] — 15/10/2026
+
+### Adicionado
+- **Etiquetas** (menu próprio), em PDF para imprimir em folha A4 adesiva (3 × 8):
+  - **gôndola:** nome, preço (o da tabela de preço da loja, quando ela tem uma) e código de barras EAN-13 ou EAN-8;
+  - **balança:** para produtos vendidos por peso, com peso, preço do quilo, total e o código "2…" com o total, que o caixa já lê como etiqueta de balança.
+- As barras seguem a especificação pública da GS1, e um teste confere que o caixa lê de volta o que a etiqueta imprime.
+
 ## [F4-13 Apuração de IBS e CBS] — 15/10/2026
 
 ### Adicionado

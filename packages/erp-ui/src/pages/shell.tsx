@@ -26,6 +26,7 @@ import {
   ScanBarcode,
   Settings,
   Sparkles,
+  Tag,
   Tags,
   ShieldCheck,
   Truck,
@@ -52,6 +53,7 @@ const NAV = [
   },
   { to: '/compras', label: 'Compras', icon: PackagePlus, permission: 'catalog.read' },
   { to: '/inventario', label: 'Inventário', icon: ListChecks, permission: 'catalog.read' },
+  { to: '/etiquetas', label: 'Etiquetas', icon: Tag, permission: 'catalog.read' },
   {
     to: '/transferencias',
     label: 'Transferências',

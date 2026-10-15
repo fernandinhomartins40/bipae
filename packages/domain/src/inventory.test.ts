@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inventoryCountInput, stockTransferInput } from './contracts';
+import { inventoryCountInput, labelsInput, stockTransferInput } from './contracts';
 
 describe('contagem de inventário (F4-11)', () => {
   it('aceita o código bipado ou o produto escolhido', () => {
@@ -58,5 +58,20 @@ describe('transferência entre lojas (F4-12)', () => {
       ],
     });
     expect(repetido.error?.issues[0]?.message).toBe('O mesmo produto aparece duas vezes');
+  });
+});
+
+describe('etiquetas (F5-01)', () => {
+  const p = '0190a0e4-0000-7000-8000-000000000003';
+
+  it('gôndola não pede peso; balança exige o peso de cada etiqueta', () => {
+    expect(labelsInput.safeParse({ kind: 'shelf', items: [{ productId: p }] }).data?.items).toEqual(
+      [{ productId: p, copies: 1 }],
+    );
+    const semPeso = labelsInput.safeParse({ kind: 'scale', items: [{ productId: p }] });
+    expect(semPeso.error?.issues[0]?.message).toBe('Informe o peso de cada etiqueta de balança');
+    expect(
+      labelsInput.safeParse({ kind: 'scale', items: [{ productId: p, grams: 350 }] }).success,
+    ).toBe(true);
   });
 });

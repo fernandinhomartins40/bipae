@@ -1,5 +1,6 @@
 export * from './cart';
 export * from './scan';
+export * from './labels';
 export * from './payments';
 export * from './cash';
 export * from './escpos';

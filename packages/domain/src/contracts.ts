@@ -1274,3 +1274,26 @@ export interface IbsCbsSettlementView {
   /** O que ficou de fora da conta e precisa de atenção. */
   pending: { saleItemsWithoutTax: number; purchaseItemsWithoutIbsCbs: number };
 }
+
+// ---------- Etiquetas de gôndola e de balança (F5-01) ----------
+
+export const labelsInput = z
+  .object({
+    kind: z.enum(['shelf', 'scale']),
+    /** Loja: o preço sai da tabela de preço da loja, quando ela tem uma. */
+    storeId: z.string().uuid().optional(),
+    items: z
+      .array(
+        z.object({
+          productId: z.string().uuid(),
+          copies: z.number().int().min(1).max(100).default(1),
+          /** Etiqueta de balança: o peso da embalagem, em gramas. */
+          grams: z.number().int().min(1, 'Peso inválido').max(99_999, 'Peso inválido').optional(),
+        }),
+      )
+      .min(1, 'Escolha pelo menos um produto')
+      .max(300),
+  })
+  .refine((v) => v.kind !== 'scale' || v.items.every((i) => i.grams), {
+    message: 'Informe o peso de cada etiqueta de balança',
+  });
