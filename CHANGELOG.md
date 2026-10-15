@@ -1,5 +1,15 @@
 # Changelog
 
+## [F4-11 Inventário pelo celular] — 15/10/2026
+
+### Adicionado
+- **Inventário** (menu próprio, feito para a tela do celular):
+  - uma contagem aberta por loja;
+  - cada bipe soma ao que já foi contado, ou a pessoa digita o total da prateleira (inclusive zero);
+  - aceita código de barras ou código interno;
+  - mostra, produto a produto, o saldo do sistema e a diferença.
+- **Fechar o inventário** ajusta o estoque dos produtos contados para o que foi contado. O que não foi contado não muda, e o fechamento fica na trilha de auditoria.
+
 ## [F4-10 Relatórios de vendas] — 15/10/2026
 
 ### Adicionado

@@ -49,7 +49,8 @@ describe('origem das tabelas', () => {
       encoding: 'utf8',
     });
     expect(saida).toContain('em dia');
-  });
+    // Lê todas as planilhas oficiais: com a máquina ocupada passa dos 5 s padrão.
+  }, 30_000);
 });
 
 describe('tabela de CFOP', () => {

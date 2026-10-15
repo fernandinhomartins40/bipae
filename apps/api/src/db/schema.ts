@@ -784,3 +784,27 @@ export const settlementRules = pgTable('settlement_rules', {
   days: integer('days').notNull(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
+
+/** Inventário pelo celular (F4-11). */
+export const inventories = pgTable('inventories', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  name: text('name').notNull(),
+  status: text('status', { enum: ['open', 'closed', 'cancelled'] })
+    .notNull()
+    .default('open'),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  closedBy: uuid('closed_by'),
+  closedAt: ts('closed_at'),
+});
+
+export const inventoryCounts = pgTable('inventory_counts', {
+  tenantId: uuid('tenant_id').notNull(),
+  inventoryId: uuid('inventory_id').notNull(),
+  productId: uuid('product_id').notNull(),
+  countedMilli: bigint('counted_milli', { mode: 'number' }).notNull(),
+  updatedBy: uuid('updated_by'),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});

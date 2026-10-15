@@ -1140,3 +1140,38 @@ export interface SalesReport {
   avgTicketCents: number;
   rows: SalesReportRow[];
 }
+
+// ---------- Inventário pelo celular (F4-11) ----------
+
+export const inventoryInput = z.object({
+  storeId: z.string().uuid('Escolha a loja'),
+  name: z.string().trim().min(2, 'Dê um nome à contagem').max(80),
+});
+
+/** add: soma (cada bipe); set: troca pelo valor digitado. Pelo produto ou pelo código. */
+export const inventoryCountInput = z
+  .object({
+    productId: z.string().uuid().optional(),
+    code: z.string().trim().min(1).max(60).optional(),
+    mode: z.enum(['add', 'set']),
+    quantityMilli: z.number().int().nonnegative('Quantidade inválida'),
+  })
+  .refine((v) => v.productId || v.code, { message: 'Bipe ou escolha o produto' });
+
+export interface InventoryView {
+  id: string;
+  storeId: string;
+  storeName: string;
+  name: string;
+  status: 'open' | 'closed' | 'cancelled';
+  createdAt: string;
+  closedAt: string | null;
+  items: {
+    productId: string;
+    productName: string;
+    unit: string;
+    countedMilli: number;
+    /** Estoque do sistema agora, para mostrar a diferença antes de fechar. */
+    systemMilli: number;
+  }[];
+}
