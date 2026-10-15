@@ -23,6 +23,7 @@ import {
   type SaleFiscalProfile,
   type SaleNfceInput,
 } from '@bipae/fiscal';
+import { explainRejection } from '@bipae/fiscal/tables';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';
@@ -64,6 +65,12 @@ const toView = (d: typeof fiscalDocuments.$inferSelect): FiscalDocumentView => (
   status: d.status,
   pendingItems: d.pendingItems,
   contingency: d.contingency,
+  help:
+    (d.status === 'rejected' || d.status === 'denied') && d.cStat
+      ? (({ cause, fix, next, area }) => ({ cause, fix, next, area }))(
+          explainRejection(d.cStat, d.xMotivo ?? ''),
+        )
+      : null,
   cStat: d.cStat,
   xMotivo: d.xMotivo,
   protocol: d.protocol,

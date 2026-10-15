@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-18 Rejeições da SEFAZ explicadas] — 15/10/2026
+
+### Adicionado
+- **Nota recusada ou denegada mostra, além do código e do motivo oficial:**
+  - **"O que aconteceu"**, em linguagem simples;
+  - **"O que fazer"**, dizendo onde corrigir no Bipaê (Empresas e lojas, cadastro do produto, certificado);
+  - se depende de alguém corrigir, se o Bipaê tenta de novo sozinho ou se é caso de falar com o suporte.
+- **Cobertura:** 49 códigos mais comuns no varejo, com o texto oficial do Anexo I do MOC 7.0. Os demais mostram o motivo da SEFAZ com a orientação geral.
+- **Fonte:** o Anexo I do MOC 7.0 (Leiaute e Regras de Validação) passou a fazer parte das fontes oficiais guardadas no projeto, com data e hash.
+
 ## [F3-15 Contingência off-line da NFC-e] — 15/10/2026
 
 ### Adicionado

@@ -1433,6 +1433,13 @@ export interface FiscalDocumentView {
   pendingItems: string[];
   /** Emitida em contingência off-line (F3-15). */
   contingency: boolean;
+  /** Recusada ou denegada: a causa e o que fazer, em linguagem simples (F3-18). */
+  help: {
+    cause: string;
+    fix: string;
+    next: 'corrigir' | 'automatico' | 'suporte';
+    area: string;
+  } | null;
   cStat: string | null;
   xMotivo: string | null;
   protocol: string | null;

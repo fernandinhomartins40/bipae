@@ -116,7 +116,24 @@ export function FiscalDocumentSection({ saleId }: { saleId: string }) {
             </Alert>
           )}
           {(d.status === 'rejected' || d.status === 'denied') && (
-            <Alert title={`Código ${d.cStat}`}>{d.xMotivo}</Alert>
+            <Alert title={`Código ${d.cStat}: ${d.xMotivo ?? ''}`}>
+              {d.help && (
+                <span className="flex flex-col gap-1" data-testid="rejection-help">
+                  <span>
+                    <strong>O que aconteceu:</strong> {d.help.cause}
+                  </span>
+                  <span>
+                    <strong>O que fazer:</strong> {d.help.fix}
+                  </span>
+                  {d.help.next === 'corrigir' && (
+                    <span className="text-sm">
+                      Depois de corrigir, use &quot;Tentar de novo&quot;: a nota sai com o mesmo
+                      número.
+                    </span>
+                  )}
+                </span>
+              )}
+            </Alert>
           )}
           {d.status === 'error' && d.lastError && (
             <p className="text-muted">Última falha: {d.lastError}</p>

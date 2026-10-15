@@ -139,7 +139,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Antes de começar: ler a NT 2026.002 v1.10a (contingência com DANFE Simplificado Tipo 2) e resolver a dúvida D-013.
 - [ ] F3-16 · SVC para NF-e — depende: F3-11, F3-08
 - [ ] F3-17 · Eventos: cancelamento, carta de correção e inutilização — depende: F3-11
-- [ ] F3-18 · Rejeições da SEFAZ traduzidas, com causa e solução — depende: F3-11
+- [x] F3-18 · Rejeições da SEFAZ traduzidas, com causa e solução — depende: F3-11
+  - Feito em 15/10/2026 contra a SEFAZ simulada: 49 códigos do Anexo I do MOC 7.0 (guardado em sources) com causa, o que fazer e se o Bipaê tenta de novo; os outros mostram o motivo da SEFAZ com a orientação geral.
 - [x] F3-19 · Importação de XML de compra (cria produtos e fornecedores e dá entrada no estoque) — depende: F3-03
 - [x] F3-19.a · Motor: leitura do XML do fornecedor (itens, valores, tributos), custo de aquisição e fator de conversão, sem ponto flutuante — depende: F3-03
 - [x] F3-19.b · API: prévia e entrada (assinatura conferida, nota da empresa certa, uma vez só, fornecedor e produtos criados, código do fornecedor lembrado, estoque e custo), com auditoria — depende: F3-19.a

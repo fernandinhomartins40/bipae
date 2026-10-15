@@ -220,6 +220,11 @@ describe('emissão da NFC-e no servidor (F3-14.b)', () => {
       cStat: '225',
       xMotivo: 'Rejeição: Falha no Schema XML da NFe',
     });
+    // F3-18: a causa e o que fazer, em linguagem simples.
+    expect(recusada.help).toMatchObject({
+      cause: 'A nota tem um campo fora do formato oficial.',
+      next: 'suporte',
+    });
     sefaz.mode = 'normal';
     const depois = (await admin.post(`/fiscal/documents/${recusada.id}/retry`)).json();
     expect(depois.status).toBe('authorized');

@@ -1,0 +1,398 @@
+{
+  "source": "MOC 7.0, Anexo I - Leiaute e Regras de Validação da NF-e e da NFC-e (tabela de códigos de erro), baixado do Portal Nacional da NF-e em 15/10/2026",
+  "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=ndIjl+iEFdE=",
+  "items": [
+    {
+      "code": "204",
+      "official": "Rejeição: Duplicidade de NF-e",
+      "area": "sistema",
+      "next": "automatico",
+      "cause": "A SEFAZ já tem uma nota com este número e série.",
+      "fix": "Normalmente é uma tentativa repetida da mesma nota. O Bipaê consulta a nota pela chave antes de reenviar; se continuar, fale com o suporte."
+    },
+    {
+      "code": "539",
+      "official": "Rejeição: Duplicidade de NF-e com diferença na Chave de Acesso",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "Já existe outra nota com o mesmo número e série, mas com conteúdo diferente.",
+      "fix": "Fale com o suporte: o número precisa ser conferido (pode ser preciso inutilizar a numeração)."
+    },
+    {
+      "code": "207",
+      "official": "Rejeição: CNPJ do emitente inválido",
+      "area": "empresa",
+      "next": "corrigir",
+      "cause": "O CNPJ da empresa está errado.",
+      "fix": "Corrija o CNPJ em Empresas e lojas e tente de novo."
+    },
+    {
+      "code": "209",
+      "official": "Rejeição: IE do emitente inválida",
+      "area": "empresa",
+      "next": "corrigir",
+      "cause": "A inscrição estadual da empresa está errada para a UF.",
+      "fix": "Confira a inscrição estadual em Empresas e lojas (é a do cartão do CNPJ ou da SEFAZ do estado)."
+    },
+    {
+      "code": "230",
+      "official": "Rejeição: IE do emitente não cadastrada",
+      "area": "empresa",
+      "next": "corrigir",
+      "cause": "A SEFAZ não encontrou esta inscrição estadual.",
+      "fix": "Confira a inscrição estadual em Empresas e lojas; se estiver certa, peça ao contador para ver a situação na SEFAZ."
+    },
+    {
+      "code": "231",
+      "official": "Rejeição: IE do emitente não vinculada ao CNPJ",
+      "area": "empresa",
+      "next": "corrigir",
+      "cause": "A inscrição estadual informada é de outro CNPJ.",
+      "fix": "Confira o CNPJ e a inscrição estadual em Empresas e lojas."
+    },
+    {
+      "code": "213",
+      "official": "Rejeição: CNPJ-Base do Emitente difere do CNPJ-Base do Certificado Digital",
+      "area": "certificado",
+      "next": "corrigir",
+      "cause": "O certificado digital é de outra empresa.",
+      "fix": "Use o certificado A1 do mesmo CNPJ da empresa (os 8 primeiros dígitos precisam ser iguais)."
+    },
+    {
+      "code": "280",
+      "official": "Rejeição: Certificado Transmissor inválido",
+      "area": "certificado",
+      "next": "corrigir",
+      "cause": "A SEFAZ não aceitou o certificado usado na conexão.",
+      "fix": "Cadastre de novo o certificado A1 da empresa; se continuar, peça um certificado novo à certificadora."
+    },
+    {
+      "code": "281",
+      "official": "Rejeição: Certificado Transmissor Data Validade",
+      "area": "certificado",
+      "next": "corrigir",
+      "cause": "O certificado digital venceu.",
+      "fix": "Renove o certificado A1 e cadastre o novo em Empresas e lojas."
+    },
+    {
+      "code": "283",
+      "official": "Rejeição: Certificado Transmissor - erro Cadeia de Certificação",
+      "area": "certificado",
+      "next": "corrigir",
+      "cause": "A SEFAZ não reconheceu a cadeia do certificado.",
+      "fix": "Use um certificado A1 de uma certificadora ICP-Brasil e cadastre de novo."
+    },
+    {
+      "code": "284",
+      "official": "Rejeição: Certificado Transmissor revogado",
+      "area": "certificado",
+      "next": "corrigir",
+      "cause": "O certificado foi revogado pela certificadora.",
+      "fix": "Peça um certificado novo e cadastre em Empresas e lojas."
+    },
+    {
+      "code": "290",
+      "official": "Rejeição: Certificado Assinatura inválido",
+      "area": "certificado",
+      "next": "corrigir",
+      "cause": "O certificado que assinou a nota não foi aceito.",
+      "fix": "Cadastre de novo o certificado A1 da empresa e tente outra vez."
+    },
+    {
+      "code": "297",
+      "official": "Rejeição: Assinatura difere do calculado",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A assinatura da nota não confere com o conteúdo.",
+      "fix": "Fale com o suporte do Bipaê, informando o número da venda."
+    },
+    {
+      "code": "298",
+      "official": "Rejeição: Assinatura difere do padrão do Sistema",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A assinatura da nota não está no padrão da SEFAZ.",
+      "fix": "Fale com o suporte do Bipaê, informando o número da venda."
+    },
+    {
+      "code": "215",
+      "official": "Rejeição: Falha no schema XML",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A nota tem um campo fora do formato oficial.",
+      "fix": "Fale com o suporte do Bipaê, informando o número da venda."
+    },
+    {
+      "code": "225",
+      "official": "Rejeição: Falha no Schema XML do lote de NFe",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A nota tem um campo fora do formato oficial.",
+      "fix": "Fale com o suporte do Bipaê, informando o número da venda."
+    },
+    {
+      "code": "243",
+      "official": "Rejeição: XML Mal Formado",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "O arquivo da nota chegou com defeito.",
+      "fix": "Tente de novo; se continuar, fale com o suporte."
+    },
+    {
+      "code": "244",
+      "official": "Rejeição: Processo de Emissão pelo Contribuinte incompatível com a Série da NF",
+      "area": "empresa",
+      "next": "suporte",
+      "cause": "A série do caixa está fora da faixa permitida (1 a 889).",
+      "fix": "Fale com o suporte: a série do caixa precisa ser ajustada."
+    },
+    {
+      "code": "247",
+      "official": "Rejeição: Sigla da UF do Emitente diverge da UF autorizadora",
+      "area": "empresa",
+      "next": "corrigir",
+      "cause": "A UF da empresa não confere com a SEFAZ que recebeu a nota.",
+      "fix": "Confira a UF em Empresas e lojas."
+    },
+    {
+      "code": "272",
+      "official": "Rejeição: Código Município do Emitente inexistente",
+      "area": "empresa",
+      "next": "corrigir",
+      "cause": "O município da empresa não foi encontrado.",
+      "fix": "Escolha de novo o município em Empresas e lojas."
+    },
+    {
+      "code": "273",
+      "official": "Rejeição: Código Município do Emitente: difere da UF do emitente",
+      "area": "empresa",
+      "next": "corrigir",
+      "cause": "O município escolhido é de outro estado.",
+      "fix": "Confira a UF e o município em Empresas e lojas."
+    },
+    {
+      "code": "237",
+      "official": "Rejeição: CPF do destinatário inválido",
+      "area": "cliente",
+      "next": "corrigir",
+      "cause": "O CPF do cliente na nota está errado.",
+      "fix": "A venda precisa sair sem o CPF ou com o CPF certo; fale com o suporte para refazer a nota."
+    },
+    {
+      "code": "228",
+      "official": "Rejeição: Data de Emissão muito atrasada",
+      "area": "prazo",
+      "next": "suporte",
+      "cause": "A nota foi enviada muito depois da venda.",
+      "fix": "Fale com o contador e com o suporte: pode ser preciso tratar a nota fora do Bipaê."
+    },
+    {
+      "code": "704",
+      "official": "Rejeição: NFC-e com Data-Hora de emissão atrasada",
+      "area": "prazo",
+      "next": "automatico",
+      "cause": "A nota normal precisa sair em até 5 minutos da venda.",
+      "fix": "O Bipaê emite em contingência a venda que chega atrasada; se aparecer, tente de novo."
+    },
+    {
+      "code": "703",
+      "official": "Rejeição: Data-Hora de Emissão posterior ao horário de recebimento",
+      "area": "prazo",
+      "next": "corrigir",
+      "cause": "O relógio do aparelho do caixa está adiantado.",
+      "fix": "Acerte a data e a hora do aparelho do caixa e tente de novo."
+    },
+    {
+      "code": "712",
+      "official": "Rejeição: NFC-e com contingência off-line para a UF",
+      "area": "prazo",
+      "next": "suporte",
+      "cause": "A UF da empresa não aceita a contingência off-line da NFC-e.",
+      "fix": "Nesta UF, a venda sem internet não pode sair em contingência. Fale com o contador."
+    },
+    {
+      "code": "373",
+      "official": "Rejeição: Descrição do primeiro item diferente de NOTA FISCAL EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "Em homologação, o primeiro item precisa ter o texto de teste da SEFAZ.",
+      "fix": "Fale com o suporte do Bipaê."
+    },
+    {
+      "code": "598",
+      "official": "Rejeição: NF-e emitida em ambiente de homologação com Razão Social do destinatário diferente de NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "Em homologação, o nome do cliente precisa ser o texto de teste da SEFAZ.",
+      "fix": "Fale com o suporte do Bipaê."
+    },
+    {
+      "code": "386",
+      "official": "Rejeição: CFOP não permitido para o CSOSN informado",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "O CFOP e o CSOSN do perfil fiscal do produto não combinam.",
+      "fix": "Confira o perfil fiscal do produto com o contador e tente de novo."
+    },
+    {
+      "code": "591",
+      "official": "Rejeição: Informado CSOSN para emissor que não é do Simples Nacional (CRT diferente de 1)",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "A empresa não é do Simples, mas o perfil fiscal usa CSOSN.",
+      "fix": "Confira o regime da empresa e o perfil fiscal dos produtos (fora do Simples, use CST)."
+    },
+    {
+      "code": "766",
+      "official": "Rejeição: Item com CST indevido",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "O CST do perfil fiscal não é aceito nesta operação.",
+      "fix": "Confira o perfil fiscal do produto com o contador."
+    },
+    {
+      "code": "778",
+      "official": "Rejeição: Informado NCM inexistente",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "O NCM do produto não existe na tabela oficial.",
+      "fix": "Corrija o NCM no cadastro do produto."
+    },
+    {
+      "code": "806",
+      "official": "Rejeição: Operação com ICMS-ST sem informação do CEST",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "Produto com substituição tributária precisa do CEST.",
+      "fix": "Informe o CEST no cadastro do produto."
+    },
+    {
+      "code": "882",
+      "official": "Rejeição: GTIN (cEAN) com prefixo inválido",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "O código de barras do produto não é um GTIN válido.",
+      "fix": "Confira o código de barras no cadastro do produto."
+    },
+    {
+      "code": "883",
+      "official": "Rejeição: GTIN (cEAN) sem informação",
+      "area": "produto",
+      "next": "suporte",
+      "cause": "O campo do código de barras foi enviado vazio.",
+      "fix": "Fale com o suporte do Bipaê."
+    },
+    {
+      "code": "885",
+      "official": "Rejeição: GTIN informado, mas não informado o GTIN da unidade tributável",
+      "area": "produto",
+      "next": "suporte",
+      "cause": "Faltou o código de barras da unidade tributável.",
+      "fix": "Fale com o suporte do Bipaê."
+    },
+    {
+      "code": "890",
+      "official": "Rejeição: GTIN inexistente no Cadastro Centralizado de GTIN (CCG)",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "O código de barras não está cadastrado na GS1.",
+      "fix": "Confira o código de barras do produto; se for código interno, ele não deve ir como GTIN."
+    },
+    {
+      "code": "873",
+      "official": "Rejeição: Operação com medicamentos e não informado os campos de rastreabilidade",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "Medicamento precisa de lote e validade na nota.",
+      "fix": "Ative o controle de lote no produto e informe os lotes."
+    },
+    {
+      "code": "391",
+      "official": "Rejeição: Não informados os dados do cartão de crédito / débito nas Formas de Pagamento da Nota Fiscal",
+      "area": "pagamento",
+      "next": "suporte",
+      "cause": "O pagamento com cartão precisa do grupo de cartões.",
+      "fix": "Fale com o suporte do Bipaê."
+    },
+    {
+      "code": "564",
+      "official": "Rejeição: Total do Produto / Serviço difere do somatório dos itens",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A soma dos itens não bateu com o total.",
+      "fix": "Fale com o suporte do Bipaê, informando o número da venda."
+    },
+    {
+      "code": "610",
+      "official": "Rejeição: Total da NF difere do somatório dos Valores compõe o valor Total da NF.",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "O total da nota não bateu com as parcelas que o compõem.",
+      "fix": "Fale com o suporte do Bipaê, informando o número da venda."
+    },
+    {
+      "code": "394",
+      "official": "Rejeição: Nota Fiscal sem a informação do QR-Code",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A nota saiu sem o QR Code.",
+      "fix": "Fale com o suporte do Bipaê."
+    },
+    {
+      "code": "395",
+      "official": "Rejeição: Endereço do site da UF da Consulta via QR-Code diverge do previsto",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "O endereço do QR Code da UF mudou.",
+      "fix": "Fale com o suporte do Bipaê: a tabela de endereços precisa ser atualizada."
+    },
+    {
+      "code": "702",
+      "official": "Rejeição: NFC-e não é aceita pela UF do Emitente",
+      "area": "empresa",
+      "next": "suporte",
+      "cause": "A UF da empresa não aceita NFC-e para este contribuinte.",
+      "fix": "Fale com o contador sobre o credenciamento na NFC-e."
+    },
+    {
+      "code": "245",
+      "official": "Rejeição: CNPJ Emitente não cadastrado",
+      "area": "empresa",
+      "next": "suporte",
+      "cause": "O CNPJ não está credenciado na SEFAZ do estado.",
+      "fix": "Peça ao contador o credenciamento da empresa como emissora de NFC-e."
+    },
+    {
+      "code": "301",
+      "official": "Uso Denegado: Irregularidade fiscal do emitente",
+      "area": "empresa",
+      "next": "suporte",
+      "cause": "A SEFAZ registrou a nota, mas negou o uso: a empresa tem pendência fiscal no estado.",
+      "fix": "Fale com o contador. A nota denegada fica registrada e não pode ser usada."
+    },
+    {
+      "code": "302",
+      "official": "Uso Denegado: Irregularidade fiscal do destinatário",
+      "area": "cliente",
+      "next": "suporte",
+      "cause": "A SEFAZ negou o uso: o CNPJ do cliente tem pendência no estado.",
+      "fix": "Fale com o contador."
+    },
+    {
+      "code": "656",
+      "official": "Rejeição: Consumo indevido pelo aplicativo da empresa",
+      "area": "sistema",
+      "next": "automatico",
+      "cause": "Muitos pedidos seguidos à SEFAZ: ela bloqueou por um tempo.",
+      "fix": "Aguarde: o Bipaê tenta de novo mais tarde, sozinho."
+    },
+    {
+      "code": "999",
+      "official": "Rejeição: Erro não catalogado",
+      "area": "sistema",
+      "next": "automatico",
+      "cause": "Erro interno da SEFAZ.",
+      "fix": "Aguarde: o Bipaê tenta de novo mais tarde. Se continuar, fale com o suporte."
+    }
+  ]
+}

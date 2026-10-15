@@ -150,5 +150,13 @@
   "page": "https://servicodados.ibge.gov.br/api/v1/localidades/municipios?view=nivelado",
   "publishedAt": "2026-10-15",
   "downloadedAt": "2026-10-15"
+ },
+ "mocAnexoI": {
+  "file": "MOC_7.0_Anexo_I_Leiaute_Regras_Validacao_2026-10-15.pdf",
+  "title": "MOC 7.0 - Anexo I: Leiaute e Regras de Validação da NF-e e da NFC-e (inclui a tabela de códigos de rejeição)",
+  "publisher": "Portal Nacional da NF-e (ENCAT)",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=ndIjl+iEFdE=",
+  "publishedAt": "2020-11-01",
+  "downloadedAt": "2026-10-15"
  }
 }
