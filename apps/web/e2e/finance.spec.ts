@@ -76,3 +76,38 @@ test('DRE gerencial mostra a despesa do mês por categoria (F4-06)', async ({ pa
   await expect(page.getByRole('row', { name: /^Aluguel/ })).toContainText('R$ 2.000,00');
   await expect(page.getByRole('row', { name: /Resultado/ })).toContainText('-R$ 2.000,00');
 });
+
+test('importa o extrato OFX e concilia com a conta sugerida (F4-07)', async ({ page }) => {
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Rita Dona');
+  await page.getByLabel('Nome do negócio').fill(`Mercearia ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`rita-ofx-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Rita!' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Contas a pagar e receber' }).click();
+  await page.getByRole('button', { name: 'Nova conta' }).click();
+  await page.getByLabel('Descrição').fill('Internet');
+  await page.getByLabel('Valor total').fill('99,90');
+  await page.getByLabel('Valor total').blur();
+  await page.getByLabel('Primeiro vencimento').fill('2026-10-05');
+  await page.getByRole('button', { name: 'Lançar conta' }).click();
+  await expect(page.getByRole('row', { name: /Internet/ })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Conciliação bancária' }).click();
+  const extrato = `OFXHEADER:100\nDATA:OFXSGML\nCHARSET:1252\n<OFX><BANKMSGSRSV1><STMTTRNRS><STMTRS><CURDEF>BRL
+<BANKACCTFROM><BANKID>0001<ACCTID>777-0</BANKACCTFROM><BANKTRANLIST>
+<STMTTRN><TRNTYPE>DEBIT<DTPOSTED>20261006<TRNAMT>-99.90<FITID>Z1<MEMO>DÉBITO PROVEDOR</STMTTRN>
+</BANKTRANLIST></STMTRS></STMTTRNRS></BANKMSGSRSV1></OFX>`;
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'extrato.ofx',
+    mimeType: 'application/x-ofx',
+    buffer: Buffer.from(extrato, 'latin1'),
+  });
+  await expect(page.getByText('Banco 0001 · Conta 777-0: 1 lançamento(s) novo(s).')).toBeVisible();
+  const linha = page.getByRole('row', { name: /DÉBITO PROVEDOR/ });
+  await linha.getByRole('button', { name: 'Internet (05/10/2026)' }).click();
+  await expect(page.getByText('Conciliado com Internet.')).toBeVisible();
+  await expect(page.getByText('Nada para conciliar')).toBeVisible();
+});

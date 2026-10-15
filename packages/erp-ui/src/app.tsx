@@ -23,6 +23,7 @@ import { AdminApp } from './admin/admin-app';
 import { captureSupportHandoff, endSupportSession, readSupportSession } from './support';
 import { SalesPage } from './pages/sales';
 import { ProductsPage } from './pages/products';
+import { BankPage } from './pages/bank';
 import { CashFlowPage } from './pages/cash-flow';
 import { DrePage } from './pages/dre';
 import { FinancePage } from './pages/finance';
@@ -156,6 +157,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="financeiro" element={<FinancePage />} />
               <Route path="fluxo-de-caixa" element={<CashFlowPage />} />
               <Route path="dre" element={<DrePage />} />
+              <Route path="conciliacao-bancaria" element={<BankPage />} />
               <Route path="notas-de-entrada" element={<ConferePage />} />
               <Route path="perfis-fiscais" element={<FiscalProfilesPage />} />
               <Route path="regras-icms" element={<IcmsRulesPage />} />

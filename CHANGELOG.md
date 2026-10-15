@@ -1,5 +1,14 @@
 # Changelog
 
+## [F4-07 Conciliação bancária por OFX] — 14/10/2026
+
+### Adicionado
+- **Conciliação bancária** (menu próprio):
+  - importa o extrato OFX do banco, nos formatos antigo e novo, com os acentos do Windows-1252; importar de novo não duplica;
+  - para cada lançamento, sugere a conta a pagar ou a receber de mesmo valor e sentido, com vencimento até 10 dias de distância;
+  - "Conciliar" dá baixa na conta com a data e o valor do banco, e fica na auditoria;
+  - tarifas e o que não tem conta podem ser ignorados.
+
 ## [F4-06 DRE gerencial] — 14/10/2026
 
 ### Adicionado

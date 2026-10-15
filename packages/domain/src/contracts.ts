@@ -1033,3 +1033,28 @@ export interface DreReport {
   months: DreMonth[];
   notes: string[];
 }
+
+// ---------- Conciliação bancária (F4-07) ----------
+
+export const bankImportInput = z.object({
+  /** Conteúdo do arquivo .ofx (texto). */
+  content: z.string().min(20, 'Escolha o arquivo do extrato (.ofx)').max(5_000_000),
+});
+
+export interface BankTransactionView {
+  id: string;
+  bankAccountName: string;
+  postedOn: string;
+  amountCents: number;
+  memo: string;
+  status: 'pending' | 'matched' | 'ignored';
+  entryId: string | null;
+  /** Contas em aberto de mesmo valor e sentido com vencimento até 10 dias de distância. */
+  suggestions: { id: string; description: string; dueDate: string; partyName: string | null }[];
+}
+
+export interface BankImportResult {
+  account: string;
+  imported: number;
+  repeated: number;
+}

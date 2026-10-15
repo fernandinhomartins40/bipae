@@ -746,3 +746,30 @@ export const financialEntries = pgTable('financial_entries', {
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
+
+/** Conciliação bancária (F4-07). */
+export const bankAccounts = pgTable('bank_accounts', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  bankCode: text('bank_code'),
+  accountNumber: text('account_number').notNull(),
+  name: text('name').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+export const bankTransactions = pgTable('bank_transactions', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  bankAccountId: uuid('bank_account_id').notNull(),
+  fitId: text('fit_id').notNull(),
+  postedOn: date('posted_on', { mode: 'string' }).notNull(),
+  amountCents: money('amount_cents').notNull(),
+  memo: text('memo').notNull().default(''),
+  status: text('status', { enum: ['pending', 'matched', 'ignored'] })
+    .notNull()
+    .default('pending'),
+  entryId: uuid('entry_id'),
+  resolvedBy: uuid('resolved_by'),
+  resolvedAt: ts('resolved_at'),
+  importedAt: ts('imported_at').notNull().defaultNow(),
+});
