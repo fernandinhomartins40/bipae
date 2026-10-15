@@ -178,5 +178,23 @@
   "publishedAt": "2020-11-01",
   "downloadedAt": "2026-10-15",
   "sha256": "5eb4cf2010b10b0b62f78197c4eb64025f24535d4c6e61158bc7806dd008f55d"
+ },
+ "eventCancel": {
+  "file": "Evento_Canc_PL_v1.01_NT_2018_004.zip",
+  "title": "Esquemas XML NF-e / NFC-e - Evento Cancelamento (tpEvento 110111), PL v1.01 (NT 2018.004)",
+  "publisher": "Portal Nacional da NF-e (ENCAT)",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2018-12-21",
+  "downloadedAt": "2026-10-15",
+  "sha256": "71ccd5fcc48f9604a2a8965146df45e3b73e96e87942ab3391be0d55cc0df718"
+ },
+ "eventCancelSubst": {
+  "file": "Evento_CancSubst_v1.01_NT_2018_004.zip",
+  "title": "Esquemas XML NFC-e - Evento Cancelamento por Substituição (tpEvento 110112), v1.01 (NT 2018.004)",
+  "publisher": "Portal Nacional da NF-e (ENCAT)",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2018-12-21",
+  "downloadedAt": "2026-10-15",
+  "sha256": "49a32c2c4dc64413f6ef47ed4756b54121ec56514d5352d6931b9bf43a0706a1"
  }
 }

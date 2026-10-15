@@ -78,3 +78,27 @@ export async function validateServiceXml(xml: string, schemaFile: string): Promi
   });
   return result.errors.map((e) => e.message);
 }
+
+/**
+ * Valida contra o schema de um pacote de eventos guardado em sources (ex.: Evento_Canc), com os
+ * outros schemas do mesmo pacote (F3-17).
+ */
+export async function validatePackageXml(
+  xml: string,
+  zipFile: string,
+  schemaFile: string,
+): Promise<string[]> {
+  const { unzip } = await import('../scripts/xlsx.mjs');
+  const zip = readFileSync(fileURLToPath(new URL(`../sources/${zipFile}`, import.meta.url)));
+  const all = [...unzip(zip)]
+    .filter(([name]) => name.endsWith('.xsd'))
+    .map(([name, body]) => ({ fileName: name.split('/').pop()!, contents: body.toString('utf8') }));
+  const schema = all.find((s) => s.fileName === schemaFile);
+  if (!schema) throw new Error(`Schema não encontrado: ${schemaFile}`);
+  const result = await validateXML({
+    xml: [{ fileName: 'evento.xml', contents: xml }],
+    schema: [schema],
+    preload: all.filter((s) => s !== schema),
+  });
+  return result.errors.map((e) => e.message);
+}

@@ -138,7 +138,11 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: um E2E com rede desligada emite em contingência e transmite ao reconectar.
   - Antes de começar: ler a NT 2026.002 v1.10a (contingência com DANFE Simplificado Tipo 2) e resolver a dúvida D-013.
 - [ ] F3-16 · SVC para NF-e — depende: F3-11, F3-08
-- [ ] F3-17 · Eventos: cancelamento, carta de correção e inutilização — depende: F3-11
+- [~] F3-17 · Eventos: cancelamento, carta de correção e inutilização — depende: F3-11
+  - Regras (MOC 7.0, pesquisadas em 15/10/2026): cancelamento 110111 até 24 horas da autorização e cancelamento por substituição 110112 (só NFC-e) até 168 horas, rejeição 501 fora do prazo (com exceção por lei estadual); métodos nfeRecepcaoEvento e nfeInutilizacaoNF; schemas nos pacotes Evento_Canc e Evento_CancSubst (NT 2018.004) e no PL_009q. A carta de correção (110110) é só da NF-e: entra com a F3-33.
+  - [x] F3-17.a · Motor: pedidos de cancelamento, cancelamento por substituição e inutilização, assinados e validados nos schemas oficiais, e leitura dos retornos
+  - [ ] F3-17.b · API: cancelar a venda com NFC-e autorizada manda o cancelamento (no prazo); números sem nota (devoluções, notas não emitidas) vão para a inutilização — depende: F3-17.a
+  - [ ] F3-17.c · Telas da nota cancelada e da inutilização, com E2E — depende: F3-17.b
 - [x] F3-18 · Rejeições da SEFAZ traduzidas, com causa e solução — depende: F3-11
   - Feito em 15/10/2026 contra a SEFAZ simulada: 49 códigos do Anexo I do MOC 7.0 (guardado em sources) com causa, o que fazer e se o Bipaê tenta de novo; os outros mostram o motivo da SEFAZ com a orientação geral.
 - [x] F3-19 · Importação de XML de compra (cria produtos e fornecedores e dá entrada no estoque) — depende: F3-03

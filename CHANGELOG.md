@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-17.a Cancelamento e inutilização no motor fiscal] — 15/10/2026
+
+### Adicionado
+- **Motor fiscal monta e assina os pedidos de:**
+  - cancelamento da nota (evento 110111, até 24 horas depois da autorização);
+  - cancelamento por substituição da NFC-e (evento 110112, até 168 horas), quando a venda já foi acobertada pela nota de contingência;
+  - inutilização de números que ficaram sem nota.
+- **Leitura das respostas da SEFAZ** (evento registrado, recusado ou fora do prazo; inutilização homologada).
+- **Fontes:** os schemas oficiais dos eventos de cancelamento (NT 2018.004) entraram nas fontes do projeto; os testes validam cada pedido contra eles.
+
+### Corrigido
+- A assinatura de eventos não encontrava o elemento assinado por causa de uma expressão regular mal escrita.
+
 ## [F3-18 Rejeições da SEFAZ explicadas] — 15/10/2026
 
 ### Adicionado

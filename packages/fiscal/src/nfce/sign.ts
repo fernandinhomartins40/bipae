@@ -91,3 +91,38 @@ export async function signText(text: string, key: SigningKey | NfeSigner): Promi
     ? toBase64(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key.privateKey, data))
     : key.sign(data);
 }
+
+/**
+ * Assina outro documento fiscal com o mesmo método da nota (F3-17): o elemento `inner` (com Id)
+ * dentro da raiz `root`, que declara o namespace da NF-e. Usado no evento (infEvento dentro de
+ * evento) e na inutilização (infInut dentro de inutNFe). O XML vem do montador do Bipaê, já na
+ * forma canônica.
+ */
+export async function signFiscalXml(
+  xml: string,
+  root: 'evento' | 'inutNFe',
+  inner: 'infEvento' | 'infInut',
+  key: SigningKey | NfeSigner,
+): Promise<string> {
+  if (xml.includes('<Signature')) throw new Error('Este XML já está assinado');
+  if (!/^[A-Za-z0-9+/=]+$/.test(key.certificate))
+    throw new Error('Certificado precisa estar em base64, sem cabeçalhos');
+  if (!xml.startsWith(`<${root} xmlns="${NFE_NS}"`)) {
+    throw new Error(`XML sem o elemento ${root} com o namespace da NF-e`);
+  }
+  const match = new RegExp(`<${inner} Id="(ID[0-9A-Z]+)">[\\s\\S]*</${inner}>`).exec(xml);
+  if (!match) throw new Error(`XML sem o elemento ${inner} no formato gerado pelo Bipaê`);
+  const id = match[1]!;
+  const canonical = match[0].replace(`<${inner} `, `<${inner} xmlns="${NFE_NS}" `);
+  const digest = toBase64(await crypto.subtle.digest('SHA-1', encoder.encode(canonical)));
+  const data = encoder.encode(signedInfo(id, digest, true));
+  const signature =
+    'privateKey' in key
+      ? toBase64(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key.privateKey, data))
+      : await key.sign(data);
+  const block =
+    `<Signature xmlns="${DSIG_NS}">${signedInfo(id, digest, false)}` +
+    `<SignatureValue>${signature}</SignatureValue>` +
+    `<KeyInfo><X509Data><X509Certificate>${key.certificate}</X509Certificate></X509Data></KeyInfo></Signature>`;
+  return xml.replace(new RegExp(`</${root}>$`), `${block}</${root}>`);
+}

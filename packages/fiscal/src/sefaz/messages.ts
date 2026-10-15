@@ -41,7 +41,11 @@ export function ufCode(uf: string): string {
 }
 
 /** Endereço de homologação do serviço para o modelo (55 NF-e, 65 NFC-e) e a UF do emitente. */
-export function sefazUrl(model: '55' | '65', uf: string, service: SefazService): string {
+export function sefazUrl(
+  model: '55' | '65',
+  uf: string,
+  service: SefazService | 'RecepcaoEvento' | 'NFeInutilizacao',
+): string {
   const url =
     model === '65'
       ? nfceEndpoints(uf)?.webservices.homologacao[service]
