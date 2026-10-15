@@ -27,6 +27,7 @@ import { BankPage } from './pages/bank';
 import { SettlementsPage } from './pages/settlements';
 import { InventoryPage } from './pages/inventory';
 import { TransfersPage } from './pages/transfers';
+import { IbsCbsPage } from './pages/ibs-cbs';
 import { CashFlowPage } from './pages/cash-flow';
 import { DelinquencyPage } from './pages/delinquency';
 import { DrePage } from './pages/dre';
@@ -164,6 +165,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="financeiro" element={<FinancePage />} />
               <Route path="fluxo-de-caixa" element={<CashFlowPage />} />
               <Route path="dre" element={<DrePage />} />
+              <Route path="apuracao-ibs-cbs" element={<IbsCbsPage />} />
               <Route path="relatorios" element={<ReportsPage />} />
               <Route path="inadimplencia" element={<DelinquencyPage />} />
               <Route path="conciliacao-bancaria" element={<BankPage />} />

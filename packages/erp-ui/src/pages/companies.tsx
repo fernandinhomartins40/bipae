@@ -3,6 +3,7 @@ import {
   Alert,
   Button,
   Card,
+  Checkbox,
   Drawer,
   PageHeader,
   SelectField,
@@ -23,6 +24,7 @@ interface Company {
   taxId: string | null;
   uf: string | null;
   taxRegime: string | null;
+  ibsCbsRegular?: boolean;
 }
 interface StoreRow {
   id: string;
@@ -188,6 +190,7 @@ function CompanyForm({
     taxId: company?.taxId ?? '',
     uf: company?.uf ?? '',
     taxRegime: company?.taxRegime ?? '',
+    ibsCbsRegular: company?.ibsCbsRegular ?? false,
   });
   const fiscal = useFiscalOptions().data;
   const regime = fiscal?.regimes.find((r) => r.id === v.taxRegime);
@@ -202,6 +205,7 @@ function CompanyForm({
       taxId: v.taxId || null,
       uf: v.uf || null,
       taxRegime: v.taxRegime || null,
+      ibsCbsRegular: v.ibsCbsRegular,
     };
     try {
       if (company) await api.patch(`/companies/${company.id}`, body);
@@ -259,6 +263,14 @@ function CompanyForm({
               : 'Não é o tipo da empresa (MEI, LTDA...), é como ela paga imposto. Na dúvida, pergunte ao contador.'
           }
         />
+        {regime?.ibsCbsRegularOption && (
+          <Checkbox
+            label="Apura o IBS e a CBS pelo regime regular"
+            checked={v.ibsCbsRegular}
+            onChange={(ibsCbsRegular) => setV({ ...v, ibsCbsRegular })}
+            hint="Só se a empresa fez essa opção (LC 214/2025, art. 41, § 3º). Sem ela, o IBS e a CBS vão no DAS. Na dúvida, pergunte ao contador."
+          />
+        )}
         <Button type="submit">Salvar empresa</Button>
       </form>
     </Drawer>

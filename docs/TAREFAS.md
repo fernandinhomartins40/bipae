@@ -225,7 +225,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] F4-10 · Relatórios por período, produto, operador, loja, forma de pagamento, margem, ticket médio e curva ABC, exportáveis (CSV, XLSX, PDF)
 - [x] F4-11 · Inventário pelo celular
 - [x] F4-12 · Transferência entre lojas — depende: F1-05
-- [ ] F4-13 · Apuração de IBS/CBS (débitos e créditos) — depende: F3-05, F3-19
+- [x] F4-13 · Apuração de IBS/CBS (débitos e créditos) — depende: F3-05, F3-19
 - [ ] F4-14 · Exportação SPED/EFD e pacote de XMLs para o contador — depende: F3-14, F4-13
 - [ ] F4-15 · Boletos via PSP — depende: F4-04 · externo: E9
 

@@ -22,6 +22,7 @@ import {
   Package,
   PackagePlus,
   Printer,
+  Scale,
   ScanBarcode,
   Settings,
   Sparkles,
@@ -72,6 +73,12 @@ const NAV = [
   },
   { to: '/fluxo-de-caixa', label: 'Fluxo de caixa', icon: TrendingUp, permission: 'finance.read' },
   { to: '/dre', label: 'DRE gerencial', icon: FileBarChart, permission: 'finance.read' },
+  {
+    to: '/apuracao-ibs-cbs',
+    label: 'Apuração de IBS e CBS',
+    icon: Scale,
+    permission: 'finance.read',
+  },
   {
     to: '/conciliacao-bancaria',
     label: 'Conciliação bancária',

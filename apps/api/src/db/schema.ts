@@ -93,6 +93,8 @@ export const companies = pgTable('companies', {
   uf: char('uf', { length: 2 }),
   /** Regime tributário (F3-06.c): mei, simples, simples-excesso, presumido ou real. */
   taxRegime: text('tax_regime'),
+  /** Optante pelo Simples que apura o IBS e a CBS pelo regime regular (F4-13). */
+  ibsCbsRegular: boolean('ibs_cbs_regular').notNull().default(false),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });

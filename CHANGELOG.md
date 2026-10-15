@@ -1,5 +1,19 @@
 # Changelog
 
+## [F4-13 Apuração de IBS e CBS] — 15/10/2026
+
+### Adicionado
+- **Apuração de IBS e CBS** (menu próprio), por empresa e mês. É uma conta gerencial para acompanhar e conversar com o contador.
+  - **Débitos e créditos:** IBS e CBS destacados nas vendas, menos as devoluções, contra os créditos destacados nas notas de compra autorizadas.
+  - **IBS e CBS separados:** crédito de um não paga o outro.
+  - **Ficou de fora:** lista os itens vendidos sem cálculo e as compras sem IBS/CBS.
+- **Regras com fonte oficial na tabela fiscal** (LC 214/2025):
+  - quem apura pelo regime regular (art. 41);
+  - como o crédito é apropriado (art. 47);
+  - a fase de teste de 2026, com dispensa de recolhimento para quem cumpre as obrigações acessórias (art. 348).
+- **Cadastro da empresa:** nova opção "Apura o IBS e a CBS pelo regime regular", para quem é do Simples ou MEI e fez essa escolha.
+- Pontos em aberto registrados na dúvida fiscal D-027.
+
 ## [F4-12 Transferência entre lojas] — 15/10/2026
 
 ### Adicionado

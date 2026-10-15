@@ -424,6 +424,8 @@ export const companyInput = z.object({
   taxId: optionalTaxId,
   uf: z.enum(UFS).nullish(),
   taxRegime: z.enum(COMPANY_TAX_REGIMES, { message: 'Regime tributário inválido' }).nullish(),
+  /** Optante pelo Simples que apura o IBS e a CBS pelo regime regular (LC 214/2025, art. 41, § 3º). */
+  ibsCbsRegular: z.boolean().optional(),
 });
 
 export const terminalInput = z.object({
@@ -1237,4 +1239,38 @@ export interface StockTransferView {
     quantityMilli: number;
     receivedMilli: number | null;
   }[];
+}
+
+// ---------- Apuração de IBS e CBS (F4-13) ----------
+
+export interface IbsCbsBalanceView {
+  debitCents: number;
+  creditCents: number;
+  balanceCents: number;
+  payableCents: number;
+  creditLeftCents: number;
+}
+
+export interface IbsCbsSettlementView {
+  companyId: string;
+  companyName: string;
+  /** AAAA-MM */
+  month: string;
+  mode: 'regular' | 'simples' | 'falta-configurar';
+  message: string | null;
+  totals: {
+    salesIbsCents: number;
+    salesCbsCents: number;
+    returnsIbsCents: number;
+    returnsCbsCents: number;
+    purchasesIbsCents: number;
+    purchasesCbsCents: number;
+  };
+  ibs: IbsCbsBalanceView | null;
+  cbs: IbsCbsBalanceView | null;
+  /** Regra do período (em 2026, a dispensa de recolhimento da fase de teste). */
+  period: { message: string; paymentWaived: boolean; source: string } | null;
+  sources: string[];
+  /** O que ficou de fora da conta e precisa de atenção. */
+  pending: { saleItemsWithoutTax: number; purchaseItemsWithoutIbsCbs: number };
 }

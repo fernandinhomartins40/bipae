@@ -30,6 +30,7 @@ import {
   isCfopValidOn,
   type Cest,
 } from '@bipae/fiscal/tables';
+import { IBS_CBS_REGIME_RULES } from '@bipae/fiscal/tables';
 import { findNcm, isNcmValidOn, ncmPath, searchNcm, type Ncm } from '@bipae/fiscal/tables/ncm';
 import { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
@@ -247,6 +248,10 @@ export class FiscalController {
         hint: regime.hint,
         crt: regime.crt,
         icmsCode: regime.icmsCode,
+        // Pode optar por apurar o IBS e a CBS pelo regime regular (F4-13).
+        ibsCbsRegularOption: IBS_CBS_REGIME_RULES.some(
+          (rule) => rule.regularOption === true && rule.regimes.includes(regime.id),
+        ),
       })),
       ufRates: ICMS_GENERAL_RATES.map((item) => ({
         uf: item.uf,

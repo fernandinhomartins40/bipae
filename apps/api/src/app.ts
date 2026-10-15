@@ -71,6 +71,10 @@ import { FinanceController, FinanceService } from './modules/finance/finance.ser
 import { ReportsController, ReportsService } from './modules/reports/reports.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
 import { TransferController, TransferService } from './modules/stock/transfer.service';
+import {
+  IbsCbsSettlementController,
+  IbsCbsSettlementService,
+} from './modules/fiscal/ibs-cbs-settlement.service';
 import { SettlementController, SettlementService } from './modules/finance/settlement.service';
 import { MaintenanceService } from './modules/maintenance/maintenance.service';
 import { OrganizationController } from './modules/organization/organization.controller';
@@ -120,6 +124,7 @@ class AppModule {
         ReportsController,
         InventoryController,
         TransferController,
+        IbsCbsSettlementController,
         PartiesController,
         AuditController,
         SyncController,
@@ -158,6 +163,7 @@ class AppModule {
         ReportsService,
         InventoryService,
         TransferService,
+        IbsCbsSettlementService,
         IcmsRulesService,
         CertificatesService,
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },

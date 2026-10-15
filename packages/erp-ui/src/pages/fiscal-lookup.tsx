@@ -21,8 +21,20 @@ export interface FiscalOptions {
   cfopInterna: FiscalCode[];
   cfopInterestadual: FiscalCode[];
   classTrib: (FiscalCode & { cst: string; pRedIBS: string; pRedCBS: string; nfce: boolean })[];
-  regimes: { id: string; label: string; hint: string; crt: number; icmsCode: 'csosn' | 'cst' }[];
-  ufRates: { uf: string; status: 'confirmado' | 'pendente' | 'divergente'; rate: string | null; law: string }[];
+  regimes: {
+    id: string;
+    label: string;
+    hint: string;
+    crt: number;
+    icmsCode: 'csosn' | 'cst';
+    ibsCbsRegularOption: boolean;
+  }[];
+  ufRates: {
+    uf: string;
+    status: 'confirmado' | 'pendente' | 'divergente';
+    rate: string | null;
+    law: string;
+  }[];
 }
 
 /** "20.5" → "20,5%". */
@@ -65,7 +77,9 @@ export function codeHint(
 ): string {
   if (!list || code.length !== length) return fallback;
   const found = list.find((item) => item.code === code);
-  return found ? found.description : 'Este código não está na tabela oficial. Confira antes de salvar.';
+  return found
+    ? found.description
+    : 'Este código não está na tabela oficial. Confira antes de salvar.';
 }
 
 /** Sugestões nativas do navegador para um campo de código (digitar continua funcionando). */
@@ -113,7 +127,8 @@ export function NcmCestHelp({
   });
   const results = useQuery({
     queryKey: ['fiscal-ncm-search', term],
-    queryFn: () => api.get<{ items: NcmResult[] }>(`/fiscal/ncm?limit=8&q=${encodeURIComponent(term)}`),
+    queryFn: () =>
+      api.get<{ items: NcmResult[] }>(`/fiscal/ncm?limit=8&q=${encodeURIComponent(term)}`),
     enabled: term.length >= 2,
     staleTime: HOUR,
   });
@@ -145,7 +160,10 @@ export function NcmCestHelp({
         onChange={(e) => setSearch(e.target.value)}
       />
       {term.length >= 2 && results.data && results.data.items.length === 0 && (
-        <p>Nada encontrado. Tente outra palavra ou peça o NCM ao fornecedor (ele vem na nota de compra).</p>
+        <p>
+          Nada encontrado. Tente outra palavra ou peça o NCM ao fornecedor (ele vem na nota de
+          compra).
+        </p>
       )}
       {term.length >= 2 && results.data && results.data.items.length > 0 && (
         <ul className="flex flex-col gap-1" aria-label="NCM encontrados">
@@ -161,7 +179,9 @@ export function NcmCestHelp({
               >
                 <span className="font-semibold">{ncmMask(item.code)}</span> — {item.description}
                 {item.path.length > 0 && (
-                  <span className="block text-muted">{item.path.slice(1).join(' › ') || item.path[0]}</span>
+                  <span className="block text-muted">
+                    {item.path.slice(1).join(' › ') || item.path[0]}
+                  </span>
                 )}
               </button>
             </li>
@@ -173,8 +193,8 @@ export function NcmCestHelp({
         <div>
           <p className="mb-1 font-semibold">CEST previstos para este NCM</p>
           <p className="mb-2 text-muted">
-            Só preencha se o produto estiver em substituição tributária no seu estado. Na dúvida, pergunte ao
-            contador.
+            Só preencha se o produto estiver em substituição tributária no seu estado. Na dúvida,
+            pergunte ao contador.
           </p>
           <ul className="flex flex-col gap-1" aria-label="CEST sugeridos">
             {cests.data.items.slice(0, 8).map((item) => (
@@ -193,7 +213,9 @@ export function NcmCestHelp({
         </div>
       )}
       {cests.data && cests.data.items.length === 0 && (
-        <p className="text-muted">Não há CEST previsto para este NCM: pode deixar o campo CEST em branco.</p>
+        <p className="text-muted">
+          Não há CEST previsto para este NCM: pode deixar o campo CEST em branco.
+        </p>
       )}
     </div>
   );

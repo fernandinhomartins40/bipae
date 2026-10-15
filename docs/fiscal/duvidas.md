@@ -213,3 +213,16 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a transferência entre lojas (F4-12) move o estoque entre lojas do mesmo cliente. Quando as lojas são de empresas (CNPJs) diferentes, a mercadoria circula entre estabelecimentos e precisa de NF-e de transferência (CFOP 5152/6152). Depois da ADC 49 do STF e da LC 204/2023, a transferência entre estabelecimentos do mesmo titular não tem incidência de ICMS, mas a nota continua obrigatória, e a transferência do crédito do ICMS tem regras próprias.
 - **Implementação provisória:** o Bipaê move o estoque e marca a transferência entre CNPJs diferentes com "precisa de NF-e de transferência", sem emitir nem calcular nada. Lojas da mesma empresa (mesmo CNPJ) não geram nota. A emissão fica para quando o fluxo de NF-e de saída (F3-14) estiver pronto e as regras abaixo, confirmadas.
 - **Pergunta (contador, E3):** na transferência entre estabelecimentos do mesmo titular, a empresa transfere o crédito do ICMS (destacando o imposto) ou não, e como isso fica por UF? Qual é o tratamento do IBS e da CBS nessas transferências a partir de 2027?
+
+### D-027 — Apuração do IBS e da CBS: quando o crédito entra e o que fica de fora
+
+- **Contexto:** pela LC 214/2025, art. 47, o crédito do IBS e da CBS só pode ser apropriado quando o débito do fornecedor for extinto (pagamento, split payment etc.), com documento fiscal eletrônico idôneo, separado por tributo, e não vale para uso ou consumo pessoal (art. 57).
+- **Implementação provisória (F4-13):** a apuração do Bipaê é **gerencial**:
+  - soma o IBS e a CBS destacados nas notas de compra **autorizadas**, no mês de emissão da nota, sem conferir se o fornecedor já recolheu e sem excluir uso e consumo pessoal;
+  - a devolução de venda estorna o débito na proporção do valor devolvido de cada linha, com arredondamento meio para cima;
+  - em 2026, mostra a dispensa de recolhimento de quem cumpre as obrigações acessórias (art. 348, § 1º).
+  - Nada disso é enviado a nenhum órgão.
+- **Pergunta (contador, E3):**
+  - Em que mês o crédito deve entrar: na emissão da nota, na entrada da mercadoria ou na extinção do débito informada pelo Comitê Gestor e pela Receita?
+  - Como a empresa marca as compras de uso e consumo pessoal?
+  - O estorno da devolução deve vir do documento de devolução, em vez da proporção?

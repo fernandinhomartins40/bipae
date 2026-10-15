@@ -14,3 +14,4 @@ export * from './nfe-endpoints';
 export * from './icms-products';
 export * from './simples-limits';
 export * from './mei';
+export * from './ibs-cbs-settlement';
