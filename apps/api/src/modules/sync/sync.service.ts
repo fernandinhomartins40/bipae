@@ -29,6 +29,7 @@ import {
   priceTableItems,
   productComponents,
   priceTables,
+  promotions,
   productBarcodes,
   products,
   saleItems,
@@ -679,6 +680,12 @@ export class SyncService {
       })
       .from(customers)
       .where(sql`${customers.priceTableId} is not null`);
+    const [promos] = await tx
+      .select({
+        last: sql<string>`coalesce(max(${promotions.updatedAt})::text, '')`,
+        n: sql<number>`count(*)`,
+      })
+      .from(promotions);
     const [creditState] = await tx
       .select({
         limits: sql<string>`coalesce((select string_agg(${customers.taxId} || ':' || ${customers.creditLimitCents}, ',' order by ${customers.taxId}) from ${customers} where ${customers.creditLimitCents} is not null), '')`,
@@ -698,6 +705,8 @@ export class SyncService {
           tables?.n,
           linked?.last,
           linked?.n,
+          promos?.last,
+          promos?.n,
         ].join('|'),
       )
       .digest('hex')
@@ -730,6 +739,13 @@ export class SyncService {
       .from(customerCreditEntries)
       .groupBy(customerCreditEntries.customerTaxId);
     const balanceOf = new Map(balances.map((b) => [b.taxId, Number(b.cents)]));
+    // Promoções ligadas e que ainda não acabaram; o caixa confere a vigência no dia da venda.
+    const activePromotions = await tx
+      .select()
+      .from(promotions)
+      .where(
+        sql`${promotions.active} and (${promotions.endsOn} is null or ${promotions.endsOn} >= ${todayInBrazil()})`,
+      );
     const late = new Map(
       (await overdueCredit(tx, todayInBrazil())).map((o) => [o.taxId, o.daysLate]),
     );
@@ -751,6 +767,13 @@ export class SyncService {
             .map(({ productId, priceCents }) => ({ productId, priceCents })),
         })),
         customers: people.map((p) => ({ taxId: p.taxId!, priceTableId: p.priceTableId! })),
+        promotions: activePromotions.map((p) => ({
+          id: p.id,
+          name: p.name,
+          startsOn: p.startsOn,
+          endsOn: p.endsOn,
+          rule: p.rule,
+        })),
       },
     };
   }

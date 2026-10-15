@@ -1,5 +1,19 @@
 # Changelog
 
+## [F5-02.b Cadastro de promoções] — 15/10/2026
+
+### Adicionado
+- **Cadastro de promoções pela API** (`/v1/promotions`):
+  - nome, início, fim opcional, ligada ou desligada, e a regra (leve X pague Y, faixa de quantidade ou combo);
+  - toda criação e alteração vai para a auditoria;
+  - não há exclusão: a promoção é desligada e fica no histórico.
+- **Validação com mensagens claras.** Por exemplo:
+  - "Quem leva precisa pagar menos do que leva";
+  - o combo precisa de pelo menos dois produtos;
+  - o fim precisa ser depois do início;
+  - produto pesado só entra em faixa de quantidade.
+- **As promoções ligadas vão ao caixa no retrato de preços.** Quando algo muda, o caixa recebe a lista nova na sincronização.
+
 ## [F5-02.a Motor de promoções] — 15/10/2026
 
 ### Adicionado

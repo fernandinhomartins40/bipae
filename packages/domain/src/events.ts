@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { PAYMENT_METHODS } from './payment-methods';
+import type { PromotionRule } from './contracts';
 
 export { PAYMENT_LABELS, PAYMENT_METHODS, type PaymentMethod } from './payment-methods';
 
@@ -268,5 +269,13 @@ export interface PricingSnapshot {
     balanceCents: number;
     /** Parcela vencida há mais do que a tolerância (F4-09): sem nova compra no crediário. */
     blocked?: boolean;
+  }[];
+  /** Promoções ativas (F5-02), no formato do motor @bipae/promotions. */
+  promotions?: {
+    id: string;
+    name: string;
+    startsOn: string;
+    endsOn: string | null;
+    rule: PromotionRule;
   }[];
 }

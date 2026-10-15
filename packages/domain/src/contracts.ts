@@ -1297,3 +1297,85 @@ export const labelsInput = z
   .refine((v) => v.kind !== 'scale' || v.items.every((i) => i.grams), {
     message: 'Informe o peso de cada etiqueta de balança',
   });
+
+// ---------- Promoções do caixa (F5-02) ----------
+
+const productIdList = z
+  .array(z.string().uuid())
+  .min(1, 'Escolha pelo menos um produto')
+  .max(200)
+  .refine((ids) => new Set(ids).size === ids.length, 'O mesmo produto aparece duas vezes');
+
+export const promotionRuleInput = z.discriminatedUnion('kind', [
+  z
+    .object({
+      kind: z.literal('buy_x_pay_y'),
+      productIds: productIdList,
+      buy: z.number().int().min(2, 'Leve pelo menos 2').max(100),
+      pay: z.number().int().min(1, 'Pague pelo menos 1'),
+    })
+    .refine((r) => r.pay < r.buy, { message: 'Quem leva precisa pagar menos do que leva' }),
+  z.object({
+    kind: z.literal('quantity_tier'),
+    productIds: productIdList,
+    tiers: z
+      .array(
+        z.object({
+          minQuantityMilli: z.number().int().positive('Quantidade inválida'),
+          unitPriceCents: z.number().int().positive('Preço inválido'),
+        }),
+      )
+      .min(1, 'Informe pelo menos uma faixa')
+      .max(10)
+      .refine(
+        (t) => new Set(t.map((x) => x.minQuantityMilli)).size === t.length,
+        'Duas faixas com a mesma quantidade',
+      ),
+  }),
+  z.object({
+    kind: z.literal('combo'),
+    items: z
+      .array(
+        z.object({
+          productId: z.string().uuid(),
+          quantityMilli: z
+            .number()
+            .int()
+            .positive()
+            .refine((q) => q % 1000 === 0, 'O combo usa unidades inteiras'),
+        }),
+      )
+      .min(2, 'O combo precisa de pelo menos dois produtos')
+      .max(10)
+      .refine(
+        (items) => new Set(items.map((i) => i.productId)).size === items.length,
+        'O mesmo produto aparece duas vezes',
+      ),
+    priceCents: z.number().int().positive('Preço inválido'),
+  }),
+]);
+
+export const promotionInput = z
+  .object({
+    name: z.string().trim().min(2, 'Dê um nome à promoção').max(80),
+    startsOn: isoDay,
+    endsOn: isoDay.nullable().default(null),
+    active: z.boolean().default(true),
+    rule: promotionRuleInput,
+  })
+  .refine((p) => p.endsOn === null || p.endsOn >= p.startsOn, {
+    message: 'O fim precisa ser depois do início',
+  });
+
+export type PromotionRule = z.output<typeof promotionRuleInput>;
+
+export interface PromotionView {
+  id: string;
+  name: string;
+  startsOn: string;
+  endsOn: string | null;
+  active: boolean;
+  rule: PromotionRule;
+  createdAt: string;
+  updatedAt: string;
+}

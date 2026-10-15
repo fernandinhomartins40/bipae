@@ -13,6 +13,7 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
+import type { PromotionRule } from '@bipae/domain';
 
 /** Typed mirror of migrations/*.sql. The SQL files are the source of truth (RLS, triggers). */
 
@@ -854,3 +855,19 @@ export const stockTransferItems = pgTable(
   },
   (t) => [primaryKey({ columns: [t.transferId, t.productId] })],
 );
+
+// ---------------------------------------------------------------- promoções (0027)
+
+/** Promoções do caixa (F5-02); a regra fica no formato do motor @bipae/promotions. */
+export const promotions = pgTable('promotions', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  name: text('name').notNull(),
+  rule: jsonb('rule').$type<PromotionRule>().notNull(),
+  startsOn: date('starts_on', { mode: 'string' }).notNull(),
+  endsOn: date('ends_on', { mode: 'string' }),
+  active: boolean('active').notNull().default(true),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
