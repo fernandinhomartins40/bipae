@@ -71,6 +71,7 @@ import { FinanceController, FinanceService } from './modules/finance/finance.ser
 import { ReportsController, ReportsService } from './modules/reports/reports.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
 import { TransferController, TransferService } from './modules/stock/transfer.service';
+import { LotsController, LotsService } from './modules/stock/lots.service';
 import { LabelsController, LabelsService } from './modules/catalog/labels.service';
 import { PromotionsController, PromotionsService } from './modules/catalog/promotions.service';
 import {
@@ -126,6 +127,7 @@ class AppModule {
         ReportsController,
         InventoryController,
         TransferController,
+        LotsController,
         LabelsController,
         PromotionsController,
         IbsCbsSettlementController,
@@ -167,6 +169,7 @@ class AppModule {
         ReportsService,
         InventoryService,
         TransferService,
+        LotsService,
         LabelsService,
         PromotionsService,
         IbsCbsSettlementService,

@@ -874,3 +874,33 @@ export const promotions = pgTable('promotions', {
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
+
+// ---------------------------------------------------------------- lote e validade (0029)
+
+/** Lote de um produto numa loja (F5-04), com validade e saldo. */
+export const stockLots = pgTable('stock_lots', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  productId: uuid('product_id').notNull(),
+  lotCode: text('lot_code').notNull(),
+  expiresOn: date('expires_on', { mode: 'string' }),
+  manufacturedOn: date('manufactured_on', { mode: 'string' }),
+  quantityMilli: bigint('quantity_milli', { mode: 'number' }).notNull().default(0),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+export const stockLotMoves = pgTable('stock_lot_moves', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  lotId: uuid('lot_id').notNull(),
+  deltaMilli: bigint('delta_milli', { mode: 'number' }).notNull(),
+  reason: text('reason', {
+    enum: ['entry', 'purchase', 'sale', 'sale_cancelled', 'return', 'discard'],
+  }).notNull(),
+  saleId: uuid('sale_id'),
+  refId: uuid('ref_id'),
+  actorId: uuid('actor_id'),
+  occurredAt: ts('occurred_at').notNull().defaultNow(),
+});

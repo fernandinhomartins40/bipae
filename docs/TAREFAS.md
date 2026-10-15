@@ -238,7 +238,10 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F5-02.c · Caixa aplica as promoções sem internet, mostra o desconto e o leva no evento da venda (fora do limite de desconto do operador) — depende: F5-02.b
   - [x] F5-02.d · Tela de promoções na retaguarda, com E2E — depende: F5-02.c
 - [x] F5-03 · Atacarejo (preço por quantidade) — depende: F5-02
-- [ ] F5-04 · Lote e validade com FEFO (farmácia, pet, mercado)
+- [~] F5-04 · Lote e validade com FEFO (farmácia, pet, mercado)
+  - [x] F5-04.a · Lotes com validade por loja, entrada manual, baixa da venda pelo lote que vence primeiro (FEFO) com rastreio por venda, devolução e cancelamento voltando ao mesmo lote
+  - [~] F5-04.b · Entrada pelo XML de compra lê o lote e a validade (grupo rastro) — depende: F5-04.a
+  - [ ] F5-04.c · Tela de lotes e de validade (vencendo e vencidos), com E2E — depende: F5-04.a
 - [ ] F5-05 · Painel de prevenção de perdas — depende: F4-10
 - [ ] F5-06 · Self-checkout — depende: F3-14
 - [ ] F5-07 · Food service: mesas e comandas

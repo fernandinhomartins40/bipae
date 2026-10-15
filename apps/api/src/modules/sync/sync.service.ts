@@ -41,6 +41,7 @@ import {
   terminals,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { LotsService } from '../stock/lots.service';
 import {
   cancelCreditReceivable,
   createCreditReceivable,
@@ -63,6 +64,7 @@ export class SyncService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(LotsService) private readonly lots: LotsService,
   ) {}
 
   /**
@@ -408,6 +410,7 @@ export class SyncService {
           'return',
           p.returnId,
           p.items.map((i) => [i.productId, i.quantityMilli]),
+          p.originalSaleId,
         );
         if (p.refundMethod === 'store_credit' && original.customerTaxId) {
           await this.creditEntry(
@@ -556,10 +559,21 @@ export class SyncService {
     reason: 'sale' | 'sale_cancelled' | 'return',
     refId: string,
     deltas: [productId: string, deltaMilli: number][],
+    /** Venda de origem (na devolução); nas outras, a própria `refId`. */
+    saleId: string = refId,
   ) {
     if (deltas.length === 0) return;
     const expanded = await this.expandKits(tx, deltas);
     if (expanded.length === 0) return;
+    // Lote e validade (F5-04): baixa pelo lote que vence primeiro e guarda a venda.
+    await this.lots.applySale(tx, ctx, {
+      storeId: terminal.storeId,
+      reason,
+      saleId,
+      refId,
+      at,
+      deltas: expanded,
+    });
     await tx.insert(stockMovements).values(
       expanded.map(([productId, deltaMilli]) => ({
         id: uuidv7(),

@@ -1,5 +1,18 @@
 # Changelog
 
+## [F5-04.a Lote e validade] — 15/10/2026
+
+### Adicionado
+- **Lotes com validade por loja** (API `/v1/stock/lots`), para produtos marcados com "controla lote e validade".
+  - O lote é informado como **mercadoria nova** (soma no estoque) ou **só para identificar** o estoque que já existe.
+  - O mesmo lote não pode ter duas validades.
+- **A venda baixa pelo lote que vence primeiro (FEFO)**, sozinha, quando o caixa sincroniza:
+  - primeiro os lotes dentro da validade; os vencidos só saem se não houver outro;
+  - **devolução e cancelamento voltam aos mesmos lotes** de onde a venda tirou.
+- **Recall:** para cada lote, a lista das vendas que levaram unidades dele, com a quantidade e o CPF/CNPJ quando houver.
+- **Vencendo e vencidos:** lista dos lotes que vencem em até N dias, com os dias que faltam.
+- **Descarte** (vencido, avariado): sai do lote e do estoque, com o motivo na auditoria.
+
 ## [F5-03 Atacarejo] — 15/10/2026
 
 ### Adicionado
