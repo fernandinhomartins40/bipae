@@ -9,7 +9,8 @@ import {
   type Terminal,
 } from '@bipae/domain';
 import { findCompanyRegime } from '@bipae/fiscal';
-import { revenueAlerts } from '@bipae/fiscal/tables';
+import { PDV_PAYMENT_TPAG, revenueAlerts } from '@bipae/fiscal/tables';
+import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
@@ -20,6 +21,30 @@ import { withTenant, type Db } from '../../db/client';
 import { companies, priceTables, sales, stores, terminals } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
+
+type CompanyInput = z.output<typeof companyInput>;
+
+/** Município da tabela do IBGE e da UF da empresa; Pix e vale só com códigos da tabela (D-029). */
+function assertCompanyFiscal(input: CompanyInput, uf: string | null | undefined) {
+  if (input.cityCode) {
+    const city = findMunicipio(input.cityCode);
+    if (!city)
+      throw new AppError(422, 'invalid_city', 'Município não encontrado na tabela do IBGE.');
+    if (uf && city.uf !== uf) {
+      throw new AppError(
+        422,
+        'invalid_city',
+        `${city.name} não fica em ${uf}: confira a UF ou o município.`,
+      );
+    }
+  }
+  for (const [method, code] of Object.entries(input.nfcePaymentCodes ?? {})) {
+    const rule = PDV_PAYMENT_TPAG[method];
+    if (!rule || !(rule.options ?? [rule.code]).includes(code)) {
+      throw new AppError(422, 'invalid_payment_code', `Código ${code} não vale para ${method}.`);
+    }
+  }
+}
 
 function toTerminal(row: typeof terminals.$inferSelect): Terminal {
   return {
@@ -85,6 +110,11 @@ export class OrganizationService {
 
   async updateCompany(ctx: RequestContext, id: string, input: z.output<typeof companyInput>) {
     return withTenant(this.db, ctx, async (tx) => {
+      const [current] = await tx
+        .select({ uf: companies.uf })
+        .from(companies)
+        .where(eq(companies.id, id));
+      assertCompanyFiscal(input, input.uf ?? current?.uf);
       const [row] = await tx
         .update(companies)
         .set({ ...input, updatedAt: new Date() })
@@ -102,6 +132,7 @@ export class OrganizationService {
   }
 
   async createCompany(ctx: RequestContext, input: z.output<typeof companyInput>) {
+    assertCompanyFiscal(input, input.uf);
     return withTenant(this.db, ctx, async (tx) => {
       await this.limits.assertCanAdd(tx, 'companies');
       const [row] = await tx

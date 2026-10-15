@@ -96,6 +96,20 @@ export const companies = pgTable('companies', {
   taxRegime: text('tax_regime'),
   /** Optante pelo Simples que apura o IBS e a CBS pelo regime regular (F4-13). */
   ibsCbsRegular: boolean('ibs_cbs_regular').notNull().default(false),
+  /** Dados do emitente da nota (F3-14.b). */
+  ie: text('ie'),
+  street: text('street'),
+  streetNumber: text('street_number'),
+  complement: text('complement'),
+  district: text('district'),
+  cityCode: char('city_code', { length: 7 }),
+  cep: char('cep', { length: 8 }),
+  phone: text('phone'),
+  /** Código tPag escolhido para o Pix e o vale (dúvida D-029). */
+  nfcePaymentCodes: jsonb('nfce_payment_codes')
+    .$type<Record<string, string>>()
+    .notNull()
+    .default({}),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
@@ -903,4 +917,34 @@ export const stockLotMoves = pgTable('stock_lot_moves', {
   refId: uuid('ref_id'),
   actorId: uuid('actor_id'),
   occurredAt: ts('occurred_at').notNull().defaultNow(),
+});
+
+// ---------------------------------------------------------------- documentos fiscais (0030)
+
+/** NFC-e (e depois NF-e) de cada venda, com a situação na SEFAZ (F3-14.b). */
+export const fiscalDocuments = pgTable('fiscal_documents', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  saleId: uuid('sale_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  model: char('model', { length: 2 }).notNull().default('65'),
+  series: integer('series'),
+  number: integer('number'),
+  accessKey: char('access_key', { length: 44 }),
+  status: text('status', {
+    enum: ['pending', 'error', 'not_configured', 'authorized', 'rejected', 'denied'],
+  })
+    .notNull()
+    .default('pending'),
+  pendingItems: jsonb('pending_items').$type<string[]>().notNull().default([]),
+  cStat: text('c_stat'),
+  xMotivo: text('x_motivo'),
+  protocol: text('protocol'),
+  signedXml: text('signed_xml'),
+  nfeProc: text('nfe_proc'),
+  attempts: integer('attempts').notNull().default(0),
+  lastError: text('last_error'),
+  authorizedAt: ts('authorized_at'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
 });

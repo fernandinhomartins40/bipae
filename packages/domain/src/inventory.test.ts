@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { inventoryCountInput, labelsInput, promotionInput, stockTransferInput } from './contracts';
+import {
+  companyInput,
+  inventoryCountInput,
+  labelsInput,
+  promotionInput,
+  stockTransferInput,
+} from './contracts';
 
 describe('contagem de inventário (F4-11)', () => {
   it('aceita o código bipado ou o produto escolhido', () => {
@@ -157,5 +163,26 @@ describe('promoções (F5-02)', () => {
         },
       }),
     ).toBe('O mesmo produto aparece duas vezes');
+  });
+});
+
+describe('dados do emitente da empresa (F3-14.b)', () => {
+  it('limpa a máscara da IE e do CEP e recusa o que não tem tamanho certo', () => {
+    expect(
+      companyInput.parse({
+        legalName: 'Mercadinho',
+        ie: '111.222.333.444',
+        cep: '01001-000',
+        cityCode: '3550308',
+      }),
+    ).toMatchObject({ ie: '111222333444', cep: '01001000', cityCode: '3550308' });
+    expect(companyInput.parse({ legalName: 'Mercadinho', ie: '', cep: '' })).toMatchObject({
+      ie: null,
+      cep: null,
+    });
+    const curto = companyInput.safeParse({ legalName: 'Mercadinho', cep: '123' });
+    expect(curto.error?.issues[0]?.message).toBe('CEP deve ter 8 dígitos');
+    const ie = companyInput.safeParse({ legalName: 'Mercadinho', ie: '1' });
+    expect(ie.error?.issues[0]?.message).toBe('Inscrição estadual inválida');
   });
 });

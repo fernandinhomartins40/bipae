@@ -1,5 +1,24 @@
 # Changelog
 
+## [F3-14.b Emissão da NFC-e no servidor] — 15/10/2026
+
+### Adicionado
+- **Cada venda sincronizada ganha a sua NFC-e**, emitida em segundo plano no servidor. Por enquanto só em homologação; a primeira emissão real depende do certificado A1 (F3-11.b).
+  - O servidor monta a nota, assina com o certificado A1 da empresa e envia à SEFAZ.
+  - O XML autorizado fica guardado para baixar.
+- **Nunca autoriza a mesma venda duas vezes:**
+  - se a resposta da SEFAZ se perder, a nova tentativa consulta a nota pela chave antes de reenviar;
+  - a mesma venda gera sempre a mesma chave.
+- **Situação da nota por venda:**
+  - autorizada, recusada (com o código e o motivo da SEFAZ) ou com falha temporária;
+  - "falta configurar", com a lista do que resolver: inscrição estadual, endereço, certificado, NCM, perfil fiscal.
+  - Nota que falta configurar não é emitida depois sozinha.
+- **Nova tentativa:**
+  - a pedido de quem cuida da loja;
+  - automática: a cada 5 minutos, as notas paradas por falha temporária nas últimas 24 horas voltam para a fila.
+- **Cadastro da empresa:** inscrição estadual, endereço com o município da tabela do IBGE (conferido com a UF), telefone e a escolha do código do Pix e do vale (D-029).
+- Tudo testado contra a SEFAZ simulada: autorização, resposta perdida, recusa e SEFAZ fora do ar.
+
 ## [F3-14.a Venda vira NFC-e] — 15/10/2026
 
 ### Adicionado

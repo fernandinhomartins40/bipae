@@ -58,6 +58,10 @@ import { PurchasesService } from './modules/purchases/purchases.service';
 import { CertificatesService } from './modules/fiscal/certificates.service';
 import { HttpsSefazTransport } from './modules/fiscal/sefaz.transport';
 import { SEFAZ_TRANSPORT, SefazService } from './modules/fiscal/sefaz.service';
+import {
+  NfceEmissionController,
+  NfceEmissionService,
+} from './modules/fiscal/nfce-emission.service';
 import { IcmsRulesService } from './modules/fiscal/icms-rules.service';
 import { AuditController } from './modules/audit/audit.controller';
 import { AuditService } from './modules/audit/audit.service';
@@ -127,6 +131,7 @@ class AppModule {
         ReportsController,
         InventoryController,
         TransferController,
+        NfceEmissionController,
         LotsController,
         LabelsController,
         PromotionsController,
@@ -177,6 +182,7 @@ class AppModule {
         CertificatesService,
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },
         SefazService,
+        NfceEmissionService,
         PurchasesService,
         PurchaseOrdersService,
         {

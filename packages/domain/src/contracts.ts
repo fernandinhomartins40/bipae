@@ -435,6 +435,31 @@ export const companyInput = z.object({
   taxRegime: z.enum(COMPANY_TAX_REGIMES, { message: 'Regime tributário inválido' }).nullish(),
   /** Optante pelo Simples que apura o IBS e a CBS pelo regime regular (LC 214/2025, art. 41, § 3º). */
   ibsCbsRegular: z.boolean().optional(),
+  // Dados do emitente da NFC-e e da NF-e (F3-14.b).
+  ie: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, '') || null)
+    .refine((v) => v === null || (v.length >= 2 && v.length <= 14), 'Inscrição estadual inválida')
+    .nullish(),
+  street: optionalText(60),
+  streetNumber: optionalText(60),
+  complement: optionalText(60),
+  district: optionalText(60),
+  cityCode: z
+    .string()
+    .regex(/^\d{7}$/, 'Escolha o município')
+    .nullish()
+    .or(z.literal('').transform(() => null)),
+  cep: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, '') || null)
+    .refine((v) => v === null || v.length === 8, 'CEP deve ter 8 dígitos')
+    .nullish(),
+  phone: optionalText(20),
+  /** Código tPag do Pix e do vale na NFC-e (dúvida D-029), entre as opções da tabela. */
+  nfcePaymentCodes: z.record(z.string(), z.string().regex(/^\d{2}$/)).optional(),
 });
 
 export const terminalInput = z.object({

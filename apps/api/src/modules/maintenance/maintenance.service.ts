@@ -11,12 +11,15 @@ import { CONFIG, DB, QUEUE } from '../../common/di';
 import type { JobQueue } from '../../common/queue';
 import { asPlatform, type Db, type Tx } from '../../db/client';
 import { rowsOf } from '../../db/migrate';
-import { adminSessions, sessions, tenants } from '../../db/schema';
+import { adminSessions, fiscalDocuments, sales, sessions, tenants } from '../../db/schema';
 import { tenantTables } from '../account/data-export.service';
 import { PlatformAuditService } from '../admin/platform-audit.service';
+import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 
 export const SESSIONS_CLEANUP = 'manutencao.limpar-sessoes';
 export const ACCOUNT_PURGE = 'manutencao.excluir-contas-canceladas';
+export const NFCE_SWEEP = 'manutencao.reenviar-nfce';
+const CINCO_MINUTOS = 5 * 60_000;
 const UM_DIA = 24 * 60 * 60_000;
 const SEIS_HORAS = 6 * 60 * 60_000;
 const DIAS_GUARDADOS = 30;
@@ -35,6 +38,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(CONFIG) private readonly config: Config,
     @Inject(QUEUE) private readonly queue: JobQueue,
     @Inject(PlatformAuditService) private readonly platformAudit: PlatformAuditService,
+    @Inject(NfceEmissionService) private readonly nfce: NfceEmissionService,
   ) {}
 
   async onModuleInit() {
@@ -43,6 +47,10 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
       this.queue.process(SESSIONS_CLEANUP, async () => {
         const removed = await this.cleanupSessions();
         if (removed > 0) this.logger.log(`${removed} registros de login antigos apagados`);
+      });
+      this.queue.process(NFCE_SWEEP, async () => {
+        const again = await this.sweepNfce();
+        if (again > 0) this.logger.log(`${again} NFC-e de volta à fila`);
       });
       this.queue.process(ACCOUNT_PURGE, async () => {
         const purged = await this.purgeCancelledAccounts();
@@ -62,6 +70,11 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
           this.logger.warn(`Não foi possível agendar a limpeza: ${error.message}`),
         );
       void this.queue
+        .add(NFCE_SWEEP, {}, { repeatEveryMs: CINCO_MINUTOS })
+        .catch((error: Error) =>
+          this.logger.warn(`Não foi possível agendar a fila da NFC-e: ${error.message}`),
+        );
+      void this.queue
         .add(ACCOUNT_PURGE, {}, { repeatEveryMs: UM_DIA })
         .catch((error: Error) =>
           this.logger.warn(`Não foi possível agendar a exclusão de contas: ${error.message}`),
@@ -71,6 +84,36 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     await this.queue.close().catch(() => undefined);
+  }
+
+  /**
+   * NFC-e paradas na fila (F3-14.b): pendentes ou com falha temporária há mais de um minuto, das
+   * últimas 24 horas, voltam para a fila (a fila em memória perde tarefas numa reinicialização, e
+   * a SEFAZ pode ficar fora mais tempo do que as tentativas automáticas). "Falta configurar" e
+   * recusadas não voltam sozinhas: dependem de alguém corrigir.
+   */
+  async sweepNfce(now: Date = new Date()): Promise<number> {
+    const stuck = await asPlatform(this.db, (tx) =>
+      tx
+        .select({
+          id: fiscalDocuments.id,
+          tenantId: fiscalDocuments.tenantId,
+          operatorId: sales.operatorId,
+        })
+        .from(fiscalDocuments)
+        .innerJoin(sales, eq(sales.id, fiscalDocuments.saleId))
+        .where(
+          and(
+            sql`${fiscalDocuments.status} in ('pending', 'error')`,
+            lt(fiscalDocuments.updatedAt, new Date(now.getTime() - 60_000)),
+            sql`${fiscalDocuments.createdAt} > ${new Date(now.getTime() - UM_DIA)}`,
+            lt(fiscalDocuments.attempts, 10),
+          ),
+        )
+        .limit(200),
+    );
+    for (const doc of stuck) await this.nfce.schedule(doc.tenantId, doc.operatorId, doc.id);
+    return stuck.length;
   }
 
   /** Apaga logins vencidos ou encerrados há mais de 30 dias, de todas as empresas. */

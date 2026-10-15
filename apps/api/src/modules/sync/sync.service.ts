@@ -42,6 +42,7 @@ import {
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 import { LotsService } from '../stock/lots.service';
+import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import {
   cancelCreditReceivable,
   createCreditReceivable,
@@ -65,6 +66,7 @@ export class SyncService {
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(LotsService) private readonly lots: LotsService,
+    @Inject(NfceEmissionService) private readonly emission: NfceEmissionService,
   ) {}
 
   /**
@@ -109,6 +111,8 @@ export class SyncService {
     parsed.sort((a, b) => a.deviceSeq - b.deviceSeq);
 
     for (const event of parsed) {
+      // Tarefas que só podem começar depois que a transação do evento terminar (ex.: emitir a NFC-e).
+      const afterCommit: (() => Promise<void>)[] = [];
       try {
         await withTenant(this.db, { tenantId: ctx.tenantId, userId: ctx.userId }, async (tx) => {
           const [inserted] = await tx
@@ -127,9 +131,14 @@ export class SyncService {
             .returning({ id: syncEvents.id });
           if (!inserted) return; // already applied
           await this.requireMember(tx, event.operatorId);
-          await this.apply(tx, ctx, terminal, event);
+          await this.apply(tx, ctx, terminal, event, afterCommit);
         });
         result.accepted.push(event.id);
+        for (const run of afterCommit) {
+          await run().catch((error: Error) =>
+            this.logger.warn(`Tarefa depois da venda não agendada: ${error.message}`),
+          );
+        }
       } catch (error) {
         if (error instanceof Rejection) {
           result.rejected.push({ id: event.id, reason: error.message });
@@ -152,7 +161,13 @@ export class SyncService {
     if (!m) throw new Rejection('Operador não pertence a esta empresa.');
   }
 
-  private async apply(tx: Tx, ctx: RequestContext, terminal: Terminal, event: TerminalEvent) {
+  private async apply(
+    tx: Tx,
+    ctx: RequestContext,
+    terminal: Terminal,
+    event: TerminalEvent,
+    afterCommit: (() => Promise<void>)[] = [],
+  ) {
     const at = new Date(event.occurredAt);
     const actor = { tenantId: ctx.tenantId, userId: event.operatorId };
     switch (event.type) {
@@ -287,6 +302,19 @@ export class SyncService {
           p.saleId,
           p.items.map((i) => [i.productId, -i.quantityMilli]),
         );
+        // NFC-e (F3-14.b): o documento nasce com a venda; a emissão roda em segundo plano.
+        const [store] = await tx
+          .select({ companyId: stores.companyId })
+          .from(stores)
+          .where(eq(stores.id, terminal.storeId));
+        const documentId = store
+          ? await this.emission.prepare(tx, ctx, p.saleId, store.companyId)
+          : null;
+        if (documentId) {
+          afterCommit.push(() =>
+            this.emission.schedule(ctx.tenantId, event.operatorId, documentId),
+          );
+        }
         const onCredit = p.payments
           .filter((pay) => pay.method === 'store_credit')
           .reduce((sum, pay) => sum + pay.amountCents, 0);
