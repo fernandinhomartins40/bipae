@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-15.a NFC-e em contingência no motor] — 15/10/2026
+
+### Adicionado
+- **O motor fiscal monta a NFC-e em contingência off-line** (`tpEmis=9`), como pedem o Manual de Contingência Off-line v2.0, o Anexo IV do MOC 7.0 e o Manual do DANFE NFC-e e QR Code v6.0:
+  - a chave de acesso com o tipo de emissão 9;
+  - a data e hora de entrada em contingência (`dhCont`) e a justificativa (`xJust`, de 15 a 256 caracteres);
+  - o QR Code versão 3 de contingência, com o dia da emissão, o valor da nota, o destinatário e a assinatura RSA-SHA1 desses dados com o mesmo certificado da nota.
+- A mesma venda gera sempre a mesma chave, porque a transmissão depois precisa manter a chave original.
+- XML validado no schema oficial. Um teste confere a assinatura do QR Code com a chave pública.
+
 ## [Dúvidas fiscais pesquisadas em fonte oficial] — 15/10/2026
 
 ### Corrigido (com base nos documentos oficiais do Portal da NF-e)

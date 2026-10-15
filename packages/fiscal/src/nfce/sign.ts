@@ -80,3 +80,14 @@ export async function signNfe(xml: string, key: SigningKey | NfeSigner): Promise
     `<KeyInfo><X509Data><X509Certificate>${key.certificate}</X509Certificate></X509Data></KeyInfo></Signature>`;
   return xml.replace(/<\/NFe>$/, `${block}</NFe>`);
 }
+
+/**
+ * Assinatura RSA-SHA1 em base64 de um texto, com o mesmo certificado da nota: usada nos
+ * parâmetros do QR Code versão 3 em contingência off-line (Manual do DANFE NFC-e v6.0, 4.4.2).
+ */
+export async function signText(text: string, key: SigningKey | NfeSigner): Promise<string> {
+  const data = encoder.encode(text);
+  return 'privateKey' in key
+    ? toBase64(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key.privateKey, data))
+    : key.sign(data);
+}

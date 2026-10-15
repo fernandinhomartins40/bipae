@@ -6,6 +6,8 @@ import { findFcp } from '../tables/rates';
 import { PdvPaymentError, pdvPaymentRule } from '../tables/pdv-payments';
 import { buildNfce, NfceBuildError, type NfceDocument, type NfceInput } from './build';
 import { nfceNumbering } from './numbering';
+import { contingencyQrPayload } from './qrcode';
+import { signText, type NfeSigner, type SigningKey } from './sign';
 
 /**
  * Da venda do caixa à NFC-e (F3-14.a). Junta a empresa, a série do caixa, os itens com os
@@ -72,6 +74,8 @@ export interface SaleNfceInput {
   /** Escolhas da empresa para Pix e vale (dúvida D-029). */
   paymentCodes?: Partial<Record<string, string>>;
   appVersion: string;
+  /** Contingência off-line (F3-15); use `buildSaleNfceContingency`, que assina o QR Code. */
+  contingency?: { enteredAt: string; reason: string; qrSignature: string };
 }
 
 export type SaleNfceResult =
@@ -247,6 +251,7 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
     payments,
     ...(changeCents > 0 && { changeCents }),
     appVersion: input.appVersion,
+    ...(input.contingency && { contingency: input.contingency }),
   };
   try {
     // cUF da tabela oficial de UFs (a mesma do FCP).
@@ -259,4 +264,26 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
     }
     throw error;
   }
+}
+
+/**
+ * A NFC-e da venda em contingência off-line, com o QR Code assinado pelo certificado (F3-15).
+ * `enteredAt` é o momento em que o caixa ficou sem conexão (dhCont); o XML ainda precisa de
+ * `signNfe` antes de ser guardado e transmitido.
+ */
+export async function buildSaleNfceContingency(
+  input: Omit<SaleNfceInput, 'contingency'>,
+  contingency: { enteredAt: string; reason: string },
+  key: SigningKey | NfeSigner,
+): Promise<SaleNfceResult> {
+  const draft = buildSaleNfce({ ...input, contingency: { ...contingency, qrSignature: '-' } });
+  if (!draft.ok) return draft;
+  const payload = contingencyQrPayload({
+    accessKey: draft.document.accessKey,
+    issuedAt: draft.input.issuedAt,
+    totalCents: draft.document.totalCents,
+    customer: draft.input.customer ?? null,
+  });
+  const qrSignature = await signText(payload, key);
+  return buildSaleNfce({ ...input, contingency: { ...contingency, qrSignature } });
 }

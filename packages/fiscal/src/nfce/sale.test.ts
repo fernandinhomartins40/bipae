@@ -5,9 +5,11 @@ import {
   buildSaleNfce,
   HOMOLOGATION_FIRST_ITEM,
   saleNumericCode,
+  buildSaleNfceContingency,
   type SaleNfceInput,
 } from './sale';
 import { pdvPaymentCode } from '../tables/pdv-payments';
+import type { WebCryptoKey } from './sign';
 
 /** F3-14.a: da venda do caixa à NFC-e. */
 
@@ -180,5 +182,93 @@ describe('detalhes da NFC-e da venda', () => {
     expect(pdvPaymentCode('voucher', '2026-10-15', { voucher: '11' })).toBe('11');
     // O código 05 só vale a partir de 01/07/2024.
     expect(() => pdvPaymentCode('store_credit', '2024-01-01')).toThrow('não vale');
+  });
+});
+
+describe('NFC-e em contingência off-line (F3-15.a)', () => {
+  const chaves = () =>
+    crypto.subtle.generateKey(
+      {
+        name: 'RSASSA-PKCS1-v1_5',
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: 'SHA-1',
+      },
+      true,
+      ['sign', 'verify'],
+    ) as unknown as Promise<{ privateKey: WebCryptoKey; publicKey: WebCryptoKey }>;
+
+  it('tpEmis 9 na chave e no ide, dhCont e xJust, QR Code versão 3 assinado e válido no schema', async () => {
+    const par = await chaves();
+    const r = await buildSaleNfceContingency(
+      venda(),
+      {
+        enteredAt: '2026-10-15T15:25:00-03:00',
+        reason: 'Caixa sem conexão com a internet no momento da venda',
+      },
+      { privateKey: par.privateKey, certificate: 'AAAA' },
+    );
+    if (!r.ok) throw new Error(r.pending.join('; '));
+    const xml = r.document.xml;
+    expect(await validate(xml)).toEqual([]);
+    // A 35ª posição da chave é o tipo de emissão.
+    expect(r.document.accessKey[34]).toBe('9');
+    expect(xml).toContain('<tpEmis>9</tpEmis>');
+    expect(xml).toContain(
+      '<dhCont>2026-10-15T15:25:00-03:00</dhCont><xJust>Caixa sem conexão com a internet no momento da venda</xJust>',
+    );
+    // QR Code: chave|3|2|dia|vNF|2 (CPF)|CPF|assinatura.
+    const p = r.document.qrCode.split('?p=')[1]!.split('|');
+    expect(p.slice(0, 7)).toEqual([
+      r.document.accessKey,
+      '3',
+      '2',
+      '15',
+      '65.80',
+      '2',
+      '12345678909',
+    ]);
+    const assinatura = Uint8Array.from(atob(p[7]!), (ch) => ch.charCodeAt(0));
+    const ok = await crypto.subtle.verify(
+      'RSASSA-PKCS1-v1_5',
+      par.publicKey,
+      assinatura,
+      new TextEncoder().encode(p.slice(0, 7).join('|')),
+    );
+    expect(ok).toBe(true);
+    // A mesma venda em contingência gera sempre a mesma chave (a transmissão mantém a chave).
+    const deNovo = await buildSaleNfceContingency(
+      venda(),
+      { enteredAt: '2026-10-15T15:25:00-03:00', reason: 'Caixa sem conexão com a internet' },
+      { privateKey: par.privateKey, certificate: 'AAAA' },
+    );
+    expect(deNovo.ok && deNovo.document.accessKey).toBe(r.document.accessKey);
+  });
+
+  it('sem destinatário, o QR Code leva os separadores vazios; justificativa curta é recusada', async () => {
+    const par = await chaves();
+    const signer = {
+      certificate: 'AAAA',
+      sign: async (data: Uint8Array) => {
+        const s = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', par.privateKey, data);
+        return btoa(String.fromCharCode(...new Uint8Array(s)));
+      },
+    };
+    const r = await buildSaleNfceContingency(
+      venda({ customerTaxId: null }),
+      { enteredAt: '2026-10-15T15:25:00-03:00', reason: 'Sem internet no caixa da loja' },
+      signer,
+    );
+    if (!r.ok) throw new Error(r.pending.join('; '));
+    expect(r.document.qrCode).toMatch(/\|15\|65\.80\|\|\|[A-Za-z0-9+/=]+$/);
+    const curta = await buildSaleNfceContingency(
+      venda(),
+      { enteredAt: '2026-10-15T15:25:00-03:00', reason: 'Sem rede' },
+      signer,
+    );
+    expect(curta.ok).toBe(false);
+    expect(!curta.ok && curta.pending[0]).toBe(
+      'A justificativa da contingência precisa ter de 15 a 256 caracteres.',
+    );
   });
 });

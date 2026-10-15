@@ -131,7 +131,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Imprimir com `buildDanfeNfce`: térmica por ESC/POS, navegador por `receiptToHtml` (job `html`). Nomes das formas de pagamento vindos da tabela tPag.
 - [~] F3-15 · Contingência offline da NFC-e (emite sem rede e transmite no prazo) — depende: F3-14
   - Regras (pesquisadas em 15/10/2026, D-013): Manual de Especificações da Contingência Off-line v2.0, Anexo IV do MOC 7.0, Manual do DANFE NFC-e e QR Code v6.0 (QR versão 3 com assinatura RSA-SHA1 dos parâmetros) e NT 2026.002 v1.11 (emissão normal em até 5 minutos; contingência transmitida em até 24 horas).
-  - [ ] F3-15.a · Motor: NFC-e em contingência (tpEmis 9, dhCont, xJust, chave com tpEmis 9) e QR Code versão 3 de contingência assinado; validada no schema
+  - [x] F3-15.a · Motor: NFC-e em contingência (tpEmis 9, dhCont, xJust, chave com tpEmis 9) e QR Code versão 3 de contingência assinado; validada no schema
   - [ ] F3-15.b · Caixa: venda sem internet com o A1 no aparelho monta e assina a NFC-e em contingência, imprime o DANFE "EMITIDA EM CONTINGÊNCIA" com a via do estabelecimento, e o XML vai no evento; o servidor transmite o mesmo XML e avisa do prazo
   - [ ] F3-15.c · E2E com a rede desligada: emite em contingência e transmite ao reconectar
   - Pronto quando: um E2E com rede desligada emite em contingência e transmite ao reconectar.

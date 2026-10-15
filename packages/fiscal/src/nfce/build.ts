@@ -1,5 +1,6 @@
 import { buildAccessKey } from './access-key';
-import { nfceSupplement } from './qrcode';
+import { contingencyQrPayload, nfceSupplement } from './qrcode';
+import { signText, type NfeSigner, type SigningKey } from './sign';
 import { el, type XmlNode } from './xml';
 import {
   computeTotals,
@@ -44,6 +45,12 @@ export interface NfceInput {
   additionalInfo?: string;
   /** Versão do sistema emissor (verProc). */
   appVersion: string;
+  /**
+   * Contingência off-line (tpEmis 9, F3-15): quando entrou em contingência (dhCont), o motivo
+   * (xJust, 15 a 256 caracteres) e a assinatura RSA-SHA1 dos parâmetros do QR Code versão 3,
+   * feita com o mesmo certificado da nota (veja `buildContingencyNfce`).
+   */
+  contingency?: { enteredAt: string; reason: string; qrSignature: string };
 }
 
 export interface NfceDocument {
@@ -69,16 +76,35 @@ export function buildNfce(input: NfceInput): NfceDocument {
     model: '65',
     series: input.series,
     number: input.number,
-    emissionType: 1,
+    emissionType: input.contingency ? 9 : 1,
     numericCode: input.numericCode,
   });
   const totals = computeTotals(input.items);
+  const customer = input.customer;
+  if (input.contingency) {
+    const reason = input.contingency.reason.trim();
+    if (reason.length < 15 || reason.length > 256) {
+      throw new NfeBuildError(
+        'A justificativa da contingência precisa ter de 15 a 256 caracteres.',
+      );
+    }
+  }
   const supplement = nfceSupplement({
     uf: input.issuer.address.uf,
     accessKey,
     environment: 'homologacao',
+    ...(input.contingency && {
+      offline: {
+        payload: contingencyQrPayload({
+          accessKey,
+          issuedAt: input.issuedAt,
+          totalCents: totals.vNF,
+          customer,
+        }),
+        signature: input.contingency.qrSignature,
+      },
+    }),
   });
-  const customer = input.customer;
   const body: XmlNode = [
     el('ide', [
       req('cUF', input.cUF),
@@ -92,7 +118,7 @@ export function buildNfce(input: NfceInput): NfceDocument {
       req('idDest', '1'),
       req('cMunFG', input.issuer.address.cityCode),
       req('tpImp', '4'),
-      req('tpEmis', '1'),
+      req('tpEmis', input.contingency ? '9' : '1'),
       req('cDV', accessKey.slice(-1)),
       req('tpAmb', '2'),
       req('finNFe', '1'),
@@ -100,6 +126,8 @@ export function buildNfce(input: NfceInput): NfceDocument {
       req('indPres', '1'),
       req('procEmi', '0'),
       req('verProc', input.appVersion),
+      input.contingency ? req('dhCont', input.contingency.enteredAt) : '',
+      input.contingency ? req('xJust', input.contingency.reason.trim()) : '',
     ]),
     emitGroup(input.issuer),
     customer?.cpf || customer?.cnpj
@@ -125,4 +153,24 @@ export function buildNfce(input: NfceInput): NfceDocument {
     { xmlns: NS },
   );
   return { accessKey, xml, totalCents: totals.vNF, ...supplement };
+}
+
+/**
+ * NFC-e em contingência off-line já com o QR Code assinado (F3-15): monta uma vez para saber a
+ * chave (que leva o tpEmis 9) e o total, assina os parâmetros do QR Code com o certificado e
+ * monta de novo. Depois, o XML ainda é assinado com `signNfe`, como a nota normal.
+ */
+export async function buildContingencyNfce(
+  input: Omit<NfceInput, 'contingency'> & { contingency: { enteredAt: string; reason: string } },
+  key: SigningKey | NfeSigner,
+): Promise<NfceDocument> {
+  const draft = buildNfce({ ...input, contingency: { ...input.contingency, qrSignature: '-' } });
+  const payload = contingencyQrPayload({
+    accessKey: draft.accessKey,
+    issuedAt: input.issuedAt,
+    totalCents: draft.totalCents,
+    customer: input.customer ?? null,
+  });
+  const qrSignature = await signText(payload, key);
+  return buildNfce({ ...input, contingency: { ...input.contingency, qrSignature } });
 }
