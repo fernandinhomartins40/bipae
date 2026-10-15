@@ -1,5 +1,14 @@
 # Changelog
 
+## [F5-02 Promoções avançadas] — 15/10/2026
+
+### Adicionado
+- **Tela de Promoções** na retaguarda (menu próprio):
+  - cria e edita leve X pague Y, preço por quantidade (com várias faixas) e combo;
+  - vigência com início e fim opcional, e liga e desliga;
+  - a lista mostra a regra e a situação: valendo, agendada, encerrada ou desligada.
+- Com as etapas anteriores (F5-02.a a F5-02.c), a promoção cadastrada chega ao caixa na sincronização e vale mesmo sem internet. Um teste de ponta a ponta prova o caminho todo.
+
 ## [F5-02.c Promoções no caixa] — 15/10/2026
 
 ### Adicionado

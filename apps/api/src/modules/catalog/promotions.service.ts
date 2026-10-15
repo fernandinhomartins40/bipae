@@ -24,7 +24,10 @@ type Input = z.output<typeof promotionInput>;
 const productIdsOf = (rule: PromotionRule) =>
   rule.kind === 'combo' ? rule.items.map((i) => i.productId) : rule.productIds;
 
-function toView(row: typeof promotions.$inferSelect): PromotionView {
+function toView(
+  row: typeof promotions.$inferSelect,
+  names: ReadonlyMap<string, string> = new Map(),
+): PromotionView {
   return {
     id: row.id,
     name: row.name,
@@ -32,6 +35,7 @@ function toView(row: typeof promotions.$inferSelect): PromotionView {
     endsOn: row.endsOn,
     active: row.active,
     rule: row.rule,
+    products: productIdsOf(row.rule).map((id) => ({ id, name: names.get(id) ?? 'Produto' })),
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
@@ -49,9 +53,27 @@ export class PromotionsService {
   ) {}
 
   list(ctx: RequestContext): Promise<PromotionView[]> {
-    return withTenant(this.db, ctx, async (tx) =>
-      (await tx.select().from(promotions).orderBy(desc(promotions.createdAt))).map(toView),
-    );
+    return withTenant(this.db, ctx, async (tx) => {
+      const rows = await tx.select().from(promotions).orderBy(desc(promotions.createdAt));
+      const ids = [...new Set(rows.flatMap((r) => productIdsOf(r.rule)))];
+      const names = ids.length
+        ? await tx
+            .select({ id: products.id, name: products.name })
+            .from(products)
+            .where(inArray(products.id, ids))
+        : [];
+      const byId = new Map(names.map((n) => [n.id, n.name]));
+      return rows.map((r) => toView(r, byId));
+    });
+  }
+
+  /** A promoção com o nome dos produtos da regra. */
+  private async named(tx: Tx, row: typeof promotions.$inferSelect) {
+    const names = await tx
+      .select({ id: products.id, name: products.name })
+      .from(products)
+      .where(inArray(products.id, productIdsOf(row.rule)));
+    return toView(row, new Map(names.map((p) => [p.id, p.name])));
   }
 
   /** Os produtos da regra precisam existir (a regra é jsonb, sem chave estrangeira). */
@@ -87,7 +109,7 @@ export class PromotionsService {
         entityId: row!.id,
         data: input,
       });
-      return toView(row!);
+      return this.named(tx, row!);
     });
   }
 
@@ -107,7 +129,7 @@ export class PromotionsService {
         entityId: id,
         data: { before: toView(before), after: input },
       });
-      return toView(row!);
+      return this.named(tx, row!);
     });
   }
 }

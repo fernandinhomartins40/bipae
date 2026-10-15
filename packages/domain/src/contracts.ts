@@ -1376,6 +1376,8 @@ export interface PromotionView {
   endsOn: string | null;
   active: boolean;
   rule: PromotionRule;
+  /** Nome dos produtos da regra, para a tela. */
+  products: { id: string; name: string }[];
   createdAt: string;
   updatedAt: string;
 }

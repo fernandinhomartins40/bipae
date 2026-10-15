@@ -112,6 +112,11 @@ describe('promoções (F5-02.b)', () => {
     expect(ultimo.promotions!.map((p) => p.name)).toEqual(['Faixa da banana']);
     const trilha = JSON.stringify((await admin.get('/audit?action=promotion.updated')).json());
     expect(trilha).toContain('"active":false');
-    expect((await admin.get('/promotions')).json()).toHaveLength(2);
+    const lista = (await admin.get('/promotions')).json();
+    expect(lista).toHaveLength(2);
+    expect(lista.find((p: { name: string }) => p.name === 'Faixa da banana').products).toEqual([
+      { id: banana.id, name: 'Banana' },
+    ]);
+    expect(leve3.json().products).toEqual([{ id: suco.id, name: 'Suco uva' }]);
   });
 });

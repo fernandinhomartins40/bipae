@@ -3,6 +3,7 @@ import { Alert, Button, cx, Logo } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   AlertTriangle,
+  BadgePercent,
   ArrowLeftRight,
   BarChart3,
   Building2,
@@ -54,6 +55,7 @@ const NAV = [
   { to: '/compras', label: 'Compras', icon: PackagePlus, permission: 'catalog.read' },
   { to: '/inventario', label: 'Inventário', icon: ListChecks, permission: 'catalog.read' },
   { to: '/etiquetas', label: 'Etiquetas', icon: Tag, permission: 'catalog.read' },
+  { to: '/promocoes', label: 'Promoções', icon: BadgePercent, permission: 'catalog.read' },
   {
     to: '/transferencias',
     label: 'Transferências',
