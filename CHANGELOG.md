@@ -1,5 +1,14 @@
 # Changelog
 
+## [F5-02.c Promoções no caixa] — 15/10/2026
+
+### Adicionado
+- **O caixa aplica as promoções sozinho, mesmo sem internet**, com as que chegaram na última sincronização e a data do próprio caixa.
+- **Na tela:** cada item mostra "Promoção: -R$ …", e o resumo traz a lista das promoções aplicadas.
+- **O desconto de promoção não conta no limite de desconto do operador:** não pede gerente.
+- **A venda grava o desconto em cada item e leva a lista das promoções no evento**, para os relatórios.
+- **Desconto na venda dado antes da promoção nunca deixa o total negativo.**
+
 ## [F5-02.b Cadastro de promoções] — 15/10/2026
 
 ### Adicionado

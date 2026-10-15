@@ -91,6 +91,11 @@ export const saleCompletedEvent = z.object({
       .nullish(),
     discountAuthorizedBy: uuid.nullish(),
     quoteId: uuid.nullish(),
+    /** Promoções aplicadas (F5-02); o desconto de cada uma já está nos itens. */
+    promotions: z
+      .array(z.object({ promotionId: uuid, name: z.string().max(80), discountCents: cents }))
+      .max(50)
+      .optional(),
   }),
 });
 

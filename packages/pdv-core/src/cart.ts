@@ -31,6 +31,18 @@ export interface Cart {
   saleDiscountCents: number;
   customerTaxId: string | null;
   quoteId: string | null;
+  /**
+   * Promoções aplicadas (F5-02), calculadas a partir do carrinho por `withPromotions` a cada
+   * mudança: desconto de cada item (número do item → centavos) e a lista para mostrar.
+   */
+  promotionDiscounts?: Record<number, number>;
+  appliedPromotions?: AppliedPromotionView[];
+}
+
+export interface AppliedPromotionView {
+  promotionId: string;
+  name: string;
+  discountCents: number;
 }
 
 export const EMPTY_CART: Cart = {
@@ -165,7 +177,10 @@ function replaceLine(cart: Cart, updated: CartLine): Cart {
 
 export interface Totals {
   subtotalCents: number;
+  /** Descontos nos itens: os do operador mais os das promoções. */
   itemDiscountCents: number;
+  /** Só a parte das promoções (não conta no limite de desconto do operador). */
+  promotionDiscountCents: number;
   saleDiscountCents: number;
   discountCents: number;
   totalCents: number;
@@ -180,13 +195,21 @@ export interface Totals {
 export function totals(cart: Cart): Totals {
   const grosses = cart.lines.map((l) => lineGross(l.unitPriceCents, l.quantityMilli));
   const subtotalCents = grosses.reduce((a, b) => a + b, 0);
-  const itemDiscountCents = cart.lines.reduce((a, l) => a + l.discountCents, 0);
-  const net = cart.lines.map((l, i) => grosses[i]! - l.discountCents);
+  // Desconto de promoção nunca passa do que sobra do item depois do desconto do operador.
+  const promo = cart.lines.map((l, i) =>
+    Math.min(cart.promotionDiscounts?.[l.line] ?? 0, grosses[i]! - l.discountCents),
+  );
+  const promotionDiscountCents = promo.reduce((a, b) => a + b, 0);
+  const itemDiscountCents =
+    cart.lines.reduce((a, l) => a + l.discountCents, 0) + promotionDiscountCents;
+  const net = cart.lines.map((l, i) => grosses[i]! - l.discountCents - promo[i]!);
   const base = net.reduce((a, b) => a + b, 0);
-  const allocation = allocate(cart.saleDiscountCents, net, base);
+  // O desconto na venda foi dado antes das promoções: nunca deixa o total negativo.
+  const saleDiscountCents = Math.min(cart.saleDiscountCents, base);
+  const allocation = allocate(saleDiscountCents, net, base);
 
   const items: SaleItem[] = cart.lines.map((l, i) => {
-    const discountCents = l.discountCents + allocation[i]!;
+    const discountCents = l.discountCents + promo[i]! + allocation[i]!;
     return {
       line: l.line,
       productId: l.productId,
@@ -199,11 +222,12 @@ export function totals(cart: Cart): Totals {
       totalCents: grosses[i]! - discountCents,
     };
   });
-  const discountCents = itemDiscountCents + cart.saleDiscountCents;
+  const discountCents = itemDiscountCents + saleDiscountCents;
   return {
     subtotalCents,
     itemDiscountCents,
-    saleDiscountCents: cart.saleDiscountCents,
+    promotionDiscountCents,
+    saleDiscountCents,
     discountCents,
     totalCents: subtotalCents - discountCents,
     items,
@@ -226,9 +250,13 @@ function allocate(amount: number, weights: number[], total: number): number[] {
   return floors;
 }
 
-/** Discount policy: above the role's limit, someone with permission must authorize. */
+/**
+ * Política de desconto: acima do limite do papel, alguém com permissão precisa autorizar.
+ * Só conta o desconto dado pelo operador; o das promoções cadastradas fica de fora.
+ */
 export function discountNeedsAuthorization(cart: Cart, limitPercent: number): boolean {
   const t = totals(cart);
-  if (t.discountCents === 0) return false;
-  return t.discountCents > percentOf(t.subtotalCents, limitPercent);
+  const manual = t.discountCents - t.promotionDiscountCents;
+  if (manual === 0) return false;
+  return manual > percentOf(t.subtotalCents, limitPercent);
 }

@@ -12,6 +12,7 @@ import {
   type TerminalEvent,
 } from '@bipae/domain';
 import { saleTaxSummaries } from '@bipae/fiscal';
+import type { Promotion } from '@bipae/promotions';
 import { getMeta, searchKey, setMeta, type LocalStorage, type Tx } from '@bipae/local-db';
 import { discountNeedsAuthorization, totals, type Cart, type CatalogItem } from './cart';
 import {
@@ -22,6 +23,7 @@ import {
   type SessionActivity,
 } from './cash';
 import { summarizePayments, type TenderInput } from './payments';
+import { withPromotions } from './promotions';
 
 /** Tabelas do banco local apagadas quando o caixa é desativado (F2-04). */
 const WIPE_TABLES = [
@@ -315,7 +317,19 @@ export class PdvService {
       if (pricing.storePriceTableId)
         await setMeta(tx, 'store_price_table_id', pricing.storePriceTableId);
       else await tx.execute("DELETE FROM meta WHERE key = 'store_price_table_id'");
+      // Promoções (F5-02): a lista inteira, no formato do motor.
+      await setMeta(tx, 'promotions', JSON.stringify(pricing.promotions ?? []));
     });
+  }
+
+  /** Promoções do último retrato de preços (F5-02); vazio antes da primeira sincronização. */
+  async promotions(): Promise<Promotion[]> {
+    return JSON.parse((await getMeta(this.storage, 'promotions')) || '[]') as Promotion[];
+  }
+
+  /** O carrinho com as promoções vigentes hoje aplicadas (o que a tela mostra e a venda grava). */
+  async priceWithPromotions(cart: Cart): Promise<Cart> {
+    return withPromotions(cart, await this.promotions(), localDate(this.now()));
   }
 
   /**
@@ -524,11 +538,14 @@ export class PdvService {
   // ---------------------------------------------------------------- sales
 
   async completeSale(
-    cart: Cart,
+    rawCart: Cart,
     tenders: TenderInput[],
     options: CompleteSaleOptions,
   ): Promise<StoredSale> {
     const session = await this.requireSession();
+    // A conta da promoção é refeita aqui, com as promoções do caixa, para a venda gravar o mesmo
+    // que a tela mostrou mesmo se o carrinho veio sem ela.
+    const cart = await this.priceWithPromotions(rawCart);
     if (cart.lines.length === 0) throw new PdvError('O carrinho está vazio.');
     if (
       discountNeedsAuthorization(cart, options.discountLimitPercent) &&
@@ -598,6 +615,7 @@ export class PdvService {
         payments: sale.payments,
         customerTaxId: sale.customerTaxId,
         discountAuthorizedBy: t.discountCents > 0 ? (options.discountAuthorizedBy ?? null) : null,
+        ...(cart.appliedPromotions?.length && { promotions: cart.appliedPromotions }),
         quoteId: cart.quoteId,
       });
     });

@@ -16,6 +16,7 @@
     "@bipae/fiscal": "workspace:*",
     "@bipae/local-db": "workspace:*",
     "@bipae/platform": "workspace:*",
+    "@bipae/promotions": "workspace:*",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {

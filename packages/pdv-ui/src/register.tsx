@@ -14,8 +14,11 @@ import {
   setLineDiscount,
   setSaleDiscount,
   totals,
+  localDay,
+  withPromotions,
   type Cart,
   type CatalogProduct,
+  type Promotion,
   type CloseResult,
   type Session,
   type StoredSale,
@@ -151,7 +154,20 @@ export function Register({
     const timer = setInterval(check, UPDATE_CHECK_MS);
     return () => clearInterval(timer);
   }, [platform]);
-  const t = useMemo(() => totals(cart), [cart]);
+  // Promoções do último retrato de preços (F5-02): recarregam a cada sincronização.
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  useEffect(() => {
+    let alive = true;
+    void pdv.promotions().then((list) => alive && setPromotions(list));
+    return () => {
+      alive = false;
+    };
+  }, [pdv, syncStatus?.lastSyncAt]);
+  const priced = useMemo(
+    () => withPromotions(cart, promotions, localDay(new Date())),
+    [cart, promotions],
+  );
+  const t = useMemo(() => totals(priced), [priced]);
   // Quem está operando agora (F2-03): começa com quem abriu o caixa e muda na troca de operador.
   const [operator, setOperator] = useState<Pick<PosUser, 'id' | 'name' | 'permissions'>>(user);
   const can = (p: string) => operator.permissions.includes(p);
@@ -576,11 +592,21 @@ export function Register({
                         {(() => {
                           const own =
                             cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0;
-                          return own > 0 ? (
-                            <span className="block text-sm font-normal text-muted">
-                              Desconto no item: {brl(own)}
-                            </span>
-                          ) : null;
+                          const promo = priced.promotionDiscounts?.[item.line] ?? 0;
+                          return (
+                            <>
+                              {own > 0 && (
+                                <span className="block text-sm font-normal text-muted">
+                                  Desconto no item: {brl(own)}
+                                </span>
+                              )}
+                              {promo > 0 && (
+                                <span className="block text-sm font-semibold text-success">
+                                  Promoção: -{brl(promo)}
+                                </span>
+                              )}
+                            </>
+                          );
                         })()}
                       </td>
                       <td className="px-3 py-2 text-right tabular-nums">
@@ -616,6 +642,18 @@ export function Register({
             {t.discountCents > 0 && <p className="mt-1">Descontos: {brl(t.discountCents)}</p>}
             <p className="mt-1 text-sm opacity-90">{cart.lines.length} itens</p>
           </div>
+          {(priced.appliedPromotions?.length ?? 0) > 0 && (
+            <ul className="rounded-ui border border-success p-3 text-sm" aria-label="Promoções">
+              {priced.appliedPromotions!.map((p) => (
+                <li key={p.promotionId} className="flex justify-between gap-2">
+                  <span className="font-semibold">{p.name}</span>
+                  <span className="tabular-nums" data-testid="promotion-discount">
+                    -{brl(p.discountCents)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
           {cart.customerTaxId && (
             <p className="text-sm">CPF/CNPJ na nota: {formatTaxId(cart.customerTaxId)}</p>
           )}
