@@ -60,10 +60,13 @@ test('venda cancelada não emite a nota, e os números sem nota são inutilizado
   await page.getByRole('button', { name: 'Cancelar venda' }).click();
   await expect(page.getByText('Venda cancelada.')).toBeVisible();
   await page.keyboard.press('Escape');
-  await page.getByTestId('sync-status').click();
-  await expect(page.getByTestId('sync-status')).not.toContainText('para enviar', {
-    timeout: 15_000,
-  });
+  // O contador "para enviar" só muda quando a sincronização roda: confere no servidor que o
+  // cancelamento chegou antes de sair do caixa (sair da tela para a sincronização).
+  await expect(async () => {
+    await page.getByTestId('sync-status').click();
+    const vendas = await (await api.get('sales?limit=10', { headers })).json();
+    expect(vendas.items[0]?.status).toBe('cancelled');
+  }).toPass({ timeout: 45_000 });
 
   // Retaguarda: a nota não foi emitida, e a tela diz o porquê.
   // O cancelamento chega ao servidor pela sincronização do caixa: reabre a venda até chegar.
