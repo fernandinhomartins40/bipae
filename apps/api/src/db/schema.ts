@@ -1034,3 +1034,36 @@ export const fiscalInutilizations = pgTable('fiscal_inutilizations', {
   createdBy: uuid('created_by').notNull(),
   createdAt: ts('created_at').notNull().defaultNow(),
 });
+
+// ---------------------------------------------------------------- comandas (0037)
+
+/** Comanda do caixa (F5-07), guardada no servidor para o garçom e a cozinha. */
+export const tabs = pgTable('tabs', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  terminalId: uuid('terminal_id').notNull(),
+  label: text('label').notNull(),
+  status: text('status', { enum: ['open', 'paid', 'cancelled'] })
+    .notNull()
+    .default('open'),
+  items: jsonb('items')
+    .$type<
+      {
+        line: number;
+        productId: string;
+        name: string;
+        unit: string;
+        quantityMilli: number;
+        unitPriceCents: number;
+      }[]
+    >()
+    .notNull()
+    .default([]),
+  totalCents: money('total_cents').notNull().default(0),
+  saleId: uuid('sale_id'),
+  cancelReason: text('cancel_reason'),
+  openedAt: ts('opened_at').notNull(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+  closedAt: ts('closed_at'),
+});

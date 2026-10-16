@@ -182,6 +182,53 @@ export const operatorChangedEvent = z.object({
   payload: z.object({ sessionId: uuid, fromOperatorId: uuid, toOperatorId: uuid }),
 });
 
+// ---------- Comandas (F5-07) ----------
+
+/** Um item da comanda, como está no caixa (o servidor guarda para o garçom e a cozinha). */
+const tabItem = z.object({
+  line: z.number().int().positive(),
+  productId: uuid,
+  name: z.string().min(1).max(120),
+  unit: z.string().min(1).max(6),
+  quantityMilli: z.number().int().positive(),
+  unitPriceCents: cents,
+});
+
+export const tabOpenedEvent = z.object({
+  ...base,
+  type: z.literal('tab.opened'),
+  payload: z.object({
+    tabId: uuid,
+    /** Mesa ou número da comanda, como o atendente chama. */
+    label: z.string().trim().min(1).max(30),
+    openedAt: iso,
+  }),
+});
+
+/** A comanda inteira depois de cada mudança (itens lançados aos poucos). */
+export const tabUpdatedEvent = z.object({
+  ...base,
+  type: z.literal('tab.updated'),
+  payload: z.object({
+    tabId: uuid,
+    label: z.string().trim().min(1).max(30),
+    items: z.array(tabItem).max(500),
+    totalCents: cents,
+  }),
+});
+
+export const tabClosedEvent = z.object({
+  ...base,
+  type: z.literal('tab.closed'),
+  payload: z.object({
+    tabId: uuid,
+    /** paga: virou a venda saleId; cancelada: a mesa desistiu, com o motivo. */
+    outcome: z.enum(['paid', 'cancelled']),
+    saleId: uuid.nullable(),
+    reason: z.string().max(200).nullable(),
+  }),
+});
+
 export const terminalEvent = z.discriminatedUnion('type', [
   saleCompletedEvent,
   saleCancelledEvent,
@@ -190,6 +237,9 @@ export const terminalEvent = z.discriminatedUnion('type', [
   cashMovementEvent,
   cashSessionClosedEvent,
   operatorChangedEvent,
+  tabOpenedEvent,
+  tabUpdatedEvent,
+  tabClosedEvent,
 ]);
 export type TerminalEvent = z.infer<typeof terminalEvent>;
 export type TerminalEventType = TerminalEvent['type'];

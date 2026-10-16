@@ -111,6 +111,17 @@ export const LOCAL_MIGRATIONS: string[] = [
   /* 6 — F4-09: cliente com parcela do crediário vencida além da tolerância */ `
   ALTER TABLE customer_credit ADD COLUMN blocked INTEGER NOT NULL DEFAULT 0;
   `,
+  /* 7 — F5-07: comandas (mesa ou número) com os itens lançados aos poucos, até virar venda */ `
+  CREATE TABLE tabs (
+    id TEXT PRIMARY KEY,
+    label TEXT NOT NULL,
+    opened_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('open', 'closed', 'cancelled')),
+    data TEXT NOT NULL
+  );
+  CREATE INDEX tabs_status ON tabs (status);
+  `,
 ];
 
 /**

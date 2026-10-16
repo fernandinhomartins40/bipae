@@ -35,7 +35,10 @@ export type ScanResult =
  * "3*7891000315507" or "3x arroz" multiplies quantity (the classic register shortcut).
  * Decimal quantities ("0,5*...") are allowed for weighed items.
  */
-export function parseScan(input: string, layout: ScaleLabelLayout = DEFAULT_SCALE_LABEL): ScanResult | null {
+export function parseScan(
+  input: string,
+  layout: ScaleLabelLayout = DEFAULT_SCALE_LABEL,
+): ScanResult | null {
   const text = input.trim();
   if (!text) return null;
   let quantityMilli = 1000;

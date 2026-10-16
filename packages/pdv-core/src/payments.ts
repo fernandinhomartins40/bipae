@@ -27,13 +27,18 @@ export function summarizePayments(totalCents: number, tenders: TenderInput[]): P
   let changeCents = 0;
 
   // Non-cash first: they can never exceed what is due.
-  const ordered = [...tenders.filter((t) => t.method !== 'cash'), ...tenders.filter((t) => t.method === 'cash')];
+  const ordered = [
+    ...tenders.filter((t) => t.method !== 'cash'),
+    ...tenders.filter((t) => t.method === 'cash'),
+  ];
   for (const t of ordered) {
     if (!Number.isInteger(t.receivedCents) || t.receivedCents <= 0) {
       throw new PaymentError('Valor de pagamento inválido.');
     }
     if (t.method !== 'cash' && t.receivedCents > remaining) {
-      throw new PaymentError('Só pagamento em dinheiro pode ser maior que o valor que falta (para dar troco).');
+      throw new PaymentError(
+        'Só pagamento em dinheiro pode ser maior que o valor que falta (para dar troco).',
+      );
     }
     const kept = Math.min(t.receivedCents, remaining);
     const change = t.method === 'cash' ? t.receivedCents - kept : 0;

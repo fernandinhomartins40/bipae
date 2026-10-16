@@ -1,5 +1,15 @@
 # Changelog
 
+## [F5-07.a Comandas no caixa e no servidor] — 16/10/2026
+
+### Adicionado
+- **Comandas no caixa**, sem depender de internet: abrir pela mesa ou pelo número, lançar os itens aos poucos (cada rodada fica guardada), fechar a conta como venda normal, com NFC-e, ou cancelar com motivo. Não há duas comandas abertas com o mesmo nome.
+- Cada passo vira um evento que sincroniza (comanda aberta, atualizada e fechada). O servidor guarda as comandas e a rota `/v1/tabs` lista as abertas, as pagas e as canceladas de cada loja. É a base para o app do garçom e para a tela da cozinha.
+- O cancelamento de comanda fica na trilha de auditoria.
+
+### Observação
+- As telas das comandas no caixa e na retaguarda vêm na próxima parte (F5-07.b).
+
 ## [F5-06 Autoatendimento] — 16/10/2026
 
 ### Adicionado

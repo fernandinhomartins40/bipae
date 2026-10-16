@@ -20,7 +20,13 @@ import {
 } from '@bipae/fiscal';
 import type { Promotion } from '@bipae/promotions';
 import { getMeta, searchKey, setMeta, type LocalStorage, type Tx } from '@bipae/local-db';
-import { discountNeedsAuthorization, totals, type Cart, type CatalogItem } from './cart';
+import {
+  discountNeedsAuthorization,
+  EMPTY_CART,
+  totals,
+  type Cart,
+  type CatalogItem,
+} from './cart';
 import {
   closeBlind,
   expectedBySession,
@@ -647,6 +653,18 @@ export class PdvService {
         ...(nfce && { nfce }),
         quoteId: cart.quoteId,
       });
+      if (cart.tabId) {
+        await tx.execute(
+          "UPDATE tabs SET status = 'closed', updated_at = ? WHERE id = ? AND status = 'open'",
+          [this.now().toISOString(), cart.tabId],
+        );
+        await this.enqueue(tx, 'tab.closed', {
+          tabId: cart.tabId,
+          outcome: 'paid',
+          saleId: sale.id,
+          reason: null,
+        });
+      }
     });
     return sale;
   }
@@ -964,6 +982,118 @@ export class PdvService {
       lines.push({ ...line, unitPriceCents: Number(p.price_cents) });
     }
     return { ...cart, lines, quoteId: id };
+  }
+
+  // ---------------------------------------------------------------- comandas (F5-07)
+
+  /** Itens da comanda no formato do evento (o servidor guarda para o garçom e a cozinha). */
+  private tabItems(cart: Cart) {
+    return cart.lines.map((l) => ({
+      line: l.line,
+      productId: l.productId,
+      name: l.name.slice(0, 120),
+      unit: l.unit,
+      quantityMilli: l.quantityMilli,
+      unitPriceCents: l.unitPriceCents,
+    }));
+  }
+
+  /** Abre uma comanda pela mesa ou pelo número. Não pode haver duas abertas com o mesmo nome. */
+  async openTab(label: string): Promise<Cart> {
+    const name = label.trim();
+    if (!name) throw new PdvError('Informe a mesa ou o número da comanda.');
+    if (name.length > 30) throw new PdvError('Nome da comanda muito longo (até 30 letras).');
+    const [taken] = await this.storage.query<Row>(
+      "SELECT id FROM tabs WHERE status = 'open' AND lower(label) = lower(?)",
+      [name],
+    );
+    if (taken) throw new PdvError(`A comanda ${name} já está aberta.`);
+    const id = this.newId();
+    const at = this.now().toISOString();
+    const cart: Cart = { ...EMPTY_CART, tabId: id, tabLabel: name };
+    await this.storage.transaction(async (tx) => {
+      await tx.execute(
+        "INSERT INTO tabs (id, label, opened_at, updated_at, status, data) VALUES (?, ?, ?, ?, 'open', ?)",
+        [id, name, at, at, JSON.stringify(cart)],
+      );
+      await this.enqueue(tx, 'tab.opened', { tabId: id, label: name, openedAt: at });
+    });
+    return cart;
+  }
+
+  /** Guarda a comanda como está (itens lançados até agora) e devolve o caixa livre. */
+  async saveTab(cart: Cart): Promise<void> {
+    if (!cart.tabId) throw new PdvError('Este carrinho não é de uma comanda.');
+    const [row] = await this.storage.query<Row>(
+      "SELECT label FROM tabs WHERE id = ? AND status = 'open'",
+      [cart.tabId],
+    );
+    if (!row) throw new PdvError('Esta comanda já foi fechada.');
+    const label = row.label as string;
+    const { promotionDiscounts: _p, appliedPromotions: _a, ...plain } = cart;
+    await this.storage.transaction(async (tx) => {
+      await tx.execute('UPDATE tabs SET data = ?, updated_at = ? WHERE id = ?', [
+        JSON.stringify({ ...plain, tabLabel: label }),
+        this.now().toISOString(),
+        cart.tabId,
+      ]);
+      await this.enqueue(tx, 'tab.updated', {
+        tabId: cart.tabId!,
+        label,
+        items: this.tabItems(cart),
+        totalCents: totals(cart).totalCents,
+      });
+    });
+  }
+
+  async listTabs(): Promise<
+    { id: string; label: string; openedAt: string; totalCents: number; items: number }[]
+  > {
+    const rows = await this.storage.query<Row>(
+      "SELECT * FROM tabs WHERE status = 'open' ORDER BY opened_at",
+    );
+    return rows.map((r) => {
+      const cart = JSON.parse(r.data as string) as Cart;
+      return {
+        id: r.id as string,
+        label: r.label as string,
+        openedAt: r.opened_at as string,
+        totalCents: totals(cart).totalCents,
+        items: cart.lines.length,
+      };
+    });
+  }
+
+  /** Traz a comanda para o caixa (os preços são os de quando cada item foi lançado). */
+  async loadTab(id: string): Promise<Cart> {
+    const [row] = await this.storage.query<Row>(
+      "SELECT data, label FROM tabs WHERE id = ? AND status = 'open'",
+      [id],
+    );
+    if (!row) throw new PdvError('Comanda não encontrada ou já fechada.');
+    const cart = JSON.parse(row.data as string) as Cart;
+    return { ...cart, tabId: id, tabLabel: row.label as string };
+  }
+
+  /** Cancela a comanda (a mesa foi embora sem consumir, por exemplo). Fica o motivo. */
+  async cancelTab(id: string, reason: string): Promise<void> {
+    if (reason.trim().length < 3) throw new PdvError('Informe o motivo do cancelamento.');
+    await this.storage.transaction(async (tx) => {
+      const [row] = await tx.query<Row>("SELECT id FROM tabs WHERE id = ? AND status = 'open'", [
+        id,
+      ]);
+      if (!row) throw new PdvError('Comanda não encontrada ou já fechada.');
+      await tx.execute("UPDATE tabs SET status = 'cancelled', updated_at = ? WHERE id = ?", [
+        this.now().toISOString(),
+        id,
+      ]);
+      await this.enqueue(tx, 'tab.closed', {
+        tabId: id,
+        outcome: 'cancelled',
+        saleId: null,
+        reason: reason.trim().slice(0, 200),
+      });
+    });
   }
 
   // ---------------------------------------------------------------- outbox

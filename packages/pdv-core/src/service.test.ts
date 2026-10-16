@@ -464,7 +464,11 @@ describe('crediário no caixa (F2-02)', () => {
     const cart = { ...addItem(EMPTY_CART, item, 1000), customerTaxId: CPF };
     const options = { discountLimitPercent: 10 };
 
-    expect(await pdv.creditAvailable(CPF)).toEqual({ limitCents: 10_000, availableCents: 8000, blocked: false });
+    expect(await pdv.creditAvailable(CPF)).toEqual({
+      limitCents: 10_000,
+      availableCents: 8000,
+      blocked: false,
+    });
     expect(await pdv.creditAvailable('11144477735')).toBeNull();
     await pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 4000 }], options);
     expect((await pdv.creditAvailable(CPF))!.availableCents).toBe(4000);
@@ -570,5 +574,76 @@ describe('crediário bloqueado por atraso (F4-09)', () => {
         { discountLimitPercent: 10 },
       ),
     ).rejects.toThrow('parcela do crediário vencida');
+  });
+});
+
+describe('comandas (F5-07)', () => {
+  it('abre pela mesa, lança itens aos poucos, guarda e fecha a conta como venda', async () => {
+    const cerveja = product({ name: 'Cerveja 600 ml', priceCents: 1200 });
+    const porcao = product({ name: 'Porção de fritas', priceCents: 3500 });
+    await pdv.applyCatalog([cerveja, porcao]);
+    await pdv.openSession(0);
+
+    const aberta = await pdv.openTab('Mesa 5');
+    expect(aberta).toMatchObject({ tabLabel: 'Mesa 5', lines: [] });
+    await expect(pdv.openTab('mesa 5')).rejects.toThrow('A comanda mesa 5 já está aberta.');
+
+    // Primeira rodada.
+    await pdv.saveTab(addItem(aberta, cerveja, 2000));
+    // Segunda rodada: a comanda volta para o caixa e ganha mais itens.
+    const depois = await pdv.loadTab(aberta.tabId!);
+    expect(depois.lines).toHaveLength(1);
+    await pdv.saveTab(addItem(depois, porcao, 1000));
+    expect(await pdv.listTabs()).toEqual([
+      expect.objectContaining({ label: 'Mesa 5', items: 2, totalCents: 5900 }),
+    ]);
+
+    const conta = await pdv.loadTab(aberta.tabId!);
+    const venda = await pdv.completeSale(conta, [{ method: 'pix', receivedCents: 5900 }], {
+      discountLimitPercent: 10,
+    });
+    expect(venda.totalCents).toBe(5900);
+    expect(await pdv.listTabs()).toEqual([]);
+    await expect(pdv.loadTab(aberta.tabId!)).rejects.toThrow('já fechada');
+
+    const tipos = (await pdv.pendingEvents()).map((e) => e.type);
+    expect(tipos).toEqual([
+      'cash_session.opened',
+      'tab.opened',
+      'tab.updated',
+      'tab.updated',
+      'sale.completed',
+      'tab.closed',
+    ]);
+    const eventos = await pdv.pendingEvents();
+    // Os eventos passam no esquema que o servidor confere.
+    for (const e of eventos) expect(terminalEvent.safeParse(e).success).toBe(true);
+    const fechada = eventos.find((e) => e.type === 'tab.closed')!;
+    expect(fechada.payload).toEqual({
+      tabId: aberta.tabId,
+      outcome: 'paid',
+      saleId: venda.id,
+      reason: null,
+    });
+    const segundaRodada = eventos.filter((e) => e.type === 'tab.updated')[1]!;
+    expect(segundaRodada.payload).toMatchObject({
+      label: 'Mesa 5',
+      totalCents: 5900,
+      items: [
+        expect.objectContaining({ name: 'Cerveja 600 ml', quantityMilli: 2000 }),
+        expect.objectContaining({ name: 'Porção de fritas', quantityMilli: 1000 }),
+      ],
+    });
+  });
+
+  it('cancela a comanda com motivo e libera o nome para outra', async () => {
+    const aberta = await pdv.openTab('Comanda 12');
+    await expect(pdv.cancelTab(aberta.tabId!, 'x')).rejects.toThrow('Informe o motivo');
+    await pdv.cancelTab(aberta.tabId!, 'Cliente foi embora');
+    expect(await pdv.listTabs()).toEqual([]);
+    await expect(pdv.saveTab(aberta)).rejects.toThrow('já foi fechada');
+    expect((await pdv.openTab('Comanda 12')).tabLabel).toBe('Comanda 12');
+    await expect(pdv.openTab('   ')).rejects.toThrow('Informe a mesa');
+    await expect(pdv.saveTab(EMPTY_CART)).rejects.toThrow('não é de uma comanda');
   });
 });

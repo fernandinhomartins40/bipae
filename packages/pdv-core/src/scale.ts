@@ -9,8 +9,7 @@
 export const SCALE_REQUEST = Uint8Array.from([0x05]);
 
 export type ScaleParse =
-  | { status: 'ok'; grams: number }
-  | { status: 'unstable' | 'negative' | 'overload' | 'invalid' };
+  { status: 'ok'; grams: number } | { status: 'unstable' | 'negative' | 'overload' | 'invalid' };
 
 export function parseScaleResponse(bytes: Uint8Array): ScaleParse {
   const stx = bytes.indexOf(0x02);
@@ -28,5 +27,6 @@ export const SCALE_MESSAGES: Record<Exclude<ScaleParse['status'], 'ok'>, string>
   unstable: 'A balança ainda está estabilizando. Espere um instante.',
   negative: 'A balança está com peso negativo. Tire tudo do prato e zere a balança.',
   overload: 'Peso acima da capacidade da balança.',
-  invalid: 'Não entendemos a resposta da balança. Confira o cabo e a configuração (velocidade e protocolo).',
+  invalid:
+    'Não entendemos a resposta da balança. Confira o cabo e a configuração (velocidade e protocolo).',
 };

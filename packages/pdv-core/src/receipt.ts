@@ -1,4 +1,11 @@
-import { formatBRL, formatTaxId, PAYMENT_LABELS, type Cents, type SaleItem, type SalePayment } from '@bipae/domain';
+import {
+  formatBRL,
+  formatTaxId,
+  PAYMENT_LABELS,
+  type Cents,
+  type SaleItem,
+  type SalePayment,
+} from '@bipae/domain';
 import type { ReceiptBlock } from './escpos';
 
 export interface ReceiptSale {
@@ -43,11 +50,16 @@ function twoColumns(left: string, right: string, columns: number) {
  * Sale receipt. Until NFC-e arrives (Phase 3) this is explicitly NOT a fiscal document,
  * and says so, as required.
  */
-export function buildReceipt(sale: ReceiptSale, header: ReceiptHeader, columns: number): ReceiptBlock[] {
+export function buildReceipt(
+  sale: ReceiptSale,
+  header: ReceiptHeader,
+  columns: number,
+): ReceiptBlock[] {
   const blocks: ReceiptBlock[] = [
     { kind: 'text', text: header.businessName, align: 'center', bold: true },
   ];
-  if (header.taxId) blocks.push({ kind: 'text', text: `CNPJ ${formatTaxId(header.taxId)}`, align: 'center' });
+  if (header.taxId)
+    blocks.push({ kind: 'text', text: `CNPJ ${formatTaxId(header.taxId)}`, align: 'center' });
   blocks.push(
     { kind: 'text', text: '-'.repeat(columns) },
     { kind: 'text', text: 'COMPROVANTE DE VENDA', align: 'center', bold: true },
@@ -55,11 +67,17 @@ export function buildReceipt(sale: ReceiptSale, header: ReceiptHeader, columns: 
     { kind: 'text', text: '-'.repeat(columns) },
   );
   for (const item of sale.items) {
-    blocks.push({ kind: 'text', text: `${String(item.line).padStart(3, '0')} ${item.name}`.slice(0, columns) });
+    blocks.push({
+      kind: 'text',
+      text: `${String(item.line).padStart(3, '0')} ${item.name}`.slice(0, columns),
+    });
     const detail = `    ${qty(item.quantityMilli, item.unit)} x ${money(item.unitPriceCents)}`;
     blocks.push({ kind: 'text', text: twoColumns(detail, money(item.grossCents), columns) });
     if (item.discountCents > 0) {
-      blocks.push({ kind: 'text', text: twoColumns('    desconto', `-${money(item.discountCents)}`, columns) });
+      blocks.push({
+        kind: 'text',
+        text: twoColumns('    desconto', `-${money(item.discountCents)}`, columns),
+      });
     }
   }
   blocks.push({ kind: 'text', text: '-'.repeat(columns) });
@@ -69,12 +87,20 @@ export function buildReceipt(sale: ReceiptSale, header: ReceiptHeader, columns: 
       { kind: 'text', text: twoColumns('Descontos', `-${money(sale.discountCents)}`, columns) },
     );
   }
-  blocks.push({ kind: 'text', text: twoColumns('TOTAL R$', money(sale.totalCents), columns), bold: true });
+  blocks.push({
+    kind: 'text',
+    text: twoColumns('TOTAL R$', money(sale.totalCents), columns),
+    bold: true,
+  });
   for (const p of sale.payments) {
-    blocks.push({ kind: 'text', text: twoColumns(PAYMENT_LABELS[p.method], money(p.amountCents + p.changeCents), columns) });
+    blocks.push({
+      kind: 'text',
+      text: twoColumns(PAYMENT_LABELS[p.method], money(p.amountCents + p.changeCents), columns),
+    });
   }
   const change = sale.payments.reduce((a, p) => a + p.changeCents, 0);
-  if (change > 0) blocks.push({ kind: 'text', text: twoColumns('Troco', money(change), columns), bold: true });
+  if (change > 0)
+    blocks.push({ kind: 'text', text: twoColumns('Troco', money(change), columns), bold: true });
   blocks.push({ kind: 'text', text: '-'.repeat(columns) });
   if (sale.customerTaxId) {
     blocks.push({ kind: 'text', text: `Consumidor: ${formatTaxId(sale.customerTaxId)}` });

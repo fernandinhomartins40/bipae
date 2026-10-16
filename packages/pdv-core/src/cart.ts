@@ -31,6 +31,9 @@ export interface Cart {
   saleDiscountCents: number;
   customerTaxId: string | null;
   quoteId: string | null;
+  /** Comanda que este carrinho está mostrando (F5-07): mesa ou número. */
+  tabId?: string | null;
+  tabLabel?: string | null;
   /**
    * Promoções aplicadas (F5-02), calculadas a partir do carrinho por `withPromotions` a cada
    * mudança: desconto de cada item (número do item → centavos) e a lista para mostrar.

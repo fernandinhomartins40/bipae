@@ -1606,3 +1606,27 @@ export interface LossDashboardView {
   /** Avisos em linguagem simples, do mais importante para o menos. */
   alerts: string[];
 }
+
+// ---------- Comandas (F5-07) ----------
+
+export interface TabView {
+  id: string;
+  storeId: string;
+  terminalId: string;
+  label: string;
+  status: 'open' | 'paid' | 'cancelled';
+  items: {
+    line: number;
+    productId: string;
+    name: string;
+    unit: string;
+    quantityMilli: number;
+    unitPriceCents: number;
+  }[];
+  totalCents: number;
+  saleId: string | null;
+  cancelReason: string | null;
+  openedAt: string;
+  updatedAt: string;
+  closedAt: string | null;
+}

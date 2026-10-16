@@ -38,6 +38,7 @@ import {
   stockMovements,
   stores,
   syncEvents,
+  tabs,
   terminals,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
@@ -183,6 +184,62 @@ export class SyncService {
           openedAt: at,
           openingCents: event.payload.openingCents,
         });
+        return;
+      }
+      // Comandas (F5-07): o servidor guarda a cópia para o garçom e a cozinha.
+      case 'tab.opened': {
+        await tx
+          .insert(tabs)
+          .values({
+            id: event.payload.tabId,
+            tenantId: ctx.tenantId,
+            storeId: terminal.storeId,
+            terminalId: terminal.id,
+            label: event.payload.label,
+            openedAt: new Date(event.payload.openedAt),
+          })
+          .onConflictDoNothing();
+        return;
+      }
+      case 'tab.updated': {
+        const [tab] = await tx.select().from(tabs).where(eq(tabs.id, event.payload.tabId));
+        if (!tab) throw new Rejection('Comanda não encontrada.');
+        // Comanda já fechada não volta a mudar (evento atrasado de outra rodada).
+        if (tab.status !== 'open') return;
+        await tx
+          .update(tabs)
+          .set({
+            label: event.payload.label,
+            items: event.payload.items,
+            totalCents: event.payload.totalCents,
+            updatedAt: at,
+          })
+          .where(eq(tabs.id, tab.id));
+        return;
+      }
+      case 'tab.closed': {
+        const [tab] = await tx.select().from(tabs).where(eq(tabs.id, event.payload.tabId));
+        if (!tab) throw new Rejection('Comanda não encontrada.');
+        if (tab.status !== 'open') return;
+        const paid = event.payload.outcome === 'paid';
+        await tx
+          .update(tabs)
+          .set({
+            status: paid ? 'paid' : 'cancelled',
+            saleId: event.payload.saleId,
+            cancelReason: paid ? null : event.payload.reason,
+            closedAt: at,
+            updatedAt: at,
+          })
+          .where(eq(tabs.id, tab.id));
+        if (!paid) {
+          await this.audit.record(tx, actor, {
+            action: 'tab.cancelled',
+            entity: 'tab',
+            entityId: tab.id,
+            data: { label: tab.label, totalCents: tab.totalCents, reason: event.payload.reason },
+          });
+        }
         return;
       }
       case 'cash_session.operator_changed': {
