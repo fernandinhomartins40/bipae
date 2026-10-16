@@ -28,6 +28,9 @@ test('criar a conta MercadoFlow pela loja e ver o desconto', async ({ page }) =>
     connectUrl: null,
     connectedAt: null,
     lastError: null,
+    lastSalesSyncAt: null,
+    salesPausedUntil: null,
+    autoApply: { prices: false, promotions: false },
     customerActive: ativa ? true : null,
     discount: ativa ? { active: true, partner: 'Bipae', percent: 20 } : null,
   });
@@ -135,4 +138,89 @@ test('card do Tino no painel inicial abre as decisões no MercadoFlow (MF-10)', 
     'href',
     'https://mercadoflow.com/app/decisoes/d1',
   );
+});
+
+test('preço aprovado no MercadoFlow espera o gerente aplicar (MF-11.a)', async ({ page }) => {
+  let pendentes = [
+    {
+      id: '0192a000-0000-7000-8000-0000000000a1',
+      storeId: '00000000-0000-7000-8000-000000000001',
+      storeName: 'Loja Centro',
+      kind: 'price',
+      problem: null,
+      data: {
+        gtin: '7891000100103',
+        productId: '0192a000-0000-7000-8000-0000000000b1',
+        productName: 'Leite integral 1 L',
+        priceCents: 529,
+        currentPriceCents: 549,
+        approvedBy: 'Ana Gerente',
+      },
+      updatedAt: new Date().toISOString(),
+    },
+  ];
+  let aplicado = false;
+  let automatico: unknown = null;
+  await page.route('**/v1/mercadoflow', (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        termsUrl: null,
+        publicUrl: 'https://mercadoflow.com',
+        stores: [
+          {
+            storeId: '00000000-0000-7000-8000-000000000001',
+            storeName: 'Loja Centro',
+            status: 'ATIVA',
+            marketId: 'mk_1',
+            scopes: ['prices:read'],
+            createdVia: 'ACCOUNT',
+            connectUrl: null,
+            connectedAt: null,
+            lastError: null,
+            lastSalesSyncAt: null,
+            salesPausedUntil: null,
+            autoApply: { prices: automatico === true, promotions: false },
+            customerActive: true,
+            discount: null,
+          },
+        ],
+        queue: { pending: 0, sent: 0, rejected: 0 },
+        errors: [],
+      },
+    }),
+  );
+  await page.route('**/v1/mercadoflow/pendings', (route) => route.fulfill({ json: pendentes }));
+  await page.route('**/v1/mercadoflow/pendings/*/apply', (route) => {
+    aplicado = true;
+    pendentes = [];
+    return route.fulfill({ json: { ok: true } });
+  });
+  await page.route('**/v1/mercadoflow/links/*/auto-apply', (route) => {
+    automatico = (route.request().postDataJSON() as { prices: boolean }).prices;
+    return route.fulfill({ json: { prices: automatico, promotions: false } });
+  });
+
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Rita Dona');
+  await page.getByLabel('Nome do negócio').fill(`Mercado ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`rita-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Rita!' })).toBeVisible();
+  await page.goto('/mercadoflow');
+
+  const precos = page.getByRole('region', { name: 'Preços aprovados no MercadoFlow' });
+  const linha = precos.getByRole('row', { name: /Leite integral 1 L/ });
+  await expect(linha).toContainText('R$ 5,49');
+  await expect(linha).toContainText('R$ 5,29');
+  await expect(linha).toContainText('Ana Gerente');
+  await linha.getByRole('button', { name: 'Aplicar' }).click();
+  await expect(precos).toHaveCount(0);
+  expect(aplicado).toBe(true);
+
+  const opcao = page.getByLabel('Aplicar sozinho os preços aprovados no MercadoFlow');
+  await opcao.click();
+  await expect.poll(() => automatico).toBe(true);
+  await expect(opcao).toBeChecked();
 });

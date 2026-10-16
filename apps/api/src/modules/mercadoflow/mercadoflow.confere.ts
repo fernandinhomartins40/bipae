@@ -107,7 +107,7 @@ const reaisToCents = (value: number | string | undefined) => {
  * Roda o trabalho do aviso no escopo do cliente (isolamento e auditoria por cliente) e volta
  * para o papel da plataforma, para o webhook registrar que tratou o aviso.
  */
-async function asTenant<T>(tx: Tx, tenantId: string, fn: () => Promise<T>): Promise<T> {
+export async function asTenant<T>(tx: Tx, tenantId: string, fn: () => Promise<T>): Promise<T> {
   await tx.execute(
     sql`select set_config('app.tenant_id', ${tenantId}, true), set_config('app.user_id', '', true)`,
   );

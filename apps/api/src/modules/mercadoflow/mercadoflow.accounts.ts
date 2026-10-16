@@ -155,6 +155,10 @@ export class MercadoflowAccounts implements OnModuleInit {
         link?.salesPausedUntil && link.salesPausedUntil > new Date()
           ? link.salesPausedUntil.toISOString()
           : null,
+      autoApply: {
+        prices: link?.autoApplyPrices ?? false,
+        promotions: link?.autoApplyPromotions ?? false,
+      },
       customerActive: link?.customerActiveSent ?? null,
       discount,
     };

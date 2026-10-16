@@ -835,8 +835,23 @@ export interface MercadoflowLinkView {
   lastSalesSyncAt: string | null;
   /** LIMITE_DO_PLANO: vendas em pausa até esta hora. */
   salesPausedUntil: string | null;
+  /** Aplicar sozinho o preço aprovado e o encarte (MF-11). */
+  autoApply: { prices: boolean; promotions: boolean };
   customerActive: boolean | null;
   discount: { active: boolean; partner?: string; percent?: number } | null;
+}
+
+/** Preço aprovado ou encarte do MercadoFlow esperando o gerente (MF-11). */
+export interface MercadoflowPendingView {
+  id: string;
+  storeId: string;
+  storeName: string;
+  kind: 'price' | 'promotion';
+  /** Por que não dá para aplicar ainda (produto não cadastrado, por exemplo). */
+  problem: string | null;
+  /** Preço: gtin, productId, productName, priceCents, currentPriceCents, approvedBy. */
+  data: Record<string, unknown>;
+  updatedAt: string;
 }
 
 export interface MercadoflowOverview {

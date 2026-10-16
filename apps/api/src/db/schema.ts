@@ -520,7 +520,29 @@ export const mercadoflowLinks = pgTable('mercadoflow_links', {
   lastSalesSyncAt: ts('last_sales_sync_at'),
   /** LIMITE_DO_PLANO: vendas da loja em pausa até esta hora (MF-08). */
   salesPausedUntil: ts('sales_paused_until'),
+  /** Aplicar sozinho o preço aprovado e o encarte do MercadoFlow (MF-11). */
+  autoApplyPrices: boolean('auto_apply_prices').notNull().default(false),
+  autoApplyPromotions: boolean('auto_apply_promotions').notNull().default(false),
   lastError: text('last_error'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Preço aprovado e encarte do MercadoFlow esperando o gerente (MF-11). */
+export const mercadoflowPendings = pgTable('mercadoflow_pendings', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  marketId: text('market_id').notNull(),
+  kind: text('kind', { enum: ['price', 'promotion'] }).notNull(),
+  sourceKey: text('source_key').notNull(),
+  status: text('status', { enum: ['pending', 'applied', 'dismissed'] })
+    .notNull()
+    .default('pending'),
+  data: jsonb('data').$type<Record<string, unknown>>().notNull(),
+  problem: text('problem'),
+  resolvedBy: uuid('resolved_by'),
+  resolvedAt: ts('resolved_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });

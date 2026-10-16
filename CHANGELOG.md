@@ -1,5 +1,14 @@
 # Changelog
 
+## [MF-11.a Preços aprovados no MercadoFlow] — 16/10/2026
+
+### Adicionado
+- **Preço aprovado no MercadoFlow vira uma pendência no Bipaê**, na tela do MercadoFlow, com o preço atual, o aprovado e quem aprovou.
+- **Aplicar** muda o preço pelo mesmo caminho da tela de produtos, com auditoria e envio ao caixa. Se a loja usa uma tabela de preço, o preço entra na tabela dela.
+- **Descartar** tira da lista.
+- Produto ainda não cadastrado aparece com o motivo e pode ser aplicado depois do cadastro.
+- **Opção por loja "Aplicar sozinho os preços aprovados no MercadoFlow"**, registrada na auditoria.
+
 ## [MF-08 Vendas do caixa no MercadoFlow] — 15/10/2026
 
 ### Adicionado

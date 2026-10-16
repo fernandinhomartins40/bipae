@@ -1,5 +1,11 @@
-import type { MercadoflowLinkView, MercadoflowOverview } from '@bipae/domain';
-import { Alert, Badge, Button, Card, Checkbox, PageHeader, TextField } from '@bipae/ui';
+import {
+  cents,
+  formatBRL,
+  type MercadoflowLinkView,
+  type MercadoflowOverview,
+  type MercadoflowPendingView,
+} from '@bipae/domain';
+import { Alert, Badge, Button, Card, Checkbox, DataTable, PageHeader, TextField } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useApp, useCan } from '../context';
@@ -79,6 +85,7 @@ export function MercadoflowPage() {
               publicUrl={data.publicUrl}
             />
           ))}
+          <ApprovedPrices />
           <Card>
             <h2 className="text-lg font-bold">Envio ao MercadoFlow</h2>
             <p className="text-sm text-muted">
@@ -233,6 +240,17 @@ function StoreLink({
             </p>
           )}
           <p className="text-muted">Permissões: {link.scopes.join(', ') || 'nenhuma'}</p>
+          <Checkbox
+            label="Aplicar sozinho os preços aprovados no MercadoFlow"
+            hint="Desligado, cada preço aprovado espera você conferir e aplicar."
+            checked={link.autoApply.prices}
+            onChange={(checked) =>
+              void run(async () => {
+                await api.put(`/mercadoflow/links/${link.storeId}/auto-apply`, { prices: checked });
+                await reload();
+              })
+            }
+          />
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => void open(`${publicUrl}/app`)}>
               Abrir o MercadoFlow
@@ -300,5 +318,73 @@ function StoreLink({
         </div>
       )}
     </Card>
+  );
+}
+
+const brl = (value: unknown) => (typeof value === 'number' ? formatBRL(cents(value)) : '—');
+
+/**
+ * Preços aprovados no MercadoFlow (MF-11.a): cada um espera o gerente aplicar (na tabela de
+ * preço da loja, se ela tiver uma) ou descartar.
+ */
+function ApprovedPrices() {
+  const { api } = useApp();
+  const canApply = useCan('catalog.price.write');
+  const queryClient = useQueryClient();
+  const pendings = useQuery({
+    queryKey: ['mercadoflow', 'pendings'],
+    queryFn: () => api.get<MercadoflowPendingView[]>('/mercadoflow/pendings'),
+  });
+  const [error, setError] = useState<string | null>(null);
+  const prices = (pendings.data ?? []).filter((p) => p.kind === 'price');
+  if (prices.length === 0) return null;
+  const act = async (id: string, action: 'apply' | 'dismiss') => {
+    setError(null);
+    try {
+      await api.post(`/mercadoflow/pendings/${id}/${action}`);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+    await queryClient.invalidateQueries({ queryKey: ['mercadoflow', 'pendings'] });
+  };
+  return (
+    <section aria-label="Preços aprovados no MercadoFlow">
+      <h2 className="mb-2 text-lg font-bold">Preços aprovados no MercadoFlow</h2>
+      {error && <Alert>{error}</Alert>}
+      <DataTable
+        caption="Preços aprovados no MercadoFlow"
+        rows={prices}
+        columns={[
+          { header: 'Loja', cell: (p) => p.storeName },
+          {
+            header: 'Produto',
+            cell: (p) => (
+              <span className="flex flex-col">
+                <span>{String(p.data.productName ?? p.data.gtin)}</span>
+                {p.problem && <span className="text-sm text-danger">{p.problem}</span>}
+              </span>
+            ),
+          },
+          { header: 'Preço atual', align: 'right', cell: (p) => brl(p.data.currentPriceCents) },
+          { header: 'Aprovado', align: 'right', cell: (p) => brl(p.data.priceCents) },
+          { header: 'Quem aprovou', cell: (p) => String(p.data.approvedBy ?? '—') },
+          {
+            header: '',
+            align: 'right',
+            cell: (p) =>
+              canApply ? (
+                <span className="flex justify-end gap-2">
+                  <Button onClick={() => void act(p.id, 'apply')} disabled={Boolean(p.problem)}>
+                    Aplicar
+                  </Button>
+                  <Button variant="ghost" onClick={() => void act(p.id, 'dismiss')}>
+                    Descartar
+                  </Button>
+                </span>
+              ) : null,
+          },
+        ]}
+      />
+    </section>
   );
 }
