@@ -279,7 +279,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] F5-10 · Delivery com taxa por bairro — depende: F5-07
   - [x] F5-10.a · Bairros com taxa por loja na retaguarda; no caixa, venda para entrega com bairro, endereço, telefone e CPF, taxa somada ao total; lista de entregas na retaguarda (saiu e entregue)
   - [x] F5-10.b · NFC-e de entrega a domicílio (indPres=4, frete rateado, destinatário com endereço, transportador), validada no schema oficial (dúvida D-032) — depende: F5-10.a
-- [ ] F5-11 · Ficha técnica com baixa de insumos — depende: F5-07
+- [x] F5-11 · Ficha técnica com baixa de insumos — depende: F5-07
+  - Feito em 16/10/2026 sobre o kit (F1-04): produto marcado "Insumo" (não aparece no caixa), composição com quantidades fracionadas e a unidade, custo da ficha e margem no cadastro do prato; vender, cancelar e devolver mexem no estoque dos insumos.
 - [ ] F5-12 · Moda: grade e venda condicional — depende: F1-04
 - [ ] F5-13 · Serviços: ordem de serviço e NFS-e Nacional — depende: F3-11
 

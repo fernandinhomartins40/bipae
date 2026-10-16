@@ -206,6 +206,8 @@ export const products = pgTable('products', {
   tracksLot: boolean('tracks_lot').notNull().default(false),
   /** Preparado na cozinha: vai para a tela da cozinha quando lançado numa comanda (F5-09). */
   kitchen: boolean('kitchen').notNull().default(false),
+  /** Insumo da ficha técnica (F5-11): baixa no estoque com o prato, não aparece no caixa. */
+  ingredient: boolean('ingredient').notNull().default(false),
   /** Atacarejo (F5-03): preço de atacado a partir de uma quantidade (em milésimos). */
   wholesalePriceCents: money('wholesale_price_cents'),
   wholesaleMinMilli: bigint('wholesale_min_milli', { mode: 'number' }),

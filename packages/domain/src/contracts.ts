@@ -194,6 +194,8 @@ export const productInput = z.object({
   tracksLot: z.boolean().default(false),
   /** Preparado na cozinha (F5-09). */
   kitchen: z.boolean().default(false),
+  /** Insumo da ficha técnica (F5-11): não aparece no caixa. */
+  ingredient: z.boolean().default(false),
   active: z.boolean().default(true),
   fiscalProfileId: z.string().uuid().nullish(),
   parentId: z.string().uuid().nullish(),
@@ -227,12 +229,20 @@ export interface Product {
   isWeighable: boolean;
   tracksLot: boolean;
   kitchen: boolean;
+  ingredient: boolean;
   active: boolean;
   fiscalProfileId: string | null;
   parentId: string | null;
   attributes: Record<string, string> | null;
   /** Composição do kit; `name` vem da API para exibir. */
-  components: { productId: string; quantity: number; name?: string }[];
+  /** Kit ou ficha técnica: quantidade de cada componente (até 4 casas), com a unidade e o custo. */
+  components: {
+    productId: string;
+    quantity: number;
+    name?: string;
+    unit?: string;
+    costCents?: number | null;
+  }[];
   /** Marca, fabricante, departamento e conteúdo (catálogo). */
   catalog?: ProductCatalog | null;
   /** Códigos de caixa ou fardo, com as unidades de cada um. */

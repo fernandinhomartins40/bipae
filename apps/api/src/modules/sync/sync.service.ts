@@ -763,7 +763,8 @@ export class SyncService {
           unit: p.unit,
           priceCents: p.priceCents,
           isWeighable: p.isWeighable,
-          active: p.active,
+          // Insumo da ficha técnica (F5-11) não se vende no caixa.
+          active: p.active && !p.ingredient,
           ncm: p.ncm,
           cest: p.cest,
           fiscalProfileId: p.fiscalProfileId,

@@ -100,9 +100,11 @@ describe('products', () => {
         ],
       })
     ).json();
-    // Cada componente vem com o nome, para a tela do kit exibir.
+    // Cada componente vem com o nome, a unidade e o custo, para a tela do kit e da ficha (F5-11).
     expect(kit.components).toEqual(
-      expect.arrayContaining([{ productId: banana.id, quantity: 0.5, name: banana.name }]),
+      expect.arrayContaining([
+        { productId: banana.id, quantity: 0.5, name: banana.name, unit: 'KG', costCents: null },
+      ]),
     );
     const self = await client.put(`/products/${kit.id}`, {
       ...kit,

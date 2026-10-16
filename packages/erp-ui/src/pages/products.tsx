@@ -164,6 +164,8 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
       productId: c.productId,
       quantity: c.quantity,
       name: c.name ?? '',
+      ...(c.unit && { unit: c.unit }),
+      costCents: c.costCents ?? null,
     })),
   );
   const profiles = useQuery({
@@ -189,6 +191,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
     isWeighable: product?.isWeighable ?? false,
     tracksLot: product?.tracksLot ?? false,
     kitchen: product?.kitchen ?? false,
+    ingredient: product?.ingredient ?? false,
     active: product?.active ?? true,
   });
 
@@ -412,7 +415,18 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           checked={form.values.kitchen}
           onChange={(v) => form.set('kitchen', v)}
         />
-        <KitEditor productId={product?.id ?? null} value={components} onChange={setComponents} />
+        <Checkbox
+          label="Insumo da ficha técnica"
+          hint="Ex.: farinha, queijo. Entra na composição dos pratos e baixa do estoque com eles, mas não aparece no caixa."
+          checked={form.values.ingredient}
+          onChange={(v) => form.set('ingredient', v)}
+        />
+        <KitEditor
+          productId={product?.id ?? null}
+          value={components}
+          onChange={setComponents}
+          priceCents={form.values.priceCents}
+        />
         <Checkbox
           label="Ativo"
           hint="Produtos inativos não aparecem no caixa."

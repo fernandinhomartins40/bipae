@@ -202,6 +202,7 @@ export class CatalogService {
       isWeighable: input.isWeighable,
       tracksLot: input.tracksLot,
       kitchen: input.kitchen,
+      ingredient: input.ingredient,
       active: input.active,
       fiscalProfileId: input.fiscalProfileId ?? null,
       parentId: input.parentId ?? null,
@@ -297,6 +298,8 @@ export class CatalogService {
         componentId: productComponents.componentId,
         quantity: productComponents.quantity,
         name: products.name,
+        unit: products.unit,
+        costCents: products.costCents,
       })
       .from(productComponents)
       .innerJoin(products, eq(products.id, productComponents.componentId))
@@ -315,13 +318,20 @@ export class CatalogService {
       isWeighable: r.isWeighable,
       tracksLot: r.tracksLot,
       kitchen: r.kitchen,
+      ingredient: r.ingredient,
       active: r.active,
       fiscalProfileId: r.fiscalProfileId,
       parentId: r.parentId,
       attributes: r.attributes,
       components: components
         .filter((c) => c.productId === r.id)
-        .map((c) => ({ productId: c.componentId, quantity: Number(c.quantity), name: c.name })),
+        .map((c) => ({
+          productId: c.componentId,
+          quantity: Number(c.quantity),
+          name: c.name,
+          unit: c.unit,
+          costCents: c.costCents,
+        })),
       catalog: (r.catalog as Product['catalog']) ?? null,
       packs: packs
         .filter((p) => p.productId === r.id)

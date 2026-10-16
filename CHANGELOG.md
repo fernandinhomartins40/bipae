@@ -1,5 +1,13 @@
 # Changelog
 
+## [F5-11 Ficha técnica] — 16/10/2026
+
+### Adicionado
+- **Produto "Insumo da ficha técnica"** (farinha, queijo, molho): entra na composição dos pratos e baixa do estoque com eles, mas não aparece no caixa.
+- **Ficha técnica no cadastro do prato:** é a mesma tela do kit, agora com a unidade de cada insumo e quantidades fracionadas (ex.: 0,250 kg de queijo).
+- **Custo da composição e margem:** aparecem no cadastro do prato, calculados com o custo de cada insumo. Se faltar o custo de algum insumo, a tela avisa em vez de inventar um número.
+- **Estoque dos insumos:** vender o prato baixa cada insumo na quantidade da ficha, e cancelar ou devolver o prato repõe.
+
 ## [F5-10 Delivery com taxa por bairro] — 16/10/2026
 
 ### Adicionado

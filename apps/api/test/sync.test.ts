@@ -563,7 +563,11 @@ describe('dados fiscais no caixa (F3-06.d2)', () => {
     const dono = await signup(t.app);
     const admin = api(t.app, dono.auth);
     const [empresa] = (await admin.get('/companies')).json();
-    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'real' });
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      uf: 'SP',
+      taxRegime: 'real',
+    });
     const perfil = (
       await admin.post('/fiscal-profiles', {
         name: 'Revenda Lucro Real',
@@ -601,7 +605,11 @@ describe('dados fiscais no caixa (F3-06.d2)', () => {
     expect(caixa.net.fiscalSnapshots).toBe(1);
 
     // Mudou o regime da empresa: chega na próxima sincronização.
-    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'presumido' });
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      uf: 'SP',
+      taxRegime: 'presumido',
+    });
     await caixa.sync.sync();
     expect(caixa.net.fiscalSnapshots).toBe(2);
     expect((await caixa.pdv.fiscalContext()).company.taxRegime).toBe('presumido');
@@ -618,7 +626,10 @@ describe('dados fiscais no caixa (F3-06.d2)', () => {
     });
     await caixa.sync.sync();
     expect(caixa.net.fiscalSnapshots).toBe(3);
-    expect((await caixa.pdv.fiscalContext()).profiles.get(perfil.id)).toMatchObject({ cfopInterna: '5405', cstIcms: '60' });
+    expect((await caixa.pdv.fiscalContext()).profiles.get(perfil.id)).toMatchObject({
+      cfopInterna: '5405',
+      cstIcms: '60',
+    });
   });
 
   it('recusa CST de PIS/COFINS que não existe', async () => {
@@ -662,7 +673,11 @@ describe('impostos da venda gravados e conferidos no servidor (F3-06.d3)', () =>
     const dono = await signup(t.app);
     const admin = api(t.app, dono.auth);
     const [empresa] = (await admin.get('/companies')).json();
-    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'real' });
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      uf: 'SP',
+      taxRegime: 'real',
+    });
     const perfil = (await admin.post('/fiscal-profiles', perfilReal)).json();
     const arroz = (
       await admin.post('/products', {
@@ -688,7 +703,13 @@ describe('impostos da venda gravados e conferidos no servidor (F3-06.d3)', () =>
     caixa.net.online = true;
     await caixa.sync.sync();
     const noServidor = await gravado(venda.id);
-    expect(noServidor.itens[0]).toMatchObject({ crt: 3, cfop: '5102', icmsCents: 1800, pisCents: 135, cofinsCents: 623 });
+    expect(noServidor.itens[0]).toMatchObject({
+      crt: 3,
+      cfop: '5102',
+      icmsCents: 1800,
+      pisCents: 135,
+      cofinsCents: 623,
+    });
     expect(noServidor.conferencia).toBe('ok');
     expect(arroz.fiscalProfileId).toBe(perfil.id);
   });
@@ -697,7 +718,11 @@ describe('impostos da venda gravados e conferidos no servidor (F3-06.d3)', () =>
     const dono = await signup(t.app);
     const admin = api(t.app, dono.auth);
     const [empresa] = (await admin.get('/companies')).json();
-    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'real' });
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      uf: 'SP',
+      taxRegime: 'real',
+    });
     const perfil = (await admin.post('/fiscal-profiles', perfilReal)).json();
     await admin.post('/products', {
       name: 'Feijão 1kg',
@@ -710,7 +735,11 @@ describe('impostos da venda gravados e conferidos no servidor (F3-06.d3)', () =>
     await caixa.sync.sync();
     caixa.net.online = false;
     // Enquanto o caixa está sem internet, a empresa muda de regime na retaguarda.
-    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'presumido' });
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      uf: 'SP',
+      taxRegime: 'presumido',
+    });
     await caixa.pdv.openSession(0);
     const venda = await caixa.pdv.completeSale(
       addItem(EMPTY_CART, (await caixa.pdv.findByCode('78912342'))!),
@@ -731,7 +760,11 @@ describe('impostos da venda gravados e conferidos no servidor (F3-06.d3)', () =>
 
   it('empresa que não configurou a parte fiscal: venda sem impostos e sem conferência', async () => {
     const dono = await signup(t.app);
-    await api(t.app, dono.auth).post('/products', { name: 'Pão', priceCents: 500, barcodes: ['96385074'] });
+    await api(t.app, dono.auth).post('/products', {
+      name: 'Pão',
+      priceCents: 500,
+      barcodes: ['96385074'],
+    });
     const caixa = await terminalDevice(dono, 'Caixa simples', 'web');
     await caixa.sync.sync();
     await caixa.pdv.openSession(0);
@@ -750,7 +783,11 @@ describe('regras de ICMS da empresa (F3-06.e)', () => {
     const dono = await signup(t.app);
     const admin = api(t.app, dono.auth);
     const [empresa] = (await admin.get('/companies')).json();
-    await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, uf: 'SP', taxRegime: 'real' });
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      uf: 'SP',
+      taxRegime: 'real',
+    });
     const perfil = (
       await admin.post('/fiscal-profiles', {
         name: 'Revenda',
@@ -771,15 +808,31 @@ describe('regras de ICMS da empresa (F3-06.e)', () => {
     });
 
     // Valores de EXEMPLO, como o contador cadastraria.
-    const base = { companyId: empresa.id, ncm: ['2203'], validFrom: '2026-01-01', source: 'Orientação do contador' };
+    const base = {
+      companyId: empresa.id,
+      ncm: ['2203'],
+      validFrom: '2026-01-01',
+      source: 'Orientação do contador',
+    };
     const criada = await admin.post('/fiscal/icms-rules', { ...base, name: 'Cerveja', rate: '25' });
     expect(criada.statusCode).toBe(201);
-    expect(criada.json()).toMatchObject({ name: 'Cerveja', ncm: ['2203'], effect: { rate: '25' }, validTo: null });
+    expect(criada.json()).toMatchObject({
+      name: 'Cerveja',
+      ncm: ['2203'],
+      effect: { rate: '25' },
+      validTo: null,
+    });
 
     // Duas regras para o mesmo NCM no mesmo período: recusado, com a explicação.
-    const conflito = await admin.post('/fiscal/icms-rules', { ...base, name: 'Cerveja de novo', rate: '20' });
+    const conflito = await admin.post('/fiscal/icms-rules', {
+      ...base,
+      name: 'Cerveja de novo',
+      rate: '20',
+    });
     expect(conflito.statusCode).toBe(400);
-    expect(conflito.json().message).toBe('As regras "Cerveja" e "Cerveja de novo" valem para os mesmos NCM no mesmo período.');
+    expect(conflito.json().message).toBe(
+      'As regras "Cerveja" e "Cerveja de novo" valem para os mesmos NCM no mesmo período.',
+    );
     expect((await admin.get(`/fiscal/icms-rules?companyId=${empresa.id}`)).json()).toHaveLength(1);
 
     // Regra sem efeito também é recusada.
@@ -790,7 +843,9 @@ describe('regras de ICMS da empresa (F3-06.e)', () => {
     // Alteração fiscal fica na trilha de auditoria.
     const trilha = await asPlatform(t.database.db, async (tx) =>
       rowsOf<{ action: string }>(
-        await tx.execute(sql`select action from audit_log where tenant_id = ${dono.me.tenant.id} and entity = 'company_icms_rule'`),
+        await tx.execute(
+          sql`select action from audit_log where tenant_id = ${dono.me.tenant.id} and entity = 'company_icms_rule'`,
+        ),
       ),
     );
     expect(trilha.map((l) => l.action)).toEqual(['fiscal_rule.created']);
@@ -809,7 +864,9 @@ describe('regras de ICMS da empresa (F3-06.e)', () => {
     caixa.net.online = true;
     await caixa.sync.sync();
     const [gravada] = await asPlatform(t.database.db, async (tx) =>
-      rowsOf<{ tax_check: string }>(await tx.execute(sql`select tax_check from sales where id = ${venda.id}`)),
+      rowsOf<{ tax_check: string }>(
+        await tx.execute(sql`select tax_check from sales where id = ${venda.id}`),
+      ),
     );
     expect(gravada!.tax_check).toBe('ok');
 
@@ -833,21 +890,35 @@ describe('aparelho novo ligado a um caixa que já vendeu (F3-12)', () => {
     await primeiro.sync.sync();
     await primeiro.pdv.openSession(0);
     const vender = async (pdv: PdvService) =>
-      pdv.completeSale(addItem(EMPTY_CART, (await pdv.findByCode('78912342'))!), [{ method: 'cash', receivedCents: 300 }], {
-        discountLimitPercent: 10,
-      });
+      pdv.completeSale(
+        addItem(EMPTY_CART, (await pdv.findByCode('78912342'))!),
+        [{ method: 'cash', receivedCents: 300 }],
+        {
+          discountLimitPercent: 10,
+        },
+      );
     await vender(primeiro.pdv);
     await vender(primeiro.pdv);
     await primeiro.sync.sync();
 
     // O mesmo caixa num aparelho novo: banco local vazio.
-    const contexto = (await api(t.app, dono.auth).get(`/pos/terminals/${primeiro.terminal.id}/context`)).json();
+    const contexto = (
+      await api(t.app, dono.auth).get(`/pos/terminals/${primeiro.terminal.id}/context`)
+    ).json();
     expect(contexto.lastTerminalSeq).toBe(2);
     const storage = createStorage(nodeSqliteDriver());
     await migrateLocal(storage);
-    const novo = new PdvService(storage, { terminalId: primeiro.terminal.id, operatorId: dono.me.user.id });
+    const novo = new PdvService(storage, {
+      terminalId: primeiro.terminal.id,
+      operatorId: dono.me.user.id,
+    });
     await novo.alignSaleSequence(contexto.lastTerminalSeq);
-    const sync = new SyncClient(storage, novo, transport(dono.auth, primeiro.terminal.id).impl, primeiro.terminal.id);
+    const sync = new SyncClient(
+      storage,
+      novo,
+      transport(dono.auth, primeiro.terminal.id).impl,
+      primeiro.terminal.id,
+    );
     await sync.sync();
     await novo.openSession(0);
     const venda = await vender(novo);
@@ -859,5 +930,75 @@ describe('aparelho novo ligado a um caixa que já vendeu (F3-12)', () => {
     // Alinhar nunca diminui o contador.
     await novo.alignSaleSequence(1);
     expect((await vender(novo)).terminalSeq).toBe(4);
+  });
+});
+
+describe('ficha técnica (F5-11)', () => {
+  it('vender o prato baixa os insumos fracionados; o insumo não aparece no caixa', async () => {
+    const owner = await signup(t.app);
+    const admin = api(t.app, owner.auth);
+    const [store] = (await admin.get('/stores')).json();
+    const insumo = async (name: string, costCents: number) =>
+      (
+        await admin.post('/products', {
+          name,
+          unit: 'KG',
+          isWeighable: true,
+          priceCents: 1,
+          costCents,
+          ingredient: true,
+        })
+      ).json();
+    const queijo = await insumo('Queijo mussarela', 3990);
+    const farinha = await insumo('Farinha de trigo', 450);
+    for (const p of [queijo, farinha]) {
+      await admin.post('/stock/adjustments', {
+        productId: p.id,
+        storeId: store.id,
+        mode: 'count',
+        quantityMilli: 10_000,
+      });
+    }
+    // Pizza: 250 g de queijo e 300 g de farinha.
+    const pizza = (
+      await admin.post('/products', {
+        name: 'Pizza mussarela',
+        priceCents: 5900,
+        barcodes: ['7891000100103'],
+        components: [
+          { productId: queijo.id, quantity: 0.25 },
+          { productId: farinha.id, quantity: 0.3 },
+        ],
+      })
+    ).json();
+    // A ficha mostra a unidade e o custo de cada insumo.
+    expect((await admin.get(`/products/${pizza.id}`)).json().components).toEqual([
+      expect.objectContaining({
+        productId: queijo.id,
+        quantity: 0.25,
+        unit: 'KG',
+        costCents: 3990,
+      }),
+      expect.objectContaining({ productId: farinha.id, quantity: 0.3, unit: 'KG', costCents: 450 }),
+    ]);
+    const estoque = async (id: string) =>
+      ((await admin.get(`/stock?productId=${id}`)).json()[0]?.quantityMilli as number) ?? 0;
+
+    const caixa = await terminalDevice(owner, 'Pizzaria', 'web');
+    await caixa.sync.sync();
+    // O insumo não se vende no caixa.
+    expect(await caixa.pdv.search('queijo')).toEqual([]);
+    await caixa.pdv.openSession(0);
+    const produto = (await caixa.pdv.findByCode('7891000100103'))!;
+    await caixa.pdv.completeSale(
+      addItem(EMPTY_CART, produto, 2000),
+      [{ method: 'pix', receivedCents: 11_800 }],
+      { discountLimitPercent: 10 },
+    );
+    expect(await caixa.sync.sync()).toMatchObject({ pending: 0, rejected: 0 });
+    // Duas pizzas: 500 g de queijo e 600 g de farinha a menos.
+    expect(await estoque(queijo.id)).toBe(9_500);
+    expect(await estoque(farinha.id)).toBe(9_400);
+    expect(await estoque(pizza.id)).toBe(0);
   });
 });
