@@ -31,6 +31,8 @@ export interface Cart {
   saleDiscountCents: number;
   customerTaxId: string | null;
   quoteId: string | null;
+  /** Venda para entrega (F5-10): o bairro, a taxa e o endereço. A taxa soma no total. */
+  delivery?: CartDelivery | null;
   /** Comanda que este carrinho está mostrando (F5-07): mesa ou número. */
   tabId?: string | null;
   tabLabel?: string | null;
@@ -40,6 +42,24 @@ export interface Cart {
    */
   promotionDiscounts?: Record<number, number>;
   appliedPromotions?: AppliedPromotionView[];
+}
+
+export interface CartDelivery {
+  zoneId: string | null;
+  zoneName: string;
+  feeCents: number;
+  name: string;
+  phone: string;
+  address: {
+    street: string;
+    number: string;
+    complement: string | null;
+    district: string;
+    cityCode: string | null;
+    cityName: string | null;
+    uf: string | null;
+    cep: string | null;
+  };
 }
 
 export interface AppliedPromotionView {
@@ -186,6 +206,9 @@ export interface Totals {
   promotionDiscountCents: number;
   saleDiscountCents: number;
   discountCents: number;
+  /** Taxa de entrega (F5-10); zero quando não é entrega. */
+  deliveryFeeCents: number;
+  /** Itens menos descontos, mais a taxa de entrega. */
   totalCents: number;
   items: SaleItem[];
 }
@@ -232,7 +255,8 @@ export function totals(cart: Cart): Totals {
     promotionDiscountCents,
     saleDiscountCents,
     discountCents,
-    totalCents: subtotalCents - discountCents,
+    deliveryFeeCents: cart.delivery?.feeCents ?? 0,
+    totalCents: subtotalCents - discountCents + (cart.delivery?.feeCents ?? 0),
     items,
   };
 }

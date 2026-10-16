@@ -1,5 +1,20 @@
 # Changelog
 
+## [F5-10 Delivery com taxa por bairro] — 16/10/2026
+
+### Adicionado
+- **Nova tela "Delivery"** na retaguarda:
+  - os bairros que cada loja atende e a taxa de cada um (mudar a taxa fica na auditoria);
+  - as entregas do dia, com endereço e telefone, de "a sair" até "entregue".
+- **Botão "Entrega" no caixa:** escolhe o bairro (com a taxa da loja) e preenche quem recebe, o telefone, o CPF e o endereço. A cidade já vem a da loja, e a taxa soma no total da venda. Funciona sem internet.
+- **NFC-e de entrega a domicílio**, conforme o MOC 7.0:
+  - a nota sai como entrega a domicílio, e a taxa entra como frete, rateada nos itens;
+  - vão também o endereço do cliente e a loja como transportadora;
+  - foi validada no schema oficial, e a contingência do caixa sai do mesmo jeito.
+
+### Observação
+- Quais estados permitem NFC-e de entrega a domicílio está na dúvida D-032, para o contador confirmar.
+
 ## [F5-08 Garçom no celular] — 16/10/2026
 
 ### Adicionado

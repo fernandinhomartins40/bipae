@@ -76,6 +76,40 @@ export interface SaleNfceInput {
   appVersion: string;
   /** Contingência off-line (F3-15); use `buildSaleNfceContingency`, que assina o QR Code. */
   contingency?: { enteredAt: string; reason: string; qrSignature: string };
+  /** Entrega a domicílio (F5-10): a taxa vira frete, rateado nos itens. */
+  delivery?: {
+    feeCents: number;
+    address: {
+      street: string;
+      number: string;
+      complement?: string | null;
+      district: string;
+      /** Município do IBGE, já resolvido por quem chama (o caixa não carrega a tabela). */
+      cityCode: string | null;
+      cityName: string | null;
+      uf: string | null;
+      cep?: string | null;
+      phone?: string | null;
+    };
+  } | null;
+}
+
+/** Reparte o frete pelo valor de cada item, maior resto primeiro (a soma bate com a taxa). */
+export function prorateFreight(feeCents: number, weights: number[]): number[] {
+  const total = weights.reduce((a, b) => a + b, 0);
+  if (feeCents <= 0 || total <= 0) return weights.map(() => 0);
+  const raw = weights.map((w) => (feeCents * w) / total);
+  const floors = raw.map(Math.floor);
+  let rest = feeCents - floors.reduce((a, b) => a + b, 0);
+  const order = raw
+    .map((r, i) => ({ i, frac: r - Math.floor(r) }))
+    .sort((a, b) => b.frac - a.frac || a.i - b.i);
+  for (const { i } of order) {
+    if (rest <= 0) break;
+    floors[i]! += 1;
+    rest -= 1;
+  }
+  return floors;
 }
 
 export type SaleNfceResult =
@@ -157,13 +191,18 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
     pending.push((error as Error).message);
   }
 
+  const freight = prorateFreight(
+    input.delivery?.feeCents ?? 0,
+    input.items.map((i) => i.grossCents - i.discountCents),
+  );
   const items: NfeItem[] = input.items.map((item, index) => {
     const label = `Item ${index + 1} (${item.description})`;
     if (!item.ncm) pending.push(`${label}: o produto não tem NCM.`);
     const taxes = calculateSaleItemTaxes({
       company: { uf: c.uf, regime: regime?.id ?? null },
       profile: item.profile,
-      item: { operationCents: item.grossCents - item.discountCents },
+      // O frete compõe o valor da operação do item (base do ICMS, quando há destaque).
+      item: { operationCents: item.grossCents - item.discountCents + freight[index]! },
       date,
       settings: companyIcmsSettings(input.rules ?? [], item.ncm, date),
     });
@@ -183,6 +222,7 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
       unitPriceCents: item.unitPriceCents,
       grossCents: item.grossCents,
       discountCents: item.discountCents,
+      ...(freight[index]! > 0 && { freightCents: freight[index]! }),
       origin: String(item.profile?.origem ?? 0),
       icms: icms!,
       pis,
@@ -214,6 +254,22 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
   const changeCents = input.payments.reduce((s, p) => s + (p.changeCents ?? 0), 0);
 
   const taxId = onlyDigits(input.customerTaxId);
+  const d = input.delivery;
+  const deliveryCity =
+    d?.address.cityCode && d.address.cityName && d.address.uf
+      ? { code: d.address.cityCode, name: d.address.cityName, uf: d.address.uf }
+      : null;
+  if (d) {
+    if (!taxId) {
+      pending.push(
+        'A venda para entrega precisa do CPF ou CNPJ do cliente na nota (regra 787 da SEFAZ).',
+      );
+    }
+    if (!d.address.street.trim() || !d.address.number.trim() || !d.address.district.trim()) {
+      pending.push('Falta o endereço de entrega (rua, número e bairro).');
+    }
+    if (!deliveryCity) pending.push('Falta o município do endereço de entrega.');
+  }
   if (pending.length > 0) return { ok: false, pending: [...new Set(pending)] };
 
   const nfce: NfceInput = {
@@ -252,6 +308,24 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
     ...(changeCents > 0 && { changeCents }),
     appVersion: input.appVersion,
     ...(input.contingency && { contingency: input.contingency }),
+    ...(d &&
+      deliveryCity && {
+        delivery: {
+          address: {
+            street: d.address.street.trim(),
+            number: d.address.number.trim(),
+            ...(d.address.complement?.trim() && { complement: d.address.complement.trim() }),
+            district: d.address.district.trim(),
+            cityCode: deliveryCity.code,
+            cityName: deliveryCity.name,
+            uf: deliveryCity.uf,
+            ...(onlyDigits(d.address.cep).length === 8 && { cep: onlyDigits(d.address.cep) }),
+            ...(onlyDigits(d.address.phone).length >= 10 && { phone: onlyDigits(d.address.phone) }),
+          },
+          // Entrega própria: a loja é a transportadora (dúvida D-032).
+          carrier: { cnpj, name: c.legalName },
+        },
+      }),
   };
   try {
     // cUF da tabela oficial de UFs (a mesma do FCP).

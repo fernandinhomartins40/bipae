@@ -48,6 +48,7 @@ import {
 } from './dialogs';
 import { QuickProductDialog } from './quick-product';
 import { splitBill, TabsDialog } from './tabs';
+import { DeliveryDialog } from './delivery';
 import {
   loadSelfCheckout,
   newSelfCheckout,
@@ -100,7 +101,8 @@ type Dialog =
   | { kind: 'quotes' }
   | { kind: 'quick-product'; code: string; catalog: CatalogEntry | null }
   | { kind: 'operator' }
-  | { kind: 'tabs' };
+  | { kind: 'tabs' }
+  | { kind: 'delivery' };
 
 export function Register({
   handle,
@@ -859,6 +861,11 @@ export function Register({
               {brl(t.totalCents)}
             </p>
             {t.discountCents > 0 && <p className="mt-1">Descontos: {brl(t.discountCents)}</p>}
+            {t.deliveryFeeCents > 0 && (
+              <p className="mt-1" data-testid="delivery-fee">
+                Taxa de entrega: {brl(t.deliveryFeeCents)}
+              </p>
+            )}
             <p className="mt-1 text-sm opacity-90">{cart.lines.length} itens</p>
           </div>
           {(priced.appliedPromotions?.length ?? 0) > 0 && (
@@ -872,6 +879,23 @@ export function Register({
                 </li>
               ))}
             </ul>
+          )}
+          {cart.delivery && (
+            <div
+              className="flex flex-col gap-1 rounded-ui border border-primary p-3 text-sm"
+              aria-label="Entrega"
+            >
+              <p className="font-semibold">Entrega: {cart.delivery.zoneName}</p>
+              <p>
+                {cart.delivery.address.street}, {cart.delivery.address.number}
+                {cart.delivery.address.complement
+                  ? ` - ${cart.delivery.address.complement}`
+                  : ''} · {cart.delivery.name}
+              </p>
+              <Button variant="ghost" onClick={() => setDialog({ kind: 'delivery' })}>
+                Mudar entrega
+              </Button>
+            </div>
           )}
           {cart.tabId && (
             <div
@@ -965,6 +989,9 @@ export function Register({
               <Button variant="secondary" onClick={() => setDialog({ kind: 'tabs' })}>
                 Comandas
               </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'delivery' })}>
+                Entrega
+              </Button>
             </div>
           )}
           {lastSale && (
@@ -1051,6 +1078,28 @@ export function Register({
           current={cart.customerTaxId}
           onConfirm={(taxId) => {
             void setCustomer(taxId);
+            closeDialog();
+          }}
+          onClose={closeDialog}
+        />
+      )}
+      {dialog.kind === 'delivery' && (
+        <DeliveryDialog
+          pdv={pdv}
+          current={cart.delivery ?? null}
+          taxId={cart.customerTaxId}
+          onSave={(delivery, taxId) => {
+            void setCustomer(taxId).then(() => {
+              setCart((c) => ({ ...c, delivery }));
+              setMessage({
+                tone: 'success',
+                text: `Entrega para ${delivery.zoneName}: taxa de ${brl(delivery.feeCents)} somada ao total.`,
+              });
+            });
+            closeDialog();
+          }}
+          onRemove={() => {
+            setCart((c) => ({ ...c, delivery: null }));
             closeDialog();
           }}
           onClose={closeDialog}

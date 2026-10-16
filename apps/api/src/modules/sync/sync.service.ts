@@ -23,6 +23,7 @@ import {
   companies,
   companyIcmsRules,
   customerCreditEntries,
+  deliveryZones,
   customers,
   fiscalProfiles,
   memberships,
@@ -346,6 +347,11 @@ export class SyncService {
           discountAuthorizedBy: p.discountAuthorizedBy ?? null,
           occurredAt: at,
           data: p,
+          ...(p.delivery && {
+            delivery: p.delivery,
+            deliveryStatus: 'pending' as const,
+            deliveryUpdatedAt: at,
+          }),
           taxCheck: await this.checkTaxes(tx, terminal.companyId, p.items, at),
         });
         await tx
@@ -804,6 +810,16 @@ export class SyncService {
       })
       .from(customers)
       .where(sql`${customers.priceTableId} is not null`);
+    // Bairros da entrega (F5-10): da loja do caixa.
+    const [zones] = await tx
+      .select({
+        last: sql<string>`coalesce(max(${deliveryZones.updatedAt})::text, '')`,
+        n: sql<number>`count(*)`,
+      })
+      .from(deliveryZones)
+      .where(
+        eq(deliveryZones.storeId, terminal?.storeId ?? '00000000-0000-0000-0000-000000000000'),
+      );
     const [promos] = await tx
       .select({
         last: sql<string>`coalesce(max(${promotions.updatedAt})::text, '')`,
@@ -839,6 +855,8 @@ export class SyncService {
           linked?.n,
           promos?.last,
           promos?.n,
+          zones?.last,
+          zones?.n,
           wholesale?.last,
           wholesale?.n,
         ].join('|'),
@@ -911,6 +929,19 @@ export class SyncService {
             .map(({ productId, priceCents }) => ({ productId, priceCents })),
         })),
         customers: people.map((p) => ({ taxId: p.taxId!, priceTableId: p.priceTableId! })),
+        deliveryZones: terminal
+          ? await tx
+              .select({
+                id: deliveryZones.id,
+                name: deliveryZones.name,
+                feeCents: deliveryZones.feeCents,
+              })
+              .from(deliveryZones)
+              .where(
+                and(eq(deliveryZones.storeId, terminal.storeId), eq(deliveryZones.active, true)),
+              )
+              .orderBy(asc(deliveryZones.name))
+          : [],
         promotions: [
           ...activePromotions.map((p) => ({
             id: p.id,

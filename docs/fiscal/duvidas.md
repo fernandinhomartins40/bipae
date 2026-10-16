@@ -262,6 +262,22 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Implementação provisória (F3-14.a):** como o Bipaê só emite em homologação (regra 4), a NFC-e montada da venda sempre leva esse texto no primeiro item; os outros itens mantêm a descrição do produto.
 - **Pergunta:** confirmar na primeira emissão real (F3-11.b, com o certificado) e guardar o Manual de Orientação do Contribuinte vigente em `sources`.
 
+### D-032 — NFC-e de entrega a domicílio (delivery): quais UFs permitem e como vai a taxa
+
+- **Fonte:** MOC 7.0, Anexo I (já em `packages/fiscal/sources`).
+- **O que diz o MOC:**
+  - campo B25a `indPres=4` é a "NFC-e em operação com entrega a domicílio";
+  - rejeição 753: NFC-e só leva frete quando é entrega a domicílio;
+  - rejeições 787 e 788: com `indPres=4`, a nota exige a identificação do destinatário (CPF ou CNPJ) e o endereço;
+  - rejeição 786: exige também os dados do transportador (`transporta`);
+  - rejeição 434: `indPres=4` exige o indicador de intermediador (`indIntermed`);
+  - rejeição 785: "NFC-e com entrega a domicílio não permitida pela UF". Cada UF decide.
+- **Implementação (F5-10.b):** a taxa de entrega vai como frete (`vFrete`, rateado nos itens), com `modFrete=0` (contratação por conta do remetente), o próprio emitente como transportador (entrega própria) e `indIntermed=0` (venda direta, sem plataforma).
+- **Pergunta ao contador:**
+  1. Quais UFs permitem a NFC-e de entrega a domicílio? Onde a UF não permite, o que usar: NF-e modelo 55, ou NFC-e presencial sem a taxa?
+  2. A entrega por motoboy terceirizado muda o transportador?
+  3. A taxa de entrega cobrada por um aplicativo (iFood) muda o `indIntermed`?
+
 ### D-031 — SPED EFD ICMS/IPI: gerar no Bipaê ou deixar com o contador
 
 - **Fonte:** Guia Prático da EFD ICMS/IPI versão 3.2.2 (atualização de 11/02/2026), baixado do Portal SPED (sped.rfb.gov.br, item 8112) em 16/10/2026.

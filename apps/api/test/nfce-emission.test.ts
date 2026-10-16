@@ -641,3 +641,91 @@ describe('pacote do mês para o contador (F4-14.a)', () => {
     ).toBe('Mês inválido (use AAAA-MM)');
   });
 });
+
+describe('delivery com taxa por bairro (F5-10)', () => {
+  it('o bairro chega ao caixa; a venda para entrega soma a taxa e a NFC-e leva o frete', async () => {
+    sefaz.mode = 'normal';
+    const { admin, caixa, ctx, pdv, sync } = await loja();
+    const [store] = (await admin.get('/stores')).json();
+    const bairro = await admin.post('/delivery-zones', {
+      storeId: store.id,
+      name: 'Jardim Paulista',
+      feeCents: 700,
+    });
+    expect(bairro.statusCode).toBe(201);
+    expect(
+      (
+        await admin.post('/delivery-zones', {
+          storeId: store.id,
+          name: 'jardim paulista',
+          feeCents: 1,
+        })
+      ).json().message,
+    ).toBe('O bairro jardim paulista já está cadastrado.');
+    await sync.sync();
+    expect(await pdv.deliveryZones()).toEqual([
+      { id: bairro.json().id, name: 'Jardim Paulista', feeCents: 700 },
+    ]);
+
+    const produto = (await pdv.findByCode('7891000315507'))!;
+    const carrinho = {
+      ...addItem(EMPTY_CART, produto, 2000),
+      customerTaxId: '12345678909',
+      delivery: {
+        zoneId: bairro.json().id,
+        zoneName: 'Jardim Paulista',
+        feeCents: 700,
+        name: 'Carla Cliente',
+        phone: '11988887777',
+        address: {
+          street: 'Rua das Acácias',
+          number: '45',
+          complement: 'Apto 12',
+          district: 'Jardim Paulista',
+          cityCode: '3550308',
+          cityName: 'São Paulo',
+          uf: 'SP',
+          cep: '01415000',
+        },
+      },
+    };
+    const venda = await pdv.completeSale(carrinho, [{ method: 'pix', receivedCents: 5780 + 700 }], {
+      discountLimitPercent: 10,
+    });
+    expect(venda.totalCents).toBe(6480);
+    expect((await sync.sync()).lastError).toBeNull();
+
+    const doc = await nota(admin, venda.id, (s) => s !== 'pending');
+    expect(doc.status).toBe('authorized');
+    const xml = (await admin.get(`/fiscal/documents/${doc.id}/xml`)).body;
+    expect(xml).toContain('<indPres>4</indPres><indIntermed>0</indIntermed>');
+    expect(xml).toContain('<vFrete>7.00</vFrete>');
+    expect(xml).toContain('<xLgr>Rua das Acácias</xLgr>');
+    expect(xml).toContain('<vNF>64.80</vNF>');
+
+    const entregas = (await admin.get('/deliveries')).json();
+    expect(entregas).toEqual([
+      expect.objectContaining({
+        saleId: venda.id,
+        status: 'pending',
+        totalCents: 6480,
+        delivery: expect.objectContaining({ zoneName: 'Jardim Paulista', phone: '11988887777' }),
+      }),
+    ]);
+    expect((await admin.post(`/deliveries/${venda.id}/out`)).json().status).toBe('out');
+    expect((await admin.post(`/deliveries/${venda.id}/out`)).statusCode).toBe(409);
+    expect((await admin.post(`/deliveries/${venda.id}/delivered`)).json().status).toBe('delivered');
+
+    // A taxa é preço: mudar fica na auditoria e chega ao caixa.
+    await admin.put(`/delivery-zones/${bairro.json().id}`, {
+      storeId: store.id,
+      name: 'Jardim Paulista',
+      feeCents: 900,
+    });
+    expect(JSON.stringify((await admin.get('/audit')).json())).toContain('delivery_zone.updated');
+    await sync.sync();
+    expect((await pdv.deliveryZones())[0]!.feeCents).toBe(900);
+    expect(caixa.id).toBeTruthy();
+    expect(ctx.tenantId).toBeTruthy();
+  });
+});

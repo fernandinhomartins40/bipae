@@ -1680,3 +1680,49 @@ export interface TabOrderView {
   createdAt: string;
   receivedAt: string | null;
 }
+
+// ---------- Delivery com taxa por bairro (F5-10) ----------
+
+export const deliveryZoneInput = z.object({
+  storeId: z.string().uuid('Escolha a loja'),
+  name: z.string().trim().min(2, 'Informe o bairro').max(60, 'Nome do bairro muito longo'),
+  feeCents: z.number().int().min(0, 'Taxa inválida').max(100_000, 'Taxa muito alta'),
+  active: z.boolean().default(true),
+});
+export type DeliveryZoneInput = z.input<typeof deliveryZoneInput>;
+
+export interface DeliveryZoneView {
+  id: string;
+  storeId: string;
+  name: string;
+  feeCents: number;
+  active: boolean;
+}
+
+export interface DeliveryView {
+  saleId: string;
+  storeId: string;
+  terminalSeq: number;
+  totalCents: number;
+  occurredAt: string;
+  /** pending: a sair; out: saiu para entrega; delivered: entregue. */
+  status: 'pending' | 'out' | 'delivered';
+  updatedAt: string;
+  delivery: {
+    zoneId: string | null;
+    zoneName: string;
+    feeCents: number;
+    name: string;
+    phone: string;
+    address: {
+      street: string;
+      number: string;
+      complement: string | null;
+      district: string;
+      cityCode: string | null;
+      cityName: string | null;
+      uf: string | null;
+      cep: string | null;
+    };
+  };
+}

@@ -276,7 +276,9 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - Feito em 16/10/2026: tela Garçom para o celular; o pedido vai ao servidor e um caixa da loja o junta à comanda na sincronização seguinte (abre a comanda se a mesa não tiver), uma vez só; o celular acompanha se entrou. O caixa continua sem depender de internet; o celular precisa dela para mandar.
 - [x] F5-09 · KDS (tela da cozinha) — depende: F5-07
   - Feito em 16/10/2026: produto marcado "Preparado na cozinha"; cada rodada da comanda manda à cozinha só o que é novo; tela Cozinha com tempo de espera, Pronto e Entregue, atualizada a cada 5 segundos. Comanda cancelada tira da fila o que não ficou pronto.
-- [ ] F5-10 · Delivery com taxa por bairro — depende: F5-07
+- [x] F5-10 · Delivery com taxa por bairro — depende: F5-07
+  - [x] F5-10.a · Bairros com taxa por loja na retaguarda; no caixa, venda para entrega com bairro, endereço, telefone e CPF, taxa somada ao total; lista de entregas na retaguarda (saiu e entregue)
+  - [x] F5-10.b · NFC-e de entrega a domicílio (indPres=4, frete rateado, destinatário com endereço, transportador), validada no schema oficial (dúvida D-032) — depende: F5-10.a
 - [ ] F5-11 · Ficha técnica com baixa de insumos — depende: F5-07
 - [ ] F5-12 · Moda: grade e venda condicional — depende: F1-04
 - [ ] F5-13 · Serviços: ordem de serviço e NFS-e Nacional — depende: F3-11

@@ -274,6 +274,10 @@ export class NfceEmissionService implements OnModuleInit {
         authorizationCode: p.authorizationCode,
       })),
       customerTaxId: sale.customerTaxId,
+      // Venda para entrega (F5-10): a taxa vira frete na NFC-e.
+      ...(sale.delivery && {
+        delivery: { feeCents: sale.delivery.feeCents, address: sale.delivery.address },
+      }),
       rules,
       paymentCodes: company.nfcePaymentCodes,
       appVersion: APP_VERSION,

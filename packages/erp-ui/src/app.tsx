@@ -33,6 +33,7 @@ import { LossesPage } from './pages/losses';
 import { TabsPage } from './pages/tabs';
 import { KitchenPage } from './pages/kitchen';
 import { WaiterPage } from './pages/waiter';
+import { DeliveryPage } from './pages/delivery';
 import { InutilizationPage } from './pages/inutilization';
 import { LabelsPage } from './pages/labels';
 import { PromotionsPage } from './pages/promotions';
@@ -183,6 +184,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="comandas" element={<TabsPage />} />
               <Route path="cozinha" element={<KitchenPage />} />
               <Route path="garcom" element={<WaiterPage />} />
+              <Route path="delivery" element={<DeliveryPage />} />
               <Route path="inutilizacao" element={<InutilizationPage />} />
               <Route path="relatorios" element={<ReportsPage />} />
               <Route path="inadimplencia" element={<DelinquencyPage />} />

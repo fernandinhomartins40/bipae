@@ -51,6 +51,25 @@ export interface NfceInput {
    * feita com o mesmo certificado da nota (veja `buildContingencyNfce`).
    */
   contingency?: { enteredAt: string; reason: string; qrSignature: string };
+  /**
+   * Entrega a domicílio (F5-10, dúvida D-032): indPres 4, endereço do destinatário, frete por
+   * conta do remetente e o transportador (rejeições 753, 786, 787 e 788 do MOC 7.0). O frete de
+   * cada item vem em `freightCents`.
+   */
+  delivery?: {
+    address: {
+      street: string;
+      number: string;
+      complement?: string;
+      district: string;
+      cityCode: string;
+      cityName: string;
+      uf: string;
+      cep?: string;
+      phone?: string;
+    };
+    carrier: { cnpj?: string; cpf?: string; name: string };
+  };
 }
 
 export interface NfceDocument {
@@ -81,6 +100,13 @@ export function buildNfce(input: NfceInput): NfceDocument {
   });
   const totals = computeTotals(input.items);
   const customer = input.customer;
+  const delivery = input.delivery;
+  if (delivery && !customer?.cpf && !customer?.cnpj) {
+    throw new NfeBuildError('A NFC-e de entrega a domicílio precisa do CPF ou CNPJ do cliente.');
+  }
+  if (!delivery && totals.vFrete > 0) {
+    throw new NfeBuildError('A NFC-e só leva frete quando é entrega a domicílio (rejeição 753).');
+  }
   if (input.contingency) {
     const reason = input.contingency.reason.trim();
     if (reason.length < 15 || reason.length > 256) {
@@ -123,7 +149,9 @@ export function buildNfce(input: NfceInput): NfceDocument {
       req('tpAmb', '2'),
       req('finNFe', '1'),
       req('indFinal', '1'),
-      req('indPres', '1'),
+      req('indPres', delivery ? '4' : '1'),
+      // Entrega a domicílio pede o indicador de intermediador; o Bipaê vende sem plataforma.
+      delivery ? req('indIntermed', '0') : '',
       req('procEmi', '0'),
       req('verProc', input.appVersion),
       input.contingency ? req('dhCont', input.contingency.enteredAt) : '',
@@ -134,12 +162,38 @@ export function buildNfce(input: NfceInput): NfceDocument {
       ? el('dest', [
           customer.cpf ? req('CPF', customer.cpf) : req('CNPJ', customer.cnpj!),
           customer.name ? req('xNome', customer.name) : '',
+          delivery
+            ? el('enderDest', [
+                req('xLgr', delivery.address.street),
+                req('nro', delivery.address.number),
+                delivery.address.complement ? req('xCpl', delivery.address.complement) : '',
+                req('xBairro', delivery.address.district),
+                req('cMun', delivery.address.cityCode),
+                req('xMun', delivery.address.cityName),
+                req('UF', delivery.address.uf),
+                delivery.address.cep ? req('CEP', delivery.address.cep) : '',
+                req('cPais', '1058'),
+                req('xPais', 'Brasil'),
+                delivery.address.phone ? req('fone', delivery.address.phone) : '',
+              ])
+            : '',
           req('indIEDest', '9'),
         ])
       : '',
     input.items.map((item, index) => detGroup(item, index, '65')),
     totalGroup(input.items, totals),
-    el('transp', req('modFrete', '9')),
+    delivery
+      ? el('transp', [
+          // Frete por conta do remetente: a loja cobra a taxa e entrega.
+          req('modFrete', '0'),
+          el('transporta', [
+            delivery.carrier.cnpj
+              ? req('CNPJ', delivery.carrier.cnpj)
+              : req('CPF', delivery.carrier.cpf ?? ''),
+            req('xNome', delivery.carrier.name),
+          ]),
+        ])
+      : el('transp', req('modFrete', '9')),
     // Os itens vêm antes: um erro no item é mais útil que a soma dos pagamentos não bater.
     pagGroup(input.payments, input.changeCents, totals.vNF, input.issuedAt.slice(0, 10)),
     infAdicGroup(undefined, input.additionalInfo),

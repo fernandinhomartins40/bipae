@@ -6,6 +6,7 @@ import {
   HOMOLOGATION_FIRST_ITEM,
   saleNumericCode,
   buildSaleNfceContingency,
+  prorateFreight,
   type SaleNfceInput,
 } from './sale';
 import { pdvPaymentCode } from '../tables/pdv-payments';
@@ -270,5 +271,78 @@ describe('NFC-e em contingência off-line (F3-15.a)', () => {
     expect(!curta.ok && curta.pending[0]).toBe(
       'A justificativa da contingência precisa ter de 15 a 256 caracteres.',
     );
+  });
+});
+
+describe('NFC-e de entrega a domicílio (F5-10, dúvida D-032)', () => {
+  const entrega = {
+    feeCents: 700,
+    address: {
+      street: 'Rua das Acácias',
+      number: '45',
+      complement: 'Apto 12',
+      district: 'Jardim Paulista',
+      cityCode: '3550308',
+      cityName: 'São Paulo',
+      uf: 'SP',
+      cep: '01415-000',
+      phone: '(11) 98888-7777',
+    },
+  };
+
+  it('vai com indPres 4, frete rateado nos itens, endereço e transportador, válida no schema', async () => {
+    const r = buildSaleNfce(
+      venda({ delivery: entrega, payments: [{ method: 'pix', amountCents: 5780 + 800 + 700 }] }),
+    );
+    if (!r.ok) throw new Error(r.pending.join('; '));
+    expect(await validate(r.document.xml)).toEqual([]);
+    const xml = r.document.xml;
+    expect(xml).toContain('<indPres>4</indPres><indIntermed>0</indIntermed>');
+    expect(xml).toContain(
+      '<enderDest><xLgr>Rua das Acácias</xLgr><nro>45</nro><xCpl>Apto 12</xCpl>',
+    );
+    expect(xml).toContain(
+      '<cMun>3550308</cMun><xMun>São Paulo</xMun><UF>SP</UF><CEP>01415000</CEP>',
+    );
+    expect(xml).toContain('<modFrete>0</modFrete><transporta><CNPJ>11222333000181</CNPJ>');
+    // R$ 7,00 rateados pelo valor dos itens (57,80 e 8,00): 6,15 + 0,85.
+    expect(xml).toContain('<vFrete>6.15</vFrete>');
+    expect(xml).toContain('<vFrete>0.85</vFrete>');
+    expect(xml).toContain('<vFrete>7.00</vFrete>');
+    // O total da nota inclui a taxa.
+    expect(r.document.totalCents).toBe(5780 + 800 + 700);
+  });
+
+  it('sem CPF ou sem endereço, fica a lista do que falta', () => {
+    const semCpf = buildSaleNfce(venda({ delivery: entrega, customerTaxId: null }));
+    expect(semCpf.ok).toBe(false);
+    if (!semCpf.ok) {
+      expect(semCpf.pending).toContain(
+        'A venda para entrega precisa do CPF ou CNPJ do cliente na nota (regra 787 da SEFAZ).',
+      );
+    }
+    const semEndereco = buildSaleNfce(
+      venda({
+        delivery: {
+          feeCents: 500,
+          address: { ...entrega.address, street: ' ', cityCode: null, cityName: null, uf: null },
+        },
+      }),
+    );
+    expect(semEndereco.ok).toBe(false);
+    if (!semEndereco.ok) {
+      expect(semEndereco.pending).toEqual(
+        expect.arrayContaining([
+          'Falta o endereço de entrega (rua, número e bairro).',
+          'Falta o município do endereço de entrega.',
+        ]),
+      );
+    }
+  });
+
+  it('reparte o frete sem perder centavo', () => {
+    expect(prorateFreight(1000, [1, 1, 1])).toEqual([334, 333, 333]);
+    expect(prorateFreight(0, [5, 5])).toEqual([0, 0]);
+    expect(prorateFreight(100, [0, 0])).toEqual([0, 0]);
   });
 });

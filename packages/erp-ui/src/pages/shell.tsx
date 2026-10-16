@@ -6,6 +6,7 @@ import {
   BadgePercent,
   ArrowLeftRight,
   BarChart3,
+  Bike,
   Building2,
   CalendarClock,
   ChefHat,
@@ -79,6 +80,7 @@ const NAV = [
   { to: '/comandas', label: 'Comandas abertas', icon: UtensilsCrossed, permission: 'pos.sell' },
   { to: '/garcom', label: 'Garçom', icon: HandPlatter, permission: 'pos.sell' },
   { to: '/cozinha', label: 'Cozinha', icon: ChefHat, permission: 'pos.sell' },
+  { to: '/delivery', label: 'Delivery', icon: Bike, permission: 'pos.sell' },
   { to: '/relatorios', label: 'Relatórios', icon: PieChart, permission: 'finance.read' },
   {
     to: '/prevencao-de-perdas',

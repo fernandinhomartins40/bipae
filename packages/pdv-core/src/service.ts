@@ -27,6 +27,7 @@ import {
   EMPTY_CART,
   totals,
   type Cart,
+  type CartDelivery,
   type CatalogItem,
 } from './cart';
 import {
@@ -96,6 +97,8 @@ export interface StoredSale {
   items: SaleItem[];
   payments: SalePayment[];
   customerTaxId: string | null;
+  /** Venda para entrega (F5-10): a taxa já está no total. */
+  delivery?: CartDelivery | null;
   originalSaleId?: string;
   refundMethod?: PaymentMethod;
   returnedItems?: { line: number; productId: string; quantityMilli: number; refundCents: number }[];
@@ -347,10 +350,20 @@ export class PdvService {
       else await tx.execute("DELETE FROM meta WHERE key = 'store_price_table_id'");
       // Promoções (F5-02): a lista inteira, no formato do motor.
       await setMeta(tx, 'promotions', JSON.stringify(pricing.promotions ?? []));
+      await setMeta(tx, 'delivery_zones', JSON.stringify(pricing.deliveryZones ?? []));
     });
   }
 
   /** Promoções do último retrato de preços (F5-02); vazio antes da primeira sincronização. */
+  /** Bairros atendidos pela entrega, com a taxa (F5-10), do último retrato de preços. */
+  async deliveryZones(): Promise<{ id: string; name: string; feeCents: number }[]> {
+    return JSON.parse((await getMeta(this.storage, 'delivery_zones')) || '[]') as {
+      id: string;
+      name: string;
+      feeCents: number;
+    }[];
+  }
+
   async promotions(): Promise<Promotion[]> {
     return JSON.parse((await getMeta(this.storage, 'promotions')) || '[]') as Promotion[];
   }
@@ -625,6 +638,7 @@ export class PdvService {
       items: await this.withTaxes(t.items),
       payments: summary.payments,
       customerTaxId: cart.customerTaxId,
+      ...(cart.delivery && { delivery: cart.delivery }),
     };
     // NFC-e em contingência (F3-15): montada e assinada antes de gravar, com o próximo número.
     // Se o número reservado não for o mesmo, a nota fica para o servidor. Nunca impede a venda.
@@ -653,6 +667,7 @@ export class PdvService {
         discountAuthorizedBy: t.discountCents > 0 ? (options.discountAuthorizedBy ?? null) : null,
         ...(cart.appliedPromotions?.length && { promotions: cart.appliedPromotions }),
         ...(nfce && { nfce }),
+        ...(cart.delivery && { delivery: cart.delivery }),
         quoteId: cart.quoteId,
       });
       if (cart.tabId) {
@@ -733,6 +748,9 @@ export class PdvService {
             authorizationCode: p.authorizationCode ?? null,
           })),
           customerTaxId: sale.customerTaxId,
+          ...(sale.delivery && {
+            delivery: { feeCents: sale.delivery.feeCents, address: sale.delivery.address },
+          }),
           rules: icmsRules,
           paymentCodes: issuer.paymentCodes,
           appVersion: 'Bipaê caixa',

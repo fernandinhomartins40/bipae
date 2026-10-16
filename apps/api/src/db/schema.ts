@@ -390,7 +390,29 @@ export const sales = pgTable('sales', {
   data: jsonb('data').notNull(),
   /** A conta de impostos do servidor bateu com a do caixa? Nulo quando o caixa não calculou. */
   taxCheck: text('tax_check'),
+  /** Venda para entrega (F5-10): bairro, taxa, contato e endereço, como o caixa mandou. */
+  delivery: jsonb('delivery').$type<SaleDelivery>(),
+  deliveryStatus: text('delivery_status', { enum: ['pending', 'out', 'delivered'] }),
+  deliveryUpdatedAt: ts('delivery_updated_at'),
 });
+
+export interface SaleDelivery {
+  zoneId: string | null;
+  zoneName: string;
+  feeCents: number;
+  name: string;
+  phone: string;
+  address: {
+    street: string;
+    number: string;
+    complement: string | null;
+    district: string;
+    cityCode: string | null;
+    cityName: string | null;
+    uf: string | null;
+    cep: string | null;
+  };
+}
 
 export const saleItems = pgTable(
   'sale_items',
@@ -1111,4 +1133,18 @@ export const tabOrders = pgTable('tab_orders', {
   reason: text('reason'),
   receivedAt: ts('received_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+// ---------------------------------------------------------------- delivery (0040)
+
+/** Bairro atendido pela entrega da loja, com a taxa (F5-10). */
+export const deliveryZones = pgTable('delivery_zones', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  name: text('name').notNull(),
+  feeCents: money('fee_cents').notNull(),
+  active: boolean('active').notNull().default(true),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
 });

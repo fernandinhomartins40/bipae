@@ -91,6 +91,29 @@ export const saleCompletedEvent = z.object({
       .nullish(),
     discountAuthorizedBy: uuid.nullish(),
     quoteId: uuid.nullish(),
+    /** Venda para entrega (F5-10): a taxa já está no totalCents (subtotal - desconto + taxa). */
+    delivery: z
+      .object({
+        zoneId: uuid.nullable(),
+        zoneName: z.string().min(1).max(60),
+        feeCents: cents,
+        name: z.string().min(1).max(80),
+        phone: z.string().min(8).max(20),
+        address: z.object({
+          street: z.string().min(1).max(60),
+          number: z.string().min(1).max(10),
+          complement: z.string().max(60).nullable(),
+          district: z.string().min(1).max(60),
+          cityCode: z
+            .string()
+            .regex(/^\d{7}$/)
+            .nullable(),
+          cityName: z.string().max(60).nullable(),
+          uf: z.string().length(2).nullable(),
+          cep: z.string().max(9).nullable(),
+        }),
+      })
+      .optional(),
     /**
      * NFC-e emitida pelo caixa em contingência off-line (F3-15), já assinada com o certificado
      * do aparelho. O servidor transmite este mesmo XML, sem mudar a chave.
@@ -380,6 +403,8 @@ export interface PricingSnapshot {
     /** Parcela vencida há mais do que a tolerância (F4-09): sem nova compra no crediário. */
     blocked?: boolean;
   }[];
+  /** Bairros atendidos pela entrega da loja do caixa, com a taxa (F5-10). */
+  deliveryZones?: { id: string; name: string; feeCents: number }[];
   /** Promoções ativas (F5-02), no formato do motor @bipae/promotions. */
   promotions?: {
     id: string;
