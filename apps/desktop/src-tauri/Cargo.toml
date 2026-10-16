@@ -35,7 +35,9 @@ tauri-plugin-opener = "2"
 # Iniciar o Bipaê Conector junto com o computador (F2-08).
 tauri-plugin-autostart = "2"
 # Mesma versão menor dos pacotes npm (@tauri-apps/plugin-*): o tauri build recusa versões diferentes.
-tauri-plugin-updater = { version = "~2.13", optional = true }
+# Sem o recurso "zip" (pacotes .zip/.tar.gz, que o instalador do Windows e o AppImage não usam):
+# a biblioteca zip 4.x foi retirada do crates.io em 10/2026 e quebrava a compilação.
+tauri-plugin-updater = { version = "~2.13", optional = true, default-features = false, features = ["rustls-tls", "system-proxy"] }
 tauri-plugin-process = { version = "~2.4", optional = true }
 
 # Impressora USB pelo spooler do Windows, em modo RAW (F2-07).
