@@ -51,6 +51,7 @@ import {
   MercadoflowPendings,
   MercadoflowPendingsController,
 } from './modules/mercadoflow/mercadoflow.pendings';
+import { MercadoflowEncartes } from './modules/mercadoflow/mercadoflow.encartes';
 import { MercadoflowOutbox } from './modules/mercadoflow/mercadoflow.outbox';
 import {
   MercadoflowWebhookController,
@@ -209,6 +210,7 @@ class AppModule {
         MercadoflowCatalog,
         MercadoflowContributions,
         MercadoflowSales,
+        MercadoflowEncartes,
         MercadoflowPendings,
         MercadoflowMarketSync,
         MercadoflowInsights,

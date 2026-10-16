@@ -908,6 +908,8 @@ export const promotions = pgTable('promotions', {
   startsOn: date('starts_on', { mode: 'string' }).notNull(),
   endsOn: date('ends_on', { mode: 'string' }),
   active: boolean('active').notNull().default(true),
+  /** Só nesta loja (encarte do MercadoFlow, MF-11.b); sem loja, vale em todas. */
+  storeId: uuid('store_id'),
   createdBy: uuid('created_by'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),

@@ -1,5 +1,13 @@
 # Changelog
 
+## [MF-11.b Encartes do MercadoFlow no caixa] — 16/10/2026
+
+### Adicionado
+- **O Bipaê busca de hora em hora os encartes publicados no MercadoFlow** de cada loja vinculada. Cada encarte vira uma pendência na tela do MercadoFlow, com a vigência e quantos produtos já estão cadastrados no Bipaê. Também dá para clicar em "Buscar encartes agora".
+- **Aplicar** cria uma promoção por produto, com o preço do encarte, valendo só naquela loja e só na vigência. Produto sem cadastro fica de fora. O preço promocional volta ao MercadoFlow com o início e o fim da promoção.
+- **Opção por loja "Aplicar sozinho os encartes do MercadoFlow"**.
+- **Promoção de uma loja só:** a promoção pode valer numa loja só e não chega ao caixa das outras lojas. A tela de promoções mostra em qual loja cada uma vale.
+
 ## [MF-11.a Preços aprovados no MercadoFlow] — 16/10/2026
 
 ### Adicionado

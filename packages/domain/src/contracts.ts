@@ -1414,6 +1414,8 @@ export const promotionInput = z
     startsOn: isoDay,
     endsOn: isoDay.nullable().default(null),
     active: z.boolean().default(true),
+    /** Só nesta loja; sem loja, vale em todas as lojas da empresa. */
+    storeId: z.string().uuid().nullable().default(null),
     rule: promotionRuleInput,
   })
   .refine((p) => p.endsOn === null || p.endsOn >= p.startsOn, {
@@ -1428,6 +1430,8 @@ export interface PromotionView {
   startsOn: string;
   endsOn: string | null;
   active: boolean;
+  /** Só nesta loja (null = todas). */
+  storeId: string | null;
   rule: PromotionRule;
   /** Nome dos produtos da regra, para a tela. */
   products: { id: string; name: string }[];

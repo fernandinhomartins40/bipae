@@ -3,24 +3,43 @@ import type { AddressInfo } from 'node:net';
 import { uuidv7 } from '@bipae/domain';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { withTenant } from '../src/db/client';
-import { mercadoflowLinks } from '../src/db/schema';
+import { mercadoflowLinks, stores, terminals } from '../src/db/schema';
+import { MercadoflowOutbox } from '../src/modules/mercadoflow/mercadoflow.outbox';
 import { signWebhook } from '../src/modules/mercadoflow/mercadoflow.webhook';
 import { api, createTestApp, signup, type TestApp } from './helpers';
 
-/** MF-11.a: o preço aprovado no MercadoFlow vira alteração de preço pendente no Bipaê. */
+/**
+ * MF-11: o preço aprovado no MercadoFlow vira alteração de preço pendente (a) e o encarte vira
+ * promoção pendente da loja (b).
+ */
 
 const SEGREDO = 'whsec_precos';
+/** Encartes publicados por mercado, como o MercadoFlow devolveria. */
+const encartes = new Map<string, unknown[]>();
+const recebidos: { path: string; items: Record<string, unknown>[] }[] = [];
 let mf: Server;
 let t: TestApp;
 
 beforeAll(async () => {
-  // O MercadoFlow simulado aceita tudo (o envio do preço novo pela fila não importa aqui).
+  // O MercadoFlow simulado devolve os encartes do mercado e guarda o que recebe.
   mf = createServer((req, res) => {
-    req.resume();
+    const chunks: Buffer[] = [];
+    req.on('data', (chunk: Buffer) => chunks.push(chunk));
     req.on('end', () => {
-      const body = (req.url ?? '').includes('/oauth/token')
-        ? { access_token: 'mfp_precos', expires_in: 3600 }
-        : { ok: true };
+      const path = (req.url ?? '').replace('/api/v1/partner', '').split('?')[0]!;
+      const encarte = /^\/markets\/([^/]+)\/promotions$/.exec(path);
+      const body =
+        path === '/oauth/token'
+          ? { access_token: 'mfp_precos', expires_in: 3600 }
+          : encarte
+            ? { items: encartes.get(encarte[1]!) ?? [] }
+            : { ok: true };
+      if (req.method === 'POST' && path !== '/oauth/token') {
+        const sent = JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}') as {
+          items?: Record<string, unknown>[];
+        };
+        recebidos.push({ path, items: sent.items ?? [] });
+      }
       res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify(body));
     });
   });
@@ -55,7 +74,7 @@ async function loja() {
       marketId,
       status: 'ATIVA',
       createdVia: 'ACCOUNT',
-      scopes: ['prices:read', 'prices:write'],
+      scopes: ['prices:read', 'prices:write', 'promotions:read'],
     }),
   );
   const produto = (
@@ -84,7 +103,7 @@ async function loja() {
     });
     expect(res.statusCode).toBe(200);
   };
-  return { admin, store, produto, avisar };
+  return { admin, auth: dono.auth, ctx, empresa, store, produto, marketId, avisar };
 }
 
 /** O aviso é tratado logo depois da resposta: espera aparecer na lista. */
@@ -181,5 +200,169 @@ describe('preço aprovado no MercadoFlow (MF-11.a)', () => {
     await avisar({ gtin: '7891000100103', price: 'grátis' });
     await avisar({ gtin: 'abc', price: 3 });
     expect(await pendencias(admin, 0)).toEqual([]);
+  });
+});
+
+/** Data AAAA-MM-DD daqui a `dias` dias, em Brasília. */
+const dia = (dias: number) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(
+    new Date(Date.now() + dias * 86_400_000),
+  );
+
+describe('encartes do MercadoFlow (MF-11.b)', () => {
+  it('vira promoção pendente; aplicar cria a promoção só da loja e manda o preço promocional', async () => {
+    const { admin, store, produto, marketId } = await loja();
+    encartes.set(marketId, [
+      {
+        id: 'enc-1',
+        name: 'Ofertas da semana',
+        validFrom: dia(0),
+        validUntil: dia(6),
+        items: [
+          {
+            gtin: '7891000100103',
+            promoPrice: 4.99,
+            regularPrice: 5.49,
+            unit: 'UN',
+            deal: 'De 5,49 por 4,99',
+          },
+          { gtin: '7896004000855', promoPrice: 9.9, regularPrice: 12.9, unit: 'UN' },
+        ],
+      },
+      // Encarte que já acabou não entra.
+      { id: 'enc-velho', name: 'Antigo', validFrom: dia(-10), validUntil: dia(-1), items: [] },
+    ]);
+    const busca = await admin.post(`/mercadoflow/links/${store.id}/promotions/fetch`);
+    expect(busca.json()).toEqual({ found: 1 });
+    const [pendente] = await pendencias(admin, 1);
+    expect(pendente).toMatchObject({
+      kind: 'promotion',
+      problem: null,
+      data: {
+        name: 'Ofertas da semana',
+        validFrom: dia(0),
+        validUntil: dia(6),
+        items: [
+          {
+            gtin: '7891000100103',
+            productId: produto.id,
+            promoPriceCents: 499,
+            regularPriceCents: 549,
+          },
+          { gtin: '7896004000855', productId: null, promoPriceCents: 990 },
+        ],
+      },
+    });
+
+    const aplicar = await admin.post(`/mercadoflow/pendings/${pendente.id}/apply`);
+    expect(aplicar.json()).toEqual({ ok: true, promotions: 1 });
+    const promocoes = (await admin.get('/promotions')).json();
+    expect(promocoes).toEqual([
+      expect.objectContaining({
+        name: 'Ofertas da semana: Leite integral 1 L',
+        startsOn: dia(0),
+        endsOn: dia(6),
+        storeId: store.id,
+        rule: {
+          kind: 'quantity_tier',
+          productIds: [produto.id],
+          tiers: [{ minQuantityMilli: 1, unitPriceCents: 499 }],
+        },
+      }),
+    ]);
+    // O preço promocional vai ao MercadoFlow pela fila.
+    recebidos.length = 0;
+    await t.app.get(MercadoflowOutbox).flush(new Date(Date.now() + 2 * 60 * 60_000));
+    const precos = recebidos.filter((r) => r.path === `/markets/${marketId}/prices`);
+    expect(precos.flatMap((r) => r.items)).toContainEqual({
+      gtin: '7891000100103',
+      price: 5.49,
+      promoPrice: 4.99,
+      promoStart: dia(0),
+      promoEnd: dia(6),
+    });
+    // Buscar de novo não traz de volta o encarte já aplicado.
+    await admin.post(`/mercadoflow/links/${store.id}/promotions/fetch`);
+    expect(await pendencias(admin, 0)).toEqual([]);
+    expect(JSON.stringify((await admin.get('/audit')).json())).toContain(
+      'mercadoflow.promotion_applied',
+    );
+  });
+
+  it('a promoção de uma loja não chega ao caixa de outra loja', async () => {
+    const { admin, auth, ctx, empresa, store, produto, marketId } = await loja();
+    // Segunda loja e um caixa nela (gravados direto: o plano de teste tem uma loja só).
+    const outra = uuidv7();
+    await withTenant(t.database.db, ctx as never, async (tx) => {
+      await tx.insert(stores).values({
+        id: outra,
+        tenantId: ctx.tenantId,
+        companyId: empresa.id,
+        name: 'Loja Bairro',
+      });
+    });
+    const caixaDaLoja = (
+      await admin.post('/terminals', { storeId: store.id, name: 'Caixa Centro', platform: 'web' })
+    ).json();
+    const caixaDaOutra = uuidv7();
+    await withTenant(t.database.db, ctx as never, (tx) =>
+      tx.insert(terminals).values({
+        id: caixaDaOutra,
+        tenantId: ctx.tenantId,
+        companyId: empresa.id,
+        storeId: outra,
+        name: 'Caixa Bairro',
+        platform: 'web',
+        nfceSeries: 2,
+      }),
+    );
+    encartes.set(marketId, [
+      {
+        id: 'enc-loja',
+        name: 'Só no Centro',
+        validFrom: dia(0),
+        validUntil: dia(3),
+        items: [{ gtin: '7891000100103', promoPrice: '4.79' }],
+      },
+    ]);
+    await admin.post(`/mercadoflow/links/${store.id}/promotions/fetch`);
+    const [pendente] = await pendencias(admin, 1);
+    await admin.post(`/mercadoflow/pendings/${pendente.id}/apply`);
+    const promocoesDoCaixa = async (terminalId: string) => {
+      const pull = await api(t.app, {
+        ...auth,
+        'x-bipae-terminal': terminalId,
+      }).get('/sync/pull?limit=1');
+      return (pull.json().pricing?.promotions ?? []) as { productIds?: string[]; rule?: unknown }[];
+    };
+    expect(JSON.stringify(await promocoesDoCaixa(caixaDaLoja.id))).toContain(produto.id);
+    expect(JSON.stringify(await promocoesDoCaixa(caixaDaOutra))).not.toContain(produto.id);
+  });
+
+  it('com a opção automática ligada, o encarte entra sozinho', async () => {
+    const { admin, store, marketId } = await loja();
+    await admin.put(`/mercadoflow/links/${store.id}/auto-apply`, { promotions: true });
+    encartes.set(marketId, [
+      {
+        id: 'enc-auto',
+        name: 'Feirão',
+        validFrom: dia(0),
+        validUntil: dia(2),
+        items: [{ gtin: '7891000100103', promoPrice: 4.5 }],
+      },
+    ]);
+    await admin.post(`/mercadoflow/links/${store.id}/promotions/fetch`);
+    expect(await pendencias(admin, 0)).toEqual([]);
+    const promocoes = (await admin.get('/promotions')).json();
+    expect(promocoes.map((p: { name: string }) => p.name)).toEqual(['Feirão: Leite integral 1 L']);
+  });
+
+  it('loja sem a permissão de ler encartes recebe a explicação', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [store] = (await admin.get('/stores')).json();
+    const res = await admin.post(`/mercadoflow/links/${store.id}/promotions/fetch`);
+    expect(res.statusCode).toBe(409);
+    expect(res.json().message).toContain('permissão de ler os encartes');
   });
 });

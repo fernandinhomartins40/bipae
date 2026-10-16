@@ -815,7 +815,8 @@ export class SyncService {
       .select()
       .from(promotions)
       .where(
-        sql`${promotions.active} and (${promotions.endsOn} is null or ${promotions.endsOn} >= ${todayInBrazil()})`,
+        sql`${promotions.active} and (${promotions.endsOn} is null or ${promotions.endsOn} >= ${todayInBrazil()})
+          and (${promotions.storeId} is null or ${promotions.storeId} = ${terminal?.storeId ?? null})`,
       );
     const late = new Map(
       (await overdueCredit(tx, todayInBrazil())).map((o) => [o.taxId, o.daysLate]),

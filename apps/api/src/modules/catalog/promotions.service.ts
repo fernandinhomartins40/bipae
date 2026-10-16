@@ -16,7 +16,7 @@ import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
-import { products, promotions } from '../../db/schema';
+import { products, promotions, stores } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 
 type Input = z.output<typeof promotionInput>;
@@ -34,6 +34,7 @@ function toView(
     startsOn: row.startsOn,
     endsOn: row.endsOn,
     active: row.active,
+    storeId: row.storeId,
     rule: row.rule,
     products: productIdsOf(row.rule).map((id) => ({ id, name: names.get(id) ?? 'Produto' })),
     createdAt: row.createdAt.toISOString(),
@@ -96,9 +97,17 @@ export class PromotionsService {
     }
   }
 
+  /** A loja da promoção precisa ser desta empresa (o RLS esconde as dos outros clientes). */
+  private async assertStore(tx: Tx, storeId: string | null) {
+    if (!storeId) return;
+    const [store] = await tx.select({ id: stores.id }).from(stores).where(eq(stores.id, storeId));
+    if (!store) throw notFound('Loja');
+  }
+
   async create(ctx: RequestContext, input: Input): Promise<PromotionView> {
     return withTenant(this.db, ctx, async (tx) => {
       await this.assertProducts(tx, input.rule);
+      await this.assertStore(tx, input.storeId);
       const [row] = await tx
         .insert(promotions)
         .values({ id: uuidv7(), tenantId: ctx.tenantId, createdBy: ctx.userId, ...input })
@@ -118,6 +127,7 @@ export class PromotionsService {
       const [before] = await tx.select().from(promotions).where(eq(promotions.id, id));
       if (!before) throw notFound('Promoção');
       await this.assertProducts(tx, input.rule);
+      await this.assertStore(tx, input.storeId);
       const [row] = await tx
         .update(promotions)
         .set({ ...input, updatedAt: new Date() })

@@ -11,7 +11,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ALL_PERMISSIONS, productInput, uuidv7, type MercadoflowPendingView } from '@bipae/domain';
+import { productInput, uuidv7, type MercadoflowPendingView } from '@bipae/domain';
 import { dec, toCents } from '@bipae/fiscal';
 import { and, desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
@@ -20,19 +20,12 @@ import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { storeCondition } from '../../common/stores';
 import { asPlatform, withTenant, type Db, type Tx } from '../../db/client';
-import {
-  memberships,
-  mercadoflowLinks,
-  mercadoflowPendings,
-  priceTableItems,
-  productBarcodes,
-  products,
-  roles,
-  stores,
-} from '../../db/schema';
+import { mercadoflowLinks, mercadoflowPendings, stores } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 import { CatalogService } from '../catalog/catalog.service';
 import { asTenant } from './mercadoflow.confere';
+import { MercadoflowEncartes } from './mercadoflow.encartes';
+import { ownerContext, productByGtin, storePrice } from './mercadoflow.pendings.helpers';
 import { MercadoflowWebhooks, type MercadoflowEvent } from './mercadoflow.webhook';
 
 type Pending = typeof mercadoflowPendings.$inferSelect;
@@ -79,44 +72,11 @@ export class MercadoflowPendings {
     @Inject(DB) private readonly db: Db,
     @Inject(CatalogService) private readonly catalog: CatalogService,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(MercadoflowEncartes) private readonly encartes: MercadoflowEncartes,
     @Inject(MercadoflowWebhooks) webhooks: MercadoflowWebhooks,
   ) {
     webhooks.on('price.approved', (tx, event) => this.priceApproved(tx, event));
     webhooks.after('price.approved', (event) => this.autoApplyPrice(event));
-  }
-
-  /** O preço atual do produto na loja: o da tabela de preço dela, senão o do cadastro. */
-  private async currentPrice(tx: Tx, storeId: string, productId: string) {
-    const [store] = await tx
-      .select({ priceTableId: stores.priceTableId })
-      .from(stores)
-      .where(eq(stores.id, storeId));
-    if (store?.priceTableId) {
-      const [item] = await tx
-        .select({ priceCents: priceTableItems.priceCents })
-        .from(priceTableItems)
-        .where(
-          and(
-            eq(priceTableItems.priceTableId, store.priceTableId),
-            eq(priceTableItems.productId, productId),
-          ),
-        );
-      if (item) return item.priceCents;
-    }
-    const [product] = await tx
-      .select({ priceCents: products.priceCents })
-      .from(products)
-      .where(eq(products.id, productId));
-    return product?.priceCents ?? null;
-  }
-
-  private async productByGtin(tx: Tx, gtin: string) {
-    const [row] = await tx
-      .select({ id: products.id, name: products.name })
-      .from(productBarcodes)
-      .innerJoin(products, eq(products.id, productBarcodes.productId))
-      .where(eq(productBarcodes.code, gtin));
-    return row ?? null;
   }
 
   private async priceApproved(tx: Tx, event: MercadoflowEvent) {
@@ -134,13 +94,13 @@ export class MercadoflowPendings {
       );
     if (!link) throw new Error('Nenhuma loja do Bipaê tem este mercado.');
     await asTenant(tx, link.tenantId, async () => {
-      const product = await this.productByGtin(tx, gtin);
+      const product = await productByGtin(tx, gtin);
       const payload: PriceData = {
         gtin,
         productId: product?.id ?? null,
         productName: product?.name ?? null,
         priceCents,
-        currentPriceCents: product ? await this.currentPrice(tx, link.storeId, product.id) : null,
+        currentPriceCents: product ? await storePrice(tx, link.storeId, product.id) : null,
         approvedBy: typeof data.approvedBy === 'string' ? data.approvedBy.slice(0, 120) : null,
       };
       // Um preço pendente por produto: o aviso mais novo substitui o anterior.
@@ -175,36 +135,6 @@ export class MercadoflowPendings {
     });
   }
 
-  /**
-   * Quem assina a aplicação automática na auditoria: o dono da empresa (a opção automática foi
-   * ligada por alguém com permissão de gerenciar lojas).
-   */
-  private async ownerContext(tenantId: string): Promise<RequestContext | null> {
-    const [owner] = await asPlatform(this.db, (tx) =>
-      tx
-        .select({ userId: memberships.userId })
-        .from(memberships)
-        .innerJoin(roles, eq(roles.id, memberships.roleId))
-        .where(
-          and(
-            eq(memberships.tenantId, tenantId),
-            eq(roles.systemKey, 'owner'),
-            eq(memberships.active, true),
-          ),
-        )
-        .limit(1),
-    );
-    return owner
-      ? {
-          tenantId,
-          userId: owner.userId,
-          permissions: [...ALL_PERMISSIONS],
-          terminalId: null,
-          storeIds: null,
-        }
-      : null;
-  }
-
   private async autoApplyPrice(event: MercadoflowEvent) {
     const gtin = (event.data as { gtin?: string }).gtin;
     const [found] = await asPlatform(this.db, (tx) =>
@@ -228,7 +158,7 @@ export class MercadoflowPendings {
         ),
     );
     if (!found?.auto || found.pending.problem) return;
-    const ctx = await this.ownerContext(found.pending.tenantId);
+    const ctx = await ownerContext(this.db, found.pending.tenantId);
     if (!ctx) return;
     await this.apply(ctx, found.pending.id, true).catch((error: Error) =>
       this.logger.warn(`Preço aprovado não aplicado sozinho: ${error.message}`),
@@ -283,12 +213,11 @@ export class MercadoflowPendings {
   /** Aplica o preço aprovado: na tabela de preço da loja, se houver, senão no cadastro. */
   async apply(ctx: RequestContext, id: string, automatic = false) {
     const row = await this.pending(ctx, id);
-    if (row.kind !== 'price') {
-      throw new AppError(400, 'not_supported', 'Este tipo de pendência ainda não se aplica aqui.');
-    }
+    // Encarte (MF-11.b): vira promoções da loja.
+    if (row.kind === 'promotion') return this.encartes.apply(ctx, row, automatic);
     const data = row.data as unknown as PriceData;
     // O produto pode ter sido cadastrado depois do aviso.
-    const product = await withTenant(this.db, ctx, (tx) => this.productByGtin(tx, data.gtin));
+    const product = await withTenant(this.db, ctx, (tx) => productByGtin(tx, data.gtin));
     if (!product) {
       await withTenant(this.db, ctx, (tx) =>
         tx
@@ -401,7 +330,10 @@ export class MercadoflowPendings {
 
 @Controller('mercadoflow')
 export class MercadoflowPendingsController {
-  constructor(@Inject(MercadoflowPendings) private readonly pendings: MercadoflowPendings) {}
+  constructor(
+    @Inject(MercadoflowPendings) private readonly pendings: MercadoflowPendings,
+    @Inject(MercadoflowEncartes) private readonly encartes: MercadoflowEncartes,
+  ) {}
 
   @Get('pendings')
   @RequirePermission('catalog.read')
@@ -421,6 +353,17 @@ export class MercadoflowPendingsController {
   @RequirePermission('catalog.price.write')
   dismiss(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.pendings.dismiss(ctx, id);
+  }
+
+  /** "Buscar encartes agora" (a busca automática roda de hora em hora). */
+  @Post('links/:storeId/promotions/fetch')
+  @HttpCode(200)
+  @RequirePermission('catalog.price.write')
+  fetchPromotions(
+    @Ctx() ctx: RequestContext,
+    @Param('storeId', new ParseUUIDPipe()) storeId: string,
+  ) {
+    return this.encartes.fetchStore(ctx, storeId);
   }
 
   @Put('links/:storeId/auto-apply')

@@ -196,6 +196,28 @@ export class MercadoflowMarketSync implements OnModuleInit {
     }
   }
 
+  /**
+   * Encarte aplicado (MF-11.b): o preço da loja com o preço promocional e a vigência, para o
+   * MercadoFlow saber que a promoção está valendo no caixa.
+   */
+  async enqueuePromoPrice(
+    tx: Tx,
+    tenantId: string,
+    storeId: string,
+    item: { gtin: string; priceCents: number; promoPriceCents: number; start: string; end: string },
+  ) {
+    for (const link of await this.links(tx, tenantId, 'prices')) {
+      if (link.storeId !== storeId) continue;
+      await this.put(tx, tenantId, link, 'prices', item.gtin, {
+        gtin: item.gtin,
+        price: reais(item.priceCents),
+        promoPrice: reais(item.promoPriceCents),
+        promoStart: item.start,
+        promoEnd: item.end,
+      });
+    }
+  }
+
   /** Estoque de cada produto com código de barras, em unidades de venda, para as lojas vinculadas. */
   private async enqueueStock(tx: Tx, tenantId: string, only?: string) {
     for (const link of await this.links(tx, tenantId, 'stock')) {

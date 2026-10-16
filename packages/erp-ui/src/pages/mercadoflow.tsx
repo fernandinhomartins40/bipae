@@ -86,6 +86,7 @@ export function MercadoflowPage() {
             />
           ))}
           <ApprovedPrices />
+          <Encartes />
           <Card>
             <h2 className="text-lg font-bold">Envio ao MercadoFlow</h2>
             <p className="text-sm text-muted">
@@ -251,6 +252,48 @@ function StoreLink({
               })
             }
           />
+          {link.scopes.includes('promotions:read') && (
+            <>
+              <Checkbox
+                label="Aplicar sozinho os encartes do MercadoFlow"
+                hint="Desligado, cada encarte espera você conferir e aplicar. O Bipaê busca os encartes de hora em hora."
+                checked={link.autoApply.promotions}
+                onChange={(checked) =>
+                  void run(async () => {
+                    await api.put(`/mercadoflow/links/${link.storeId}/auto-apply`, {
+                      promotions: checked,
+                    });
+                    await reload();
+                  })
+                }
+              />
+              <div>
+                <Button
+                  variant="secondary"
+                  disabled={busy}
+                  onClick={() =>
+                    void run(async () => {
+                      const { found } = await api.post<{ found: number }>(
+                        `/mercadoflow/links/${link.storeId}/promotions/fetch`,
+                      );
+                      setMessage({
+                        ok: true,
+                        text:
+                          found === 0
+                            ? 'Nenhum encarte valendo no MercadoFlow agora.'
+                            : `${found} encarte(s) do MercadoFlow conferido(s).`,
+                      });
+                      await queryClient.invalidateQueries({
+                        queryKey: ['mercadoflow', 'pendings'],
+                      });
+                    })
+                  }
+                >
+                  Buscar encartes agora
+                </Button>
+              </div>
+            </>
+          )}
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => void open(`${publicUrl}/app`)}>
               Abrir o MercadoFlow
@@ -385,6 +428,102 @@ function ApprovedPrices() {
           },
         ]}
       />
+    </section>
+  );
+}
+
+const shortDay = (value: unknown) =>
+  typeof value === 'string' ? value.split('-').reverse().join('/') : '—';
+
+/**
+ * Encartes do MercadoFlow (MF-11.b): cada encarte espera o gerente aplicar (vira uma promoção
+ * por produto, só na loja dele) ou descartar.
+ */
+function Encartes() {
+  const { api } = useApp();
+  const canApply = useCan('catalog.price.write');
+  const queryClient = useQueryClient();
+  const pendings = useQuery({
+    queryKey: ['mercadoflow', 'pendings'],
+    queryFn: () => api.get<MercadoflowPendingView[]>('/mercadoflow/pendings'),
+  });
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const list = (pendings.data ?? []).filter((p) => p.kind === 'promotion');
+  if (list.length === 0 && !message) return null;
+  const act = async (id: string, action: 'apply' | 'dismiss') => {
+    setMessage(null);
+    try {
+      const result = await api.post<{ promotions?: number }>(
+        `/mercadoflow/pendings/${id}/${action}`,
+      );
+      if (action === 'apply') {
+        setMessage({
+          ok: true,
+          text: `Encarte aplicado: ${result.promotions ?? 0} promoção(ões) criada(s) no caixa desta loja.`,
+        });
+      }
+    } catch (e) {
+      setMessage({ ok: false, text: (e as Error).message });
+    }
+    await queryClient.invalidateQueries({ queryKey: ['mercadoflow', 'pendings'] });
+  };
+  const items = (p: MercadoflowPendingView) =>
+    (p.data.items as { productId: string | null }[] | undefined) ?? [];
+  return (
+    <section aria-label="Encartes do MercadoFlow">
+      <h2 className="mb-2 text-lg font-bold">Encartes do MercadoFlow</h2>
+      {message && (
+        <div className="mb-2">
+          <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
+        </div>
+      )}
+      {list.length > 0 && (
+        <DataTable
+          caption="Encartes do MercadoFlow"
+          rows={list}
+          columns={[
+            { header: 'Loja', cell: (p) => p.storeName },
+            {
+              header: 'Encarte',
+              cell: (p) => (
+                <span className="flex flex-col">
+                  <span className="font-semibold">{String(p.data.name)}</span>
+                  {p.problem && <span className="text-sm text-danger">{p.problem}</span>}
+                </span>
+              ),
+            },
+            {
+              header: 'Vigência',
+              cell: (p) => `${shortDay(p.data.validFrom)} a ${shortDay(p.data.validUntil)}`,
+            },
+            {
+              header: 'Produtos',
+              cell: (p) => {
+                const all = items(p);
+                const found = all.filter((i) => i.productId).length;
+                return found === all.length
+                  ? `${all.length}`
+                  : `${found} de ${all.length} cadastrados no Bipaê`;
+              },
+            },
+            {
+              header: '',
+              align: 'right',
+              cell: (p) =>
+                canApply ? (
+                  <span className="flex justify-end gap-2">
+                    <Button onClick={() => void act(p.id, 'apply')} disabled={Boolean(p.problem)}>
+                      Aplicar
+                    </Button>
+                    <Button variant="ghost" onClick={() => void act(p.id, 'dismiss')}>
+                      Descartar
+                    </Button>
+                  </span>
+                ) : null,
+            },
+          ]}
+        />
+      )}
     </section>
   );
 }

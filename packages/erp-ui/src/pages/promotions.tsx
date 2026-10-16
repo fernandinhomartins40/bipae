@@ -57,6 +57,12 @@ export function PromotionsPage() {
     queryKey: ['promotions'],
     queryFn: () => api.get<PromotionView[]>('/promotions'),
   });
+  const stores = useQuery({
+    queryKey: ['stores'],
+    queryFn: () => api.get<{ id: string; name: string }[]>('/stores'),
+  });
+  const storeName = (id: string | null) =>
+    id ? (stores.data?.find((s) => s.id === id)?.name ?? 'Uma loja') : 'Todas';
   const [open, setOpen] = useState<PromotionView | 'new' | null>(null);
   const now = today();
   const rows = list.data ?? [];
@@ -88,6 +94,7 @@ export function PromotionsPage() {
               { header: 'Nome', cell: (r) => <span className="font-semibold">{r.name}</span> },
               { header: 'Tipo', cell: (r) => KINDS[r.rule.kind] },
               { header: 'Regra', cell: (r) => describeRule(r.rule) },
+              { header: 'Loja', cell: (r) => storeName(r.storeId) },
               {
                 header: 'Vigência',
                 cell: (r) =>
@@ -204,7 +211,15 @@ function PromotionDrawer({
     setError(null);
     setBusy(true);
     try {
-      const body = { name, startsOn, endsOn: endsOn || null, active, rule: buildRule() };
+      // A loja de uma promoção (encarte do MercadoFlow) não muda pela tela.
+      const body = {
+        name,
+        startsOn,
+        endsOn: endsOn || null,
+        active,
+        storeId: promotion?.storeId ?? null,
+        rule: buildRule(),
+      };
       if (promotion) await api.put(`/promotions/${promotion.id}`, body);
       else await api.post('/promotions', body);
       await queryClient.invalidateQueries({ queryKey: ['promotions'] });

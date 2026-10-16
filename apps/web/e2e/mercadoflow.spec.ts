@@ -224,3 +224,86 @@ test('preço aprovado no MercadoFlow espera o gerente aplicar (MF-11.a)', async 
   await expect.poll(() => automatico).toBe(true);
   await expect(opcao).toBeChecked();
 });
+
+test('encarte do MercadoFlow vira promoção da loja com um clique (MF-11.b)', async ({ page }) => {
+  let pendentes = [
+    {
+      id: '0192a000-0000-7000-8000-0000000000c1',
+      storeId: '00000000-0000-7000-8000-000000000001',
+      storeName: 'Loja Centro',
+      kind: 'promotion',
+      problem: null,
+      data: {
+        name: 'Ofertas da semana',
+        validFrom: '2026-10-16',
+        validUntil: '2026-10-22',
+        items: [
+          { gtin: '7891000100103', productId: 'p1', promoPriceCents: 499 },
+          { gtin: '7896004000855', productId: null, promoPriceCents: 990 },
+        ],
+      },
+      updatedAt: new Date().toISOString(),
+    },
+  ];
+  let buscou = false;
+  await page.route('**/v1/mercadoflow', (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        termsUrl: null,
+        publicUrl: 'https://mercadoflow.com',
+        stores: [
+          {
+            storeId: '00000000-0000-7000-8000-000000000001',
+            storeName: 'Loja Centro',
+            status: 'ATIVA',
+            marketId: 'mk_1',
+            scopes: ['promotions:read'],
+            createdVia: 'ACCOUNT',
+            connectUrl: null,
+            connectedAt: null,
+            lastError: null,
+            lastSalesSyncAt: null,
+            salesPausedUntil: null,
+            autoApply: { prices: false, promotions: false },
+            customerActive: true,
+            discount: null,
+          },
+        ],
+        queue: { pending: 0, sent: 0, rejected: 0 },
+        errors: [],
+      },
+    }),
+  );
+  await page.route('**/v1/mercadoflow/pendings', (route) => route.fulfill({ json: pendentes }));
+  await page.route('**/v1/mercadoflow/links/*/promotions/fetch', (route) => {
+    buscou = true;
+    return route.fulfill({ json: { found: 1 } });
+  });
+  await page.route('**/v1/mercadoflow/pendings/*/apply', (route) => {
+    pendentes = [];
+    return route.fulfill({ json: { ok: true, promotions: 1 } });
+  });
+
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Bia Dona');
+  await page.getByLabel('Nome do negócio').fill(`Mercado ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`bia-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Bia!' })).toBeVisible();
+  await page.goto('/mercadoflow');
+
+  await page.getByRole('button', { name: 'Buscar encartes agora' }).click();
+  await expect(page.getByText('1 encarte(s) do MercadoFlow conferido(s).')).toBeVisible();
+  expect(buscou).toBe(true);
+  const encartes = page.getByRole('region', { name: 'Encartes do MercadoFlow' });
+  const linha = encartes.getByRole('row', { name: /Ofertas da semana/ });
+  await expect(linha).toContainText('16/10/2026 a 22/10/2026');
+  await expect(linha).toContainText('1 de 2 cadastrados no Bipaê');
+  await linha.getByRole('button', { name: 'Aplicar' }).click();
+  await expect(
+    encartes.getByText('Encarte aplicado: 1 promoção(ões) criada(s) no caixa desta loja.'),
+  ).toBeVisible();
+  await expect(encartes.getByRole('row', { name: /Ofertas da semana/ })).toHaveCount(0);
+});
