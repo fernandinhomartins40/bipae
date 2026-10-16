@@ -150,6 +150,11 @@ export class MercadoflowAccounts implements OnModuleInit {
       connectUrl: link?.status === 'PENDENTE' ? (link.connectUrl ?? null) : null,
       connectedAt: link?.connectedAt?.toISOString() ?? null,
       lastError: link?.lastError ?? null,
+      lastSalesSyncAt: link?.lastSalesSyncAt?.toISOString() ?? null,
+      salesPausedUntil:
+        link?.salesPausedUntil && link.salesPausedUntil > new Date()
+          ? link.salesPausedUntil.toISOString()
+          : null,
       customerActive: link?.customerActiveSent ?? null,
       discount,
     };

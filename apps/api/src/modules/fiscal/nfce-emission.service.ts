@@ -37,6 +37,7 @@ import {
   companies,
   companyIcmsRules,
   fiscalDocuments,
+  fiscalEvents,
   fiscalProfiles,
   productBarcodes,
   products,
@@ -45,6 +46,7 @@ import {
   sales,
   terminals,
 } from '../../db/schema';
+import { MercadoflowSales } from '../mercadoflow/mercadoflow.sales';
 import { CertificatesService } from './certificates.service';
 import { toMotorRule } from './icms-rules.service';
 import { SefazService } from './sefaz.service';
@@ -55,7 +57,35 @@ const LATE_EMISSION_MS = 4 * 60_000;
 const LATE_REASON = 'Venda registrada sem conexão com a internet; NFC-e transmitida ao reconectar';
 const APP_VERSION = 'Bipaê 1.0';
 
-const toView = (d: typeof fiscalDocuments.$inferSelect): FiscalDocumentView => ({
+/** Causa e o que fazer de um código de rejeição (F3-18). */
+export const rejectionHelp = (cStat: string | null, xMotivo: string | null) =>
+  cStat
+    ? (({ cause, fix, next, area }) => ({ cause, fix, next, area }))(
+        explainRejection(cStat, xMotivo ?? ''),
+      )
+    : null;
+
+/** Pedido de cancelamento da nota (F3-17). */
+export const cancellationView = (
+  e: typeof fiscalEvents.$inferSelect | null | undefined,
+): FiscalDocumentView['cancellation'] =>
+  e
+    ? {
+        status: e.status,
+        reason: e.reason,
+        cStat: e.cStat,
+        xMotivo: e.xMotivo,
+        protocol: e.protocol,
+        lastError: e.lastError,
+        registeredAt: e.registeredAt?.toISOString() ?? null,
+        help: e.status === 'rejected' ? rejectionHelp(e.cStat, e.xMotivo) : null,
+      }
+    : null;
+
+const toView = (
+  d: typeof fiscalDocuments.$inferSelect,
+  cancel?: typeof fiscalEvents.$inferSelect | null,
+): FiscalDocumentView => ({
   id: d.id,
   saleId: d.saleId,
   model: d.model,
@@ -65,12 +95,7 @@ const toView = (d: typeof fiscalDocuments.$inferSelect): FiscalDocumentView => (
   status: d.status,
   pendingItems: d.pendingItems,
   contingency: d.contingency,
-  help:
-    (d.status === 'rejected' || d.status === 'denied') && d.cStat
-      ? (({ cause, fix, next, area }) => ({ cause, fix, next, area }))(
-          explainRejection(d.cStat, d.xMotivo ?? ''),
-        )
-      : null,
+  help: d.status === 'rejected' || d.status === 'denied' ? rejectionHelp(d.cStat, d.xMotivo) : null,
   cStat: d.cStat,
   xMotivo: d.xMotivo,
   protocol: d.protocol,
@@ -78,6 +103,7 @@ const toView = (d: typeof fiscalDocuments.$inferSelect): FiscalDocumentView => (
   lastError: d.lastError,
   authorizedAt: d.authorizedAt?.toISOString() ?? null,
   updatedAt: d.updatedAt.toISOString(),
+  cancellation: cancellationView(cancel),
 });
 
 /** Contexto da tarefa em segundo plano: o tenant da venda, sem pessoa por trás. */
@@ -105,6 +131,7 @@ export class NfceEmissionService implements OnModuleInit {
     @Inject(QUEUE) private readonly queue: JobQueue,
     @Inject(CertificatesService) private readonly certificates: CertificatesService,
     @Inject(SefazService) private readonly sefaz: SefazService,
+    @Inject(MercadoflowSales) private readonly mercadoflow: MercadoflowSales,
   ) {}
 
   onModuleInit() {
@@ -276,7 +303,9 @@ export class NfceEmissionService implements OnModuleInit {
         .where(eq(fiscalDocuments.id, documentId));
       // Ainda não visível: a transação da venda não terminou. A fila tenta de novo.
       if (!doc) throw new Error('Documento fiscal ainda não disponível.');
-      if (doc.status === 'authorized' || doc.status === 'denied') return null;
+      if (!['pending', 'error', 'not_configured', 'rejected'].includes(doc.status)) return null;
+      // Venda cancelada antes de a nota sair: quem decide é o cancelamento (F3-17).
+      if (doc.cancelRequestedAt && doc.origin === 'server') return null;
       // O certificado da empresa no servidor é a conexão com a SEFAZ, mesmo para a nota que o
       // caixa assinou: sem ele, a nota fica em "falta configurar".
       let key;
@@ -380,7 +409,7 @@ export class NfceEmissionService implements OnModuleInit {
     }
   }
 
-  private async finish(
+  async finish(
     ctx: RequestContext,
     id: string,
     signedXml: string,
@@ -395,14 +424,29 @@ export class NfceEmissionService implements OnModuleInit {
     },
   ) {
     if (protocol.outcome === 'authorized' || protocol.outcome === 'denied') {
-      await this.update(ctx, id, {
-        status: protocol.outcome,
-        cStat: protocol.cStat,
-        xMotivo: protocol.xMotivo,
-        protocol: protocol.number ?? null,
-        nfeProc: buildNfeProc(signedXml, protocol as Parameters<typeof buildNfeProc>[1]),
-        authorizedAt: protocol.outcome === 'authorized' ? new Date() : null,
-        lastError: null,
+      const nfeProc = buildNfeProc(signedXml, protocol as Parameters<typeof buildNfeProc>[1]);
+      await withTenant(this.db, ctx, async (tx) => {
+        const [doc] = await tx
+          .update(fiscalDocuments)
+          .set({
+            status: protocol.outcome as 'authorized' | 'denied',
+            cStat: protocol.cStat,
+            xMotivo: protocol.xMotivo,
+            protocol: protocol.number ?? null,
+            nfeProc,
+            authorizedAt: protocol.outcome === 'authorized' ? new Date() : null,
+            lastError: null,
+            updatedAt: new Date(),
+          })
+          .where(eq(fiscalDocuments.id, id))
+          .returning({ saleId: fiscalDocuments.saleId });
+        if (protocol.outcome !== 'authorized' || !doc) return;
+        // MF-08: a venda vai para o MercadoFlow na mesma transação da autorização.
+        const [sale] = await tx
+          .select({ storeId: sales.storeId })
+          .from(sales)
+          .where(eq(sales.id, doc.saleId));
+        if (sale) await this.mercadoflow.enqueueSale(tx, ctx.tenantId, sale.storeId, nfeProc);
       });
       return;
     }
@@ -419,11 +463,15 @@ export class NfceEmissionService implements OnModuleInit {
   async forSale(ctx: RequestContext, saleId: string) {
     return withTenant(this.db, ctx, async (tx) => {
       const [doc] = await tx
-        .select({ d: fiscalDocuments })
+        .select({ d: fiscalDocuments, e: fiscalEvents })
         .from(fiscalDocuments)
         .innerJoin(sales, eq(sales.id, fiscalDocuments.saleId))
+        .leftJoin(
+          fiscalEvents,
+          and(eq(fiscalEvents.documentId, fiscalDocuments.id), eq(fiscalEvents.type, '110111')),
+        )
         .where(and(eq(fiscalDocuments.saleId, saleId), storeCondition(ctx, sales.storeId)));
-      return doc ? toView(doc.d) : null;
+      return doc ? toView(doc.d, doc.e) : null;
     });
   }
 
@@ -431,9 +479,13 @@ export class NfceEmissionService implements OnModuleInit {
     return withTenant(this.db, ctx, async (tx) =>
       (
         await tx
-          .select({ d: fiscalDocuments })
+          .select({ d: fiscalDocuments, e: fiscalEvents })
           .from(fiscalDocuments)
           .innerJoin(sales, eq(sales.id, fiscalDocuments.saleId))
+          .leftJoin(
+            fiscalEvents,
+            and(eq(fiscalEvents.documentId, fiscalDocuments.id), eq(fiscalEvents.type, '110111')),
+          )
           .where(
             and(
               storeCondition(ctx, sales.storeId),
@@ -442,7 +494,7 @@ export class NfceEmissionService implements OnModuleInit {
           )
           .orderBy(desc(fiscalDocuments.createdAt))
           .limit(200)
-      ).map((r) => toView(r.d)),
+      ).map((r) => toView(r.d, r.e)),
     );
   }
 
@@ -462,8 +514,15 @@ export class NfceEmissionService implements OnModuleInit {
     const doc = await withTenant(this.db, ctx, async (tx) => {
       const [row] = await tx.select().from(fiscalDocuments).where(eq(fiscalDocuments.id, id));
       if (!row) throw notFound('Documento fiscal');
-      if (row.status === 'authorized' || row.status === 'denied') {
+      if (['authorized', 'denied', 'cancelled', 'voided'].includes(row.status)) {
         throw new AppError(409, 'already_final', 'Esta nota já tem resposta final da SEFAZ.');
+      }
+      if (row.cancelRequestedAt && row.origin === 'server') {
+        throw new AppError(
+          409,
+          'sale_cancelled',
+          'A venda foi cancelada: esta nota não será emitida.',
+        );
       }
       // Rejeitada: a nota será montada de novo com os dados corrigidos (mesma chave e número).
       await tx

@@ -130,7 +130,7 @@ async function loja(completa = true, agora?: () => Date) {
     return venda;
   };
   const ctx = { tenantId: dono.me.tenant.id as string, userId: dono.me.user.id as string };
-  return { admin, empresa, caixa, vender, ctx, dono };
+  return { admin, empresa, caixa, vender, ctx, dono, pdv, sync };
 }
 
 /** Espera a fila mexer na nota (a emissão roda em segundo plano). */
@@ -359,5 +359,199 @@ describe('emissão da NFC-e no servidor (F3-14.b)', () => {
         })
       ).statusCode,
     ).toBe(422);
+  });
+});
+
+/** Espera o cancelamento da nota sair do lugar (roda em segundo plano). */
+async function cancelamento(
+  admin: ReturnType<typeof api>,
+  saleId: string,
+  until: (doc: { status: string; cancellation: { status: string } | null }) => boolean,
+) {
+  for (let i = 0; i < 100; i++) {
+    const doc = (await admin.get(`/sales/${saleId}/fiscal`)).json();
+    if (doc && until(doc)) return doc;
+    await new Promise((ok) => setTimeout(ok, 100));
+  }
+  throw new Error('O cancelamento não saiu do lugar.');
+}
+
+describe('cancelamento da NFC-e e inutilização (F3-17.b)', () => {
+  it('venda cancelada no caixa cancela a nota autorizada na SEFAZ', async () => {
+    sefaz.mode = 'normal';
+    const { admin, vender, pdv, sync } = await loja();
+    const venda = await vender();
+    const autorizada = await nota(admin, venda.id, (s) => s === 'authorized');
+    await pdv.cancelSale(venda.id, 'Cliente desistiu', null);
+    expect((await sync.sync()).lastError).toBeNull();
+    const doc = await cancelamento(admin, venda.id, (d) => d.status === 'cancelled');
+    expect(doc.cancellation).toMatchObject({
+      status: 'registered',
+      cStat: '135',
+      protocol: '135260000888888',
+      reason: 'Venda cancelada no caixa: Cliente desistiu',
+    });
+    const evento = sefaz.calls.find(
+      (c) => c.service === 'evento' && c.body.includes(autorizada.accessKey),
+    );
+    expect(evento?.body).toContain('<tpEvento>110111</tpEvento>');
+    expect(evento?.body).toContain(`<nProt>${autorizada.protocol}</nProt>`);
+    expect(evento?.body).toContain('<Signature');
+    // Nota cancelada não volta para a fila.
+    expect((await admin.post(`/fiscal/documents/${doc.id}/retry`)).statusCode).toBe(409);
+  });
+
+  it('fora do prazo a SEFAZ recusa: a nota continua valendo e a tela explica o que fazer', async () => {
+    sefaz.mode = 'prazo';
+    const { admin, vender, pdv, sync } = await loja();
+    const venda = await vender();
+    await nota(admin, venda.id, (s) => s === 'authorized');
+    await pdv.cancelSale(venda.id, 'Cliente desistiu', null);
+    await sync.sync();
+    const doc = await cancelamento(admin, venda.id, (d) => d.cancellation?.status === 'rejected');
+    expect(doc.status).toBe('authorized');
+    expect(doc.cancellation).toMatchObject({ cStat: '501', help: { next: 'suporte' } });
+    expect(doc.cancellation.help.fix).toContain('devolução');
+    sefaz.mode = 'normal';
+  });
+
+  it('venda cancelada antes de a nota sair: a nota não é emitida e não vai à SEFAZ', async () => {
+    sefaz.mode = 'normal';
+    const { admin, vender, pdv, sync } = await loja(false);
+    const venda = await vender();
+    await nota(admin, venda.id, (s) => s === 'not_configured');
+    const antes = sefaz.calls.length;
+    await pdv.cancelSale(venda.id, 'Erro no item', null);
+    await sync.sync();
+    const doc = await cancelamento(admin, venda.id, (d) => d.status === 'voided');
+    expect(doc.cancellation).toBeNull();
+    expect(sefaz.calls.length).toBe(antes);
+    expect((await admin.post(`/fiscal/documents/${doc.id}/retry`)).statusCode).toBe(409);
+  });
+
+  it('a resposta da autorização se perdeu: consulta pela chave e cancela a nota autorizada', async () => {
+    sefaz.mode = 'perde';
+    const { admin, vender, pdv, sync } = await loja();
+    const venda = await vender();
+    const erro = await nota(admin, venda.id, (s) => s === 'error');
+    sefaz.mode = 'normal';
+    await pdv.cancelSale(venda.id, 'Cliente desistiu', null);
+    await sync.sync();
+    const doc = await cancelamento(admin, venda.id, (d) => d.status === 'cancelled');
+    expect(doc.protocol).toBe('135260000999999');
+    const daChave = sefaz.calls.filter((c) => c.body.includes(erro.accessKey));
+    // Uma autorização só (a que se perdeu), a consulta e o cancelamento.
+    expect(daChave.filter((c) => c.service === 'autorizacao')).toHaveLength(1);
+    expect(daChave.some((c) => c.service === 'consulta')).toBe(true);
+    expect(daChave.some((c) => c.service === 'evento')).toBe(true);
+  });
+
+  it('número que ficou sem nota (devolução) aparece como buraco e é inutilizado', async () => {
+    sefaz.mode = 'normal';
+    const { admin, empresa, caixa, vender, pdv, sync } = await loja();
+    const primeira = await vender();
+    await nota(admin, primeira.id, (s) => s === 'authorized');
+    // A devolução usa o número seguinte do caixa e não vira NFC-e.
+    await pdv.returnItems(primeira.id, [{ line: 1, quantityMilli: 1000 }], 'cash', 'Defeito');
+    await sync.sync();
+    const terceira = await vender();
+    await nota(admin, terceira.id, (s) => s === 'authorized');
+    const buraco = primeira.terminalSeq + 1;
+
+    const gaps = (await admin.get(`/fiscal/inutilizations/gaps?companyId=${empresa.id}`)).json();
+    expect(gaps).toEqual([{ model: '65', series: caixa.nfceSeries, from: buraco, to: buraco }]);
+
+    // Número com nota não se inutiliza.
+    const comNota = await admin.post('/fiscal/inutilizations', {
+      companyId: empresa.id,
+      series: caixa.nfceSeries,
+      from: primeira.terminalSeq,
+      to: buraco,
+      reason: 'Número usado em devolução, sem NFC-e',
+    });
+    expect(comNota.statusCode).toBe(409);
+    expect(comNota.json().message).toContain(`O número ${primeira.terminalSeq}`);
+    expect(
+      (
+        await admin.post('/fiscal/inutilizations', {
+          companyId: empresa.id,
+          series: caixa.nfceSeries,
+          from: buraco,
+          to: buraco,
+          reason: 'curta',
+        })
+      ).json().message,
+    ).toBe('A justificativa precisa ter pelo menos 15 caracteres.');
+
+    const feita = await admin.post('/fiscal/inutilizations', {
+      companyId: empresa.id,
+      series: caixa.nfceSeries,
+      from: buraco,
+      to: buraco,
+      reason: 'Número usado em devolução, sem NFC-e',
+    });
+    expect(feita.statusCode).toBe(201);
+    expect(feita.json()).toMatchObject({
+      status: 'registered',
+      cStat: '102',
+      protocol: '135260000777777',
+      from: buraco,
+      to: buraco,
+    });
+    const pedido = sefaz.calls.filter((c) => c.service === 'inutilizacao').at(-1)!;
+    expect(pedido.body).toContain('<xServ>INUTILIZAR</xServ>');
+    expect(pedido.body).toContain(`<nNFIni>${buraco}</nNFIni>`);
+    expect(pedido.body).toContain('<Signature');
+    expect((await admin.get(`/fiscal/inutilizations/gaps?companyId=${empresa.id}`)).json()).toEqual(
+      [],
+    );
+    expect((await admin.get(`/fiscal/inutilizations?companyId=${empresa.id}`)).json()).toHaveLength(
+      1,
+    );
+    // Ação fiscal sensível fica na trilha de auditoria.
+    const trilha = (await admin.get('/audit')).json();
+    expect(JSON.stringify(trilha)).toContain('fiscal.inutilization');
+  });
+
+  it('SEFAZ fora do ar no cancelamento: a varredura da manutenção tenta de novo', async () => {
+    sefaz.mode = 'normal';
+    const { admin, vender, pdv, sync, ctx } = await loja();
+    const venda = await vender();
+    await nota(admin, venda.id, (s) => s === 'authorized');
+    sefaz.mode = 'fora';
+    await pdv.cancelSale(venda.id, 'Cliente desistiu', null);
+    await sync.sync();
+    const falhou = await cancelamento(admin, venda.id, (d) => d.cancellation?.status === 'error');
+    expect(falhou.status).toBe('authorized');
+    sefaz.mode = 'normal';
+    await withTenant(t.database.db, ctx as never, (tx) =>
+      tx.execute(
+        sql`update fiscal_documents set updated_at = now() - interval '5 minutes' where id = ${falhou.id}`,
+      ),
+    );
+    expect(await t.app.get(MaintenanceService).sweepNfce()).toBeGreaterThanOrEqual(1);
+    const doc = await cancelamento(admin, venda.id, (d) => d.status === 'cancelled');
+    expect(doc.cancellation.status).toBe('registered');
+  });
+
+  it('a SEFAZ recusa a inutilização: fica registrada a recusa com a explicação', async () => {
+    sefaz.mode = 'normal';
+    const { admin, empresa, caixa } = await loja();
+    sefaz.mode = 'rejeita';
+    const recusada = (
+      await admin.post('/fiscal/inutilizations', {
+        companyId: empresa.id,
+        series: caixa.nfceSeries,
+        from: 50,
+        to: 60,
+        reason: 'Números pulados por erro do caixa',
+      })
+    ).json();
+    sefaz.mode = 'normal';
+    expect(recusada).toMatchObject({
+      status: 'rejected',
+      cStat: '241',
+      help: { next: 'corrigir' },
+    });
   });
 });

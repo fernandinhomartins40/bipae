@@ -518,6 +518,8 @@ export const mercadoflowLinks = pgTable('mercadoflow_links', {
   connectedAt: ts('connected_at'),
   revokedAt: ts('revoked_at'),
   lastSalesSyncAt: ts('last_sales_sync_at'),
+  /** LIMITE_DO_PLANO: vendas da loja em pausa até esta hora (MF-08). */
+  salesPausedUntil: ts('sales_paused_until'),
   lastError: text('last_error'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
@@ -932,7 +934,16 @@ export const fiscalDocuments = pgTable('fiscal_documents', {
   number: integer('number'),
   accessKey: char('access_key', { length: 44 }),
   status: text('status', {
-    enum: ['pending', 'error', 'not_configured', 'authorized', 'rejected', 'denied'],
+    enum: [
+      'pending',
+      'error',
+      'not_configured',
+      'authorized',
+      'rejected',
+      'denied',
+      'cancelled',
+      'voided',
+    ],
   })
     .notNull()
     .default('pending'),
@@ -951,6 +962,51 @@ export const fiscalDocuments = pgTable('fiscal_documents', {
   origin: text('origin', { enum: ['server', 'terminal'] })
     .notNull()
     .default('server'),
+  /** A venda foi cancelada: a nota precisa ser cancelada ou deixada de emitir (F3-17). */
+  cancelRequestedAt: ts('cancel_requested_at'),
+  cancelReason: text('cancel_reason'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Eventos da nota enviados à SEFAZ: o cancelamento (F3-17). */
+export const fiscalEvents = pgTable('fiscal_events', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  documentId: uuid('document_id').notNull(),
+  type: text('type', { enum: ['110111', '110112'] }).notNull(),
+  status: text('status', { enum: ['pending', 'error', 'registered', 'rejected'] })
+    .notNull()
+    .default('pending'),
+  reason: text('reason').notNull(),
+  cStat: text('c_stat'),
+  xMotivo: text('x_motivo'),
+  protocol: text('protocol'),
+  signedXml: text('signed_xml'),
+  procXml: text('proc_xml'),
+  attempts: integer('attempts').notNull().default(0),
+  lastError: text('last_error'),
+  registeredAt: ts('registered_at'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Faixas de números inutilizadas na SEFAZ (F3-17). */
+export const fiscalInutilizations = pgTable('fiscal_inutilizations', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  model: char('model', { length: 2 }).notNull(),
+  series: integer('series').notNull(),
+  numberFrom: integer('number_from').notNull(),
+  numberTo: integer('number_to').notNull(),
+  year: char('year', { length: 2 }).notNull(),
+  reason: text('reason').notNull(),
+  status: text('status', { enum: ['registered', 'rejected'] }).notNull(),
+  cStat: text('c_stat').notNull(),
+  xMotivo: text('x_motivo').notNull(),
+  protocol: text('protocol'),
+  procXml: text('proc_xml'),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
 });

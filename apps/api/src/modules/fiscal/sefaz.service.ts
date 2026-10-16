@@ -3,14 +3,19 @@ import {
   authorizationRequest,
   buildNfeProc,
   consultRequest,
+  eventRequest,
+  inutilizationRequest,
   parseBatchResponse,
   parseConsultResponse,
+  parseEventResponse,
+  parseInutilizationResponse,
   parseStatusResponse,
   receiptRequest,
   SefazMessageError,
   SefazResponseError,
   statusRequest,
   type SefazBatchResult,
+  type FiscalEventResult,
   type SefazConsultResult,
   type SefazRequest,
 } from '@bipae/fiscal';
@@ -160,5 +165,41 @@ export class SefazService {
     const { uf, credentials } = await this.prepare(ctx, companyId);
     const response = await this.call(() => consultRequest(uf, accessKey), credentials);
     return this.read(() => parseConsultResponse(response));
+  }
+
+  /** Envia um evento assinado (cancelamento, F3-17); o Bipaê manda um evento por lote. */
+  async event(
+    ctx: RequestContext,
+    companyId: string,
+    model: NfeModel,
+    signedEvent: string,
+  ): Promise<FiscalEventResult> {
+    const { uf, credentials } = await this.prepare(ctx, companyId);
+    const response = await this.call(
+      () =>
+        eventRequest({
+          model,
+          uf,
+          batchId: String(Date.now()).slice(-15),
+          signedEvents: [signedEvent],
+        }),
+      credentials,
+    );
+    return this.read(() => parseEventResponse(response));
+  }
+
+  /** Pede a inutilização de uma faixa de números (pedido já assinado). */
+  async inutilize(
+    ctx: RequestContext,
+    companyId: string,
+    model: NfeModel,
+    signedXml: string,
+  ): Promise<FiscalEventResult> {
+    const { uf, credentials } = await this.prepare(ctx, companyId);
+    const response = await this.call(
+      () => inutilizationRequest({ model, uf, signedXml }),
+      credentials,
+    );
+    return this.read(() => parseInutilizationResponse(response));
   }
 }

@@ -43,6 +43,7 @@ import {
 import { AuditService } from '../audit/audit.service';
 import { LotsService } from '../stock/lots.service';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
+import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import {
   cancelCreditReceivable,
@@ -68,6 +69,7 @@ export class SyncService {
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(LotsService) private readonly lots: LotsService,
     @Inject(NfceEmissionService) private readonly emission: NfceEmissionService,
+    @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
   ) {}
 
   /**
@@ -405,6 +407,13 @@ export class SyncService {
             terminalSeq: sale.terminalSeq,
           },
         });
+        // NFC-e (F3-17): o cancelamento na SEFAZ roda depois, sem segurar o cancelamento da venda.
+        const documentId = await this.fiscalEvents.requestCancel(tx, sale.id, event.payload.reason);
+        if (documentId) {
+          afterCommit.push(() =>
+            this.fiscalEvents.schedule(ctx.tenantId, event.operatorId, documentId),
+          );
+        }
         return;
       }
       case 'sale.returned': {

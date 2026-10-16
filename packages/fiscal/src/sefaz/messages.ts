@@ -11,6 +11,9 @@ import { el } from '../nfce/xml';
 export type SefazService =
   'NFeStatusServico' | 'NFeAutorizacao' | 'NFeRetAutorizacao' | 'NFeConsultaProtocolo';
 
+/** Serviços que só levam eventos e inutilização (F3-17), além dos de cima. */
+export type SefazEndpoint = SefazService | 'RecepcaoEvento' | 'NFeInutilizacao';
+
 const NFE_NS = 'http://www.portalfiscal.inf.br/nfe';
 const TP_AMB_HOMOLOGACAO = '2';
 
@@ -25,7 +28,7 @@ const WSDL: Record<SefazService, { ns: string; method: string }> = {
 export class SefazMessageError extends Error {}
 
 export interface SefazRequest {
-  service: SefazService;
+  service: SefazEndpoint;
   url: string;
   /** Envelope SOAP completo. */
   envelope: string;
@@ -44,7 +47,7 @@ export function ufCode(uf: string): string {
 export function sefazUrl(
   model: '55' | '65',
   uf: string,
-  service: SefazService | 'RecepcaoEvento' | 'NFeInutilizacao',
+  service: SefazEndpoint,
 ): string {
   const url =
     model === '65'

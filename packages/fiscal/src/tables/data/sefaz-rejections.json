@@ -393,6 +393,78 @@
       "next": "automatico",
       "cause": "Erro interno da SEFAZ.",
       "fix": "Aguarde: o Bipaê tenta de novo mais tarde. Se continuar, fale com o suporte."
+    },
+    {
+      "code": "501",
+      "official": "Rejeição: Prazo de cancelamento superior ao previsto na Legislação",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "O prazo para cancelar esta nota já passou (normalmente 24 horas depois da autorização).",
+      "fix": "A nota continua valendo. Para desfazer a venda, registre a devolução da mercadoria; em caso de dúvida, fale com o contador."
+    },
+    {
+      "code": "573",
+      "official": "Rejeição: Duplicidade de Evento",
+      "area": "sistema",
+      "next": "automatico",
+      "cause": "A SEFAZ já tinha recebido este cancelamento.",
+      "fix": "Nada a fazer: o Bipaê confere a nota e marca como cancelada."
+    },
+    {
+      "code": "580",
+      "official": "Rejeição: O evento exige uma NF-e autorizada",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A SEFAZ não tem esta nota como autorizada, então não há o que cancelar.",
+      "fix": "Fale com o suporte do Bipaê para conferir a situação da nota."
+    },
+    {
+      "code": "218",
+      "official": "Rejeição: NF-e já está cancelada na base de dados da SEFAZ",
+      "area": "sistema",
+      "next": "automatico",
+      "cause": "A nota já estava cancelada na SEFAZ.",
+      "fix": "Nada a fazer: o Bipaê marca a nota como cancelada."
+    },
+    {
+      "code": "222",
+      "official": "Rejeição: Protocolo de Autorização de Uso difere do cadastrado",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "O protocolo de autorização enviado não bate com o da SEFAZ.",
+      "fix": "Fale com o suporte do Bipaê: a nota precisa ser consultada de novo na SEFAZ."
+    },
+    {
+      "code": "241",
+      "official": "Rejeição: Um número da faixa já foi utilizado",
+      "area": "sistema",
+      "next": "corrigir",
+      "cause": "Um dos números da faixa já tem nota autorizada.",
+      "fix": "Confira a faixa e inutilize só os números que ficaram sem nota."
+    },
+    {
+      "code": "256",
+      "official": "Rejeição: Uma NF-e da faixa já está inutilizada na Base de dados da SEFAZ",
+      "area": "sistema",
+      "next": "corrigir",
+      "cause": "Parte da faixa já tinha sido inutilizada antes.",
+      "fix": "Confira a faixa e peça só os números que ainda faltam."
+    },
+    {
+      "code": "563",
+      "official": "Rejeição: Já existe pedido de Inutilização com a mesma faixa de inutilização",
+      "area": "sistema",
+      "next": "automatico",
+      "cause": "Esta faixa já foi inutilizada.",
+      "fix": "Nada a fazer: a numeração já está regularizada."
+    },
+    {
+      "code": "206",
+      "official": "Rejeição: NF-e já está inutilizada na Base de Dados da SEFAZ",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "O número desta nota foi inutilizado antes, então ela não pode mais ser emitida.",
+      "fix": "Fale com o suporte do Bipaê para conferir a numeração."
     }
   ]
 }

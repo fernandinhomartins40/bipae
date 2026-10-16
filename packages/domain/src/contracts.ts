@@ -831,6 +831,10 @@ export interface MercadoflowLinkView {
   connectUrl: string | null;
   connectedAt: string | null;
   lastError: string | null;
+  /** Último envio de vendas (NFC-e) aceito pelo MercadoFlow (MF-08). */
+  lastSalesSyncAt: string | null;
+  /** LIMITE_DO_PLANO: vendas em pausa até esta hora. */
+  salesPausedUntil: string | null;
   customerActive: boolean | null;
   discount: { active: boolean; partner?: string; percent?: number } | null;
 }
@@ -1419,7 +1423,24 @@ export interface PromotionView {
 // ---------- NFC-e da venda (F3-14) ----------
 
 export type FiscalDocumentStatus =
-  'pending' | 'error' | 'not_configured' | 'authorized' | 'rejected' | 'denied';
+  | 'pending'
+  | 'error'
+  | 'not_configured'
+  | 'authorized'
+  | 'rejected'
+  | 'denied'
+  /** Cancelamento registrado na SEFAZ (F3-17). */
+  | 'cancelled'
+  /** Venda cancelada antes de a nota sair: o número vai para a inutilização. */
+  | 'voided';
+
+/** Ajuda em linguagem simples para um código de rejeição da SEFAZ (F3-18). */
+export interface RejectionHelpView {
+  cause: string;
+  fix: string;
+  next: 'corrigir' | 'automatico' | 'suporte';
+  area: string;
+}
 
 export interface FiscalDocumentView {
   id: string;
@@ -1434,12 +1455,7 @@ export interface FiscalDocumentView {
   /** Emitida em contingência off-line (F3-15). */
   contingency: boolean;
   /** Recusada ou denegada: a causa e o que fazer, em linguagem simples (F3-18). */
-  help: {
-    cause: string;
-    fix: string;
-    next: 'corrigir' | 'automatico' | 'suporte';
-    area: string;
-  } | null;
+  help: RejectionHelpView | null;
   cStat: string | null;
   xMotivo: string | null;
   protocol: string | null;
@@ -1447,4 +1463,61 @@ export interface FiscalDocumentView {
   lastError: string | null;
   authorizedAt: string | null;
   updatedAt: string;
+  /** Pedido de cancelamento da nota na SEFAZ (F3-17), quando a venda foi cancelada. */
+  cancellation: {
+    status: 'pending' | 'error' | 'registered' | 'rejected';
+    reason: string;
+    cStat: string | null;
+    xMotivo: string | null;
+    protocol: string | null;
+    lastError: string | null;
+    registeredAt: string | null;
+    help: RejectionHelpView | null;
+  } | null;
 }
+
+// ---------- Inutilização de numeração (F3-17) ----------
+
+/** Faixa de números da série sem nota, que precisa ser inutilizada. */
+export interface NumberingGapView {
+  model: '65';
+  series: number;
+  from: number;
+  to: number;
+}
+
+export interface InutilizationView {
+  id: string;
+  companyId: string;
+  model: string;
+  series: number;
+  from: number;
+  to: number;
+  year: string;
+  reason: string;
+  status: 'registered' | 'rejected';
+  cStat: string;
+  xMotivo: string;
+  protocol: string | null;
+  help: RejectionHelpView | null;
+  createdAt: string;
+}
+
+export const inutilizationInput = z
+  .object({
+    companyId: z.string().uuid(),
+    model: z.literal('65').default('65'),
+    series: z.number().int().min(1, 'Série inválida.').max(999, 'Série inválida.'),
+    from: z.number().int().min(1, 'Número inicial inválido.').max(999_999_999),
+    to: z.number().int().min(1, 'Número final inválido.').max(999_999_999),
+    reason: z
+      .string()
+      .trim()
+      .min(15, 'A justificativa precisa ter pelo menos 15 caracteres.')
+      .max(255, 'A justificativa pode ter no máximo 255 caracteres.'),
+  })
+  .refine((v) => v.to >= v.from, {
+    message: 'O número final não pode ser menor que o inicial.',
+    path: ['to'],
+  });
+export type InutilizationInput = z.infer<typeof inutilizationInput>;

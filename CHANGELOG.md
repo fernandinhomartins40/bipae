@@ -1,5 +1,34 @@
 # Changelog
 
+## [MF-08 Vendas do caixa no MercadoFlow] — 15/10/2026
+
+### Adicionado
+- **Cada NFC-e autorizada vai para o MercadoFlow** pela fila de envio, na mesma hora em que a SEFAZ autoriza, com os dados exatos da nota (itens, códigos de barras, balança em kg, descontos e impostos).
+- **Venda cancelada:** o cancelamento vai ao MercadoFlow sempre depois da venda, mesmo se a venda tiver ficado presa na fila.
+- **Limite do plano do MercadoFlow:** as vendas da loja pausam por 6 horas e a tela do MercadoFlow avisa, com o botão "Ver planos".
+- **Carga inicial:** ao vincular a loja, vão as vendas dos últimos 90 dias, da mais antiga para a mais nova.
+- A tela do MercadoFlow mostra quando as vendas foram enviadas pela última vez.
+
+### Observação
+- Enquanto a emissão for só em homologação, as vendas vão como validação (o MercadoFlow confere e não grava).
+
+## [F3-17 Cancelamento da NFC-e e inutilização de números] — 15/10/2026
+
+### Adicionado
+- **Venda cancelada no caixa cancela a NFC-e na SEFAZ**, em segundo plano, sem segurar o caixa:
+  - nota autorizada: vai o pedido de cancelamento, com a justificativa "Venda cancelada no caixa: <motivo>";
+  - nota que ainda não tinha saído: não é mais emitida e o número fica para a inutilização;
+  - se a resposta da autorização tinha se perdido, o Bipaê consulta a nota pela chave antes, para cancelar a nota certa;
+  - nota que o caixa emitiu em contingência é transmitida e depois cancelada;
+  - com a SEFAZ fora do ar, a rotina de manutenção tenta de novo a cada 5 minutos.
+- **Fora do prazo** (rejeição 501), a nota continua valendo e a tela explica o que fazer (registrar a devolução).
+- **Nova tela "Inutilização de números":** mostra, por série, os números da NFC-e que ficaram sem nota (devoluções, vendas canceladas antes da nota) e pede a inutilização na SEFAZ. Recusa números que têm nota e registra o pedido na trilha de auditoria.
+- **Na venda, a seção da nota mostra o cancelamento:** registrado (com protocolo), na fila, com falha temporária ou recusado (com causa e o que fazer).
+- **Rejeições explicadas:** mais 9 códigos de cancelamento e inutilização, com o texto oficial do Anexo I do MOC 7.0.
+
+### Observação
+- Tudo testado contra a SEFAZ simulada. A primeira conversa com a SEFAZ de homologação de verdade depende do certificado A1.
+
 ## [F3-17.a Cancelamento e inutilização no motor fiscal] — 15/10/2026
 
 ### Adicionado

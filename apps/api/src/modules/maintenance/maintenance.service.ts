@@ -14,6 +14,7 @@ import { rowsOf } from '../../db/migrate';
 import { adminSessions, fiscalDocuments, sales, sessions, tenants } from '../../db/schema';
 import { tenantTables } from '../account/data-export.service';
 import { PlatformAuditService } from '../admin/platform-audit.service';
+import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 
 export const SESSIONS_CLEANUP = 'manutencao.limpar-sessoes';
@@ -39,6 +40,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(QUEUE) private readonly queue: JobQueue,
     @Inject(PlatformAuditService) private readonly platformAudit: PlatformAuditService,
     @Inject(NfceEmissionService) private readonly nfce: NfceEmissionService,
+    @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
   ) {}
 
   async onModuleInit() {
@@ -105,6 +107,8 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .where(
           and(
             sql`${fiscalDocuments.status} in ('pending', 'error')`,
+            // Venda cancelada: quem cuida da nota é o cancelamento, logo abaixo.
+            or(isNull(fiscalDocuments.cancelRequestedAt), eq(fiscalDocuments.origin, 'terminal')),
             lt(fiscalDocuments.updatedAt, new Date(now.getTime() - 60_000)),
             sql`${fiscalDocuments.createdAt} > ${new Date(now.getTime() - UM_DIA)}`,
             lt(fiscalDocuments.attempts, 10),
@@ -113,7 +117,33 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .limit(200),
     );
     for (const doc of stuck) await this.nfce.schedule(doc.tenantId, doc.operatorId, doc.id);
-    return stuck.length;
+    // Cancelamentos parados (F3-17): venda cancelada cuja nota ainda não foi cancelada nem
+    // deixada de emitir, sem resposta final da SEFAZ ao evento.
+    const cancels = await asPlatform(this.db, (tx) =>
+      tx
+        .select({
+          id: fiscalDocuments.id,
+          tenantId: fiscalDocuments.tenantId,
+          operatorId: sales.operatorId,
+        })
+        .from(fiscalDocuments)
+        .innerJoin(sales, eq(sales.id, fiscalDocuments.saleId))
+        .where(
+          and(
+            sql`${fiscalDocuments.cancelRequestedAt} is not null`,
+            sql`${fiscalDocuments.status} in ('authorized', 'pending', 'error')`,
+            lt(fiscalDocuments.updatedAt, new Date(now.getTime() - 60_000)),
+            sql`${fiscalDocuments.cancelRequestedAt} > ${new Date(now.getTime() - 2 * UM_DIA)}`,
+            sql`not exists (select 1 from fiscal_events e where e.document_id = ${fiscalDocuments.id}
+              and (e.status in ('registered', 'rejected') or e.attempts >= 10))`,
+          ),
+        )
+        .limit(200),
+    );
+    for (const doc of cancels) {
+      await this.fiscalEvents.schedule(doc.tenantId, doc.operatorId, doc.id);
+    }
+    return stuck.length + cancels.length;
   }
 
   /** Apaga logins vencidos ou encerrados há mais de 30 dias, de todas as empresas. */

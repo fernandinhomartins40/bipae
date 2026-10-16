@@ -18,6 +18,7 @@ import {
 } from '../../db/schema';
 import { MERCADOFLOW_CLIENT, type MercadoflowClient } from './mercadoflow.client';
 import { MercadoflowOutbox, type OutboxResult, type OutboxRow } from './mercadoflow.outbox';
+import { MercadoflowSales } from './mercadoflow.sales';
 
 /** Recurso do MercadoFlow, escopo exigido e tipo na fila (seção 7.2 do contrato). */
 const RESOURCES = {
@@ -63,6 +64,7 @@ export class MercadoflowMarketSync implements OnModuleInit {
     @Inject(QUEUE) private readonly queue: JobQueue,
     @Inject(MERCADOFLOW_CLIENT) private readonly client: MercadoflowClient,
     @Inject(MercadoflowOutbox) private readonly outbox: MercadoflowOutbox,
+    @Inject(MercadoflowSales) private readonly sales: MercadoflowSales,
   ) {}
 
   onModuleInit() {
@@ -225,7 +227,8 @@ export class MercadoflowMarketSync implements OnModuleInit {
 
   /**
    * Carga inicial depois do vínculo (seção 7.4): fornecedores, produtos, preços, custos e estoque,
-   * nesta ordem. Vai pela fila e respeita o limite de requisições. As vendas entram com a NFC-e.
+   * nesta ordem, e por último as vendas (NFC-e autorizadas) dos últimos 90 dias. Vai pela fila e
+   * respeita o limite de requisições.
    */
   async initialLoad(tenantId: string, storeId: string) {
     if (!this.client.enabled) return;
@@ -257,6 +260,7 @@ export class MercadoflowMarketSync implements OnModuleInit {
         });
       }
       await this.enqueueStock(tx, tenantId, storeId);
+      await this.sales.enqueueHistory(tx, tenantId, storeId);
     });
   }
 

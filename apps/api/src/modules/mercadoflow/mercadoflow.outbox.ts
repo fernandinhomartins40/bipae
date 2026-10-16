@@ -12,12 +12,17 @@ export type OutboxRow = typeof mercadoflowOutbox.$inferSelect;
 
 /** O que aconteceu com cada item de um lote enviado. */
 export type OutboxResult =
-  { id: string; outcome: 'sent' } | { id: string; outcome: 'rejected'; error: string };
+  | { id: string; outcome: 'sent' }
+  | { id: string; outcome: 'rejected'; error: string }
+  /** Ainda não: fica na fila até `until` (loja em pausa, venda que precisa ir antes). */
+  | { id: string; outcome: 'later'; until: Date; error: string };
 
 /** Envia um lote do mesmo tipo e diz o resultado de cada item. Erro lançado = tenta de novo depois. */
 export type OutboxSender = (
   rows: OutboxRow[],
   client: MercadoflowClient,
+  /** A hora da rotina de envio (os testes adiantam o relógio). */
+  now: Date,
 ) => Promise<OutboxResult[]>;
 
 const FLUSH_JOB = 'mercadoflow.outbox';
@@ -138,7 +143,7 @@ export class MercadoflowOutbox implements OnModuleInit {
       this.lastFlush.set(kind, now.getTime());
       let results: OutboxResult[];
       try {
-        results = await send(rows, this.client);
+        results = await send(rows, this.client, now);
       } catch (error) {
         // Recusa do lote inteiro por dado inválido não melhora repetindo.
         if (error instanceof MercadoflowError && [400, 403, 404, 409].includes(error.status)) {
@@ -167,6 +172,20 @@ export class MercadoflowOutbox implements OnModuleInit {
             .where(eq(mercadoflowOutbox.id, item.id));
         }
       });
+      const later = results.filter(
+        (r): r is Extract<OutboxResult, { outcome: 'later' }> => r.outcome === 'later',
+      );
+      if (later.length) {
+        await asPlatform(this.db, async (tx) => {
+          for (const item of later) {
+            await tx
+              .update(mercadoflowOutbox)
+              .set({ nextAttemptAt: item.until, lastError: item.error.slice(0, 500) })
+              .where(eq(mercadoflowOutbox.id, item.id));
+          }
+        });
+      }
+      totals.retried += later.length;
       totals.sent += sent.length;
       totals.rejected += rejected.length;
     }

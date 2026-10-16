@@ -50,11 +50,14 @@ export function testPfx(subject = 'MERCADINHO TESTE:11222333000181') {
   return Buffer.from(der, 'binary').toString('base64');
 }
 
-/** perde: a SEFAZ autoriza, mas a resposta não chega (rede caiu no meio). */
-export type SefazMode = 'normal' | 'rejeita' | 'fora' | 'perde';
+/**
+ * perde: a SEFAZ autoriza, mas a resposta não chega (rede caiu no meio).
+ * prazo: o cancelamento chega depois do prazo (rejeição 501).
+ */
+export type SefazMode = 'normal' | 'rejeita' | 'fora' | 'perde' | 'prazo';
 
 export interface SefazCall {
-  service: 'status' | 'autorizacao' | 'consulta' | 'outro';
+  service: 'status' | 'autorizacao' | 'consulta' | 'evento' | 'inutilizacao' | 'outro';
   body: string;
 }
 
@@ -70,6 +73,8 @@ export class SefazSimulator {
   mode: SefazMode = 'normal';
   /** Chaves que a SEFAZ já autorizou (a consulta responde por elas). */
   readonly authorized = new Set<string>();
+  /** Chaves canceladas (evento 110111 registrado). */
+  readonly cancelled = new Set<string>();
   readonly calls: SefazCall[] = [];
   private server: Server | null = null;
   private readonly ac = certificate('AC SEFAZ SIMULADA', null, null);
@@ -121,7 +126,11 @@ export class SefazSimulator {
         ? 'autorizacao'
         : contentType.includes('nfeConsultaNF')
           ? 'consulta'
-          : 'outro';
+          : contentType.includes('nfeRecepcaoEvento')
+            ? 'evento'
+            : contentType.includes('nfeInutilizacaoNF')
+              ? 'inutilizacao'
+              : 'outro';
     this.calls.push({ service, body });
     if (this.mode === 'perde' && service === 'autorizacao') this.authorized.add(chave);
     if (this.mode === 'fora' || this.mode === 'perde') {
@@ -142,7 +151,7 @@ export class SefazSimulator {
         this.mode === 'rejeita'
           ? protNFe(chave, '225', 'Rejeição: Falha no Schema XML da NFe')
           : protNFe(chave);
-      if (this.mode === 'normal') this.authorized.add(chave);
+      if (this.mode === 'normal' || this.mode === 'prazo') this.authorized.add(chave);
       return {
         status: 200,
         text: envelope(
@@ -160,6 +169,42 @@ export class SefazSimulator {
           known
             ? `<retConsSitNFe versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><tpAmb>2</tpAmb><cStat>100</cStat><xMotivo>Autorizado o uso da NF-e</xMotivo><chNFe>${chave}</chNFe>${protNFe(chave)}</retConsSitNFe>`
             : `<retConsSitNFe versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><tpAmb>2</tpAmb><cStat>217</cStat><xMotivo>Rejeição: NF-e não consta na base de dados da SEFAZ</xMotivo><chNFe>${chave}</chNFe></retConsSitNFe>`,
+        ),
+      };
+    }
+    if (service === 'evento') {
+      const [cStat, xMotivo] = this.cancelled.has(chave)
+        ? ['573', 'Rejeição: Duplicidade de Evento']
+        : !this.authorized.has(chave)
+          ? ['580', 'Rejeição: O evento exige uma NF-e autorizada']
+          : this.mode === 'prazo'
+            ? ['501', 'Rejeição: Prazo de cancelamento superior ao previsto na Legislação']
+            : ['135', 'Evento registrado e vinculado a NF-e'];
+      if (cStat === '135') this.cancelled.add(chave);
+      return {
+        status: 200,
+        text: envelope(
+          'NFeRecepcaoEvento4',
+          '<retEnvEvento versao="1.00" xmlns="http://www.portalfiscal.inf.br/nfe"><idLote>1</idLote><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic><cOrgao>35</cOrgao><cStat>128</cStat><xMotivo>Lote de evento processado</xMotivo>' +
+            `<retEvento versao="1.00"><infEvento><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic><cOrgao>35</cOrgao><cStat>${cStat}</cStat><xMotivo>${xMotivo}</xMotivo>` +
+            `<chNFe>${chave}</chNFe><tpEvento>110111</tpEvento><nSeqEvento>1</nSeqEvento>` +
+            (cStat === '135'
+              ? '<dhRegEvento>2026-10-15T10:05:00-03:00</dhRegEvento><nProt>135260000888888</nProt>'
+              : '') +
+            '</infEvento></retEvento></retEnvEvento>',
+        ),
+      };
+    }
+    if (service === 'inutilizacao') {
+      return {
+        status: 200,
+        text: envelope(
+          'NFeInutilizacao4',
+          '<retInutNFe versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><infInut><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic>' +
+            (this.mode === 'rejeita'
+              ? '<cStat>241</cStat><xMotivo>Rejeição: Um número da faixa já foi utilizado</xMotivo><cUF>35</cUF>'
+              : '<cStat>102</cStat><xMotivo>Inutilização de número homologado</xMotivo><cUF>35</cUF><dhRecbto>2026-10-15T10:06:00-03:00</dhRecbto><nProt>135260000777777</nProt>') +
+            '</infInut></retInutNFe>',
         ),
       };
     }

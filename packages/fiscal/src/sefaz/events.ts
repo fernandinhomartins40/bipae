@@ -1,6 +1,12 @@
 import { el } from '../nfce/xml';
 import { descendant, findAll, parseXml, textOf, type XmlElement } from '../xml-reader';
-import { SefazMessageError, sefazUrl, ufCode } from './messages';
+import {
+  SefazMessageError,
+  sefazUrl,
+  ufCode,
+  type SefazEndpoint,
+  type SefazRequest,
+} from './messages';
 import { SefazResponseError } from './responses';
 
 /**
@@ -19,14 +25,17 @@ const INUT_NS = `${NFE_NS}/wsdl/NFeInutilizacao4`;
 export const CANCEL_WINDOW_HOURS = 24;
 export const CANCEL_SUBSTITUTION_WINDOW_HOURS = 168;
 
-export interface FiscalEventRequest {
-  url: string;
-  envelope: string;
-  contentType: string;
-}
+export type FiscalEventRequest = SefazRequest;
 
-function soap(ns: string, method: string, url: string, payload: string): FiscalEventRequest {
+function soap(
+  service: SefazEndpoint,
+  ns: string,
+  method: string,
+  url: string,
+  payload: string,
+): FiscalEventRequest {
   return {
+    service,
     url,
     envelope:
       '<?xml version="1.0" encoding="utf-8"?>' +
@@ -123,6 +132,7 @@ export function eventRequest(input: {
     `<envEvento xmlns="${NFE_NS}" versao="1.00">${el('idLote', input.batchId)}` +
     `${input.signedEvents.join('')}</envEvento>`;
   return soap(
+    'RecepcaoEvento',
     EVENT_NS,
     'nfeRecepcaoEvento',
     sefazUrl(input.model, input.uf, 'RecepcaoEvento'),
@@ -183,6 +193,7 @@ export function inutilizationRequest(input: {
     throw new SefazMessageError('Pedido de inutilização sem assinatura.');
   }
   return soap(
+    'NFeInutilizacao',
     INUT_NS,
     'nfeInutilizacaoNF',
     sefazUrl(input.model, input.uf, 'NFeInutilizacao'),

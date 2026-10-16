@@ -46,6 +46,7 @@ import { MercadoflowController } from './modules/mercadoflow/mercadoflow.control
 import { MercadoflowContributions } from './modules/mercadoflow/mercadoflow.contributions';
 import { MercadoflowInsights } from './modules/mercadoflow/mercadoflow.insights';
 import { MercadoflowMarketSync } from './modules/mercadoflow/mercadoflow.market-sync';
+import { MercadoflowSales } from './modules/mercadoflow/mercadoflow.sales';
 import { MercadoflowOutbox } from './modules/mercadoflow/mercadoflow.outbox';
 import {
   MercadoflowWebhookController,
@@ -62,6 +63,10 @@ import {
   NfceEmissionController,
   NfceEmissionService,
 } from './modules/fiscal/nfce-emission.service';
+import {
+  FiscalEventsController,
+  FiscalEventsService,
+} from './modules/fiscal/fiscal-events.service';
 import { IcmsRulesService } from './modules/fiscal/icms-rules.service';
 import { AuditController } from './modules/audit/audit.controller';
 import { AuditService } from './modules/audit/audit.service';
@@ -132,6 +137,7 @@ class AppModule {
         InventoryController,
         TransferController,
         NfceEmissionController,
+        FiscalEventsController,
         LotsController,
         LabelsController,
         PromotionsController,
@@ -183,6 +189,7 @@ class AppModule {
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },
         SefazService,
         NfceEmissionService,
+        FiscalEventsService,
         PurchasesService,
         PurchaseOrdersService,
         {
@@ -196,6 +203,7 @@ class AppModule {
         MercadoflowOutbox,
         MercadoflowCatalog,
         MercadoflowContributions,
+        MercadoflowSales,
         MercadoflowMarketSync,
         MercadoflowInsights,
         MercadoflowAccounts,

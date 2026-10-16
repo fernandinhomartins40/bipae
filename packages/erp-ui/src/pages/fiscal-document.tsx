@@ -15,6 +15,8 @@ const STATUS: Record<
   authorized: { label: 'Autorizada', tone: 'success' },
   rejected: { label: 'Recusada pela SEFAZ', tone: 'danger' },
   denied: { label: 'Uso denegado', tone: 'danger' },
+  cancelled: { label: 'Cancelada na SEFAZ', tone: 'neutral' },
+  voided: { label: 'Não emitida (venda cancelada)', tone: 'neutral' },
 };
 
 /** Chave de acesso em grupos de 4, como no DANFE. */
@@ -33,7 +35,11 @@ export function FiscalDocumentSection({ saleId }: { saleId: string }) {
     queryFn: () => api.get<FiscalDocumentView | null>(`/sales/${saleId}/fiscal`),
     // Enquanto está na fila, a situação muda sozinha.
     refetchInterval: (q) =>
-      q.state.data && ['pending', 'error'].includes(q.state.data.status) ? 5000 : false,
+      q.state.data &&
+      (['pending', 'error'].includes(q.state.data.status) ||
+        ['pending', 'error'].includes(q.state.data.cancellation?.status ?? ''))
+        ? 5000
+        : false,
   });
   const [receipt, setReceipt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -135,12 +141,53 @@ export function FiscalDocumentSection({ saleId }: { saleId: string }) {
               )}
             </Alert>
           )}
+          {d.status === 'voided' && (
+            <p data-testid="nfce-voided">
+              A venda foi cancelada antes de a nota sair, então ela não foi emitida. O número fica
+              sem nota e deve ser inutilizado em Inutilização de números.
+            </p>
+          )}
+          {d.cancellation && (
+            <div className="flex flex-col gap-1" data-testid="nfce-cancellation">
+              <p className="font-semibold">Cancelamento na SEFAZ</p>
+              <p className="text-muted">Justificativa: {d.cancellation.reason}</p>
+              {d.cancellation.status === 'registered' && (
+                <p>
+                  Cancelamento registrado
+                  {d.cancellation.protocol && ` · protocolo ${d.cancellation.protocol}`}
+                </p>
+              )}
+              {d.cancellation.status === 'pending' && <p>Pedido de cancelamento na fila.</p>}
+              {d.cancellation.status === 'error' && (
+                <p className="text-muted">
+                  Falha temporária: nova tentativa automática.
+                  {d.cancellation.lastError && ` Última falha: ${d.cancellation.lastError}`}
+                </p>
+              )}
+              {d.cancellation.status === 'rejected' && (
+                <Alert
+                  title={`Cancelamento recusado. Código ${d.cancellation.cStat}: ${d.cancellation.xMotivo ?? ''}`}
+                >
+                  {d.cancellation.help && (
+                    <span className="flex flex-col gap-1">
+                      <span>
+                        <strong>O que aconteceu:</strong> {d.cancellation.help.cause}
+                      </span>
+                      <span>
+                        <strong>O que fazer:</strong> {d.cancellation.help.fix}
+                      </span>
+                    </span>
+                  )}
+                </Alert>
+              )}
+            </div>
+          )}
           {d.status === 'error' && d.lastError && (
             <p className="text-muted">Última falha: {d.lastError}</p>
           )}
           {error && <Alert>{error}</Alert>}
           <div className="flex flex-wrap gap-2">
-            {d.status === 'authorized' && (
+            {(d.status === 'authorized' || d.status === 'cancelled') && (
               <>
                 <Button variant="secondary" onClick={() => void download()}>
                   Baixar XML
@@ -150,7 +197,7 @@ export function FiscalDocumentSection({ saleId }: { saleId: string }) {
                 </Button>
               </>
             )}
-            {canWrite && d.status !== 'authorized' && d.status !== 'denied' && (
+            {canWrite && ['pending', 'error', 'not_configured', 'rejected'].includes(d.status) && (
               <Button variant="secondary" loading={busy} onClick={() => void retry()}>
                 Tentar de novo
               </Button>

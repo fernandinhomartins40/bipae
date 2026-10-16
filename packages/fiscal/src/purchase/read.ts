@@ -101,7 +101,8 @@ export function decimalTextToCents(value: string | undefined): number {
 
 const cents = (node: XmlElement | null, path: string) => decimalTextToCents(textOf(node, path));
 
-function party(node: XmlElement | null, addressTag: string): PurchaseParty {
+/** Emitente ou destinatário da nota (também usado na leitura da NFC-e de venda). */
+export function readNfeParty(node: XmlElement | null, addressTag: string): PurchaseParty {
   if (!node) throw new PurchaseXmlError('O XML não traz o emitente ou o destinatário.');
   const a = find(node, addressTag);
   const text = (path: string) => textOf(node, path) || undefined;
@@ -129,7 +130,8 @@ function party(node: XmlElement | null, addressTag: string): PurchaseParty {
 
 const GTIN = /^(\d{8}|\d{12,14})$/;
 
-function item(det: XmlElement): PurchaseItem {
+/** Um item (det) da nota; na NFC-e de venda, supplierCode é o código do produto no Bipaê. */
+export function readNfeItem(det: XmlElement): PurchaseItem {
   const prod = find(det, 'prod');
   const imposto = find(det, 'imposto');
   const need = (path: string) => {
@@ -212,7 +214,7 @@ export function readPurchaseNfe(xml: string): PurchaseNfe {
   if (!/^[0-9A-Z]{44}$/.test(accessKey))
     throw new PurchaseXmlError('Chave de acesso inválida no XML.');
   const infProt = root.name === 'nfeProc' ? descendant(find(root, 'protNFe'), 'infProt') : null;
-  const items = findAll(inf, 'det').map(item);
+  const items = findAll(inf, 'det').map(readNfeItem);
   if (items.length === 0) throw new PurchaseXmlError('A nota não tem itens.');
   return {
     accessKey,
@@ -221,8 +223,8 @@ export function readPurchaseNfe(xml: string): PurchaseNfe {
     series: Number(textOf(ide, 'serie')),
     issuedAt: textOf(ide, 'dhEmi') ?? textOf(ide, 'dEmi') ?? '',
     environment: textOf(ide, 'tpAmb') === '1' ? 'producao' : 'homologacao',
-    supplier: party(find(inf, 'emit'), 'enderEmit'),
-    recipient: party(find(inf, 'dest'), 'enderDest'),
+    supplier: readNfeParty(find(inf, 'emit'), 'enderEmit'),
+    recipient: readNfeParty(find(inf, 'dest'), 'enderDest'),
     items,
     totalCents: cents(inf, 'total/ICMSTot/vNF'),
     ...(infProt &&

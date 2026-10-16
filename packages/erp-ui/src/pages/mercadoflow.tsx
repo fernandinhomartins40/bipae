@@ -4,6 +4,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useApp, useCan } from '../context';
 
+/** Data e hora de Brasília (dd/mm/aaaa hh:mm). */
+const when = (iso: string) =>
+  new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(new Date(iso));
+
 const STATUS: Record<
   NonNullable<MercadoflowLinkView['status']>,
   { label: string; tone: 'success' | 'warning' | 'danger' | 'neutral' }
@@ -190,7 +198,28 @@ function StoreLink({
         <h2 className="text-lg font-bold">{link.storeName}</h2>
         {status ? <Badge tone={status.tone}>{status.label}</Badge> : <Badge>Sem vínculo</Badge>}
       </div>
-      {link.lastError && <p className="mt-1 text-sm text-danger">{link.lastError}</p>}
+      {link.salesPausedUntil ? (
+        <div className="mt-3">
+          <Alert tone="warning" title="Limite do plano do MercadoFlow">
+            As vendas desta loja voltam a ser enviadas às {when(link.salesPausedUntil)}. Para não
+            pausar, aumente o plano no MercadoFlow.{' '}
+            <button
+              type="button"
+              className="font-semibold underline"
+              onClick={() => void open(`${publicUrl}/app/planos`)}
+            >
+              Ver planos
+            </button>
+          </Alert>
+        </div>
+      ) : (
+        link.lastError && <p className="mt-1 text-sm text-danger">{link.lastError}</p>
+      )}
+      {link.lastSalesSyncAt && (
+        <p className="mt-1 text-sm text-muted">
+          Vendas enviadas ao MercadoFlow pela última vez em {when(link.lastSalesSyncAt)}.
+        </p>
+      )}
       {message && (
         <div className="mt-3">
           <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
