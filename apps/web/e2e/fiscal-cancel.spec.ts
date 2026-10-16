@@ -66,10 +66,13 @@ test('venda cancelada não emite a nota, e os números sem nota são inutilizado
   });
 
   // Retaguarda: a nota não foi emitida, e a tela diz o porquê.
-  await page.goto('/vendas');
-  await page.getByRole('row', { name: /Caixa 1 · nº 1/ }).click();
+  // O cancelamento chega ao servidor pela sincronização do caixa: reabre a venda até chegar.
   const nota = page.getByRole('region', { name: 'Nota fiscal' });
-  await expect(nota).toContainText('Não emitida (venda cancelada)', { timeout: 15_000 });
+  await expect(async () => {
+    await page.goto('/vendas');
+    await page.getByRole('row', { name: /Caixa 1 · nº 1/ }).click();
+    await expect(nota).toContainText('Não emitida (venda cancelada)', { timeout: 3_000 });
+  }).toPass({ timeout: 45_000 });
   await expect(nota.getByTestId('nfce-voided')).toContainText('Inutilização de números');
   await expect(nota.getByRole('button', { name: 'Tentar de novo' })).toHaveCount(0);
 
