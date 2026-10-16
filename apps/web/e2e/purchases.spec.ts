@@ -55,6 +55,16 @@ test('importar o XML de compra: fornecedor, produtos e estoque de uma vez', asyn
   await expect(page.getByRole('cell', { name: 'Bebidas Já LTDA' })).toBeVisible();
   await expect(page.getByText('Autorizada')).toBeVisible();
 
+  // Uso ou consumo pessoal (LC 214/2025, art. 57): a marcação fica gravada na nota.
+  const pessoal = page.getByLabel('Uso pessoal (nota nº 3001)');
+  await expect(pessoal).not.toBeChecked();
+  await pessoal.click();
+  await expect(pessoal).toBeChecked();
+  await page.reload();
+  await expect(page.getByLabel('Uso pessoal (nota nº 3001)')).toBeChecked();
+  await page.getByLabel('Uso pessoal (nota nº 3001)').click();
+  await expect(page.getByLabel('Uso pessoal (nota nº 3001)')).not.toBeChecked();
+
   await page.getByRole('link', { name: 'Produtos', exact: true }).click();
   const linha = page.getByRole('row', { name: /Refrigerante guaraná 2 L caixa com 6/ });
   await expect(linha).toContainText('R$ 8,99');

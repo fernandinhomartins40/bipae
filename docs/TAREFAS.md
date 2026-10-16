@@ -40,6 +40,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] E19 · Credenciais do parceiro Bipaê no MercadoFlow (client id e secret, gerados em Parceiros → Bipaê) no `.env` da VPS
 - [ ] E18 · Token ou cartão A3 de teste (com a leitora) para a assinatura pelo desktop
 - [ ] E21 · Decisão sobre gerar o SPED EFD ICMS/IPI no Bipaê ou deixar com o contador (dúvida D-031)
+- [ ] E22 · Publicação oficial do recolhimento na liquidação financeira (split payment, LC 214/2025, arts. 31 a 36): data e leiaute da consulta de débitos extintos. Não depende de decisão do dono; marque quando a Receita e o Comitê Gestor publicarem (dúvida D-027)
 
 ---
 
@@ -251,6 +252,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [ ] F4-14.b · Arquivo SPED EFD ICMS/IPI do mês (registros das NFC-e), conforme o Guia Prático oficial, validado no PVA — depende: F4-14.a · externo: E21
   - Pesquisa feita em 16/10/2026 (dúvida D-031): o arquivo completo exige entradas, apuração e inventário; espera a decisão do dono.
 - [ ] F4-15 · Boletos via PSP — depende: F4-04 · externo: E9
+- [ ] F4-16 · Crédito de IBS/CBS pela extinção do débito do fornecedor, quando o split payment estiver em funcionamento (LC 214/2025, arts. 47 e 48; dúvida D-027) — depende: F4-13 · externo: E22
 
 ## Fase 5 — Verticais
 

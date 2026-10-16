@@ -7,9 +7,9 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-001 | ✅ resolvida | IBS/CBS compõem o total da nota em 2026? |
 | D-002 | ✅ resolvida | Simples Nacional: preencher IBS/CBS antes de 01/01/2027? |
 | D-003 | ✅ resolvida | Quando a rejeição por ausência do grupo IBS/CBS volta? |
-| D-004 | 🔴 aberta | Alíquotas de CBS/IBS de 2027–2028 |
+| D-004 | 🟡 aguarda publicação | Alíquotas de CBS/IBS de 2027–2028 |
 | D-005 | ✅ resolvida | Simples Nacional "por fora" em 2027: como o ERP deve tratar |
-| D-006 | 🔴 aberta | Data da NFS-e Nacional para o Simples Nacional |
+| D-006 | ✅ resolvida | Data da NFS-e Nacional para o Simples Nacional |
 | D-007 | ✅ resolvida | Escopo das NT 2026.007 e 2026.008 |
 | D-008 | ✅ resolvida | Arredondamento de IBS/CBS por item × total |
 | D-009 | 🟡 parcial | Devolução no PDV com referência por item (VC02-14) |
@@ -30,7 +30,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-024 | ✅ resolvida | Custo de aquisição na compra: com ou sem os créditos |
 | D-025 | ✅ resolvida | DIFAL a não contribuinte: base única ou base dupla por UF |
 | D-026 | ✅ resolvida | NF-e na transferência entre lojas |
-| D-027 | 🔴 aberta | Apuração do IBS e da CBS: quando o crédito entra (contador) |
+| D-027 | ✅ resolvida | Apuração do IBS e da CBS: quando o crédito entra (contador) |
 | D-028 | 🟡 parcial | Unidade do qLote na NF-e de compra |
 | D-029 | ✅ resolvida | Pix e vale do caixa: qual código tPag |
 | D-030 | ✅ resolvida | Descrição do primeiro item da NFC-e em homologação |
@@ -61,6 +61,11 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Atualização de 13/10/2026 (F3-03):** confirmado em fonte oficial que **ainda não há número**. A Tabela de Alíquotas da CBS do Portal da NF-e (IT 2026.002 v1.00) traz "aguarda legislação" para 2027, e a LC 214/2025 (arts. 347 e 349) manda fixar a alíquota por resolução do Senado. O IBS de 2027–2028 está na lei (art. 344): 0,05% estadual + 0,05% municipal, já na tabela do motor.
 - **Implementação provisória:** tabela de alíquotas com vigência; 2027 fica sem valor e bloqueia emissão com mensagem clara até ser preenchida.
 - **Pergunta:** fonte oficial das alíquotas de referência de 2027.
+- **Atualização de 16/10/2026 (fontes oficiais):** a alíquota **continua sem número oficial**, e o motivo é de calendário, não de pesquisa.
+  - **Rito (LC 214/2025, art. 349):** o Executivo propõe, o Tribunal de Contas da União calcula e o Senado Federal fixa por resolução, no ano anterior ao da vigência. Segundo o portal do TCU (notícia de 31/03/2026), a Receita Federal entregaria a proposta de 2027 até 14/09/2026. A resolução do Senado ainda não saiu.
+  - **Se o Senado atrasar (art. 349, § 2º):** valem as alíquotas calculadas pelo TCU até a fixação. A alíquota fixada depois só vale a partir do segundo mês seguinte ao da fixação.
+  - **Em 2027 e 2028 (art. 347):** a CBS é a alíquota de referência menos 0,1 ponto percentual. Nas reduções de alíquota, o desconto é proporcional. O IBS fica em 0,05% estadual + 0,05% municipal (art. 344), já na tabela.
+  - **Regra no Bipaê (mantida):** sem número oficial, o cálculo de 2027 para com mensagem clara e não supõe valor. Quando a resolução do Senado (ou o cálculo do TCU, se o Senado atrasar) for publicada, basta acrescentar a linha na tabela de alíquotas (`packages/fiscal/src/tables/data`), já com o desconto de 0,1 ponto do art. 347.
 
 ### D-005 — Simples Nacional "por fora" em 2027
 
@@ -78,6 +83,12 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 
 - **Contexto:** fontes divergem entre 01/09/2026 (Resolução CGSN nº 189/2026) e 01/11/2026 (Resolução CGSN nº 191/2026).
 - **Implementação provisória:** NFS-e só na Fase 5 (Serviços); data configurável.
+- **Resolvida em 16/10/2026 (fonte oficial: notícia da Receita Federal de 14/08/2026, "Simples Nacional: NFS-e Nacional será obrigatória para ME e EPP a partir de 1º de novembro de 2026", em gov.br/receitafederal):**
+  - **Vale 01/11/2026.** A Resolução CGSN nº 191, de 04/08/2026, altera a Resolução CGSN nº 140/2018 e "revogou expressamente a Resolução CGSN nº 189, de 2026", que previa 01/09/2026.
+  - **Quem:** microempresa e empresa de pequeno porte do Simples que prestam serviço sujeito à NFS-e.
+  - **Como:** pelo Emissor Nacional, "seja pela aplicação web, seja por integração via API".
+  - **CBS e IBS:** as regras de CBS e IBS dos optantes só produzem efeitos em 01/01/2027.
+  - **Regra no Bipaê:** a NFS-e (F5-13) é emitida pela API do Emissor Nacional (Sefin Nacional), a mesma para todos os regimes. Para empresa do Simples com serviço, a NFS-e nacional é o caminho padrão desde 01/11/2026, sem integração com emissor municipal.
 
 ### D-007 — Escopo das NT 2026.007 e 2026.008
 
@@ -314,6 +325,13 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - Em que mês o crédito deve entrar: na emissão da nota, na entrada da mercadoria ou na extinção do débito informada pelo Comitê Gestor e pela Receita?
   - Como a empresa marca as compras de uso e consumo pessoal?
   - O estorno da devolução deve vir do documento de devolução, em vez da proporção?
+- **Resolvida em 16/10/2026 (fonte oficial: LC 214/2025, com a redação da LC 227/2026, no site do Planalto):**
+  - **Quando o crédito entra:** a regra geral (art. 47, caput) liga o crédito à extinção do débito do fornecedor. O **art. 48**, porém, dispensa esse requisito "exclusivamente, se não houver sido implementada" nem o recolhimento na liquidação financeira (split payment, arts. 31 e 32) nem o recolhimento pelo adquirente (art. 36). Nesse caso, o crédito fica "condicionado ao destaque dos valores corretos do IBS e da CBS no documento fiscal eletrônico". Enquanto o split payment não funcionar, vale o valor destacado na nota autorizada, como o Bipaê já faz. Quando entrar em funcionamento, o crédito passa a depender da extinção informada pelo Comitê Gestor e pela Receita (nova tarefa quando houver leiaute).
+  - **O que não dá crédito:**
+    - uso ou consumo pessoal (art. 57): joias, obras de arte, bebidas alcoólicas, tabaco, armas, bens recreativos, esportivos e estéticos, além de bens dados de graça ou abaixo do valor de mercado a sócios, administradores, empregados e parentes, como imóvel residencial e veículo. Pelo § 3º, não é uso pessoal o que é comercializado: a cerveja comprada para revenda dá crédito;
+    - operações imunes, isentas, com alíquota zero, diferimento ou suspensão (art. 49), que já chegam sem IBS e CBS destacados.
+  - **Como marcar:** a nota de compra ganhou a marcação **"Uso pessoal"** na tela Compras (permissão de configuração fiscal, registrada na auditoria). A nota marcada sai do crédito na apuração e aparece em "ficou de fora da conta".
+  - **Devolução:** na devolução por adquirente que não é contribuinte do regime regular (o consumidor do caixa), o fornecedor "poderá apropriar créditos ou estornar débitos com base nos valores dos débitos incidentes na operação devolvida" (art. 47, § 8º). O estorno proporcional ao valor devolvido de cada linha da venda original é exatamente o débito da parte devolvida, então fica como está. Na devolução por contribuinte do regime regular, o procedimento ainda depende de regulamento (art. 47, § 12).
 
 ### D-028 — Unidade da quantidade do lote (`qLote`) na NF-e de compra
 

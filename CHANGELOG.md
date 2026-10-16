@@ -1,5 +1,18 @@
 # Changelog
 
+## [Compra de uso pessoal fora do crédito de IBS/CBS] — 16/10/2026
+
+### Adicionado
+- **Marcação "Uso pessoal" na tela Compras (D-027):** a nota de compra de uso ou consumo pessoal (LC 214/2025, art. 57) sai do crédito de IBS e CBS na apuração e aparece em "ficou de fora da conta". Exemplos: veículo, joias ou bens dados a sócios e empregados. Marcar ou desmarcar exige a permissão de configuração fiscal e fica na auditoria.
+
+### Corrigido
+- **Texto da apuração de IBS/CBS:** antes dizia que o crédito só vale depois que o fornecedor recolhe. Agora segue o art. 48 da LC 214/2025: enquanto o pagamento dividido (split payment) não estiver em funcionamento, basta o destaque correto na nota autorizada.
+
+### Confirmado (sem mudar o comportamento)
+- **Estorno da devolução ao consumidor:** proporcional ao débito da parte devolvida, como prevê o art. 47, § 8º.
+- **Alíquota da CBS de 2027 (D-004):** o Senado ainda não fixou. O Bipaê continua sem supor número até a publicação.
+- **NFS-e Nacional para o Simples (D-006):** obrigatória desde 01/11/2026, pela Resolução CGSN nº 191/2026.
+
 ## [Mais dúvidas fiscais resolvidas em fontes oficiais] — 16/10/2026
 
 ### Adicionado

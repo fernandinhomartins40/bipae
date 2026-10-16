@@ -108,12 +108,15 @@ export class IbsCbsSettlementService {
       }
 
       // Crédito só com documento fiscal eletrônico idôneo (art. 47, § 1º, II): nota autorizada.
-      const bought = rowsOf<{ ibs: string; cbs: string; without: number }>(
+      // Enquanto não houver split payment, o crédito não depende de o fornecedor ter recolhido,
+      // só do destaque correto na nota (art. 48). Uso ou consumo pessoal fica de fora (art. 57).
+      const bought = rowsOf<{ ibs: string; cbs: string; without: number; personal: number }>(
         await tx.execute(sql`
           select
-            coalesce(sum((i->'taxes'->'ibsCbs'->>'ibsCents')::bigint) filter (where p.authorized), 0)::text as ibs,
-            coalesce(sum((i->'taxes'->'ibsCbs'->>'cbsCents')::bigint) filter (where p.authorized), 0)::text as cbs,
-            (count(*) filter (where i->'taxes'->'ibsCbs' is null or not p.authorized))::int as without
+            coalesce(sum((i->'taxes'->'ibsCbs'->>'ibsCents')::bigint) filter (where p.authorized and not p.personal_use), 0)::text as ibs,
+            coalesce(sum((i->'taxes'->'ibsCbs'->>'cbsCents')::bigint) filter (where p.authorized and not p.personal_use), 0)::text as cbs,
+            (count(*) filter (where (i->'taxes'->'ibsCbs' is null or not p.authorized) and not p.personal_use))::int as without,
+            (count(*) filter (where p.personal_use))::int as personal
           from purchase_invoices p, jsonb_array_elements(p.items) i
           where p.company_id = ${companyId}
             and to_char(p.issued_at at time zone 'America/Sao_Paulo', 'YYYY-MM') = ${month}
@@ -158,6 +161,7 @@ export class IbsCbsSettlementService {
         pending: {
           saleItemsWithoutTax: sold?.withoutTax ?? 0,
           purchaseItemsWithoutIbsCbs: bought?.without ?? 0,
+          purchaseItemsPersonalUse: bought?.personal ?? 0,
         },
       };
     });

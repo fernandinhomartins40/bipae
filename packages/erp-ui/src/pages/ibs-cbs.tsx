@@ -111,18 +111,25 @@ export function IbsCbsPage() {
           </p>
         </div>
       )}
-      {r && (r.pending.saleItemsWithoutTax > 0 || r.pending.purchaseItemsWithoutIbsCbs > 0) && (
-        <Alert tone="warning" title="Ficou de fora da conta">
-          {r.pending.saleItemsWithoutTax > 0 &&
-            `${r.pending.saleItemsWithoutTax} item(ns) vendido(s) sem IBS/CBS calculado (confira o perfil fiscal dos produtos). `}
-          {r.pending.purchaseItemsWithoutIbsCbs > 0 &&
-            `${r.pending.purchaseItemsWithoutIbsCbs} item(ns) de compra sem IBS/CBS destacado ou de nota não autorizada.`}
-        </Alert>
-      )}
+      {r &&
+        (r.pending.saleItemsWithoutTax > 0 ||
+          r.pending.purchaseItemsWithoutIbsCbs > 0 ||
+          r.pending.purchaseItemsPersonalUse > 0) && (
+          <Alert tone="warning" title="Ficou de fora da conta">
+            {r.pending.saleItemsWithoutTax > 0 &&
+              `${r.pending.saleItemsWithoutTax} item(ns) vendido(s) sem IBS/CBS calculado (confira o perfil fiscal dos produtos). `}
+            {r.pending.purchaseItemsWithoutIbsCbs > 0 &&
+              `${r.pending.purchaseItemsWithoutIbsCbs} item(ns) de compra sem IBS/CBS destacado ou de nota não autorizada. `}
+            {r.pending.purchaseItemsPersonalUse > 0 &&
+              `${r.pending.purchaseItemsPersonalUse} item(ns) de compra marcada como uso ou consumo pessoal, que não dá crédito (LC 214/2025, art. 57).`}
+          </Alert>
+        )}
       {r && r.sources.length > 0 && (
         <p className="mt-3 text-sm text-muted">
-          Regras: {r.sources.join('; ')}. O crédito só vale depois que o fornecedor recolher o
-          imposto; esta conta usa o valor destacado nas notas autorizadas do mês.
+          Regras: {r.sources.join('; ')}. Esta conta usa o IBS e a CBS destacados nas notas de
+          compra autorizadas do mês. Enquanto o pagamento dividido (split payment) não estiver em
+          funcionamento, o crédito depende só do destaque correto na nota (LC 214/2025, art. 48).
+          Compras de uso ou consumo pessoal são marcadas na tela Compras.
         </p>
       )}
     </>

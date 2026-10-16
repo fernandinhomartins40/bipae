@@ -693,6 +693,9 @@ export const purchaseXmlInput = z.object({
     .max(5_000_000, 'Arquivo grande demais para uma nota fiscal'),
 });
 
+/** Marca ou desmarca a nota de compra como uso ou consumo pessoal (LC 214/2025, art. 57). */
+export const purchasePersonalUseInput = z.object({ personalUse: z.boolean() });
+
 /** Fator de conversão como texto decimal ("12", "0,5"): unidades de estoque por unidade da nota. */
 const conversionFactor = z
   .union([z.number(), z.string()])
@@ -769,6 +772,8 @@ export interface PurchaseSummary {
   supplierName: string;
   storeName: string;
   authorized: boolean;
+  /** Uso ou consumo pessoal (LC 214/2025, art. 57): sem crédito de IBS e CBS. */
+  personalUse: boolean;
   itemCount: number;
   createdAt: string;
 }
@@ -1338,7 +1343,12 @@ export interface IbsCbsSettlementView {
   period: { message: string; paymentWaived: boolean; source: string } | null;
   sources: string[];
   /** O que ficou de fora da conta e precisa de atenção. */
-  pending: { saleItemsWithoutTax: number; purchaseItemsWithoutIbsCbs: number };
+  pending: {
+    saleItemsWithoutTax: number;
+    purchaseItemsWithoutIbsCbs: number;
+    /** Itens de notas marcadas como uso ou consumo pessoal, fora do crédito (art. 57). */
+    purchaseItemsPersonalUse: number;
+  };
 }
 
 // ---------- Etiquetas de gôndola e de balança (F5-01) ----------

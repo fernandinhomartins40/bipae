@@ -180,9 +180,41 @@ describe('apuração do IBS e da CBS (F4-13)', () => {
       ibs: { debitCents: 667, creditCents: 500, payableCents: 167, creditLeftCents: 0 },
       cbs: { debitCents: 6000, creditCents: 4500, payableCents: 1500 },
       period: null,
-      pending: { saleItemsWithoutTax: 1, purchaseItemsWithoutIbsCbs: 2 },
+      pending: {
+        saleItemsWithoutTax: 1,
+        purchaseItemsWithoutIbsCbs: 2,
+        purchaseItemsPersonalUse: 0,
+      },
     });
     expect(r.sources.join(' ')).toContain('art. 47');
+
+    // Uso ou consumo pessoal (LC 214/2025, art. 57): a nota sai do crédito, e a marcação é auditada.
+    const compras = (await admin.get('/purchases')).json() as { id: string; number: number }[];
+    const notaComCredito = compras.find((c) => c.number === 1)!;
+    const marcar = await admin.put(`/purchases/${notaComCredito.id}/personal-use`, {
+      personalUse: true,
+    });
+    expect(marcar.statusCode).toBe(200);
+    expect((await admin.get('/purchases')).json()).toEqual(
+      expect.arrayContaining([expect.objectContaining({ number: 1, personalUse: true })]),
+    );
+    const pessoal = (
+      await admin.get(`/fiscal/ibs-cbs/settlement?companyId=${empresa.id}&month=${mes}`)
+    ).json();
+    expect(pessoal.totals).toMatchObject({ purchasesIbsCents: 0, purchasesCbsCents: 0 });
+    expect(pessoal.ibs).toMatchObject({ creditCents: 0, payableCents: 667 });
+    expect(pessoal.pending).toMatchObject({ purchaseItemsPersonalUse: 1 });
+    const auditoria = (await admin.get('/audit?action=purchase.personal_use')).json();
+    expect(JSON.stringify(auditoria)).toContain('purchase.personal_use');
+    await admin.put(`/purchases/${notaComCredito.id}/personal-use`, { personalUse: false });
+    expect(
+      (await admin.get(`/fiscal/ibs-cbs/settlement?companyId=${empresa.id}&month=${mes}`)).json()
+        .totals.purchasesIbsCents,
+    ).toBe(500);
+    expect(
+      (await admin.put(`/purchases/${notaComCredito.id}/personal-use`, { personalUse: 'sim' }))
+        .statusCode,
+    ).toBe(400);
 
     // Outro mês não mistura.
     const abril = (

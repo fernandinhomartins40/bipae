@@ -539,6 +539,7 @@ export class PurchasesService {
           supplierName: suppliers.name,
           storeName: stores.name,
           authorized: purchaseInvoices.authorized,
+          personalUse: purchaseInvoices.personalUse,
           items: purchaseInvoices.items,
           createdAt: purchaseInvoices.createdAt,
         })
@@ -554,6 +555,31 @@ export class PurchasesService {
         createdAt: createdAt.toISOString(),
         itemCount: items.length,
       }));
+    });
+  }
+
+  /**
+   * Marca a nota como uso ou consumo pessoal (LC 214/2025, art. 57): o IBS e a CBS dela saem do
+   * crédito na apuração (art. 47, caput). É alteração fiscal, então fica na auditoria.
+   */
+  async setPersonalUse(ctx: RequestContext, id: string, personalUse: boolean) {
+    return withTenant(this.db, ctx, async (tx) => {
+      const [row] = await tx
+        .select({ storeId: purchaseInvoices.storeId, personalUse: purchaseInvoices.personalUse })
+        .from(purchaseInvoices)
+        .where(eq(purchaseInvoices.id, id));
+      if (!row) throw notFound('Nota de compra');
+      assertStore(ctx, row.storeId);
+      if (row.personalUse !== personalUse) {
+        await tx.update(purchaseInvoices).set({ personalUse }).where(eq(purchaseInvoices.id, id));
+        await this.audit.record(tx, ctx, {
+          action: 'purchase.personal_use',
+          entity: 'purchase_invoice',
+          entityId: id,
+          data: { from: row.personalUse, to: personalUse },
+        });
+      }
+      return { id, personalUse };
     });
   }
 }

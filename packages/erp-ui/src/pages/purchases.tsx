@@ -11,6 +11,7 @@ import {
   Alert,
   Badge,
   Button,
+  Checkbox,
   DataTable,
   Drawer,
   EmptyState,
@@ -42,6 +43,8 @@ const quantity = (value: string) =>
 export function PurchasesPage() {
   const { api } = useApp();
   const canImport = useCan('catalog.write');
+  const canFiscal = useCan('fiscal.profile.write');
+  const queryClient = useQueryClient();
   const purchases = useQuery({
     queryKey: ['purchases'],
     queryFn: () => api.get<PurchaseSummary[]>('/purchases'),
@@ -50,6 +53,18 @@ export function PurchasesPage() {
   const [preview, setPreview] = useState<{ xml: string; data: PurchasePreview } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
+
+  /** Uso ou consumo pessoal (LC 214/2025, art. 57): a nota sai do crédito de IBS e CBS. */
+  const setPersonalUse = async (p: PurchaseSummary, personalUse: boolean) => {
+    setError(null);
+    try {
+      await api.put(`/purchases/${p.id}/personal-use`, { personalUse });
+      await queryClient.invalidateQueries({ queryKey: ['purchases'] });
+      await queryClient.invalidateQueries({ queryKey: ['ibs-cbs'] });
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
 
   const open = async (file: File | undefined) => {
     if (!file) return;
@@ -124,6 +139,21 @@ export function PurchasesPage() {
                   ),
               },
               { header: 'Total', align: 'right', cell: (p) => money(p.totalCents) },
+              {
+                header: 'Uso pessoal',
+                cell: (p) =>
+                  canFiscal ? (
+                    <Checkbox
+                      label={`Uso pessoal (nota nº ${p.number})`}
+                      checked={p.personalUse}
+                      onChange={(value) => void setPersonalUse(p, value)}
+                    />
+                  ) : p.personalUse ? (
+                    <Badge tone="neutral">Uso pessoal</Badge>
+                  ) : (
+                    '—'
+                  ),
+              },
             ]}
           />
         )
