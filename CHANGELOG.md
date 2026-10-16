@@ -1,5 +1,16 @@
 # Changelog
 
+## [F7-01 Teste de carga do caixa] — 16/10/2026
+
+### Corrigido
+- **Primeira sincronização de um catálogo grande no caixa web:** com 100 mil produtos, a carga não terminava em 9 minutos. Agora termina em cerca de 30 segundos, porque o caixa grava os produtos em blocos.
+
+### Adicionado
+- **Testes de carga com 100 mil produtos no banco do caixa**, no Node e no navegador. Os dois rodam na CI e falham se as metas forem passadas:
+  - busca por nome: 18 ms no navegador (meta: 100 ms);
+  - venda com 20 itens: 90 ms (meta: 1 s).
+- Os números e como medir de novo estão em `docs/desempenho.md`.
+
 ## [F6-08.b Programa de fidelidade] — 16/10/2026
 
 ### Adicionado

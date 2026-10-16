@@ -468,18 +468,25 @@ export class PdvService {
   }
 
   /** Upserts products from a sync pull. */
+  /**
+   * Grava os produtos de uma sincronização. Em blocos (uma instrução SQL para cada 200 produtos):
+   * no navegador cada instrução é uma mensagem para o worker do SQLite, e a primeira carga de um
+   * catálogo grande precisa caber em segundos, não em minutos (F7-01).
+   */
   async applyCatalog(products: SyncPullResult['products']) {
+    const CHUNK = 200;
     await this.storage.transaction(async (tx) => {
-      for (const p of products) {
+      for (let start = 0; start < products.length; start += CHUNK) {
+        const chunk = products.slice(start, start + CHUNK);
         await tx.execute(
           `INSERT INTO products (id, name, search_name, sku, unit, price_cents, is_weighable, active, ncm, cest, fiscal_profile_id, parent_id, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           VALUES ${chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ')}
            ON CONFLICT (id) DO UPDATE SET name = excluded.name, search_name = excluded.search_name,
              sku = excluded.sku, unit = excluded.unit, price_cents = excluded.price_cents,
              is_weighable = excluded.is_weighable, active = excluded.active, ncm = excluded.ncm,
              cest = excluded.cest, fiscal_profile_id = excluded.fiscal_profile_id, parent_id = excluded.parent_id,
              updated_at = excluded.updated_at`,
-          [
+          chunk.flatMap((p) => [
             p.id,
             p.name,
             searchKey(p.name),
@@ -493,13 +500,19 @@ export class PdvService {
             p.fiscalProfileId,
             p.parentId ?? null,
             p.updatedAt,
-          ],
+          ]),
         );
-        await tx.execute('DELETE FROM barcodes WHERE product_id = ?', [p.id]);
-        for (const code of p.barcodes) {
+        await tx.execute(
+          `DELETE FROM barcodes WHERE product_id IN (${chunk.map(() => '?').join(', ')})`,
+          chunk.map((p) => p.id),
+        );
+        const codes = chunk.flatMap((p) => p.barcodes.map((code) => [code, p.id]));
+        for (let c = 0; c < codes.length; c += 400) {
+          const part = codes.slice(c, c + 400);
           await tx.execute(
-            'INSERT INTO barcodes (code, product_id) VALUES (?, ?) ON CONFLICT (code) DO UPDATE SET product_id = excluded.product_id',
-            [code, p.id],
+            `INSERT INTO barcodes (code, product_id) VALUES ${part.map(() => '(?, ?)').join(', ')}
+             ON CONFLICT (code) DO UPDATE SET product_id = excluded.product_id`,
+            part.flat(),
           );
         }
       }

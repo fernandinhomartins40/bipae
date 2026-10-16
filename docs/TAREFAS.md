@@ -308,7 +308,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 
 ## Fase 7 — Endurecimento
 
-- [ ] F7-01 · Teste de carga: venda < 1 s (p95) e busca < 100 ms com 100 mil produtos locais
+- [x] F7-01 · Teste de carga: venda < 1 s (p95) e busca < 100 ms com 100 mil produtos locais
+  - Feito em 16/10/2026: medições no Node e no navegador com 100 mil produtos, nas metas; a gravação do catálogo passou a ser em blocos (ver `docs/desempenho.md`).
 - [ ] F7-02 · Revisão de segurança OWASP ASVS nível 2 e correções — externo: E15
 - [ ] F7-03 · Auditoria de acessibilidade WCAG 2.2 AA e correções
 - [ ] F7-04 · Central de ajuda (documentação do usuário)
