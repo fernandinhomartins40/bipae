@@ -1,5 +1,17 @@
 # Changelog
 
+## [F4-14.a Arquivos para o contador] — 16/10/2026
+
+### Adicionado
+- **Nova tela "Arquivos para o contador"**: escolha a empresa e o mês e baixe um ZIP com:
+  - o XML autorizado de cada NFC-e do mês, inclusive as que depois foram canceladas;
+  - o XML de cada cancelamento e de cada inutilização de números;
+  - um resumo em planilha (chave, número, série, data, situação, valor e protocolos), que abre no Excel com acentos.
+- A exportação fica registrada na trilha de auditoria.
+
+### Observação
+- O arquivo do SPED EFD é a próxima parte (F4-14.b).
+
 ## [MF-11.c Pedidos enviados pelo MercadoFlow] — 16/10/2026
 
 ### Adicionado

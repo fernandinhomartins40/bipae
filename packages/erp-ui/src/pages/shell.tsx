@@ -14,6 +14,7 @@ import {
   Download,
   FileBarChart,
   FileX,
+  FolderDown,
   Home,
   Landmark,
   ListChecks,
@@ -84,6 +85,12 @@ const NAV = [
     to: '/apuracao-ibs-cbs',
     label: 'Apuração de IBS e CBS',
     icon: Scale,
+    permission: 'finance.read',
+  },
+  {
+    to: '/contador',
+    label: 'Arquivos para o contador',
+    icon: FolderDown,
     permission: 'finance.read',
   },
   {

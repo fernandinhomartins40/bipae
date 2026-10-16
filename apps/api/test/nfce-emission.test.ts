@@ -1,3 +1,4 @@
+import { inflateRawSync } from 'node:zlib';
 import type { SyncPullResult, SyncPushResult, TerminalEvent } from '@bipae/domain';
 import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
@@ -553,5 +554,90 @@ describe('cancelamento da NFC-e e inutilização (F3-17.b)', () => {
       cStat: '241',
       help: { next: 'corrigir' },
     });
+  });
+});
+
+describe('pacote do mês para o contador (F4-14.a)', () => {
+  /** Lê o ZIP gerado (método deflate, sem pastas). */
+  function unzip(zip: Buffer) {
+    const files: Record<string, string> = {};
+    let at = 0;
+    while (zip.readUInt32LE(at) === 0x04034b50) {
+      const size = zip.readUInt32LE(at + 18);
+      const nameLength = zip.readUInt16LE(at + 26);
+      const name = zip.subarray(at + 30, at + 30 + nameLength).toString('utf8');
+      const start = at + 30 + nameLength;
+      files[name] = inflateRawSync(zip.subarray(start, start + size)).toString('utf8');
+      at = start + size;
+    }
+    return files;
+  }
+
+  it('traz as NFC-e autorizadas, o cancelamento, a inutilização e o resumo em CSV', async () => {
+    sefaz.mode = 'normal';
+    const { admin, empresa, caixa, vender, pdv, sync } = await loja();
+    const primeira = await vender('12345678909');
+    const a = await nota(admin, primeira.id, (s) => s === 'authorized');
+    await pdv.returnItems(primeira.id, [{ line: 1, quantityMilli: 1000 }], 'cash', 'Defeito');
+    await sync.sync();
+    const segunda = await vender();
+    const b = await nota(admin, segunda.id, (s) => s === 'authorized');
+    await pdv.cancelSale(segunda.id, 'Cliente desistiu', null);
+    await sync.sync();
+    await cancelamento(admin, segunda.id, (d) => d.status === 'cancelled');
+    const buraco = primeira.terminalSeq + 1;
+    await admin.post('/fiscal/inutilizations', {
+      companyId: empresa.id,
+      series: caixa.nfceSeries,
+      from: buraco,
+      to: buraco,
+      reason: 'Número usado em devolução, sem NFC-e',
+    });
+
+    const mes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' })
+      .format(new Date())
+      .slice(0, 7);
+    const res = await admin.get(`/fiscal/accountant-export?companyId=${empresa.id}&month=${mes}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.headers['content-disposition']).toContain(
+      `bipae-contador-11222333000181-${mes}.zip`,
+    );
+    const files = unzip(res.rawPayload);
+    expect(Object.keys(files).sort()).toEqual(
+      [
+        `Eventos/${b.accessKey}-cancelamento.xml`,
+        `Inutilizacoes/serie${caixa.nfceSeries}-${buraco}-a-${buraco}.xml`,
+        `NFCe/${a.accessKey}-procNFCe.xml`,
+        `NFCe/${b.accessKey}-procNFCe.xml`,
+        'resumo.csv',
+      ].sort(),
+    );
+    expect(files[`NFCe/${a.accessKey}-procNFCe.xml`]).toContain('<nfeProc');
+    expect(files[`Eventos/${b.accessKey}-cancelamento.xml`]).toContain('<procEventoNFe');
+    expect(files[`Inutilizacoes/serie${caixa.nfceSeries}-${buraco}-a-${buraco}.xml`]).toContain(
+      '<procInutNFe',
+    );
+    const linhas = files['resumo.csv']!.replace('﻿', '').trim().split('\r\n');
+    expect(linhas[0]).toBe(
+      'chave;modelo;serie;numero;emissao;situacao;valor;protocolo;protocolo_cancelamento',
+    );
+    expect(linhas).toContainEqual(
+      expect.stringMatching(new RegExp(`^${a.accessKey};65;.*;Autorizada;57,80;135260000999999;$`)),
+    );
+    expect(linhas).toContainEqual(
+      expect.stringMatching(
+        new RegExp(`^${b.accessKey};65;.*;Cancelada;57,80;135260000999999;135260000888888$`),
+      ),
+    );
+    // Mês sem movimento: só o resumo, com o cabeçalho.
+    const vazio = unzip(
+      (await admin.get(`/fiscal/accountant-export?companyId=${empresa.id}&month=2020-01`))
+        .rawPayload,
+    );
+    expect(Object.keys(vazio)).toEqual(['resumo.csv']);
+    expect(
+      (await admin.get(`/fiscal/accountant-export?companyId=${empresa.id}&month=2026-13`)).json()
+        .message,
+    ).toBe('Mês inválido (use AAAA-MM)');
   });
 });

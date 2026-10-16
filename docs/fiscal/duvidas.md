@@ -262,6 +262,22 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Implementação provisória (F3-14.a):** como o Bipaê só emite em homologação (regra 4), a NFC-e montada da venda sempre leva esse texto no primeiro item; os outros itens mantêm a descrição do produto.
 - **Pergunta:** confirmar na primeira emissão real (F3-11.b, com o certificado) e guardar o Manual de Orientação do Contribuinte vigente em `sources`.
 
+### D-031 — SPED EFD ICMS/IPI: gerar no Bipaê ou deixar com o contador
+
+- **Fonte:** Guia Prático da EFD ICMS/IPI versão 3.2.2 (atualização de 11/02/2026), baixado do Portal SPED (sped.rfb.gov.br, item 8112) em 16/10/2026.
+- **Quem entrega:** a obrigatoriedade está na lei de cada estado. O Protocolo ICMS 03/2011 dispensa o Simples Nacional. Pelo Protocolo ICMS 49/2015, continuam obrigadas as empresas do Simples dos estados que as obrigaram até o 1º trimestre de 2014. Presumido e Real entregam.
+- **NFC-e no arquivo:** Exceção 9 do registro C100. A NFC-e entra só nos registros C100 e C190 (e C195/C197 quando houver ajuste estadual), sem C170. Não vão os campos COD_PART, ICMS-ST, IPI, PIS e COFINS. A NFC-e não é escriturada nas entradas.
+- **O arquivo completo exige:**
+  - bloco 0 (cadastros);
+  - as notas de entrada com itens (C100/C170);
+  - a apuração do ICMS (bloco E, E110);
+  - o inventário (bloco H, em fevereiro);
+  - o bloco K, conforme o caso;
+  - assinatura com certificado;
+  - validação no programa oficial (PVA).
+- **Situação no Bipaê:** o pacote do mês para o contador (F4-14.a) já entrega todos os XML. Na prática, o escritório costuma gerar a EFD no sistema dele a partir desses XML.
+- **Pergunta ao dono:** gerar a EFD completa no Bipaê agora (tarefa grande, F4-14.b) ou deixar para depois, com o contador gerando a partir do pacote? E, se gerar: só para Presumido e Real, ou também para o Simples nos estados que obrigam (a lista de estados exige ler a lei de cada um)?
+
 
 ---
 
