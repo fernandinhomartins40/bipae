@@ -125,8 +125,22 @@ export class FiscalEventsService implements OnModuleInit {
       .update(fiscalDocuments)
       .set({ cancelRequestedAt: new Date(), cancelReason: reason, updatedAt: new Date() })
       .where(and(eq(fiscalDocuments.saleId, saleId), isNull(fiscalDocuments.cancelRequestedAt)))
-      .returning({ id: fiscalDocuments.id });
-    return doc?.id ?? null;
+      .returning();
+    if (!doc) return null;
+    // Nota que o servidor nunca mandou à SEFAZ: deixa de ser emitida já, na mesma transação.
+    const neverSent =
+      doc.origin === 'server' &&
+      (doc.status === 'not_configured' ||
+        doc.status === 'rejected' ||
+        (doc.status === 'pending' && doc.attempts === 0));
+    if (neverSent) {
+      await tx
+        .update(fiscalDocuments)
+        .set({ status: 'voided', lastError: null, updatedAt: new Date() })
+        .where(eq(fiscalDocuments.id, doc.id));
+      return null;
+    }
+    return doc.id;
   }
 
   async schedule(tenantId: string, userId: string, documentId: string) {
