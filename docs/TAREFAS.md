@@ -293,7 +293,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 
 - [~] F6-01 · API pública (OpenAPI) com chaves por cliente e webhooks (ADR-0016)
   - [x] F6-01.a · Chaves de API: criar (mostrada uma vez), listar e revogar na retaguarda; autenticação por chave com escopos, só em rotas marcadas como públicas; auditoria
-  - [ ] F6-01.b · Contrato OpenAPI 3.1 em /v1/public/openapi.json e rotas públicas de leitura: produtos, estoque, clientes e vendas; teste de conformidade — depende: F6-01.a
+  - [x] F6-01.b · Contrato OpenAPI 3.1 em /v1/public/openapi.json e rotas públicas de leitura: produtos, estoque, clientes e vendas; teste de conformidade — depende: F6-01.a
   - [ ] F6-01.c · Webhooks: URL, eventos e segredo selado; envio pela fila com assinatura HMAC, novas tentativas e histórico na tela — depende: F6-01.a
 - [ ] F6-02 · Pix real com conciliação automática — externo: E9
 - [ ] F6-03 · TEF real (maquininha integrada) — externo: E10

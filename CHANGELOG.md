@@ -1,5 +1,18 @@
 # Changelog
 
+## [F6-01.b Contrato OpenAPI e leitura pela API pública] — 16/10/2026
+
+### Adicionado
+- **Contrato da API em `/v1/public/openapi.json`** (OpenAPI 3.1, em português), aberto para quem for integrar.
+- **Rotas públicas de leitura, com a chave da Integração:**
+  - lojas;
+  - produtos (com preço, códigos de barras e grade);
+  - saldo de estoque por loja;
+  - clientes (com o consentimento de marketing, LGPD);
+  - vendas e devoluções, com itens e pagamentos.
+- **Paginação e filtros:** paginação por cursor, e filtros "mudou desde" para produtos e clientes e por período para vendas. Dinheiro sai em centavos e quantidades em milésimos, como no resto do Bipaê.
+- **Testes de conformidade:** um teste confere que cada rota do contrato existe, aceita a chave e responde no formato prometido. Outro confere que uma empresa nunca vê os dados de outra.
+
 ## [F6-01.a Chaves da API pública] — 16/10/2026
 
 ### Adicionado

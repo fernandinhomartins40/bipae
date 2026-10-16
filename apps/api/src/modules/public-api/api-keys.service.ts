@@ -12,7 +12,7 @@ import { apiKeyInput, uuidv7, type ApiKeyCreated, type ApiKeyView } from '@bipae
 import { desc, eq, inArray } from 'drizzle-orm';
 import type { z } from 'zod';
 import { generateApiKey } from '../../common/api-keys';
-import { Ctx, PublicApi, RequirePermission, type RequestContext } from '../../common/auth';
+import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
@@ -143,17 +143,5 @@ export class ApiKeysController {
   @RequirePermission('admin.integrations')
   revoke(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.keys.revoke(ctx, id);
-  }
-}
-
-/** Rotas da API pública (ADR-0016): aceitam a chave, além do login normal. */
-@Controller('public')
-export class PublicApiController {
-  constructor(@Inject(ApiKeysService) private readonly keys: ApiKeysService) {}
-
-  @Get('me')
-  @PublicApi()
-  me(@Ctx() ctx: RequestContext) {
-    return this.keys.me(ctx);
   }
 }

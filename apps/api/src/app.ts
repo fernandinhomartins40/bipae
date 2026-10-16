@@ -92,11 +92,8 @@ import { LossesController, LossesService } from './modules/reports/losses.servic
 import { TabsController } from './modules/sales/tabs.controller';
 import { KitchenController, KitchenService } from './modules/sales/kitchen.service';
 import { ConditionalsController, ConditionalsService } from './modules/sales/conditionals.service';
-import {
-  ApiKeysController,
-  ApiKeysService,
-  PublicApiController,
-} from './modules/public-api/api-keys.service';
+import { ApiKeysController, ApiKeysService } from './modules/public-api/api-keys.service';
+import { PublicApiController, PublicDataService } from './modules/public-api/public-api.controller';
 import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
 import { DeliveryController, DeliveryService } from './modules/sales/delivery.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
@@ -214,6 +211,7 @@ class AppModule {
         TabOrdersService,
         ConditionalsService,
         ApiKeysService,
+        PublicDataService,
         DeliveryService,
         InventoryService,
         TransferService,
