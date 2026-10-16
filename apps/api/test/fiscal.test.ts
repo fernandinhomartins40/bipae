@@ -240,11 +240,12 @@ describe('regime tributário e UF da empresa (F3-06.c)', () => {
       status: 'confirmado',
       rate: '18',
     });
-    // UF sem confirmação oficial vem sem número, nunca com valor suposto.
+    // Desde 16/10/2026 as 27 UFs têm a alíquota geral confirmada em fonte oficial (D-021).
     expect(opcoes.ufRates.find((u: { uf: string }) => u.uf === 'AL')).toMatchObject({
-      status: 'divergente',
-      rate: null,
+      status: 'confirmado',
+      rate: '20.5',
     });
+    expect(opcoes.ufRates.every((u: { status: string }) => u.status === 'confirmado')).toBe(true);
   });
 
   it('a empresa guarda o regime e recusa valor fora da lista', async () => {

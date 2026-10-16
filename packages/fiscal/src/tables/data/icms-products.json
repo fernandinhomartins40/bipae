@@ -64,8 +64,8 @@
  {
   "uf": "AL",
   "portalGeneralRate": "20.5",
-  "confirmedGeneralRate": null,
-  "generalMatches": null,
+  "confirmedGeneralRate": "20.5",
+  "generalMatches": true,
   "items": [
    {
     "description": "Regra Geral",
@@ -427,8 +427,8 @@
  {
   "uf": "AP",
   "portalGeneralRate": "18",
-  "confirmedGeneralRate": null,
-  "generalMatches": null,
+  "confirmedGeneralRate": "18",
+  "generalMatches": true,
   "items": [
    {
     "description": "Regra Geral",

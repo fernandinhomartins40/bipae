@@ -1,5 +1,18 @@
 # Changelog
 
+## [Dúvidas fiscais resolvidas em fontes oficiais] — 16/10/2026
+
+### Corrigido
+- **ICMS de Alagoas: 20,5% desde 01/04/2026**, pela Lei 9.776/2025, conferida no site da Assembleia Legislativa. Antes, aparecia como "divergente".
+- **ICMS do Amapá: 18%**, pela Lei 400/1997, art. 37, III, "i", no texto consolidado da Assembleia. Antes, aparecia como "pendente".
+- Agora **as 27 UFs têm a alíquota geral do ICMS confirmada em fonte oficial**, e o motor calcula todas as 135 combinações de UF e regime.
+
+### Confirmado (sem mudar o comportamento)
+- **NFC-e de entrega a domicílio:** é permitida pelo Ajuste SINIEF 19/2016 do CONFAZ (cláusula quarta, VII, "c"). Onde a UF restringe, a própria SEFAZ avisa com a rejeição 785, que agora aparece explicada na tela, junto com as rejeições 753, 786, 787, 788 e 434.
+- **DIFAL a consumidor final:** a base é única, pela LC 87/1996, art. 13, X, na redação da LC 190/2022. O Bipaê já calculava assim.
+- **NFC-e de Minas Gerais:** usa o ambiente próprio da SEF/MG; os endereços do Bipaê batem com a página oficial.
+- **QR Code da NFC-e:** o schema oficial exige o "https://" que o Bipaê acrescenta.
+
 ## [F5-11 Ficha técnica] — 16/10/2026
 
 ### Adicionado

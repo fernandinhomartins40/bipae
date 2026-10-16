@@ -38,8 +38,8 @@ Pontos que valem para todos os regimes:
 | UF | Alíquota geral | Base legal e início da vigência | Status |
 |---|---|---|---|
 | AC | 19% | LC 55/1997, art. 18, I (LC 422/2022); desde 01/04/2023 | ✅ |
-| AL | 19% (Lei 8.779/2022) ou 20,5%? | A Lei 8.779/2022 (site da Assembleia) fixa 19% no art. 17, I, "b", mais 1% de FECOEP. O Portal da DIFAL e fontes privadas de 2026 mostram 20,5%; pode haver lei posterior não localizada | 🔴 |
-| AP | 18% | Lei 400/1997 (texto consolidado da Assembleia, pode estar defasado) | 🟡 |
+| AL | 20,5% | Lei 5.900/1996, art. 17, I, "b" (Lei 9.776/2025, texto no site da Assembleia); desde 01/04/2026 (antes 19%). FECOEP de 1% à parte | ✅ |
+| AP | 18% | Lei 400/1997, art. 37, III, "i" (redação da Lei 1.949/2015; texto consolidado da Assembleia com alterações até a Lei 3.150/2024) | ✅ |
 | AM | 20% | LC 19/1997 (LC 242/2022); desde 01/04/2023 | ✅ |
 | BA | 20,5% | Lei 7.014/1996, art. 15, I; desde 07/02/2024 (antes 19%) | ✅ |
 | CE | 20% | Lei 18.305/2023; desde 01/01/2024 | ✅ |
@@ -65,7 +65,7 @@ Pontos que valem para todos os regimes:
 | SE | 19% | Lei 3.796/1996, art. 18, I, "j" (Lei 9.176/2023, texto no site da Assembleia); desde 01/04/2023. Há adicional de FECOEP | ✅ |
 | TO | 20% | Lei 1.287/2001, art. 27 (Lei 4.141/2023); desde 01/01/2024, conforme o STF na ADI 7375 | ✅ |
 
-**Resumo (atualizado em 13/10/2026, F3-24):** 25 UFs ✅, 1 UF 🟡 (AP) e 1 UF 🔴 (AL). Na matriz de cobertura, 129 de 135 combinações já calculam por completo.
+**Resumo (atualizado em 16/10/2026, dúvida D-021):** as 27 UFs ✅, todas com a alíquota geral em fonte oficial. Na matriz de cobertura, as 135 combinações calculam por completo.
 
 **Alíquotas interestaduais** (Portal Nacional da DIFAL, ✅): 4% para mercadoria importada ou com conteúdo de importação acima de 40%; 7% nas saídas do Sul e do Sudeste (exceto ES) para Norte, Nordeste, Centro-Oeste e ES; 12% nos demais casos.
 

@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-13",
+  "checkedAt": "2026-10-16",
   "interstate": {
     "source": "Resoluções do Senado Federal 22/1989 e 13/2012, como publicadas no Portal Nacional da DIFAL",
     "url": "https://dfe-portal.svrs.rs.gov.br/Difal/Aliquotas",
@@ -25,17 +25,17 @@
     },
     {
       "uf": "AL",
-      "status": "divergente",
-      "law": "Lei 5.900/1996, art. 17, I, b (Lei 8.779/2022); Lei 6.558/2004, art. 2º-A",
-      "url": "https://sapl.al.al.leg.br/media/sapl/public/normajuridica/2022/2419/lei_no_8.779_de_20_de_dezembro_de_2022.pdf",
-      "note": "A Lei 8.779/2022 fixa 19% (mais 1% de FECOEP), mas o Portal Nacional da DIFAL e fontes privadas de 2026 mostram 20,5%; pode haver lei posterior não localizada. Dúvida D-021."
+      "status": "confirmado",
+      "rate": "20.5",
+      "law": "Lei 5.900/1996, art. 17, I, b (redação da Lei 9.776/2025, art. 1º); desde 01/04/2026 (art. 3º: primeiro dia do quarto mês após a publicação de 22/12/2025). FECOEP de 1% à parte (Lei 6.558/2004)",
+      "url": "https://sapl.al.al.leg.br/media/sapl/public/normajuridica/2025/3699/lei_no_9.776_de_22_de_dezembro_de_2025.pdf"
     },
     {
       "uf": "AP",
-      "status": "pendente",
-      "law": "Lei 400/1997; RICMS/AP (Decreto 2.269/1998)",
-      "url": "http://www.al.ap.gov.br/ver_texto_consolidado.php?iddocumento=10488",
-      "note": "18% em fontes secundárias e no texto consolidado da Assembleia, que pode estar defasado; nenhuma fonte oficial atual localizada. Dúvida D-021."
+      "status": "confirmado",
+      "rate": "18",
+      "law": "Lei 400/1997 (Código Tributário do Amapá), art. 37, III, i (redação da Lei 1.949/2015); texto consolidado da Assembleia com alterações até a Lei 3.150/2024",
+      "url": "http://www.al.ap.gov.br/ver_texto_consolidado.php?iddocumento=10488"
     },
     {
       "uf": "AM",

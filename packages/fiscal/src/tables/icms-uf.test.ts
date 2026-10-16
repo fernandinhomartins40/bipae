@@ -37,17 +37,18 @@ describe('alíquota geral do ICMS por UF', () => {
     }
   });
 
-  it('o retrato de 13/10/2026: 25 confirmadas, 1 pendente e 1 divergente', () => {
+  it('o retrato de 16/10/2026: as 27 UFs confirmadas em fonte oficial (dúvida D-021)', () => {
     const conta = (status: string) => ICMS_GENERAL_RATES.filter((i) => i.status === status).map((i) => i.uf);
-    expect(conta('confirmado')).toHaveLength(25);
-    expect(conta('pendente')).toEqual(['AP']);
-    expect(conta('divergente')).toEqual(['AL']);
+    expect(conta('confirmado')).toHaveLength(27);
+    expect(conta('pendente')).toEqual([]);
+    expect(conta('divergente')).toEqual([]);
   });
 
   it('consulta por sigla', () => {
     expect(icmsGeneralRate('SP')).toMatchObject({ status: 'confirmado', rate: '18' });
     expect(icmsGeneralRate('BA')).toMatchObject({ rate: '20.5' });
-    expect(icmsGeneralRate('AL')).toMatchObject({ status: 'divergente' });
+    expect(icmsGeneralRate('AL')).toMatchObject({ status: 'confirmado', rate: '20.5' });
+    expect(icmsGeneralRate('AP')).toMatchObject({ status: 'confirmado', rate: '18' });
     expect(icmsGeneralRate('XX')).toBeNull();
   });
 });

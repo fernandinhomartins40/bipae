@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { withPendingUf } from '../test/pending-uf';
 import { COMPANY_REGIMES, type CompanyRegime } from './regimes';
 import {
   calculateSaleItemTaxes,
@@ -163,19 +164,20 @@ describe('o que falta configurar aparece com todas as letras', () => {
     );
   });
 
-  it('UF sem alíquota confirmada: pede a alíquota ao contador, sem número suposto', () => {
-    const r = venda('real', 'AL');
-    expect(r.icms).toEqual({
-      status: 'falta-configurar',
-      reason:
-        'A alíquota geral de ICMS de AL ainda não foi confirmada em fonte oficial. Peça a alíquota ao contador.',
-    });
-    expect(r.complete).toBe(false);
-    // Com a alíquota informada pela empresa, o cálculo sai.
-    const comRegra = venda('real', 'AL', { settings: { icms: { rate: '19' } } });
-    expect(comRegra.icms).toMatchObject({ status: 'calculado', result: { amountCents: 1900 } });
-    expect(comRegra.assumptions.join(' ')).not.toContain('alíquota geral');
-  });
+  it('UF sem alíquota confirmada: pede a alíquota ao contador, sem número suposto', () =>
+    withPendingUf('AL', () => {
+      const r = venda('real', 'AL');
+      expect(r.icms).toEqual({
+        status: 'falta-configurar',
+        reason:
+          'A alíquota geral de ICMS de AL ainda não foi confirmada em fonte oficial. Peça a alíquota ao contador.',
+      });
+      expect(r.complete).toBe(false);
+      // Com a alíquota informada pela empresa, o cálculo sai.
+      const comRegra = venda('real', 'AL', { settings: { icms: { rate: '19' } } });
+      expect(comRegra.icms).toMatchObject({ status: 'calculado', result: { amountCents: 1900 } });
+      expect(comRegra.assumptions.join(' ')).not.toContain('alíquota geral');
+    }));
 
   it('situação que precisa de mais dados ou que o motor ainda não calcula', () => {
     const st = venda('real', 'SP', { profile: { ...REVENDA, cstIcms: '10' } });
@@ -222,7 +224,11 @@ describe('venda para outra UF', () => {
     expect(importado.icms).toMatchObject({ result: { rate: '4.00' } });
     // A alíquota interestadual não depende de a UF de origem ter a alíquota interna confirmada.
     expect(
-      venda('real', 'AL', { item: { operationCents: 10_000, ufDestino: 'SP' } }).icms.status,
+      withPendingUf(
+        'AL',
+        () =>
+          venda('real', 'AL', { item: { operationCents: 10_000, ufDestino: 'SP' } }).icms.status,
+      ),
     ).toBe('calculado');
   });
 });
@@ -259,12 +265,16 @@ describe('matriz de cobertura: 27 UFs × 5 regimes (F3-23)', () => {
     expect(combinacoes).toBe(135);
   });
 
-  it('o retrato de hoje: 129 combinações completas e 6 esperando a alíquota da UF', () => {
+  it('o retrato de hoje: as 135 combinações completas (27 UFs confirmadas, D-021)', () => {
     const completas = UFS.flatMap((uf) =>
       COMPANY_REGIMES.map((regime) => venda(regime.id, uf).complete),
     ).filter(Boolean);
-    // 25 UFs × 5 regimes + 2 UFs pendentes × 2 regimes que não dependem da alíquota (MEI e Simples).
-    expect(completas).toHaveLength(129);
+    expect(completas).toHaveLength(135);
+    // Com uma UF pendente, só ficam completos os 2 regimes que não dependem da alíquota (MEI e Simples).
+    const comPendente = withPendingUf('AP', () =>
+      COMPANY_REGIMES.map((regime) => venda(regime.id, 'AP').complete).filter(Boolean),
+    );
+    expect(comPendente).toHaveLength(2);
   });
 });
 
@@ -306,7 +316,7 @@ describe('resumo dos impostos do item', () => {
   });
 
   it('o que falta configurar vira valor nulo, com o motivo', () => {
-    const r = summarizeSaleItemTaxes(venda('real', 'AL'));
+    const r = withPendingUf('AL', () => summarizeSaleItemTaxes(venda('real', 'AL')));
     expect(r.icmsCents).toBeNull();
     expect(r.complete).toBe(false);
     expect(r.pending[0]).toContain('AL ainda não foi confirmada');

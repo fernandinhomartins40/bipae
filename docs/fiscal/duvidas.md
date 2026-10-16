@@ -17,18 +17,18 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-011 | ✅ resolvida | Datas de homologação e produção da NT 2025.002 v1.52 |
 | D-012 | ✅ resolvida | Qual pacote de schemas (XSD) vale para a v1.52 |
 | D-013 | ✅ resolvida | Contingência off-line da NFC-e depois da NT 2026.002 |
-| D-014 | 🟡 parcial | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
+| D-014 | ✅ resolvida | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
 | D-015 | ✅ resolvida | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
 | D-016 | 🔴 aberta | cClassTrib: o dia do fim da vigência ainda vale? |
 | D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 | D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
 | D-020 | 🔴 aberta | IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação |
-| D-022 | 🔴 aberta | NFC-e em MG: ambiente próprio ou SVRS? |
-| D-021 | 🟡 parcial | Alíquota geral do ICMS: AL divergente e AP sem fonte oficial |
+| D-022 | ✅ resolvida | NFC-e em MG: ambiente próprio ou SVRS? |
+| D-021 | ✅ resolvida | Alíquota geral do ICMS: AL divergente e AP sem fonte oficial |
 | D-023 | 🔴 aberta | Código de barras do DANFE com o CNPJ alfanumérico |
 | D-024 | 🔴 aberta | Custo de aquisição na compra: com ou sem os créditos (contador) |
-| D-025 | 🔴 aberta | DIFAL a não contribuinte: base única ou base dupla por UF (contador) |
+| D-025 | ✅ resolvida | DIFAL a não contribuinte: base única ou base dupla por UF |
 | D-026 | 🔴 aberta | NF-e na transferência entre lojas (contador) |
 | D-027 | 🔴 aberta | Apuração do IBS e da CBS: quando o crédito entra (contador) |
 | D-028 | 🟡 parcial | Unidade do qLote na NF-e de compra |
@@ -124,6 +124,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a NT 2025.001 v1.01 (26/06/2025) define o QR Code versão 3 da NFC-e.
 - **Implementação provisória:** a versão do QR Code fica como configuração por UF.
 - **Pergunta:** a versão 3 já é obrigatória? Em quais UFs e desde quando? A versão 2 ainda é aceita?
+- **Resolvida em 16/10/2026 (fontes oficiais):** a NT 2025.001 v1.01 diz que todas as UFs aceitam a versão 3 desde 01/09/2025, opcional para emitente com CNPJ; o Bipaê usa a versão 3. Sobre as URLs sem protocolo na tabela do ENCAT: o schema oficial do campo `qrCode` (leiaute 4.00, pacote PL_010f, `leiauteNFe_v4.00.xsd`) só aceita texto que começa com `http://` ou `https://` (padrão `((HTTPS?|https?)://.*\?p=...)`). Acrescentar `https://` é, portanto, exigência do próprio schema. O `urlChave` não tem padrão de protocolo (só 21 a 85 caracteres).
 
 ### D-015 — Split payment no grupo de pagamento da NFC-e (NT 2026.006)
 
@@ -188,6 +189,10 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Implementação provisória:** essas sete UFs ficam como "falta configurar" no motor. Uma empresa dessas UFs consegue usar o caixa, mas o cálculo do ICMS pede a alíquota ao contador até a confirmação.
 - **Pergunta:** o contador confirma as sete alíquotas e as leis? O adicional de FECOEP de AL e de SE se soma à alíquota geral em todos os produtos ou só nos listados?
 - **Atualização de 13/10/2026 (F3-24):** MA (23%), PI (22,5%), RS (17%), SE (19%) e TO (20%) confirmadas em fonte oficial (Assembleias, Receita Estadual do RS e decisão do STF na ADI 7375). Continuam abertas: **AL**, onde a Lei 8.779/2022 diz 19% e o Portal Nacional da DIFAL mostra 20,5% (pode haver lei posterior), e **AP**, sem fonte oficial atual localizada.
+- **Resolvida em 16/10/2026 (fontes oficiais):**
+  - **AL: 20,5% desde 01/04/2026.** A Lei 9.776, de 22/12/2025 (texto original no site da Assembleia Legislativa: https://sapl.al.al.leg.br/media/sapl/public/normajuridica/2025/3699/lei_no_9.776_de_22_de_dezembro_de_2025.pdf), dá nova redação ao art. 17, I, "b", da Lei 5.900/1996: "20,5% (vinte vírgula cinco por cento), nos demais casos". O art. 3º manda valer no primeiro dia do quarto mês após a publicação. Antes, era 19% (Lei 8.779/2022). O FECOEP de 1% continua à parte.
+  - **AP: 18%.** O texto consolidado da Lei 400/1997 (Código Tributário do Amapá) na Assembleia Legislativa (http://www.al.ap.gov.br/ver_texto_consolidado.php?iddocumento=10488), com alterações até a Lei 3.150, de 20/12/2024, mantém o art. 37, III, "i": "18% (dezoito por cento) para as demais mercadorias e serviços" (redação da Lei 1.949/2015).
+  - **Resultado:** as 27 UFs têm a alíquota geral em fonte oficial, e a matriz de cobertura calcula as 135 combinações.
 - **D-012 resolvida em 13/10/2026 (F3-07):** a lista oficial de Esquemas XML do Portal Nacional da NF-e tem como pacote mais recente o **PL_010f v1.04** (NT 2025.002 v1.50 e NT 2026.007 v1.00, publicado em 31/08/2026). Não há pacote próprio da v1.52, que mudou regras e não o leiaute. O Bipaê passou a usar o PL_010f (guardado em `packages/fiscal/sources`).
 
 ### D-022 — NFC-e em MG: ambiente próprio ou SVRS?
@@ -195,6 +200,10 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a relação de serviços web da NFC-e no portal da SEFAZ Virtual do RS lista os autorizadores AM, GO, MS, MT, PR, RS, SP e SVRS, sem MG. A página de webservices do Portal Nacional da NFC-e (ENCAT) lista um ambiente próprio de MG (hnfce.fazenda.mg.gov.br).
 - **Implementação provisória:** MG usa o ambiente próprio listado pelo ENCAT. Se a primeira autorização em homologação falhar, o caminho é tentar a SVRS.
 - **Pergunta:** qual é o autorizador vigente da NFC-e em MG?
+- **Resolvida em 16/10/2026 (fonte oficial):**
+  - a página de webservices da NFC-e da SEF/MG (https://portalsped.fazenda.mg.gov.br/spedmg/nfce/web-services/) publica um ambiente próprio, sem SVRS;
+  - homologação em `https://hnfce.fazenda.mg.gov.br/nfce/services/<Serviço>4` e produção em `https://nfce.fazenda.mg.gov.br/nfce/services/<Serviço>4`, para autorização, retorno, consulta, status, evento e inutilização;
+  - os seis endereços de homologação da tabela do Bipaê batem exatamente com a página oficial.
 - **D-014, atualização de 13/10/2026 (F3-13.a):** a NT 2025.001 v1.01 (texto oficial) diz que todas as UF disponibilizam o QR Code versão 3 desde 01/09/2025 e que a adoção pela empresa com CNPJ é opcional. O Bipaê usa a versão 3: na emissão normal o QR Code leva só chave, versão e ambiente, **sem CSC**. Ainda em aberto: algumas URLs da tabela oficial do ENCAT vêm sem o protocolo (AM, MA e as de consulta pela chave); o Bipaê acrescenta https://, o que precisa ser confirmado na primeira autorização em homologação.
 
 
@@ -215,6 +224,17 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** na venda interestadual a consumidor final não contribuinte (EC 87/2015), a diferença entre a alíquota interna do destino e a interestadual vai toda para a UF de destino desde 2019 (pICMSInterPart = 100, como diz o próprio leiaute da NF-e). A forma de calcular a base varia: algumas UFs aplicam a base única (DIFAL = valor × diferença de alíquotas) e outras a base dupla, refazendo a base "por dentro" com a alíquota interna do destino.
 - **Implementação provisória (F3-32):** o motor calcula as duas formas (`calculateDifal`, `baseMode`), com **base única como padrão**. A alíquota interna do destino é a geral confirmada da UF, ou a do produto quando a empresa informa. O FCP do destino **só entra com regra do produto**, porque a lei de cada UF lista os produtos sujeitos a ele; sem regra, o resultado traz um aviso.
 - **Pergunta (contador, E3):** quais UFs exigem a base dupla para não contribuinte, e o FCP entra no divisor "por dentro"? Com a resposta, a forma vira tabela por UF com data de vigência.
+- **Resolvida em 16/10/2026 (fonte oficial, lei nacional):**
+  - texto da LC 87/1996, com a redação da LC 190/2022, no site do Planalto (https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp87.htm);
+  - a saída para consumidor final **não contribuinte** de outra UF é o fato gerador do art. 12, XVI;
+  - a base desse caso é a do art. 13, **X**: "o valor da operação ou o preço do serviço, para o cálculo do imposto devido ao Estado de origem e ao de destino". Uma base só, a **base única**;
+  - a base dupla do art. 13, IX, "a" e "b" (valor no Estado de origem e no de destino) vale só para os incisos XIII e XV: o **contribuinte** que compra para uso, consumo ou ativo;
+  - o § 1º do art. 13 manda o próprio imposto integrar a base também no inciso X (por dentro, como já está no valor da operação).
+- **Consequência no Bipaê:**
+  - a base única, que já é o padrão do motor, segue a lei complementar nacional;
+  - a opção de base dupla fica no motor só para a venda a contribuinte (uso e consumo), que é NF-e e chega com a F3-33;
+  - lei estadual que exija a base dupla para não contribuinte vai contra a LC 87 e não vira regra automática;
+  - o FCP do destino continua entrando só com a regra do produto, sobre a mesma base.
 
 ### D-026 — NF-e na transferência entre lojas
 
@@ -273,10 +293,15 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - rejeição 434: `indPres=4` exige o indicador de intermediador (`indIntermed`);
   - rejeição 785: "NFC-e com entrega a domicílio não permitida pela UF". Cada UF decide.
 - **Implementação (F5-10.b):** a taxa de entrega vai como frete (`vFrete`, rateado nos itens), com `modFrete=0` (contratação por conta do remetente), o próprio emitente como transportador (entrega própria) e `indIntermed=0` (venda direta, sem plataforma).
-- **Pergunta ao contador:**
-  1. Quais UFs permitem a NFC-e de entrega a domicílio? Onde a UF não permite, o que usar: NF-e modelo 55, ou NFC-e presencial sem a taxa?
-  2. A entrega por motoboy terceirizado muda o transportador?
-  3. A taxa de entrega cobrada por um aplicativo (iFood) muda o `indIntermed`?
+- **Resolvida em 16/10/2026, pelas fontes oficiais (o dono não tem contador):**
+  1. **A regra nacional permite.** O Ajuste SINIEF 19/2016 (CONFAZ), cláusula quarta, inciso VII, alínea "c", prevê a NFC-e com o destinatário identificado nas entregas a domicílio, "hipótese em que deverá constar a informação do respectivo endereço". Desde 03/08/2026, pelo Ajuste SINIEF 09/2026, a alínea vale para todas as operações não presenciais. Texto consultado em https://www.confaz.fazenda.gov.br/legislacao/ajustes/2016/AJ_019_16.
+  2. **Restrição por UF:**
+     - o ajuste deixa o uso da NFC-e "a critério das unidades federadas" (cláusula primeira) e não proíbe a entrega;
+     - onde a UF restringe, quem avisa é a própria SEFAZ, com a rejeição 785. Não há lista nacional publicada;
+     - o Bipaê explica a 785 na tela e indica a NF-e modelo 55 como caminho, que chega com a F3-33.
+  3. **Transportador:** a regra 786 do MOC exige o grupo `transporta` em toda NFC-e de entrega. Na entrega própria vai a loja; o motoboy terceirizado com CNPJ ou CPF pode ser informado no lugar quando a loja cadastrar (melhoria futura, sem mudança de regra).
+  4. **Aplicativo (iFood):** pela NT 2020.006 do Portal Nacional da NF-e, a venda feita em plataforma de terceiros usa `indIntermed=1` e o grupo `infIntermed` (CNPJ da plataforma). Entra com a integração do iFood (F6-05); a venda direta da loja segue com `indIntermed=0`.
+  5. As rejeições 753, 785, 786, 787, 788 e 434 entraram na tabela de rejeições explicadas, com o texto oficial do Anexo I do MOC 7.0.
 
 ### D-031 — SPED EFD ICMS/IPI: gerar no Bipaê ou deixar com o contador
 

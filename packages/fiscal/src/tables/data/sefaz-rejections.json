@@ -465,6 +465,54 @@
       "next": "suporte",
       "cause": "O número desta nota foi inutilizado antes, então ela não pode mais ser emitida.",
       "fix": "Fale com o suporte do Bipaê para conferir a numeração."
+    },
+    {
+      "code": "785",
+      "official": "Rejeição: NFC-e com entrega a domicílio não permitida pela UF",
+      "area": "empresa",
+      "next": "suporte",
+      "cause": "O estado da loja não aceita NFC-e de entrega a domicílio.",
+      "fix": "Neste estado, a venda para entrega precisa sair em NF-e (modelo 55). Enquanto a NF-e não estiver no Bipaê, registre a entrega no caixa sem o botão Entrega e combine a nota com o suporte."
+    },
+    {
+      "code": "786",
+      "official": "Rejeição: NFC-e de entrega a domicílio sem dados do Transportador",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A nota de entrega saiu sem os dados de quem entrega.",
+      "fix": "Fale com o suporte do Bipaê: a loja deve ir como transportadora na nota."
+    },
+    {
+      "code": "787",
+      "official": "Rejeição: NFC-e de entrega a domicílio sem a identificação do destinatário",
+      "area": "cliente",
+      "next": "corrigir",
+      "cause": "A nota de entrega precisa do CPF ou CNPJ do cliente.",
+      "fix": "Informe o CPF ou CNPJ do cliente na entrega e tente de novo."
+    },
+    {
+      "code": "788",
+      "official": "Rejeição: NFC-e de entrega a domicílio sem o endereço do destinatário",
+      "area": "cliente",
+      "next": "corrigir",
+      "cause": "A nota de entrega saiu sem o endereço do cliente.",
+      "fix": "Confira a rua, o número, o bairro e a cidade da entrega e tente de novo."
+    },
+    {
+      "code": "753",
+      "official": "Rejeição: NFC-e com Frete",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A nota levou frete sem ser de entrega a domicílio.",
+      "fix": "Fale com o suporte do Bipaê: frete só vai na NFC-e de entrega."
+    },
+    {
+      "code": "434",
+      "official": "Rejeição: NF-e sem indicativo do intermediador (NT 2020.006)",
+      "area": "sistema",
+      "next": "suporte",
+      "cause": "A nota saiu sem dizer se a venda foi por plataforma de terceiros.",
+      "fix": "Fale com o suporte do Bipaê."
     }
   ]
 }

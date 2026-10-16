@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { withPendingUf } from '../../test/pending-uf';
 import { calculateDifal } from './difal';
 import { TaxRuleDataError } from './shared';
 
@@ -72,13 +73,18 @@ describe('partilha do ICMS (DIFAL)', () => {
     expect(r.destinationCents).toBe(0);
   });
 
-  it('UF de destino sem alíquota confirmada pede a do produto', () => {
-    expect(() => calculateDifal({ ufOrigem: 'SP', ufDestino: 'AP', baseCents: 10_000 })).toThrow(
-      TaxRuleDataError,
-    );
-    expect(
-      calculateDifal({ ufOrigem: 'SP', ufDestino: 'AP', baseCents: 10_000, destinationRate: '18' })
-        .destinationCents,
-    ).toBe(1100); // 18% − 7% (de SP para o Norte)
-  });
+  it('UF de destino sem alíquota confirmada pede a do produto', () =>
+    withPendingUf('AP', () => {
+      expect(() => calculateDifal({ ufOrigem: 'SP', ufDestino: 'AP', baseCents: 10_000 })).toThrow(
+        TaxRuleDataError,
+      );
+      expect(
+        calculateDifal({
+          ufOrigem: 'SP',
+          ufDestino: 'AP',
+          baseCents: 10_000,
+          destinationRate: '18',
+        }).destinationCents,
+      ).toBe(1100); // 18% − 7% (de SP para o Norte)
+    }));
 });

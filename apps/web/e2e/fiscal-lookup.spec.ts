@@ -86,9 +86,9 @@ test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código
   await page.getByRole('link', { name: 'Empresas e lojas' }).click();
   await expect(page.getByText(/Falta configurar: UF e regime tributário/)).toBeVisible();
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
-  // UF com alíquota confirmada mostra o número e a lei; UF pendente avisa, sem número.
+  // UF com alíquota confirmada mostra o número e a lei (as 27 confirmadas desde 16/10/2026, D-021).
   await page.getByLabel('UF').selectOption('AL');
-  await expect(page.getByText(/alíquota geral de ICMS de AL ainda não foi confirmada/)).toBeVisible();
+  await expect(page.getByText(/ICMS geral de AL: 20,5% \(Lei 5\.900\/1996/)).toBeVisible();
   await page.getByLabel('UF').selectOption('SP');
   await expect(page.getByText('ICMS geral de SP: 18% (RICMS/2000, art. 52, I).')).toBeVisible();
   await page.getByLabel('Regime tributário').selectOption({ label: 'Lucro Real' });
