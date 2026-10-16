@@ -32,7 +32,9 @@ const pacote = (caminho: string) => fileURLToPath(new URL(`../../${caminho}`, im
 describe('origem das tabelas', () => {
   it('cada tabela aponta para um arquivo oficial guardado, com o mesmo hash', () => {
     for (const fonte of Object.values(TABLE_SOURCES)) {
-      const hash = createHash('sha256').update(readFileSync(pacote(`sources/${fonte.file}`))).digest('hex');
+      const hash = createHash('sha256')
+        .update(readFileSync(pacote(`sources/${fonte.file}`)))
+        .digest('hex');
       expect(hash, fonte.file).toBe(fonte.sha256);
       // Só fontes oficiais: Portal Nacional da NF-e, Siscomex, SEFAZ Virtual do RS, CONFAZ e o
       // Portal Nacional da NFC-e, mantido pelo ENCAT (os coordenadores tributários das SEFAZ).
@@ -107,7 +109,9 @@ describe('CST e cClassTrib do IBS e da CBS', () => {
       expect(TP_RBSN[item.tpRBSN], item.cClassTrib).toBeDefined();
       expect(TP_DOACAO[item.tpDoacao], item.cClassTrib).toBeDefined();
       for (const reducao of [item.pRedIBS, item.pRedCBS]) {
-        expect(dec(reducao).greaterThanOrEqualTo(0) && dec(reducao).lessThanOrEqualTo(100)).toBe(true);
+        expect(dec(reducao).greaterThanOrEqualTo(0) && dec(reducao).lessThanOrEqualTo(100)).toBe(
+          true,
+        );
       }
     }
   });
@@ -120,7 +124,12 @@ describe('CST e cClassTrib do IBS e da CBS', () => {
     expect(findCstIbsCbs('000')!.groups.ibsCbs).toBe(true);
 
     const cestaBasica = findClassTrib('200003')!;
-    expect(cestaBasica).toMatchObject({ cst: '200', pRedIBS: '100', pRedCBS: '100', law: 'Art. 125' });
+    expect(cestaBasica).toMatchObject({
+      cst: '200',
+      pRedIBS: '100',
+      pRedCBS: '100',
+      law: 'Art. 125',
+    });
     expect(cestaBasica.lawUrl).toContain('planalto.gov.br');
 
     expect(findClassTrib('999999')).toBeNull();
@@ -129,7 +138,7 @@ describe('CST e cClassTrib do IBS e da CBS', () => {
     expect(classTribsOf('999')).toEqual([]);
   });
 
-  it('diz a situação na data, sem decidir o que a tabela deixa em aberto (D-016)', () => {
+  it('o dia do fim da vigência já não vale (D-016)', () => {
     const integral = findClassTrib('000001')!;
     expect(classTribStatus(integral, '2025-12-31')).toBe('fora-da-vigencia');
     expect(classTribStatus(integral, '2026-01-01')).toBe('vigente');
@@ -137,13 +146,28 @@ describe('CST e cClassTrib do IBS e da CBS', () => {
 
     const comFim = { ...integral, end: '2027-01-01' };
     expect(classTribStatus(comFim, '2026-12-31')).toBe('vigente');
-    expect(classTribStatus(comFim, '2027-01-01')).toBe('vigencia-indefinida');
+    expect(classTribStatus(comFim, '2027-01-01')).toBe('fora-da-vigencia');
     expect(classTribStatus(comFim, '2027-01-02')).toBe('fora-da-vigencia');
 
-    // Códigos publicados com início e fim no mesmo dia: nunca "vigente" sem confirmação.
+    // Códigos com início e fim no mesmo dia foram excluídos: nunca valem.
     const mesmoDia = CLASS_TRIBS.filter((c) => c.end !== undefined && c.end <= c.start);
+    expect(mesmoDia.length).toBeGreaterThan(0);
     for (const item of mesmoDia) {
-      expect(classTribStatus(item, item.start), item.cClassTrib).toBe('vigencia-indefinida');
+      expect(classTribStatus(item, item.start), item.cClassTrib).toBe('fora-da-vigencia');
+    }
+  });
+
+  it('os substitutos dos códigos excluídos do CST 220 valem desde 01/01/2026 (D-016)', () => {
+    for (const [antigo, novo] of [
+      ['220001', '221002'],
+      ['220002', '221003'],
+      ['220003', '221004'],
+    ] as const) {
+      const a = findClassTrib(antigo)!;
+      const n = findClassTrib(novo)!;
+      expect(a.end, antigo).toBe(a.start);
+      expect(n.start, novo).toBe(a.end);
+      expect(classTribStatus(n, '2026-01-01'), novo).toBe('vigente');
     }
   });
 });
@@ -174,7 +198,10 @@ describe('alíquotas de referência', () => {
         expect(emVigor, String(publicada.year)).toEqual([]);
         expect(publicada.note).toBeTruthy();
       } else {
-        expect(emVigor.map((r) => r.rate), String(publicada.year)).toEqual([publicada.rate]);
+        expect(
+          emVigor.map((r) => r.rate),
+          String(publicada.year),
+        ).toEqual([publicada.rate]);
       }
     }
     expect(CBS_PUBLISHED_RATES.find((r) => r.year === 2026)?.rate).toBe('0.9');

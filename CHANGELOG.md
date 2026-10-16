@@ -1,5 +1,20 @@
 # Changelog
 
+## [Custo de compra, transferência e vigência do cClassTrib] — 16/10/2026
+
+### Corrigido
+- **Custo de entrada da compra sem o crédito de tributo (D-024):** o ICMS, o PIS e a COFINS que a empresa recupera como crédito saem do custo do estoque (RIR/2018, art. 301, § 3º, e NBC TG 16, item 11). O que sai depende do regime:
+  - MEI e Simples Nacional: nenhum, o custo continua cheio;
+  - Simples acima do sublimite e Lucro Presumido: sai o ICMS;
+  - Lucro Real: saem o ICMS, o PIS e a COFINS.
+  - O IPI e o ICMS-ST continuam no custo.
+- **Vigência do cClassTrib (D-016):** o dia do fim da vigência já não vale. Isso aparece na própria tabela oficial: os códigos 220001 a 220003 terminam no mesmo dia em que começam os substitutos, 221002 a 221004. Antes, nesse dia o motor respondia "vigência indefinida".
+
+### Confirmado (sem mudar o comportamento)
+- **Transferência entre lojas da mesma empresa (D-026):**
+  - não tem ICMS (LC 87/1996, art. 12, § 4º, na redação da LC 204/2023). O crédito é transferido pelo Convênio ICMS 109/2024 e pelo Ajuste SINIEF 33/2024;
+  - não tem IBS nem CBS (LC 214/2025, art. 6º, II), mas a nota continua obrigatória.
+
 ## [Dúvidas fiscais resolvidas em fontes oficiais] — 16/10/2026
 
 ### Corrigido

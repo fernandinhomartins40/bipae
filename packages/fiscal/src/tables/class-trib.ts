@@ -77,15 +77,17 @@ export function classTribsOf(cst: string): ClassTrib[] {
   return CLASS_TRIBS.filter((item) => item.cst === cst);
 }
 
-export type ClassTribStatus = 'vigente' | 'fora-da-vigencia' | 'vigencia-indefinida';
+export type ClassTribStatus = 'vigente' | 'fora-da-vigencia';
 
 /**
- * Situação de uma classificação numa data. A tabela oficial não diz se o dia do fim da vigência
- * ainda vale ou não (dúvida D-016; há códigos com início e fim no mesmo dia). Nesse dia exato a
- * resposta é "vigencia-indefinida", e quem chama não deve escolher o código sozinho.
+ * Situação de uma classificação numa data. O fim da vigência (`dFimVig`) é o primeiro dia em
+ * que o código não vale mais (dúvida D-016, resolvida): na tabela oficial, os códigos 220001 a
+ * 220003 têm início e fim em 01/01/2026 e foram substituídos pelos 221002 a 221004, com a mesma
+ * descrição, vigentes desde 01/01/2026; o Informe Técnico 2025.002 v1.60 chama isso de
+ * "exclusão" do código. Início igual ao fim quer dizer código excluído.
  */
 export function classTribStatus(item: ClassTrib, date: string): ClassTribStatus {
   if (date < item.start) return 'fora-da-vigencia';
-  if (item.end === undefined || date < item.end) return 'vigente';
-  return date === item.end ? 'vigencia-indefinida' : 'fora-da-vigencia';
+  if (item.end !== undefined && date >= item.end) return 'fora-da-vigencia';
+  return 'vigente';
 }

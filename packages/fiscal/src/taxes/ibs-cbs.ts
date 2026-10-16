@@ -78,16 +78,18 @@ const p4 = (value: Dec) => `${value.toFixed(4)}%`;
 export function calculateIbsCbs(input: IbsCbsInput): IbsCbsResult {
   assertBase(input.operationCents, 'Valor da operação');
   const item = findClassTrib(input.cClassTrib);
-  if (!item) throw new TaxRuleDataError('IBS/CBS', input.cClassTrib, 'cClassTrib não existe na tabela oficial');
+  if (!item)
+    throw new TaxRuleDataError(
+      'IBS/CBS',
+      input.cClassTrib,
+      'cClassTrib não existe na tabela oficial',
+    );
   const status = classTribStatus(item, input.date);
   if (status === 'fora-da-vigencia') {
-    throw new TaxRuleDataError('IBS/CBS', item.cClassTrib, `classificação fora da vigência em ${input.date}`);
-  }
-  if (status === 'vigencia-indefinida') {
     throw new TaxRuleDataError(
       'IBS/CBS',
       item.cClassTrib,
-      'a tabela oficial não deixa claro se a classificação vale nesta data (dúvida D-016); escolha outra ou confirme com o contador',
+      `classificação fora da vigência em ${input.date}`,
     );
   }
   const cst = findCstIbsCbs(item.cst)!;
@@ -130,10 +132,13 @@ export function calculateIbsCbs(input: IbsCbsInput): IbsCbsResult {
     if (cents === 0) continue;
     const before = money(toCents(base));
     base = rule.effect === 'exclude' ? base.minus(fromCents(cents)) : base.plus(fromCents(cents));
-    if (base.isNegative()) throw new Error('Os tributos a tirar da base somam mais que o valor da operação');
+    if (base.isNegative())
+      throw new Error('Os tributos a tirar da base somam mais que o valor da operação');
     trace.push(
       step(
-        rule.effect === 'exclude' ? `${rule.tax} fora da base (${rule.source})` : `${rule.tax} somado à base (${rule.source})`,
+        rule.effect === 'exclude'
+          ? `${rule.tax} fora da base (${rule.source})`
+          : `${rule.tax} somado à base (${rule.source})`,
         money(toCents(base)),
         `${before} ${rule.effect === 'exclude' ? '−' : '+'} ${money(cents)}`,
       ),
@@ -145,18 +150,35 @@ export function calculateIbsCbs(input: IbsCbsInput): IbsCbsResult {
   // ---------------------------------------------------------------- alíquotas e valores
   const rates = input.rates ?? REFERENCE_RATES;
   const mode = input.rounding ?? 'half-up';
-  const part = (tax: 'IBS' | 'CBS', sphere: ReferenceRate['sphere'], label: string, reduction: string): IbsCbsPart => {
-    const matches = rates.filter((r) => r.tax === tax && r.sphere === sphere && isValidOn(r.validity, input.date));
+  const part = (
+    tax: 'IBS' | 'CBS',
+    sphere: ReferenceRate['sphere'],
+    label: string,
+    reduction: string,
+  ): IbsCbsPart => {
+    const matches = rates.filter(
+      (r) => r.tax === tax && r.sphere === sphere && isValidOn(r.validity, input.date),
+    );
     if (matches.length === 0) throw new MissingRateError(tax, sphere, input.date);
     if (matches.length > 1) {
-      throw new TaxRuleDataError(tax, matches.map((m) => m.id).join(', '), 'mais de uma alíquota em vigor para o mesmo ente');
+      throw new TaxRuleDataError(
+        tax,
+        matches.map((m) => m.id).join(', '),
+        'mais de uma alíquota em vigor para o mesmo ente',
+      );
     }
     const rate = dec(matches[0]!.rate);
     const cut = dec(reduction);
     const effective = rate.mul(dec(1).minus(percent(cut)));
     const amountCents = toCents(base.mul(percent(effective)), mode);
     if (cut.isZero()) {
-      trace.push(step(`${label} a ${p4(rate)}`, money(amountCents), `${money(result.baseCents)} × ${p4(rate)}`));
+      trace.push(
+        step(
+          `${label} a ${p4(rate)}`,
+          money(amountCents),
+          `${money(result.baseCents)} × ${p4(rate)}`,
+        ),
+      );
     } else {
       trace.push(
         step(

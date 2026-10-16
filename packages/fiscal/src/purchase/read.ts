@@ -274,10 +274,20 @@ export function purchaseLotMilli(
 
 /**
  * Custo de aquisição de cada unidade de estoque, em centavos: produto menos desconto, mais frete,
- * seguro, outras despesas, ICMS-ST e IPI, dividido pela quantidade em unidades de estoque. Os
- * créditos de ICMS, PIS, COFINS, IBS e CBS não são abatidos aqui (dúvida D-024).
+ * seguro, outras despesas, ICMS-ST e IPI, menos os tributos que a empresa recupera como crédito
+ * (`recoverable`, da tabela do regime em `recoverableTaxes`), dividido pelas unidades de estoque.
+ * RIR/2018, art. 301, § 3º, e NBC TG 16, item 11 (dúvida D-024). O IBS e a CBS entram aqui a
+ * partir de 2027, quando houver crédito deles.
  */
-export function purchaseUnitCostCents(item: PurchaseItem, factor: string | number = 1): number {
+export function purchaseUnitCostCents(
+  item: PurchaseItem,
+  factor: string | number = 1,
+  recoverable: readonly ('icms' | 'pis' | 'cofins')[] = [],
+): number {
+  const credits =
+    (recoverable.includes('icms') ? (item.taxes.icms?.amountCents ?? 0) : 0) +
+    (recoverable.includes('pis') ? item.taxes.pisCents : 0) +
+    (recoverable.includes('cofins') ? item.taxes.cofinsCents : 0);
   const total: Dec = dec(
     item.totalCents -
       item.discountCents +
@@ -285,7 +295,8 @@ export function purchaseUnitCostCents(item: PurchaseItem, factor: string | numbe
       item.insuranceCents +
       item.otherCents +
       item.stCents +
-      item.ipiCents,
+      item.ipiCents -
+      credits,
   ).div(100);
   const units = dec(item.quantity).mul(dec(factor));
   if (units.lte(0)) throw new PurchaseXmlError(`Quantidade inválida no item ${item.line}.`);

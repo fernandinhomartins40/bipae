@@ -1,4 +1,4 @@
-| D-007 | ✅ resolvida || D-015 | ✅ resolvida || D-013 | ✅ resolvida || D-011 | ✅ resolvida || D-010 | ✅ resolvida || D-009 | 🟡 parcial || D-003 | ✅ resolvida || D-002 | ✅ resolvida || D-001 | ✅ resolvida |# Dúvidas fiscais para validar com contador
+# Dúvidas fiscais para validar com contador
 
 Cada dúvida vira **configuração** no sistema até ser respondida: nada é decidido em silêncio no código. Ao responder, registre data, quem respondeu e a fonte, e atualize o status.
 
@@ -19,7 +19,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-013 | ✅ resolvida | Contingência off-line da NFC-e depois da NT 2026.002 |
 | D-014 | ✅ resolvida | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
 | D-015 | ✅ resolvida | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
-| D-016 | 🔴 aberta | cClassTrib: o dia do fim da vigência ainda vale? |
+| D-016 | ✅ resolvida | cClassTrib: o dia do fim da vigência ainda vale? |
 | D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 | D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
@@ -27,9 +27,9 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-022 | ✅ resolvida | NFC-e em MG: ambiente próprio ou SVRS? |
 | D-021 | ✅ resolvida | Alíquota geral do ICMS: AL divergente e AP sem fonte oficial |
 | D-023 | 🔴 aberta | Código de barras do DANFE com o CNPJ alfanumérico |
-| D-024 | 🔴 aberta | Custo de aquisição na compra: com ou sem os créditos (contador) |
+| D-024 | ✅ resolvida | Custo de aquisição na compra: com ou sem os créditos |
 | D-025 | ✅ resolvida | DIFAL a não contribuinte: base única ou base dupla por UF |
-| D-026 | 🔴 aberta | NF-e na transferência entre lojas (contador) |
+| D-026 | ✅ resolvida | NF-e na transferência entre lojas |
 | D-027 | 🔴 aberta | Apuração do IBS e da CBS: quando o crédito entra (contador) |
 | D-028 | 🟡 parcial | Unidade do qLote na NF-e de compra |
 | D-029 | ✅ resolvida | Pix e vale do caixa: qual código tPag |
@@ -135,8 +135,10 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 ### D-016 — cClassTrib: o dia do fim da vigência ainda vale?
 
 - **Contexto:** a tabela oficial (IT 2025.002 v1.70) traz as colunas `dIniVig` e `dFimVig`, sem dizer se o fim é o último dia válido ou o primeiro inválido. Três códigos (220001, 220002 e 220003, do regime de incorporação imobiliária e parcelamento do solo) estão com **início e fim em 01/01/2026**.
-- **Implementação provisória:** no dia exato do fim, o motor responde "vigência indefinida" e não escolhe o código sozinho. Esses três códigos não se aplicam a venda de mercadoria no varejo.
+- **Implementação anterior:** no dia exato do fim, o motor respondia "vigência indefinida" e não escolhe o código sozinho. Esses três códigos não se aplicam a venda de mercadoria no varejo.
 - **Pergunta:** o `dFimVig` é inclusivo? Os três códigos estão extintos ou nunca entraram em vigor?
+- **Resolvida em 16/10/2026 (fonte oficial):** a própria tabela oficial de cClassTrib responde. Os códigos 220001, 220002 e 220003 têm início e fim em 01/01/2026 e foram substituídos pelos **221002, 221003 e 221004**, com a mesma descrição e vigentes **desde 01/01/2026**. Se o fim fosse inclusivo, os dois códigos valeriam juntos nesse dia. O Informe Técnico 2025.002 v1.60, no histórico de alterações, chama a mudança de "exclusão do cClassTrib do CST 220 (inclusão de fim de vigência)".
+  - **Regra no Bipaê:** o `dFimVig` é o primeiro dia em que o código não vale mais. Início igual ao fim quer dizer código excluído, que nunca vale. O motor deixou de responder "vigência indefinida" (`classTribStatus` em `packages/fiscal/src/tables/class-trib.ts`).
 
 ### D-017 — CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos?
 
@@ -218,6 +220,20 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a entrada pelo XML de compra (F3-19) grava o custo de cada produto. Empresas do regime normal recuperam o ICMS destacado, o PIS e a COFINS (e, a partir de 2027, o IBS e a CBS), o que muda o custo contábil.
 - **Implementação provisória:** custo = valor dos produtos − desconto + frete + seguro + outras despesas + ICMS-ST + IPI, dividido pelas unidades de estoque, **sem abater nenhum crédito**. Os tributos de cada item ficam guardados com a nota, para a apuração (F4-13) e para recalcular o custo quando a regra for definida.
 - **Pergunta (contador, E3):** o custo do produto deve abater os créditos recuperáveis conforme o regime (Simples não abate; Presumido e Real abatem ICMS, e o Real abate PIS/COFINS)? O IPI entra no custo de quem não é contribuinte do IPI?
+- **Resolvida em 16/10/2026 (fontes oficiais):**
+  - **Lei tributária:** o RIR/2018 (Decreto 9.580/2018, site do Planalto), art. 301, diz no § 1º que o custo "compreenderá os de transporte e seguro até o estabelecimento do contribuinte e os tributos devidos na aquisição" e no § 3º que "os impostos recuperáveis por meio de créditos na escrita fiscal não integram o custo de aquisição".
+  - **Norma contábil:** a NBC TG 16 do Conselho Federal de Contabilidade, item 11, diz que o custo de aquisição inclui os tributos, "exceto os recuperáveis perante o fisco".
+  - **Por regime:**
+    - MEI e Simples não aproveitam crédito (LC 123/2006, art. 23);
+    - o Simples acima do sublimite recupera o ICMS, que sai do Simples (art. 13-A);
+    - o Presumido recupera o ICMS (PIS/COFINS cumulativos, Lei 9.718/1998, sem crédito);
+    - o Real recupera ICMS, PIS e COFINS (não cumulativos, Leis 10.637/2002 e 10.833/2003, art. 3º).
+  - **IPI e ICMS-ST:** o varejista não os recupera, e eles ficam no custo.
+- **Implementação:**
+  - a tabela versionada `purchase-cost-credits.json` traz, por regime, os tributos recuperáveis e a fonte;
+  - a entrada da compra abate do custo o ICMS, o PIS e a COFINS da nota conforme o regime da empresa;
+  - teste na API com empresa do Lucro Real;
+  - o IBS e a CBS entram na tabela em 2027, quando houver crédito deles.
 
 ### D-025 — Partilha do ICMS (DIFAL) a não contribuinte: base única ou base dupla?
 
@@ -241,6 +257,28 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a transferência entre lojas (F4-12) move o estoque entre lojas do mesmo cliente. Quando as lojas são de empresas (CNPJs) diferentes, a mercadoria circula entre estabelecimentos e precisa de NF-e de transferência (CFOP 5152/6152). Depois da ADC 49 do STF e da LC 204/2023, a transferência entre estabelecimentos do mesmo titular não tem incidência de ICMS, mas a nota continua obrigatória, e a transferência do crédito do ICMS tem regras próprias.
 - **Implementação provisória:** o Bipaê move o estoque e marca a transferência entre CNPJs diferentes com "precisa de NF-e de transferência", sem emitir nem calcular nada. Lojas da mesma empresa (mesmo CNPJ) não geram nota. A emissão fica para quando o fluxo de NF-e de saída (F3-14) estiver pronto e as regras abaixo, confirmadas.
 - **Pergunta (contador, E3):** na transferência entre estabelecimentos do mesmo titular, a empresa transfere o crédito do ICMS (destacando o imposto) ou não, e como isso fica por UF? Qual é o tratamento do IBS e da CBS nessas transferências a partir de 2027?
+- **Resolvida em 16/10/2026 (fontes oficiais):**
+  - **ICMS, regra nacional:**
+    - a LC 87/1996, art. 12, § 4º, com a redação da LC 204/2023 (site do Planalto), diz: "Não se considera ocorrido o fato gerador do imposto na saída de mercadoria de estabelecimento para outro de mesma titularidade, mantendo-se o crédito";
+    - na transferência entre UFs, o crédito é assegurado pela UF de destino, limitado à alíquota interestadual;
+    - pelo § 5º, a empresa pode optar por equiparar a transferência a operação tributada.
+  - **ICMS entre UFs, CONFAZ:**
+    - o Convênio ICMS 109/2024 (efeitos desde 01/11/2024) dá à empresa o direito de transferir o crédito, sem obrigá-la, sobre o valor médio de entrada ou o custo, nas alíquotas interestaduais;
+    - a opção de tributar (cláusula sexta) é anual, irretratável no ano e vale para todos os estabelecimentos.
+  - **NF-e entre UFs, pelo Ajuste SINIEF 33/2024:**
+    - natureza "Transferência de Mercadoria - Estabelecimentos mesmo titular" e CFOP do grupo 6.150 (6151/6152);
+    - **CST 90**, com `vBC` e `pICMS` zerados e `vICMS` igual ao crédito transferido, quando houver;
+    - em `infAdFisco`, "Procedimento autorizado conforme Convênio ICMS nº 109/24".
+  - **Dentro da mesma UF:**
+    - também não há fato gerador (o mesmo § 4º);
+    - o Convênio 109/24 e o Ajuste 33/24 só tratam da remessa entre UFs, então a nota interna (CFOP 5151/5152, sem destaque) segue a legislação de cada UF.
+  - **IBS e CBS a partir de 2027:** a LC 214/2025 (site do Planalto), art. 6º, II, diz que eles **não incidem** na "transferência de bens entre estabelecimentos pertencentes ao mesmo contribuinte, observada a obrigatoriedade de emissão de documento fiscal eletrônico" (art. 60, § 2º, II).
+- **No Bipaê:**
+  - a transferência entre CNPJs diferentes continua marcada "precisa de NF-e de transferência";
+  - a emissão entra com a NF-e da retaguarda (F3-33), seguindo as regras acima;
+  - entre UFs sem a opção de tributar, CST 90 com o crédito em `vICMS`;
+  - com a opção de tributar, operação normal com alíquota interestadual;
+  - IBS e CBS sem incidência.
 
 ### D-027 — Apuração do IBS e da CBS: quando o crédito entra e o que fica de fora
 

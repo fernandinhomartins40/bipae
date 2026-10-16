@@ -177,6 +177,20 @@ describe('XML de compra (F3-19.a)', () => {
     expect(() => purchaseUnitCostCents(item!, 0)).toThrow('Quantidade inválida');
   });
 
+  it('os créditos recuperáveis do regime saem do custo (RIR/2018, art. 301, § 3º; D-024)', () => {
+    const [item] = readPurchaseNfe(notaDoFornecedor().xml).items;
+    const bruto = 12_000 - 600 + 300 + item!.stCents + 1200;
+    const icms = item!.taxes.icms?.amountCents ?? 0;
+    const { pisCents, cofinsCents } = item!.taxes;
+    // A nota de teste tem ICMS, PIS e COFINS destacados, para a conta ser visível.
+    expect(icms + pisCents + cofinsCents).toBeGreaterThan(0);
+    expect(purchaseUnitCostCents(item!, 1, [])).toBe(Math.round(bruto / 10));
+    expect(purchaseUnitCostCents(item!, 1, ['icms'])).toBe(Math.round((bruto - icms) / 10));
+    expect(purchaseUnitCostCents(item!, 1, ['icms', 'pis', 'cofins'])).toBe(
+      Math.round((bruto - icms - pisCents - cofinsCents) / 10),
+    );
+  });
+
   it('recusa o que não é NF-e de compra', () => {
     const doc = notaDoFornecedor();
     expect(() => readPurchaseNfe('não é xml <')).toThrow('não é um XML válido');

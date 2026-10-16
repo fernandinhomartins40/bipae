@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { api, createTestApp, signup, type TestApp } from './helpers';
+import { readPurchaseNfe } from '@bipae/fiscal';
 import { notaDoFornecedor } from './support/supplier-nfe';
 
 /**
@@ -219,5 +220,46 @@ describe('compra pelo XML da NF-e (F3-19)', () => {
     expect(nfce.json().message).toBe(
       'Só a NF-e (modelo 55) dá entrada de compra; cupom e NFC-e não.',
     );
+  });
+});
+
+describe('custo da compra sem os créditos recuperáveis (dúvida D-024)', () => {
+  it('Lucro Real: o ICMS, o PIS e a COFINS da nota saem do custo do produto', async () => {
+    const { admin, empresa, loja } = await mercado();
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      taxId: '11.222.333/0001-81',
+      uf: 'SP',
+      taxRegime: 'real',
+    });
+    const xml = await notaDoFornecedor(2001);
+    const [item] = readPurchaseNfe(xml).items;
+    const creditos =
+      (item!.taxes.icms?.amountCents ?? 0) + item!.taxes.pisCents + item!.taxes.cofinsCents;
+    expect(creditos).toBeGreaterThan(0);
+    const entrada = await admin.post('/purchases', {
+      xml,
+      storeId: loja.id,
+      items: [
+        { line: 1, productId: null, factor: '6', unit: 'UN', priceCents: 899 },
+        { line: 2, productId: null, factor: 1, priceCents: 300 },
+      ],
+    });
+    expect(entrada.statusCode).toBe(201);
+    const produtos = (await admin.get('/products?q=Refrigerante')).json();
+    const refri = (produtos.items ?? produtos).find((x: { name: string }) =>
+      x.name.startsWith('Refrigerante cola'),
+    );
+    const bruto =
+      item!.totalCents -
+      item!.discountCents +
+      item!.freightCents +
+      item!.insuranceCents +
+      item!.otherCents +
+      item!.stCents +
+      item!.ipiCents;
+    // 10 caixas × 6 = 60 unidades.
+    expect(refri.costCents).toBe(Math.round((bruto - creditos) / 60));
+    expect(refri.costCents).toBeLessThan(Math.round(bruto / 60));
   });
 });

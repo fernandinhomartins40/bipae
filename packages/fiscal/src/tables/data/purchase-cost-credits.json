@@ -1,0 +1,32 @@
+{
+  "source": "RIR/2018 (Decreto 9.580/2018), art. 301, §§ 1º e 3º (site do Planalto); NBC TG 16 do Conselho Federal de Contabilidade, item 11 (tributos 'exceto os recuperáveis perante o fisco'); LC 123/2006, art. 23 (Simples Nacional não apropria nem transfere créditos); Leis 10.637/2002 e 10.833/2003, art. 3º (créditos do PIS e da COFINS não cumulativos, Lucro Real); Lei 9.718/1998 (PIS e COFINS cumulativos, Lucro Presumido, sem crédito). Conferido em 16/10/2026 (dúvida D-024).",
+  "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/decreto/d9580.htm",
+  "checkedAt": "2026-10-16",
+  "regimes": [
+    {
+      "regime": "mei",
+      "recoverable": [],
+      "note": "MEI recolhe valor fixo no SIMEI: nenhum tributo da compra é recuperável."
+    },
+    {
+      "regime": "simples",
+      "recoverable": [],
+      "note": "Simples Nacional não aproveita crédito de ICMS, PIS e COFINS da compra (LC 123/2006, art. 23)."
+    },
+    {
+      "regime": "simples-excesso",
+      "recoverable": ["icms"],
+      "note": "Acima do sublimite o ICMS sai do Simples e segue o regime normal, com crédito (LC 123/2006, art. 13-A); PIS e COFINS continuam no DAS, sem crédito."
+    },
+    {
+      "regime": "presumido",
+      "recoverable": ["icms"],
+      "note": "ICMS destacado na compra é crédito; PIS e COFINS cumulativos (Lei 9.718/1998) não geram crédito."
+    },
+    {
+      "regime": "real",
+      "recoverable": ["icms", "pis", "cofins"],
+      "note": "ICMS destacado é crédito; PIS e COFINS não cumulativos (Leis 10.637/2002 e 10.833/2003, art. 3º) também."
+    }
+  ]
+}

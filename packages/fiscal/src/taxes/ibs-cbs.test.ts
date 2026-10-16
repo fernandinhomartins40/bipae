@@ -13,7 +13,13 @@ const CESTA_BASICA = '200003';
  * Para os anos sem alíquota publicada, os casos usam números de EXEMPLO (marcados no nome), só
  * para provar que o motor troca de regra na data certa. Não são previsão de alíquota.
  */
-const exemplo = (inicio: string, fim: string | undefined, cbs: string, estadual: string, municipal: string): ReferenceRate[] =>
+const exemplo = (
+  inicio: string,
+  fim: string | undefined,
+  cbs: string,
+  estadual: string,
+  municipal: string,
+): ReferenceRate[] =>
   (
     [
       ['CBS', 'federal', cbs],
@@ -45,7 +51,12 @@ describe('IBS e CBS em 2026 (ano de teste, alíquotas da lei)', () => {
   it('tributação integral: CBS de 0,9% e IBS de 0,1%', () => {
     const r = calculateIbsCbs({ cClassTrib: INTEGRAL, date: '2026-06-15', operationCents: 10_000 });
     expect(r).toMatchObject({ cst: '000', cClassTrib: INTEGRAL, taxed: true, baseCents: 10_000 });
-    expect(r.cbs).toMatchObject({ rate: '0.9000', reduction: '0.00', effectiveRate: '0.9000', amountCents: 90 });
+    expect(r.cbs).toMatchObject({
+      rate: '0.9000',
+      reduction: '0.00',
+      effectiveRate: '0.9000',
+      amountCents: 90,
+    });
     expect(r.ibsState).toMatchObject({ rate: '0.1000', amountCents: 10 });
     expect(r.ibsMunicipal).toMatchObject({ rate: '0.0000', amountCents: 0 });
     expect(r.ibsAmountCents).toBe(10);
@@ -66,18 +77,37 @@ describe('IBS e CBS em 2026 (ano de teste, alíquotas da lei)', () => {
     expect(r.ibsAmountCents).toBe(8);
     const passos = r.trace.map((s) => s.label);
     expect(passos).toContain('ICMS fora da base (LC 214/2025, art. 12, § 2º, V)');
-    expect(r.trace.find((s) => s.label.startsWith('COFINS fora'))).toMatchObject({ formula: '81.35 − 3.00', value: '78.35' });
+    expect(r.trace.find((s) => s.label.startsWith('COFINS fora'))).toMatchObject({
+      formula: '81.35 − 3.00',
+      value: '78.35',
+    });
   });
 
   it('alíquota reduzida a zero (cesta básica): há grupo de valores, mas o tributo é zero', () => {
-    const r = calculateIbsCbs({ cClassTrib: CESTA_BASICA, date: '2026-06-15', operationCents: 10_000 });
-    expect(r).toMatchObject({ cst: '200', taxed: true, baseCents: 10_000, ibsAmountCents: 0, cbsAmountCents: 0 });
+    const r = calculateIbsCbs({
+      cClassTrib: CESTA_BASICA,
+      date: '2026-06-15',
+      operationCents: 10_000,
+    });
+    expect(r).toMatchObject({
+      cst: '200',
+      taxed: true,
+      baseCents: 10_000,
+      ibsAmountCents: 0,
+      cbsAmountCents: 0,
+    });
     expect(r.cbs).toMatchObject({ rate: '0.9000', reduction: '100.00', effectiveRate: '0.0000' });
   });
 
   it('redução de 60% da tabela oficial', () => {
-    const reduzida = CLASS_TRIBS.find((c) => c.cst === '200' && c.pRedIBS === '60' && c.pRedCBS === '60')!;
-    const r = calculateIbsCbs({ cClassTrib: reduzida.cClassTrib, date: '2026-06-15', operationCents: 100_000 });
+    const reduzida = CLASS_TRIBS.find(
+      (c) => c.cst === '200' && c.pRedIBS === '60' && c.pRedCBS === '60',
+    )!;
+    const r = calculateIbsCbs({
+      cClassTrib: reduzida.cClassTrib,
+      date: '2026-06-15',
+      operationCents: 100_000,
+    });
     // CBS: 0,9% × 0,4 = 0,36% de 1.000,00 = 3,60. IBS: 0,1% × 0,4 = 0,04% = 0,40.
     expect(r.cbs).toMatchObject({ effectiveRate: '0.3600', amountCents: 360 });
     expect(r.ibsState).toMatchObject({ effectiveRate: '0.0400', amountCents: 40 });
@@ -86,8 +116,19 @@ describe('IBS e CBS em 2026 (ano de teste, alíquotas da lei)', () => {
 
   it('imunidade e isenção: nada a calcular', () => {
     const imune = CLASS_TRIBS.find((c) => c.cst === '410')!;
-    const r = calculateIbsCbs({ cClassTrib: imune.cClassTrib, date: '2026-06-15', operationCents: 10_000 });
-    expect(r).toMatchObject({ cst: '410', taxed: false, baseCents: 0, cbs: null, ibsState: null, ibsAmountCents: 0 });
+    const r = calculateIbsCbs({
+      cClassTrib: imune.cClassTrib,
+      date: '2026-06-15',
+      operationCents: 10_000,
+    });
+    expect(r).toMatchObject({
+      cst: '410',
+      taxed: false,
+      baseCents: 0,
+      cbs: null,
+      ibsState: null,
+      ibsAmountCents: 0,
+    });
     expect(r.trace.at(-1)!.label).toBe('Sem IBS e CBS a calcular nesta situação');
   });
 
@@ -104,13 +145,20 @@ describe('IBS e CBS de 2027 em diante', () => {
   it('2027 sem alíquota publicada da CBS: o cálculo fica bloqueado, com explicação', () => {
     const entrada = { cClassTrib: INTEGRAL, date: '2027-03-01', operationCents: 10_000 };
     expect(() => calculateIbsCbs(entrada)).toThrow(MissingRateError);
-    expect(() => calculateIbsCbs(entrada)).toThrow('A alíquota da CBS para 2027 ainda não está na tabela');
+    expect(() => calculateIbsCbs(entrada)).toThrow(
+      'A alíquota da CBS para 2027 ainda não está na tabela',
+    );
   });
 
   it('2029 sem alíquota do IBS: também bloqueia, dizendo qual falta', () => {
     const soCbs = TABELA_DE_EXEMPLO.filter((r) => r.tax === 'CBS');
     expect(() =>
-      calculateIbsCbs({ cClassTrib: INTEGRAL, date: '2029-03-01', operationCents: 10_000, rates: soCbs }),
+      calculateIbsCbs({
+        cClassTrib: INTEGRAL,
+        date: '2029-03-01',
+        operationCents: 10_000,
+        rates: soCbs,
+      }),
     ).toThrow('A alíquota estadual do IBS para 2029 ainda não está na tabela');
   });
 
@@ -123,7 +171,11 @@ describe('IBS e CBS de 2027 em diante', () => {
       rates: TABELA_DE_EXEMPLO,
     });
     expect(r.baseCents).toBe(8200);
-    expect(r.ibsState).toMatchObject({ rate: '0.0500', amountCents: 4, source: 'LC 214/2025, art. 344' });
+    expect(r.ibsState).toMatchObject({
+      rate: '0.0500',
+      amountCents: 4,
+      source: 'LC 214/2025, art. 344',
+    });
     expect(r.ibsMunicipal).toMatchObject({ rate: '0.0500', amountCents: 4 });
     expect(r.ibsAmountCents).toBe(8);
     // 82,00 × 8,7% = 7,134
@@ -131,7 +183,12 @@ describe('IBS e CBS de 2027 em diante', () => {
   });
 
   it('o Imposto Seletivo entra na base a partir de 2027, não antes', () => {
-    const entrada = { cClassTrib: INTEGRAL, operationCents: 10_000, taxes: { IS: 500 }, rates: TABELA_DE_EXEMPLO };
+    const entrada = {
+      cClassTrib: INTEGRAL,
+      operationCents: 10_000,
+      taxes: { IS: 500 },
+      rates: TABELA_DE_EXEMPLO,
+    };
     expect(calculateIbsCbs({ ...entrada, date: '2026-12-31' }).baseCents).toBe(10_000);
     const em2027 = calculateIbsCbs({ ...entrada, date: '2027-01-01' });
     expect(em2027.baseCents).toBe(10_500);
@@ -187,28 +244,56 @@ describe('IBS e CBS de 2027 em diante', () => {
 describe('IBS e CBS: o que o motor recusa', () => {
   const base = { date: '2026-06-15', operationCents: 10_000 };
 
-  it('classificação inexistente, fora da vigência ou de vigência indefinida', () => {
-    expect(() => calculateIbsCbs({ ...base, cClassTrib: '999999' })).toThrow('não existe na tabela oficial');
-    expect(() => calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, date: '2025-12-31' })).toThrow('fora da vigência');
-    // Códigos publicados com início e fim em 01/01/2026 (dúvida D-016).
-    expect(() => calculateIbsCbs({ ...base, cClassTrib: '220001', date: '2026-01-01' })).toThrow('dúvida D-016');
+  it('classificação inexistente, fora da vigência ou excluída', () => {
+    expect(() => calculateIbsCbs({ ...base, cClassTrib: '999999' })).toThrow(
+      'não existe na tabela oficial',
+    );
+    expect(() => calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, date: '2025-12-31' })).toThrow(
+      'fora da vigência',
+    );
+    // Códigos com início e fim em 01/01/2026 foram excluídos (D-016): nem nesse dia valem.
+    expect(() => calculateIbsCbs({ ...base, cClassTrib: '220001', date: '2026-01-01' })).toThrow(
+      'fora da vigência',
+    );
     expect(() => calculateIbsCbs({ ...base, cClassTrib: '220001' })).toThrow(TaxRuleDataError);
   });
 
   it('situações ainda não calculadas viram aviso claro', () => {
-    for (const cst of ['010', '011', '221', '222', '510', '515', '550', '620', '800', '810', '811', '830']) {
+    for (const cst of [
+      '010',
+      '011',
+      '221',
+      '222',
+      '510',
+      '515',
+      '550',
+      '620',
+      '800',
+      '810',
+      '811',
+      '830',
+    ]) {
       const item = CLASS_TRIBS.find((c) => c.cst === cst && c.end === undefined)!;
-      expect(() => calculateIbsCbs({ ...base, cClassTrib: item.cClassTrib }), cst).toThrow(UnsupportedTaxSituationError);
+      expect(() => calculateIbsCbs({ ...base, cClassTrib: item.cClassTrib }), cst).toThrow(
+        UnsupportedTaxSituationError,
+      );
     }
   });
 
   it('entrada inválida e tabela de alíquotas incoerente', () => {
-    expect(() => calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, operationCents: -1 })).toThrow('Valor da operação inválida');
-    expect(() => calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, taxes: { ICMS: -1 } })).toThrow('Valor de ICMS inválida');
-    expect(() => calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, taxes: { ICMS: 20_000 } })).toThrow(
-      'somam mais que o valor da operação',
+    expect(() => calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, operationCents: -1 })).toThrow(
+      'Valor da operação inválida',
     );
-    const duplicada = [...REFERENCE_RATES, { ...REFERENCE_RATES.find((r) => r.tax === 'CBS')!, id: 'cbs-repetida' }];
+    expect(() => calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, taxes: { ICMS: -1 } })).toThrow(
+      'Valor de ICMS inválida',
+    );
+    expect(() =>
+      calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, taxes: { ICMS: 20_000 } }),
+    ).toThrow('somam mais que o valor da operação');
+    const duplicada = [
+      ...REFERENCE_RATES,
+      { ...REFERENCE_RATES.find((r) => r.tax === 'CBS')!, id: 'cbs-repetida' },
+    ];
     expect(() => calculateIbsCbs({ ...base, cClassTrib: INTEGRAL, rates: duplicada })).toThrow(
       'mais de uma alíquota em vigor para o mesmo ente',
     );
@@ -218,23 +303,49 @@ describe('IBS e CBS: o que o motor recusa', () => {
 describe('Imposto Seletivo', () => {
   it('alíquota percentual', () => {
     const r = calculateIs({ rate: '10' }, { baseCents: 10_000 });
-    expect(r).toMatchObject({ baseCents: 10_000, rate: '10.00', amountCents: 1000, quantity: null });
-    expect(r.trace.at(-1)).toMatchObject({ label: 'IS a 10.00%', formula: '100.00 × 10.00%', value: '10.00' });
+    expect(r).toMatchObject({
+      baseCents: 10_000,
+      rate: '10.00',
+      amountCents: 1000,
+      quantity: null,
+    });
+    expect(r.trace.at(-1)).toMatchObject({
+      label: 'IS a 10.00%',
+      formula: '100.00 × 10.00%',
+      value: '10.00',
+    });
   });
 
   it('valor por unidade, sozinho ou somado ao percentual', () => {
-    const porUnidade = calculateIs({ amountPerUnit: '0.2500' }, { baseCents: 10_000, quantity: '12' });
-    expect(porUnidade).toMatchObject({ rate: null, quantity: '12.0000', amountPerUnit: '0.2500', amountCents: 300 });
-    const misto = calculateIs({ rate: '10', amountPerUnit: '0.25' }, { baseCents: 10_000, quantity: '12' });
+    const porUnidade = calculateIs(
+      { amountPerUnit: '0.2500' },
+      { baseCents: 10_000, quantity: '12' },
+    );
+    expect(porUnidade).toMatchObject({
+      rate: null,
+      quantity: '12.0000',
+      amountPerUnit: '0.2500',
+      amountCents: 300,
+    });
+    const misto = calculateIs(
+      { rate: '10', amountPerUnit: '0.25' },
+      { baseCents: 10_000, quantity: '12' },
+    );
     expect(misto.amountCents).toBe(1300);
-    expect(calculateIs({ rate: '1', rounding: 'truncate' }, { baseCents: 250 }).amountCents).toBe(2);
+    expect(calculateIs({ rate: '1', rounding: 'truncate' }, { baseCents: 250 }).amountCents).toBe(
+      2,
+    );
   });
 
   it('recusa regra sem alíquota e entrada inválida', () => {
     expect(() => calculateIs({}, { baseCents: 100 })).toThrow('informe a alíquota percentual');
     expect(() => calculateIs({ rate: '-1' }, { baseCents: 100 })).toThrow('alíquota negativa');
-    expect(() => calculateIs({ amountPerUnit: '1' }, { baseCents: 100 })).toThrow('informe a quantidade');
-    expect(() => calculateIs({ amountPerUnit: '1' }, { baseCents: 100, quantity: '-1' })).toThrow('não podem ser negativos');
+    expect(() => calculateIs({ amountPerUnit: '1' }, { baseCents: 100 })).toThrow(
+      'informe a quantidade',
+    );
+    expect(() => calculateIs({ amountPerUnit: '1' }, { baseCents: 100, quantity: '-1' })).toThrow(
+      'não podem ser negativos',
+    );
     expect(() => calculateIs({ rate: '1' }, { baseCents: -1 })).toThrow('Base de cálculo inválida');
   });
 });

@@ -16,6 +16,7 @@ import {
   type PurchaseNfe,
 } from '@bipae/fiscal';
 import { ICP_BRASIL_CERTIFICATES } from '@bipae/fiscal/icp-brasil';
+import { recoverableTaxes } from '@bipae/fiscal/tables';
 import { DOMParser } from '@xmldom/xmldom';
 import { desc, eq, inArray } from 'drizzle-orm';
 import { SignedXml } from 'xml-crypto';
@@ -270,6 +271,8 @@ export class PurchasesService {
       if (!store || store.companyId !== company.id) throw notFound('Loja desta empresa');
       assertStore(ctx, store.id);
       const decisions = new Map(input.items.map((d) => [d.line, d]));
+      // Créditos recuperáveis do regime da empresa saem do custo (RIR/2018, art. 301, § 3º; D-024).
+      const recoverable = recoverableTaxes(company.taxRegime);
       for (const item of nfe.items) {
         if (!decisions.has(item.line))
           throw new AppError(
@@ -315,7 +318,7 @@ export class PurchasesService {
       for (const item of nfe.items) {
         const decision = decisions.get(item.line)!;
         const factor = decision.factor;
-        const unitCostCents = purchaseUnitCostCents(item, factor);
+        const unitCostCents = purchaseUnitCostCents(item, factor, recoverable);
         const quantityMilli = purchaseStockMilli(item, factor);
         let productId = decision.productId;
         let created = false;

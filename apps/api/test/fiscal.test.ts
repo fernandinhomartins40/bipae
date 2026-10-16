@@ -81,7 +81,7 @@ describe('consulta às tabelas fiscais', () => {
     expect(codigos(opcoes.csosn)).toContain('102');
     expect(codigos(opcoes.cstIcms)).toContain('00');
     expect(codigos(opcoes.classTrib)).toContain('000001');
-    // Os códigos de vigência indefinida (dúvida D-016) não são oferecidos.
+    // Os códigos excluídos da tabela oficial (início igual ao fim, D-016) não são oferecidos.
     expect(codigos(opcoes.classTrib)).not.toContain('220001');
     expect(opcoes.sources.cfop.title).toContain('CFOP');
   });
