@@ -122,6 +122,9 @@ export const LOCAL_MIGRATIONS: string[] = [
   );
   CREATE INDEX tabs_status ON tabs (status);
   `,
+  /* 8 — F5-08: pedidos do garçom já juntados à comanda (cada um entra uma vez só) */ `
+  CREATE TABLE applied_tab_orders (id TEXT PRIMARY KEY, applied_at TEXT NOT NULL);
+  `,
 ];
 
 /**

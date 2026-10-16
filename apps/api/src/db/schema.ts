@@ -1090,3 +1090,25 @@ export const kitchenTickets = pgTable('kitchen_tickets', {
   readyAt: ts('ready_at'),
   deliveredAt: ts('delivered_at'),
 });
+
+// ---------------------------------------------------------------- pedidos do garçom (0039)
+
+/** Pedido do garçom (F5-08), à espera de um caixa da loja para entrar na comanda. */
+export const tabOrders = pgTable('tab_orders', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  label: text('label').notNull(),
+  items: jsonb('items').$type<{ productId: string; quantityMilli: number }[]>().notNull(),
+  waiterId: uuid('waiter_id').notNull(),
+  waiterName: text('waiter_name').notNull(),
+  status: text('status', { enum: ['pending', 'received', 'rejected'] })
+    .notNull()
+    .default('pending'),
+  claimedBy: uuid('claimed_by'),
+  claimedAt: ts('claimed_at'),
+  tabId: uuid('tab_id'),
+  reason: text('reason'),
+  receivedAt: ts('received_at'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});

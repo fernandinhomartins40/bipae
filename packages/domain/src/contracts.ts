@@ -1650,3 +1650,33 @@ export interface KitchenTicketView {
   readyAt: string | null;
   deliveredAt: string | null;
 }
+
+// ---------- Pedidos do garçom (F5-08) ----------
+
+export const tabOrderInput = z.object({
+  storeId: z.string().uuid('Escolha a loja'),
+  label: z.string().trim().min(1, 'Informe a mesa ou a comanda').max(30, 'Até 30 letras'),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid(),
+        quantityMilli: z.number().int().positive('Quantidade inválida').max(1_000_000),
+      }),
+    )
+    .min(1, 'Escolha pelo menos um item')
+    .max(100),
+});
+export type TabOrderInput = z.input<typeof tabOrderInput>;
+
+export interface TabOrderView {
+  id: string;
+  storeId: string;
+  label: string;
+  items: { productId: string; name: string; quantityMilli: number }[];
+  waiterName: string;
+  /** pending: esperando o caixa; received: na comanda; rejected: o caixa não conseguiu. */
+  status: 'pending' | 'received' | 'rejected';
+  reason: string | null;
+  createdAt: string;
+  receivedAt: string | null;
+}

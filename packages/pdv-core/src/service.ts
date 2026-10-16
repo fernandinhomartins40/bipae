@@ -9,6 +9,7 @@ import {
   type SaleItem,
   type SalePayment,
   type SyncPullResult,
+  type TabOrderForTerminal,
   type TerminalEvent,
 } from '@bipae/domain';
 import {
@@ -21,6 +22,7 @@ import {
 import type { Promotion } from '@bipae/promotions';
 import { getMeta, searchKey, setMeta, type LocalStorage, type Tx } from '@bipae/local-db';
 import {
+  addItem,
   discountNeedsAuthorization,
   EMPTY_CART,
   totals,
@@ -996,6 +998,82 @@ export class PdvService {
       quantityMilli: l.quantityMilli,
       unitPriceCents: l.unitPriceCents,
     }));
+  }
+
+  /**
+   * Pedidos do garçom (F5-08): cada um entra na comanda aberta com o mesmo nome (ou abre uma
+   * nova), na mesma transação que marca o pedido como recebido. Pedido já juntado não entra de
+   * novo, mesmo que o servidor o mande outra vez antes de saber que chegou.
+   */
+  async applyTabOrders(orders: TabOrderForTerminal[]): Promise<void> {
+    for (const order of orders) {
+      const [done] = await this.storage.query<Row>(
+        'SELECT id FROM applied_tab_orders WHERE id = ?',
+        [order.id],
+      );
+      if (done) continue;
+      const table = (await this.activePriceTable(null))?.id ?? null;
+      const missing: string[] = [];
+      const lines: { product: CatalogProduct; quantityMilli: number }[] = [];
+      for (const item of order.items) {
+        const [row] = await this.storage.query<Row>(
+          `${this.productSelect} WHERE p.id = ? AND p.active = 1 LIMIT 1`,
+          [table, item.productId],
+        );
+        if (row) lines.push({ product: toProduct(row), quantityMilli: item.quantityMilli });
+        else missing.push(item.productId);
+      }
+      const label = order.label.trim().slice(0, 30);
+      await this.storage.transaction(async (tx) => {
+        await tx.execute('INSERT INTO applied_tab_orders (id, applied_at) VALUES (?, ?)', [
+          order.id,
+          this.now().toISOString(),
+        ]);
+        if (missing.length > 0 || lines.length === 0 || !label) {
+          await this.enqueue(tx, 'tab.order_received', {
+            orderId: order.id,
+            tabId: null,
+            rejected: 'Produto do pedido não está no caixa (inativo ou ainda não sincronizado).',
+          });
+          return;
+        }
+        const at = this.now().toISOString();
+        const [open] = await tx.query<Row>(
+          "SELECT id, label, data FROM tabs WHERE status = 'open' AND lower(label) = lower(?)",
+          [label],
+        );
+        let cart: Cart;
+        if (open) {
+          cart = { ...(JSON.parse(open.data as string) as Cart), tabId: open.id as string };
+        } else {
+          const id = this.newId();
+          cart = { ...EMPTY_CART, tabId: id, tabLabel: label };
+          await tx.execute(
+            "INSERT INTO tabs (id, label, opened_at, updated_at, status, data) VALUES (?, ?, ?, ?, 'open', ?)",
+            [id, label, at, at, JSON.stringify(cart)],
+          );
+          await this.enqueue(tx, 'tab.opened', { tabId: id, label, openedAt: at });
+        }
+        for (const line of lines) cart = addItem(cart, line.product, line.quantityMilli);
+        const tabLabel = (open?.label as string | undefined) ?? label;
+        await tx.execute('UPDATE tabs SET data = ?, updated_at = ? WHERE id = ?', [
+          JSON.stringify({ ...cart, tabLabel }),
+          at,
+          cart.tabId,
+        ]);
+        await this.enqueue(tx, 'tab.updated', {
+          tabId: cart.tabId!,
+          label: tabLabel,
+          items: this.tabItems(cart),
+          totalCents: totals(cart).totalCents,
+        });
+        await this.enqueue(tx, 'tab.order_received', {
+          orderId: order.id,
+          tabId: cart.tabId!,
+          rejected: null,
+        });
+      });
+    }
   }
 
   /** Abre uma comanda pela mesa ou pelo número. Não pode haver duas abertas com o mesmo nome. */

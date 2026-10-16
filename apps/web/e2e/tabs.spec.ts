@@ -161,3 +161,65 @@ test('cozinha: o prato lançado na comanda aparece, fica pronto e é entregue (F
   await expect(page.getByText('Nenhum pedido na cozinha')).toBeVisible();
   await expect(page.getByText('entregue(s) na última meia hora.')).toBeVisible();
 });
+
+test('garçom: o pedido do celular entra na comanda do caixa (F5-08)', async ({ page, context }) => {
+  const email = `lia-garcom-${Date.now()}@exemplo.com.br`;
+  const api = await request.newContext({ baseURL: 'http://localhost:3334/v1/' });
+  const conta = await (
+    await api.post('auth/signup', {
+      data: {
+        ownerName: 'Lia Dona',
+        businessName: `Restaurante ${Date.now()}`,
+        email,
+        password: 'senha-forte-123',
+      },
+    })
+  ).json();
+  const headers = { authorization: `Bearer ${conta.accessToken}` };
+  await api.post('products', {
+    headers,
+    data: { name: 'Suco de laranja', priceCents: 900, barcodes: ['7891000100103'] },
+  });
+
+  // O caixa aberto no computador.
+  await page.goto('/entrar');
+  await page.getByLabel('E-mail').fill(email);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Entrar' }).click();
+  await page.getByRole('link', { name: 'Abrir o caixa' }).click();
+  await page.getByLabel('Novo caixa').fill('Salão');
+  await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByLabel('Dinheiro na gaveta para troco (R$)').fill('0');
+  await page.getByRole('button', { name: 'Abrir caixa' }).click();
+  await expect(page.getByText('Caixa livre')).toBeVisible();
+
+  // O garçom no celular.
+  const celular = await context.newPage();
+  await celular.setViewportSize({ width: 390, height: 844 });
+  await celular.goto('/garcom');
+  await celular.getByLabel('Mesa ou comanda').fill('Mesa 3');
+  await celular.getByLabel('Buscar produto').fill('suco');
+  await celular
+    .getByRole('list', { name: 'Produtos encontrados' })
+    .getByText('Suco de laranja')
+    .click();
+  await celular.getByRole('button', { name: 'Mais Suco de laranja' }).click();
+  await celular.getByRole('button', { name: /Mandar pedido · R\$ 18,00/ }).click();
+  await expect(celular.getByText('Pedido da Mesa 3 enviado.')).toBeVisible();
+  const hoje = celular.getByRole('region', { name: 'Pedidos de hoje' });
+  await expect(hoje).toContainText('Esperando o caixa');
+
+  // O caixa sincroniza e a comanda da Mesa 3 aparece com o suco.
+  await expect(async () => {
+    await page.getByTestId('sync-status').click();
+    const pedidos = await (await api.get('tabs/orders', { headers })).json();
+    expect(pedidos[0]?.status).toBe('received');
+  }).toPass({ timeout: 45_000 });
+  await expect(hoje).toContainText('Na comanda', { timeout: 15_000 });
+  await page.getByRole('button', { name: 'Comandas' }).click();
+  const mesa = page.getByRole('list', { name: 'Comandas abertas' }).getByRole('listitem');
+  await expect(mesa.filter({ hasText: 'Mesa 3' })).toContainText('R$ 18,00');
+});

@@ -119,6 +119,8 @@ export class SyncClient {
         fiscalVersion = page.fiscal.version;
         await setMeta(this.storage, FISCAL_KEY, fiscalVersion);
       }
+      // Pedidos do garçom (F5-08): entram nas comandas deste caixa.
+      if (page.tabOrders?.length) await this.pdv.applyTabOrders(page.tabOrders);
       if (page.cursor) {
         cursor = page.cursor;
         await setMeta(this.storage, CURSOR_KEY, cursor);

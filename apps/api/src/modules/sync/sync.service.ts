@@ -47,6 +47,7 @@ import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import { KitchenService } from '../sales/kitchen.service';
+import { TabOrdersService } from '../sales/tab-orders.service';
 import {
   cancelCreditReceivable,
   createCreditReceivable,
@@ -73,6 +74,7 @@ export class SyncService {
     @Inject(NfceEmissionService) private readonly emission: NfceEmissionService,
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
     @Inject(KitchenService) private readonly kitchen: KitchenService,
+    @Inject(TabOrdersService) private readonly tabOrders: TabOrdersService,
   ) {}
 
   /**
@@ -218,6 +220,11 @@ export class SyncService {
             updatedAt: at,
           })
           .where(eq(tabs.id, tab.id));
+        return;
+      }
+      // Pedido do garçom (F5-08): o caixa juntou à comanda, ou não conseguiu.
+      case 'tab.order_received': {
+        await this.tabOrders.received(tx, event.payload, at);
         return;
       }
       case 'tab.closed': {
@@ -739,6 +746,10 @@ export class SyncService {
         hasMore: rows.length > limit,
         ...(await this.pricing(tx, ctx.terminalId, pricingVersion)),
         ...(await this.fiscal(tx, ctx.terminalId, fiscalVersion)),
+        // Pedidos do garçom só na última página: o caixa já tem o catálogo inteiro.
+        ...(rows.length <= limit && {
+          tabOrders: await this.tabOrders.forTerminal(tx, ctx.terminalId),
+        }),
         products: page.map((p) => ({
           id: p.id,
           name: p.name,

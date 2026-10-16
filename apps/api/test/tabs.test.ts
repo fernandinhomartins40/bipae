@@ -164,3 +164,102 @@ describe('tela da cozinha (F5-09)', () => {
     expect(final.map((x: { status: string }) => x.status)).toEqual(['delivered']);
   });
 });
+
+describe('pedidos do garçom (F5-08)', () => {
+  it('o celular manda o pedido; o caixa junta à comanda na sincronização, uma vez só', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [store] = (await admin.get('/stores')).json();
+    const cerveja = (
+      await admin.post('/products', {
+        name: 'Cerveja 600 ml',
+        priceCents: 1200,
+        barcodes: ['7891149101009'],
+      })
+    ).json();
+    const porcao = (
+      await admin.post('/products', {
+        name: 'Porção de fritas',
+        priceCents: 3500,
+        barcodes: ['7891000053508'],
+        kitchen: true,
+      })
+    ).json();
+    const caixa = (
+      await admin.post('/terminals', { storeId: store.id, name: 'Bar', platform: 'web' })
+    ).json();
+    const storage = createStorage(nodeSqliteDriver());
+    await migrateLocal(storage);
+    const pdv = new PdvService(storage, { terminalId: caixa.id, operatorId: dono.me.user.id });
+    const sync = new SyncClient(storage, pdv, transport(dono.auth, caixa.id), caixa.id);
+    await sync.sync();
+    await pdv.openSession(0);
+    // A Mesa 1 já está aberta no caixa com uma cerveja.
+    const mesa1 = await pdv.openTab('Mesa 1');
+    await pdv.saveTab(addItem(mesa1, (await pdv.findByCode('7891149101009'))!, 1000));
+
+    const pedido = async (label: string, items: { productId: string; quantityMilli: number }[]) =>
+      admin.post('/tabs/orders', { storeId: store.id, label, items });
+    const a = await pedido('mesa 1', [{ productId: porcao.id, quantityMilli: 1000 }]);
+    expect(a.statusCode).toBe(201);
+    expect(a.json()).toMatchObject({
+      status: 'pending',
+      label: 'mesa 1',
+      items: [{ name: 'Porção de fritas', quantityMilli: 1000 }],
+    });
+    await pedido('Mesa 6', [{ productId: cerveja.id, quantityMilli: 2000 }]);
+
+    // Primeira sincronização: o caixa pega e junta; a segunda manda as comandas de volta.
+    await sync.sync();
+    await sync.sync();
+    const comandas = (await pdv.listTabs()).map((x) => [x.label, x.items, x.totalCents]);
+    expect(comandas).toEqual([
+      ['Mesa 1', 2, 4700],
+      ['Mesa 6', 1, 2400],
+    ]);
+    const pedidos = (await admin.get('/tabs/orders')).json();
+    expect(pedidos.map((p: { status: string }) => p.status)).toEqual(['received', 'received']);
+    expect((await admin.get('/tabs')).json().map((x: { label: string }) => x.label)).toEqual([
+      'Mesa 1',
+      'Mesa 6',
+    ]);
+    // A porção foi para a cozinha.
+    const fila = (await admin.get('/kitchen/tickets')).json();
+    expect(fila).toEqual([
+      expect.objectContaining({ tabLabel: 'Mesa 1', name: 'Porção de fritas' }),
+    ]);
+
+    // O mesmo pedido de novo (o servidor reenviou antes de saber): não duplica.
+    await pdv.applyTabOrders([
+      {
+        id: a.json().id,
+        label: 'mesa 1',
+        items: [{ productId: porcao.id, quantityMilli: 1000 }],
+        waiterName: 'Dono',
+      },
+    ]);
+    expect((await pdv.listTabs())[0]!.items).toBe(2);
+
+    // Produto que o caixa não tem: o pedido volta recusado com o motivo.
+    const fantasma = '0192a000-0000-7000-8000-00000000f00d';
+    await pdv.applyTabOrders([
+      {
+        id: '0192a000-0000-7000-8000-00000000beef',
+        label: 'Mesa 7',
+        items: [{ productId: fantasma, quantityMilli: 1000 }],
+        waiterName: 'Dono',
+      },
+    ]);
+    const eventos = await pdv.pendingEvents();
+    expect(eventos.find((e) => e.type === 'tab.order_received')?.payload).toMatchObject({
+      tabId: null,
+      rejected: expect.stringContaining('não está no caixa'),
+    });
+    expect((await pdv.listTabs()).map((x) => x.label)).not.toContain('Mesa 7');
+
+    // Pedido com produto inexistente nem entra no servidor.
+    expect(
+      (await pedido('Mesa 2', [{ productId: fantasma, quantityMilli: 1000 }])).statusCode,
+    ).toBe(422);
+  });
+});

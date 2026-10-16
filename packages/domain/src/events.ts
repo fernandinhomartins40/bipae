@@ -229,6 +229,17 @@ export const tabClosedEvent = z.object({
   }),
 });
 
+/** O caixa juntou o pedido do garçom à comanda (F5-08), ou não conseguiu, com o motivo. */
+export const tabOrderReceivedEvent = z.object({
+  ...base,
+  type: z.literal('tab.order_received'),
+  payload: z.object({
+    orderId: uuid,
+    tabId: uuid.nullable(),
+    rejected: z.string().max(200).nullable(),
+  }),
+});
+
 export const terminalEvent = z.discriminatedUnion('type', [
   saleCompletedEvent,
   saleCancelledEvent,
@@ -240,6 +251,7 @@ export const terminalEvent = z.discriminatedUnion('type', [
   tabOpenedEvent,
   tabUpdatedEvent,
   tabClosedEvent,
+  tabOrderReceivedEvent,
 ]);
 export type TerminalEvent = z.infer<typeof terminalEvent>;
 export type TerminalEventType = TerminalEvent['type'];
@@ -280,6 +292,15 @@ export interface SyncPullResult {
   pricing?: PricingSnapshot;
   /** Só vem quando os dados fiscais mudaram desde a `fiscalVersion` que o caixa enviou (F3-06). */
   fiscal?: FiscalSnapshot;
+  /** Pedidos do garçom que este caixa pegou para juntar às comandas (F5-08). */
+  tabOrders?: TabOrderForTerminal[];
+}
+
+export interface TabOrderForTerminal {
+  id: string;
+  label: string;
+  items: { productId: string; quantityMilli: number }[];
+  waiterName: string;
 }
 
 /**

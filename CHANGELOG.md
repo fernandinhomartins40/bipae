@@ -1,5 +1,14 @@
 # Changelog
 
+## [F5-08 Garçom no celular] — 16/10/2026
+
+### Adicionado
+- **Nova tela "Garçom"**, feita para o celular. O garçom escolhe a mesa (uma comanda aberta ou uma nova), busca os produtos pelo nome, acerta as quantidades e manda o pedido.
+- **O caixa junta o pedido à comanda da mesa** na sincronização seguinte. Se a mesa ainda não tiver comanda, ele abre uma. Os pratos vão para a cozinha como em qualquer rodada.
+- Cada pedido entra uma vez só, mesmo que chegue de novo. Se o caixa que pegou o pedido sair do ar, outro caixa da loja pega depois de 2 minutos.
+- **O garçom acompanha cada pedido:** esperando o caixa, na comanda ou não entrou (com o motivo).
+- O caixa continua funcionando sem internet. Já o celular precisa de internet para mandar o pedido, e avisa quando não conseguiu.
+
 ## [F5-09 Tela da cozinha] — 16/10/2026
 
 ### Adicionado

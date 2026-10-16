@@ -91,6 +91,7 @@ import { ReportsController, ReportsService } from './modules/reports/reports.ser
 import { LossesController, LossesService } from './modules/reports/losses.service';
 import { TabsController } from './modules/sales/tabs.controller';
 import { KitchenController, KitchenService } from './modules/sales/kitchen.service';
+import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
 import { TransferController, TransferService } from './modules/stock/transfer.service';
 import { LotsController, LotsService } from './modules/stock/lots.service';
@@ -150,6 +151,7 @@ class AppModule {
         LossesController,
         TabsController,
         KitchenController,
+        TabOrdersController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -198,6 +200,7 @@ class AppModule {
         ReportsService,
         LossesService,
         KitchenService,
+        TabOrdersService,
         InventoryService,
         TransferService,
         LotsService,

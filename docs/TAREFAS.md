@@ -272,7 +272,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] F5-07 · Food service: mesas e comandas
   - [x] F5-07.a · Comandas no caixa, sem internet: abrir pela mesa ou pelo número, lançar itens aos poucos, guardar e fechar a conta como venda; cada passo vira evento (tab.opened, tab.updated, tab.closed) e o servidor guarda as comandas para o garçom e a cozinha
   - [x] F5-07.b · Telas das comandas no caixa e na retaguarda (comandas abertas, tempo e valor), divisão da conta por pessoas, com E2E — depende: F5-07.a
-- [ ] F5-08 · App do garçom (celular) — depende: F5-07
+- [x] F5-08 · App do garçom (celular) — depende: F5-07
+  - Feito em 16/10/2026: tela Garçom para o celular; o pedido vai ao servidor e um caixa da loja o junta à comanda na sincronização seguinte (abre a comanda se a mesa não tiver), uma vez só; o celular acompanha se entrou. O caixa continua sem depender de internet; o celular precisa dela para mandar.
 - [x] F5-09 · KDS (tela da cozinha) — depende: F5-07
   - Feito em 16/10/2026: produto marcado "Preparado na cozinha"; cada rodada da comanda manda à cozinha só o que é novo; tela Cozinha com tempo de espera, Pronto e Entregue, atualizada a cada 5 segundos. Comanda cancelada tira da fila o que não ficou pronto.
 - [ ] F5-10 · Delivery com taxa por bairro — depende: F5-07
