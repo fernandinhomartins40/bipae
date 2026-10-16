@@ -1,5 +1,19 @@
 # Changelog
 
+## [F6-08.b Programa de fidelidade] — 16/10/2026
+
+### Adicionado
+- **Programa de pontos na tela "Relacionamento":** a loja escolhe:
+  - quanto de compra vale 1 ponto;
+  - quanto cada ponto vale no caixa;
+  - em quantos meses os pontos vencem;
+  - o mínimo para usar.
+  Mudar o programa fica na auditoria.
+- **Pontos nas compras com CPF ou CNPJ na nota:** a taxa de entrega não conta. Venda cancelada tira os pontos ganhos e devolve os usados, e devolução tira os pontos do valor devolvido.
+- **"Usar pontos" no caixa:** com o CPF na venda, o caixa mostra os pontos do cliente e quanto valem, e transforma em desconto com um toque, mesmo sem internet. Esse desconto não conta no limite de desconto do operador.
+- **Saldo justo:** os pontos que vencem primeiro são usados primeiro. O caixa desconta os pontos que já usou e que ainda não subiram. Se dois caixas sem internet usarem os mesmos pontos, a venda passa normalmente e a diferença fica na auditoria.
+- **Extrato de pontos na ficha do cliente.**
+
 ## [F6-08.a CRM: histórico e segmentos] — 16/10/2026
 
 ### Adicionado

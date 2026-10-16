@@ -56,7 +56,9 @@ describe('chaves da API pública (F6-01.a)', () => {
     expect(interna.json().message).toContain('API pública');
 
     // Chave adulterada, de formato errado ou de outro cliente: 401.
-    expect((await comChave(`${chave.key.slice(0, -1)}A`).get('/public/me')).statusCode).toBe(401);
+    // Troca o último caractere por outro (nunca o mesmo), para a chave ser de fato diferente.
+    const adulterada = `${chave.key.slice(0, -1)}${chave.key.endsWith('A') ? 'B' : 'A'}`;
+    expect((await comChave(adulterada).get('/public/me')).statusCode).toBe(401);
     expect((await comChave('bpk_errada').get('/public/me')).statusCode).toBe(401);
     const outro = await signup(t.app);
     const deOutro = chave.key.replace(

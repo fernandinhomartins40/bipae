@@ -1,3 +1,4 @@
+import type { LoyaltyProgram } from './loyalty';
 import { z } from 'zod';
 import { PAYMENT_METHODS } from './payment-methods';
 import type { PromotionRule } from './contracts';
@@ -128,6 +129,13 @@ export const saleCompletedEvent = z.object({
     promotions: z
       .array(z.object({ promotionId: uuid, name: z.string().max(80), discountCents: cents }))
       .max(50)
+      .optional(),
+    /** Pontos de fidelidade usados como desconto (F6-08.b); o desconto já está nos itens. */
+    loyalty: z
+      .object({
+        points: z.number().int().positive(),
+        discountCents: cents.refine((v) => v > 0),
+      })
       .optional(),
   }),
 });
@@ -405,6 +413,11 @@ export interface PricingSnapshot {
   }[];
   /** Bairros atendidos pela entrega da loja do caixa, com a taxa (F5-10). */
   deliveryZones?: { id: string; name: string; feeCents: number }[];
+  /** Fidelidade (F6-08.b): o programa e o saldo de quem tem pontos. */
+  loyalty?: {
+    program: LoyaltyProgram | null;
+    balances: { taxId: string; points: number }[];
+  };
   /** Promoções ativas (F5-02), no formato do motor @bipae/promotions. */
   promotions?: {
     id: string;

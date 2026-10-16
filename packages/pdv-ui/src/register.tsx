@@ -1,4 +1,4 @@
-import { formatTaxId, type CatalogProduct as CatalogEntry } from '@bipae/domain';
+import { formatTaxId, maxRedeem, type CatalogProduct as CatalogEntry } from '@bipae/domain';
 import {
   addItem,
   buildDanfeNfce,
@@ -26,6 +26,7 @@ import {
   type Session,
   type StoredSale,
   repriceLines,
+  type PdvService,
 } from '@bipae/pdv-core';
 import type { Platform, UpdateInfo } from '@bipae/platform';
 import { describeLastSync, type SyncStatus } from '@bipae/sync';
@@ -320,6 +321,34 @@ export function Register({
     };
   }, [pdv, cart.customerTaxId, syncStatus?.lastSyncAt]);
 
+  // Fidelidade (F6-08.b): os pontos do cliente da venda, do último retrato, sem internet.
+  const [loyalty, setLoyalty] = useState<Awaited<ReturnType<PdvService['loyaltyFor']>> | null>(
+    null,
+  );
+  useEffect(() => {
+    let alive = true;
+    const taxId = cart.customerTaxId;
+    void (taxId ? pdv.loyaltyFor(taxId) : Promise.resolve(null)).then(
+      (l) => alive && setLoyalty(l),
+    );
+    return () => {
+      alive = false;
+    };
+  }, [pdv, cart.customerTaxId, syncStatus?.lastSyncAt, lastSale]);
+  const applyLoyalty = () => {
+    if (!loyalty?.program) return;
+    const base = totals({ ...priced, loyalty: null });
+    const use = maxRedeem(loyalty.points, base.totalCents - base.deliveryFeeCents, loyalty.program);
+    if (use.points === 0) {
+      setMessage({
+        tone: 'warning',
+        text: `Para usar pontos, o mínimo é ${loyalty.program.minRedeemPoints}.`,
+      });
+      return;
+    }
+    setCart((c) => ({ ...c, loyalty: use }));
+  };
+
   /** O CPF/CNPJ na venda muda a tabela de preço: recalcula o que já está no carrinho. */
   const setCustomer = async (taxId: string | null) => {
     try {
@@ -327,7 +356,8 @@ export function Register({
         cartRef.current.lines.map((l) => l.productId),
         taxId,
       );
-      setCart((c) => repriceLines({ ...c, customerTaxId: taxId }, prices));
+      // Os pontos são do cliente: trocar o CPF desfaz o uso.
+      setCart((c) => repriceLines({ ...c, customerTaxId: taxId, loyalty: null }, prices));
     } catch (error) {
       fail(error);
     }
@@ -941,6 +971,33 @@ export function Register({
           )}
           {cart.customerTaxId && (
             <p className="text-sm">CPF/CNPJ na nota: {formatTaxId(cart.customerTaxId)}</p>
+          )}
+          {cart.loyalty ? (
+            <div className="flex items-center justify-between gap-2 text-sm">
+              <span data-testid="loyalty-used">
+                Usando {cart.loyalty.points} pontos: −{brl(t.loyaltyDiscountCents)}
+              </span>
+              <Button variant="ghost" onClick={() => setCart((c) => ({ ...c, loyalty: null }))}>
+                Não usar pontos
+              </Button>
+            </div>
+          ) : (
+            loyalty?.program?.active &&
+            loyalty.points > 0 && (
+              <div className="flex items-center justify-between gap-2 text-sm">
+                <span data-testid="loyalty-points">
+                  {loyalty.points} pontos (valem{' '}
+                  {brl(loyalty.points * loyalty.program.pointValueCents)})
+                </span>
+                <Button
+                  variant="secondary"
+                  onClick={applyLoyalty}
+                  disabled={cart.lines.length === 0}
+                >
+                  Usar pontos
+                </Button>
+              </div>
+            )
           )}
           {priceTable && (
             <p className="text-sm font-semibold text-primary" data-testid="price-table">

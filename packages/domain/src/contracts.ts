@@ -1947,3 +1947,29 @@ export interface CrmCustomerRow {
   lastPurchaseAt: string;
   segment: 'novo' | 'frequente' | 'sumido' | 'ativo';
 }
+
+// ---------- Fidelidade (F6-08.b) ----------
+
+export const loyaltyProgramInput = z.object({
+  active: z.boolean(),
+  centsPerPoint: z.number().int().min(1, 'Informe quanto de compra vale 1 ponto').max(100_000),
+  pointValueCents: z.number().int().min(1, 'Informe quanto vale 1 ponto').max(10_000),
+  expiryMonths: z.number().int().min(1).max(60),
+  minRedeemPoints: z.number().int().min(1).max(1_000_000),
+});
+export type LoyaltyProgramInput = z.input<typeof loyaltyProgramInput>;
+
+export interface LoyaltyStatement {
+  /** Sem CPF/CNPJ no cadastro não há pontos. */
+  hasTaxId: boolean;
+  points: number;
+  /** Quanto os pontos valem hoje, em centavos. */
+  valueCents: number;
+  entries: {
+    kind: 'earn' | 'redeem' | 'reverse_earn' | 'reverse_redeem';
+    points: number;
+    saleId: string | null;
+    createdAt: string;
+    expiresAt: string | null;
+  }[];
+}

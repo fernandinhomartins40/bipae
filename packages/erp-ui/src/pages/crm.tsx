@@ -6,9 +6,21 @@ import {
   type CrmCustomerRow,
   type CrmSegment,
   type CustomerSummary,
+  type LoyaltyProgram,
+  type LoyaltyStatement,
 } from '@bipae/domain';
-import { Alert, Badge, Button, DataTable, EmptyState, PageHeader } from '@bipae/ui';
-import { useQuery } from '@tanstack/react-query';
+import {
+  Alert,
+  Badge,
+  Button,
+  Checkbox,
+  DataTable,
+  EmptyState,
+  MoneyField,
+  PageHeader,
+  TextField,
+} from '@bipae/ui';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Download } from 'lucide-react';
 import { useState } from 'react';
 import { useApp, useCan } from '../context';
@@ -156,6 +168,7 @@ export function CrmPage() {
         }
       />
       {error && <Alert>{error}</Alert>}
+      <LoyaltyProgramCard />
       <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Segmentos">
         <Button variant={segment === null ? 'primary' : 'ghost'} onClick={() => setSegment(null)}>
           Todos
@@ -210,5 +223,142 @@ export function CrmPage() {
         )
       )}
     </>
+  );
+}
+
+const LOYALTY_KIND: Record<LoyaltyStatement['entries'][number]['kind'], string> = {
+  earn: 'Ganhou na compra',
+  redeem: 'Usou no caixa',
+  reverse_earn: 'Estorno (cancelamento ou devolução)',
+  reverse_redeem: 'Pontos devolvidos (venda cancelada)',
+};
+
+/** Pontos de fidelidade do cliente (F6-08.b). */
+export function LoyaltyPanel({ customerId }: { customerId: string }) {
+  const { api } = useApp();
+  const statement = useQuery({
+    queryKey: ['loyalty', customerId],
+    queryFn: () => api.get<LoyaltyStatement>(`/loyalty/customers/${customerId}`),
+  });
+  const s = statement.data;
+  if (!s?.hasTaxId || (s.points === 0 && s.entries.length === 0)) return null;
+  return (
+    <section className="rounded-ui border border-border p-4 text-sm" aria-labelledby="pontos">
+      <h3 id="pontos" className="mb-2 font-semibold">
+        Pontos de fidelidade
+      </h3>
+      <p data-testid="loyalty-balance">
+        <span className="font-semibold">{s.points} pontos</span> (valem {money(s.valueCents)})
+      </p>
+      <ul className="mt-2 flex flex-col gap-1" aria-label="Extrato de pontos">
+        {s.entries.slice(0, 10).map((e, i) => (
+          <li key={i} className="flex justify-between gap-2">
+            <span>
+              {LOYALTY_KIND[e.kind]} · {day(e.createdAt)}
+              {e.expiresAt && e.points > 0 && ` · vence ${day(e.expiresAt)}`}
+            </span>
+            <span className={e.points > 0 ? 'text-success' : 'text-muted'}>
+              {e.points > 0 ? `+${e.points}` : e.points}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** Configuração do programa de pontos (F6-08.b), na tela Relacionamento. */
+export function LoyaltyProgramCard() {
+  const { api } = useApp();
+  const queryClient = useQueryClient();
+  const canEdit = useCan('catalog.price.write');
+  const current = useQuery({
+    queryKey: ['loyalty', 'program'],
+    queryFn: () => api.get<{ program: LoyaltyProgram | null }>('/loyalty/program'),
+  });
+  const [form, setForm] = useState<LoyaltyProgram | null>(null);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const p: LoyaltyProgram = form ??
+    current.data?.program ?? {
+      active: false,
+      centsPerPoint: 100,
+      pointValueCents: 5,
+      expiryMonths: 6,
+      minRedeemPoints: 100,
+    };
+  const set = (patch: Partial<LoyaltyProgram>) => setForm({ ...p, ...patch });
+  const whole = (text: string) => Math.max(0, Math.floor(Number(text.replace(/\D/g, '')) || 0));
+
+  const save = async () => {
+    setBusy(true);
+    setMessage(null);
+    try {
+      await api.put('/loyalty/program', p);
+      await queryClient.invalidateQueries({ queryKey: ['loyalty'] });
+      setForm(null);
+      setMessage({
+        ok: true,
+        text: 'Programa de fidelidade salvo. Os caixas recebem na próxima sincronização.',
+      });
+    } catch (e) {
+      setMessage({ ok: false, text: (e as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (!current.data) return null;
+  return (
+    <section className="mb-6 rounded-ui border border-border p-4" aria-labelledby="fidelidade">
+      <h2 id="fidelidade" className="mb-1 text-lg font-bold">
+        Programa de fidelidade
+      </h2>
+      <p className="mb-3 text-sm text-muted">
+        O cliente ganha pontos nas compras com CPF ou CNPJ na nota e usa no caixa como desconto,
+        mesmo sem internet. Os pontos que vencem primeiro são usados primeiro.
+      </p>
+      {message && (
+        <div className="mb-3">
+          <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
+        </div>
+      )}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <MoneyField
+          label="1 ponto a cada (R$ de compra)"
+          value={p.centsPerPoint}
+          onChange={(v) => set({ centsPerPoint: v ?? 0 })}
+        />
+        <MoneyField
+          label="Cada ponto vale no caixa (R$)"
+          value={p.pointValueCents}
+          onChange={(v) => set({ pointValueCents: v ?? 0 })}
+        />
+        <TextField
+          label="Os pontos vencem em (meses)"
+          inputMode="numeric"
+          value={String(p.expiryMonths)}
+          onChange={(e) => set({ expiryMonths: whole(e.target.value) })}
+        />
+        <TextField
+          label="Mínimo de pontos para usar"
+          inputMode="numeric"
+          value={String(p.minRedeemPoints)}
+          onChange={(e) => set({ minRedeemPoints: whole(e.target.value) })}
+        />
+      </div>
+      <div className="mt-3">
+        <Checkbox
+          label="Programa ligado"
+          checked={p.active}
+          onChange={(active) => set({ active })}
+        />
+      </div>
+      {canEdit && (
+        <Button className="mt-3" loading={busy} onClick={() => void save()}>
+          Salvar programa
+        </Button>
+      )}
+    </section>
   );
 }

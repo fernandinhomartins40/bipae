@@ -42,6 +42,11 @@ export interface Cart {
    */
   promotionDiscounts?: Record<number, number>;
   appliedPromotions?: AppliedPromotionView[];
+  /**
+   * Pontos de fidelidade usados como desconto na venda (F6-08.b). Não conta no limite de
+   * desconto do operador: é o cliente usando o que já ganhou.
+   */
+  loyalty?: { points: number; discountCents: number } | null;
 }
 
 export interface CartDelivery {
@@ -205,6 +210,8 @@ export interface Totals {
   /** Só a parte das promoções (não conta no limite de desconto do operador). */
   promotionDiscountCents: number;
   saleDiscountCents: number;
+  /** Desconto dos pontos de fidelidade (F6-08.b). */
+  loyaltyDiscountCents: number;
   discountCents: number;
   /** Taxa de entrega (F5-10); zero quando não é entrega. */
   deliveryFeeCents: number;
@@ -232,7 +239,9 @@ export function totals(cart: Cart): Totals {
   const base = net.reduce((a, b) => a + b, 0);
   // O desconto na venda foi dado antes das promoções: nunca deixa o total negativo.
   const saleDiscountCents = Math.min(cart.saleDiscountCents, base);
-  const allocation = allocate(saleDiscountCents, net, base);
+  // Os pontos descontam do que sobra, junto com o desconto na venda, rateados nos itens.
+  const loyaltyDiscountCents = Math.min(cart.loyalty?.discountCents ?? 0, base - saleDiscountCents);
+  const allocation = allocate(saleDiscountCents + loyaltyDiscountCents, net, base);
 
   const items: SaleItem[] = cart.lines.map((l, i) => {
     const discountCents = l.discountCents + promo[i]! + allocation[i]!;
@@ -248,12 +257,13 @@ export function totals(cart: Cart): Totals {
       totalCents: grosses[i]! - discountCents,
     };
   });
-  const discountCents = itemDiscountCents + saleDiscountCents;
+  const discountCents = itemDiscountCents + saleDiscountCents + loyaltyDiscountCents;
   return {
     subtotalCents,
     itemDiscountCents,
     promotionDiscountCents,
     saleDiscountCents,
+    loyaltyDiscountCents,
     discountCents,
     deliveryFeeCents: cart.delivery?.feeCents ?? 0,
     totalCents: subtotalCents - discountCents + (cart.delivery?.feeCents ?? 0),
@@ -283,7 +293,8 @@ function allocate(amount: number, weights: number[], total: number): number[] {
  */
 export function discountNeedsAuthorization(cart: Cart, limitPercent: number): boolean {
   const t = totals(cart);
-  const manual = t.discountCents - t.promotionDiscountCents;
+  // Promoção e pontos de fidelidade não são desconto do operador.
+  const manual = t.discountCents - t.promotionDiscountCents - t.loyaltyDiscountCents;
   if (manual === 0) return false;
   return manual > percentOf(t.subtotalCents, limitPercent);
 }

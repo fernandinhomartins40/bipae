@@ -95,6 +95,7 @@ import { ConditionalsController, ConditionalsService } from './modules/sales/con
 import { ApiKeysController, ApiKeysService } from './modules/public-api/api-keys.service';
 import { WebhooksController, WebhooksService } from './modules/public-api/webhooks.service';
 import { CrmController, CrmService } from './modules/crm/crm.service';
+import { LoyaltyController, LoyaltyService } from './modules/crm/loyalty.service';
 import { PublicApiController, PublicDataService } from './modules/public-api/public-api.controller';
 import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
 import { DeliveryController, DeliveryService } from './modules/sales/delivery.service';
@@ -162,6 +163,7 @@ class AppModule {
         ApiKeysController,
         WebhooksController,
         CrmController,
+        LoyaltyController,
         PublicApiController,
         DeliveryController,
         InventoryController,
@@ -217,6 +219,7 @@ class AppModule {
         ApiKeysService,
         WebhooksService,
         CrmService,
+        LoyaltyService,
         PublicDataService,
         DeliveryService,
         InventoryService,

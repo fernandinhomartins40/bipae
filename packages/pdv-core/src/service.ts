@@ -4,6 +4,7 @@ import {
   terminalEvent,
   uuidv7,
   type FiscalSnapshot,
+  type LoyaltyProgram,
   type PaymentMethod,
   type PricingSnapshot,
   type SaleItem,
@@ -351,7 +352,56 @@ export class PdvService {
       // Promoções (F5-02): a lista inteira, no formato do motor.
       await setMeta(tx, 'promotions', JSON.stringify(pricing.promotions ?? []));
       await setMeta(tx, 'delivery_zones', JSON.stringify(pricing.deliveryZones ?? []));
+      await setMeta(tx, 'loyalty', JSON.stringify(pricing.loyalty ?? null));
     });
+  }
+
+  /**
+   * Fidelidade no caixa (F6-08.b): o programa e o saldo do último retrato, menos os pontos que
+   * este caixa já usou em vendas que ainda não subiram. Funciona sem internet.
+   */
+  async loyaltyFor(taxId: string): Promise<{ program: LoyaltyProgram | null; points: number }> {
+    const snapshot = JSON.parse((await getMeta(this.storage, 'loyalty')) || 'null') as
+      PricingSnapshot['loyalty'] | null;
+    const program = snapshot?.program ?? null;
+    if (!program?.active) return { program, points: 0 };
+    const balance = snapshot!.balances.find((b) => b.taxId === taxId)?.points ?? 0;
+    const pending = await this.storage.query<{ payload: string }>(
+      "SELECT payload FROM outbox WHERE sent_at IS NULL AND type = 'sale.completed'",
+    );
+    let used = 0;
+    for (const { payload } of pending) {
+      const sale = (
+        JSON.parse(payload) as {
+          payload: { customerTaxId?: string | null; loyalty?: { points: number } };
+        }
+      ).payload;
+      if (sale.customerTaxId === taxId && sale.loyalty) used += sale.loyalty.points;
+    }
+    return { program, points: Math.max(0, balance - used) };
+  }
+
+  private async assertLoyalty(cart: Cart, appliedCents: number) {
+    const use = cart.loyalty!;
+    if (!cart.customerTaxId) {
+      throw new PdvError('Para usar pontos, informe o CPF ou CNPJ do cliente (F6).');
+    }
+    const { program, points } = await this.loyaltyFor(cart.customerTaxId);
+    if (!program?.active) throw new PdvError('O programa de fidelidade está desligado.');
+    if (use.points > points) {
+      throw new PdvError(`Este cliente tem só ${points} pontos para usar.`);
+    }
+    if (use.points < program.minRedeemPoints) {
+      throw new PdvError(`O mínimo para usar é de ${program.minRedeemPoints} pontos.`);
+    }
+    if (
+      use.discountCents !== use.points * program.pointValueCents ||
+      appliedCents !== use.discountCents
+    ) {
+      throw new PdvError(
+        'O desconto dos pontos não confere com o valor da venda. Use os pontos de novo.',
+      );
+    }
   }
 
   /** Promoções do último retrato de preços (F5-02); vazio antes da primeira sincronização. */
@@ -597,6 +647,7 @@ export class PdvService {
       );
     }
     const t = totals(cart);
+    if (cart.loyalty) await this.assertLoyalty(cart, t.loyaltyDiscountCents);
     const summary = summarizePayments(t.totalCents, tenders);
     if (summary.remainingCents > 0)
       throw new PdvError('Ainda falta receber parte do valor da venda.');
@@ -668,6 +719,7 @@ export class PdvService {
         ...(cart.appliedPromotions?.length && { promotions: cart.appliedPromotions }),
         ...(nfce && { nfce }),
         ...(cart.delivery && { delivery: cart.delivery }),
+        ...(cart.loyalty && { loyalty: cart.loyalty }),
         quoteId: cart.quoteId,
       });
       if (cart.tabId) {

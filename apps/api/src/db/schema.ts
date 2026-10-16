@@ -1238,3 +1238,29 @@ export const webhookDeliveries = pgTable('webhook_deliveries', {
   createdAt: ts('created_at').notNull().defaultNow(),
   deliveredAt: ts('delivered_at'),
 });
+
+// ---------------------------------------------------------------- fidelidade (0047)
+
+/** Programa de pontos do cliente (F6-08.b). */
+export const loyaltyPrograms = pgTable('loyalty_programs', {
+  tenantId: uuid('tenant_id').primaryKey(),
+  active: boolean('active').notNull().default(false),
+  centsPerPoint: integer('cents_per_point').notNull(),
+  pointValueCents: integer('point_value_cents').notNull(),
+  expiryMonths: integer('expiry_months').notNull(),
+  minRedeemPoints: integer('min_redeem_points').notNull(),
+  updatedBy: uuid('updated_by'),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Extrato de pontos de cada consumidor, pelo CPF/CNPJ (F6-08.b). */
+export const loyaltyEntries = pgTable('loyalty_entries', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  customerTaxId: text('customer_tax_id').notNull(),
+  kind: text('kind', { enum: ['earn', 'redeem', 'reverse_earn', 'reverse_redeem'] }).notNull(),
+  points: integer('points').notNull(),
+  saleId: uuid('sale_id'),
+  expiresAt: ts('expires_at'),
+  createdAt: ts('created_at').notNull(),
+});

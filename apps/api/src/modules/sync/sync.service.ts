@@ -50,6 +50,7 @@ import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import { KitchenService } from '../sales/kitchen.service';
 import { TabOrdersService } from '../sales/tab-orders.service';
 import { WebhooksService } from '../public-api/webhooks.service';
+import { LoyaltyService } from '../crm/loyalty.service';
 import {
   cancelCreditReceivable,
   createCreditReceivable,
@@ -78,6 +79,7 @@ export class SyncService {
     @Inject(KitchenService) private readonly kitchen: KitchenService,
     @Inject(TabOrdersService) private readonly tabOrders: TabOrdersService,
     @Inject(WebhooksService) private readonly webhooks: WebhooksService,
+    @Inject(LoyaltyService) private readonly loyalty: LoyaltyService,
   ) {}
 
   /**
@@ -434,6 +436,14 @@ export class SyncService {
             },
           });
         }
+        // Fidelidade (F6-08.b): pontos pelo valor da venda, sem a taxa de entrega.
+        await this.loyalty.onSaleCompleted(tx, actor, {
+          saleId: p.saleId,
+          customerTaxId: p.customerTaxId,
+          totalCents: p.totalCents - (p.delivery?.feeCents ?? 0),
+          at,
+          loyalty: p.loyalty,
+        });
         await this.notify(tx, ctx.tenantId, 'sale.completed', p.saleId, afterCommit);
         return;
       }
@@ -491,6 +501,7 @@ export class SyncService {
             this.fiscalEvents.schedule(ctx.tenantId, event.operatorId, documentId),
           );
         }
+        await this.loyalty.onSaleCancelled(tx, ctx.tenantId, sale.id, at);
         await this.notify(tx, ctx.tenantId, 'sale.cancelled', sale.id, afterCommit);
         return;
       }
@@ -546,6 +557,7 @@ export class SyncService {
           entityId: p.originalSaleId,
           data: { refundCents: p.refundCents, refundMethod: p.refundMethod, reason: p.reason },
         });
+        await this.loyalty.onSaleReturned(tx, ctx.tenantId, p.originalSaleId, p.refundCents, at);
         await this.notify(tx, ctx.tenantId, 'sale.returned', p.returnId, afterCommit);
         return;
       }
@@ -877,6 +889,9 @@ export class SyncService {
           zones?.n,
           wholesale?.last,
           wholesale?.n,
+          // Fidelidade (F6-08.b): o programa e o extrato; o vencimento muda com os dias.
+          await this.loyalty.version(tx),
+          todayInBrazil(),
         ].join('|'),
       )
       .digest('hex')
@@ -981,6 +996,7 @@ export class SyncService {
             },
           })),
         ],
+        loyalty: await this.loyalty.snapshot(tx, new Date()),
       },
     };
   }

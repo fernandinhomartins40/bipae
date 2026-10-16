@@ -24,7 +24,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useDeferredValue, useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
-import { CustomerSummaryPanel } from './crm';
+import { CustomerSummaryPanel, LoyaltyPanel } from './crm';
 import { useForm } from '../forms';
 
 type Kind = 'customer' | 'supplier';
@@ -242,6 +242,7 @@ function PartyForm({
           />
         )}
         {kind === 'customer' && party && <CustomerSummaryPanel customerId={party.id} />}
+        {kind === 'customer' && party && <LoyaltyPanel customerId={party.id} />}
         {kind === 'customer' && party?.taxId && <CreditPanel customerId={party.id} />}
         {kind === 'customer' && (
           <Checkbox
