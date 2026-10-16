@@ -1190,3 +1190,20 @@ export const conditionalItems = pgTable(
   },
   (t) => [primaryKey({ columns: [t.conditionalId, t.productId] })],
 );
+
+// ---------------------------------------------------------------- API pública (0044)
+
+/** Chave da API pública (F6-01.a, ADR-0016): só o SHA-256 fica no banco. */
+export const apiKeys = pgTable('api_keys', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  name: text('name').notNull(),
+  keyPrefix: text('key_prefix').notNull(),
+  keyHash: text('key_hash').notNull(),
+  scopes: text('scopes').array().notNull(),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  lastUsedAt: ts('last_used_at'),
+  revokedAt: ts('revoked_at'),
+  revokedBy: uuid('revoked_by'),
+});

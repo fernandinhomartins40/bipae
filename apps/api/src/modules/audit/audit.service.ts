@@ -19,12 +19,18 @@ export interface AuditInput {
 }
 
 /** During a Bipaê support session, every audited action carries who really did it. */
-function withSupportMark(data: unknown, impersonatedBy: string | undefined) {
+function withSupportMark(
+  data: unknown,
+  impersonatedBy: string | undefined,
+  apiKeyId?: string,
+) {
   const plain = data === undefined ? null : JSON.parse(JSON.stringify(data));
-  if (!impersonatedBy) return plain;
+  if (!impersonatedBy && !apiKeyId) return plain;
   return {
     ...(plain && typeof plain === 'object' ? plain : { value: plain }),
-    suporteBipae: impersonatedBy,
+    ...(impersonatedBy && { suporteBipae: impersonatedBy }),
+    // Pedido feito por chave da API pública (ADR-0016): a pessoa responde, a chave fica marcada.
+    ...(apiKeyId && { chaveDeApi: apiKeyId }),
   };
 }
 
@@ -69,7 +75,7 @@ export class AuditService {
 
   async record(
     tx: Tx,
-    ctx: Pick<RequestContext, 'tenantId' | 'userId' | 'impersonatedBy'>,
+    ctx: Pick<RequestContext, 'tenantId' | 'userId' | 'impersonatedBy' | 'apiKeyId'>,
     input: AuditInput,
   ) {
     // Serializes writers per tenant so sequence numbers and the hash chain never fork.
@@ -89,7 +95,7 @@ export class AuditService {
       entityId: input.entityId ?? null,
       actorId: ctx.userId,
       authorizedBy: input.authorizedBy ?? null,
-      data: withSupportMark(input.data, ctx.impersonatedBy),
+      data: withSupportMark(input.data, ctx.impersonatedBy, ctx.apiKeyId),
       createdAt: new Date(),
     };
     await tx.insert(auditLog).values({

@@ -28,6 +28,7 @@ import {
   PieChart,
   Package,
   PackagePlus,
+  Plug,
   Printer,
   Scale,
   ScanBarcode,
@@ -142,6 +143,12 @@ const NAV = [
   { to: '/baixar', label: 'Baixar o desktop', icon: Download, permission: null },
   { to: '/assinatura', label: 'Minha assinatura', icon: CreditCard, permission: 'admin.users' },
   { to: '/mercadoflow', label: 'MercadoFlow', icon: Sparkles, permission: 'admin.stores' },
+  {
+    to: '/integracoes',
+    label: 'Integrações (API)',
+    icon: Plug,
+    permission: 'admin.integrations',
+  },
   { to: '/configuracoes', label: 'Configurações', icon: Settings, permission: null },
 ] as const;
 

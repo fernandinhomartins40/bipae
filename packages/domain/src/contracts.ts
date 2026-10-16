@@ -1810,3 +1810,40 @@ export interface ConditionalView {
   }[];
   totalCents: number;
 }
+
+// ---------- API pública: chaves (F6-01.a, ADR-0016) ----------
+
+/** Escopos que uma chave pode receber: por enquanto, só leitura. */
+export const PUBLIC_API_SCOPES = ['catalog.read', 'parties.read'] as const;
+export type PublicApiScope = (typeof PUBLIC_API_SCOPES)[number];
+
+export const PUBLIC_API_SCOPE_LABELS: Record<PublicApiScope, string> = {
+  'catalog.read': 'Ler produtos, preços, estoque e vendas',
+  'parties.read': 'Ler clientes e fornecedores',
+};
+
+export const apiKeyInput = z.object({
+  name: z.string().trim().min(2, 'Dê um nome para a chave (ex.: Loja virtual)').max(60),
+  scopes: z
+    .array(z.enum(PUBLIC_API_SCOPES))
+    .min(1, 'Escolha pelo menos uma permissão')
+    .transform((s) => [...new Set(s)]),
+});
+export type ApiKeyInput = z.input<typeof apiKeyInput>;
+
+export interface ApiKeyView {
+  id: string;
+  name: string;
+  /** Começo da chave, para reconhecer (a chave inteira só aparece ao criar). */
+  prefix: string;
+  scopes: string[];
+  createdByName: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+}
+
+/** Resposta da criação: a única vez em que a chave inteira aparece. */
+export interface ApiKeyCreated extends ApiKeyView {
+  key: string;
+}

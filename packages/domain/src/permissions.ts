@@ -17,6 +17,7 @@ export const PERMISSIONS = {
   'admin.users': { label: 'Gerenciar usuários e papéis', sensitive: true },
   'admin.terminals': { label: 'Gerenciar caixas (terminais)', sensitive: true },
   'admin.stores': { label: 'Gerenciar empresas e lojas', sensitive: true },
+  'admin.integrations': { label: 'Criar chaves de API e webhooks', sensitive: true },
   'audit.read': { label: 'Ver trilha de auditoria', sensitive: false },
   'finance.read': { label: 'Ver contas a pagar e a receber', sensitive: false },
   'finance.write': { label: 'Lançar e dar baixa em contas a pagar e a receber', sensitive: true },
@@ -36,7 +37,9 @@ export const SYSTEM_ROLES: Record<SystemRoleKey, { name: string; permissions: Pe
   owner: { name: 'Dono', permissions: ALL_PERMISSIONS },
   manager: {
     name: 'Gerente',
-    permissions: ALL_PERMISSIONS.filter((p) => p !== 'admin.users' && p !== 'admin.stores'),
+    permissions: ALL_PERMISSIONS.filter(
+      (p) => p !== 'admin.users' && p !== 'admin.stores' && p !== 'admin.integrations',
+    ),
   },
   cashier: {
     name: 'Operador de caixa',

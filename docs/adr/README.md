@@ -19,3 +19,4 @@ Formato: contexto → decisão → alternativas → consequências. Status: `pro
 | [0013](0013-plataforma-saas-super-admin.md) | Plataforma SaaS multi-clientes e painel super admin | aceita |
 | [0014](0014-pdv-embed.md) | Bipaê PDV Embed: o caixa embutível em outras aplicações | aceita |
 | [0015](0015-integracao-mercadoflow.md) | Integração nativa com o MercadoFlow | aceita |
+| [0016](0016-api-publica.md) | API pública com chaves por cliente e webhooks | aceita |

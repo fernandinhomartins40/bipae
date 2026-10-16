@@ -1,5 +1,17 @@
 # Changelog
 
+## [F6-01.a Chaves da API pública] — 16/10/2026
+
+### Adicionado
+- **Nova tela "Integrações (API)":** o dono cria chaves para outros sistemas (loja virtual, BI, planilhas) lerem os dados do Bipaê. A chave aparece uma única vez, com botão de copiar. A tela mostra o último uso, e a chave pode ser revogada na hora.
+- **Permissões da chave:** por enquanto só leitura (produtos, preços, estoque e vendas; clientes e fornecedores). A chave nunca tem mais poder do que quem a criou e para de funcionar se essa pessoa perder o acesso.
+- **Segurança:**
+  - o banco guarda só o resumo (SHA-256) da chave;
+  - a chave só abre as rotas marcadas como API pública, e qualquer outra responde 403;
+  - criar e revogar chaves ficam na auditoria;
+  - nova permissão "Criar chaves de API e webhooks", só do dono por padrão.
+- **`GET /v1/public/me`:** o parceiro confere de quem é a chave e o que ela pode. As decisões estão no ADR-0016.
+
 ## [F5-12.b Venda condicional] — 16/10/2026
 
 ### Adicionado
