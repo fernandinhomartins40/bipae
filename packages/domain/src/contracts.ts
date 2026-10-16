@@ -1540,3 +1540,69 @@ export const inutilizationInput = z
     path: ['to'],
   });
 export type InutilizationInput = z.infer<typeof inutilizationInput>;
+
+// ---------- Painel de prevenção de perdas (F5-05) ----------
+
+export interface LossOperatorView {
+  operatorId: string;
+  name: string;
+  salesCount: number;
+  salesCents: number;
+  cancelledCount: number;
+  cancelledCents: number;
+  /** Cancelamentos sobre vendas, em pontos-base (100 = 1%). */
+  cancelRateBp: number;
+  returnsCount: number;
+  returnsCents: number;
+  /** Vendas com desconto acima do limite, autorizado por um supervisor. */
+  authorizedDiscountCount: number;
+  authorizedDiscountCents: number;
+  withdrawalsCount: number;
+  withdrawalsCents: number;
+  /** Soma das diferenças no fechamento do caixa (negativo = faltou dinheiro). */
+  cashDifferenceCents: number;
+  alerts: string[];
+}
+
+export interface LossProductView {
+  productId: string;
+  name: string;
+  /** Quantidade perdida, em milésimos (ajustes e diferenças de contagem para menos). */
+  lostMilli: number;
+  /** Valor a custo; null quando o produto não tem custo cadastrado. */
+  lostCostCents: number | null;
+}
+
+export interface ExpiredLotView {
+  productId: string;
+  name: string;
+  lotCode: string;
+  expiresOn: string;
+  quantityMilli: number;
+  costCents: number | null;
+}
+
+export interface LossDashboardView {
+  from: string;
+  to: string;
+  totals: {
+    salesCount: number;
+    salesCents: number;
+    cancelledCount: number;
+    cancelledCents: number;
+    returnsCount: number;
+    returnsCents: number;
+    authorizedDiscountCount: number;
+    authorizedDiscountCents: number;
+    withdrawalsCount: number;
+    withdrawalsCents: number;
+    cashDifferenceCents: number;
+    stockLossCostCents: number;
+    expiredCostCents: number;
+  };
+  operators: LossOperatorView[];
+  products: LossProductView[];
+  expiredLots: ExpiredLotView[];
+  /** Avisos em linguagem simples, do mais importante para o menos. */
+  alerts: string[];
+}

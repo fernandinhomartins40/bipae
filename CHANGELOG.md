@@ -1,5 +1,19 @@
 # Changelog
 
+## [F5-05 Prevenção de perdas] — 16/10/2026
+
+### Adicionado
+- **Nova tela "Prevenção de perdas"**, por período e por loja, para quem tem acesso à auditoria (dono e gerente). Ela mostra:
+  - **por operador:** vendas canceladas (com a taxa), devoluções, descontos acima do limite, sangrias e diferença nos fechamentos de caixa;
+  - **perdas de estoque** a custo (ajustes e contagens para menos), por produto;
+  - **lotes vencidos** que ainda estão no estoque.
+- **Alertas em linguagem simples:**
+  - operador que cancela ou devolve mais que o dobro da média dos colegas;
+  - operador com muitos descontos acima do limite;
+  - falta de dinheiro no fechamento a partir de R$ 10;
+  - maiores perdas de estoque;
+  - lotes vencidos para tirar da venda.
+
 ## [F4-14.a Arquivos para o contador] — 16/10/2026
 
 ### Adicionado

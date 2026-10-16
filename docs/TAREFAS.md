@@ -265,7 +265,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F5-04.a · Lotes com validade por loja, entrada manual, baixa da venda pelo lote que vence primeiro (FEFO) com rastreio por venda, devolução e cancelamento voltando ao mesmo lote
   - [x] F5-04.b · Entrada pelo XML de compra lê o lote e a validade (grupo rastro) — depende: F5-04.a
   - [x] F5-04.c · Tela de lotes e de validade (vencendo e vencidos), com E2E — depende: F5-04.a
-- [ ] F5-05 · Painel de prevenção de perdas — depende: F4-10
+- [x] F5-05 · Painel de prevenção de perdas — depende: F4-10
+  - Feito em 16/10/2026: por período e loja, cancelamentos, devoluções, descontos acima do limite, sangrias e faltas no fechamento por operador, perdas de estoque a custo e lotes vencidos, com alertas de quem fica acima do dobro da média.
 - [ ] F5-06 · Self-checkout — depende: F3-14
 - [ ] F5-07 · Food service: mesas e comandas
 - [ ] F5-08 · App do garçom (celular) — depende: F5-07

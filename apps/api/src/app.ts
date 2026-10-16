@@ -88,6 +88,7 @@ import { PricingController, PricingService } from './modules/catalog/pricing.ser
 import { BankController, BankService } from './modules/finance/bank.service';
 import { FinanceController, FinanceService } from './modules/finance/finance.service';
 import { ReportsController, ReportsService } from './modules/reports/reports.service';
+import { LossesController, LossesService } from './modules/reports/losses.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
 import { TransferController, TransferService } from './modules/stock/transfer.service';
 import { LotsController, LotsService } from './modules/stock/lots.service';
@@ -144,6 +145,7 @@ class AppModule {
         BankController,
         SettlementController,
         ReportsController,
+        LossesController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -190,6 +192,7 @@ class AppModule {
         BankService,
         SettlementService,
         ReportsService,
+        LossesService,
         InventoryService,
         TransferService,
         LotsService,

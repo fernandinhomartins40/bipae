@@ -32,6 +32,7 @@ import {
   Sparkles,
   Tag,
   Tags,
+  ShieldAlert,
   ShieldCheck,
   Truck,
   UserRound,
@@ -73,6 +74,12 @@ const NAV = [
     permission: 'catalog.read',
   },
   { to: '/relatorios', label: 'Relatórios', icon: PieChart, permission: 'finance.read' },
+  {
+    to: '/prevencao-de-perdas',
+    label: 'Prevenção de perdas',
+    icon: ShieldAlert,
+    permission: 'audit.read',
+  },
   {
     to: '/financeiro',
     label: 'Contas a pagar e receber',
