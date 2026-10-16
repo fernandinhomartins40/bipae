@@ -204,6 +204,8 @@ export const products = pgTable('products', {
   cest: char('cest', { length: 7 }),
   isWeighable: boolean('is_weighable').notNull().default(false),
   tracksLot: boolean('tracks_lot').notNull().default(false),
+  /** Preparado na cozinha: vai para a tela da cozinha quando lançado numa comanda (F5-09). */
+  kitchen: boolean('kitchen').notNull().default(false),
   /** Atacarejo (F5-03): preço de atacado a partir de uma quantidade (em milésimos). */
   wholesalePriceCents: money('wholesale_price_cents'),
   wholesaleMinMilli: bigint('wholesale_min_milli', { mode: 'number' }),
@@ -1066,4 +1068,25 @@ export const tabs = pgTable('tabs', {
   openedAt: ts('opened_at').notNull(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
   closedAt: ts('closed_at'),
+});
+
+// ---------------------------------------------------------------- cozinha (0038)
+
+/** Pedido da cozinha (F5-09): um item preparado na cozinha lançado numa comanda. */
+export const kitchenTickets = pgTable('kitchen_tickets', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  tabId: uuid('tab_id').notNull(),
+  tabLabel: text('tab_label').notNull(),
+  line: integer('line').notNull(),
+  productId: uuid('product_id').notNull(),
+  name: text('name').notNull(),
+  quantityMilli: bigint('quantity_milli', { mode: 'number' }).notNull(),
+  status: text('status', { enum: ['pending', 'ready', 'delivered', 'cancelled'] })
+    .notNull()
+    .default('pending'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  readyAt: ts('ready_at'),
+  deliveredAt: ts('delivered_at'),
 });

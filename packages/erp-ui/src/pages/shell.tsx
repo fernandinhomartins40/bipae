@@ -8,6 +8,7 @@ import {
   BarChart3,
   Building2,
   CalendarClock,
+  ChefHat,
   ClipboardCheck,
   ClipboardList,
   CreditCard,
@@ -75,6 +76,7 @@ const NAV = [
     permission: 'catalog.read',
   },
   { to: '/comandas', label: 'Comandas abertas', icon: UtensilsCrossed, permission: 'pos.sell' },
+  { to: '/cozinha', label: 'Cozinha', icon: ChefHat, permission: 'pos.sell' },
   { to: '/relatorios', label: 'Relatórios', icon: PieChart, permission: 'finance.read' },
   {
     to: '/prevencao-de-perdas',

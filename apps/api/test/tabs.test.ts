@@ -98,3 +98,69 @@ describe('comandas no servidor (F5-07)', () => {
     expect((await admin.get('/tabs?status=outra')).statusCode).toBe(422);
   });
 });
+
+describe('tela da cozinha (F5-09)', () => {
+  it('cada rodada manda à cozinha só o que é novo; pronto, entregue e cancelado', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [store] = (await admin.get('/stores')).json();
+    await admin.post('/products', {
+      name: 'Cerveja 600 ml',
+      priceCents: 1200,
+      barcodes: ['7891149101009'],
+    });
+    await admin.post('/products', {
+      name: 'Porção de fritas',
+      priceCents: 3500,
+      barcodes: ['7891000053508'],
+      kitchen: true,
+    });
+    const caixa = (
+      await admin.post('/terminals', { storeId: store.id, name: 'Bar', platform: 'web' })
+    ).json();
+    const storage = createStorage(nodeSqliteDriver());
+    await migrateLocal(storage);
+    const pdv = new PdvService(storage, { terminalId: caixa.id, operatorId: dono.me.user.id });
+    const sync = new SyncClient(storage, pdv, transport(dono.auth, caixa.id), caixa.id);
+    await sync.sync();
+    await pdv.openSession(0);
+    const cerveja = (await pdv.findByCode('7891149101009'))!;
+    const porcao = (await pdv.findByCode('7891000053508'))!;
+    const fila = async () => (await admin.get('/kitchen/tickets')).json();
+
+    // Rodada 1: duas porções e uma cerveja; só a porção vai para a cozinha.
+    const mesa = await pdv.openTab('Mesa 9');
+    await pdv.saveTab(addItem(addItem(mesa, porcao, 2000), cerveja, 1000));
+    await sync.sync();
+    const [primeiro] = await fila();
+    expect(await fila()).toHaveLength(1);
+    expect(primeiro).toMatchObject({
+      tabLabel: 'Mesa 9',
+      name: 'Porção de fritas',
+      quantityMilli: 2000,
+      status: 'pending',
+    });
+
+    // Rodada 2: mais uma porção na mesma linha; vai só a que é nova.
+    const rodada = await pdv.loadTab(mesa.tabId!);
+    rodada.lines = rodada.lines.map((l) =>
+      l.productId === porcao.id ? { ...l, quantityMilli: 3000 } : l,
+    );
+    await pdv.saveTab(rodada);
+    await sync.sync();
+    const depois = await fila();
+    expect(depois.map((x: { quantityMilli: number }) => x.quantityMilli)).toEqual([2000, 1000]);
+
+    expect((await admin.post(`/kitchen/tickets/${primeiro.id}/ready`)).json().status).toBe('ready');
+    expect((await admin.post(`/kitchen/tickets/${primeiro.id}/ready`)).statusCode).toBe(409);
+    expect((await admin.post(`/kitchen/tickets/${primeiro.id}/delivered`)).json().status).toBe(
+      'delivered',
+    );
+
+    // Comanda cancelada: o que estava na fila sai.
+    await pdv.cancelTab(mesa.tabId!, 'Cliente foi embora');
+    await sync.sync();
+    const final = await fila();
+    expect(final.map((x: { status: string }) => x.status)).toEqual(['delivered']);
+  });
+});

@@ -90,6 +90,7 @@ import { FinanceController, FinanceService } from './modules/finance/finance.ser
 import { ReportsController, ReportsService } from './modules/reports/reports.service';
 import { LossesController, LossesService } from './modules/reports/losses.service';
 import { TabsController } from './modules/sales/tabs.controller';
+import { KitchenController, KitchenService } from './modules/sales/kitchen.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
 import { TransferController, TransferService } from './modules/stock/transfer.service';
 import { LotsController, LotsService } from './modules/stock/lots.service';
@@ -148,6 +149,7 @@ class AppModule {
         ReportsController,
         LossesController,
         TabsController,
+        KitchenController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -195,6 +197,7 @@ class AppModule {
         SettlementService,
         ReportsService,
         LossesService,
+        KitchenService,
         InventoryService,
         TransferService,
         LotsService,

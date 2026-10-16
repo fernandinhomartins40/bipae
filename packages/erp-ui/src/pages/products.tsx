@@ -188,6 +188,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
     cest: product?.cest ?? '',
     isWeighable: product?.isWeighable ?? false,
     tracksLot: product?.tracksLot ?? false,
+    kitchen: product?.kitchen ?? false,
     active: product?.active ?? true,
   });
 
@@ -404,6 +405,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           hint="A venda sai do lote que vence primeiro, e a tela Lote e validade avisa o que está vencendo."
           checked={form.values.tracksLot}
           onChange={(v) => form.set('tracksLot', v)}
+        />
+        <Checkbox
+          label="Preparado na cozinha"
+          hint="Quando lançado numa comanda, aparece na tela da Cozinha para preparar."
+          checked={form.values.kitchen}
+          onChange={(v) => form.set('kitchen', v)}
         />
         <KitEditor productId={product?.id ?? null} value={components} onChange={setComponents} />
         <Checkbox

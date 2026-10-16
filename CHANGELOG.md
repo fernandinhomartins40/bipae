@@ -1,5 +1,13 @@
 # Changelog
 
+## [F5-09 Tela da cozinha] — 16/10/2026
+
+### Adicionado
+- **Produto "Preparado na cozinha"**: nova marcação no cadastro do produto.
+- **Nova tela "Cozinha"**: mostra os pratos lançados nas comandas, por mesa, na ordem em que chegaram, com o tempo de espera. Depois de 15 minutos o pedido fica em destaque. A cozinha marca "Pronto" e quem leva à mesa marca "Entregue". A tela atualiza a cada 5 segundos e pode ficar num tablet ou numa TV.
+- **A cada rodada da comanda vai à cozinha só o que é novo:** o prato novo, ou a quantidade a mais do mesmo prato.
+- **Item tirado da comanda ou comanda cancelada:** o que ainda não ficou pronto sai da fila.
+
 ## [F5-07.b Telas das comandas] — 16/10/2026
 
 ### Adicionado

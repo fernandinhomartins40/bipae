@@ -46,6 +46,7 @@ import { LotsService } from '../stock/lots.service';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
+import { KitchenService } from '../sales/kitchen.service';
 import {
   cancelCreditReceivable,
   createCreditReceivable,
@@ -71,6 +72,7 @@ export class SyncService {
     @Inject(LotsService) private readonly lots: LotsService,
     @Inject(NfceEmissionService) private readonly emission: NfceEmissionService,
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
+    @Inject(KitchenService) private readonly kitchen: KitchenService,
   ) {}
 
   /**
@@ -206,6 +208,7 @@ export class SyncService {
         if (!tab) throw new Rejection('Comanda não encontrada.');
         // Comanda já fechada não volta a mudar (evento atrasado de outra rodada).
         if (tab.status !== 'open') return;
+        await this.kitchen.onTabUpdated(tx, tab, event.payload.items);
         await tx
           .update(tabs)
           .set({
@@ -233,6 +236,7 @@ export class SyncService {
           })
           .where(eq(tabs.id, tab.id));
         if (!paid) {
+          await this.kitchen.onTabCancelled(tx, tab.id);
           await this.audit.record(tx, actor, {
             action: 'tab.cancelled',
             entity: 'tab',

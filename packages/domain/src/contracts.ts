@@ -192,6 +192,8 @@ export const productInput = z.object({
     .or(z.literal('').transform(() => null)),
   isWeighable: z.boolean().default(false),
   tracksLot: z.boolean().default(false),
+  /** Preparado na cozinha (F5-09). */
+  kitchen: z.boolean().default(false),
   active: z.boolean().default(true),
   fiscalProfileId: z.string().uuid().nullish(),
   parentId: z.string().uuid().nullish(),
@@ -224,6 +226,7 @@ export interface Product {
   cest: string | null;
   isWeighable: boolean;
   tracksLot: boolean;
+  kitchen: boolean;
   active: boolean;
   fiscalProfileId: string | null;
   parentId: string | null;
@@ -1629,4 +1632,21 @@ export interface TabView {
   openedAt: string;
   updatedAt: string;
   closedAt: string | null;
+}
+
+// ---------- Cozinha (F5-09) ----------
+
+export interface KitchenTicketView {
+  id: string;
+  storeId: string;
+  tabId: string;
+  tabLabel: string;
+  line: number;
+  productId: string;
+  name: string;
+  quantityMilli: number;
+  status: 'pending' | 'ready' | 'delivered' | 'cancelled';
+  createdAt: string;
+  readyAt: string | null;
+  deliveredAt: string | null;
 }

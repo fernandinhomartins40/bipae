@@ -99,3 +99,65 @@ test('comandas: abre pela mesa, guarda, divide a conta e fecha; a retaguarda vê
   await expect(page.getByTestId('tabs-total')).toHaveText('1 comanda aberta · R$ 35,00 em consumo');
   await expect(page.getByRole('row', { name: /Mesa 8/ })).toContainText('1 Porção de fritas');
 });
+
+test('cozinha: o prato lançado na comanda aparece, fica pronto e é entregue (F5-09)', async ({
+  page,
+}) => {
+  const email = `rui-cozinha-${Date.now()}@exemplo.com.br`;
+  const api = await request.newContext({ baseURL: 'http://localhost:3334/v1/' });
+  const conta = await (
+    await api.post('auth/signup', {
+      data: {
+        ownerName: 'Rui Dono',
+        businessName: `Restaurante ${Date.now()}`,
+        email,
+        password: 'senha-forte-123',
+      },
+    })
+  ).json();
+  const headers = { authorization: `Bearer ${conta.accessToken}` };
+  await api.post('products', {
+    headers,
+    data: {
+      name: 'Feijoada',
+      priceCents: 4500,
+      barcodes: ['7891000100103'],
+      kitchen: true,
+    },
+  });
+
+  await page.goto('/entrar');
+  await page.getByLabel('E-mail').fill(email);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Entrar' }).click();
+  await page.getByRole('link', { name: 'Abrir o caixa' }).click();
+  await page.getByLabel('Novo caixa').fill('Salão');
+  await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await page.getByLabel('Dinheiro na gaveta para troco (R$)').fill('0');
+  await page.getByRole('button', { name: 'Abrir caixa' }).click();
+  await page.getByRole('button', { name: 'Comandas' }).click();
+  await page.getByLabel('Nova comanda (mesa ou número)').fill('Mesa 2');
+  await page.getByRole('button', { name: 'Abrir comanda' }).click();
+  const campo = page.getByLabel('Bipe o código ou digite o nome do produto');
+  await campo.fill('7891000100103');
+  await campo.press('Enter');
+  await page.getByRole('button', { name: 'Guardar na comanda' }).click();
+  await expect(async () => {
+    await page.getByTestId('sync-status').click();
+    const fila = await (await api.get('kitchen/tickets', { headers })).json();
+    expect(fila).toHaveLength(1);
+  }).toPass({ timeout: 45_000 });
+
+  await page.goto('/cozinha');
+  const mesa = page.getByRole('region', { name: 'Comanda Mesa 2' });
+  await expect(mesa).toContainText('1 × Feijoada');
+  await expect(mesa).toContainText('Esperando há');
+  await mesa.getByRole('button', { name: 'Pronto' }).click();
+  await expect(mesa).toContainText('Pronto');
+  await mesa.getByRole('button', { name: 'Entregue' }).click();
+  await expect(page.getByText('Nenhum pedido na cozinha')).toBeVisible();
+  await expect(page.getByText('entregue(s) na última meia hora.')).toBeVisible();
+});
