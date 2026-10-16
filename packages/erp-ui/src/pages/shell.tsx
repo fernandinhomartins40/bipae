@@ -41,6 +41,7 @@ import {
   UserRound,
   TrendingUp,
   Users,
+  Shirt,
   UtensilsCrossed,
   Wallet,
 } from 'lucide-react';
@@ -78,6 +79,7 @@ const NAV = [
     permission: 'catalog.read',
   },
   { to: '/comandas', label: 'Comandas abertas', icon: UtensilsCrossed, permission: 'pos.sell' },
+  { to: '/condicional', label: 'Condicional', icon: Shirt, permission: 'pos.sell' },
   { to: '/garcom', label: 'Garçom', icon: HandPlatter, permission: 'pos.sell' },
   { to: '/cozinha', label: 'Cozinha', icon: ChefHat, permission: 'pos.sell' },
   { to: '/delivery', label: 'Delivery', icon: Bike, permission: 'pos.sell' },

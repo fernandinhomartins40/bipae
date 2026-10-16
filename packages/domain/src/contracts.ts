@@ -1746,3 +1746,67 @@ export interface DeliveryView {
     };
   };
 }
+
+// ---------- Venda condicional (F5-12.b) ----------
+
+/** Prazo máximo de volta: a suspensão do ICMS vale por 60 dias (Ajuste SINIEF 02/18, cl. 4ª). */
+export const CONDITIONAL_MAX_DAYS = 60;
+
+export const conditionalInput = z.object({
+  storeId: z.string().uuid('Escolha a loja'),
+  customerId: z.string().uuid('Escolha o cliente'),
+  /** Sem data, vale o prazo máximo. */
+  dueOn: isoDay.optional(),
+  note: z.string().trim().max(300).optional(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid(),
+        quantityMilli: z.number().int().positive('Quantidade inválida').max(1_000_000),
+      }),
+    )
+    .min(1, 'Escolha pelo menos uma peça')
+    .max(100),
+});
+export type ConditionalInput = z.input<typeof conditionalInput>;
+
+/** Na volta: quanto de cada peça o cliente ficou (o resto voltou à loja). */
+export const conditionalCloseInput = z.object({
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid(),
+        keptMilli: z.number().int().min(0, 'Quantidade inválida'),
+      }),
+    )
+    .max(100),
+});
+export type ConditionalCloseInput = z.input<typeof conditionalCloseInput>;
+
+export interface ConditionalView {
+  id: string;
+  number: number;
+  storeId: string;
+  storeName: string;
+  customerId: string;
+  customerName: string;
+  customerTaxId: string | null;
+  status: 'open' | 'closed' | 'cancelled';
+  dueOn: string;
+  /** Passou do prazo e ainda está aberto. */
+  overdue: boolean;
+  note: string | null;
+  createdAt: string;
+  closedAt: string | null;
+  /** Pedido enviado ao caixa com o que o cliente ficou (F5-08). */
+  tabOrderId: string | null;
+  items: {
+    productId: string;
+    productName: string;
+    unit: string;
+    quantityMilli: number;
+    unitPriceCents: number;
+    keptMilli: number | null;
+  }[];
+  totalCents: number;
+}

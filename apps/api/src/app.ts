@@ -91,6 +91,7 @@ import { ReportsController, ReportsService } from './modules/reports/reports.ser
 import { LossesController, LossesService } from './modules/reports/losses.service';
 import { TabsController } from './modules/sales/tabs.controller';
 import { KitchenController, KitchenService } from './modules/sales/kitchen.service';
+import { ConditionalsController, ConditionalsService } from './modules/sales/conditionals.service';
 import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
 import { DeliveryController, DeliveryService } from './modules/sales/delivery.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
@@ -153,6 +154,7 @@ class AppModule {
         TabsController,
         KitchenController,
         TabOrdersController,
+        ConditionalsController,
         DeliveryController,
         InventoryController,
         TransferController,
@@ -203,6 +205,7 @@ class AppModule {
         LossesService,
         KitchenService,
         TabOrdersService,
+        ConditionalsService,
         DeliveryService,
         InventoryService,
         TransferService,

@@ -34,6 +34,9 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-028 | 🟡 parcial | Unidade do qLote na NF-e de compra |
 | D-029 | ✅ resolvida | Pix e vale do caixa: qual código tPag |
 | D-030 | ✅ resolvida | Descrição do primeiro item da NFC-e em homologação |
+| D-031 | 🟡 aguarda o dono | SPED EFD ICMS/IPI: gerar no Bipaê ou deixar com o contador (E21) |
+| D-032 | ✅ resolvida | NFC-e de entrega a domicílio (delivery) |
+| D-033 | 🟡 parcial | Venda condicional: notas da remessa, da volta e da venda |
 
 ---
 
@@ -450,3 +453,19 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
 - **D-030 — resolvida.**
   - **Fonte:** Anexo I do MOC 7.0, regra I04-10 (NT 2015.002), rejeição 373. O texto é exatamente "NOTA FISCAL EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL".
   - **Achado:** a regra 598 (modelos 55 e 65) também exige, em homologação, o nome do destinatário "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL". Corrigido.
+
+### D-033 — Venda condicional: notas da remessa, da volta e da venda
+
+- **Contexto (F5-12.b):** a loja de moda deixa o cliente levar peças para provar em casa. O Bipaê controla a saída, a volta e o estoque, e manda ao caixa o que o cliente ficou.
+- **Fonte oficial (Ajuste SINIEF 02/18, no site do CONFAZ):**
+  - **Saída para o cliente provar ("demonstração", cláusulas segunda, quarta e quinta):** o ICMS fica suspenso, inclusive quando o destino é consumidor final, desde que a mercadoria volte em até **60 dias**. A saída exige Nota Fiscal "sem destaque do valor do imposto", com natureza "Remessa para Demonstração", **CFOP 5.912** (ou 6.912) e os textos "Mercadoria remetida para demonstração" e "Imposto suspenso nos termos do Ajuste SINIEF 02/18".
+  - **Volta do consumidor (cláusula sexta):** a loja emite a nota de entrada "Retorno de mercadoria remetida para Demonstração", **CFOP 1.913** (ou 2.913), com a chave da remessa.
+  - **Venda do que o cliente ficou (cláusula oitava):** a loja emite a nota de entrada simbólica (**CFOP 1.949**, com a chave da remessa) e a nota de venda com destaque do imposto, os dados do comprador, o CFOP de venda, a chave da remessa e o texto "Transmissão da Propriedade de mercadoria remetida para Demonstração".
+  - **Prazo vencido (cláusula quinta, § 1º):** a loja emite nota com o imposto, com os dados do adquirente e a chave da original.
+- **Implementação provisória:**
+  - prazo de volta limitado a 60 dias;
+  - estoque que sai na entrega e volta no retorno;
+  - o que o cliente ficou vai ao caixa como comanda e é vendido com NFC-e;
+  - a tela avisa que as notas de remessa e de retorno ainda são emitidas fora do Bipaê.
+  - As notas do Ajuste (5.912, 1.913, 1.949 e a venda referenciada) dependem da NF-e da retaguarda (tarefa F5-12.c, que depende da F3-33).
+- **Pergunta em aberto:** quando a remessa foi feita por NF-e, a venda do que ficou pode sair em NFC-e, ou tem de ser NF-e para referenciar a chave da remessa, como pede a cláusula oitava, II, "c"? Quando a F5-12.c chegar, a venda do condicional passa a ser feita por NF-e com a referência, a menos que uma fonte oficial permita a NFC-e.

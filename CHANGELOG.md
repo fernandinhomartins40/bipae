@@ -1,5 +1,13 @@
 # Changelog
 
+## [F5-12.b Venda condicional] — 16/10/2026
+
+### Adicionado
+- **Nova tela "Condicional" na retaguarda:** o cliente leva peças para provar em casa, com prazo de volta de até 60 dias, o limite do Ajuste SINIEF 02/18. As peças saem do estoque na hora.
+- **Volta do condicional:** a loja informa o que o cliente ficou. Tudo volta ao estoque, e o que ficou vai para o caixa como a comanda "Condicional nº", pelo mesmo caminho dos pedidos do garçom. A venda e a NFC-e saem no caixa, como sempre, mesmo sem internet.
+- **Cancelar:** se o cliente devolveu tudo, as peças voltam ao estoque. Abrir, fechar e cancelar ficam na auditoria.
+- **Aviso honesto sobre a nota:** a tela explica que a remessa para demonstração (CFOP 5.912) e o retorno (CFOP 1.913) ainda são emitidos fora do Bipaê. A emissão chega com a NF-e da retaguarda (F5-12.c e dúvida D-033).
+
 ## [F5-12.a Grade em matriz] — 16/10/2026
 
 ### Adicionado

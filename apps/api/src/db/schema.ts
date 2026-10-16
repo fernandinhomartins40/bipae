@@ -469,6 +469,8 @@ export const stockMovements = pgTable('stock_movements', {
       'confere',
       'transfer_out',
       'transfer_in',
+      'conditional_out',
+      'conditional_in',
     ],
   }).notNull(),
   refId: uuid('ref_id'),
@@ -1152,3 +1154,39 @@ export const deliveryZones = pgTable('delivery_zones', {
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
+
+// ---------------------------------------------------------------- condicional (0043)
+
+/** Venda condicional (F5-12.b): a mercadoria sai para o cliente provar, com prazo de volta. */
+export const conditionals = pgTable('conditionals', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  number: integer('number').notNull(),
+  customerId: uuid('customer_id').notNull(),
+  status: text('status', { enum: ['open', 'closed', 'cancelled'] })
+    .notNull()
+    .default('open'),
+  dueOn: date('due_on', { mode: 'string' }).notNull(),
+  note: text('note'),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  closedBy: uuid('closed_by'),
+  closedAt: ts('closed_at'),
+  /** Pedido da comanda com o que o cliente ficou, para o caixa vender (F5-08). */
+  tabOrderId: uuid('tab_order_id'),
+});
+
+export const conditionalItems = pgTable(
+  'conditional_items',
+  {
+    tenantId: uuid('tenant_id').notNull(),
+    conditionalId: uuid('conditional_id').notNull(),
+    productId: uuid('product_id').notNull(),
+    quantityMilli: bigint('quantity_milli', { mode: 'number' }).notNull(),
+    unitPriceCents: money('unit_price_cents').notNull(),
+    /** Quanto o cliente ficou; nulo enquanto o condicional está aberto. */
+    keptMilli: bigint('kept_milli', { mode: 'number' }),
+  },
+  (t) => [primaryKey({ columns: [t.conditionalId, t.productId] })],
+);

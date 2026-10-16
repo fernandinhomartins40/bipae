@@ -285,7 +285,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - Feito em 16/10/2026 sobre o kit (F1-04): produto marcado "Insumo" (não aparece no caixa), composição com quantidades fracionadas e a unidade, custo da ficha e margem no cadastro do prato; vender, cancelar e devolver mexem no estoque dos insumos.
 - [~] F5-12 · Moda: grade e venda condicional — depende: F1-04
   - [x] F5-12.a · Grade em matriz (tamanho × cor) no cadastro do modelo: estoque de cada variação e preço editável na própria grade — depende: F1-04
-  - [ ] F5-12.b · Condicional: mercadoria sai para o cliente com prazo (60 dias, Ajuste SINIEF 02/18), volta por item, e o que ele ficou vai ao caixa como pedido da comanda; estoque e auditoria — depende: F5-12.a, F5-08
+  - [x] F5-12.b · Condicional: mercadoria sai para o cliente com prazo (60 dias, Ajuste SINIEF 02/18), volta por item, e o que ele ficou vai ao caixa como pedido da comanda; estoque e auditoria — depende: F5-12.a, F5-08
   - [ ] F5-12.c · Notas do condicional pela NF-e da retaguarda: remessa para demonstração (CFOP 5.912), retorno (1.913), entrada simbólica (1.949) e venda com referência à remessa (Ajuste SINIEF 02/18; dúvida D-033) — depende: F5-12.b, F3-33
 - [ ] F5-13 · Serviços: ordem de serviço e NFS-e Nacional — depende: F3-11
 
