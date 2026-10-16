@@ -224,10 +224,10 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] MF-14 · Aviso "Chegou nota de X para conferir" (evento confere.document.received) com contador no menu Notas de entrada — depende: MF-09
 - [x] MF-10.a · Inteligência: card do Tino no painel inicial (decisões por loja, cache de 15 min, abre no MercadoFlow) — depende: MF-04
 - [ ] MF-10.b · Inteligência: preço da região na tela de preço e na ficha do produto (cache de 24 h) — depende: MF-10.a · externo: E20
-- [~] MF-11 · Inteligência: encartes, preço aprovado e pedido enviado viram pendências — depende: MF-10.a, F4-01, F5-02
+- [x] MF-11 · Inteligência: encartes, preço aprovado e pedido enviado viram pendências — depende: MF-10.a, F4-01, F5-02
   - [x] MF-11.a · Aviso price.approved vira alteração de preço pendente ("Preços aprovados no MercadoFlow"), aplicada com um clique ou automática se a loja ligar a opção; aplica na tabela de preço da loja quando ela tem uma
   - [x] MF-11.b · Encartes (GET /promotions) viram promoções pendentes ou automáticas, aplicadas no caixa na vigência, e o preço promocional volta ao MercadoFlow em /prices — depende: MF-11.a
-  - [ ] MF-11.c · Aviso order.sent vira pedido de compra "Enviado ao fornecedor", com fornecedor e produtos achados pelo CNPJ e pelo código de barras — depende: MF-11.a
+  - [x] MF-11.c · Aviso order.sent vira pedido de compra "Enviado ao fornecedor", com fornecedor e produtos achados pelo CNPJ e pelo código de barras — depende: MF-11.a
 - [x] MF-12 · Envio de produtos, preços, custos e estoque da loja vinculada — depende: MF-04
 
 ## Fase 4 — ERP

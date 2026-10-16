@@ -307,3 +307,59 @@ test('encarte do MercadoFlow vira promoção da loja com um clique (MF-11.b)', a
   ).toBeVisible();
   await expect(encartes.getByRole('row', { name: /Ofertas da semana/ })).toHaveCount(0);
 });
+
+test('pedido do MercadoFlow sem cadastro mostra o que falta e vira pedido de compra (MF-11.c)', async ({
+  page,
+}) => {
+  let pendentes = [
+    {
+      id: '0192a000-0000-7000-8000-0000000000d1',
+      storeId: '00000000-0000-7000-8000-000000000001',
+      storeName: 'Loja Centro',
+      kind: 'order',
+      problem: 'Cadastre o fornecedor Laticínios Sul (CNPJ 11444777000161) em Fornecedores.',
+      data: {
+        orderNumber: 'PC-1001',
+        supplierName: 'Laticínios Sul',
+        totalCents: 27450,
+        items: [],
+      },
+      updatedAt: new Date().toISOString(),
+    },
+  ];
+  await page.route('**/v1/mercadoflow', (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        termsUrl: null,
+        publicUrl: 'https://mercadoflow.com',
+        stores: [],
+        queue: { pending: 0, sent: 0, rejected: 0 },
+        errors: [],
+      },
+    }),
+  );
+  await page.route('**/v1/mercadoflow/pendings', (route) => route.fulfill({ json: pendentes }));
+  await page.route('**/v1/mercadoflow/pendings/*/apply', (route) => {
+    pendentes = [];
+    return route.fulfill({ json: { ok: true, purchaseOrderId: 'x', number: 7 } });
+  });
+
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Lia Dona');
+  await page.getByLabel('Nome do negócio').fill(`Mercado ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`lia-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Lia!' })).toBeVisible();
+  await page.goto('/mercadoflow');
+
+  const pedidos = page.getByRole('region', { name: 'Pedidos enviados pelo MercadoFlow' });
+  const linha = pedidos.getByRole('row', { name: /PC-1001/ });
+  await expect(linha).toContainText('Cadastre o fornecedor Laticínios Sul');
+  await expect(linha).toContainText('R$ 274,50');
+  await linha.getByRole('button', { name: 'Criar pedido' }).click();
+  await expect(
+    pedidos.getByText('Pedido de compra nº 7 criado como "Enviado ao fornecedor".'),
+  ).toBeVisible();
+});

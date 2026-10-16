@@ -1,5 +1,12 @@
 # Changelog
 
+## [MF-11.c Pedidos enviados pelo MercadoFlow] — 16/10/2026
+
+### Adicionado
+- **Pedido enviado ao fornecedor pelo MercadoFlow vira pedido de compra no Bipaê**, já como "Enviado ao fornecedor", com o número do pedido do MercadoFlow nas observações. O fornecedor é achado pelo CNPJ e os produtos pelo código de barras.
+- **Quando falta cadastro**, o pedido espera na tela do MercadoFlow, dizendo exatamente o que cadastrar. Depois de cadastrar, "Criar pedido" resolve. Nada é cadastrado sozinho.
+- Aviso repetido não cria pedido duplicado.
+
 ## [MF-11.b Encartes do MercadoFlow no caixa] — 16/10/2026
 
 ### Adicionado

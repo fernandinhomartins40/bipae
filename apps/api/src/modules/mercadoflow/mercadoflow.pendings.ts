@@ -25,6 +25,7 @@ import { AuditService } from '../audit/audit.service';
 import { CatalogService } from '../catalog/catalog.service';
 import { asTenant } from './mercadoflow.confere';
 import { MercadoflowEncartes } from './mercadoflow.encartes';
+import { MercadoflowOrders } from './mercadoflow.orders';
 import { ownerContext, productByGtin, storePrice } from './mercadoflow.pendings.helpers';
 import { MercadoflowWebhooks, type MercadoflowEvent } from './mercadoflow.webhook';
 
@@ -73,6 +74,7 @@ export class MercadoflowPendings {
     @Inject(CatalogService) private readonly catalog: CatalogService,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(MercadoflowEncartes) private readonly encartes: MercadoflowEncartes,
+    @Inject(MercadoflowOrders) private readonly orders: MercadoflowOrders,
     @Inject(MercadoflowWebhooks) webhooks: MercadoflowWebhooks,
   ) {
     webhooks.on('price.approved', (tx, event) => this.priceApproved(tx, event));
@@ -215,6 +217,8 @@ export class MercadoflowPendings {
     const row = await this.pending(ctx, id);
     // Encarte (MF-11.b): vira promoções da loja.
     if (row.kind === 'promotion') return this.encartes.apply(ctx, row, automatic);
+    // Pedido enviado pelo MercadoFlow (MF-11.c): vira pedido de compra.
+    if (row.kind === 'order') return this.orders.apply(ctx, row, automatic);
     const data = row.data as unknown as PriceData;
     // O produto pode ter sido cadastrado depois do aviso.
     const product = await withTenant(this.db, ctx, (tx) => productByGtin(tx, data.gtin));

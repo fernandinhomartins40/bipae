@@ -87,6 +87,7 @@ export function MercadoflowPage() {
           ))}
           <ApprovedPrices />
           <Encartes />
+          <OrdersWaiting />
           <Card>
             <h2 className="text-lg font-bold">Envio ao MercadoFlow</h2>
             <p className="text-sm text-muted">
@@ -515,6 +516,82 @@ function Encartes() {
                     <Button onClick={() => void act(p.id, 'apply')} disabled={Boolean(p.problem)}>
                       Aplicar
                     </Button>
+                    <Button variant="ghost" onClick={() => void act(p.id, 'dismiss')}>
+                      Descartar
+                    </Button>
+                  </span>
+                ) : null,
+            },
+          ]}
+        />
+      )}
+    </section>
+  );
+}
+
+/**
+ * Pedidos enviados pelo MercadoFlow que ainda não viraram pedido de compra (MF-11.c): falta
+ * cadastrar o fornecedor ou algum produto. Depois de cadastrar, "Criar pedido" resolve.
+ */
+function OrdersWaiting() {
+  const { api } = useApp();
+  const canApply = useCan('catalog.price.write');
+  const queryClient = useQueryClient();
+  const pendings = useQuery({
+    queryKey: ['mercadoflow', 'pendings'],
+    queryFn: () => api.get<MercadoflowPendingView[]>('/mercadoflow/pendings'),
+  });
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const list = (pendings.data ?? []).filter((p) => p.kind === 'order');
+  if (list.length === 0 && !message) return null;
+  const act = async (id: string, action: 'apply' | 'dismiss') => {
+    setMessage(null);
+    try {
+      const result = await api.post<{ number?: number }>(`/mercadoflow/pendings/${id}/${action}`);
+      if (action === 'apply') {
+        setMessage({
+          ok: true,
+          text: `Pedido de compra nº ${result.number ?? ''} criado como "Enviado ao fornecedor".`,
+        });
+      }
+    } catch (e) {
+      setMessage({ ok: false, text: (e as Error).message });
+    }
+    await queryClient.invalidateQueries({ queryKey: ['mercadoflow', 'pendings'] });
+  };
+  return (
+    <section aria-label="Pedidos enviados pelo MercadoFlow">
+      <h2 className="mb-2 text-lg font-bold">Pedidos enviados pelo MercadoFlow</h2>
+      {message && (
+        <div className="mb-2">
+          <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
+        </div>
+      )}
+      {list.length > 0 && (
+        <DataTable
+          caption="Pedidos enviados pelo MercadoFlow"
+          rows={list}
+          columns={[
+            { header: 'Loja', cell: (p) => p.storeName },
+            {
+              header: 'Pedido',
+              cell: (p) => (
+                <span className="flex flex-col">
+                  <span className="font-semibold">
+                    Nº {String(p.data.orderNumber)} · {String(p.data.supplierName)}
+                  </span>
+                  {p.problem && <span className="text-sm text-danger">{p.problem}</span>}
+                </span>
+              ),
+            },
+            { header: 'Total', align: 'right', cell: (p) => brl(p.data.totalCents) },
+            {
+              header: '',
+              align: 'right',
+              cell: (p) =>
+                canApply ? (
+                  <span className="flex justify-end gap-2">
+                    <Button onClick={() => void act(p.id, 'apply')}>Criar pedido</Button>
                     <Button variant="ghost" onClick={() => void act(p.id, 'dismiss')}>
                       Descartar
                     </Button>

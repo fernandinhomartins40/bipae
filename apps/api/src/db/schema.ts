@@ -534,7 +534,7 @@ export const mercadoflowPendings = pgTable('mercadoflow_pendings', {
   tenantId: uuid('tenant_id').notNull(),
   storeId: uuid('store_id').notNull(),
   marketId: text('market_id').notNull(),
-  kind: text('kind', { enum: ['price', 'promotion'] }).notNull(),
+  kind: text('kind', { enum: ['price', 'promotion', 'order'] }).notNull(),
   sourceKey: text('source_key').notNull(),
   status: text('status', { enum: ['pending', 'applied', 'dismissed'] })
     .notNull()

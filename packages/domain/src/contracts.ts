@@ -846,7 +846,7 @@ export interface MercadoflowPendingView {
   id: string;
   storeId: string;
   storeName: string;
-  kind: 'price' | 'promotion';
+  kind: 'price' | 'promotion' | 'order';
   /** Por que não dá para aplicar ainda (produto não cadastrado, por exemplo). */
   problem: string | null;
   /** Preço: gtin, productId, productName, priceCents, currentPriceCents, approvedBy. */

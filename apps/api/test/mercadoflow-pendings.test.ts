@@ -366,3 +366,107 @@ describe('encartes do MercadoFlow (MF-11.b)', () => {
     expect(res.json().message).toContain('permissão de ler os encartes');
   });
 });
+
+describe('pedido enviado pelo MercadoFlow (MF-11.c)', () => {
+  /** Manda o aviso order.sent do mercado da loja. */
+  const pedido = async (marketId: string, data: Record<string, unknown>) => {
+    const evento = JSON.stringify({
+      event: 'order.sent',
+      marketId,
+      occurredAt: '2026-10-16T10:00:00-03:00',
+      data,
+    });
+    const res = await t.app.inject({
+      method: 'POST',
+      url: '/v1/integrations/mercadoflow/webhook',
+      headers: {
+        'content-type': 'application/json',
+        'x-mercadoflow-signature': signWebhook(evento, SEGREDO),
+        'x-mercadoflow-delivery': `pedido-${++entrega}`,
+      },
+      payload: evento,
+    });
+    expect(res.statusCode).toBe(200);
+  };
+  const dados = {
+    orderNumber: 'PC-1001',
+    supplierCnpj: '11.444.777/0001-61',
+    supplierName: 'Laticínios Sul',
+    totalValue: 274.5,
+    items: [
+      { gtin: '7891000100103', description: 'LEITE INTEGRAL 1L', quantity: 60, unitCost: 4.575 },
+    ],
+  };
+
+  it('com fornecedor e produto cadastrados vira pedido de compra "Enviado ao fornecedor"', async () => {
+    const { admin, store, produto, marketId } = await loja();
+    const fornecedor = (
+      await admin.post('/suppliers', { name: 'Laticínios Sul', taxId: '11.444.777/0001-61' })
+    ).json();
+    await pedido(marketId, dados);
+    let pedidos: { status: string }[] = [];
+    for (let i = 0; i < 50 && pedidos.length === 0; i++) {
+      pedidos = (await admin.get('/purchase-orders')).json();
+      if (pedidos.length === 0) await new Promise((ok) => setTimeout(ok, 50));
+    }
+    expect(pedidos).toEqual([
+      expect.objectContaining({
+        status: 'sent',
+        storeId: store.id,
+        supplierId: fornecedor.id,
+        notes: 'Pedido nº PC-1001 enviado ao fornecedor pelo MercadoFlow.',
+        items: [
+          expect.objectContaining({
+            productId: produto.id,
+            quantityMilli: 60_000,
+            unitCostCents: 458,
+          }),
+        ],
+      }),
+    ]);
+    // O mesmo aviso de novo não cria outro pedido.
+    await pedido(marketId, dados);
+    await new Promise((ok) => setTimeout(ok, 200));
+    expect((await admin.get('/purchase-orders')).json()).toHaveLength(1);
+    expect(await pendencias(admin, 0)).toEqual([]);
+  });
+
+  it('sem o fornecedor cadastrado espera com o que falta; depois de cadastrar, "Aplicar" cria', async () => {
+    const { admin, marketId } = await loja();
+    await pedido(marketId, {
+      ...dados,
+      items: [
+        ...dados.items,
+        { gtin: '7896004000855', name: 'QUEIJO MUSSARELA', quantity: '2.5', unitCost: '32.90' },
+      ],
+    });
+    const [pendente] = await pendencias(admin, 1);
+    expect(pendente.kind).toBe('order');
+    expect(pendente.problem).toContain(
+      'Cadastre o fornecedor Laticínios Sul (CNPJ 11444777000161) em Fornecedores.',
+    );
+    expect(pendente.problem).toContain('Cadastre o produto QUEIJO MUSSARELA (7896004000855).');
+    const cedo = await admin.post(`/mercadoflow/pendings/${pendente.id}/apply`);
+    expect(cedo.statusCode).toBe(409);
+    expect((await admin.get('/purchase-orders')).json()).toEqual([]);
+
+    await admin.post('/suppliers', { name: 'Laticínios Sul', taxId: '11.444.777/0001-61' });
+    await admin.post('/products', {
+      name: 'Queijo mussarela',
+      priceCents: 4990,
+      barcodes: ['7896004000855'],
+      unit: 'KG',
+      isWeighable: true,
+    });
+    const aplicar = await admin.post(`/mercadoflow/pendings/${pendente.id}/apply`);
+    expect(aplicar.statusCode).toBe(200);
+    const [criado] = (await admin.get('/purchase-orders')).json();
+    expect(criado).toMatchObject({ status: 'sent' });
+    expect(criado.items.map((i: { quantityMilli: number }) => i.quantityMilli)).toEqual([
+      60_000, 2_500,
+    ]);
+    expect(JSON.stringify((await admin.get('/audit')).json())).toContain(
+      'mercadoflow.order_received',
+    );
+  });
+});
