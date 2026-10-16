@@ -1,5 +1,19 @@
 # Changelog
 
+## [F6-08.a CRM: histórico e segmentos] — 16/10/2026
+
+### Adicionado
+- **Histórico de compras na ficha do cliente:** junta as compras feitas com o CPF ou CNPJ dele na nota e mostra:
+  - número de compras, total (menos devoluções) e ticket médio;
+  - cliente desde, última compra e de quantos em quantos dias ele volta;
+  - os produtos que ele mais compra.
+- **Nova tela "Relacionamento":** os clientes separados em quatro grupos, com a regra de cada um escrita na tela:
+  - **novos:** primeira compra nos últimos 30 dias;
+  - **frequentes:** 4 ou mais compras em 90 dias;
+  - **sumidos:** sem comprar há mais de 60 dias;
+  - **ativos:** os demais.
+- **Lista para ofertas (CSV):** sai só com quem aceitou receber ofertas e tem e-mail ou telefone. Cada exportação fica na auditoria (LGPD). A nova permissão "Exportar a lista de clientes que aceitaram ofertas" é do dono e do gerente.
+
 ## [F6-01.c Webhooks] — 16/10/2026
 
 ### Adicionado

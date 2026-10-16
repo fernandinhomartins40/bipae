@@ -1908,3 +1908,42 @@ export interface WebhookDeliveryView {
   deliveredAt: string | null;
   nextAttemptAt: string | null;
 }
+
+// ---------- CRM (F6-08.a) ----------
+
+/** Resumo do cliente para a ficha: o que ele comprou, pelo CPF/CNPJ. */
+export interface CustomerSummary {
+  customerId: string;
+  /** Sem CPF/CNPJ no cadastro não há como juntar as compras. */
+  hasTaxId: boolean;
+  purchases: number;
+  /** Compras menos devoluções. */
+  totalCents: number;
+  averageTicketCents: number | null;
+  firstPurchaseAt: string | null;
+  lastPurchaseAt: string | null;
+  averageIntervalDays: number | null;
+  segment: 'novo' | 'frequente' | 'sumido' | 'ativo' | null;
+  topProducts: { productId: string; name: string; quantityMilli: number; totalCents: number }[];
+  recentSales: {
+    id: string;
+    occurredAt: string;
+    kind: 'sale' | 'return';
+    status: 'completed' | 'cancelled';
+    totalCents: number;
+    storeName: string;
+  }[];
+}
+
+/** Uma linha da lista de relacionamento (segmentos). */
+export interface CrmCustomerRow {
+  customerId: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  marketingConsent: boolean;
+  purchases: number;
+  totalCents: number;
+  lastPurchaseAt: string;
+  segment: 'novo' | 'frequente' | 'sumido' | 'ativo';
+}

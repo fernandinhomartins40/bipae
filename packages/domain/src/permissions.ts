@@ -9,6 +9,7 @@ export const PERMISSIONS = {
   'parties.read': { label: 'Ver clientes e fornecedores', sensitive: false },
   'parties.write': { label: 'Cadastrar e editar clientes e fornecedores', sensitive: false },
   'parties.credit': { label: 'Definir limite e receber no crediário', sensitive: true },
+  'crm.export': { label: 'Exportar a lista de clientes que aceitaram ofertas', sensitive: true },
   'fiscal.profile.write': { label: 'Alterar configuração fiscal', sensitive: true },
   'pos.sell': { label: 'Vender no caixa', sensitive: false },
   'pos.discount.above_limit': { label: 'Dar desconto acima do limite', sensitive: true },
