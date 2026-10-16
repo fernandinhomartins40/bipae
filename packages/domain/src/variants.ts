@@ -49,3 +49,58 @@ export function sameVariant(
       .join('|');
   return norm(a) === norm(b);
 }
+
+/** Grade em matriz (F5-12.a): linhas pelo primeiro atributo, colunas pelo segundo. */
+export interface VariantGrid<T> {
+  /** Nome do atributo das linhas (ex.: Tamanho) e das colunas (ex.: Cor; vazio se só há um). */
+  rowName: string;
+  colName: string;
+  rows: string[];
+  cols: string[];
+  /** A variação de cada cruzamento, ou null quando a combinação não foi criada. */
+  cell: (row: string, col: string) => T | null;
+}
+
+/**
+ * Monta a matriz a partir das variações. Os valores seguem a ordem de criação (P, M, G),
+ * sem diferença de maiúsculas. O banco não guarda a ordem dos atributos, então o que tem mais
+ * valores vai nas linhas (a tabela cabe melhor na tela); `swap` troca linhas e colunas. Só vale
+ * para um ou dois atributos; com mais, devolve null e a tela mostra a lista.
+ */
+export function variantGrid<T extends { id: string; attributes: Record<string, string> | null }>(
+  variants: T[],
+  swap = false,
+): VariantGrid<T> | null {
+  // IDs UUIDv7 seguem a ordem de criação, que é a ordem em que os valores foram digitados.
+  const withAttrs = variants
+    .filter((v) => v.attributes && Object.keys(v.attributes).length > 0)
+    .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  if (withAttrs.length === 0) return null;
+  const names = Object.keys(withAttrs[0]!.attributes!);
+  if (names.length > 2) return null;
+  const key = (value: string | undefined) => (value ?? '').trim().toLowerCase();
+  const count = (name: string) => new Set(withAttrs.map((v) => key(v.attributes![name]))).size;
+  if (names.length === 2 && count(names[1]!) > count(names[0]!)) names.reverse();
+  if (names.length === 2 && swap) names.reverse();
+  const [rowName, colName = ''] = names;
+  const distinct = (name: string) => {
+    const seen = new Map<string, string>();
+    for (const v of withAttrs) {
+      const value = name ? (v.attributes![name] ?? '') : '';
+      if (!seen.has(key(value))) seen.set(key(value), value.trim());
+    }
+    return [...seen.values()];
+  };
+  const index = new Map<string, T>();
+  for (const v of withAttrs) {
+    if (Object.keys(v.attributes!).length !== names.length) return null;
+    index.set(`${key(v.attributes![rowName!])}|${key(colName ? v.attributes![colName] : '')}`, v);
+  }
+  return {
+    rowName: rowName!,
+    colName,
+    rows: distinct(rowName!),
+    cols: colName ? distinct(colName) : [''],
+    cell: (row, col) => index.get(`${key(row)}|${key(col)}`) ?? null,
+  };
+}

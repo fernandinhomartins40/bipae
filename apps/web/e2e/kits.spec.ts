@@ -75,21 +75,35 @@ test('gerar a grade de variações de um modelo', async ({ page }) => {
   await page.getByLabel('Valores de Cor').fill('Azul, Preto');
   await page.getByRole('button', { name: 'Gerar 4 variações' }).click();
   await expect(page.getByText('4 variações criadas.')).toBeVisible();
-  const lista = page.getByRole('list', { name: 'Variações deste produto' });
-  await expect(lista.getByRole('listitem')).toHaveCount(4);
-  await expect(lista).toContainText('Camiseta Básica — P / Azul');
-  await expect(lista).toContainText('R$ 49,90');
+  // Grade em matriz (F5-12.a): tamanho nas linhas, cor nas colunas, preço e estoque em cada uma.
+  // Com 2 valores em cada atributo, dá para trocar linhas e colunas.
+  await page.getByRole('button', { name: 'Trocar linhas e colunas' }).click();
+  const grade = page.getByRole('table', { name: /Grade: Tamanho × Cor/ });
+  await expect(grade.getByRole('rowheader')).toHaveText(['P', 'M']);
+  await expect(grade.getByRole('columnheader', { name: 'Preto' })).toBeVisible();
+  await expect(page.getByLabel('Preço P / Azul')).toHaveValue('49,90');
+  await expect(page.getByLabel('Estoque M / Preto')).toHaveText('Estoque: 0');
+  await page.getByRole('button', { name: 'Trocar linhas e colunas' }).click();
+  await expect(page.getByRole('table', { name: /Grade: Cor × Tamanho/ })).toBeVisible();
 
   // Acrescentar o tamanho G só cria as 2 que faltam.
   await page.getByLabel('Valores de Tamanho').fill('P, M, G');
   await page.getByLabel('Valores de Cor').fill('Azul, Preto');
   await page.getByRole('button', { name: 'Gerar 2 variações' }).click();
   await expect(page.getByText('2 variações criadas.')).toBeVisible();
-  await expect(lista.getByRole('listitem')).toHaveCount(6);
+  await expect(grade.getByRole('rowheader')).toHaveText(['P', 'M', 'G']);
+
+  // O preço de uma variação muda na própria grade.
+  await page.getByLabel('Preço G / Preto').fill('59,90');
+  await page.getByLabel('Preço G / Preto').blur();
+  await page.getByRole('button', { name: 'Salvar preços da grade' }).click();
+  await expect(page.getByText('1 preço alterado.')).toBeVisible();
 
   // As variações aparecem na lista de produtos.
   await page.getByRole('button', { name: 'Cancelar' }).click();
-  await expect(page.getByRole('row', { name: /Camiseta Básica — G \/ Preto/ })).toBeVisible();
+  await expect(page.getByRole('row', { name: /Camiseta Básica — G \/ Preto/ })).toContainText(
+    'R$ 59,90',
+  );
 });
 
 test('no caixa aparecem as variações e não o modelo; o kit é vendido como um item', async ({

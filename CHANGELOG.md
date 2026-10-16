@@ -1,5 +1,12 @@
 # Changelog
 
+## [F5-12.a Grade em matriz] — 16/10/2026
+
+### Adicionado
+- **Grade em matriz no cadastro do modelo:** as variações aparecem numa tabela, por exemplo com o tamanho nas linhas e a cor nas colunas. Cada cruzamento mostra o estoque somado das lojas e o preço.
+- **Preço na própria grade:** dá para trocar o preço de cada variação ali mesmo. A troca pede a permissão de preço e fica na auditoria, como no cadastro.
+- **Ordem da grade:** o atributo com mais valores vai nas linhas, e o botão "Trocar linhas e colunas" inverte. Os valores seguem a ordem em que foram digitados (P, M, G).
+
 ## [Compra de uso pessoal fora do crédito de IBS/CBS] — 16/10/2026
 
 ### Adicionado
