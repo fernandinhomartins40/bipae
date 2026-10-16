@@ -1,5 +1,16 @@
 # Changelog
 
+## [F5-06 Autoatendimento] — 16/10/2026
+
+### Adicionado
+- **Modo autoatendimento no caixa**: o operador toca em "Autoatendimento" e escolhe um PIN de atendente; a tela fica simples para o próprio cliente bipar e pagar.
+- **O cliente pode** bipar, pôr o CPF na nota e pagar com Pix ou cartão. Somem desconto, sangria, histórico, troca de operador e cadastro de produto.
+- **Com o PIN do atendente:** tirar item, confirmar o pagamento e desligar o modo.
+- O PIN fica só no aparelho, como hash com sal, e funciona sem internet. Recarregar a página não sai do modo.
+
+### Observação
+- Pagamento sem atendente (Pix com QR dinâmico e maquininha integrada) e conferência por peso aparecem como "chega em breve". Dependem das contas de Pix e TEF (E9 e E10) e de hardware.
+
 ## [F5-05 Prevenção de perdas] — 16/10/2026
 
 ### Adicionado

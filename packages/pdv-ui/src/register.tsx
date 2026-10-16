@@ -47,6 +47,13 @@ import {
   QuotesDialog,
 } from './dialogs';
 import { QuickProductDialog } from './quick-product';
+import {
+  loadSelfCheckout,
+  newSelfCheckout,
+  PinDialog,
+  SELF_CHECKOUT_PREF,
+  type SelfCheckoutState,
+} from './self-checkout';
 import type { RegisterHandle } from './use-register';
 
 export /** O que dizer ao operador quando a nota ainda não pode sair como cupom fiscal (F3-14.c). */
@@ -201,6 +208,54 @@ export function Register({
       text: error instanceof Error ? error.message : 'Algo deu errado.',
     });
 
+  // Autoatendimento (F5-06): o estado fica no aparelho; recarregar a página não sai do modo.
+  const [selfCheckout, setSelfCheckout] = useState<SelfCheckoutState | null>(null);
+  const [pinRequest, setPinRequest] = useState<{
+    mode: 'create' | 'check';
+    title: string;
+    description: string;
+    resolve: (ok: boolean) => void;
+  } | null>(null);
+  useEffect(() => {
+    void loadSelfCheckout(platform).then(setSelfCheckout);
+  }, [platform]);
+  const selfMode = selfCheckout !== null;
+  const askPin = (title: string, description: string) =>
+    new Promise<boolean>((resolve) =>
+      setPinRequest({ mode: 'check', title, description, resolve }),
+    );
+  const startSelfCheckout = () =>
+    setPinRequest({
+      mode: 'create',
+      title: 'Ligar o autoatendimento',
+      description:
+        'O cliente vai bipar e pagar sozinho. Escolha um PIN de atendente: ele confirma o pagamento, tira itens e desliga o modo.',
+      resolve: () => undefined,
+    });
+  const stopSelfCheckout = async () => {
+    if (
+      !(await askPin(
+        'Desligar o autoatendimento',
+        'Atendente: digite o PIN para voltar ao caixa normal.',
+      ))
+    )
+      return;
+    await platform.preferences.remove(SELF_CHECKOUT_PREF);
+    setSelfCheckout(null);
+    setMessage(null);
+  };
+  /** Tirar item: no autoatendimento, só com o atendente. */
+  const removeSelected = async () => {
+    if (selected === null) return;
+    if (
+      selfMode &&
+      !(await askPin('Tirar item', 'Atendente: digite o PIN para tirar o item da compra.'))
+    )
+      return;
+    setCart((c) => removeLine(c, selected));
+    setSelected(null);
+  };
+
   const requestAuthorization = useCallback(
     (permission: AuthorizablePermission) =>
       new Promise<string | null>((resolve) => setAuth({ permission, resolve })),
@@ -283,7 +338,7 @@ export function Register({
         const product = await pdv.findByCode(scan.code, cartRef.current.customerTaxId);
         if (!product) {
           // Quem pode cadastrar e está com internet cadastra na hora, com o catálogo ajudando.
-          if (can('catalog.write') && backend.createProduct && navigator.onLine) {
+          if (!selfMode && can('catalog.write') && backend.createProduct && navigator.onLine) {
             const catalog = backend.catalogLookup
               ? await backend.catalogLookup(scan.code).catch(() => null)
               : null;
@@ -427,6 +482,15 @@ export function Register({
   };
 
   const pay = async (tenders: Parameters<typeof pdv.completeSale>[1]) => {
+    if (
+      selfMode &&
+      !(await askPin(
+        'Confirmar o pagamento',
+        'Atendente: confira o pagamento na maquininha ou no Pix e digite o PIN.',
+      ))
+    ) {
+      throw new Error('Pagamento não confirmado. Chame o atendente.');
+    }
     const signer = await contingencySigner();
     const sale = await pdv.completeSale(cart, tenders, {
       discountLimitPercent: DISCOUNT_LIMIT_PERCENT,
@@ -465,7 +529,7 @@ export function Register({
 
   const onKeyDown = (e: globalThis.KeyboardEvent) => {
     const cart = cartRef.current;
-    if (dialog.kind !== 'none' || auth) return;
+    if (dialog.kind !== 'none' || auth || pinRequest) return;
     const actions: Record<string, () => void> = {
       F2: () => inputRef.current?.focus(),
       F3: () => {
@@ -490,11 +554,7 @@ export function Register({
           .catch(fail),
       F6: () => setDialog({ kind: 'customer' }),
       F7: () => setDialog({ kind: 'quotes' }),
-      F8: () => {
-        if (selected === null) return;
-        setCart((c) => removeLine(c, selected));
-        setSelected(null);
-      },
+      F8: () => void removeSelected(),
       F9: () => setDialog({ kind: 'cash' }),
       F10: () => cart.lines.length > 0 && setDialog({ kind: 'payment' }),
       F11: () => setDialog({ kind: 'history' }),
@@ -511,7 +571,8 @@ export function Register({
         setSelected(cart.lines[Math.min(cart.lines.length - 1, i + 1)]?.line ?? null);
       },
     };
-    const action = actions[e.key];
+    const allowedInSelf = ['F2', 'F6', 'F8', 'F10', 'ArrowUp', 'ArrowDown'];
+    const action = selfMode && !allowedInSelf.includes(e.key) ? undefined : actions[e.key];
     if (action) {
       e.preventDefault();
       action();
@@ -554,15 +615,28 @@ export function Register({
           <span className="text-sm text-muted" data-testid="pdv-operator">
             · {operator.name}
           </span>
-          <Button variant="ghost" onClick={() => setDialog({ kind: 'operator' })}>
-            Trocar operador
-          </Button>
+          {!selfMode && (
+            <Button variant="ghost" onClick={() => setDialog({ kind: 'operator' })}>
+              Trocar operador
+            </Button>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <SyncBadge status={syncStatus} onSync={() => void onSyncNow()} />
-          <Button variant="ghost" onClick={onExit}>
-            Sair do caixa
-          </Button>
+          {selfMode ? (
+            <Button variant="ghost" onClick={() => void stopSelfCheckout()}>
+              Desligar autoatendimento
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" onClick={startSelfCheckout}>
+                Autoatendimento
+              </Button>
+              <Button variant="ghost" onClick={onExit}>
+                Sair do caixa
+              </Button>
+            </>
+          )}
         </div>
       </header>
       {update && cart.lines.length === 0 && (
@@ -586,6 +660,12 @@ export function Register({
               Atualizar agora
             </Button>
           </div>
+        </Alert>
+      )}
+      {selfMode && (
+        <Alert tone="success" title="Autoatendimento">
+          Bipe seus produtos e toque em Pagar. Pague na maquininha ou no Pix; o atendente confirma o
+          pagamento. Pagamento sem atendente e conferência por peso chegam em breve.
         </Alert>
       )}
       {!handle.persistent && (
@@ -765,24 +845,39 @@ export function Register({
           >
             Pagar (F10)
           </Button>
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => setDialog({ kind: 'discount', line: selected })}
-              disabled={cart.lines.length === 0}
-            >
-              Desconto (F4)
-            </Button>
-            <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
-              CPF na nota (F6)
-            </Button>
-            <Button variant="secondary" onClick={() => setDialog({ kind: 'cash' })}>
-              Caixa (F9)
-            </Button>
-            <Button variant="secondary" onClick={() => setDialog({ kind: 'history' })}>
-              Vendas (F11)
-            </Button>
-          </div>
+          {selfMode ? (
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
+                CPF na nota
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => void removeSelected()}
+                disabled={selected === null}
+              >
+                Tirar item
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => setDialog({ kind: 'discount', line: selected })}
+                disabled={cart.lines.length === 0}
+              >
+                Desconto (F4)
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
+                CPF na nota (F6)
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'cash' })}>
+                Caixa (F9)
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'history' })}>
+                Vendas (F11)
+              </Button>
+            </div>
+          )}
           {lastSale && (
             <Button variant="ghost" onClick={() => void print(lastSale)}>
               Imprimir comprovante da venda nº {lastSale.terminalSeq}
@@ -876,6 +971,7 @@ export function Register({
         <PaymentDialog
           totalCents={t.totalCents}
           credit={cart.customerTaxId ? creditInfo : undefined}
+          {...(selfMode && { methods: ['pix', 'debit', 'credit'] as const })}
           onPaid={pay}
           onClose={closeDialog}
         />
@@ -934,6 +1030,32 @@ export function Register({
             closeDialog();
           }}
           onClose={closeDialog}
+        />
+      )}
+      {pinRequest && (
+        <PinDialog
+          mode={pinRequest.mode}
+          title={pinRequest.title}
+          description={pinRequest.description}
+          state={selfCheckout}
+          onDone={(pin) => {
+            const request = pinRequest;
+            setPinRequest(null);
+            if (request.mode === 'create') {
+              void newSelfCheckout(pin).then(async (state) => {
+                await platform.preferences.set(SELF_CHECKOUT_PREF, JSON.stringify(state));
+                setSelfCheckout(state);
+                setDialog({ kind: 'none' });
+              });
+            }
+            request.resolve(true);
+            focusInput();
+          }}
+          onClose={() => {
+            pinRequest.resolve(false);
+            setPinRequest(null);
+            focusInput();
+          }}
         />
       )}
       {auth && (

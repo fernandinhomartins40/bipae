@@ -267,7 +267,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F5-04.c · Tela de lotes e de validade (vencendo e vencidos), com E2E — depende: F5-04.a
 - [x] F5-05 · Painel de prevenção de perdas — depende: F4-10
   - Feito em 16/10/2026: por período e loja, cancelamentos, devoluções, descontos acima do limite, sangrias e faltas no fechamento por operador, perdas de estoque a custo e lotes vencidos, com alertas de quem fica acima do dobro da média.
-- [ ] F5-06 · Self-checkout — depende: F3-14
+- [x] F5-06 · Self-checkout — depende: F3-14
+  - Feito em 16/10/2026: modo autoatendimento no próprio caixa, com PIN de atendente guardado como hash no aparelho (funciona sem internet). O cliente bipa e paga com Pix ou cartão; tirar item, confirmar o pagamento e desligar o modo pedem o PIN. Pagamento sem atendente (depende de E9 e E10) e conferência por peso aparecem como "chega em breve".
 - [ ] F5-07 · Food service: mesas e comandas
 - [ ] F5-08 · App do garçom (celular) — depende: F5-07
 - [ ] F5-09 · KDS (tela da cozinha) — depende: F5-07

@@ -78,10 +78,23 @@ export function AuthorizeDialog({
   return (
     <Modal open onOpenChange={(o) => !o && onClose()} title="Autorização do gerente">
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <p className="text-muted">Peça a um gerente para entrar com os dados dele e {PERMISSION_TEXT[permission]}.</p>
+        <p className="text-muted">
+          Peça a um gerente para entrar com os dados dele e {PERMISSION_TEXT[permission]}.
+        </p>
         {error && <Alert>{error}</Alert>}
-        <TextField label="E-mail do gerente" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
-        <TextField label="Senha do gerente" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <TextField
+          label="E-mail do gerente"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoFocus
+        />
+        <TextField
+          label="Senha do gerente"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <Button type="submit" loading={busy}>
           Autorizar
         </Button>
@@ -124,10 +137,23 @@ export function OperatorDialog({
   return (
     <Modal open onOpenChange={(o) => !o && onClose()} title="Trocar operador">
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <p className="text-muted">O caixa continua aberto. As próximas vendas saem no nome de quem entrar.</p>
+        <p className="text-muted">
+          O caixa continua aberto. As próximas vendas saem no nome de quem entrar.
+        </p>
         {error && <Alert>{error}</Alert>}
-        <TextField label="E-mail de quem vai operar" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
-        <TextField label="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <TextField
+          label="E-mail de quem vai operar"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoFocus
+        />
+        <TextField
+          label="Senha"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <Button type="submit" loading={busy}>
           Entrar no caixa
         </Button>
@@ -159,8 +185,10 @@ export function QuantityDialog({
     e.preventDefault();
     const value = Number(text.replace(',', '.'));
     const milli = Math.round(value * 1000);
-    if (!Number.isFinite(value) || milli <= 0) return setError('Informe uma quantidade maior que zero.');
-    if (!weighable && milli % 1000 !== 0) return setError('Este produto é vendido por unidade inteira.');
+    if (!Number.isFinite(value) || milli <= 0)
+      return setError('Informe uma quantidade maior que zero.');
+    if (!weighable && milli % 1000 !== 0)
+      return setError('Este produto é vendido por unidade inteira.');
     onConfirm(milli);
   };
   return (
@@ -227,20 +255,37 @@ export function DiscountDialog({
     let cents: number | null;
     if (mode === 'percent') {
       const pct = Number(text.replace(',', '.'));
-      cents = Number.isFinite(pct) && pct >= 0 && pct <= 100 ? Math.floor((base * Math.round(pct * 100) + 5000) / 10000) : null;
+      cents =
+        Number.isFinite(pct) && pct >= 0 && pct <= 100
+          ? Math.floor((base * Math.round(pct * 100) + 5000) / 10000)
+          : null;
     } else cents = parseBRL(text);
     if (cents === null || cents < 0 || cents > base) {
-      return setError(scope === 'item' ? 'O desconto não pode ser maior que o valor do item.' : 'Desconto inválido.');
+      return setError(
+        scope === 'item'
+          ? 'O desconto não pode ser maior que o valor do item.'
+          : 'Desconto inválido.',
+      );
     }
     onConfirm(cents, scope);
   };
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title={scope === 'item' ? 'Desconto no item' : 'Desconto na venda'}>
+    <Modal
+      open
+      onOpenChange={(o) => !o && onClose()}
+      title={scope === 'item' ? 'Desconto no item' : 'Desconto na venda'}
+    >
       <form onSubmit={submit} className="flex flex-col gap-4">
         {item && (
           <div className="flex gap-2" role="radiogroup" aria-label="Onde aplicar o desconto">
             {(['item', 'sale'] as const).map((s) => (
-              <Button key={s} variant={scope === s ? 'primary' : 'secondary'} role="radio" aria-checked={scope === s} onClick={() => setScope(s)}>
+              <Button
+                key={s}
+                variant={scope === s ? 'primary' : 'secondary'}
+                role="radio"
+                aria-checked={scope === s}
+                onClick={() => setScope(s)}
+              >
                 {s === 'item' ? `Neste item: ${item.name}` : 'Na venda toda'}
               </Button>
             ))}
@@ -248,7 +293,13 @@ export function DiscountDialog({
         )}
         <div className="flex gap-2" role="radiogroup" aria-label="Tipo de desconto">
           {(['percent', 'value'] as const).map((m) => (
-            <Button key={m} variant={mode === m ? 'primary' : 'secondary'} role="radio" aria-checked={mode === m} onClick={() => setMode(m)}>
+            <Button
+              key={m}
+              variant={mode === m ? 'primary' : 'secondary'}
+              role="radio"
+              aria-checked={mode === m}
+              onClick={() => setMode(m)}
+            >
               {m === 'percent' ? 'Porcentagem (%)' : 'Valor (R$)'}
             </Button>
           ))}
@@ -261,7 +312,11 @@ export function DiscountDialog({
           error={error}
           autoFocus
         />
-        {!canExceed && <p className="text-sm text-muted">Acima de {limitPercent}% precisa da autorização de um gerente.</p>}
+        {!canExceed && (
+          <p className="text-sm text-muted">
+            Acima de {limitPercent}% precisa da autorização de um gerente.
+          </p>
+        )}
         <Button type="submit">Aplicar desconto</Button>
       </form>
     </Modal>
@@ -330,8 +385,10 @@ const METHOD_KEYS: { method: PaymentMethod; key: string }[] = [
 export type CreditInfo = { availableCents: number } | null | undefined;
 
 function creditHint(credit: CreditInfo): string {
-  if (credit === undefined) return 'Para vender no crediário, informe o CPF ou CNPJ do cliente (F6).';
-  if (credit === null) return 'Este cliente não tem crediário. O limite é liberado no cadastro do cliente.';
+  if (credit === undefined)
+    return 'Para vender no crediário, informe o CPF ou CNPJ do cliente (F6).';
+  if (credit === null)
+    return 'Este cliente não tem crediário. O limite é liberado no cadastro do cliente.';
   return `Disponível no crediário: ${brl(credit.availableCents)}.`;
 }
 
@@ -342,16 +399,20 @@ function creditHint(credit: CreditInfo): string {
 export function PaymentDialog({
   totalCents,
   credit,
+  methods,
   onPaid,
   onClose,
 }: {
   totalCents: number;
   credit?: CreditInfo;
+  /** Formas aceitas (autoatendimento, F5-06); sem a lista, todas. */
+  methods?: PaymentMethod[];
   onPaid: (tenders: TenderInput[]) => Promise<void>;
   onClose: () => void;
 }) {
   const [tenders, setTenders] = useState<TenderInput[]>([]);
-  const [method, setMethod] = useState<PaymentMethod>('cash');
+  const allowed = METHOD_KEYS.filter((m) => !methods || methods.includes(m.method));
+  const [method, setMethod] = useState<PaymentMethod>(allowed[0]?.method ?? 'cash');
   const summary = useMemo(() => {
     try {
       return summarizePayments(totalCents, tenders);
@@ -374,10 +435,13 @@ export function PaymentDialog({
   const add = async (received: number | null) => {
     setError(null);
     if (received === null || received <= 0) return setError('Informe um valor válido.');
-    if (method !== 'cash' && received > remaining) return setError('Só pagamento em dinheiro pode passar do valor (para dar troco).');
+    if (method !== 'cash' && received > remaining)
+      return setError('Só pagamento em dinheiro pode passar do valor (para dar troco).');
     if (method === 'pix') return setPixPending(received);
     if (method === 'store_credit') {
-      const used = tenders.filter((t) => t.method === 'store_credit').reduce((a, t) => a + t.receivedCents, 0);
+      const used = tenders
+        .filter((t) => t.method === 'store_credit')
+        .reduce((a, t) => a + t.receivedCents, 0);
       if (!credit) return setError(creditHint(credit));
       if (used + received > credit.availableCents) return setError(creditHint(credit));
     }
@@ -386,7 +450,16 @@ export function PaymentDialog({
       const result = await tef.pay({ amountCents: received, method, saleId: 'pending' });
       setBusy(false);
       if (!result.approved) return setError(result.message);
-      return setTenders((t) => [...t, { method, receivedCents: received, nsu: result.nsu ?? null, authorizationCode: result.authorizationCode ?? null, provider: 'Simulador' }]);
+      return setTenders((t) => [
+        ...t,
+        {
+          method,
+          receivedCents: received,
+          nsu: result.nsu ?? null,
+          authorizationCode: result.authorizationCode ?? null,
+          provider: 'Simulador',
+        },
+      ]);
     }
     setTenders((t) => [...t, { method, receivedCents: received }]);
   };
@@ -408,7 +481,7 @@ export function PaymentDialog({
       <div className="grid gap-6 md:grid-cols-2">
         <div className="flex flex-col gap-4">
           <div role="radiogroup" aria-label="Forma de pagamento" className="grid grid-cols-2 gap-2">
-            {METHOD_KEYS.map(({ method: m, key }) => (
+            {allowed.map(({ method: m, key }) => (
               <Button
                 key={m}
                 role="radio"
@@ -430,7 +503,13 @@ export function PaymentDialog({
               }}
               className="flex flex-col gap-3"
             >
-              <TextField label={method === 'cash' ? 'Valor recebido (R$)' : 'Valor (R$)'} inputMode="decimal" value={amount.text} onChange={(e) => amount.setText(e.target.value)} autoFocus />
+              <TextField
+                label={method === 'cash' ? 'Valor recebido (R$)' : 'Valor (R$)'}
+                inputMode="decimal"
+                value={amount.text}
+                onChange={(e) => amount.setText(e.target.value)}
+                autoFocus
+              />
               {method === 'cash' && (
                 <div className="flex flex-wrap gap-2">
                   {cashSuggestions(remaining).map((c) => (
@@ -440,8 +519,14 @@ export function PaymentDialog({
                   ))}
                 </div>
               )}
-              {method === 'store_credit' && <p className="text-sm text-muted">{creditHint(credit)}</p>}
-              {method !== 'cash' && method !== 'store_credit' && <p className="text-sm text-muted">Simulador: a integração real com Pix e maquininhas chega na Fase 6.</p>}
+              {method === 'store_credit' && (
+                <p className="text-sm text-muted">{creditHint(credit)}</p>
+              )}
+              {method !== 'cash' && method !== 'store_credit' && (
+                <p className="text-sm text-muted">
+                  Simulador: a integração real com Pix e maquininhas chega na Fase 6.
+                </p>
+              )}
               <Button type="submit" loading={busy}>
                 Adicionar {PAYMENT_LABELS[method].toLowerCase()}
               </Button>
@@ -453,7 +538,15 @@ export function PaymentDialog({
               <div className="mt-3 flex gap-2">
                 <Button
                   onClick={() => {
-                    setTenders((t) => [...t, { method: 'pix', receivedCents: pixPending, provider: 'Simulador', nsu: `PIX${Date.now()}` }]);
+                    setTenders((t) => [
+                      ...t,
+                      {
+                        method: 'pix',
+                        receivedCents: pixPending,
+                        provider: 'Simulador',
+                        nsu: `PIX${Date.now()}`,
+                      },
+                    ]);
                     setPixPending(null);
                   }}
                 >
@@ -470,7 +563,11 @@ export function PaymentDialog({
         <div className="flex flex-col gap-3 rounded-ui bg-surface-2 p-4">
           <Row label="Total da venda" value={brl(totalCents)} strong />
           {summary?.payments.map((p, i) => (
-            <Row key={i} label={PAYMENT_LABELS[p.method]} value={brl(p.amountCents + p.changeCents)} />
+            <Row
+              key={i}
+              label={PAYMENT_LABELS[p.method]}
+              value={brl(p.amountCents + p.changeCents)}
+            />
           ))}
           <Row label="Falta pagar" value={brl(remaining)} strong={remaining > 0} />
           {(summary?.changeCents ?? 0) > 0 && (
@@ -483,7 +580,13 @@ export function PaymentDialog({
               Refazer pagamentos
             </Button>
           )}
-          <Button size="lg" onClick={() => void finish()} disabled={!done} loading={busy} aria-keyshortcuts="F10">
+          <Button
+            size="lg"
+            onClick={() => void finish()}
+            disabled={!done}
+            loading={busy}
+            aria-keyshortcuts="F10"
+          >
             Finalizar venda
           </Button>
         </div>
@@ -526,15 +629,23 @@ export function CashDialog({
   const saveMovement = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (amount.cents === null || amount.cents <= 0) return setError('Informe um valor maior que zero.');
+    if (amount.cents === null || amount.cents <= 0)
+      return setError('Informe um valor maior que zero.');
     try {
       let authorizedBy: string | null = null;
       if (view === 'withdrawal' && !canWithdraw) {
         authorizedBy = await requestAuthorization('pos.cash.withdrawal');
         if (!authorizedBy) return;
       }
-      await pdv.addMovement(view as 'withdrawal' | 'supply', amount.cents, reason || null, authorizedBy);
-      setMessage(`${view === 'withdrawal' ? 'Sangria' : 'Suprimento'} de ${brl(amount.cents)} registrado.`);
+      await pdv.addMovement(
+        view as 'withdrawal' | 'supply',
+        amount.cents,
+        reason || null,
+        authorizedBy,
+      );
+      setMessage(
+        `${view === 'withdrawal' ? 'Sangria' : 'Suprimento'} de ${brl(amount.cents)} registrado.`,
+      );
       amount.setText('');
       setReason('');
       setView('menu');
@@ -550,7 +661,8 @@ export function CashDialog({
     for (const [m, text] of Object.entries(declared)) {
       if (!text.trim()) continue;
       const cents = parseBRL(text);
-      if (cents === null || cents < 0) return setError(`Valor inválido em ${PAYMENT_LABELS[m as PaymentMethod]}.`);
+      if (cents === null || cents < 0)
+        return setError(`Valor inválido em ${PAYMENT_LABELS[m as PaymentMethod]}.`);
       values[m as PaymentMethod] = cents;
     }
     try {
@@ -579,10 +691,22 @@ export function CashDialog({
       )}
       {(view === 'withdrawal' || view === 'supply') && (
         <form onSubmit={saveMovement} className="mt-4 flex flex-col gap-4">
-          <TextField label="Valor (R$)" inputMode="decimal" value={amount.text} onChange={(e) => amount.setText(e.target.value)} autoFocus />
-          <TextField label="Motivo (opcional)" value={reason} onChange={(e) => setReason(e.target.value)} />
+          <TextField
+            label="Valor (R$)"
+            inputMode="decimal"
+            value={amount.text}
+            onChange={(e) => amount.setText(e.target.value)}
+            autoFocus
+          />
+          <TextField
+            label="Motivo (opcional)"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
           <div className="flex gap-2">
-            <Button type="submit">Registrar {view === 'withdrawal' ? 'sangria' : 'suprimento'}</Button>
+            <Button type="submit">
+              Registrar {view === 'withdrawal' ? 'sangria' : 'suprimento'}
+            </Button>
             <Button variant="secondary" onClick={() => setView('menu')}>
               Voltar
             </Button>
@@ -592,7 +716,8 @@ export function CashDialog({
       {view === 'close' && (
         <form onSubmit={close} className="mt-4 flex flex-col gap-4">
           <p className="text-muted">
-            Conte o que está no caixa e informe abaixo. O sistema só mostra se sobrou ou faltou depois que você confirmar (fechamento cego).
+            Conte o que está no caixa e informe abaixo. O sistema só mostra se sobrou ou faltou
+            depois que você confirmar (fechamento cego).
           </p>
           {(['cash', 'pix', 'debit', 'credit', 'voucher'] as PaymentMethod[]).map((m) => (
             <TextField
@@ -612,17 +737,31 @@ export function CashDialog({
   );
 }
 
-export function CloseResultDialog({ result, onClose }: { result: CloseResult; onClose: () => void }) {
-  const methods = (Object.keys(result.expected) as PaymentMethod[]).filter((m) => result.expected[m] !== 0 || result.declared[m] !== 0);
+export function CloseResultDialog({
+  result,
+  onClose,
+}: {
+  result: CloseResult;
+  onClose: () => void;
+}) {
+  const methods = (Object.keys(result.expected) as PaymentMethod[]).filter(
+    (m) => result.expected[m] !== 0 || result.declared[m] !== 0,
+  );
   return (
     <Modal open onOpenChange={(o) => !o && onClose()} title="Caixa fechado">
       <table className="w-full text-left">
         <thead className="text-sm text-muted">
           <tr>
             <th scope="col">Forma</th>
-            <th scope="col" className="text-right">Esperado</th>
-            <th scope="col" className="text-right">Contado</th>
-            <th scope="col" className="text-right">Diferença</th>
+            <th scope="col" className="text-right">
+              Esperado
+            </th>
+            <th scope="col" className="text-right">
+              Contado
+            </th>
+            <th scope="col" className="text-right">
+              Diferença
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -631,7 +770,14 @@ export function CloseResultDialog({ result, onClose }: { result: CloseResult; on
               <td className="py-2">{PAYMENT_LABELS[m]}</td>
               <td className="text-right tabular-nums">{brl(result.expected[m])}</td>
               <td className="text-right tabular-nums">{brl(result.declared[m])}</td>
-              <td className={cx('text-right tabular-nums font-semibold', result.differences[m] < 0 && 'text-danger')}>{brl(result.differences[m])}</td>
+              <td
+                className={cx(
+                  'text-right tabular-nums font-semibold',
+                  result.differences[m] < 0 && 'text-danger',
+                )}
+              >
+                {brl(result.differences[m])}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -641,7 +787,8 @@ export function CloseResultDialog({ result, onClose }: { result: CloseResult; on
           <Alert tone="success">Bateu certinho. Bipaê!</Alert>
         ) : (
           <Alert tone="warning">
-            {result.differenceCents > 0 ? 'Sobrou' : 'Faltou'} {brl(Math.abs(result.differenceCents))}. A diferença fica registrada para o gerente.
+            {result.differenceCents > 0 ? 'Sobrou' : 'Faltou'}{' '}
+            {brl(Math.abs(result.differenceCents))}. A diferença fica registrada para o gerente.
           </Alert>
         )}
       </div>
@@ -701,17 +848,32 @@ export function HistoryDialog({
       {error && <Alert>{error}</Alert>}
       {!selected ? (
         <ul className="mt-2 divide-y divide-border">
-          {sales.length === 0 && <li className="py-4 text-muted">Nenhuma venda neste caixa ainda.</li>}
+          {sales.length === 0 && (
+            <li className="py-4 text-muted">Nenhuma venda neste caixa ainda.</li>
+          )}
           {sales.map((s) => (
             <li key={s.id}>
-              <button type="button" className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-surface-2" onClick={() => s.kind === 'sale' && setSelected(s)}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-surface-2"
+                onClick={() => s.kind === 'sale' && setSelected(s)}
+              >
                 <span>
-                  <span className="font-semibold">{s.kind === 'sale' ? `Venda nº ${s.terminalSeq}` : `Devolução nº ${s.terminalSeq}`}</span>{' '}
-                  <span className="text-sm text-muted">{new Date(s.createdAt).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}</span>
+                  <span className="font-semibold">
+                    {s.kind === 'sale'
+                      ? `Venda nº ${s.terminalSeq}`
+                      : `Devolução nº ${s.terminalSeq}`}
+                  </span>{' '}
+                  <span className="text-sm text-muted">
+                    {new Date(s.createdAt).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}
+                  </span>
                 </span>
                 <span className="flex items-center gap-2">
                   {s.status === 'cancelled' && <Badge tone="danger">Cancelada</Badge>}
-                  <span className="tabular-nums">{s.kind === 'return' ? '−' : ''}{brl(s.totalCents)}</span>
+                  <span className="tabular-nums">
+                    {s.kind === 'return' ? '−' : ''}
+                    {brl(s.totalCents)}
+                  </span>
                 </span>
               </button>
             </li>
@@ -719,20 +881,28 @@ export function HistoryDialog({
         </ul>
       ) : (
         <div className="flex flex-col gap-4">
-          <p className="font-semibold">Venda nº {selected.terminalSeq} · {brl(selected.totalCents)}</p>
+          <p className="font-semibold">
+            Venda nº {selected.terminalSeq} · {brl(selected.totalCents)}
+          </p>
           <table className="w-full text-left">
             <thead className="text-sm text-muted">
               <tr>
                 <th scope="col">Item</th>
-                <th scope="col" className="text-right">Qtd.</th>
-                <th scope="col" className="text-right">Devolver</th>
+                <th scope="col" className="text-right">
+                  Qtd.
+                </th>
+                <th scope="col" className="text-right">
+                  Devolver
+                </th>
               </tr>
             </thead>
             <tbody>
               {selected.items.map((i) => (
                 <tr key={i.line} className="border-t border-border">
                   <td className="py-2">{i.name}</td>
-                  <td className="text-right tabular-nums">{(i.quantityMilli / 1000).toLocaleString('pt-BR')}</td>
+                  <td className="text-right tabular-nums">
+                    {(i.quantityMilli / 1000).toLocaleString('pt-BR')}
+                  </td>
                   <td className="text-right">
                     <input
                       aria-label={`Quantidade a devolver de ${i.name}`}
@@ -750,7 +920,11 @@ export function HistoryDialog({
           <TextField label="Motivo" value={reason} onChange={(e) => setReason(e.target.value)} />
           <label className="flex flex-col gap-1.5 text-sm font-semibold">
             Devolver o dinheiro em
-            <select className="min-h-11 rounded-ui border border-border bg-surface px-3" value={refundMethod} onChange={(e) => setRefundMethod(e.target.value as PaymentMethod)}>
+            <select
+              className="min-h-11 rounded-ui border border-border bg-surface px-3"
+              value={refundMethod}
+              onChange={(e) => setRefundMethod(e.target.value as PaymentMethod)}
+            >
               {(['cash', 'pix', 'debit', 'credit', 'voucher'] as PaymentMethod[]).map((m) => (
                 <option key={m} value={m}>
                   {PAYMENT_LABELS[m]}
@@ -765,7 +939,10 @@ export function HistoryDialog({
                 void act(async () => {
                   const lines = Object.entries(returning)
                     .filter(([, v]) => v.trim())
-                    .map(([line, v]) => ({ line: Number(line), quantityMilli: Math.round(Number(v.replace(',', '.')) * 1000) }));
+                    .map(([line, v]) => ({
+                      line: Number(line),
+                      quantityMilli: Math.round(Number(v.replace(',', '.')) * 1000),
+                    }));
                   if (lines.length === 0) throw new Error('Informe a quantidade a devolver.');
                   const r = await pdv.returnItems(selected.id, lines, refundMethod, reason);
                   setMessage(`Devolva ${brl(r.totalCents)} ao cliente.`);
@@ -824,7 +1001,11 @@ export function QuotesDialog({
           {quotes.map((q) => (
             <li key={q.id} className="flex items-center justify-between gap-3 py-3">
               <span>
-                {new Date(q.createdAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })} · {q.items} itens
+                {new Date(q.createdAt).toLocaleString('pt-BR', {
+                  dateStyle: 'short',
+                  timeStyle: 'short',
+                })}{' '}
+                · {q.items} itens
               </span>
               <span className="flex items-center gap-3">
                 <span className="tabular-nums">{brl(q.totalCents)}</span>
