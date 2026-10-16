@@ -38,6 +38,7 @@ import {
   UserRound,
   TrendingUp,
   Users,
+  UtensilsCrossed,
   Wallet,
 } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
@@ -73,6 +74,7 @@ const NAV = [
     icon: ClipboardCheck,
     permission: 'catalog.read',
   },
+  { to: '/comandas', label: 'Comandas abertas', icon: UtensilsCrossed, permission: 'pos.sell' },
   { to: '/relatorios', label: 'Relatórios', icon: PieChart, permission: 'finance.read' },
   {
     to: '/prevencao-de-perdas',

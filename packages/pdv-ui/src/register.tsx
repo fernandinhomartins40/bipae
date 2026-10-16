@@ -47,6 +47,7 @@ import {
   QuotesDialog,
 } from './dialogs';
 import { QuickProductDialog } from './quick-product';
+import { splitBill, TabsDialog } from './tabs';
 import {
   loadSelfCheckout,
   newSelfCheckout,
@@ -98,7 +99,8 @@ type Dialog =
   | { kind: 'history' }
   | { kind: 'quotes' }
   | { kind: 'quick-product'; code: string; catalog: CatalogEntry | null }
-  | { kind: 'operator' };
+  | { kind: 'operator' }
+  | { kind: 'tabs' };
 
 export function Register({
   handle,
@@ -254,6 +256,48 @@ export function Register({
       return;
     setCart((c) => removeLine(c, selected));
     setSelected(null);
+  };
+
+  // Comandas (F5-07): abrir traz para o caixa; guardar devolve o caixa livre.
+  const [people, setPeople] = useState(2);
+  const openTab = async (tabId: string | null, label?: string) => {
+    const current = cartRef.current;
+    if (current.lines.length > 0 && !current.tabId) {
+      throw new Error('Termine ou limpe a venda atual antes de abrir uma comanda.');
+    }
+    if (current.tabId) await pdv.saveTab(current);
+    const next = tabId ? await pdv.loadTab(tabId) : await pdv.openTab(label ?? '');
+    setCart(next);
+    setSelected(null);
+    setPeople(2);
+    setDialog({ kind: 'none' });
+    setMessage({
+      tone: 'success',
+      text: `Comanda ${next.tabLabel} na tela: bipe os itens e toque em Guardar na comanda.`,
+    });
+    focusInput();
+  };
+  const saveTabNow = async () => {
+    const current = cartRef.current;
+    try {
+      await pdv.saveTab(current);
+      setCart(EMPTY_CART);
+      setSelected(null);
+      setMessage({ tone: 'success', text: `Comanda ${current.tabLabel} guardada.` });
+    } catch (error) {
+      fail(error);
+    }
+    focusInput();
+  };
+  const cancelTab = async (tab: { id: string; label: string }) => {
+    const reason = window.prompt(`Por que cancelar a comanda ${tab.label}?`);
+    if (!reason) return;
+    if (!can('pos.sale.cancel') && !(await requestAuthorization('pos.sale.cancel'))) {
+      throw new Error('Cancelamento não autorizado.');
+    }
+    await pdv.cancelTab(tab.id, reason);
+    if (cartRef.current.tabId === tab.id) setCart(EMPTY_CART);
+    setMessage({ tone: 'success', text: `Comanda ${tab.label} cancelada.` });
   };
 
   const requestAuthorization = useCallback(
@@ -829,6 +873,48 @@ export function Register({
               ))}
             </ul>
           )}
+          {cart.tabId && (
+            <div
+              className="flex flex-col gap-2 rounded-ui border border-primary p-3"
+              aria-label="Comanda"
+            >
+              <p className="font-semibold" data-testid="tab-label">
+                Comanda {cart.tabLabel}
+              </p>
+              <Button variant="secondary" onClick={() => void saveTabNow()}>
+                Guardar na comanda
+              </Button>
+              {t.totalCents > 0 && (
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  <span>Dividir por</span>
+                  <Button
+                    variant="ghost"
+                    aria-label="Menos uma pessoa"
+                    onClick={() => setPeople((n) => Math.max(1, n - 1))}
+                  >
+                    −
+                  </Button>
+                  <span className="font-semibold tabular-nums" data-testid="tab-people">
+                    {people}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    aria-label="Mais uma pessoa"
+                    onClick={() => setPeople((n) => Math.min(50, n + 1))}
+                  >
+                    +
+                  </Button>
+                  <span data-testid="tab-split">
+                    {people === 1 ? 'pessoa' : 'pessoas'}:{' '}
+                    {brl(splitBill(t.totalCents, people)[0]!)}
+                    {splitBill(t.totalCents, people).some((v, _, all) => v !== all[0])
+                      ? ' (alguns centavos a mais na primeira)'
+                      : ' cada'}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
           {cart.customerTaxId && (
             <p className="text-sm">CPF/CNPJ na nota: {formatTaxId(cart.customerTaxId)}</p>
           )}
@@ -875,6 +961,9 @@ export function Register({
               </Button>
               <Button variant="secondary" onClick={() => setDialog({ kind: 'history' })}>
                 Vendas (F11)
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'tabs' })}>
+                Comandas
               </Button>
             </div>
           )}
@@ -966,6 +1055,9 @@ export function Register({
           }}
           onClose={closeDialog}
         />
+      )}
+      {dialog.kind === 'tabs' && (
+        <TabsDialog pdv={pdv} onOpen={openTab} onCancel={cancelTab} onClose={closeDialog} />
       )}
       {dialog.kind === 'payment' && (
         <PaymentDialog

@@ -269,9 +269,9 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - Feito em 16/10/2026: por período e loja, cancelamentos, devoluções, descontos acima do limite, sangrias e faltas no fechamento por operador, perdas de estoque a custo e lotes vencidos, com alertas de quem fica acima do dobro da média.
 - [x] F5-06 · Self-checkout — depende: F3-14
   - Feito em 16/10/2026: modo autoatendimento no próprio caixa, com PIN de atendente guardado como hash no aparelho (funciona sem internet). O cliente bipa e paga com Pix ou cartão; tirar item, confirmar o pagamento e desligar o modo pedem o PIN. Pagamento sem atendente (depende de E9 e E10) e conferência por peso aparecem como "chega em breve".
-- [~] F5-07 · Food service: mesas e comandas
+- [x] F5-07 · Food service: mesas e comandas
   - [x] F5-07.a · Comandas no caixa, sem internet: abrir pela mesa ou pelo número, lançar itens aos poucos, guardar e fechar a conta como venda; cada passo vira evento (tab.opened, tab.updated, tab.closed) e o servidor guarda as comandas para o garçom e a cozinha
-  - [ ] F5-07.b · Telas das comandas no caixa e na retaguarda (comandas abertas, tempo e valor), divisão da conta por pessoas, com E2E — depende: F5-07.a
+  - [x] F5-07.b · Telas das comandas no caixa e na retaguarda (comandas abertas, tempo e valor), divisão da conta por pessoas, com E2E — depende: F5-07.a
 - [ ] F5-08 · App do garçom (celular) — depende: F5-07
 - [ ] F5-09 · KDS (tela da cozinha) — depende: F5-07
 - [ ] F5-10 · Delivery com taxa por bairro — depende: F5-07

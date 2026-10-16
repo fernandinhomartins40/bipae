@@ -1,5 +1,12 @@
 # Changelog
 
+## [F5-07.b Telas das comandas] — 16/10/2026
+
+### Adicionado
+- **Botão "Comandas" no caixa**: lista as comandas abertas com o valor e há quanto tempo estão abertas, abre uma nova pela mesa ou pelo número e cancela com motivo (com autorização, para quem não tem a permissão).
+- **Com a comanda na tela:** "Guardar na comanda" devolve o caixa livre, e "Dividir por N pessoas" mostra quanto cada um paga, sem perder centavo. Pagar fecha a comanda.
+- **Nova tela "Comandas abertas" na retaguarda**: o que está em cada mesa agora, por loja, atualizada a cada 15 segundos.
+
 ## [F5-07.a Comandas no caixa e no servidor] — 16/10/2026
 
 ### Adicionado

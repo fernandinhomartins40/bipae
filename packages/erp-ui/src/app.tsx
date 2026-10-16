@@ -30,6 +30,7 @@ import { TransfersPage } from './pages/transfers';
 import { IbsCbsPage } from './pages/ibs-cbs';
 import { AccountantPage } from './pages/accountant';
 import { LossesPage } from './pages/losses';
+import { TabsPage } from './pages/tabs';
 import { InutilizationPage } from './pages/inutilization';
 import { LabelsPage } from './pages/labels';
 import { PromotionsPage } from './pages/promotions';
@@ -177,6 +178,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="apuracao-ibs-cbs" element={<IbsCbsPage />} />
               <Route path="contador" element={<AccountantPage />} />
               <Route path="prevencao-de-perdas" element={<LossesPage />} />
+              <Route path="comandas" element={<TabsPage />} />
               <Route path="inutilizacao" element={<InutilizationPage />} />
               <Route path="relatorios" element={<ReportsPage />} />
               <Route path="inadimplencia" element={<DelinquencyPage />} />
