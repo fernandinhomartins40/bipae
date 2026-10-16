@@ -1,5 +1,15 @@
 # Changelog
 
+## [F6-01.c Webhooks] — 16/10/2026
+
+### Adicionado
+- **Webhooks na tela "Integrações (API)":** o Bipaê avisa outro sistema na hora de cada venda, cancelamento, devolução ou mudança de produto (inclusive preço). O aviso traz os dados no mesmo formato da API pública.
+- **Assinatura:** cada aviso vai assinado com um segredo que aparece uma vez e pode ser trocado, para o outro sistema conferir que veio do Bipaê.
+- **Novas tentativas:** se o endereço não responder, o Bipaê tenta de novo em 1 minuto, 5 minutos, 30 minutos, 2 horas e 12 horas. A tela mostra o que está pendente, o que falhou e o histórico de entregas.
+- **"Enviar teste":** manda um aviso de teste para conferir o endereço.
+- **Segurança:** só endereços https. Endereços da rede interna são recusados. Criar, alterar e trocar o segredo ficam na auditoria.
+- **Fim da F6-01:** com isso, a API pública está completa (chaves, contrato OpenAPI e webhooks).
+
 ## [F6-01.b Contrato OpenAPI e leitura pela API pública] — 16/10/2026
 
 ### Adicionado

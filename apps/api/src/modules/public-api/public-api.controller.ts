@@ -8,16 +8,14 @@ import { storeCondition } from '../../common/stores';
 import { withTenant, type Db } from '../../db/client';
 import {
   customers,
-  productBarcodes,
   products,
-  saleItems,
-  salePayments,
   sales,
   stockMovements,
   stores,
 } from '../../db/schema';
 import { ApiKeysService } from './api-keys.service';
 import { OPENAPI } from './openapi';
+import { publicProducts, publicSales } from './public-shapes';
 
 /** Página da API pública: `cursor` é o último id da página anterior (ids UUIDv7, em ordem). */
 const page = z.object({
@@ -52,48 +50,15 @@ export class PublicDataService {
   products(ctx: RequestContext, query: unknown) {
     const q = parse(page.extend({ updatedSince: since.optional() }), query);
     return withTenant(this.db, ctx, async (tx) => {
-      const rows = await tx
-        .select({
-          id: products.id,
-          name: products.name,
-          sku: products.sku,
-          unit: products.unit,
-          priceCents: products.priceCents,
-          active: products.active,
-          ncm: products.ncm,
-          cest: products.cest,
-          parentId: products.parentId,
-          attributes: products.attributes,
-          updatedAt: products.updatedAt,
-        })
-        .from(products)
-        .where(
-          and(
-            q.cursor ? gt(products.id, q.cursor) : undefined,
-            q.updatedSince ? gte(products.updatedAt, new Date(q.updatedSince)) : undefined,
-          ),
-        )
-        .orderBy(asc(products.id))
-        .limit(q.limit);
-      const codes = rows.length
-        ? await tx
-            .select({ productId: productBarcodes.productId, code: productBarcodes.code })
-            .from(productBarcodes)
-            .where(
-              inArray(
-                productBarcodes.productId,
-                rows.map((r) => r.id),
-              ),
-            )
-        : [];
-      return {
-        items: rows.map((r) => ({
-          ...r,
-          barcodes: codes.filter((c) => c.productId === r.id).map((c) => c.code),
-          updatedAt: r.updatedAt.toISOString(),
-        })),
-        nextCursor: nextCursor(rows, q.limit),
-      };
+      const items = await publicProducts(
+        tx,
+        and(
+          q.cursor ? gt(products.id, q.cursor) : undefined,
+          q.updatedSince ? gte(products.updatedAt, new Date(q.updatedSince)) : undefined,
+        ),
+        q.limit,
+      );
+      return { items, nextCursor: nextCursor(items, q.limit) };
     });
   }
 
@@ -159,71 +124,17 @@ export class PublicDataService {
   sales(ctx: RequestContext, query: unknown) {
     const q = parse(page.extend({ from: since.optional(), to: since.optional() }), query);
     return withTenant(this.db, ctx, async (tx) => {
-      const rows = await tx
-        .select({
-          id: sales.id,
-          storeId: sales.storeId,
-          terminalId: sales.terminalId,
-          kind: sales.kind,
-          status: sales.status,
-          originalSaleId: sales.originalSaleId,
-          subtotalCents: sales.subtotalCents,
-          discountCents: sales.discountCents,
-          totalCents: sales.totalCents,
-          occurredAt: sales.occurredAt,
-          cancelledAt: sales.cancelledAt,
-        })
-        .from(sales)
-        .where(
-          and(
-            storeCondition(ctx, sales.storeId),
-            q.cursor ? gt(sales.id, q.cursor) : undefined,
-            q.from ? gte(sales.occurredAt, new Date(q.from)) : undefined,
-            q.to ? lt(sales.occurredAt, new Date(q.to)) : undefined,
-          ),
-        )
-        .orderBy(asc(sales.id))
-        .limit(q.limit);
-      const ids = rows.map((r) => r.id);
-      const [items, payments] = ids.length
-        ? await Promise.all([
-            tx
-              .select({
-                saleId: saleItems.saleId,
-                line: saleItems.line,
-                productId: saleItems.productId,
-                name: saleItems.name,
-                unit: saleItems.unit,
-                quantityMilli: saleItems.quantityMilli,
-                unitPriceCents: saleItems.unitPriceCents,
-                discountCents: saleItems.discountCents,
-                totalCents: saleItems.totalCents,
-              })
-              .from(saleItems)
-              .where(inArray(saleItems.saleId, ids))
-              .orderBy(asc(saleItems.line)),
-            tx
-              .select({
-                saleId: salePayments.saleId,
-                method: salePayments.method,
-                amountCents: salePayments.amountCents,
-                changeCents: salePayments.changeCents,
-              })
-              .from(salePayments)
-              .where(inArray(salePayments.saleId, ids))
-              .orderBy(asc(salePayments.idx)),
-          ])
-        : [[], []];
-      return {
-        items: rows.map((r) => ({
-          ...r,
-          occurredAt: r.occurredAt.toISOString(),
-          cancelledAt: r.cancelledAt?.toISOString() ?? null,
-          items: items.filter((i) => i.saleId === r.id).map(({ saleId: _s, ...i }) => i),
-          payments: payments.filter((p) => p.saleId === r.id).map(({ saleId: _s, ...p }) => p),
-        })),
-        nextCursor: nextCursor(rows, q.limit),
-      };
+      const items = await publicSales(
+        tx,
+        and(
+          storeCondition(ctx, sales.storeId),
+          q.cursor ? gt(sales.id, q.cursor) : undefined,
+          q.from ? gte(sales.occurredAt, new Date(q.from)) : undefined,
+          q.to ? lt(sales.occurredAt, new Date(q.to)) : undefined,
+        ),
+        q.limit,
+      );
+      return { items, nextCursor: nextCursor(items, q.limit) };
     });
   }
 }

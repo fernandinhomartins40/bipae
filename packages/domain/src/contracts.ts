@@ -1847,3 +1847,64 @@ export interface ApiKeyView {
 export interface ApiKeyCreated extends ApiKeyView {
   key: string;
 }
+
+// ---------- API pública: webhooks (F6-01.c, ADR-0016) ----------
+
+export const WEBHOOK_EVENTS = [
+  'sale.completed',
+  'sale.cancelled',
+  'sale.returned',
+  'product.updated',
+] as const;
+export type WebhookEvent = (typeof WEBHOOK_EVENTS)[number];
+
+export const WEBHOOK_EVENT_LABELS: Record<WebhookEvent, string> = {
+  'sale.completed': 'Venda feita no caixa',
+  'sale.cancelled': 'Venda cancelada',
+  'sale.returned': 'Devolução de venda',
+  'product.updated': 'Produto cadastrado ou alterado (inclusive preço)',
+};
+
+export const webhookInput = z.object({
+  url: z
+    .string()
+    .trim()
+    .url('Informe o endereço completo, começando com https://')
+    .max(500)
+    .refine((u) => /^https?:\/\//i.test(u), 'O endereço precisa começar com https://'),
+  events: z
+    .array(z.enum(WEBHOOK_EVENTS))
+    .min(1, 'Escolha pelo menos um aviso')
+    .transform((e) => [...new Set(e)]),
+  active: z.boolean().default(true),
+});
+export type WebhookInput = z.input<typeof webhookInput>;
+
+export interface WebhookView {
+  id: string;
+  url: string;
+  events: string[];
+  active: boolean;
+  createdAt: string;
+  /** Resumo das últimas entregas. */
+  pending: number;
+  failed: number;
+  lastDeliveryAt: string | null;
+}
+
+/** Na criação (e ao gerar outro): a única vez em que o segredo aparece. */
+export interface WebhookCreated extends WebhookView {
+  secret: string;
+}
+
+export interface WebhookDeliveryView {
+  id: string;
+  event: string;
+  status: 'pending' | 'sent' | 'failed';
+  attempts: number;
+  lastStatus: number | null;
+  lastError: string | null;
+  createdAt: string;
+  deliveredAt: string | null;
+  nextAttemptAt: string | null;
+}

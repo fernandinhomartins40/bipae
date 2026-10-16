@@ -49,6 +49,7 @@ import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import { KitchenService } from '../sales/kitchen.service';
 import { TabOrdersService } from '../sales/tab-orders.service';
+import { WebhooksService } from '../public-api/webhooks.service';
 import {
   cancelCreditReceivable,
   createCreditReceivable,
@@ -76,6 +77,7 @@ export class SyncService {
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
     @Inject(KitchenService) private readonly kitchen: KitchenService,
     @Inject(TabOrdersService) private readonly tabOrders: TabOrdersService,
+    @Inject(WebhooksService) private readonly webhooks: WebhooksService,
   ) {}
 
   /**
@@ -432,6 +434,7 @@ export class SyncService {
             },
           });
         }
+        await this.notify(tx, ctx.tenantId, 'sale.completed', p.saleId, afterCommit);
         return;
       }
       case 'sale.cancelled': {
@@ -488,6 +491,7 @@ export class SyncService {
             this.fiscalEvents.schedule(ctx.tenantId, event.operatorId, documentId),
           );
         }
+        await this.notify(tx, ctx.tenantId, 'sale.cancelled', sale.id, afterCommit);
         return;
       }
       case 'sale.returned': {
@@ -542,9 +546,22 @@ export class SyncService {
           entityId: p.originalSaleId,
           data: { refundCents: p.refundCents, refundMethod: p.refundMethod, reason: p.reason },
         });
+        await this.notify(tx, ctx.tenantId, 'sale.returned', p.returnId, afterCommit);
         return;
       }
     }
+  }
+
+  /** Avisos da API pública (F6-01.c): gravados nesta transação, enviados depois dela. */
+  private async notify(
+    tx: Tx,
+    tenantId: string,
+    event: 'sale.completed' | 'sale.cancelled' | 'sale.returned',
+    saleId: string,
+    afterCommit: (() => Promise<void>)[],
+  ) {
+    const ids = await this.webhooks.emitSale(tx, tenantId, event, saleId);
+    if (ids.length > 0) afterCommit.push(() => this.webhooks.schedule(tenantId, ids));
   }
 
   private async requireSession(tx: Tx, sessionId: string) {

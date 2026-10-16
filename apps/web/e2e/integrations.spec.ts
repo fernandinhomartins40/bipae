@@ -1,6 +1,8 @@
+import { createServer } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { expect, request, test, type Page } from '@playwright/test';
 
-/** F6-01.a: chave da API pública criada na retaguarda, usada por outro sistema e revogada. */
+/** F6-01.a e F6-01.c: chave da API pública e webhooks, criados na retaguarda e usados por outro sistema. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
 const menu = (page: Page, name: string) =>
@@ -46,4 +48,53 @@ test('criar a chave, usar na API pública e revogar', async ({ page }) => {
   await linha.getByRole('button', { name: 'Revogar Loja virtual' }).click();
   await expect(linha.getByText('Revogada')).toBeVisible();
   expect((await parceiro.get('public/me')).status()).toBe(401);
+});
+
+test('cadastrar um webhook, mandar o teste e ver a entrega', async ({ page }) => {
+  const recebidos: string[] = [];
+  const receptor = createServer((req, res) => {
+    let corpo = '';
+    req.on('data', (c) => (corpo += c));
+    req.on('end', () => {
+      recebidos.push(corpo);
+      res.end('ok');
+    });
+  });
+  await new Promise<void>((r) => receptor.listen(0, '127.0.0.1', r));
+  const endereco = `http://127.0.0.1:${(receptor.address() as AddressInfo).port}/avisos`;
+
+  const email = `hook-${Date.now()}@exemplo.com.br`;
+  const api = await request.newContext({ baseURL: 'http://localhost:3334/v1/' });
+  await api.post('auth/signup', {
+    data: {
+      ownerName: 'Bruno Dono',
+      businessName: `Loja Hook ${Date.now()}`,
+      email,
+      password: 'senha-forte-123',
+    },
+  });
+  await page.goto('/entrar');
+  await page.getByLabel('E-mail').fill(email);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Entrar' }).click();
+  await menu(page, 'Integrações (API)');
+
+  await page.getByRole('button', { name: 'Novo webhook' }).click();
+  await page.getByLabel('Endereço que recebe os avisos').fill(endereco);
+  await page.getByLabel('Produto cadastrado ou alterado (inclusive preço)').check();
+  await page.getByRole('button', { name: 'Criar webhook' }).click();
+  await expect(page.getByLabel('Segredo do webhook')).toContainText('whsec_');
+  await page.getByRole('button', { name: 'Já guardei o segredo' }).click();
+
+  const linha = page.getByRole('row', { name: /127\.0\.0\.1:\d+\/avisos/ });
+  await expect(linha).toContainText('Venda feita no caixa');
+  await linha.getByRole('button', { name: 'Enviar teste' }).click();
+  await expect.poll(() => recebidos.length).toBeGreaterThan(0);
+  expect(JSON.parse(recebidos[0]!)).toMatchObject({ event: 'ping' });
+
+  await linha.getByRole('button', { name: 'Entregas' }).click();
+  const entregas = page.getByRole('list', { name: 'Entregas' });
+  await expect(entregas).toContainText('Aviso de teste');
+  await expect(entregas).toContainText('Entregue');
+  receptor.close();
 });

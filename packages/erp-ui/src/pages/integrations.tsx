@@ -20,6 +20,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { KeyRound } from 'lucide-react';
 import { useState } from 'react';
 import { useApp } from '../context';
+import { WebhooksSection } from './webhooks';
 
 const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString('pt-BR') : '—');
 
@@ -134,6 +135,7 @@ export function IntegrationsPage() {
           }}
         />
       )}
+      <WebhooksSection />
     </>
   );
 }

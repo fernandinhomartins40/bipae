@@ -93,6 +93,7 @@ import { TabsController } from './modules/sales/tabs.controller';
 import { KitchenController, KitchenService } from './modules/sales/kitchen.service';
 import { ConditionalsController, ConditionalsService } from './modules/sales/conditionals.service';
 import { ApiKeysController, ApiKeysService } from './modules/public-api/api-keys.service';
+import { WebhooksController, WebhooksService } from './modules/public-api/webhooks.service';
 import { PublicApiController, PublicDataService } from './modules/public-api/public-api.controller';
 import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
 import { DeliveryController, DeliveryService } from './modules/sales/delivery.service';
@@ -158,6 +159,7 @@ class AppModule {
         TabOrdersController,
         ConditionalsController,
         ApiKeysController,
+        WebhooksController,
         PublicApiController,
         DeliveryController,
         InventoryController,
@@ -211,6 +213,7 @@ class AppModule {
         TabOrdersService,
         ConditionalsService,
         ApiKeysService,
+        WebhooksService,
         PublicDataService,
         DeliveryService,
         InventoryService,

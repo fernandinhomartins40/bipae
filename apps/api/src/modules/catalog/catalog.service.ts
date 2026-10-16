@@ -29,6 +29,7 @@ import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 import { assertFiscalProfile, assertProductFiscal } from '../fiscal/fiscal-validation';
 import { MercadoflowContributions } from '../mercadoflow/mercadoflow.contributions';
+import { WebhooksService } from '../public-api/webhooks.service';
 import { MercadoflowMarketSync } from '../mercadoflow/mercadoflow.market-sync';
 
 type ProductData = z.output<typeof productInput>;
@@ -60,6 +61,7 @@ export class CatalogService {
     @Inject(LimitsService) private readonly limits: LimitsService,
     @Inject(MercadoflowContributions) private readonly contributions: MercadoflowContributions,
     @Inject(MercadoflowMarketSync) private readonly marketSync: MercadoflowMarketSync,
+    @Inject(WebhooksService) private readonly webhooks: WebhooksService,
   ) {}
 
   // ---------------------------------------------------------------- products
@@ -102,7 +104,8 @@ export class CatalogService {
   async createProduct(ctx: RequestContext, input: ProductData): Promise<Product> {
     assertProductFiscal(input);
     assertWholesale(input);
-    return withTenant(this.db, ctx, async (tx) => {
+    let notices: string[] = [];
+    const product = await withTenant(this.db, ctx, async (tx) => {
       await this.limits.assertCanAdd(tx, 'products');
       const id = uuidv7();
       await tx.insert(products).values({ id, tenantId: ctx.tenantId, ...this.columns(input) });
@@ -119,13 +122,17 @@ export class CatalogService {
         entityId: id,
         data: { name: input.name, priceCents: input.priceCents },
       });
+      notices = await this.webhooks.emitProduct(tx, ctx.tenantId, id);
       const [row] = await tx.select().from(products).where(eq(products.id, id));
       return (await this.hydrate(tx, [row!]))[0]!;
     });
+    await this.webhooks.schedule(ctx.tenantId, notices);
+    return product;
   }
 
   async updateProduct(ctx: RequestContext, id: string, input: ProductData): Promise<Product> {
-    return withTenant(this.db, ctx, async (tx) => {
+    let notices: string[] = [];
+    const product = await withTenant(this.db, ctx, async (tx) => {
       const [current] = await tx.select().from(products).where(eq(products.id, id));
       if (!current) throw notFound('Produto');
       if (input.parentId === id) {
@@ -185,9 +192,12 @@ export class CatalogService {
             }
           : { name: input.name },
       });
+      notices = await this.webhooks.emitProduct(tx, ctx.tenantId, id);
       const [row] = await tx.select().from(products).where(eq(products.id, id));
       return (await this.hydrate(tx, [row!]))[0]!;
     });
+    await this.webhooks.schedule(ctx.tenantId, notices);
+    return product;
   }
 
   private columns(input: ProductData) {

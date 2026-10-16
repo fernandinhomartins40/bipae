@@ -1207,3 +1207,34 @@ export const apiKeys = pgTable('api_keys', {
   revokedAt: ts('revoked_at'),
   revokedBy: uuid('revoked_by'),
 });
+
+/** Endereço que recebe os avisos da API pública (F6-01.c); o segredo fica selado. */
+export const webhookEndpoints = pgTable('webhook_endpoints', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  url: text('url').notNull(),
+  events: text('events').array().notNull(),
+  secretSealed: text('secret_sealed').notNull(),
+  active: boolean('active').notNull().default(true),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Cada aviso a entregar (outbox), com as tentativas e a resposta do parceiro. */
+export const webhookDeliveries = pgTable('webhook_deliveries', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  endpointId: uuid('endpoint_id').notNull(),
+  event: text('event').notNull(),
+  payload: jsonb('payload').notNull(),
+  status: text('status', { enum: ['pending', 'sent', 'failed'] })
+    .notNull()
+    .default('pending'),
+  attempts: integer('attempts').notNull().default(0),
+  nextAttemptAt: ts('next_attempt_at').notNull().defaultNow(),
+  lastStatus: integer('last_status'),
+  lastError: text('last_error'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  deliveredAt: ts('delivered_at'),
+});

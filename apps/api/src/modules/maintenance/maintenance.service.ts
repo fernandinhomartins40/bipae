@@ -11,15 +11,25 @@ import { CONFIG, DB, QUEUE } from '../../common/di';
 import type { JobQueue } from '../../common/queue';
 import { asPlatform, type Db, type Tx } from '../../db/client';
 import { rowsOf } from '../../db/migrate';
-import { adminSessions, fiscalDocuments, sales, sessions, tenants } from '../../db/schema';
+import {
+  adminSessions,
+  fiscalDocuments,
+  sales,
+  sessions,
+  tenants,
+  webhookDeliveries,
+} from '../../db/schema';
 import { tenantTables } from '../account/data-export.service';
 import { PlatformAuditService } from '../admin/platform-audit.service';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
+import { WebhooksService } from '../public-api/webhooks.service';
 
 export const SESSIONS_CLEANUP = 'manutencao.limpar-sessoes';
 export const ACCOUNT_PURGE = 'manutencao.excluir-contas-canceladas';
 export const NFCE_SWEEP = 'manutencao.reenviar-nfce';
+export const WEBHOOK_SWEEP = 'manutencao.reenviar-webhooks';
+const UM_MINUTO = 60_000;
 const CINCO_MINUTOS = 5 * 60_000;
 const UM_DIA = 24 * 60 * 60_000;
 const SEIS_HORAS = 6 * 60 * 60_000;
@@ -41,6 +51,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(PlatformAuditService) private readonly platformAudit: PlatformAuditService,
     @Inject(NfceEmissionService) private readonly nfce: NfceEmissionService,
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
+    @Inject(WebhooksService) private readonly webhooks: WebhooksService,
   ) {}
 
   async onModuleInit() {
@@ -53,6 +64,9 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
       this.queue.process(NFCE_SWEEP, async () => {
         const again = await this.sweepNfce();
         if (again > 0) this.logger.log(`${again} NFC-e de volta à fila`);
+      });
+      this.queue.process(WEBHOOK_SWEEP, async () => {
+        await this.sweepWebhooks();
       });
       this.queue.process(ACCOUNT_PURGE, async () => {
         const purged = await this.purgeCancelledAccounts();
@@ -77,6 +91,11 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
           this.logger.warn(`Não foi possível agendar a fila da NFC-e: ${error.message}`),
         );
       void this.queue
+        .add(WEBHOOK_SWEEP, {}, { repeatEveryMs: UM_MINUTO })
+        .catch((error: Error) =>
+          this.logger.warn(`Não foi possível agendar os webhooks: ${error.message}`),
+        );
+      void this.queue
         .add(ACCOUNT_PURGE, {}, { repeatEveryMs: UM_DIA })
         .catch((error: Error) =>
           this.logger.warn(`Não foi possível agendar a exclusão de contas: ${error.message}`),
@@ -86,6 +105,24 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     await this.queue.close().catch(() => undefined);
+  }
+
+  /**
+   * Avisos da API pública (F6-01.c) com tentativa vencida voltam para a fila: a espera entre
+   * tentativas fica na própria linha, e a fila em memória perde tarefas numa reinicialização.
+   */
+  async sweepWebhooks(now: Date = new Date()): Promise<number> {
+    const due = await asPlatform(this.db, (tx) =>
+      tx
+        .select({ id: webhookDeliveries.id, tenantId: webhookDeliveries.tenantId })
+        .from(webhookDeliveries)
+        .where(
+          and(eq(webhookDeliveries.status, 'pending'), lt(webhookDeliveries.nextAttemptAt, now)),
+        )
+        .limit(500),
+    );
+    for (const d of due) await this.webhooks.schedule(d.tenantId, [d.id]);
+    return due.length;
   }
 
   /**
