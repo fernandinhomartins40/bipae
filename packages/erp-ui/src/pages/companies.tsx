@@ -295,7 +295,7 @@ function CompanyForm({
             label="Apura o IBS e a CBS pelo regime regular"
             checked={v.ibsCbsRegular}
             onChange={(ibsCbsRegular) => setV({ ...v, ibsCbsRegular })}
-            hint="Só se a empresa fez essa opção (LC 214/2025, art. 41, § 3º). Sem ela, o IBS e a CBS vão no DAS. Na dúvida, pergunte ao contador."
+            hint="Só se a empresa fez essa opção no Simples Nacional (LC 123/2006, art. 13, §§ 9º e 10). Ela vale por semestre (de janeiro ou de julho), é feita em setembro ou março e não pode ser desfeita no meio do semestre. Sem ela, o IBS e a CBS vão no DAS."
           />
         )}
         <fieldset className="flex flex-col gap-4 rounded-ui border border-border p-4">

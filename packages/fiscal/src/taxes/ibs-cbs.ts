@@ -1,4 +1,4 @@
-import { dec, fromCents, percent, toCents, type Dec, type RoundingMode } from '../decimal';
+import { dec, fromCents, percent, round, toCents, type Dec, type RoundingMode } from '../decimal';
 import type { TraceStep } from '../engine';
 import { classTribStatus, findClassTrib, findCstIbsCbs } from '../tables/class-trib';
 import { REFERENCE_RATES, type ReferenceRate } from '../tables/rates';
@@ -169,7 +169,8 @@ export function calculateIbsCbs(input: IbsCbsInput): IbsCbsResult {
     }
     const rate = dec(matches[0]!.rate);
     const cut = dec(reduction);
-    const effective = rate.mul(dec(1).minus(percent(cut)));
+    // NT 2025.002, UB: a alíquota efetiva (pAliqEfet) tem 4 casas, arredondada na última (D-008).
+    const effective = round(rate.mul(dec(1).minus(percent(cut))), 4);
     const amountCents = toCents(base.mul(percent(effective)), mode);
     if (cut.isZero()) {
       trace.push(

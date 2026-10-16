@@ -8,10 +8,10 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-002 | ✅ resolvida | Simples Nacional: preencher IBS/CBS antes de 01/01/2027? |
 | D-003 | ✅ resolvida | Quando a rejeição por ausência do grupo IBS/CBS volta? |
 | D-004 | 🔴 aberta | Alíquotas de CBS/IBS de 2027–2028 |
-| D-005 | 🔴 aberta | Simples Nacional "por fora" em 2027: como o ERP deve tratar |
+| D-005 | ✅ resolvida | Simples Nacional "por fora" em 2027: como o ERP deve tratar |
 | D-006 | 🔴 aberta | Data da NFS-e Nacional para o Simples Nacional |
 | D-007 | ✅ resolvida | Escopo das NT 2026.007 e 2026.008 |
-| D-008 | 🔴 aberta | Arredondamento de IBS/CBS por item × total |
+| D-008 | ✅ resolvida | Arredondamento de IBS/CBS por item × total |
 | D-009 | 🟡 parcial | Devolução no PDV com referência por item (VC02-14) |
 | D-010 | ✅ resolvida | Faixa de séries de NFC-e permitida para série por terminal |
 | D-011 | ✅ resolvida | Datas de homologação e produção da NT 2025.002 v1.52 |
@@ -20,13 +20,13 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-014 | ✅ resolvida | QR Code versão 3 da NFC-e: obrigatoriedade por UF |
 | D-015 | ✅ resolvida | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
 | D-016 | ✅ resolvida | cClassTrib: o dia do fim da vigência ainda vale? |
-| D-017 | 🔴 aberta | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
+| D-017 | ✅ resolvida | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
 | D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 | D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
 | D-020 | 🔴 aberta | IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação |
 | D-022 | ✅ resolvida | NFC-e em MG: ambiente próprio ou SVRS? |
 | D-021 | ✅ resolvida | Alíquota geral do ICMS: AL divergente e AP sem fonte oficial |
-| D-023 | 🔴 aberta | Código de barras do DANFE com o CNPJ alfanumérico |
+| D-023 | ✅ resolvida | Código de barras do DANFE com o CNPJ alfanumérico |
 | D-024 | ✅ resolvida | Custo de aquisição na compra: com ou sem os créditos |
 | D-025 | ✅ resolvida | DIFAL a não contribuinte: base única ou base dupla por UF |
 | D-026 | ✅ resolvida | NF-e na transferência entre lojas |
@@ -67,6 +67,12 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a partir de 2027 a empresa do Simples pode optar por recolher IBS/CBS fora do DAS.
 - **Implementação provisória:** atributo por empresa e por período (`opcaoIbsCbsForaSimples`) que altera CST/cClassTrib e a apuração.
 - **Pergunta:** periodicidade da opção (semestral?), efeitos no documento e na apuração.
+- **Resolvida em 16/10/2026 (fonte oficial: LC 214/2025, art. 517, que altera a LC 123/2006, art. 13, §§ 9º a 11, na redação da LC 227/2026, no site do Planalto):**
+  - **Periodicidade:** semestral. A opção vale para os semestres que começam em janeiro e em julho. É feita em **setembro** (para o semestre de janeiro) ou em **março** (para o de julho), na forma regulamentada pelo CGSN. Não pode ser desfeita dentro do semestre. Quem abre a empresa pode optar desde o início da atividade (§ 11).
+  - **Efeito na apuração:** com a opção, o IBS e a CBS saem do DAS e seguem o regime regular. A apuração é mensal (LC 214, art. 43) e consolida todos os estabelecimentos (art. 42).
+  - **Efeito no crédito de quem compra:** o comprador no regime regular credita o IBS e a CBS destacados e extintos (art. 47, § 2º, I), inclusive na compra de optante do Simples (art. 47, § 3º). Sem a opção, o crédito fica limitado ao valor cobrado no regime único, pela alíquota informada no documento (LC 123, art. 23, §§ 1º e 2º).
+  - **Regra no Bipaê:** a opção continua sendo um campo da empresa (`companies.ibs_cbs_regular`), com mudança registrada na auditoria e usada na apuração (F4). A tela explica o prazo e o semestre. Validar se a data de mudança cai em setembro ou março não vira bloqueio: quem confirma a opção é o portal do Simples Nacional, não o Bipaê.
+  - **Pendente de publicação:** a resolução do CGSN com o procedimento da opção. O leiaute do documento do optante no regime regular a partir de 2027 segue as NTs da reforma (D-020).
 
 ### D-006 — Data da NFS-e Nacional para o Simples Nacional
 
@@ -83,6 +89,11 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** o arredondamento por item e a soma no total podem gerar diferença de centavos.
 - **Implementação provisória:** calcular por item com 2 casas (meia para cima), total = soma dos itens; regra de arredondamento parametrizada.
 - **Pergunta:** confirmar com as regras de validação de totais da NT vigente.
+- **Resolvida em 16/10/2026 (fonte oficial: NT 2025.002-RTC v1.40, publicada pelo Comitê Gestor do IBS em https://www.cgibs.gov.br e no Portal da NF-e):**
+  - **No item:** a SEFAZ refaz a conta `vIBSUF = vBC × pIBSUF / 100` (e o mesmo para `vIBSMun` e `vCBS`) e "aceita uma tolerância de 0,01 a mais ou a menos". A nota não fixa o modo de arredondamento do valor. Com 2 casas e meia para cima, o Bipaê fica sempre dentro da tolerância.
+  - **Alíquota com redução:** a NT manda calcular a `pAliqEfet` "com 4 casas decimais, com arredondamento na última casa decimal". O motor passou a arredondar a alíquota efetiva em 4 casas antes de multiplicar pela base. Antes ele usava a alíquota sem arredondar e só a arredondava no XML.
+  - **Nos totais:** o grupo `IBSCBSTot` tem de ser **a soma exata dos itens**, sem tolerância. São as rejeições 1076 a 1093, por exemplo "Total de CBS difere da soma dos itens". O Bipaê já somava os itens, nunca recalculava sobre o total.
+  - **Regra no Bipaê:** cálculo por item com 2 casas (meia para cima, configurável), alíquota efetiva com 4 casas e total igual à soma dos itens. Um teste confere todas as classificações com redução contra a conta da SEFAZ.
 
 ### D-009 — Devolução no PDV com referência por item (VC02-14)
 
@@ -145,6 +156,11 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** o texto do IT 2023.002 v2.00 diz que 84 CFOPs são permitidos ao contribuinte exclusivo do IBS/CBS (`indExcIBSCBS` = 1). A planilha da v2.10 (04/09/2026) marca 72. O PDF da v2.10 ainda não foi lido.
 - **Implementação provisória:** vale a planilha mais recente, que é o que o motor carrega. A coluna é só informativa até a entrada em produção e não afeta o varejo comum (contribuinte do ICMS).
 - **Pergunta:** a v2.10 reduziu a lista de propósito?
+- **Resolvida em 16/10/2026 (fontes oficiais):**
+  - **O PDF da v2.10** foi lido. Ele só inclui as colunas Título e Descrição e diz textualmente que "não altera as demais colunas nem os indicadores já publicados". A v2.10, portanto, não mudou a lista de propósito.
+  - **A planilha oficial da v2.10**, guardada em `packages/fiscal/sources`, foi contada de novo direto no arquivo, sem passar pelo gerador: há **72 CFOPs com `indExcIBSCBS` = 1** em 619 linhas, nenhum com fim de vigência. O número "84 códigos" aparece só no texto do PDF da v2.00. A planilha da v2.00 não está disponível fora do portal para comparar.
+  - **Vale a planilha:** a regra de validação I08-191 da NT 2026.007 v1.00 (rejeição 159, "Operação não permitida para contribuinte exclusivo do IBS/CBS", exclusiva da SVRS) manda "consultar tabela de CFOP permitidos ... publicada no Portal Nacional da NF-e". Quem rejeita é a planilha, não o número do texto. Exceções da regra: devolução (`finNFe` = 4) e nota de crédito tipo 03.
+  - **Regra no Bipaê:** a tabela gerada da planilha oficial continua sendo a fonte. A rejeição 159 foi incluída nas rejeições explicadas. Se uma versão nova da planilha mudar a coluna, basta trocar o arquivo e regerar. A regra só vale para quem emite NF-e sem inscrição estadual, o que não é o caso do varejo comum.
 
 ### D-018 — CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF
 
@@ -214,6 +230,12 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** o Anexo II do MOC 7.0 manda imprimir a chave de acesso em CODE-128C, que só codifica dígitos. Com o CNPJ alfanumérico (NT DFe Conjunta 2025), a chave passa a ter letras.
 - **Implementação provisória (F3-13.c):** quando a chave tem letras, o DANFE sai sem o código de barras, com a chave impressa por extenso. Nenhuma simbologia foi inventada.
 - **Pergunta:** qual simbologia (CODE-128B ou outra) o manual adotará para a chave com letras, e a partir de quando?
+- **Resolvida em 16/10/2026 (fonte oficial: NT Conjunta 2025.001 v1.00, "CNPJ Alfanumérico", de 25/04/2025, seção 6 "Padrão do Código de Barras dos Documentos Auxiliares"):**
+  - **Simbologia:** modelo **híbrido**. O código começa no CODE-128C (Start C, código 105) e passa ao **CODE-128A** (código 101) quando aparece letra, voltando ao C (código 99) nos grupos de dígitos. O dígito verificador continua módulo 103. Vale para DANFE, DACTE, DABPE e os demais documentos auxiliares.
+  - **Orientações da NT seguidas à risca:** dígito ímpar antes de uma letra vai no conjunto A; no conjunto A, um grupo de quatro ou mais dígitos volta ao C (e, como no exemplo da NT, também os dígitos que fecham a chave) e, se for ímpar, o primeiro dígito fica no A. O exemplo da própria NT, "5225AB83" (105, 52, 25, 101, 33, 34, 99, 83, DV 30, 106), é teste automático.
+  - **Tamanho:** largura mínima de 11,5 cm e altura mínima de 0,8 cm.
+  - **Prazos:** homologação em 06/04/2026 e produção em 06/07/2026.
+  - **Regra no Bipaê:** o DANFE imprime o código híbrido sempre que a chave tem letras (`code128KeyModules` em `packages/danfe/src/code128.ts`). Chave só com dígitos continua igual ao CODE-128C puro.
 
 ### D-024 — Custo de aquisição na entrada da compra: com ou sem os créditos?
 

@@ -241,6 +241,35 @@ describe('IBS e CBS de 2027 em diante', () => {
   });
 });
 
+describe('IBS e CBS: arredondamento conferido pela SEFAZ (D-008)', () => {
+  it('o valor de cada item bate com vBC × pAliqEfet, dentro da tolerância de 0,01 da NT 2025.002', () => {
+    const comReducao = CLASS_TRIBS.filter(
+      (c) => Number(c.pRedIBS) > 0 && Number(c.pRedIBS) < 100 && c.end === undefined,
+    );
+    expect(comReducao.length).toBeGreaterThan(0);
+    let conferidos = 0;
+    for (const c of comReducao) {
+      for (const operationCents of [1, 333, 98_765, 123_456_789]) {
+        let r;
+        try {
+          r = calculateIbsCbs({ cClassTrib: c.cClassTrib, date: '2026-06-15', operationCents });
+        } catch {
+          continue; // situação que o motor ainda recusa, com mensagem própria
+        }
+        for (const p of [r.cbs, r.ibsState, r.ibsMunicipal]) {
+          if (!p) continue;
+          // A alíquota efetiva vai ao XML com 4 casas; a SEFAZ refaz a conta com ela.
+          expect(p.effectiveRate).toMatch(/^\d+\.\d{4}$/);
+          const esperado = (r.baseCents * Number(p.effectiveRate)) / 100;
+          expect(Math.abs(p.amountCents - esperado), c.cClassTrib).toBeLessThanOrEqual(1);
+          conferidos++;
+        }
+      }
+    }
+    expect(conferidos).toBeGreaterThan(0);
+  });
+});
+
 describe('IBS e CBS: o que o motor recusa', () => {
   const base = { date: '2026-06-15', operationCents: 10_000 };
 

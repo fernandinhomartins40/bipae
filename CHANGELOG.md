@@ -1,5 +1,19 @@
 # Changelog
 
+## [Mais dúvidas fiscais resolvidas em fontes oficiais] — 16/10/2026
+
+### Adicionado
+- **DANFE com CNPJ alfanumérico (D-023):** a chave com letras agora sai com código de barras, no modelo híbrido CODE-128C/A da NT Conjunta 2025.001. Antes, o DANFE saía só com a chave por extenso.
+- **Rejeição 159 explicada:** "Operação não permitida para contribuinte exclusivo do IBS/CBS" (NT 2026.007, regra I08-191).
+
+### Corrigido
+- **Alíquota efetiva do IBS e da CBS com 4 casas (D-008):** com redução de alíquota, o motor arredonda a alíquota efetiva em 4 casas antes de calcular, como manda a NT 2025.002. Assim a conta bate com a que a SEFAZ refaz.
+
+### Confirmado (sem mudar o comportamento)
+- **Totais de IBS e CBS (D-008):** a nota soma os valores dos itens, como exigem as rejeições 1076 a 1093.
+- **Opção do Simples pelo IBS e CBS no regime regular (D-005):** vale por semestre (janeiro e julho), é feita em setembro ou março e não pode ser desfeita no meio do semestre (LC 123/2006, art. 13, §§ 9º e 10). A tela da empresa agora explica isso.
+- **CFOP do contribuinte exclusivo do IBS/CBS (D-017):** vale a planilha oficial, com 72 códigos. A SEFAZ consulta essa planilha, e a versão 2.10 não mudou a lista.
+
 ## [Custo de compra, transferência e vigência do cClassTrib] — 16/10/2026
 
 ### Corrigido

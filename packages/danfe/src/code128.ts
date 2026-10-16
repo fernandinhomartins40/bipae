@@ -37,5 +37,66 @@ export function code128cValues(digits: string): number[] {
 
 /** Larguras alternadas (barra, espaço, barra...) em módulos, sem as margens claras. */
 export function code128cModules(digits: string): number[] {
-  return code128cValues(digits).flatMap((value) => [...PATTERNS[value]!].map(Number));
+  return toModules(code128cValues(digits));
+}
+
+const CODE_A = 101; // no conjunto C, muda para o A
+const CODE_C = 99; // no conjunto A, muda para o C
+
+/**
+ * Chave de acesso com o CNPJ alfanumérico (NT Conjunta 2025.001, seção 6): o modelo híbrido
+ * começa no CODE-128C e passa ao CODE-128A (código 101) quando aparece letra, voltando ao C
+ * (código 99) nos grupos de dígitos. As trocas seguem as orientações da própria NT:
+ * dígito ímpar antes de uma letra vai no conjunto A; no A, um grupo de quatro ou mais dígitos
+ * (ou os dígitos que fecham a chave) volta ao C, e, se o grupo for ímpar, o primeiro dígito
+ * fica no A. Chave só com dígitos sai igual ao CODE-128C puro.
+ */
+export function code128KeyValues(key: string): number[] {
+  if (!/^[0-9A-Z]+$/.test(key)) {
+    throw new Error('A chave de acesso tem só dígitos e letras maiúsculas.');
+  }
+  if (!/^\d\d/.test(key)) throw new Error('A chave de acesso começa com dígitos (Start C).');
+  const isDigit = (i: number) => i < key.length && key[i]! >= '0' && key[i]! <= '9';
+  const runFrom = (i: number) => {
+    let j = i;
+    while (isDigit(j)) j++;
+    return j - i;
+  };
+  const data: number[] = [];
+  let mode: 'A' | 'C' = 'C';
+  let i = 0;
+  while (i < key.length) {
+    if (mode === 'C') {
+      if (isDigit(i) && isDigit(i + 1)) {
+        data.push(Number(key.slice(i, i + 2)));
+        i += 2;
+      } else {
+        data.push(CODE_A);
+        mode = 'A';
+      }
+      continue;
+    }
+    const run = runFrom(i);
+    if (run >= 4 || (run >= 2 && i + run === key.length)) {
+      if (run % 2 === 1) {
+        data.push(key.charCodeAt(i) - 32);
+        i++;
+      }
+      data.push(CODE_C);
+      mode = 'C';
+      continue;
+    }
+    data.push(key.charCodeAt(i) - 32); // conjunto A: ASCII 32 a 95 valem 0 a 63
+    i++;
+  }
+  return [START_C, ...data, code128cCheck(data), STOP];
+}
+
+/** Larguras do código de barras da chave, numérica ou alfanumérica. */
+export function code128KeyModules(key: string): number[] {
+  return toModules(code128KeyValues(key));
+}
+
+function toModules(values: number[]): number[] {
+  return values.flatMap((value) => [...PATTERNS[value]!].map(Number));
 }

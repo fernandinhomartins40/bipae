@@ -12,6 +12,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import {
   CODE128_PATTERNS,
   code128cCheck,
+  code128KeyModules,
+  code128KeyValues,
   code128cModules,
   code128cValues,
   createDanfeDocument,
@@ -152,6 +154,51 @@ const textos = (ops: DrawOp[]) =>
     .map((op) => op.text);
 
 // ------------------------------------------------------------------ testes
+
+/** cUF, AAMM, CNPJ alfanumérico, modelo, série, número, tpEmis, cNF e DV: 44 posições. */
+const CHAVE_ALFA =
+  '35' + '2610' + '12ABC34501DE35' + '55' + '001' + '000000001' + '1' + '12345678' + '9';
+
+describe('código de barras da chave com CNPJ alfanumérico (NT Conjunta 2025.001, seção 6)', () => {
+  it('reproduz o exemplo da NT: 5225AB83 com troca para o conjunto A e volta ao C', () => {
+    expect(code128KeyValues('5225AB83')).toEqual([105, 52, 25, 101, 33, 34, 99, 83, 30, 106]);
+  });
+
+  it('dígito ímpar antes da letra vai no conjunto A (exemplo 123A da NT)', () => {
+    const v = code128KeyValues('123A');
+    expect(v.slice(0, 5)).toEqual([105, 12, 101, 19, 33]);
+  });
+
+  it('chave só com dígitos sai igual ao CODE-128C puro', () => {
+    const numerica = '3526' + '1'.repeat(40);
+    expect(code128KeyValues(numerica)).toEqual(code128cValues(numerica));
+  });
+
+  it('a chave alfanumérica volta ao C nos grupos de dígitos e fecha com DV e Stop', () => {
+    const v = code128KeyValues(CHAVE_ALFA);
+    expect(CHAVE_ALFA).toHaveLength(44);
+    expect(v[0]).toBe(105);
+    expect(v.at(-1)).toBe(106);
+    const dados = v.slice(1, -2);
+    expect(v.at(-2)).toBe(code128cCheck(dados));
+    // Decodifica de volta, para provar que nada se perdeu.
+    let modo = 'C';
+    let texto = '';
+    for (const x of dados) {
+      if (modo === 'C' && x === 101) modo = 'A';
+      else if (modo === 'A' && x === 99) modo = 'C';
+      else texto += modo === 'C' ? String(x).padStart(2, '0') : String.fromCharCode(x + 32);
+    }
+    expect(texto).toBe(CHAVE_ALFA);
+    // O grupo longo de dígitos depois do CNPJ fica no conjunto C (pares).
+    expect(dados.length).toBeLessThan(44);
+  });
+
+  it('recusa o que não é chave', () => {
+    expect(() => code128KeyValues('35ab')).toThrow('letras maiúsculas');
+    expect(() => code128KeyValues('3A26')).toThrow('começa com dígitos');
+  });
+});
 
 describe('código de barras CODE-128C (Anexo II, item 2)', () => {
   it('calcula o dígito verificador do exemplo do manual', () => {
@@ -455,7 +502,7 @@ describe('dados incomuns no DANFE', () => {
     const nfe = base();
     const estranho: typeof nfe = {
       ...nfe,
-      accessKey: 'A'.repeat(44),
+      accessKey: CHAVE_ALFA,
       leavesAt: undefined,
       emitter: {
         ...nfe.emitter,
@@ -499,8 +546,9 @@ describe('dados incomuns no DANFE', () => {
     expect(t).toContain('IBS/CBS cClassTrib 000001 · IS BC 100,00 10,00% 10,00');
     expect(t).toContain('Lote 12, validade 10/2027');
     expect(t.some((x) => x.startsWith('Inf. fisco: Mensagem ao fisco'))).toBe(true);
-    // Chave com letras (CNPJ alfanumérico) não vira CODE-128C: o código de barras fica de fora.
-    expect(folha!.ops.some((op) => op.kind === 'bars')).toBe(false);
+    // Chave com letras (CNPJ alfanumérico): código de barras híbrido da NT Conjunta 2025.001.
+    const barras = folha!.ops.find((op) => op.kind === 'bars');
+    expect(barras).toMatchObject({ widths: code128KeyModules(CHAVE_ALFA) });
   });
 
   it('nota sem destinatário, sem transportadora e sem volumes', () => {

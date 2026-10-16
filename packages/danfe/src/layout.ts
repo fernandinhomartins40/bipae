@@ -1,4 +1,4 @@
-import { code128cModules } from './code128';
+import { code128KeyModules } from './code128';
 import {
   accessKeyBR,
   cepBR,
@@ -395,11 +395,12 @@ function header(
     align: 'center',
   });
 
-  // Código de barras da chave (CODE-128C), chave e consulta de autenticidade (campos 1 e 2).
+  // Código de barras da chave (CODE-128C; com letras do CNPJ alfanumérico, híbrido C/A da NT
+  // Conjunta 2025.001), chave e consulta de autenticidade (campos 1 e 2).
   const barsH = cm(1.48);
   w.rect(keyX, y, keyW, barsH);
-  if (/^\d{44}$/.test(nfe.accessKey)) {
-    const widths = code128cModules(nfe.accessKey);
+  if (/^\d{4}[0-9A-Z]{40}$/.test(nfe.accessKey)) {
+    const widths = code128KeyModules(nfe.accessKey);
     const modules = widths.reduce((sum, n) => sum + n, 0);
     const module = Math.min((keyW - cm(0.6)) / modules, 1.2);
     const barsWidth = module * modules;

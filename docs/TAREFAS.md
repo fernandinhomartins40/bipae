@@ -122,7 +122,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-13.b · DANFE da NFC-e em 80 mm (impressora térmica e tela), com QR Code — depende: F3-13.a
   - `buildDanfeNfce` (pdv-core) nas divisões do manual 5.1; QR Code por GS ( k na térmica e em SVG na tela e no navegador (`receiptToHtml`). Ligar ao caixa e à reimpressão fica na F3-14.
 - [x] F3-13.c · DANFE da NF-e em PDF — depende: F3-08
-  - Pacote `@bipae/danfe`: lê o XML autorizado (nfeProc), monta o A4 retrato do Anexo II do MOC 7.0 com os quadros da NT 2026.010 e gera o PDF (pdf-lib). Chave com letras sai sem código de barras (D-023).
+  - Pacote `@bipae/danfe`: lê o XML autorizado (nfeProc), monta o A4 retrato do Anexo II do MOC 7.0 com os quadros da NT 2026.010 e gera o PDF (pdf-lib). Chave com letras (CNPJ alfanumérico) sai com o código de barras híbrido CODE-128C/A da NT Conjunta 2025.001 (D-023, resolvida em 16/10/2026).
   - Seguir a NT 2025.001 (QR Code versão 3), a NT 2026.003 (DANFE Simplificado Tipo 2) e a NT 2026.010 (DANFE com tributos da Reforma); dúvida D-014.
 - [x] F3-14 · Caixa emite NFC-e na venda (CPF na nota, fila, reimpressão) — depende: F3-11, F3-12, F3-13
   - Sem o certificado A1 (E1), tudo é feito e testado contra a SEFAZ simulada da F3-11.a; a primeira emissão real fica na F3-11.b.

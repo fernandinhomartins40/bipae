@@ -467,6 +467,14 @@
       "fix": "Fale com o suporte do Bipaê para conferir a numeração."
     },
     {
+      "code": "159",
+      "official": "Rejeição: Operação não permitida para contribuinte exclusivo do IBS/CBS.",
+      "area": "produto",
+      "next": "corrigir",
+      "cause": "A empresa emite sem inscrição estadual (contribuinte só do IBS e da CBS), e o CFOP do item não está entre os permitidos para esse caso na tabela oficial de CFOP (NT 2026.007, regra I08-191).",
+      "fix": "Troque o CFOP do item por um permitido ao contribuinte exclusivo do IBS/CBS (são 72 na tabela oficial de CFOP do Portal da NF-e, coluna indExcIBSCBS) ou, se a empresa tem inscrição estadual, preencha-a no cadastro da empresa e emita de novo."
+    },
+    {
       "code": "785",
       "official": "Rejeição: NFC-e com entrega a domicílio não permitida pela UF",
       "area": "empresa",
