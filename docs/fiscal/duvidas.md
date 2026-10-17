@@ -594,4 +594,8 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Códigos:** 303, com o dispositivo legal.
   - **Redação antiga:** vem antes da nota "Redação com vigência de ... a ...", e vale a última. Um código "REVOGADO" vale até a data da nota.
   - **Obrigatoriedade em GO:** desde 01/07/2023 (IN 1.518/2022). Simples Nacional e MEI ficam fora da obrigação.
-- **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, DF, ES e das outras UFs que exigem o código.
+- **Atualização de 17/10/2026 (F3-27.b, Espírito Santo):** planilha "cBenef ES V6" da SEFAZ-ES (Tabela cBenef x CST dos benefícios vigentes):
+  - **Códigos:** 247, com a capitulação legal e o tipo do benefício.
+  - **Datas:** vêm como número de série do Excel e são convertidas pelo gerador.
+  - **Obrigatoriedade no ES:** desde 01/07/2024 (Decreto 5.630-R/2024), na NF-e, no NF3-e e no CT-e.
+- **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, DF e das outras UFs que exigem o código.

@@ -384,5 +384,13 @@
   "page": "https://appasp.economia.go.gov.br/Legislacao/arquivos/Secretario/IN/IN_1518_2022.htm",
   "publishedAt": "2026-01-05",
   "downloadedAt": "2026-10-17"
+ },
+ "cbenefEs": {
+  "file": "SEFAZ-ES_cBenef_ES_V6_2026-10-17.xlsx",
+  "title": "Tabela cBenef x CST para os benefícios fiscais vigentes do Espírito Santo (planilha cBenef ES V6)",
+  "publisher": "Secretaria de Estado da Fazenda do Espírito Santo",
+  "page": "https://sefaz.es.gov.br/media/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.xlsx",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17"
  }
 }

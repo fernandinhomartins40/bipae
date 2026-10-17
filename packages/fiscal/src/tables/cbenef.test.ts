@@ -114,3 +114,14 @@ describe('cBenef de Goiás (IN 1.518/2022-GSE)', () => {
     expect(cbenefLookup('GO', 'GO811023', '2026-10-17').valid).toBe(false);
   });
 });
+
+describe('cBenef do Espírito Santo (cBenef ES V6)', () => {
+  it('a planilha com a vigência em número de série do Excel e o tipo do benefício', () => {
+    expect(CBENEF_UFS).toContain('ES');
+    const r = cbenefLookup('ES', 'ES120001', '2026-10-17', '40');
+    expect(r).toMatchObject({ covered: true, valid: true, cstOk: true });
+    expect(r.entry).toMatchObject({ from: '2016-07-01', to: '2032-12-31' });
+    expect(r.entry!.description).toMatch(/INVEST-ES/);
+    expect(cbenefLookup('ES', 'ES120001', '2033-01-01').valid).toBe(false);
+  });
+});

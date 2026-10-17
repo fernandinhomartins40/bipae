@@ -432,5 +432,14 @@
   "publishedAt": "2026-01-05",
   "downloadedAt": "2026-10-17",
   "sha256": "91cbc2d9aed930419937996c9523a1eabe16cae9762eaea9df8318e5d0059ce7"
+ },
+ "cbenefEs": {
+  "file": "SEFAZ-ES_cBenef_ES_V6_2026-10-17.xlsx",
+  "title": "Tabela cBenef x CST para os benefícios fiscais vigentes do Espírito Santo (planilha cBenef ES V6)",
+  "publisher": "Secretaria de Estado da Fazenda do Espírito Santo",
+  "page": "https://sefaz.es.gov.br/media/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.xlsx",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "bb2b89a07b4e2c3f4380382aa8b18108b5ab76bf00121e3896311d6e964a94ac"
  }
 }

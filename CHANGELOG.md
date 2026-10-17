@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-27.b.ES Tabela oficial de cBenef do Espírito Santo] — 17/10/2026
+
+### Adicionado
+- **cBenef do Espírito Santo explicado na regra de ICMS:** são 247 códigos da planilha oficial da SEFAZ-ES, com a base legal, os CST e a vigência.
+- **Monitor semanal das fontes:** passou a conferir a planilha do ES.
+
 ## [F3-27.b.GO Tabela oficial de cBenef de Goiás] — 17/10/2026
 
 ### Adicionado
