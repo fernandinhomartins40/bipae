@@ -41,6 +41,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] E18 · Token ou cartão A3 de teste (com a leitora) para a assinatura pelo desktop
 - [ ] E21 · Decisão sobre gerar o SPED EFD ICMS/IPI no Bipaê ou deixar com o contador (dúvida D-031)
 - [ ] E22 · Publicação oficial do recolhimento na liquidação financeira (split payment, LC 214/2025, arts. 31 a 36): data e leiaute da consulta de débitos extintos. Não depende de decisão do dono; marque quando a Receita e o Comitê Gestor publicarem (dúvida D-027)
+- [ ] E23 · Conta de desenvolvedor da Apple (Developer ID) para assinar e notarizar o Bipaê Desktop do macOS; sem ela, o Mac pede para abrir com Control + clique
 
 ---
 
@@ -317,5 +318,6 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - Feito em 16/10/2026: tela "Ajuda" dentro do aplicativo (funciona sem internet), com busca e 16 artigos em passos; teste que confere os links para as telas (`packages/erp-ui/src/help/articles.ts`).
 - [x] F7-05 · Guia de implantação para revendas e técnicos
   - Feito em 16/10/2026: `docs/implantacao.md` (levantamento, equipamentos, instalação, configuração, treinamento, checklist, problemas comuns e o que ainda não está disponível).
-- [ ] F7-06 · Bipaê Desktop para macOS
+- [x] F7-06 · Bipaê Desktop para macOS
+  - Feito em 16/10/2026: app universal (Intel e Apple Silicon) e .dmg na CI e na release, com download reconhecido pela página. Assinatura e notarização da Apple dependem do E23.
 - [ ] F7-07 · Teste de usabilidade com 10 pessoas (meta: 9 de 10 vendem e emitem sem ajuda) — depende: F3-14 · externo: E15

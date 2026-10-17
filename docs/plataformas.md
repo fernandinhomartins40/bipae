@@ -70,9 +70,10 @@ Segurança do Conector:
 
 ## Bipaê Desktop
 
-- Windows 10 ou superior (prioridade) e Linux (Ubuntu 22.04+ ou equivalente); macOS depois.
-- Instaladores `.msi`/`.exe` (Windows) e `.deb`/AppImage (Linux), gerados pela CI.
+- Windows 10 ou superior (prioridade), Linux (Ubuntu 22.04+ ou equivalente) e macOS 11 ou mais novo (aplicativo universal: Intel e Apple Silicon, desde a F7-06).
+- Instaladores `.msi`/`.exe` (Windows), `.deb`/AppImage (Linux) e `.dmg` (macOS), gerados pela CI.
 - Dados do caixa: um banco SQLite na pasta de dados do app, que **sobrevive às atualizações**.
+- **macOS ainda sem assinatura da Apple:** na primeira vez, o Mac diz que o Bipaê "não pode ser aberto porque é de um desenvolvedor não identificado". Abra o Finder em Aplicativos, clique no Bipaê com a tecla Control apertada e escolha **Abrir**. Some quando a conta de desenvolvedor da Apple for configurada (item E23). Impressora pelo "spooler" é só do Windows; no Mac, use a impressora pela rede (IP) ou pela porta serial/USB.
 - **Ainda sem assinatura de código:** no Windows, o SmartScreen mostra "O Windows protegeu o computador". Clique em *Mais informações → Executar assim mesmo*. Isso some quando o certificado de assinatura for configurado (abaixo).
 
 ### Compilar o desktop

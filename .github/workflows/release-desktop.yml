@@ -20,7 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-22.04]
+        # macOS (F7-06): aplicativo universal (Intel e Apple Silicon), .dmg sem assinatura da Apple.
+        os: [windows-latest, ubuntu-22.04, macos-14]
     runs-on: ${{ matrix.os }}
     env:
       HAS_UPDATER_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY != '' }}
@@ -33,6 +34,8 @@ jobs:
           node-version: 24
           cache: pnpm
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ runner.os == 'macOS' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: apps/desktop/src-tauri
@@ -46,6 +49,8 @@ jobs:
       - name: Versão e canal a partir da tag
         shell: bash
         run: |
+          # No macOS: binário universal e só os pacotes do Mac.
+          if [ "$RUNNER_OS" = macOS ]; then echo 'MAC_ARGS=--target universal-apple-darwin --bundles app,dmg' >> "$GITHUB_ENV"; fi
           VERSION="${GITHUB_REF_NAME#v}"
           CHANNEL=$([[ "$VERSION" == *-* ]] && echo beta || echo stable)
           echo "CHANNEL=$CHANNEL" >> "$GITHUB_ENV"
@@ -83,13 +88,15 @@ jobs:
           VITE_API_URL: https://www.bipae.com.br
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-        run: pnpm --filter @bipae/desktop tauri build --features updater --config src-tauri/tauri.updater.conf.json
+        shell: bash
+        run: pnpm --filter @bipae/desktop tauri build --features updater --config src-tauri/tauri.updater.conf.json $MAC_ARGS
 
       - name: Build (sem atualizador — segredos ainda não configurados)
         if: env.HAS_UPDATER_KEY != 'true'
         env:
           VITE_API_URL: https://www.bipae.com.br
-        run: pnpm --filter @bipae/desktop tauri build
+        shell: bash
+        run: pnpm --filter @bipae/desktop tauri build $MAC_ARGS
 
       # Fixed, ASCII names: the API (/v1/downloads/desktop) recognizes each installer by suffix.
       - name: Nomes fixos dos instaladores
@@ -103,6 +110,7 @@ jobs:
           for f in "$B"/msi/*.msi; do cp "$f" "out/Bipae-$V-windows-x64.msi"; done
           for f in "$B"/deb/*.deb; do cp "$f" "out/bipae_${V}_amd64.deb"; done
           for f in "$B"/appimage/*.AppImage; do cp "$f" "out/Bipae-$V-linux-x86_64.AppImage"; done
+          for f in apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg; do cp "$f" "out/Bipae-$V-macos-universal.dmg"; done
           ls -la out
           [ -n "$(ls out)" ] || { echo "Nenhum instalador gerado"; exit 1; }
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [F7-06 Bipaê Desktop para macOS] — 16/10/2026
+
+### Adicionado
+- **Bipaê Desktop no Mac:** aplicativo universal, que roda em Intel e em Apple Silicon, para macOS 11 ou mais novo. O `.dmg` passa a ser gerado na CI e nas versões publicadas.
+- **Página de download:** reconhece o Mac e recomenda o instalador certo.
+- **Ainda sem assinatura da Apple:** na primeira vez, abra com Control + clique → Abrir. A assinatura e a notarização dependem da conta de desenvolvedor da Apple (novo item E23).
+
 ## [F7-05 Guia de implantação] — 16/10/2026
 
 ### Adicionado

@@ -15,6 +15,7 @@ describe('desktop downloads', () => {
       assets: [
         asset('Bipae-0.3.0-windows-x64-setup.exe'),
         asset('Bipae-0.3.0-windows-x64.msi'),
+        asset('Bipae-0.3.0-macos-universal.dmg'),
         asset('bipae_0.3.0_amd64.deb'),
         asset('Bipae-0.3.0-linux-x86_64.AppImage'),
         asset('Bipae-0.3.0-windows-x64-setup.exe.sig'),
@@ -25,6 +26,7 @@ describe('desktop downloads', () => {
     expect(release.files.map((f) => f.kind)).toEqual([
       'windows-setup',
       'windows-msi',
+      'macos-dmg',
       'linux-deb',
       'linux-appimage',
     ]);

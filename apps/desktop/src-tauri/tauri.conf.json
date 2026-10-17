@@ -51,6 +51,9 @@
       "wix": {
         "language": "pt-BR"
       }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0"
     }
   }
 }

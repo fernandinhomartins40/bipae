@@ -3,7 +3,8 @@
  * `.github/workflows/release-desktop.yml`; the API exposes the latest stable one.
  */
 
-export type DesktopFileKind = 'windows-setup' | 'windows-msi' | 'linux-deb' | 'linux-appimage';
+export type DesktopFileKind =
+  'windows-setup' | 'windows-msi' | 'macos-dmg' | 'linux-deb' | 'linux-appimage';
 
 export interface DesktopFile {
   kind: DesktopFileKind;
@@ -38,6 +39,11 @@ const FILE_KINDS: { kind: DesktopFileKind; suffix: string; label: string }[] = [
     kind: 'windows-msi',
     suffix: '-windows-x64.msi',
     label: 'Windows, pacote MSI (para TI e várias máquinas)',
+  },
+  {
+    kind: 'macos-dmg',
+    suffix: '-macos-universal.dmg',
+    label: 'macOS 11 ou mais novo (Intel e Apple Silicon)',
   },
   { kind: 'linux-deb', suffix: '_amd64.deb', label: 'Linux Ubuntu/Debian (.deb)' },
   {

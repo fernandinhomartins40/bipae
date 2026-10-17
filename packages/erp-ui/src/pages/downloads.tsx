@@ -12,15 +12,16 @@ const BENEFITS = [
   'Mesma conta e mesmos dados do Bipaê no navegador: dá para misturar os dois na mesma loja.',
 ];
 
-/** Recommended installer for this visitor's system (Windows when unsure). */
+/** Instalador recomendado para o sistema de quem visita (Windows na dúvida). */
 function recommended(files: DesktopFile[]): DesktopFile | undefined {
-  const linux =
-    typeof navigator !== 'undefined' &&
-    /Linux/.test(navigator.userAgent) &&
-    !/Android/.test(navigator.userAgent);
-  const order = linux
-    ? ['linux-deb', 'linux-appimage', 'windows-setup']
-    : ['windows-setup', 'windows-msi'];
+  const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+  const linux = /Linux/.test(ua) && !/Android/.test(ua);
+  const mac = /Macintosh|Mac OS X/.test(ua) && !/iPhone|iPad/.test(ua);
+  const order = mac
+    ? ['macos-dmg', 'windows-setup']
+    : linux
+      ? ['linux-deb', 'linux-appimage', 'windows-setup']
+      : ['windows-setup', 'windows-msi'];
   for (const kind of order) {
     const file = files.find((f) => f.kind === kind);
     if (file) return file;

@@ -22,7 +22,7 @@ Peça ao lojista, por escrito:
 
 | Equipamento | O que funciona | Como liga |
 |---|---|---|
-| Computador do caixa | Windows 10 ou superior, ou Linux (Ubuntu 22.04+). O navegador também serve: Chrome ou Edge atualizados | — |
+| Computador do caixa | Windows 10 ou superior, Linux (Ubuntu 22.04+) ou macOS 11 ou mais novo. O navegador também serve: Chrome ou Edge atualizados | — |
 | Leitor de código de barras | Qualquer leitor USB que funcione como teclado | Direto, sem configurar |
 | Impressora térmica | ESC/POS, papel de 80 mm ou 58 mm | Rede (IP, porta 9100), USB/serial (porta COM) ou impressora instalada no Windows |
 | Gaveta de dinheiro | Ligada à impressora (pulso) | Marque "Abrir a gaveta pela impressora em vendas no dinheiro" |
@@ -110,6 +110,6 @@ Não ofereça ao lojista como pronto:
 - Pix e cartão integrados (TEF): por enquanto, o Pix e o cartão são registrados à mão no caixa;
 - iFood e marketplaces;
 - envio de e-mail de campanhas;
-- macOS.
+- assinatura da Apple no macOS: o app funciona, mas na primeira vez abra com Control + clique → Abrir.
 
 A lista atualizada está no backlog do projeto (`docs/TAREFAS.md`). O que o Bipaê ainda não faz aparece na tela como "chega em breve" ou "falta configurar".
