@@ -46,6 +46,7 @@ import {
   Shirt,
   UtensilsCrossed,
   Wallet,
+  FileOutput,
 } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
 import { useConfereNotices } from '../confere-notices';
@@ -80,6 +81,7 @@ const NAV = [
     icon: ClipboardCheck,
     permission: 'catalog.read',
   },
+  { to: '/nfe', label: 'NF-e', icon: FileOutput, permission: 'catalog.read' },
   { to: '/comandas', label: 'Comandas abertas', icon: UtensilsCrossed, permission: 'pos.sell' },
   { to: '/condicional', label: 'Condicional', icon: Shirt, permission: 'pos.sell' },
   { to: '/garcom', label: 'Garçom', icon: HandPlatter, permission: 'pos.sell' },

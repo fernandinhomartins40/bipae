@@ -213,7 +213,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [~] F3-33 · Retaguarda emite NF-e (modelo 55): tela da nota com destinatário, itens, transporte e cobrança, envio pela fila e DANFE em PDF — depende: F3-11, F3-08, F3-13.c
   - [x] F3-33.a · Motor: do rascunho da retaguarda ao XML da NF-e com os impostos (alíquota interestadual, 4% para importado pela origem, partilha do ICMS, CFOP de venda a não contribuinte tirado da tabela oficial), fatura e duplicatas, e a lista do que falta; válido no XSD — depende: F3-08.a
   - [x] F3-33.b · API: rascunho da NF-e, numeração por série da empresa, tarefa na fila que assina e envia (consulta antes de reenviar), XML e DANFE em PDF, testada contra a SEFAZ simulada; auditoria — depende: F3-33.a, F3-11.a, F3-13.c
-  - [ ] F3-33.c · Tela da NF-e na retaguarda: destinatário pelo cadastro de clientes, itens pelos produtos, transporte, parcelas e pagamento; o que falta, status da SEFAZ, XML e DANFE; E2E — depende: F3-33.b
+  - [x] F3-33.c · Tela da NF-e na retaguarda: destinatário pelo cadastro de clientes, itens pelos produtos, transporte, parcelas e pagamento; o que falta, status da SEFAZ, XML e DANFE; E2E — depende: F3-33.b
   - [ ] F3-33.e · A NF-e de venda baixa o estoque da loja e lança a conta a receber pelas parcelas; a devolução faz o contrário; auditoria — depende: F3-33.b
   - [ ] F3-33.d · Primeira NF-e autorizada na SEFAZ de homologação com o certificado da empresa — depende: F3-33.c · externo: E1
 - [x] F3-32 · Partilha do ICMS (DIFAL, grupo ICMSUFDest) na venda interestadual para consumidor final não contribuinte — depende: F3-08.a

@@ -67,6 +67,7 @@ test('telas sem violações de acessibilidade WCAG 2.2 AA', async ({ page }) => 
     ['/relacionamento', 'Relacionamento'],
     ['/integracoes', 'Integrações (API)'],
     ['/condicional', 'Condicional'],
+    ['/nfe', 'NF-e'],
     ['/promocoes', 'Promoções'],
     ['/equipe', 'Equipe'],
     ['/empresas', 'Empresas e lojas'],

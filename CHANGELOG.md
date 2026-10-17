@@ -1,5 +1,17 @@
 # Changelog
 
+## [F3-33.c Tela da NF-e na retaguarda] — 17/10/2026
+
+### Adicionado
+- **Menu NF-e:** tela para preencher a nota fiscal eletrônica.
+  - O destinatário vem do cadastro de clientes e o município, da tabela do IBGE.
+  - Os itens vêm dos produtos, com preço, desconto e CFOP opcional.
+  - Também tem frete, forma de pagamento da tabela oficial, parcelas e informações complementares.
+- **Conferência:** "Salvar e conferir" mostra o que falta ou "Pronta para emitir", com o total e os avisos do cálculo.
+- **Emissão:** mostra a situação na SEFAZ, a chave, o motivo de recusa e "Tentar de novo".
+- **Arquivos:** baixa o DANFE em PDF (e a prévia sem valor fiscal) e o XML.
+- **Aviso:** a tela informa que a NF-e ainda não baixa o estoque nem lança a conta a receber.
+
 ## [F3-33.b API da NF-e da retaguarda] — 17/10/2026
 
 ### Adicionado

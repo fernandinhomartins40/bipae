@@ -374,7 +374,7 @@ function CompanyForm({
 }
 
 /** Município da tabela do IBGE, buscado dentro da UF da empresa (F3-14). */
-function CityPicker({
+export function CityPicker({
   uf,
   value,
   onChange,
