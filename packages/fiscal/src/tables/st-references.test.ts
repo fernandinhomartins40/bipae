@@ -456,3 +456,20 @@ describe('Alagoas: Decreto 90.309/2023 com as MVAs (F3-26.d.AL)', () => {
     );
   });
 });
+
+describe('Rondônia: Anexo VI do RICMS/RO (F3-26.d.RO)', () => {
+  const ro = ST_REFERENCES.filter((r) => r.uf === 'RO');
+
+  it('os segmentos com a MVA original, com o nome do Convênio ICMS 142/18', () => {
+    expect(ST_REFERENCE_UFS).toContain('RO');
+    expect(ro.flatMap((r) => r.items).length).toBeGreaterThan(350);
+    expect(ro.find((r) => r.segment === '17')!.segmentName).toBe('Produtos alimentícios');
+    const autopeca = ro.find((r) => r.segment === '01')!.items[0];
+    expect(autopeca).toMatchObject({ cest: '0100100', mva: '35' });
+  });
+
+  it('NCM colado na tabela ("2207.202208.40.00") vira os dois códigos', () => {
+    const cachaca = ro.flatMap((r) => r.items).find((i) => i.cest === '0200400')!;
+    expect(cachaca.ncms).toEqual(['220720', '22084000']);
+  });
+});

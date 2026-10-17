@@ -30,6 +30,7 @@ import { goStReferences, parseGoApendiceII } from './st-go.mjs';
 import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
 import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
+import { parseRoAnexoVI, roStReferences } from './st-ro.mjs';
 import { docText } from './doc-text.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
@@ -609,6 +610,20 @@ async function importStReferences(cest) {
     ),
     { url: manifest.stAlDecreto90309.page },
   );
+  // Rondônia (F3-26.d.RO): Anexo VI do RICMS/RO (resposta da API do portal da SEFIN-RO).
+  const roNames = new Map(cest.segments.map((s) => [s.code, s.name]));
+  const ro = roStReferences(
+    parseRoAnexoVI(
+      JSON.parse(
+        gunzipSync(readFileSync(join(sourcesDir, manifest.stRoAnexoVI.file))).toString('utf8'),
+      ).texto_html,
+      known,
+    ),
+    {
+      url: 'https://legislacao.sefin.ro.gov.br/normas/299',
+      segmentName: (code) => roNames.get(code) ?? `Segmento ${code} do CEST`,
+    },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -634,6 +649,7 @@ async function importStReferences(cest) {
       rj.segment,
       es.segment,
       al.segment,
+      ro.segment,
     ],
     references: [
       {
@@ -657,6 +673,7 @@ async function importStReferences(cest) {
       ...rj.references,
       ...es.references,
       ...al.references,
+      ...ro.references,
     ],
   };
 }

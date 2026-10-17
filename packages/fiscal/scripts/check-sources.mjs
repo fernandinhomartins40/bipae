@@ -26,6 +26,7 @@ import { parseGoApendiceII } from './st-go.mjs';
 import { parseRjAnexoI } from './st-rj.mjs';
 import { parseEsPortaria16R } from './st-es.mjs';
 import { parseAlDecreto90309 } from './st-al.mjs';
+import { parseRoAnexoVI } from './st-ro.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -607,6 +608,41 @@ async function checkAl() {
   };
 }
 
+/** Rondônia: o Anexo VI de hoje, pela API do portal de legislação da SEFIN-RO. */
+async function checkRo() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (json) =>
+    parseRoAnexoVI(JSON.parse(json).texto_html, known).flatMap((s) =>
+      s.items.map((i) => [i.item, i.cest, i.ncms.join(' '), i.mva]),
+    );
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stRoAnexoVI.file))).toString('utf8'),
+  );
+  const title = 'ST em Rondônia (RICMS/RO, Anexo VI)';
+  let now;
+  try {
+    now = rowsOf((await download(manifest.stRoAnexoVI.page)).body.toString('utf8'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stRoAnexoVI.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stRoAnexoVI.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -638,6 +674,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),
+    await safe('ST em Rondônia', manifest.stRoAnexoVI.page, checkRo),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

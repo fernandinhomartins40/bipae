@@ -251,6 +251,10 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **CEST quebrado no PDF** ("04.00" + "1.00", "17.031.0" + "0"): a leitura junta os pedaços até formar o código.
   - **Revogados:** itens com a nota "*Item ... revogado pelo Decreto ... Efeitos a partir de ..." (inclusive faixas, "Itens 49.2 a 53.2") viram "saiu da ST", com a data. Exemplo: salgadinhos de trigo em 01/09/2025 (Decreto 103.496/2025).
   - **Fonte descartada:** a lista "Mercadorias sujeitas à ST" do mesmo portal é de 25/07/2018 e não foi usada.
+- **Atualização de 17/10/2026 (F3-26.d.RO, Rondônia, fonte oficial):** Anexo VI do RICMS/RO (Decreto 22.721/2018), consolidado até o Decreto 31.963/2026. Vem da API do portal de legislação da SEFIN-RO e é guardado como a resposta original, em JSON:
+  - **Itens:** 403 linhas com a MVA original, em 17 segmentos.
+  - **Nomes dos segmentos:** os da Parte 1 do anexo; onde a tabela quebra de página, usa-se o nome do Convênio ICMS 142/18.
+  - **Linhas revogadas:** não trazem o CEST ("24.0 – REVOGADO PELO DEC. 31963/26 – efeitos a partir de 1º/09/2026"), por isso ficam de fora, sem deduzir o código.
 - **Distrito Federal e Ceará (F3-26.d.DF e F3-26.d.CE): fonte oficial ainda não localizada.**
   - **DF:** a lista é o Caderno I do Anexo IV do RICMS/DF (Decreto 18.955/1997). O texto compilado fica no SINJ-DF, que só abre por uma busca sem endereço direto para a norma.
   - **CE:** a lista é o Anexo IX do RICMS/CE (Decreto 33.327/2019). O site da SEFAZ-CE não tem a legislação consolidada, e o antigo portal de legislação não responde.

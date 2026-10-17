@@ -344,5 +344,13 @@
   "page": "https://gcs.sefaz.al.gov.br/documentos/visualizarDocumento.action?key=dx9aIL23hOg%3D",
   "publishedAt": "2026-05-01",
   "downloadedAt": "2026-10-17"
+ },
+ "stRoAnexoVI": {
+  "file": "SEFIN-RO_RICMS_Anexo_VI_2026-10-17.json.gz",
+  "title": "RICMS/RO (Decreto 22.721/2018), Anexo VI, da substituição tributária: texto consolidado até o Decreto 31.963/2026 (resposta da API do portal de legislação da SEFIN-RO)",
+  "publisher": "Secretaria de Estado de Finanças de Rondônia",
+  "page": "https://legislacao.sefin.ro.gov.br/pesquisar_detalhe_lei/299",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17"
  }
 }

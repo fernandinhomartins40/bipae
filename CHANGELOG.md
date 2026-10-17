@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-26.d.RO Substituição tributária em Rondônia] — 17/10/2026
+
+### Adicionado
+- **Rondônia na regra de ICMS:** 403 linhas com a MVA original, do Anexo VI do RICMS/RO consolidado até o Decreto 31.963/2026, pela API do portal da SEFIN-RO.
+- **Monitor semanal das fontes:** passou a conferir o anexo de RO.
+
 ## [F3-26.d.AL Substituição tributária em Alagoas] — 17/10/2026
 
 ### Adicionado
