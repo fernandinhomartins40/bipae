@@ -234,3 +234,30 @@ describe('Minas Gerais: Anexo XV do RICMS/MG, Parte 2 (F3-26.c.MG)', () => {
     expect(cerveja.some((s) => s.inSt)).toBe(true);
   });
 });
+
+describe('Rio Grande do Sul: Apêndice II do RICMS/RS (F3-26.c.RS)', () => {
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+  const rs = ST_REFERENCES.filter((r) => r.uf === 'RS');
+
+  it('Seções II e III, com a MVA da operação interna', () => {
+    expect(ST_REFERENCE_UFS).toContain('RS');
+    const itens = rs.flatMap((r) => r.items);
+    expect(itens.length).toBeGreaterThan(180);
+    for (const item of itens) expect(item.mva, item.item).toMatch(/^\d{1,3}\.\d{2}$/);
+    expect(rs.find((r) => r.segment === 'III-XXII')!.items[0]).toMatchObject({
+      cest: '2000100',
+      mva: '80.05',
+    });
+  });
+
+  it('a Seção II, só do RS: carne bovina com MVA de 30%', () => {
+    const carne = stReferencesFor('RS', '02013000', '2026-10-17');
+    expect(carne.find((m) => m.cest === '1708400')).toMatchObject({ mva: '30.00' });
+  });
+
+  it('cerveja está na ST, mas a MVA fica no art. 92 do Livro III: a lista diz, sem inventar MVA', () => {
+    expect(stReferencesFor('RS', '22030000', '2026-10-17')).toEqual([]);
+    const status = stStatusFor('RS', '22030000', '2026-10-17', ncmsOf);
+    expect(status.some((s) => s.annex === 'III-I' && s.inSt)).toBe(true);
+  });
+});

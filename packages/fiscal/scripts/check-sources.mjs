@@ -19,6 +19,7 @@ import { parseSpCat68 } from './st-sp-cat68.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences, prStRows } from './st-pr.mjs';
 import { pdfLines } from './pdf-text.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
+import { parseRsApendiceII } from './st-rs.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -324,6 +325,41 @@ async function checkMg() {
   };
 }
 
+/** Rio Grande do Sul: o texto do RICMS/RS de hoje, lido como na geração. */
+async function checkRs() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (html) =>
+    parseRsApendiceII(html, known).flatMap((s) =>
+      s.items.map((i) => [s.section, s.item, i.item, i.cest, i.ncms.join(' '), i.mva ?? '']),
+    );
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stRsRicms.file))).toString('latin1'),
+  );
+  const title = 'ST no Rio Grande do Sul (RICMS/RS, Apêndice II)';
+  let now;
+  try {
+    now = rowsOf((await download(manifest.stRsRicms.page)).body.toString('latin1'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stRsRicms.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stRsRicms.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -348,6 +384,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('NCM (Siscomex)', manifest.ncm.page, checkNcm),
     await safe('ST no Paraná', manifest.stPrRes571.page, checkPr),
     await safe('ST em Minas Gerais', manifest.stMgAnexoXV6.page, checkMg),
+    await safe('ST no Rio Grande do Sul', manifest.stRsRicms.page, checkRs),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

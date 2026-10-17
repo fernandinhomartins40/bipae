@@ -214,6 +214,12 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Coluna "exceções":** as UFs onde o protocolo não vale para o item entram na descrição.
   - **Fora da sugestão:** combustíveis (remetem ao Capítulo XIV) e energia elétrica, que não têm MVA na tabela.
   - **Erro no texto oficial:** o item 24/2.1 traz o NCM "33204.17.00". O token malformado fica de fora e o item vale pelos outros NCM (2821 e 3206).
+- **Atualização de 17/10/2026 (F3-26.c.RS, Rio Grande do Sul, fonte oficial):** Apêndice II do RICMS/RS (Decreto 37.699/1997), no texto em vigor do site de legislação da Receita Estadual, guardado em `packages/fiscal/sources` e lido por gerador:
+  - **Seção II:** ST só do RS, sem acordo com outras UFs (carnes, papel para cigarro e telhas). São 9 itens.
+  - **Seção III:** ST de acordos com outras UFs, em 14 segmentos. A MVA usada é a da operação interna; a tabela também traz as MVAs para entradas com 12% e 4%, citadas na nota.
+  - **Sem MVA na tabela:** bebidas (art. 92, III, do Livro III), cigarros, combustíveis, medicamentos e bebidas quentes. A tela diz que o produto está na ST e que a MVA não está nos atos que o Bipaê tem.
+  - **Em aberto:** os segmentos revogados não trazem CEST, então ainda não aparecem como "saiu da ST".
+- **Rio de Janeiro (F3-26.c.RJ): bloqueado.** O site de legislação da SEFAZ-RJ (`legislacao.fazenda.rj.gov.br` e `portal.fazenda.rj.gov.br`) devolve uma página de bloqueio por endereço de IP, tanto daqui quanto da VPS. Sem acesso ao texto oficial, o RJ fica como "falta configurar" até conseguirmos baixar de outra origem.
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração
 

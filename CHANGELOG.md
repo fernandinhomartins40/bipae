@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-26.c.RS Substituição tributária no Rio Grande do Sul] — 17/10/2026
+
+### Adicionado
+- **MVA oficial do Rio Grande do Sul na regra de ICMS:** 194 itens do Apêndice II do RICMS/RS, com a MVA da operação interna. Inclui a Seção II, que é a ST só do RS, como carnes, papel para cigarro e telhas.
+- **Produtos na ST sem MVA na tabela:** em bebidas, cigarros, combustíveis, medicamentos e bebidas quentes, a tela avisa que o produto está na ST e que a MVA fica em outro artigo.
+- **Monitor semanal das fontes:** passou a conferir o RICMS/RS.
+
+### Pendente
+- **Rio de Janeiro:** o site de legislação da SEFAZ-RJ bloqueia o acesso pelo endereço de IP, então o RJ continua como "falta configurar".
+
 ## [F3-26.c.MG Substituição tributária em Minas Gerais] — 17/10/2026
 
 ### Adicionado

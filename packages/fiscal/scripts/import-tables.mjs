@@ -23,6 +23,7 @@ import { parseSpBebidasBase, parseSpCat68 } from './st-sp-cat68.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences } from './st-pr.mjs';
 import { pdfLines } from './pdf-text.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
+import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -539,10 +540,23 @@ function importStMg(known) {
   return mgStReferences(chapters, { url: manifest.stMgAnexoXV6.page });
 }
 
+// Rio Grande do Sul (F3-26.c.RS): Apêndice II do RICMS/RS, Seções II e III.
+function importStRs(cest, known) {
+  const html = gunzipSync(readFileSync(join(sourcesDir, manifest.stRsRicms.file))).toString(
+    'latin1',
+  );
+  const names = new Map(cest.segments.map((s) => [s.code, s.name]));
+  return rsStReferences(parseRsApendiceII(html, known), {
+    url: manifest.stRsRicms.page,
+    segmentName: (code) => names.get(code.slice(0, 2)) ?? `Segmento ${code.slice(0, 2)} do CEST`,
+  });
+}
+
 async function importStReferences(cest) {
   const known = new Set(cest.items.map((c) => c.cest));
   const pr = await importStPr(known);
   const mg = importStMg(known);
+  const rs = importStRs(cest, known);
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -561,6 +575,7 @@ async function importStReferences(cest) {
       },
       pr.segment,
       mg.segment,
+      rs.segment,
     ],
     references: [
       {
@@ -577,6 +592,7 @@ async function importStReferences(cest) {
       },
       ...pr.references,
       ...mg.references,
+      ...rs.references,
     ],
   };
 }
