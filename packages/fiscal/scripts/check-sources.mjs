@@ -20,6 +20,7 @@ import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences, prStRows }
 import { pdfLines } from './pdf-text.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII } from './st-rs.mjs';
+import { parseScAnexo1A } from './st-sc.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -360,6 +361,43 @@ async function checkRs() {
   };
 }
 
+/** Santa Catarina: o Anexo 1-A de hoje, lido como na geração. */
+async function checkSc() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (html) =>
+    parseScAnexo1A(html, known).flatMap((s) =>
+      s.kind === 'current'
+        ? s.items.map((i) => [s.roman, i.cest, i.ncms.join(' '), i.mvas.join(' ')])
+        : [[s.roman, 'revogada', s.excludedFrom ?? '', s.cests.join(' ')]],
+    );
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stScAnexo1A.file))).toString('latin1'),
+  );
+  const title = 'ST em Santa Catarina (RICMS/SC, Anexo 1-A)';
+  let now;
+  try {
+    now = rowsOf((await download(manifest.stScAnexo1A.page)).body.toString('latin1'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stScAnexo1A.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stScAnexo1A.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -385,6 +423,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Paraná', manifest.stPrRes571.page, checkPr),
     await safe('ST em Minas Gerais', manifest.stMgAnexoXV6.page, checkMg),
     await safe('ST no Rio Grande do Sul', manifest.stRsRicms.page, checkRs),
+    await safe('ST em Santa Catarina', manifest.stScAnexo1A.page, checkSc),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

@@ -40,7 +40,7 @@ describe('origem das tabelas', () => {
       // Portal Nacional da NFC-e, mantido pelo ENCAT (os coordenadores tributários das SEFAZ), e os
       // sites de legislação das SEFAZ estaduais (ST por UF, F3-26).
       expect(fonte.page).toMatch(
-        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda|servicodados\.ibge|legislacao\.fazenda\.sp|www\.sefanet\.pr|www\.fazenda\.mg|www\.legislacao\.sefaz\.rs)\.gov\.br|nfce\.encat\.org|www\.gov\.br\/iti)\//,
+        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda|servicodados\.ibge|legislacao\.fazenda\.sp|www\.sefanet\.pr|www\.fazenda\.mg|www\.legislacao\.sefaz\.rs|legislacao\.sef\.sc)\.gov\.br|nfce\.encat\.org|www\.gov\.br\/iti)\//,
       );
       assertDate(fonte.publishedAt);
       assertDate(fonte.downloadedAt);

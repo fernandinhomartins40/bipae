@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.c.SC Substituição tributária em Santa Catarina] — 17/10/2026
+
+### Adicionado
+- **Santa Catarina na regra de ICMS:** MVA original de bebidas alcoólicas, cerveja, refrigerante e águas, do Anexo 1-A do RICMS/SC. Onde há duas MVAs, a do atacadista e a da indústria, cada uma aparece com o nome.
+- **O que saiu da ST em SC:** a tela avisa a data e o decreto. Alimentícios e limpeza saíram em 2018, construção e eletrônicos em 2019, cosméticos e medicamentos em 2021, sorvetes em 2023.
+- **Venda porta a porta:** a tela mostra quando o produto continua na ST só por esse sistema de venda.
+- **Monitor semanal das fontes:** passou a conferir o Anexo 1-A.
+
 ## [F3-26.c.RS Substituição tributária no Rio Grande do Sul] — 17/10/2026
 
 ### Adicionado

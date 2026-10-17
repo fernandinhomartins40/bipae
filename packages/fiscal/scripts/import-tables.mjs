@@ -24,6 +24,7 @@ import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences } from './s
 import { pdfLines } from './pdf-text.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
+import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -557,6 +558,14 @@ async function importStReferences(cest) {
   const pr = await importStPr(known);
   const mg = importStMg(known);
   const rs = importStRs(cest, known);
+  // Santa Catarina (F3-26.c.SC): Anexo 1-A do RICMS/SC, atual e com as seções revogadas.
+  const sc = scStReferences(
+    parseScAnexo1A(
+      gunzipSync(readFileSync(join(sourcesDir, manifest.stScAnexo1A.file))).toString('latin1'),
+      known,
+    ),
+    { url: manifest.stScAnexo1A.page },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -576,6 +585,7 @@ async function importStReferences(cest) {
       pr.segment,
       mg.segment,
       rs.segment,
+      sc.segment,
     ],
     references: [
       {
@@ -593,6 +603,7 @@ async function importStReferences(cest) {
       ...pr.references,
       ...mg.references,
       ...rs.references,
+      ...sc.references,
     ],
   };
 }

@@ -261,3 +261,44 @@ describe('Rio Grande do Sul: Apêndice II do RICMS/RS (F3-26.c.RS)', () => {
     expect(status.some((s) => s.annex === 'III-I' && s.inSt)).toBe(true);
   });
 });
+
+describe('Santa Catarina: Anexo 1-A do RICMS/SC (F3-26.c.SC)', () => {
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+
+  it('bebidas alcoólicas: só a MVA original interna (74,15%), sem as ajustadas', () => {
+    const vodka = stReferencesFor('SC', '22086000', '2026-10-17').filter(
+      (m) => m.cest === '0201800',
+    );
+    expect(vodka.map((m) => m.mva)).toEqual(['74.15']);
+  });
+
+  it('cerveja e refrigerante: a MVA do atacadista e a da indústria, cada uma com o nome', () => {
+    const refri = stReferencesFor('SC', '22021000', '2026-10-17').filter(
+      (m) => m.cest === '0301000',
+    );
+    expect(refri.map((m) => m.mva).sort()).toEqual(['154.46', '80.24']);
+    expect(refri.find((m) => m.mva === '80.24')!.description).toMatch(/atacadista/);
+  });
+
+  it('alimentícios saíram da ST em 01/04/2018 (Decreto 1.541/2018)', () => {
+    const chocolate = stStatusFor('SC', '17049010', '2026-10-17', ncmsOf);
+    expect(chocolate.length).toBeGreaterThan(0);
+    expect(chocolate.every((s) => !s.inSt)).toBe(true);
+    expect(chocolate[0]).toMatchObject({
+      excludedFrom: '2018-04-01',
+      excludedBy: 'Decreto 1.541/2018',
+    });
+    expect(stReferencesFor('SC', '17049010', '2026-10-17')).toEqual([]);
+  });
+
+  it('cosméticos saíram em 01/01/2021 (Decreto 982/2020), menos na venda porta a porta', () => {
+    const perfume = stStatusFor('SC', '33030010', '2026-10-17', ncmsOf);
+    expect(perfume.find((s) => s.annex === 'XIX')).toMatchObject({
+      inSt: false,
+      excludedFrom: '2021-01-01',
+    });
+    expect(perfume.find((s) => s.annex === 'XXVI')).toMatchObject({ inSt: true });
+    const cerveja = stStatusFor('SC', '22030000', '2026-10-17', ncmsOf);
+    expect(cerveja.some((s) => s.inSt)).toBe(true);
+  });
+});

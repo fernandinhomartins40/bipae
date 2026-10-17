@@ -219,6 +219,18 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Seção III:** ST de acordos com outras UFs, em 14 segmentos. A MVA usada é a da operação interna; a tabela também traz as MVAs para entradas com 12% e 4%, citadas na nota.
   - **Sem MVA na tabela:** bebidas (art. 92, III, do Livro III), cigarros, combustíveis, medicamentos e bebidas quentes. A tela diz que o produto está na ST e que a MVA não está nos atos que o Bipaê tem.
   - **Em aberto:** os segmentos revogados não trazem CEST, então ainda não aparecem como "saiu da ST".
+- **Atualização de 17/10/2026 (F3-26.c.SC, Santa Catarina, fonte oficial):** Anexo 1-A do RICMS/SC (art. 15 do Anexo 3: as mercadorias em ST são as do Anexo 1-A), na página da SEF/SC que traz a redação atual e a passada. Está guardado em `packages/fiscal/sources` e é lido por gerador:
+  - **Continuam na ST:** bebidas alcoólicas (Seção III-A), cervejas, refrigerantes e águas, cigarros, cimento, combustíveis, energia elétrica, pneus, veículos e venda porta a porta.
+  - **MVA:** só bebidas alcoólicas e cervejas/refrigerantes têm MVA na tabela, com 80 linhas. A sugestão usa a MVA original; as colunas "ajustadas" (12%, 4% e diferimento parcial do TTD) ficam de fora. Cerveja e refrigerante têm duas MVAs, a do atacadista e a da indústria.
+  - **Saíram da ST, com data e decreto:**
+    - limpeza, papéis e plásticos e alimentícios em 01/04/2018 (Decreto 1.541/2018);
+    - ferramentas, lâmpadas, construção, elétricos, papelaria, eletrônicos e tintas em 01/05/2019 (Decreto 104/2019);
+    - rações em 01/03/2020;
+    - autopeças em 01/04/2020;
+    - medicamentos, cosméticos e a Seção III de bebidas em 01/01/2021 (Decreto 982/2020);
+    - sorvetes em 01/04/2023 (Decreto 74/2023).
+  - **CEST que saíram:** vêm da redação passada de cada seção revogada.
+  - **Venda porta a porta (Seção XXVI):** perfumes e cosméticos vendidos assim continuam na ST, e a tela mostra isso.
 - **Rio de Janeiro (F3-26.c.RJ): bloqueado.** O site de legislação da SEFAZ-RJ (`legislacao.fazenda.rj.gov.br` e `portal.fazenda.rj.gov.br`) devolve uma página de bloqueio por endereço de IP, tanto daqui quanto da VPS. Sem acesso ao texto oficial, o RJ fica como "falta configurar" até conseguirmos baixar de outra origem.
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração

@@ -333,5 +333,14 @@
   "publishedAt": "2026-10-17",
   "downloadedAt": "2026-10-17",
   "sha256": "312f85f888d59150bae0285be1eb6e871e64d7cf44598c1ef9f68c2e91189742"
+ },
+ "stScAnexo1A": {
+  "file": "SEF-SC_RICMS_Anexo_1-A_2026-10-17.html.gz",
+  "title": "RICMS/SC (Decreto 2.870/2001), Anexo 1-A: bens e mercadorias sujeitos à substituição tributária, com a redação atual e a passada",
+  "publisher": "Secretaria de Estado da Fazenda de Santa Catarina",
+  "page": "https://legislacao.sef.sc.gov.br/html/regulamentos/icms/RICMS_01_01_A_pas.htm",
+  "publishedAt": "2026-06-25",
+  "downloadedAt": "2026-10-17",
+  "sha256": "c71b6922683eb84e087f43be84f151e1a8309c156a409846778d2ed27480ac34"
  }
 }
