@@ -23060,6 +23060,2765 @@
    ]
   },
   {
+   "uf": "DF",
+   "act": "Ato Declaratório de cBenef da Receita-DF, Anexo Único (planilha consolidada de 15/05/2023)",
+   "source": "cbenefDf",
+   "url": "https://static.fazenda.df.gov.br//arquivos/servico-1051/TABELA_CBenef_X_CST_consolidada_15-05_2023.xlsx",
+   "codes": [
+    {
+     "code": "DF810001",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Imunidade do ICMS",
+     "description": "Prestações de serviço de comunicação. (Constituição Federal, art. 155, § 2º, inc. X, \"d\")"
+    },
+    {
+     "code": "DF811001",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Operação ou prestação que destine ao exterior mercadorias. (Lei nº 1.254/96, art. 3º, I)"
+    },
+    {
+     "code": "DF811002",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Operação que destine a outra unidade federada energia elétrica e petróleo. (Lei nº 1.254/96, art. 3º, II)"
+    },
+    {
+     "code": "DF811003",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Operação com ouro, quando definido em lei como ativo financeiro ou instrumento cambial. (Lei nº 1.254/96, art. 3º, III)"
+    },
+    {
+     "code": "DF811004",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Operação com livros, jornais e periódicos, bem como o papel destinado a sua impressão. (Lei nº 1.254/96, art. 3º, IV)"
+    },
+    {
+     "code": "DF811005",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Operação relativa a mercadorias a serem utilizadas na prestação de serviço. (Lei nº 1.254/96, art. 3º, V)"
+    },
+    {
+     "code": "DF811006",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Transferência de propriedade de estabelecimento ou mudança de endereço. (Lei nº 1.254/96, art. 3º, VI)"
+    },
+    {
+     "code": "DF811007",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Operação decorrente de alienação fiduciária em garantia. (Lei nº 1.254/96, art. 3º, VII)"
+    },
+    {
+     "code": "DF811008",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Operação de contrato de arrendamento mercantil. (Lei nº 1.254/96, art. 3º, VIII)"
+    },
+    {
+     "code": "DF811009",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Transferência, para a companhia seguradora, de bens móveis salvados de sinistro. (Lei nº 1.254/96, art. 3º, IX)"
+    },
+    {
+     "code": "DF811010",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Saída de mercadoria com destino a armazém geral ou para depósito fechado do próprio contribuinte. (Lei nº 1.254/96, art. 3º, X)"
+    },
+    {
+     "code": "DF811011",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Operação com fonogramas e videofonogramas musicais produzidos no Brasil. (Lei nº 1.254/96, art. 3º, XI)"
+    },
+    {
+     "code": "DF811012",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Não-incidência do ICMS",
+     "description": "Serviços de transmissão e distribuição, encargos setoriais nas operações com energia elétrica. (Lei nº 1.254/96, art. 3º, XII)"
+    },
+    {
+     "code": "DF814001",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Isenção do ICMS",
+     "description": "Saída de combustíveis e lubrificantes para aeronaves nacionais com destino ao exterior. (Convênio ICMS/CONFAZ 84/90, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 1)"
+    },
+    {
+     "code": "DF814002",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída promovida por Depósito de Loja Franca – DELOF, instalado no Distrito Federal. (Convênio ICMS/CONFAZ 27/92, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 2)"
+    },
+    {
+     "code": "DF814003",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Prestação de serviços locais de difusão sonora. (Convênio ICMS/CONFAZ 08/89, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 3)"
+    },
+    {
+     "code": "DF814004",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de doações à entidades governamentais e assistenciais para vítimas de calamidades públicas. (Convênio ICM 26/75, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 4)"
+    },
+    {
+     "code": "DF814005",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Entrada de mercadorias importadas do exterior sob regime de \"drawback\". (Convênio ICMS/CONFAZ 27/90, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 5)"
+    },
+    {
+     "code": "DF814006",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de embarcações construídas no País, bem como a de peças, partes e componentes utilizados no reparo. (Convênio ICM 33/77, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 6)"
+    },
+    {
+     "code": "DF814007",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de estabelecimento de empresa de energia elétrica de bens utilizados em suas instalações. (Convênio ICM 5/72, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 7)"
+    },
+    {
+     "code": "DF814009",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Fornecimento de energia elétrica residencial até 50 (cinquenta) quilowatts/hora mensais. (Convênio ICMS/CONFAZ 20/89, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 9)"
+    },
+    {
+     "code": "DF814010",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Fornecimento de energia elétrica rural até 50 (cinqüenta) quilowatts/hora mensais. (Convênio ICMS/CONFAZ 76/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 10)"
+    },
+    {
+     "code": "DF814011",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com equipamentos destinados a portadores de deficiência. (Convênio ICMS/CONFAZ 38/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 11)"
+    },
+    {
+     "code": "DF814012",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Recebimento de amostra sem valor comercial. (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 12)"
+    },
+    {
+     "code": "DF814013",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Fornecimento de refeições efetuado por estabelecimentos industriais, comerciais e outros. (Convênio ICM 1/75, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 13)"
+    },
+    {
+     "code": "DF814014",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna e interestadual de frutas em estado natural, nacionais ou provenientes da ALALC. (Convênio ICM 44/75, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 14)"
+    },
+    {
+     "code": "DF814015",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna e interestadual de hortícolas em estado natural e ovos. (Convênio ICMS/CONFAZ 44/75, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 15)"
+    },
+    {
+     "code": "DF814016",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de produtos típicos de artesanato regional, promovidas diretamente por artesão. (Convênio ICMS/CONFAZ 32/75, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 16)"
+    },
+    {
+     "code": "DF814017",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna e interestadual de embrião ou sêmen de bovino, caprino, ovino ou de suíno. (Convênio ICMS/CONFAZ 70/92, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 17)"
+    },
+    {
+     "code": "DF814018",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de leite fluído, exceto UHT, do estabelecimento varejista, com destino a consumidor final. (Convênio ICMS/CONFAZ 25/83, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 18)"
+    },
+    {
+     "code": "DF814019",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna entre estabelecimentos de uma mesma empresa de bens e produtos não comerciais. (Convênio ICMS/CONFAZ 70/90, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 19)"
+    },
+    {
+     "code": "DF814020",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Recebimento pelo exportador de mercadoria exportada e não recebida pelo importador . (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 20)"
+    },
+    {
+     "code": "DF814021",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de mercadorias promovida por órgão da administração pública para industrialização. (V Convênio do Rio de Janeiro de 1967, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 21)"
+    },
+    {
+     "code": "DF814022",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de mercadorias com destino a exposições ou feiras. (I Convênio do Rio de Janeiro de 1967, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 22)"
+    },
+    {
+     "code": "DF814023",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Ingresso de bens procedentes do exterior integrantes de bagagem de viajante. (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 23)"
+    },
+    {
+     "code": "DF814024",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de mercadorias doadas à Secretaria de Educação. (Convênio ICMS/CONFAZ 78/92, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 24)"
+    },
+    {
+     "code": "DF814025",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Entrada e a posterior saída de mercadorias importadas, doadas por organizações internacionais. (Convênio ICMS/CONFAZ 55/89, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 25)"
+    },
+    {
+     "code": "DF814026",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de produtos resultantes do trabalho de reeducação dos detentos. (Convênio ICMS/CONFAZ 85/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 26)"
+    },
+    {
+     "code": "DF814027",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Diferencial de alíquota nas aquisições interestaduais de equipamentos e componentes do Metrô/DF. (Convênio ICMS/CONFAZ 57/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 27)"
+    },
+    {
+     "code": "DF814028",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída gratuita de amostra de produto. (Convênio ICMS/CONFAZ 29/90, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 28)"
+    },
+    {
+     "code": "DF814029",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de obras de arte, decorrente de operações realizadas pelo próprio autor. (Convênio ICMS/CONFAZ 59/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 29)"
+    },
+    {
+     "code": "DF814030",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de óleo lubrificante usado ou contaminado. (Convênio ICMS/CONFAZ 03/90, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 30)"
+    },
+    {
+     "code": "DF814031",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de produtos farmacêuticos realizada pela Administração Pública Federal, estadual ou municipal. (Convênio ICM 40/75, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 31)"
+    },
+    {
+     "code": "DF814032",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Entrada de remédios importados pela APAE - Associação de Pais e Amigos e Excepcionais. (Convênio ICMS/CONFAZ 41/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 32)"
+    },
+    {
+     "code": "DF814033",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de reprodutores e matrizes de caprinos de comprovada superioridade genética. (Convênio ICMS/CONFAZ 20/92, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 33)"
+    },
+    {
+     "code": "DF814034",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com reprodutores e matrizes de animais vacuns, ovinos, suínos e bufalinos. (Convênio ICMS/CONFAZ 35/77, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 34)"
+    },
+    {
+     "code": "DF814036",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação realizada por órgãos e entidades de hematologia e hemoterapia. (Convênio ICMS/CONFAZ 24/89, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 36)"
+    },
+    {
+     "code": "DF814037",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de equipamentos médicos, científicos e laboratoriais pela administração pública e outros. (Convênio ICMS/CONFAZ 104/89, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 37)"
+    },
+    {
+     "code": "DF814038",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Prestação de serviços de transporte interestadual realizada por táxis. (Convênio ICMS/CONFAZ 99/89, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 38)"
+    },
+    {
+     "code": "DF814039",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Entrada de equipamento, e seus respectivos acessórios, no estabelecimento do importador. (Convênio ICMS/CONFAZ 130/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 39)"
+    },
+    {
+     "code": "DF814041",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de trava-blocos para a construção de casas populares vinculadas a programas habitacionais. (Convênio ICMS/CONFAZ 35/92, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 41)"
+    },
+    {
+     "code": "DF814042",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de vasilhames, recipientes e embalagens. (Convênio ICMS/CONFAZ 88/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 42)"
+    },
+    {
+     "code": "DF814043",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de veículos adquiridos pela Secretaria de Segurança e pela Secretaria de Fazenda do DF. (Convênio ICMS/CONFAZ 34/92, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 43)"
+    },
+    {
+     "code": "DF814045",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas de peças de argamassa armada e concreto armado com destino aos CIACs. (Convênio ICMS/CONFAZ 126/92, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 45)"
+    },
+    {
+     "code": "DF814046",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de produtos resultantes das aulas práticas ministradas pelo SENAC. (Convênio ICMS/CONFAZ 11/93, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 46)"
+    },
+    {
+     "code": "DF814047",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação das mercadorias descritas no Convênio ICMS 35/93 para integrar o ativo fixo do importador. (Convênio ICMS/CONFAZ 35/93, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 47)"
+    },
+    {
+     "code": "DF814048",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de produtos pela Administração Pública do DF para seu ativo imobilizado ou seu uso e consumo. (Convênio ICMS/CONFAZ 48/93, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 48)"
+    },
+    {
+     "code": "DF814049",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de produtos para a Zona Franca de Manaus, nas Áreas de Livre Comércio e outras. (Convênio ICMS/CONFAZ 45/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 49)"
+    },
+    {
+     "code": "DF814052",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Entradas de produtos importados decorrentes de doações feitas pela ONU, OEA, BID. (Convênio ICMS/CONFAZ 113/93, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 52)"
+    },
+    {
+     "code": "DF814053",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com os equipamentos ou acessórios destinados a portadores de deficiência física ou auditiva. (Convênio ICMS/CONFAZ 126/10, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 53)"
+    },
+    {
+     "code": "DF814054",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas de produtos doados ao Banco de Alimentos e ao INTEGRA. (Convênio ICMS/CONFAZ 136/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 54)"
+    },
+    {
+     "code": "DF814055",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas de mercadorias, serviço de comunicação e energia elétrica missões diplomáticas e afins. (Convênio ICMS/CONFAZ 158/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 55)"
+    },
+    {
+     "code": "DF814056",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de veículo nacional adquirido por Missões Diplomáticas e afins. (Convênio ICMS/CONFAZ 158/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 56)"
+    },
+    {
+     "code": "DF814057",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Entrada de mercadoria importada por Missões Diplomáticas e afins. (Convênio ICMS/CONFAZ 158/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 57)"
+    },
+    {
+     "code": "DF814058",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Recebimento pelo importador de mercadoria remetida pelo exportador para fins de substituição. (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 58)"
+    },
+    {
+     "code": "DF814059",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Recebimento por pessoa física de encomendas ou remessas internacionais até US$ 50,00. (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 59)"
+    },
+    {
+     "code": "DF814060",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Recebimento de medicamentos importados do exterior por pessoa física. (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 60)"
+    },
+    {
+     "code": "DF814061",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Diferença no valor do imposto decorrentes de variação na taxa cambial. (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 61)"
+    },
+    {
+     "code": "DF814062",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de equipamentos científicos e laboratoriais pela EMBRAPA. (Convênio ICMS/CONFAZ 64/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 62)"
+    },
+    {
+     "code": "DF814063",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Recebimento de produtos importados isentos do Imposto de Importação e sujeitos ao RTS. (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 63)"
+    },
+    {
+     "code": "DF814064",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Desembaraço aduaneiro de tratores e colheitadeiras mecânicas de algodão. (Convênio ICMS/CONFAZ 77/93, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 64)"
+    },
+    {
+     "code": "DF814065",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Prestação de serviço de transporte ferroviário de carga prevista no Convênio ICMS nº 30/96. (Convênio ICMS/CONFAZ 30/96, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 65)"
+    },
+    {
+     "code": "DF814066",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Doação de produtos importados à Administração Pública, fundações e entidades beneficentes. (Convênio ICMS/CONFAZ 80/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 66)"
+    },
+    {
+     "code": "DF814067",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Aquisição pela administração Pública de equipamentos científicos e de informática, suas partes e peças. (Convênio ICMS/CONFAZ 80/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 67)"
+    },
+    {
+     "code": "DF814068",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de mercadorias doadas ao Distrito Federal para distribuição a necessitados ou vítimas de catástrofes. (Convênio ICMS/CONFAZ 82/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 68)"
+    },
+    {
+     "code": "DF814071",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Desembaraço aduaneiro de bens importados destinados à CAESB. (Convênio ICMS/CONFAZ 42/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 71)"
+    },
+    {
+     "code": "DF814073",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operação interna com veículos e outros, adquiridos pelos Corpos de Bombeiros Voluntários. (Convênio ICMS/CONFAZ 32/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 73)"
+    },
+    {
+     "code": "DF814074",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interestadual de bem do ativo fixo e de uso e consumo realizadas por empresas de transporte aéreo. (Convênio ICMS/CONFAZ 18/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 74)"
+    },
+    {
+     "code": "DF814075",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com medicamentos quimioterápicos usados no tratamento de câncer. (Convênio ICMS/CONFAZ 162/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 75)"
+    },
+    {
+     "code": "DF814079",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com preservativos. (Convênio ICMS/CONFAZ 116/98, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 79)"
+    },
+    {
+     "code": "DF814080",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com equipamentos e componentes para o aproveitamento das energias solar e eólica. (Convênio ICMS/CONFAZ 101/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 80)"
+    },
+    {
+     "code": "DF814081",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com insumos da fabricação de álcool combustível, indicadas no Convênio ICMS 09/99. (Convênio ICMS/CONFAZ 09/99, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 81)"
+    },
+    {
+     "code": "DF814082",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna dos insumos agropecuários listados na Cláusula Primeira do Convênio 100/97. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 82)"
+    },
+    {
+     "code": "DF814083",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de ácido nítrico, ácido sulfúrico, ácido fosfórico, fosfato natural bruto e enxofre. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 83)"
+    },
+    {
+     "code": "DF814084",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de rações para animais, concentrados, suplementos, aditivos, premix ou núcleo. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 84)"
+    },
+    {
+     "code": "DF814085",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de calcário e gesso, destinados ao uso exclusivo na agricultura. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 85)"
+    },
+    {
+     "code": "DF814086",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de sementes. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 86)"
+    },
+    {
+     "code": "DF814087",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de produtos para alimentação ou fabricação de ração animal. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 87)"
+    },
+    {
+     "code": "DF814088",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de esterco animal. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 88)"
+    },
+    {
+     "code": "DF814089",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de mudas de plantas. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 89)"
+    },
+    {
+     "code": "DF814090",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de embriões, sêmen congelado, ovos férteis, aves de um dia, girinos e alevinos. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 90)"
+    },
+    {
+     "code": "DF814091",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de enzimas para decomposição de matéria orgânica animal. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 91)"
+    },
+    {
+     "code": "DF814092",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna dos alimentos animais e fertilizantes listados na Cláusula Segunda do Convênio ICMS 100/97. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 92)"
+    },
+    {
+     "code": "DF814093",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Aquisição de veículo automotor por taxista. (Convênio ICMS/CONFAZ 38/01, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 93)"
+    },
+    {
+     "code": "DF814094",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com produtos e equipamentos em imunohematologia, sorologia e coagulação. (Convênio ICMS/CONFAZ 84/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 94)"
+    },
+    {
+     "code": "DF814095",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com equipamentos à programa de modernização institucional do Ministério da Educação. (Convênio ICMS/CONFAZ 123/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 95)"
+    },
+    {
+     "code": "DF814096",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas internas de combustível a missões diplomáticas e afins. (Convênio ICMS/CONFAZ 158/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 96)"
+    },
+    {
+     "code": "DF814097",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com produtos destinados à recuperação da agropecuária do estado de Roraima. (Convênio ICMS/CONFAZ 62/03, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 97)"
+    },
+    {
+     "code": "DF814098",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Aquisição interestadual de bens do ativo e de uso ou consumo, e remessa de animais, feitos pela EMBRAPA. (Convênio ICMS/CONFAZ 47/98, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 98)"
+    },
+    {
+     "code": "DF814099",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de doações à Administração Pública e outras entidades assistenciais para vítimas da seca. (Convênio ICMS/CONFAZ 57/98, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 99)"
+    },
+    {
+     "code": "DF814100",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Retorno do exterior de mercadorias remetidas à exposição ou feira. (Convênio ICMS/CONFAZ 18/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 100)"
+    },
+    {
+     "code": "DF814101",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importações para os Programas Nacionais de combate à dengue, malária, febre amarela, feitas pelo MS e FNS. (Convênio ICMS/CONFAZ 95/98, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 101)"
+    },
+    {
+     "code": "DF814103",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com os equipamentos e insumos da área de saúde relacionados no Convênio ICMS 01/99. (Convênio ICMS/CONFAZ 01/99, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 103)"
+    },
+    {
+     "code": "DF814104",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com Coletores Eletrônicos de Voto (CEV) adquiridos pelo Tribunal Superior Eleitoral -TSE. (Convênio ICMS/CONFAZ 75/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 104)"
+    },
+    {
+     "code": "DF814106",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas internas de mercadorias da cesta básica no Programa Fortalecimento às Famílias de Baixa Renda. (Convênio ICMS/CONFAZ 08/99, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 106)"
+    },
+    {
+     "code": "DF814107",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Doação de microcomputador usado para associações de portadores de deficiência e comunidades carentes. (Convênio ICMS/CONFAZ 43/99, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 107)"
+    },
+    {
+     "code": "DF814111",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas de bolas de aço forjadas e fundidas em regime de “draw back”. (Convênio ICMS/CONFAZ 33/01, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 111)"
+    },
+    {
+     "code": "DF814112",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas de embalagens vazias de agrotóxicos e respectivas tampas, realizadas sem ônus. (Convênio ICMS/CONFAZ 42/01, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 112)"
+    },
+    {
+     "code": "DF814113",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação com equipamentos, matérias-primas e produtos intermediários da Lei Federal nº 8.010/90. (Convênio ICMS/CONFAZ 93/98, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 113)"
+    },
+    {
+     "code": "DF814115",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de vídeo laparoscópio para o Ministério da Saúde no âmbito de programa de modernização hospitalar. (Convênio ICMS/CONFAZ 77/00, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 115)"
+    },
+    {
+     "code": "DF814116",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de bens realizada pelo Senado Federal. (Convênio ICMS/CONFAZ 103/00, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 116)"
+    },
+    {
+     "code": "DF814118",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação, saída interna e interestadual de medicamentos da AIDS e produtos para sua produção. (Convênio ICMS/CONFAZ 10/02, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 118)"
+    },
+    {
+     "code": "DF814120",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de equipamentos por universidades públicas e fundações educacionais de ensino superior. (Convênio ICMS/CONFAZ 31/02, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 120)"
+    },
+    {
+     "code": "DF814121",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com fármacos e medicamentos destinados à Administração Pública federal, estadual e municipal. (Convênio ICMS/CONFAZ 87/02, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 121)"
+    },
+    {
+     "code": "DF814123",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações realizadas com os medicamentos relacionados no Convênio 140/01 e outros. (Convênio ICMS/CONFAZ 140/01, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 123)"
+    },
+    {
+     "code": "DF814124",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas internas e interestaduais de doações ao Programa Fome Zero. (Convênio ICMS/CONFAZ 18/03, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 124)"
+    },
+    {
+     "code": "DF814125",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de gipsita britada destinada ao uso na agropecuária ou à fabricação de sal mineralizado. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 125)"
+    },
+    {
+     "code": "DF814126",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna casca de coco triturada para uso na agricultura. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 126)"
+    },
+    {
+     "code": "DF814127",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de vermiculita para uso como condicionador e ativador de solo. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 127)"
+    },
+    {
+     "code": "DF814129",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Isenção do ICMS",
+     "description": "Fornecimento de alimentação e a comercialização de produtos na Festa dos Estados de 2007 a 2012. (Convênio ICMS/CONFAZ 105/07, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 129)"
+    },
+    {
+     "code": "DF814130",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Aquisição de veículo automotor por portador de deficiência física (Convênio ICMS/CONFAZ 38/12, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 130)"
+    },
+    {
+     "code": "DF814131",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de equipamentos e matérias-primas pelas fundações de apoio à Fundação Universidade de Brasília. (Convênio ICMS/CONFAZ 51/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 131)"
+    },
+    {
+     "code": "DF814132",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas referentes ao evento denominado \"Mc Dia Feliz\". (Convênio ICMS/CONFAZ 84/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 132)"
+    },
+    {
+     "code": "DF814133",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de pilhas e baterias usadas para reutilização, reciclagem, tratamento ou disposição adequada. (Convênio ICMS/CONFAZ 27/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 133)"
+    },
+    {
+     "code": "DF814135",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações e prestações destinadas a programas de fortalecimento e modernização do GDF. (Convênio ICMS/CONFAZ 79/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 135)"
+    },
+    {
+     "code": "DF814136",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas internas no âmbito do Programa Farmácia Popular do Brasil. (Convênio ICMS/CONFAZ 81/08, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 136)"
+    },
+    {
+     "code": "DF814137",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de equipamentos ferroviários pelo METRÔ/DF. (Convênio ICMS/CONFAZ 122/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 137)"
+    },
+    {
+     "code": "DF814138",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas de medidores de vazão e condutivímetros, e de aparelhos para o controle dos quantitativos medidos. (Convênio ICMS/CONFAZ 69/06, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 138)"
+    },
+    {
+     "code": "DF814140",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operação com Certificado de Depósito Agropecuário - CDA e do Warrant Agropecuário - WA. (Convênio ICMS/CONFAZ 30/06, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 140)"
+    },
+    {
+     "code": "DF814142",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com veículos e equipamentos adquiridos pelo Corpo de Bombeiros Militar do DF. (Convênio ICMS/CONFAZ 152/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 142)"
+    },
+    {
+     "code": "DF814143",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com veículos de transporte escolar destinados ao Programa Caminho da Escola do MEC. (Convênio ICMS/CONFAZ 53/07, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 143)"
+    },
+    {
+     "code": "DF814144",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de materiais destinados à manutenção e ao reparo de aeronave. (Convênio ICMS/CONFAZ 09/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 144)"
+    },
+    {
+     "code": "DF814145",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de equipamentos efetuada por empresa concessionária de radiodifusão. (Convênio ICMS/CONFAZ 10/07, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 145)"
+    },
+    {
+     "code": "DF814146",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação e saídas de/para “free-shops” instaladas em aeroportos de categoria internacional. (Convênio ICMS/CONFAZ 91/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 146)"
+    },
+    {
+     "code": "DF814147",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas internas de óleo diesel às empresas de transporte coletivo urbano do Distrito Federal. (Lei Distrital nº 4.242/08, regulamentada no Decreto nº 18.955/1997 Anexo I, caderno I, item 147)"
+    },
+    {
+     "code": "DF814148",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Remessa da peça defeituosa para o fabricante pelo estabelecimento ou oficina credenciada ou autorizada. (Convênio ICMS/CONFAZ 27/07, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 148)"
+    },
+    {
+     "code": "DF814149",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Remessa da peça defeituosa para o fabricante de veículos pelo concessionário ou oficina autorizada. (Convênio ICMS/CONFAZ 129/06, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 149)"
+    },
+    {
+     "code": "DF814151",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com mercadorias adquiridas no âmbito do Programa Nacional de Informática na Educação do MEC. (Convênio ICMS/CONFAZ 147/07, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 151)"
+    },
+    {
+     "code": "DF814152",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Prestação de serviço de comunicação ao programa Governo Eletrônico de Atendimento do Cidadão. (Convênio ICMS/CONFAZ 141/07, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 152)"
+    },
+    {
+     "code": "DF814154",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importações pela Administração Pública Federal para integrar o ativo imobilizado ou para uso ou consumo. (Convênio ICMS/CONFAZ 91/00, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 154)"
+    },
+    {
+     "code": "DF814155",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de fármacos e medicamentos destinados ao tratamento da AIDS, por decisão judicial. (Convênio ICMS/CONFAZ 140/08, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 155)"
+    },
+    {
+     "code": "DF814156",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importações pelo Ministério da Justiça no Programa Nacional de Segurança Pública com Cidadania. (Convênio ICMS/CONFAZ 14/09, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 156)"
+    },
+    {
+     "code": "DF814157",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação amparada pelo Regime Especial Aduaneiro de Admissão Temporária. (Convênio ICMS/CONFAZ 58/99, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 157)"
+    },
+    {
+     "code": "DF814158",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Remessa de peça aeronáutica defeituosa para o fabricante, e de peça nova em substituição à defeituosa. (Convênio ICMS/CONFAZ 26/09, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 158)"
+    },
+    {
+     "code": "DF814161",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com fosfato de oseltamivir no Programa Farmácia Popular do Brasil, Aqui Tem Farmácia Popular. (Convênio ICMS/CONFAZ 73/10, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 161)"
+    },
+    {
+     "code": "DF814162",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com pneus usados para reciclagem, tratamento ou disposição final adequada. (Convênio ICMS/CONFAZ 33/10, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 162)"
+    },
+    {
+     "code": "DF814163",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações e prestações com equipamentos de segurança eletrônica pelo Departamento Penitenciário Nacional. (Convênio ICMS/CONFAZ 43/10, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 163)"
+    },
+    {
+     "code": "DF814164",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas e interestaduais com maçã e pêra. (Convênio ICMS/CONFAZ 94/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 164)"
+    },
+    {
+     "code": "DF814166",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importação de equipamento médico-hospitalar por clínica ou hospital que preste serviços ao GDF. (Convênio ICMS/CONFAZ 05/98, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 166)"
+    },
+    {
+     "code": "DF814176",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Fornecimento de alimentação oriunda de aulas práticas promovidas pelo Restaurante/Escola do SENAC. (Convênio ICMS/CONFAZ 05/93, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 176)"
+    },
+    {
+     "code": "DF814177",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de produtos para alimentação escolar por agricultor familiar ou afim, destinados a rede pública de ensino. (Convênios ICMS 143/10, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 177)"
+    },
+    {
+     "code": "DF814178",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com produtos regionais destinados à alimentação escolar da rede pública de ensino. (Convênios ICMS 55/11, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 178)"
+    },
+    {
+     "code": "DF814179",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações e prestações com os produtos previstos na Lei nº 11.508/07 a estabelecimento localizado em ZPE. (Convênio ICMS 99/98, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 179)"
+    },
+    {
+     "code": "DF814180",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de condicionadores de solo e substratos para plantas. (Convênio ICMS 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 180)"
+    },
+    {
+     "code": "DF814181",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna dos produtos descritos no inc. XVII da Cláusula Segunda do Convênio ICMS 100/97. (Convênio ICMS 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 181)"
+    },
+    {
+     "code": "DF814182",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operação interna com energia elétrica sujeita ao Sistema de Compensação de Energia Elétrica. (Convênio ICMS 16/15, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 182)"
+    },
+    {
+     "code": "DF814183",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas internas e importação de álcool gel e insumos, luvas, máscaras, hipoclorito de sódio 5% e álcool 70%. (Lei nº 6.521/20, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 183)"
+    },
+    {
+     "code": "DF814184",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com os medicamentos Spinraza e Risdiplam para tratamento da Atrofia Muscular Espinhal - AME. (Convênio ICMS 96/18, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 184)"
+    },
+    {
+     "code": "DF814186",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Importações e operações com insumos e vacinas para COVID. (Convênio ICMS 15/21, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 186)"
+    },
+    {
+     "code": "DF814187",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas e interestaduais e diferencial de alíquotas para o transporte público sobre trilhos. (Convênio ICMS 94/12, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 187)"
+    },
+    {
+     "code": "DF814188",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Venda de bens e mercadorias nos eventos da Associação dos Cônjuges dos Chefes de Missão. (Convênio ICMS 137/15, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 188)"
+    },
+    {
+     "code": "DF814194",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Serviço de comunicação para projetos educacionais em EaD da Secretaria de Educação. (Convênio ICMS 50/20, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno I, item 194)"
+    },
+    {
+     "code": "DF814500",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Isenção do ICMS",
+     "description": "Venda de bens e mercadorias nos eventos da Associação dos Cônjuges dos Chefes de Missão. (Convênio ICMS 137/15)"
+    },
+    {
+     "code": "DF814501",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de bertalha, flores utilizadas na alimentação humana e frutas frescas. (Decreto nº 39.828/19, art. 2º, inc. I)"
+    },
+    {
+     "code": "DF814502",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna de gado asinino, bovino, bufalino, caprino, equino, muar, ovino e suíno entre produtores agropecuários. (Decreto nº 39.828/19, art. 2º, inc. II)"
+    },
+    {
+     "code": "DF814503",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Entrada de trator agrícola de quatro rodas e de colheitadeira mecânica de algodão. (Decreto nº 39.828/19, art. 2º, inc. III)"
+    },
+    {
+     "code": "DF814504",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída interna com animal silvestre ou exótico vivo. (Decreto nº 39.828/19, art. 2º, inc. IV)"
+    },
+    {
+     "code": "DF814505",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas e interestaduais de peixes, carne e pele de jacaré criados em cativeiro. (Decreto nº 39.828/19, art. 2º, inc. V)"
+    },
+    {
+     "code": "DF814506",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com apara de papel. (Decreto nº 40.036/2019, art. 3º, inc. I)"
+    },
+    {
+     "code": "DF814507",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com caco de vidro. (Decreto nº 40.036/2019, art. 3º, inc. II)"
+    },
+    {
+     "code": "DF814508",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com embalagem plástica e papel usados. (Decreto nº 40.036/2019, art. 3º, inc. III)"
+    },
+    {
+     "code": "DF814509",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com fragmento, retalho, resíduo e desperdício de plástico, borracha, pneus e couro. (Decreto nº 40.036/2019, art. 3º, inc. IV)"
+    },
+    {
+     "code": "DF814510",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com sucata de qualquer tipo de material. (Decreto nº 40.036/2019, art. 3º, inc. V)"
+    },
+    {
+     "code": "DF814511",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Diferencial de alíquota (DIFAL) nas operações interestaduais para contribuintes Simples Nacional (Lei nº 6.296/2019, art. 1º)"
+    },
+    {
+     "code": "DF814512",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saída de produtos para uso ou consumo de bordo em embarcações ou aeronaves com destino ao exterior. (Convênio ICMS 12/75)"
+    },
+    {
+     "code": "DF814513",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Saídas internas e interestaduais com embalagens de agrotóxicos usadas e lavadas, e o respectivo transporte. (Convênio ICMS 51/99)"
+    },
+    {
+     "code": "DF814514",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com produtos para a produção de biodiesel e querosene de aviação alternativo. (Convênio ICMS 105/03)"
+    },
+    {
+     "code": "DF814515",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas com areia, brita, tijolo, exceto refratário e de vidro e telha de barro. (Convênio ICMS 101/16)"
+    },
+    {
+     "code": "DF814516",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com Aceleradores Lineares para Programa de Oncologia do MS e entidade de assistência social. (Convênio ICMS 66/19)"
+    },
+    {
+     "code": "DF814517",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações e prestações de serviço de transporte realizadas no âmbito de prevenção ao COVID. (Convênio ICMS 63/20)"
+    },
+    {
+     "code": "DF814518",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações internas e interestaduais com o equipamento respiratório Elmo, utilizado no combate ao COVID. (Convênio ICMS 13/21)"
+    },
+    {
+     "code": "DF814519",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Isenção do ICMS",
+     "description": "Operações com absorventes íntimos femininos e outros, para órgãos da Administração Pública Direta e Indireta. (Convênio ICMS 187/21)"
+    },
+    {
+     "code": "DF816001",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operações com aeronaves e similares, suas partes e peças. (Convênio ICMS/CONFAZ 75/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 01)"
+    },
+    {
+     "code": "DF816002",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operações internas com eqüinos puro sangue. (Convênio ICMS/CONFAZ 50/92, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 02)"
+    },
+    {
+     "code": "DF816003",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interna de leite pasteurizado tipo \"C\". (Convênio ICMS/CONFAZ 25/83, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 03)"
+    },
+    {
+     "code": "DF816004",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operações internas e interestaduais de equipamentos industriais listados no Anexo I do Convênio ICMS 52/91. (Convênio ICMS/CONFAZ 52/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 04)"
+    },
+    {
+     "code": "DF816005",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operações internas e interestaduais de equipamentos agrícolas listados no Anexo II do Convênio ICMS 52/91. (Convênio ICMS/CONFAZ 52/91, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 05)"
+    },
+    {
+     "code": "DF816006",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída de máquinas, aparelhos, veículos, móveis, motores e vestuário usados. (Convênio ICMS/CONFAZ 15/81, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 06)"
+    },
+    {
+     "code": "DF816011",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interna de mercadorias que compõem a cesta básica. (Convênio ICMS/CONFAZ 128/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 11)"
+    },
+    {
+     "code": "DF816012",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Prestação de serviços de radiochamada (Convênio ICMS/CONFAZ 86/99, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 12)"
+    },
+    {
+     "code": "DF816014",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interna de produtos da indústria de informática e automação. (Lei 1.254/96, regulamentada no Decreto nº 18.955/1997 Anexo I, caderno II, item 14)"
+    },
+    {
+     "code": "DF816015",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interna por estabelecimentos industriais e atacadistas de papel, formulário contínuo e impressos. (Lei 1.254/96, regulamentada no Decreto nº 18.955/1997 Anexo I, caderno II, item 15)"
+    },
+    {
+     "code": "DF816016",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operações internas com água natural canalizada promovidas pela CAESB. (Convênio ICMS/CONFAZ 114/95, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 16)"
+    },
+    {
+     "code": "DF816017",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Prestações de serviços de transporte aéreo (Convênio ICMS/CONFAZ 120/96, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 17)"
+    },
+    {
+     "code": "DF816018",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de inseticidas e outros produtos listados no inc. I da Claúsula Primeira do Convênio ICMS 100/97. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 18)"
+    },
+    {
+     "code": "DF816019",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de ácido nítrico, ácido sulfúrico, ácido fosfórico, fosfato natural bruto e enxofre. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 19)"
+    },
+    {
+     "code": "DF816020",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de rações para animais, concentrados, suplementos, aditivos, premix ou núcleo. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 20)"
+    },
+    {
+     "code": "DF816021",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de calcário e gesso. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 21)"
+    },
+    {
+     "code": "DF816022",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de sementes. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 22)"
+    },
+    {
+     "code": "DF816023",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de produtos para alimentação ou fabricação de ração animal. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 23)"
+    },
+    {
+     "code": "DF816024",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de esterco animal. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 24)"
+    },
+    {
+     "code": "DF816025",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de mudas de plantas. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 25)"
+    },
+    {
+     "code": "DF816026",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de embriões, sêmen congelado, ovos férteis, aves de um dia, girinos e alevinos. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 26)"
+    },
+    {
+     "code": "DF816027",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de enzimas para decomposição de matéria orgânica animal. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 27)"
+    },
+    {
+     "code": "DF816028",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de ração animal. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 28)"
+    },
+    {
+     "code": "DF816029",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interna de tijolos cerâmicos, tijoleiras e telhas cerâmicas. (Convênio ICMS/CONFAZ 50/93, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 29)"
+    },
+    {
+     "code": "DF816033",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interna de pedra britada e de mão. (Convênio ICMS/CONFAZ 13/94, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 33)"
+    },
+    {
+     "code": "DF816034",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Redução de BC do ICMS",
+     "description": "Serviço de provimento de acesso à Internet, por provedor de acesso. (Convênio ICMS/CONFAZ 78/01, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 34)"
+    },
+    {
+     "code": "DF816035",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operação interestadual com pneumáticos e câmaras-de-ar de borracha por importador ou fabricante. (Convênio ICMS/CONFAZ 06/09, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 35)"
+    },
+    {
+     "code": "DF816036",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de gipsita britada destinada ao uso na agropecuária ou à fabricação de sal mineralizado. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 36)"
+    },
+    {
+     "code": "DF816038",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operação interna e interestadual com produtos relacionados no item por produtor rural. (Lei 2.708/01, regulamentada no Decreto nº 18.955/1997 Anexo I, caderno II, item 38)"
+    },
+    {
+     "code": "DF816039",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de casca de coco triturada para uso na agricultura. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 39)"
+    },
+    {
+     "code": "DF816040",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operação interestadual com os veículos relacionados no item por estabelecimento fabricante ou importador. (Convênio ICMS/CONFAZ 133/02, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 40)"
+    },
+    {
+     "code": "DF816041",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de vermiculita para uso como condicionador e ativador de solo. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 41)"
+    },
+    {
+     "code": "DF816042",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de carne e outros produtos do abate de ave, leporídeo, gado, bufalino, caprino, ovino e suíno. (Convênio ICMS/CONFAZ 89/05, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 42)"
+    },
+    {
+     "code": "DF816043",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de produtos farmacêuticos e de perfumaria. (Convênio ICMS/CONFAZ 34/06, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 43)"
+    },
+    {
+     "code": "DF816044",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interna de gás natural veicular - GNV (Convênio ICMS/CONFAZ 89/04, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 44)"
+    },
+    {
+     "code": "DF816046",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída de biodiesel resultante de industrialização de grãos, sebo bovino, sementes e palma. (Convênio ICMS/CONFAZ 113/06, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 46)"
+    },
+    {
+     "code": "DF816047",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de extrato pirolenhoso decantado, piro alho, silício líquido piro alho e bio bire plus. (Convênio ICMS/CONFAZ100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 47)"
+    },
+    {
+     "code": "DF816048",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Prestação de serviços de televisão por assinatura. (Convênio ICMS/CONFAZ 78/15, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 48)"
+    },
+    {
+     "code": "DF816049",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Importação amparada pelo Regime Especial Aduaneiro de Admissão Temporária. (Convênio ICMS/CONFAZ 58/99, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 49)"
+    },
+    {
+     "code": "DF816050",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de óleo, extrato seco e torta de Nim. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 50)"
+    },
+    {
+     "code": "DF816051",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual de condicionadores de solo e substratos para plantas. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 51)"
+    },
+    {
+     "code": "DF816052",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saída interestadual dos produtos descritos no inc. XVII da Cláusula Segunda do Convênio ICMS 100/97. (Convênio ICMS/CONFAZ 100/97, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 52)"
+    },
+    {
+     "code": "DF816053",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operações internas e interestaduais com sucatas de papel, vidro e plástico para reciclagem. (Convênio ICMS/CONFAZ 07/13, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 53)"
+    },
+    {
+     "code": "DF816054",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saídas internas e interestaduais de mercadorias de cooperativas de produtores agropecuários e extrativistas. (Convênio ICMS/CONFAZ 102/11, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 54)"
+    },
+    {
+     "code": "DF816055",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operações de saída com querosene de aviação (QAV) (Convênio ICMS/CONFAZ 188/17, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 55)"
+    },
+    {
+     "code": "DF816056",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Importação do Paraguai realizada por empresa do Simples Nacional. (Convênio ICMS/CONFAZ 61/12, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 56)"
+    },
+    {
+     "code": "DF816057",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Operações internas com óleo diesel e biodiesel para transporte coletivo de passageiros. (Convênio ICMS/CONFAZ 79/19, regulamentado no Decreto nº 18.955/1997 Anexo I, caderno II, item 57)"
+    },
+    {
+     "code": "DF816500",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Serviços de comunicação prestados a central de atendimento telefônico (\"call center\"). (Lei nº 1.254/96, art. 18, § 4º)"
+    },
+    {
+     "code": "DF816501",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Exclusão da gorjeta da base de cálculo do ICMS por bares, restaurantes, hotéis e similares. (Convênio ICMS/CONFAZ 125/11, regulamentado no Decreto nº 18.955/1997, art. 7º - B)"
+    },
+    {
+     "code": "DF816502",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Saídas de bens, materiais ou peças com defeito, na prestação de serviços de assistência técnica, manutenção e reparo prevista no Ajuste SINIEF 14/17. (Convênio ICMS 104/17)"
+    },
+    {
+     "code": "DF816503",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2023-06-01",
+     "to": null,
+     "kind": "Redução de BC do ICMS",
+     "description": "Fornecimento de refeições por bares, restaurantes e outros, e saída de refeições coletivas. (Convênio ICMS 91/12)"
+    },
+    {
+     "code": "DF817001",
+     "csts": [],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Crédito Presumido do ICMS",
+     "description": "Aos estabelecimentos prestadores de serviço de transporte aéreo. (Convênio ICMS/CONFAZ 120/96, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno III item 1)"
+    },
+    {
+     "code": "DF817002",
+     "csts": [],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Crédito Presumido do ICMS",
+     "description": "Aos estabelecimentos prestadores de serviço de transporte. (Convênio ICMS/CONFAZ 120/96, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno III item 2)"
+    },
+    {
+     "code": "DF817004",
+     "csts": [],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Crédito Presumido do ICMS",
+     "description": "Ao estabelecimento que realizar saídas de obras de arte recebidas diretamente do autor com isenção do imposto. (Convênio ICMS/CONFAZ 120/96, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno III item 4)"
+    },
+    {
+     "code": "DF817007",
+     "csts": [],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Crédito Presumido do ICMS",
+     "description": "Às empresas produtoras de discos fonográficos e de outros suportes com sons gravados. (Convênio ICMS/CONFAZ 120/96, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno III item 7)"
+    },
+    {
+     "code": "DF817009",
+     "csts": [],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Crédito Presumido do ICMS",
+     "description": "Às empresas de telecomunicação prestadoras de STFC e SMP e de televisão por assinatura (Convênio ICMS/CONFAZ 120/96, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno III item 9)"
+    },
+    {
+     "code": "DF817501",
+     "csts": [],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Crédito Presumido do ICMS",
+     "description": "Ao contribuinte comerciante atacadista, na saída interestadual. (Decreto nº 39.753/2019, fundamentado no Convênio ICMS/CONFAZ 190/17)"
+    },
+    {
+     "code": "DF817502",
+     "csts": [],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Crédito Presumido do ICMS",
+     "description": "Aos empreendimentos econômicos produtivos enquadrados no Programa EMPREGA - DF (Decreto nº 39.803/2019, fundamentado no Convênio ICMS/CONFAZ 190/17)"
+    },
+    {
+     "code": "DF817503",
+     "csts": [],
+     "from": "2021-02-01",
+     "to": "2023-05-31",
+     "kind": "Crédito Presumido do ICMS",
+     "description": "Aos estabelecimentos industriais na aquisição de produtos e material de reciclagem (Decreto nº 40.036/2019, fundamentado no Convênio ICMS/CONFAZ 190/17)"
+    },
+    {
+     "code": "DF819001",
+     "csts": [
+      "50"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Suspensão do ICMS",
+     "description": "Saída de mercadorias para fins de conserto ou reparo. (Convênios AE-15/74, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno IV item 1)"
+    },
+    {
+     "code": "DF819002",
+     "csts": [
+      "50"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Suspensão do ICMS",
+     "description": "Saída de matérias-primas, produtos intermediários e material de embalagem para fins de industrialização. (Convênios AE-15/74, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno IV item 2)"
+    },
+    {
+     "code": "DF819003",
+     "csts": [
+      "50"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Suspensão do ICMS",
+     "description": "Saídas de bens integrados ao ativo imobilizado e de moldes, matrizes, gabaritos e afins. (Convênios ICMS/CONFAZ 19/91, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno IV item 3)"
+    },
+    {
+     "code": "DF819005",
+     "csts": [
+      "50"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Suspensão do ICMS",
+     "description": "Importação de mercadoria por Missões Diplomáticas e afins. (Convênios ICMS/CONFAZ 158/94, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno IV item 5)"
+    },
+    {
+     "code": "DF819006",
+     "csts": [
+      "50"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Suspensão do ICMS",
+     "description": "Importação de materiais destinados à manutenção e ao reparo de aeronave de transporte comercial internacional. (Convênios ICMS/CONFAZ 09/05, regulamentado no Decreto nº 18.955/1997, Anexo I, Caderno IV item 6)"
+    },
+    {
+     "code": "DF824001",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Isenção do ISS",
+     "description": "Prestação de serviços de transporte público de passageiros de natureza estritamente municipal. (Decreto-Lei nº 82/66, art. 92, inc. V)"
+    },
+    {
+     "code": "DF826001",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução da BC do ISS",
+     "description": "Serviços de diversões, lazer e outros; planejamento, organização e administração de feiras, exposições e outros. (Lei nº 3.730/2005)"
+    },
+    {
+     "code": "DF826002",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução da BC do ISS",
+     "description": "Prestação de serviços de acesso, atendimento e outros realizados por central de atendimento (call center). (Lei nº 3.731/05)"
+    },
+    {
+     "code": "DF826003",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Redução da BC do ISS",
+     "description": "Serviços de agenciamento, corretagem ou intermediação de seguros. (Lei nº 3.736/2005)"
+    },
+    {
+     "code": "DF890000",
+     "csts": [
+      "20",
+      "30",
+      "40",
+      "41",
+      "50",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Outros",
+     "description": "Situações não previstas nos Cbenefs anteriores. (cBenef não previsto)"
+    },
+    {
+     "code": "DF890001",
+     "csts": [
+      "20",
+      "30",
+      "40",
+      "41",
+      "50",
+      "70"
+     ],
+     "from": "2021-02-01",
+     "to": null,
+     "kind": "Outros",
+     "description": "Benefícios concedidos por sentença judicial individual ou coletiva. (Benefício concedido por decisão judicial)"
+    }
+   ]
+  },
+  {
    "uf": "SP",
    "act": "Tabela CST x cBenef da SEFAZ-SP",
    "source": "cbenefSp",

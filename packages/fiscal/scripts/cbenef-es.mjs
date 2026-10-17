@@ -13,11 +13,15 @@ const isoFromEs = (value) => {
   return m ? `${m[3]}-${m[2]}-${m[1]}` : null;
 };
 
-/** @param sheets planilhas lidas por readXlsx */
-export function parseCbenefEs(sheets) {
+/**
+ * Planilha "cBenef x CST" no layout do ES e do DF: Cbenef, CST..., início, fim, descrição,
+ * capitulação legal e observação (o tipo do benefício).
+ * @param sheets planilhas lidas por readXlsx
+ */
+export function parseCbenefSheet(sheets, { uf, min }) {
   const sheet = sheets[0];
   const head = sheet.rows.findIndex((r) => /^cbenef$/i.test((r[0] ?? '').trim()));
-  if (head < 0) throw new Error('Não achei o cabeçalho da tabela cBenef do ES');
+  if (head < 0) throw new Error(`Não achei o cabeçalho da tabela cBenef de ${uf}`);
   const header = sheet.rows[head].map((h) => h.replace(/\s+/g, ' ').trim());
   const cstCols = header.map((h, i) => [/^CST (\d{2})\b/.exec(h)?.[1], i]).filter(([cst]) => cst);
   const find = (re) => header.findIndex((h) => re.test(h));
@@ -27,10 +31,11 @@ export function parseCbenefEs(sheets) {
   const legal = find(/legal|legisla|fundamento/i);
   const kind = find(/^observa/i);
   if (cstCols.length < 10 || start < 0 || desc < 0)
-    throw new Error('A tabela cBenef do ES mudou de colunas');
+    throw new Error(`A tabela cBenef de ${uf} mudou de colunas`);
+  const CODE = new RegExp(`^(${uf}\\d{6}|SEM CBENEF)$`);
   const codes = sheet.rows
     .slice(head + 1)
-    .filter((r) => /^(ES\d{6}|SEM CBENEF)$/.test((r[0] ?? '').trim()))
+    .filter((r) => CODE.test((r[0] ?? '').trim()))
     .map((r) => ({
       code: r[0].trim(),
       csts: cstCols
@@ -45,7 +50,13 @@ export function parseCbenefEs(sheets) {
         .replace(/\s+/g, ' ')
         .trim(),
     }));
-  if (codes.length < 200)
-    throw new Error(`Esperava a tabela cBenef do ES inteira; achei ${codes.length} códigos`);
+  if (codes.length < min)
+    throw new Error(`Esperava a tabela cBenef de ${uf} inteira; achei ${codes.length} códigos`);
   return codes;
 }
+
+/** Espírito Santo: planilha cBenef ES. */
+export const parseCbenefEs = (sheets) => parseCbenefSheet(sheets, { uf: 'ES', min: 200 });
+
+/** Distrito Federal: Anexo Único do Ato Declaratório de cBenef. */
+export const parseCbenefDf = (sheets) => parseCbenefSheet(sheets, { uf: 'DF', min: 200 });

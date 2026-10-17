@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-27.b.DF Tabela oficial de cBenef do Distrito Federal] — 17/10/2026
+
+### Adicionado
+- **cBenef do Distrito Federal explicado na regra de ICMS:** são 252 códigos da planilha consolidada da Receita-DF, com o tipo do benefício, a descrição e a base legal.
+  - **Data do arquivo:** é a planilha de 15/05/2023, a única que a Receita-DF publica.
+- **Monitor semanal das fontes:** passou a conferir a planilha do DF.
+
 ## [F3-27.b.RJ Tabela oficial de cBenef do Rio de Janeiro] — 17/10/2026
 
 ### Adicionado

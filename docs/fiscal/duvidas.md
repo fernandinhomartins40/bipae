@@ -609,4 +609,8 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
     - não informar o literal SEM CBENEF;
     - nota sem o campo é aceita, mas, se preenchido, só valem códigos da tabela e habilitados para o CST;
     - a validação não dispensa a obrigação de preencher quando a legislação exige.
-- **Em aberto (F3-27.b, demais UFs):** as tabelas do DF e das outras UFs que exigem o código.
+- **Atualização de 17/10/2026 (F3-27.b, Distrito Federal):** planilha consolidada "TABELA_CBenef_X_CST" da Receita-DF (Anexo Único do Ato Declaratório de cBenef):
+  - **Data do arquivo:** a página da Receita-DF cita o Ato Declaratório 02/2025, mas o único arquivo oferecido é a planilha consolidada de 15/05/2023. O Bipaê usa esse arquivo e mostra a data dele; o monitor semanal avisa quando a planilha mudar.
+  - **Códigos:** 252, com o tipo do benefício, a descrição e a base legal. Doze terminaram em 31/05/2023 e só valem até essa data.
+  - **Sem CST:** 8 códigos não marcam CST na planilha (a tela mostra o código, mas não confere o CST).
+- **Em aberto (F3-27.b, demais UFs):** as tabelas das outras UFs que exigem o código.

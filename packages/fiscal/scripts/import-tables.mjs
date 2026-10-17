@@ -26,7 +26,7 @@ import { parseCbenefPr, parseCbenefRj } from './cbenef-pr.mjs';
 import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
-import { parseCbenefEs } from './cbenef-es.mjs';
+import { parseCbenefDf, parseCbenefEs } from './cbenef-es.mjs';
 import { parseCbenefSp } from './cbenef-sp.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
@@ -726,6 +726,13 @@ tables['cbenef.json'] = {
       source: 'cbenefEs',
       url: manifest.cbenefEs.page,
       codes: parseCbenefEs(readXlsx(join(sourcesDir, manifest.cbenefEs.file))),
+    },
+    {
+      uf: 'DF',
+      act: 'Ato Declaratório de cBenef da Receita-DF, Anexo Único (planilha consolidada de 15/05/2023)',
+      source: 'cbenefDf',
+      url: manifest.cbenefDf.page,
+      codes: parseCbenefDf(readXlsx(join(sourcesDir, manifest.cbenefDf.file))),
     },
     {
       uf: 'SP',

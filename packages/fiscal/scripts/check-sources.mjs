@@ -22,7 +22,7 @@ import { parseCbenefPr, parseCbenefRj } from './cbenef-pr.mjs';
 import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
-import { parseCbenefEs } from './cbenef-es.mjs';
+import { parseCbenefDf, parseCbenefEs } from './cbenef-es.mjs';
 import { parseCbenefSp } from './cbenef-sp.mjs';
 import { readXlsx } from './xlsx.mjs';
 import { mkdtempSync } from 'node:fs';
@@ -779,21 +779,23 @@ async function checkCbenefGo() {
   };
 }
 
-/** cBenef do Espírito Santo: a planilha de hoje (a versão nova muda o nome do arquivo). */
-async function checkCbenefEs() {
+/**
+ * cBenef em planilha (ES e DF): compara a planilha de hoje com a guardada (a versão nova muda o
+ * nome do arquivo e às vezes o leitor deixa de reconhecê-la).
+ */
+async function checkCbenefSheet(key, parse, title) {
   const rowsOf = (path) =>
-    parseCbenefEs(readXlsx(path)).map((c) => [c.code, c.csts.join(' '), c.from ?? '', c.to ?? '']);
-  const old = rowsOf(join(sourcesDir, manifest.cbenefEs.file));
-  const title = 'cBenef do Espírito Santo (planilha cBenef ES)';
+    parse(readXlsx(path)).map((c) => [c.code, c.csts.join(' '), c.from ?? '', c.to ?? '']);
+  const old = rowsOf(join(sourcesDir, manifest[key].file));
   let now;
   try {
-    const tmp = join(mkdtempSync(join(tmpdir(), 'bipae-cbenef-')), 'es.xlsx');
-    writeFileSync(tmp, (await download(manifest.cbenefEs.page)).body);
+    const tmp = join(mkdtempSync(join(tmpdir(), 'bipae-cbenef-')), 'tabela.xlsx');
+    writeFileSync(tmp, (await download(manifest[key].page)).body);
     now = rowsOf(tmp);
   } catch (error) {
     return {
       title,
-      page: manifest.cbenefEs.page,
+      page: manifest[key].page,
       status: 'mudou',
       details: [
         `o arquivo não abre ou não passa no leitor do Bipaê (talvez uma versão nova): ${error.message}`,
@@ -803,13 +805,23 @@ async function checkCbenefEs() {
   const diff = diffRows(old, now);
   return {
     title,
-    page: manifest.cbenefEs.page,
+    page: manifest[key].page,
     status: diff.changed ? 'mudou' : 'igual',
     details: diff.changed
       ? [`${diff.added} código(s) novo(s) ou alterado(s), ${diff.removed} saíram`, ...diff.examples]
       : [],
   };
 }
+
+const checkCbenefEs = () =>
+  checkCbenefSheet('cbenefEs', parseCbenefEs, 'cBenef do Espírito Santo (planilha cBenef ES)');
+
+const checkCbenefDf = () =>
+  checkCbenefSheet(
+    'cbenefDf',
+    parseCbenefDf,
+    'cBenef do Distrito Federal (Anexo Único do Ato Declaratório)',
+  );
 
 /** cBenef de São Paulo: a planilha de hoje (cada versão nova muda o nome do arquivo). */
 async function checkCbenefSp() {
@@ -917,6 +929,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('cBenef do Espírito Santo', manifest.cbenefEs.page, checkCbenefEs),
     await safe('cBenef de São Paulo', manifest.cbenefSp.page, checkCbenefSp),
     await safe('cBenef do Rio de Janeiro', manifest.cbenefRj.page, checkCbenefRj),
+    await safe('cBenef do Distrito Federal', manifest.cbenefDf.page, checkCbenefDf),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

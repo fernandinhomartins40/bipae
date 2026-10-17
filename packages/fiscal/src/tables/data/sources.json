@@ -459,5 +459,14 @@
   "publishedAt": "2026-10-02",
   "downloadedAt": "2026-10-17",
   "sha256": "99defe903d4249fde7aa8b70d7b79f9ef4b36b1a1c7e4cfc4c6f4186f67a1a6f"
+ },
+ "cbenefDf": {
+  "file": "SEFAZ-DF_Tabela_cBenef_x_CST_2023-05-15.xlsx",
+  "title": "Tabela cBenef x CST do Distrito Federal (planilha consolidada de 15/05/2023), Anexo Único do Ato Declaratório de cBenef da Receita-DF",
+  "publisher": "Secretaria de Estado de Economia do Distrito Federal (Receita-DF)",
+  "page": "https://static.fazenda.df.gov.br//arquivos/servico-1051/TABELA_CBenef_X_CST_consolidada_15-05_2023.xlsx",
+  "publishedAt": "2023-05-15",
+  "downloadedAt": "2026-10-17",
+  "sha256": "175c297fc6de8da2430726012736e3838d9de1c6c4bcd36edb75f5417fb54a95"
  }
 }

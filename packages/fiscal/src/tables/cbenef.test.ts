@@ -126,6 +126,24 @@ describe('cBenef do Espírito Santo (cBenef ES V6)', () => {
   });
 });
 
+describe('cBenef do Distrito Federal (Anexo Único do Ato Declaratório)', () => {
+  it('a planilha consolidada com o tipo, a descrição e a base legal', () => {
+    expect(CBENEF_UFS).toContain('DF');
+    const df = CBENEF_TABLES.find((t) => t.uf === 'DF')!;
+    expect(df.codes.length).toBeGreaterThan(240);
+    const r = cbenefLookup('DF', 'DF816001', '2026-10-17', '20');
+    expect(r).toMatchObject({ covered: true, valid: true, cstOk: true });
+    expect(r.entry).toMatchObject({ from: '2021-02-01', kind: 'Redução de BC do ICMS' });
+    expect(r.entry!.description).toMatch(/aeronaves/);
+    expect(cbenefLookup('DF', 'DF816001', '2026-10-17', '40').cstOk).toBe(false);
+  });
+
+  it('código encerrado em 31/05/2023 não vale depois', () => {
+    expect(cbenefLookup('DF', 'DF814001', '2023-05-31').valid).toBe(true);
+    expect(cbenefLookup('DF', 'DF814001', '2023-06-01').valid).toBe(false);
+  });
+});
+
 describe('cBenef de São Paulo (Tabela CST x cBenef)', () => {
   it('a planilha com o dispositivo e a descrição; SEM CBENEF não vale mais desde 01/07/2026', () => {
     expect(CBENEF_UFS).toContain('SP');
