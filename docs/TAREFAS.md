@@ -172,7 +172,14 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [x] F3-26.b · SP: o que está e o que saiu da ST, por anexo e por item, gerado do texto consolidado da Portaria CAT 68/2019 (higiene saiu em 01/04/2026, limpeza e ração em 01/08/2026, bebidas alcoólicas e medicamentos em 01/01/2026, águas do Anexo III em 01/07/2026); aviso na regra de ICMS — depende: F3-26.a
   - [x] F3-26.e · SP: cerveja, chope e refrigerante continuam na ST; a base é a pauta da Portaria SRE 27/2026 (01/07 a 31/12/2026, lida do texto oficial), e a regra de ICMS explica e avisa que o cálculo por pauta ainda não está no Bipaê — depende: F3-26.b
   - [ ] F3-26.f · ST por pauta (valor em reais por marca e embalagem): o motor calcula com o valor da pauta e importa as tabelas da Portaria SRE 27/2026 e alterações; a cada nova portaria de SP, regerar — depende: F3-26.e
-  - [ ] F3-26.c · PR, MG, RJ, RS, SC e BA (uma subtarefa por UF quando começar) — depende: F3-26.a
+  - [~] F3-26.c · PR, MG, RJ, RS, SC e BA, uma subtarefa por UF — depende: F3-26.a
+    - [x] F3-26.c.PR · Paraná: MVA da Resolução SEFA 571/2019 consolidada (444 itens) e o que saiu da ST pelo Anexo IX do RICMS/PR (eletrônicos e celulares em 01/03/2026, limpeza e papelaria em 01/08/2024, sorvetes em 01/02/2025); monitor semanal confere os dois PDFs
+    - [ ] F3-26.c.PR2 · Paraná: MVA única por hipótese, escrita no artigo (autopeças, medicamentos, veículos e porta a porta)
+    - [ ] F3-26.c.MG · Minas Gerais (RICMS/MG, Anexo XV)
+    - [ ] F3-26.c.RJ · Rio de Janeiro
+    - [ ] F3-26.c.RS · Rio Grande do Sul
+    - [ ] F3-26.c.SC · Santa Catarina
+    - [ ] F3-26.c.BA · Bahia
   - [ ] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
 - [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25

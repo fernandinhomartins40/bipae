@@ -16,6 +16,8 @@ import { parseCest } from './cest.mjs';
 import { parseDifal } from './difal.mjs';
 import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpCat68 } from './st-sp-cat68.mjs';
+import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences, prStRows } from './st-pr.mjs';
+import { pdfLines } from './pdf-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -226,6 +228,48 @@ async function checkListings() {
   });
 }
 
+/** Paraná (PDFs): a resolução e o RICMS inteiro de hoje, lidos como na geração. */
+async function checkPr() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const build = async (resBytes, ricmsBytes) =>
+    prStRows(
+      prStReferences(
+        parsePrRes571(await pdfLines(resBytes), known).tables,
+        parsePrAnexoIX(anexoIXLines(await pdfLines(ricmsBytes))),
+        { resUrl: '', anexoUrl: '' },
+      ),
+    );
+  const file = (key) => readFileSync(join(sourcesDir, manifest[key].file));
+  const old = await build(file('stPrRes571'), file('stPrAnexoIX'));
+  const [res, ricms] = await Promise.all([
+    download(manifest.stPrRes571.page),
+    download(manifest.stPrAnexoIX.page),
+  ]);
+  const title = 'ST no Paraná (Resolução SEFA 571/2019 e Anexo IX do RICMS/PR)';
+  let fresh;
+  try {
+    fresh = await build(res.body, ricms.body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stPrRes571.page,
+      status: 'mudou',
+      details: [`o PDF novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, fresh);
+  return {
+    title,
+    page: manifest.stPrRes571.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -248,6 +292,7 @@ if (process.argv.includes('--save-listings')) {
       PARSED.map((item) => safe(item.title, manifest[item.keys[0]].page, () => checkParsed(item))),
     )),
     await safe('NCM (Siscomex)', manifest.ncm.page, checkNcm),
+    await safe('ST no Paraná', manifest.stPrRes571.page, checkPr),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

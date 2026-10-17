@@ -196,6 +196,17 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Conferência:** nenhum CEST com IVA-ST na Portaria SRE 12/2026 aparece como fora da ST. As duas portarias concordam.
   - **Regra no Bipaê:** a regra de ICMS avisa quando o NCM saiu da ST, com a data e a portaria.
   - **Ainda falta (F3-26.e):** a base de cálculo de cerveja, chope e refrigerante depois que a Portaria SRE 9/2026 revogou os valores da Portaria SRE 89/2025.
+- **Atualização de 17/10/2026 (F3-26.c, Paraná, fonte oficial):** duas fontes da SEFA-PR, guardadas em `packages/fiscal/sources` e lidas por gerador:
+  - **MVA:** texto consolidado da Resolução SEFA 571/2019 (versão de 20/12/2025, com a Resolução SEFA 1.245/2025). São 444 itens com CEST, NCM e MVA original, em 26 tabelas. Vale a redação atual de cada item; a "redação original" que o texto consolidado repete fica de fora, e itens e seções revogados também. Cosméticos e materiais de construção usam a tabela nova, que vale a partir de 01/04/2026.
+  - **O que está e o que saiu da ST:** Anexo IX do RICMS/PR (Decreto 7.871/2017), texto consolidado de 13/10/2026. Guardamos as páginas 2818 a 3318 do PDF oficial, sem alteração, e o hash do PDF inteiro fica no manifesto. Saíram da ST:
+    - artefatos de uso doméstico, papelaria e materiais de limpeza em 01/08/2024 (Decreto 6.048/2024);
+    - sorvetes em 01/02/2025 (Decreto 8.404/2024);
+    - eletrônicos, eletroeletrônicos e eletrodomésticos em 01/03/2026 (Decreto 12.828/2026);
+    - celulares e cartões inteligentes em 01/03/2026 (Decreto 12.924/2026).
+  - **A resolução ainda traz a MVA de eletrônicos e celulares:** o Bipaê para de sugerir essas MVAs a partir de 01/03/2026, porque o RICMS manda.
+  - **Conferência:** a numeração das seções é a mesma nas duas fontes, e o gerador confere o nome de cada seção. Os itens revogados no RICMS (sucos, carnes temperadas) também foram revogados na resolução.
+  - **CEST que o Convênio ICMS 142/18 já tirou:** três CEST de água mineral (03.001.00, 03.002.00 e 03.004.00) continuam na resolução. Ficam, porque o NCM é o que identifica o produto.
+  - **Ainda sem tabela por item:** autopeças, medicamentos, veículos, combustíveis e venda porta a porta, que têm MVA única por hipótese, escrita no texto do artigo. A tela não sugere MVA para esses casos.
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração
 

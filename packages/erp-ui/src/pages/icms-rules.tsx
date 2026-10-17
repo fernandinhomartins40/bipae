@@ -468,7 +468,7 @@ function StSuggestion({
       const first = out[0]!;
       return (
         <Alert tone="warning" title={`Saiu da substituição tributária em ${uf}`}>
-          {`${first.segmentName} (CEST ${cestText(first.cest)}) saiu da ST em ${day(first.excludedFrom)}, pela ${first.excludedBy ?? 'legislação da SEFAZ'}. O ICMS deste produto passa a ser cobrado normalmente, sem ST.`}
+          {`${first.segmentName} (CEST ${cestText(first.cest)}) saiu da ST em ${day(first.excludedFrom)} (${first.excludedBy ?? 'legislação da SEFAZ'}). O ICMS deste produto passa a ser cobrado normalmente, sem ST.`}
         </Alert>
       );
     }
@@ -483,7 +483,7 @@ function StSuggestion({
     if (inSt.length > 0) {
       return (
         <p className="text-sm text-muted">
-          {`Este NCM está na ST em ${uf} (Anexo ${inSt[0]!.annex}: ${inSt[0]!.segmentName}), mas a MVA dele não está nas portarias que o Bipaê tem. Confira na legislação da SEFAZ.`}
+          {`Este NCM está na ST em ${uf} (${inSt[0]!.segmentName}), mas a MVA dele não está nos atos que o Bipaê tem. Confira na legislação da SEFAZ.`}
         </p>
       );
     }
@@ -504,7 +504,7 @@ function StSuggestion({
         {items.slice(0, 5).map((m) => (
           <li key={m.cest} className="flex flex-wrap items-center justify-between gap-2">
             <span>
-              <span className="font-semibold">IVA-ST {m.mva.replace('.', ',')}%</span> · CEST{' '}
+              <span className="font-semibold">MVA {m.mva.replace('.', ',')}%</span> · CEST{' '}
               {cestText(m.cest)} · {m.description}
             </span>
             <Button variant="secondary" onClick={() => onUse(m)}>

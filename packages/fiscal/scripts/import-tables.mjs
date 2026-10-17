@@ -20,6 +20,8 @@ import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { markStale, parseDifal } from './difal.mjs';
 import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpBebidasBase, parseSpCat68 } from './st-sp-cat68.mjs';
+import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences } from './st-pr.mjs';
+import { pdfLines } from './pdf-text.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -513,8 +515,19 @@ function withSpDrinksBase(annexes) {
 
 // Substituição tributária por UF (F3-26): a MVA (IVA-ST) publicada por cada SEFAZ, por CEST e
 // NCM. É referência para a regra de ICMS da empresa, não regra do motor: a empresa confirma.
-function importStReferences(cest) {
+// Paraná (F3-26.c): MVA da Resolução SEFA 571/2019 e o que saiu da ST pelo Anexo IX do RICMS/PR.
+async function importStPr(known) {
+  const pdf = async (key) => pdfLines(readFileSync(join(sourcesDir, manifest[key].file)));
+  const res = parsePrRes571(await pdf('stPrRes571'), known);
+  return prStReferences(res.tables, parsePrAnexoIX(anexoIXLines(await pdf('stPrAnexoIX'))), {
+    resUrl: manifest.stPrRes571.page,
+    anexoUrl: manifest.stPrAnexoIX.page,
+  });
+}
+
+async function importStReferences(cest) {
   const known = new Set(cest.items.map((c) => c.cest));
+  const pr = await importStPr(known);
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -531,6 +544,7 @@ function importStReferences(cest) {
         url: manifest.stSpCat68.page,
         annexes: withSpDrinksBase(parseSpCat68(cat68, known)),
       },
+      pr.segment,
     ],
     references: [
       {
@@ -545,13 +559,14 @@ function importStReferences(cest) {
         note: 'Base: preço praticado + frete, seguro, impostos e encargos, mais o IVA-ST. Vindo de outra UF com alíquota interna maior que a interestadual, usar o IVA-ST ajustado (art. 1º, parágrafo único).',
         items: parseSpAlimenticios(sp, known),
       },
+      ...pr.references,
     ],
   };
 }
 
 // Depende do FCP (para o código de cada UF).
 tables['icms-products.json'] = importIcmsProducts(tables['fcp.json']);
-tables['st-references.json'] = importStReferences(tables['cest.json']);
+tables['st-references.json'] = await importStReferences(tables['cest.json']);
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha
 // sem regerar os dados.

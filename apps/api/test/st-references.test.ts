@@ -46,8 +46,12 @@ describe('referências de ST por UF (F3-26)', () => {
         }),
       ]),
     );
-    const outra = (await admin.get('/fiscal/st-references?uf=PR&ncm=04011010')).json();
-    expect(outra).toEqual({ uf: 'PR', covered: false, items: [], listed: false, status: [] });
+    const outra = (await admin.get('/fiscal/st-references?uf=MG&ncm=04011010')).json();
+    expect(outra).toEqual({ uf: 'MG', covered: false, items: [], listed: false, status: [] });
+    // Paraná (F3-26.c): leite UHT com a MVA da Resolução SEFA 571/2019.
+    const pr = (await admin.get('/fiscal/st-references?uf=PR&ncm=04011010&date=2026-10-17')).json();
+    expect(pr).toMatchObject({ uf: 'PR', covered: true, listed: true });
+    expect(pr.items[0]).toMatchObject({ cest: '1701600', mva: '14.22' });
     expect((await admin.get('/fiscal/st-references?uf=SP&ncm=abc')).statusCode).toBe(400);
     expect((await api(t.app, {}).get('/fiscal/st-references?uf=SP&ncm=0401')).statusCode).toBe(401);
   });

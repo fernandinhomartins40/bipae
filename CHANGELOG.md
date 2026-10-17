@@ -1,5 +1,23 @@
 # Changelog
 
+## [F3-26.c.PR Substituição tributária no Paraná] — 17/10/2026
+
+### Adicionado
+- **MVA oficial do Paraná na regra de ICMS:** ao digitar o NCM, a tela sugere a MVA original da Resolução SEFA 571/2019, com o CEST e a descrição.
+  - **Tamanho:** 444 itens em 26 tabelas (bebidas, alimentícios, cosméticos, construção, ferramentas, materiais elétricos, pneus e outros).
+  - **Origem:** a tabela é gerada do texto consolidado guardado no Bipaê, com a redação atual de cada item. A redação antiga e os itens revogados ficam de fora.
+  - **Cosméticos e materiais de construção:** usam a tabela nova da Resolução SEFA 1.245/2025, que vale a partir de 01/04/2026.
+- **O que saiu da ST no Paraná:** a regra avisa a data e o decreto, lidos do Anexo IX do RICMS/PR. Saíram:
+  - eletrônicos e celulares em 01/03/2026 (Decretos 12.828/2026 e 12.924/2026);
+  - limpeza, papelaria e artefatos de uso doméstico em 01/08/2024;
+  - sorvetes em 01/02/2025.
+- **Eletrônicos e celulares:** a resolução ainda traz a MVA, mas o Bipaê para de sugeri-la a partir de 01/03/2026, porque o RICMS manda.
+- **Monitor semanal das fontes:** passou a baixar e conferir os dois PDFs da SEFA-PR.
+- **Leitura de PDF oficial na geração das tabelas:** feita com o `pdfjs-dist`, sem depender de programa instalado na máquina.
+
+### Alterado
+- **Sugestão da regra de ICMS:** passou a dizer "MVA", o termo geral. O aviso de saída da ST ficou neutro para portaria ou decreto.
+
 ## [F2-10 Teste do caixa dentro do app desktop de verdade] — 17/10/2026
 
 ### Adicionado

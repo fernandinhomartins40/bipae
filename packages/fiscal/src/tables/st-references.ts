@@ -75,7 +75,13 @@ export function stReferencesFor(uf: string, ncm: string, date: string): StRefere
 export interface StSegment {
   annex: string;
   name: string;
-  cests: { cest: string; excludedFrom?: string | null; excludedBy?: string | null }[];
+  cests: {
+    cest: string;
+    /** NCM do CEST como a UF escreve, quando ela publica (senão vale o Convênio ICMS 142/18). */
+    ncms?: string[];
+    excludedFrom?: string | null;
+    excludedBy?: string | null;
+  }[];
   excludedFrom?: string;
   excludedBy?: string;
   /** Base de cálculo própria do segmento (ex.: pauta em reais por marca, nas bebidas de SP). */
@@ -133,7 +139,7 @@ export function stStatusFor(
     if (block.uf !== uf.toUpperCase()) continue;
     for (const annex of block.annexes) {
       for (const item of annex.cests) {
-        if (!cestNcms(item.cest).some((n) => code.startsWith(n))) continue;
+        if (!(item.ncms ?? cestNcms(item.cest)).some((n) => code.startsWith(n))) continue;
         const from = annex.excludedFrom ?? item.excludedFrom ?? null;
         const by = annex.excludedBy ?? item.excludedBy ?? null;
         result.push({

@@ -100,7 +100,7 @@ test('MVA oficial de SP sugerida pelo NCM e usada com um clique (F3-26)', async 
   await page.getByLabel('Vale a partir de').fill('2026-10-16');
   await page.getByLabel('NCM', { exact: true }).fill('0401.10.10');
   const sugestao = page.getByRole('region', { name: 'MVA oficial' });
-  await expect(sugestao).toContainText('IVA-ST 23,06%');
+  await expect(sugestao).toContainText('MVA 23,06%');
   await expect(sugestao).toContainText('Portaria SRE 12/2026');
   await sugestao.getByRole('button', { name: 'Usar 23,06%' }).click();
   await expect(page.getByLabel('MVA (%)')).toHaveValue('23.06');
@@ -122,4 +122,43 @@ test('MVA oficial de SP sugerida pelo NCM e usada com um clique (F3-26)', async 
     page.getByText(/de 01\/07\/2026 a 31\/12\/2026 \(Portaria SRE 27\/2026/),
   ).toBeVisible();
   await expect(page.getByText(/chega em breve/)).toBeVisible();
+});
+
+test('Paraná: MVA da Resolução SEFA 571/2019 e eletrônicos fora da ST (F3-26.c)', async ({
+  page,
+}) => {
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Davi Dono');
+  await page.getByLabel('Nome do negócio').fill(`Doceria ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`davi-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Davi!' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await page.getByRole('button', { name: 'Editar', exact: true }).click();
+  await page.getByLabel('UF').selectOption('PR');
+  await page.getByRole('button', { name: 'Salvar empresa' }).click();
+  await expect(page.getByText(/ · PR/)).toBeVisible();
+
+  await page.getByRole('link', { name: 'Regras de ICMS' }).click();
+  await page.getByRole('button', { name: 'Nova regra' }).click();
+  await page.getByLabel('Nome da regra').fill('Chocolate branco');
+  await page.getByLabel('Vale a partir de').fill('2026-10-17');
+  await page.getByLabel('NCM', { exact: true }).fill('1704.90.10');
+  const sugestao = page.getByRole('region', { name: 'MVA oficial' });
+  await expect(sugestao).toContainText('41,47%');
+  await expect(sugestao).toContainText('Resolução SEFA 571/2019');
+  // Dois CEST com a mesma MVA (chocolate branco e o 17.005.00): usar o do chocolate branco.
+  await sugestao
+    .getByRole('listitem')
+    .filter({ hasText: 'CEST 17.001.00' })
+    .getByRole('button', { name: 'Usar 41,47%' })
+    .click();
+  await expect(page.getByLabel('MVA (%)')).toHaveValue('41.47');
+
+  // Ar-condicionado: os eletrônicos saíram da ST no PR em 01/03/2026.
+  await page.getByLabel('NCM', { exact: true }).fill('8415.10.11');
+  await expect(page.getByText('Saiu da substituição tributária em PR')).toBeVisible();
+  await expect(page.getByText(/Decreto 12\.828\/2026/).first()).toBeVisible();
 });

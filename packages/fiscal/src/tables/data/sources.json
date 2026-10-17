@@ -223,5 +223,25 @@
   "publishedAt": "2026-06-09",
   "downloadedAt": "2026-10-16",
   "sha256": "832b9c1490f896b50858dc6d7a737489126f8837e2f8c9653473d236ef343d56"
+ },
+ "stPrRes571": {
+  "file": "SEFA-PR_Resolucao_SEFA_571-2019_consolidada_2026-10-17.pdf",
+  "title": "Resolução SEFA 571/2019 (PR), texto consolidado: MVA original das mercadorias da substituição tributária",
+  "publisher": "Secretaria de Estado da Fazenda do Paraná (Receita Estadual)",
+  "page": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+  "publishedAt": "2025-12-20",
+  "downloadedAt": "2026-10-17",
+  "sha256": "af53bf64313fefa45e5ed490fdd7ca57e7b2d87116f2f74a1ba1ae0cff874a5d"
+ },
+ "stPrAnexoIX": {
+  "file": "SEFA-PR_RICMS_Anexo_IX_paginas_2818-3318_2026-10-17.pdf",
+  "title": "RICMS/PR (Decreto 7.871/2017), texto consolidado: Anexo IX, da substituição tributária (páginas 2818 a 3318 do PDF oficial, copiadas sem alteração)",
+  "publisher": "Secretaria de Estado da Fazenda do Paraná (Receita Estadual)",
+  "page": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/106201707871.pdf",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-10-17",
+  "pages": "2818-3318",
+  "originalSha256": "dc917a25da84668a0df124bfa65f32521e93cf8f1f3d9b16db8c5f2f7ce721e2",
+  "sha256": "e5b54fcd8f4d972f42afa461bfe362c156fc0338e5d090ee3709092a6c0c5341"
  }
 }

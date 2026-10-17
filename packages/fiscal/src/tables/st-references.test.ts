@@ -32,7 +32,7 @@ describe('substituição tributária por UF (F3-26)', () => {
     expect(stReferencesFor('sp', '04039000', '2026-10-16').map((m) => m.mva)).toContain('70.10');
     expect(stReferencesFor('SP', '04011010', '2026-04-30')).toEqual([]);
     expect(stReferencesFor('SP', '04011010', '2029-02-01')).toEqual([]);
-    expect(stReferencesFor('PR', '04011010', '2026-10-16')).toEqual([]);
+    expect(stReferencesFor('MG', '04011010', '2026-10-16')).toEqual([]);
     expect(stReferencesFor('SP', '22030000', '2026-10-16')).toEqual([]);
   });
 
@@ -117,5 +117,70 @@ describe('bebidas em SP: base pela pauta da Portaria SRE 27/2026 (F3-26.e)', () 
       (s) => s.annex === 'III',
     );
     expect(depois[0]!.base).toBeNull();
+  });
+});
+
+describe('Paraná: Resolução SEFA 571/2019 e Anexo IX do RICMS/PR (F3-26.c)', () => {
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+  const pr = ST_REFERENCES.filter((r) => r.uf === 'PR');
+
+  it('as tabelas da resolução, com a redação atual de cada item', () => {
+    expect(ST_REFERENCE_UFS).toContain('PR');
+    expect(ST_SEGMENT_UFS).toContain('PR');
+    const itens = pr.flatMap((r) => r.items);
+    expect(itens.length).toBeGreaterThan(400);
+    for (const item of itens) {
+      expect(item.mva, item.item).toMatch(/^\d{1,3}(\.\d{1,2})?$/);
+      expect(item.ncms.length, item.item).toBeGreaterThan(0);
+      for (const n of item.ncms) expect(n, item.item).toMatch(/^\d{4,8}$/);
+    }
+    // Nenhum item repetido dentro da mesma tabela (a redação antiga ficou de fora).
+    for (const r of pr) {
+      const chaves = r.items.map((i) => `${i.item}/${i.cest}`);
+      expect(new Set(chaves).size, r.segment).toBe(chaves.length);
+    }
+  });
+
+  it('chocolate branco 41,47% e cerveja em lata 140%, pelo NCM', () => {
+    const chocolate = stReferencesFor('PR', '1704.90.10', '2026-10-17');
+    expect(chocolate[0]).toMatchObject({ cest: '1700100', mva: '41.47' });
+    expect(chocolate[0]!.segmentName).toBe('Produtos alimentícios: chocolates');
+    const cerveja = stReferencesFor('PR', '22030000', '2026-10-17').map((m) => m.mva);
+    expect(cerveja).toContain('140');
+  });
+
+  it('a redação antiga não vale: o sucos e bebidas perdeu o item 1 (sucos de frutas)', () => {
+    const sucos = pr.find((r) => r.segment === 'XXII-II')!;
+    expect(sucos.items.map((i) => i.item)).not.toContain('1');
+    expect(sucos.items.map((i) => i.cest)).not.toContain('1701000');
+  });
+
+  it('cosméticos pela tabela nova da Resolução SEFA 1.245/2025, a partir de 01/04/2026', () => {
+    const cosmeticos = pr.find((r) => r.segment === 'XII')!;
+    expect(cosmeticos.validFrom).toBe('2026-04-01');
+    expect(cosmeticos.items.find((i) => i.cest === '2000100')).toMatchObject({ mva: '46.78' });
+    expect(stReferencesFor('PR', '12119090', '2026-03-31')).toEqual([]);
+  });
+
+  it('eletrônicos saíram da ST em 01/03/2026 (Decreto 12.828/2026): a MVA para de ser sugerida', () => {
+    const anexo = ST_SEGMENTS.find((s) => s.uf === 'PR')!.annexes.find((a) => a.annex === 'XXIII')!;
+    expect(anexo).toMatchObject({ excludedFrom: '2026-03-01', excludedBy: 'Decreto 12.828/2026' });
+    // Aparelho de ar-condicionado (NCM 8415.10.11).
+    expect(stReferencesFor('PR', '84151011', '2026-02-28').length).toBeGreaterThan(0);
+    expect(stReferencesFor('PR', '84151011', '2026-03-01')).toEqual([]);
+    const status = stStatusFor('PR', '84151011', '2026-10-17', ncmsOf);
+    expect(status[0]).toMatchObject({ inSt: false, excludedBy: 'Decreto 12.828/2026' });
+  });
+
+  it('materiais de limpeza saíram em 01/08/2024 (Decreto 6.048/2024); alimentícios continuam', () => {
+    // Água sanitária (CEST 11.001.00).
+    const limpeza = stStatusFor('PR', '28289011', '2026-10-17', ncmsOf);
+    expect(limpeza.find((s) => s.cest === '1100100')).toMatchObject({
+      annex: 'XVIII',
+      inSt: false,
+      excludedFrom: '2024-08-01',
+    });
+    const chocolate = stStatusFor('PR', '17049010', '2026-10-17', ncmsOf);
+    expect(chocolate.find((s) => s.cest === '1700100')).toMatchObject({ inSt: true });
   });
 });

@@ -11,6 +11,9 @@ export interface TableSource {
   downloadedAt: string;
   /** Hash do arquivo, para saber que os dados gerados vieram dele. */
   sha256: string;
+  /** Quando o arquivo guardado é um trecho do PDF oficial: as páginas e o hash do PDF inteiro. */
+  pages?: string;
+  originalSha256?: string;
 }
 
 export const TABLE_SOURCES: Readonly<Record<keyof typeof data, TableSource>> = data;
