@@ -468,5 +468,14 @@
   "publishedAt": "2023-05-15",
   "downloadedAt": "2026-10-17",
   "sha256": "175c297fc6de8da2430726012736e3838d9de1c6c4bcd36edb75f5417fb54a95"
+ },
+ "ajusteSinief0218": {
+  "file": "CONFAZ_Ajuste_SINIEF_02-18_2026-10-17.htm",
+  "title": "Ajuste SINIEF 02/18: operações com mercadorias destinadas a demonstração e mostruário (texto com as alterações)",
+  "publisher": "Conselho Nacional de Política Fazendária (CONFAZ)",
+  "page": "https://www.confaz.fazenda.gov.br/legislacao/ajustes/2018/AJ_002_18",
+  "publishedAt": "2018-04-04",
+  "downloadedAt": "2026-10-17",
+  "sha256": "d06f15d29d85d04520c8ccae839dae430472e19f322558d3a9048a0f1f3d28dd"
  }
 }

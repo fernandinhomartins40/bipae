@@ -1,5 +1,14 @@
 # Changelog
 
+## [F5-12.c.1 Motor das notas do condicional] — 17/10/2026
+
+### Adicionado
+- **Notas da venda condicional (Ajuste SINIEF 02/18):** o motor monta a remessa para demonstração (5.912), o retorno (1.913), a entrada simbólica (1.949) e a venda do que o cliente ficou, que referencia a remessa.
+  - A natureza, o CFOP e os textos obrigatórios saem do texto oficial do CONFAZ guardado no Bipaê.
+  - O monitor semanal avisa se o texto do Ajuste mudar.
+- **Imposto suspenso:** remessa, retorno e entrada simbólica saem sem destaque e sem pagamento, com o perfil fiscal que a empresa escolhe para o condicional.
+- **Natureza longa demais:** a natureza da entrada simbólica passa dos 60 caracteres do leiaute. A nota pede a forma abreviada e leva o texto completo nas informações complementares (dúvida D-035).
+
 ## [F3-33.e Estoque e contas a receber da NF-e] — 17/10/2026
 
 ### Adicionado

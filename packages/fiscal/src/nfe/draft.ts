@@ -8,7 +8,8 @@ import {
   type SaleNfceItem,
 } from '../nfce/sale';
 import { findCompanyRegime } from '../regimes';
-import { calculateSaleItemTaxes, type TaxOutcome } from '../sale';
+import { calculateSaleItemTaxes, type SaleFiscalProfile, type TaxOutcome } from '../sale';
+import { DEMONSTRATION, type DemonstrationNote } from '../tables/demonstration';
 import { findCfop } from '../tables/cfop';
 import { isImportedOrigin } from '../tables/icms-uf';
 import { meiItemProblem } from '../tables/mei';
@@ -92,6 +93,15 @@ export interface NfeDraftInput {
   difalBaseMode?: DifalBaseMode;
   additionalInfo?: string | null;
   appVersion: string;
+  /**
+   * Nota da venda condicional (Ajuste SINIEF 02/18, F5-12.c): a natureza, o CFOP e os textos vêm
+   * do ato. Na remessa, no retorno e na entrada simbólica o imposto fica suspenso, e os itens usam
+   * o perfil fiscal que a empresa escolheu para a demonstração (com o contador).
+   */
+  demonstration?: {
+    note: DemonstrationNote;
+    profile: (SaleFiscalProfile & { origem?: number }) | null;
+  };
 }
 
 export type NfeDraftResult =
@@ -99,6 +109,8 @@ export type NfeDraftResult =
   | { ok: false; pending: string[] };
 
 const NON_CONTRIBUTOR = ', destinada a não contribuinte.';
+/** Tamanho máximo da natureza da operação (natOp) no leiaute da NF-e. */
+const NAT_OP_MAX = 60;
 const onlyDigits = (text: string | null | undefined) => (text ?? '').replace(/\D/g, '');
 
 /**
@@ -184,7 +196,54 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
   const ufDestino = recipientAddress.uf || uf;
   const interstate = Boolean(uf) && ufDestino !== uf;
   // EC 87/2015: só a venda interestadual para consumidor final não contribuinte leva a partilha.
-  const needsDifal = regime?.crt !== 4 && interstate && finalConsumer && ieIndicator === 9;
+  // ---------------------------------------------------------------- venda condicional
+  const demo = input.demonstration ? DEMONSTRATION.notes[input.demonstration.note] : null;
+  const suspended = Boolean(demo && !demo.taxed);
+  const act = `${DEMONSTRATION.act}, cláusula ${demo?.clause ?? ''}`;
+  if (demo?.references && !(input.references?.length ?? 0)) {
+    pending.push(`Falta a chave da NF-e de remessa para demonstração (${act}).`);
+  }
+  if (suspended && interstate) {
+    pending.push(
+      'A nota da venda condicional para cliente de outro estado ainda não é emitida pelo Bipaê.',
+    );
+  }
+  const demoProfile = input.demonstration?.profile ?? null;
+  if (suspended && !demoProfile) {
+    pending.push(
+      'Escolha em Empresas e lojas o perfil fiscal da venda condicional (demonstração), com o contador.',
+    );
+  }
+  if (suspended && demoProfile && regime?.icmsCode === 'cst' && demoProfile.cstIcms !== '50') {
+    pending.push(
+      `Na demonstração o ICMS fica suspenso (${DEMONSTRATION.act}, cláusula quarta): o perfil fiscal da venda condicional precisa do CST 50 (suspensão).`,
+    );
+  }
+  const direction = demo?.direction ?? 'saida';
+  // O leiaute aceita até 60 caracteres na natureza da operação; o texto do Ajuste para a entrada
+  // simbólica tem mais. Sem abreviação oficial (dúvida D-035), vale a que a empresa escrever na
+  // nota, e o texto completo vai nas informações complementares.
+  const officialNature = demo?.nature ?? null;
+  const tooLong = officialNature !== null && officialNature.length > NAT_OP_MAX;
+  const typedNature = input.nature.trim();
+  if (
+    tooLong &&
+    (!typedNature || typedNature === 'Venda de mercadoria' || typedNature.length > NAT_OP_MAX)
+  ) {
+    pending.push(
+      `A natureza do Ajuste ("${officialNature}") passa dos ${NAT_OP_MAX} caracteres do leiaute. Escreva na nota a forma abreviada combinada com o contador; o texto completo vai nas informações complementares.`,
+    );
+  }
+  const nature =
+    officialNature && !tooLong
+      ? officialNature
+      : tooLong
+        ? typedNature
+        : typedNature || 'Venda de mercadoria';
+  // EC 87/2015: só a venda interestadual para consumidor final não contribuinte leva a partilha;
+  // na demonstração ela fica suspensa junto (cláusula quarta, § 1º).
+  const needsDifal =
+    !suspended && regime?.crt !== 4 && interstate && finalConsumer && ieIndicator === 9;
 
   // ---------------------------------------------------------------- itens
   const date = brasiliaDateTime(input.issuedAt).slice(0, 10);
@@ -193,23 +252,35 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
     input.transport.freightCents ?? 0,
     input.items.map((i) => i.grossCents - i.discountCents),
   );
-  const items: NfeItem[] = input.items.map((item, index) => {
+  const items = input.items.map((item, index): NfeItem | null => {
     const label = `Item ${index + 1} (${item.description})`;
     if (!item.ncm) pending.push(`${label}: o produto não tem NCM.`);
-    const settings = companyIcmsSettings(input.rules ?? [], item.ncm, date);
+    // Remessa, retorno e entrada simbólica: o perfil da demonstração, com a origem do produto.
+    const profile =
+      suspended && demoProfile
+        ? { ...demoProfile, origem: item.profile?.origem ?? 0 }
+        : suspended
+          ? null
+          : item.profile;
+    const settings = suspended ? {} : companyIcmsSettings(input.rules ?? [], item.ncm, date);
     const imported = isImportedOrigin(item.profile?.origem);
     const operationCents = item.grossCents - item.discountCents + freight[index]!;
     const taxes = calculateSaleItemTaxes({
       company: { uf: c.uf, regime: regime?.id ?? null },
-      profile: item.profile,
+      profile,
       item: { operationCents, ufDestino, imported },
       date,
       settings,
       model: '55',
     });
-    let cfop = item.cfop?.trim() || taxes.cfop || '';
+    let cfop =
+      suspended && demo?.cfop
+        ? interstate
+          ? demo.cfop.interestadual
+          : demo.cfop.interna
+        : item.cfop?.trim() || taxes.cfop || '';
     // Venda a não contribuinte: a tabela oficial de CFOP tem o código próprio (6.108, 6.107).
-    if (!item.cfop && interstate && ieIndicator === 9 && cfop) {
+    if (!suspended && !item.cfop && interstate && ieIndicator === 9 && cfop) {
       const other = nonContributorCfop(cfop);
       const csosn = item.profile?.csosn ?? null;
       const allowed =
@@ -220,6 +291,7 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
       }
     }
     if (!cfop) pending.push(`${label}: falta o CFOP no perfil fiscal do produto.`);
+    if (suspended && !profile) return null;
     const icms = result(taxes.icms, `${label}, ICMS`, pending);
     const pis = result(taxes.pis, `${label}, PIS`, pending);
     const cofins = result(taxes.cofins, `${label}, COFINS`, pending);
@@ -265,7 +337,9 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
 
   // ---------------------------------------------------------------- pagamento e cobrança
   const payments: NfePayment[] = [];
-  for (const p of input.payments) {
+  // Remessa, retorno e entrada simbólica não têm pagamento (tPag 90).
+  const paid = suspended ? [{ code: '90', amountCents: 0, description: null }] : input.payments;
+  for (const p of paid) {
     const means = findPaymentMeans(p.code, date);
     if (!means) {
       pending.push(`Meio de pagamento ${p.code} não existe na tabela oficial em ${date}.`);
@@ -279,9 +353,9 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
       ...(['03', '04'].includes(p.code) && { card: { integration: '2' as const } }),
     });
   }
-  if (payments.length === 0 && input.payments.length === 0)
+  if (payments.length === 0 && paid.length === 0)
     pending.push('Informe o pagamento (ou "sem pagamento", na devolução e na remessa).');
-  const installments = input.installments ?? [];
+  const installments = suspended ? [] : (input.installments ?? []);
 
   if (pending.length > 0) return { ok: false, pending: [...new Set(pending)] };
 
@@ -298,6 +372,14 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
       ...(onlyDigits(ra.phone).length >= 10 && { phone: onlyDigits(ra.phone) }),
     },
   };
+  // Os textos obrigatórios do Ajuste vêm antes do que a pessoa escreveu.
+  const additionalInfo = [
+    ...(tooLong ? [`Natureza da operação: ${officialNature}`] : []),
+    ...(demo?.texts ?? []),
+    input.additionalInfo?.trim(),
+  ]
+    .filter(Boolean)
+    .join('. ');
   const nfe: NfeInput = {
     issuer: {
       cnpj,
@@ -323,21 +405,21 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
     number: input.number,
     issuedAt: brasiliaDateTime(input.issuedAt),
     numericCode: saleNumericCode(input.draftId, input.number),
-    nature: input.nature.trim() || 'Venda de mercadoria',
-    direction: 'saida',
+    nature,
+    direction,
     purpose: input.purpose,
     presence: input.presence,
     finalConsumer,
     ...(input.references?.length && { references: input.references }),
     recipient,
-    items,
+    items: items.filter((i): i is NfeItem => i !== null),
     transport: {
       freight: input.transport.freight,
       ...(input.transport.carrier && { carrier: input.transport.carrier }),
       ...(input.transport.volumes?.length && { volumes: input.transport.volumes }),
     },
     payments,
-    ...(input.additionalInfo?.trim() && { additionalInfo: input.additionalInfo.trim() }),
+    ...(additionalInfo && { additionalInfo }),
     appVersion: input.appVersion,
   };
   try {

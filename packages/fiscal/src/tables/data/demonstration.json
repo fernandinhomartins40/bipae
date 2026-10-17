@@ -1,0 +1,62 @@
+{
+ "act": "Ajuste SINIEF 02/18",
+ "source": "ajusteSinief0218",
+ "url": "https://www.confaz.fazenda.gov.br/legislacao/ajustes/2018/AJ_002_18",
+ "maxDays": 60,
+ "notes": {
+  "remessa": {
+   "clause": "quinta",
+   "direction": "saida",
+   "nature": "Remessa para Demonstração",
+   "cfop": {
+    "interna": "5912",
+    "interestadual": "6912"
+   },
+   "texts": [
+    "Mercadoria remetida para demonstração",
+    "Imposto suspenso nos termos do Ajuste SINIEF 02/18"
+   ],
+   "references": false,
+   "taxed": false
+  },
+  "retorno": {
+   "clause": "sexta, I",
+   "direction": "entrada",
+   "nature": "Retorno de mercadoria remetida para Demonstração",
+   "cfop": {
+    "interna": "1913",
+    "interestadual": "2913"
+   },
+   "texts": [
+    "Imposto suspenso nos termos da cláusula quarta do Ajuste SINIEF 02/18"
+   ],
+   "references": true,
+   "taxed": false
+  },
+  "entradaSimbolica": {
+   "clause": "oitava, I",
+   "direction": "entrada",
+   "nature": "Entrada Simbólica em Retorno de Mercadoria remetida para Demonstração",
+   "cfop": {
+    "interna": "1949",
+    "interestadual": "2949"
+   },
+   "texts": [
+    "Imposto suspenso nos termos da cláusula quarta do Ajuste SINIEF 02/18"
+   ],
+   "references": true,
+   "taxed": false
+  },
+  "venda": {
+   "clause": "oitava, II",
+   "direction": "saida",
+   "nature": null,
+   "cfop": null,
+   "texts": [
+    "Transmissão da Propriedade de mercadoria remetida para Demonstração"
+   ],
+   "references": true,
+   "taxed": true
+  }
+ }
+}

@@ -28,6 +28,7 @@ import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
 import { parseCbenefDf, parseCbenefEs } from './cbenef-es.mjs';
 import { parseCbenefSp } from './cbenef-sp.mjs';
+import { parseDemonstration } from './demonstration.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
@@ -688,6 +689,14 @@ async function importStReferences(cest) {
 tables['icms-products.json'] = importIcmsProducts(tables['fcp.json']);
 tables['st-references.json'] = await importStReferences(tables['cest.json']);
 // Códigos de benefício fiscal por UF (F3-27.b), da tabela oficial de cada SEFAZ.
+// Venda condicional (F5-12.c): as notas da demonstração, do texto do Ajuste SINIEF 02/18.
+tables['demonstration.json'] = {
+  act: 'Ajuste SINIEF 02/18',
+  source: 'ajusteSinief0218',
+  url: manifest.ajusteSinief0218.page,
+  ...parseDemonstration(readFileSync(join(sourcesDir, manifest.ajusteSinief0218.file), 'utf8')),
+};
+
 tables['cbenef.json'] = {
   tables: [
     {

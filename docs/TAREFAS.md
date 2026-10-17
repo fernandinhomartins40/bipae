@@ -328,7 +328,10 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [~] F5-12 · Moda: grade e venda condicional — depende: F1-04
   - [x] F5-12.a · Grade em matriz (tamanho × cor) no cadastro do modelo: estoque de cada variação e preço editável na própria grade — depende: F1-04
   - [x] F5-12.b · Condicional: mercadoria sai para o cliente com prazo (60 dias, Ajuste SINIEF 02/18), volta por item, e o que ele ficou vai ao caixa como pedido da comanda; estoque e auditoria — depende: F5-12.a, F5-08
-  - [ ] F5-12.c · Notas do condicional pela NF-e da retaguarda: remessa para demonstração (CFOP 5.912), retorno (1.913), entrada simbólica (1.949) e venda com referência à remessa (Ajuste SINIEF 02/18; dúvida D-033) — depende: F5-12.b, F3-33
+  - [~] F5-12.c · Notas do condicional pela NF-e da retaguarda: remessa para demonstração (CFOP 5.912), retorno (1.913), entrada simbólica (1.949) e venda com referência à remessa (Ajuste SINIEF 02/18; dúvida D-033) — depende: F5-12.b, F3-33
+    - [x] F5-12.c.1 · Motor: as quatro notas geradas do texto do Ajuste guardado (natureza, CFOP, textos, chave da remessa), imposto suspenso pelo perfil da demonstração (CST 50 no regime normal), natureza acima de 60 caracteres pedida à empresa (D-035); válidas no XSD; monitor semanal do Ajuste
+    - [ ] F5-12.c.2 · API: perfil fiscal da venda condicional na empresa; o condicional emite a remessa ao sair e, na volta, o retorno do que voltou e a entrada simbólica com a venda do que o cliente ficou (por NF-e com a chave da remessa, D-033), sem mexer de novo no estoque — depende: F5-12.c.1, F3-33.e
+    - [ ] F5-12.c.3 · Tela do condicional: as notas de cada condicional, com o que falta, a situação na SEFAZ e o DANFE; E2E — depende: F5-12.c.2
 - [ ] F5-13 · Serviços: ordem de serviço e NFS-e Nacional — depende: F3-11
 
 ## Fase 6 — Integrações e IA

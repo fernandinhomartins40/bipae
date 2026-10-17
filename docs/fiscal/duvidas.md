@@ -38,6 +38,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-032 | ✅ resolvida | NFC-e de entrega a domicílio (delivery) |
 | D-033 | 🟡 parcial | Venda condicional: notas da remessa, da volta e da venda |
 | D-034 | 🟡 parcial | Código de benefício fiscal (cBenef) por UF |
+| D-035 | 🟡 configurável | Natureza da operação da entrada simbólica do condicional passa de 60 caracteres |
 
 ---
 
@@ -569,6 +570,10 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - o que o cliente ficou vai ao caixa como comanda e é vendido com NFC-e;
   - a tela avisa que as notas de remessa e de retorno ainda são emitidas fora do Bipaê.
   - As notas do Ajuste (5.912, 1.913, 1.949 e a venda referenciada) dependem da NF-e da retaguarda (tarefa F5-12.c, que depende da F3-33).
+- **Atualização de 17/10/2026 (F5-12.c, motor):** o Bipaê monta as quatro notas a partir do texto do Ajuste guardado em `packages/fiscal/sources` (natureza, CFOP, textos obrigatórios e chave da remessa, lidos das cláusulas quinta, sexta e oitava):
+  - **Imposto suspenso:** remessa, retorno e entrada simbólica vão sem destaque. No regime normal, o perfil precisa do CST 50 (suspensão, Tabela B do CST).
+  - **O que o Ajuste não diz:** o CSOSN do Simples (400 ou 900), o CST do PIS/COFINS e o cClassTrib dessas notas não estão no Ajuste, e não foi achada resposta oficial. Por isso vêm de um perfil fiscal que a empresa escolhe para a venda condicional; sem ele, a nota fica em "falta resolver".
+  - **Outro estado:** a nota para cliente de outro estado (CFOP 6.912) ainda não é emitida. A partilha também fica suspensa (cláusula quarta, § 1º), e isso pede regra própria.
 - **Pergunta em aberto:** quando a remessa foi feita por NF-e, a venda do que ficou pode sair em NFC-e, ou tem de ser NF-e para referenciar a chave da remessa, como pede a cláusula oitava, II, "c"? Quando a F5-12.c chegar, a venda do condicional passa a ser feita por NF-e com a referência, a menos que uma fonte oficial permita a NFC-e.
 
 ### D-034 — Código de benefício fiscal (cBenef) por UF
@@ -614,3 +619,13 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Códigos:** 252, com o tipo do benefício, a descrição e a base legal. Doze terminaram em 31/05/2023 e só valem até essa data.
   - **Sem CST:** 8 códigos não marcam CST na planilha (a tela mostra o código, mas não confere o CST).
 - **Em aberto (F3-27.b, demais UFs):** as tabelas das outras UFs que exigem o código.
+
+### D-035 — Natureza da operação da entrada simbólica do condicional passa de 60 caracteres
+
+- **Contexto (F5-12.c):** o Ajuste SINIEF 02/18, cláusula oitava, I, "a", manda usar a natureza "Entrada Simbólica em Retorno de Mercadoria remetida para Demonstração", com 69 caracteres. O campo natOp do leiaute da NF-e aceita no máximo 60, e o XSD oficial recusa o texto inteiro.
+- **Pesquisa (17/10/2026):** não foi achada abreviação oficial (CONFAZ, Portal da NF-e ou SEFAZ). O Decreto 46.178/2018 de PE repete o texto inteiro.
+- **Implementação:** o Bipaê não abrevia sozinho.
+  - Sem a forma abreviada, a nota fica em "falta resolver" e explica o motivo.
+  - A forma abreviada é escrita pela empresa na natureza da nota.
+  - O texto completo do Ajuste vai nas informações complementares ("Natureza da operação: ...").
+- **Pergunta em aberto:** a SEFAZ aceita a natureza abreviada com o texto completo nas informações complementares? Confirmar na primeira emissão em homologação (F3-33.d).

@@ -23,6 +23,7 @@ import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
 import { parseCbenefDf, parseCbenefEs } from './cbenef-es.mjs';
+import { parseDemonstration } from './demonstration.mjs';
 import { parseCbenefSp } from './cbenef-sp.mjs';
 import { readXlsx } from './xlsx.mjs';
 import { mkdtempSync } from 'node:fs';
@@ -779,6 +780,28 @@ async function checkCbenefGo() {
   };
 }
 
+/** Ajuste SINIEF 02/18 (venda condicional): as regras das notas lidas do texto de hoje. */
+async function checkDemonstration() {
+  const title = 'Notas da venda condicional (Ajuste SINIEF 02/18)';
+  const page = manifest.ajusteSinief0218.page;
+  const old = parseDemonstration(
+    readFileSync(join(sourcesDir, manifest.ajusteSinief0218.file), 'utf8'),
+  );
+  let now;
+  try {
+    now = parseDemonstration((await download(page)).body.toString('utf8'));
+  } catch (error) {
+    return { title, page, status: 'mudou', details: [`o texto não passa no leitor do Bipaê: ${error.message}`] };
+  }
+  const changed = JSON.stringify(old) !== JSON.stringify(now);
+  return {
+    title,
+    page,
+    status: changed ? 'mudou' : 'igual',
+    details: changed ? ['natureza, CFOP, textos ou prazo das notas mudaram no texto do Ajuste'] : [],
+  };
+}
+
 /**
  * cBenef em planilha (ES e DF): compara a planilha de hoje com a guardada (a versão nova muda o
  * nome do arquivo e às vezes o leitor deixa de reconhecê-la).
@@ -930,6 +953,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('cBenef de São Paulo', manifest.cbenefSp.page, checkCbenefSp),
     await safe('cBenef do Rio de Janeiro', manifest.cbenefRj.page, checkCbenefRj),
     await safe('cBenef do Distrito Federal', manifest.cbenefDf.page, checkCbenefDf),
+    await safe('Venda condicional (Ajuste SINIEF 02/18)', manifest.ajusteSinief0218.page, checkDemonstration),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),
