@@ -20,6 +20,10 @@ import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences, prStRows }
 import { pdfItems, pdfLines } from './pdf-text.mjs';
 import { parseCbenefPr } from './cbenef-pr.mjs';
 import { parseCbenefSc } from './cbenef-sc.mjs';
+import { parseCbenefRs } from './cbenef-rs.mjs';
+import { readXlsx } from './xlsx.mjs';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII } from './st-rs.mjs';
 import { parseScAnexo1A } from './st-sc.mjs';
@@ -711,6 +715,38 @@ async function checkCbenefSc() {
   };
 }
 
+/** cBenef do Rio Grande do Sul: a planilha de hoje (o endereço muda a cada versão publicada). */
+async function checkCbenefRs() {
+  const rowsOf = (path) =>
+    parseCbenefRs(readXlsx(path)).map((c) => [c.code, c.csts.join(' '), c.from ?? '', c.to ?? '']);
+  const old = rowsOf(join(sourcesDir, manifest.cbenefRs.file));
+  const title = 'cBenef do Rio Grande do Sul (Tabela cBenef x CST)';
+  let now;
+  try {
+    const tmp = join(mkdtempSync(join(tmpdir(), 'bipae-cbenef-')), 'rs.xlsx');
+    writeFileSync(tmp, (await download(manifest.cbenefRs.page)).body);
+    now = rowsOf(tmp);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.cbenefRs.page,
+      status: 'mudou',
+      details: [
+        `o arquivo não abre ou não passa no leitor do Bipaê (talvez uma versão nova): ${error.message}`,
+      ],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.cbenefRs.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} código(s) novo(s) ou alterado(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -745,6 +781,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Rondônia', manifest.stRoAnexoVI.page, checkRo),
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),
+    await safe('cBenef do Rio Grande do Sul', manifest.cbenefRs.page, checkCbenefRs),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-27.b.RS Tabela oficial de cBenef do Rio Grande do Sul] — 17/10/2026
+
+### Adicionado
+- **cBenef do Rio Grande do Sul explicado na regra de ICMS:** são 541 códigos da planilha oficial da Receita Estadual, com a descrição, os CST e as datas de início e fim.
+- **Monitor semanal das fontes:** passou a conferir a planilha do RS.
+
 ## [F3-27.b.SC Tabela oficial de cBenef de Santa Catarina] — 17/10/2026
 
 ### Adicionado

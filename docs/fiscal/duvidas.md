@@ -586,4 +586,8 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
 - **Atualização de 17/10/2026 (F3-27.b, Santa Catarina):** Tabela 5.2A (cBenef) da SEF/SC, gerada em 09/10/2026, lida pela posição de cada pedaço no PDF:
   - **Códigos:** 665, com o tipo de cada benefício (isenção, redução de base, diferimento, suspensão, não incidência e crédito presumido), os CST e a vigência.
   - **Crédito presumido:** os 112 códigos de crédito presumido não têm CST, porque vão no campo cCredPresumido da nota, e não no cBenef. A tela avisa isso.
-- **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, RS, GO, DF, ES e das outras UFs que exigem o código.
+- **Atualização de 17/10/2026 (F3-27.b, Rio Grande do Sul):** planilha "Tabela cBenef x CST" da Central de Conteúdo da Receita Estadual, de 10/09/2026:
+  - **Códigos:** 541, com a descrição legível e a referência legal.
+  - **Datas:** vêm sem o zero do dia ("1102016" = 01/10/2016) e são convertidas pelo gerador.
+  - **Orientação da Receita-RS:** no CST 00 o cBenef não deve ser preenchido.
+- **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, GO, DF, ES e das outras UFs que exigem o código.

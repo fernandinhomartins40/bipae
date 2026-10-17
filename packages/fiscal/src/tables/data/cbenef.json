@@ -11415,6 +11415,5668 @@
      "description": "Isenção. ICMS. Nas operações internas dos seguintes insumos agropecuários: aveia e farelo de aveia, quando destinados à alimentação animal ou ao emprego na fabricação de ração animal, observadas também as restrições do art. 31 do Anexo 2 do RICMS/SC-01."
     }
    ]
+  },
+  {
+   "uf": "RS",
+   "act": "Tabela cBenef x CST da Receita Estadual do RS",
+   "source": "cbenefRs",
+   "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202609/10130054-tabela-cbenef-x-cst-10-09-2026.xlsx",
+   "codes": [
+    {
+     "code": "SEM CBENEF",
+     "csts": [
+      "02",
+      "10",
+      "15",
+      "30",
+      "40",
+      "41",
+      "50",
+      "51",
+      "53",
+      "60",
+      "61",
+      "90"
+     ],
+     "from": "2020-08-10",
+     "to": null,
+     "description": "ITEM SEM cBenef E UF EXIGE cBenef PARA O CST"
+    },
+    {
+     "code": "RS051001",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de reprodutores ou matrizes a estabelecimento agropecuário inscrito como contribuinte do imposto (LIVRO I,9,II -REPRODUTORES OU MATRIZES)"
+    },
+    {
+     "code": "RS051002",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saída de embriões ou semem congelado ou resfriado (LIVRO I,9,III -EMBRIOES OU SEMEM CONGEL OU RESFR)"
+    },
+    {
+     "code": "RS051003",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saída de equinos (LIVRO I,9,IV -EQUINOS)"
+    },
+    {
+     "code": "RS051004",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saída de amostras de diminuto ou nenhum valor comercial (LIVRO I,9,V -AMOSTRA DIMINUTO OU NENHUM VAL COMER)"
+    },
+    {
+     "code": "RS051005",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias com destino a exposições ou feiras (LIVRO I,9,VI -EXPOSICOES OU FEIRAS-SAIDAS)"
+    },
+    {
+     "code": "RS051006",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Retorno das saídas de mercadorias com destino a exposições ou feiras (LIVRO I,9,VII -EXPOSICOES OU FEIRAS-RETORNO)"
+    },
+    {
+     "code": "RS051007",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2027-12-31",
+     "description": "ISENÇÃO - Saídas internas de insumos agropecuários (LIVRO I,9,VIII -INSUMOS AGROPECUARIOS)"
+    },
+    {
+     "code": "RS051008",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2027-12-31",
+     "description": "ISENÇÃO - Saídas internas de produtos para alimentação animal/fabricação de ração animal (LIVRO I,9,IX -PROD P/ALIM ANIMAL/FABRICACAO RACAO)"
+    },
+    {
+     "code": "RS051009",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de bulbos de cebola destinados à produção de sementes (LIVRO I,9,X -BULBOS DE CEBOLA)"
+    },
+    {
+     "code": "RS051010",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de pós-larva de camarão (LIVRO I,9,XI -POS-LARVA DE CAMARAO)"
+    },
+    {
+     "code": "RS051011",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de vasilhames, recipientes e embalagens, inclusive sacaria, que devam retornar (LIVRO I,9,XII -VASILHAMES,RECIP E EMBALAG-SAIDAS)"
+    },
+    {
+     "code": "RS051012",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas, em retorno ao estabelecimento remetente, de vasilhames, recipientes e embalagens, inclusive sacaria (LIVRO I,9,XIII -VASILHAMES,RECIP,EMBALAG -RETORNO)"
+    },
+    {
+     "code": "RS051013",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas relacionadas com a destroca de botijões vazios (vasilhames) de gás liquefeito de petróleo - GLP (LIVRO I,9,XIV -BOTIJOES VAZIOS DE GLP)"
+    },
+    {
+     "code": "RS051014",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Fornecimento de refeições aos presos ou aos próprios empregados (LIVRO I,9,XV -FORNECIMENTO DE REFEICOES)"
+    },
+    {
+     "code": "RS051016",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de ovos, exceto quando destinados à indústria (LIVRO I,9,XVII -OVOS)"
+    },
+    {
+     "code": "RS051017",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de flores naturais, exceto quando destinadas à indústria; (LIVRO I,9,XVIII -FLORES NATURAIS)"
+    },
+    {
+     "code": "RS051018",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de frutas frescas nacionais ou oriundas de países membros da ALADI e as de verduras e hortaliças (LIVRO I,9,XIX -HORTIFRUTIGRANJEIROS)"
+    },
+    {
+     "code": "RS051019",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-12-31",
+     "description": "ISENÇÃO - Alterado (LIVRO I,9,XX -LEITE FLUIDO)"
+    },
+    {
+     "code": "RS051019",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2020-01-01",
+     "to": "2024-04-30",
+     "description": "ISENÇÃO - Substituído pelo cód.190 a partir de 01/06/2024. (LIVRO I,9,XX LEITE PAUSTERIZADO TIPO A, B, C)"
+    },
+    {
+     "code": "RS051021",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas, promovidas pelo importador, de mercadorias sob o regime de \"drawback\" para beneficiamento (LIVRO I,9,XXIII -\"DRAWBACK\"-SAIDAS P/BENEFICIAMEN)"
+    },
+    {
+     "code": "RS051022",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas em devolução das mercadorias sob o regime \"drawback\" ou dos produtos resultantes de industrialização (LIVRO I,9,XXIV -\"DRAWBACK\"-RETORNO BENEFICIAMENTO)"
+    },
+    {
+     "code": "RS051023",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de produtos nacionais industrializados para comercialização/industrialização na Zona Franca de Manaus (LIVRO I,9,XXV -ZONA FRANCA DE MANAUS)"
+    },
+    {
+     "code": "RS051024",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de produtos nacionais industrializados para comercialização/industrialização em Áreas de Livre Comércio (LIVRO I,9,XXVI -AREAS DE LIVRE COMERCIO)"
+    },
+    {
+     "code": "RS051025",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de óleo lubrificante usado ou contaminado para estabelecimento re-refinador ou coletor revendedor (LIVRO I,9,XXVII -OLEO LUBRIFIC USADO CONTAMINADOS)"
+    },
+    {
+     "code": "RS051026",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de embarcações nacionais, fornecimento de peças/partes juntamente com serviços de reparo de embarcações (LIVRO I,9,XXVIII -EMBARCACOES)"
+    },
+    {
+     "code": "RS051027",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de produtos industrializados para uso/consumo de embarcações/aeronaves estrangeiras aportados no País (LIVRO I,9,XXIX -PROD P/CONSUM EM EMBARC/AERONAVES)"
+    },
+    {
+     "code": "RS051028",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de combustíveis/lubrificantes para embarcações/aeronaves nacionais com destino ao exterior (LIVRO I,9,XXX -COMBUSTIVEIS P/ EMBARC E AERONAVES)"
+    },
+    {
+     "code": "RS051029",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ISENÇÃO - Revogada (LIVRO I,9,XXXI -PROGRAMAS DE COMPUTADOR)"
+    },
+    {
+     "code": "RS051030",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de obras de arte decorrentes de operações realizadas pelo próprio autor (LIVRO I,9,XXXII -OBRAS DE E)"
+    },
+    {
+     "code": "RS051031",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de fármacos destinados à produção e de medicamentos para tratamento de HIV (LIVRO I,9,XXXVIII -MEDICAMENTOS P/ TRATAM DA AIDS)"
+    },
+    {
+     "code": "RS051032",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de cadeira de rodas, próteses e aparelhos auditivos, bem como suas partes (LIVRO I,9,XXXIX -CADEIRA RODAS, PROTESES,AP.AUDIC)"
+    },
+    {
+     "code": "RS051033",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de veículo automotor novo para portadores de deficiência física/visual/mental severa/autistas (LIVRO I,9,XL -VEIC AUTOM P/PORTADORES DEFICIENCIA)"
+    },
+    {
+     "code": "RS051034",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações com medicamentos usados no tratamento de câncer relacionados no Apêndice XL (LIVRO I,9,XLI -MEDICAMENTOS QUIMIOTERAPICOS)"
+    },
+    {
+     "code": "RS051035",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de energia elétrica e de veículos nacionais a Missões Diplomáticas e Repartições Consulares (LIVRO I,9,XLVIII -ENERG ELET,VEIC P/MISSAO DIPLOM)"
+    },
+    {
+     "code": "RS051036",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias/prestações de serviço de transporte em doação a entidades governamentais /assistenciais (LIVRO I,9,XLIX -DOACAO ENTIDAD GOVERN OU ASSISTEN)"
+    },
+    {
+     "code": "RS051037",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de mercadorias doadas ao Governo do Estado do RS para distribuição gratuita (LIVRO I,9,L -DOACOES EFETUADAS AO GOVERNO ESTADO)"
+    },
+    {
+     "code": "RS051038",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias por órgãos da administração pública para fins de industrialização (LIVRO I,9,LX -ORGAOS DA ADMINIST PUBLICA-SAIDAS)"
+    },
+    {
+     "code": "RS051039",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas em retorno de mercadorias encaminhadas para industrialização por órgãos da administração pública (LIVRO I,9,LXI -ORGAOS DA ADMINIST PUBLICA-RETORNO)"
+    },
+    {
+     "code": "RS051040",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de trava-blocos para a construção de casas populares promovidas administração pública (LIVRO I,9,LXII -TRAVA-BLOCO P/CONSTR CASA POPULAR)"
+    },
+    {
+     "code": "RS051041",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de produtos farmacêuticos promovidas por órgãos ou entidades da Administração Pública (LIVRO I,9,LXIII -PRODUTOS FARMACEUTICOS)"
+    },
+    {
+     "code": "RS051042",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas vinculadas a programa de recuperação de portador de deficiência a instituições públicas estaduais (LIVRO I,9,LXV -PROG RECUP PORTADOR DE DEFICIENCIA)"
+    },
+    {
+     "code": "RS051043",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de obras de artesanato de artesãos cadastrados na FGTAS, promovidas através de entidades incentivadoras (LIVRO I,9,LXVII -OBRAS DE ARTESANATO)"
+    },
+    {
+     "code": "RS051044",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias de produção própria, por instituições de assist. social/educacional, sem fins lucrativos (LIVRO I,9,LXVIII -INSTIT ASSISTENC SOCIAL/EDUCAC)"
+    },
+    {
+     "code": "RS051045",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de veículos, para o Estado do RS,para reequipamento da Fiscalização de Tributos Estaduais e PM (LIVRO I,9,LXIX -VEIC P/FISCALIZACAO DE TE E PM)"
+    },
+    {
+     "code": "RS051046",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas de doações à rede oficial de ensino, por contribuintes do imposto, à Secretaria da Educação RS (LIVRO I,9,LXX -DOACAO A SECRETARIA DA EDUCACAO)"
+    },
+    {
+     "code": "RS051047",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias para o reequipamento dos Centros de Formação de RH do Sistema SENAI, em razão de doação (LIVRO I,9,LXXI -CENTRO FORM DE RH DO SISTEM SENAI)"
+    },
+    {
+     "code": "RS051048",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-01-01",
+     "description": "ISENÇÃO - Revogada (LIVRO I,9,LXXII -DOAÇÃO A SUDENE)"
+    },
+    {
+     "code": "RS051049",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas/desemb.aduaneiro de veículos automotores/máq./equip. para o Corpos de Bombeiros Voluntários (LIVRO I,9,LXXIII -VEIC P/CORPOS BOMBEIROS VOLUNT)"
+    },
+    {
+     "code": "RS051050",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de cavalos doados à Brigada Militar do RS destinados à utilização em patrulhamento (LIVRO I,9,LXXIV -CAVALOS DOADOS A BRIGADA MILITAR)"
+    },
+    {
+     "code": "RS051051",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas e recebimentos de mercadorias adquiridas em licitações/contratações destinadas ao PROMOFAZ (LIVRO I,9,LXXV -PROMOFAZ)"
+    },
+    {
+     "code": "RS051052",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de veículos de bombeiros para equipar os aeroportos nacionais, adquiridos pelo Ministério da Defesa (LIVRO I,9,LXXVI -VEICULOS DE BOMBEIROS)"
+    },
+    {
+     "code": "RS051053",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações internas de energia elétrica a órgãos da Adm Estadual Direta, Fundações e Autarquias estaduais. (LIVRO I,9,LXXVII -ENERG ELET P/ADM PUBLICA ESTAD)"
+    },
+    {
+     "code": "RS051054",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas promovidas por fabricante ou revendedor autorizado, de automóveis novos de passageiros para taxistas (LIVRO I,9,LXXIX -TAXI)"
+    },
+    {
+     "code": "RS051056",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-04-30",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,LXXXIII -COLETORES ELETRÔNICOS DE VOTOS)"
+    },
+    {
+     "code": "RS051057",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com preservativos classificados no código 4014.10.00 da NBM/SH-NCM (LIVRO I,9,LXXXIV -PRESERVATIVOS)"
+    },
+    {
+     "code": "RS051058",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2028-12-31",
+     "description": "ISENÇÃO - Operações com equipamentos, partes e peças para energia solar e eólica (LIVRO I,9,LXXXV -EQUIP P/ENERGIAS SOLAR E EOLICA)"
+    },
+    {
+     "code": "RS051059",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas promovidas/destinadas por/a \"free shops\" instaladas nas zonas primárias dos aeroportos internacionais (LIVRO I,9,LXXXVI -\"FREE SHOPS\")"
+    },
+    {
+     "code": "RS051060",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações que destinem equipamentos didáticos, científicos e médico-hospitalares ao MEC (LIVRO I,9,LXXXVII -EQUIP DIDAT,CIENT,MEDICO-HOSP)"
+    },
+    {
+     "code": "RS051061",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2023-06-01",
+     "description": "ISENÇÃO - Saídas internas de óleo diesel para embarcações pesqueiras nacionais, por distribuidora de combustível (LIVRO I,9,LXXXVIII -OLEO DIESEL P/EMBARC PESQUEIRA)"
+    },
+    {
+     "code": "RS051062",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas a contribuintes do Projeto Integrado de Exploração Agropecuária e Agroindustrial do Estado de Roraima (LIVRO I,9,LXXXIX-PROJ INT EXPL AGR PEC IND RORAIMA)"
+    },
+    {
+     "code": "RS051063",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de animais à EMBRAPA para fins de inseminação e inovulação com animais de raça, e respectivo retorno (LIVRO I,9,XC -ATIVO IMOBILIZADO - EMBRAPA)"
+    },
+    {
+     "code": "RS051064",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de mercadorias/serviços de transporte em doação a administração direta e indireta para vítimas de seca (LIVRO I,9,XCII -DOACOES P/ASSISTENCIA VITIMAS SECA)"
+    },
+    {
+     "code": "RS051065",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de máq./equip. ao ativo imobilizado de empresa industrial que os tenha adquirido pelo Programa BEFIEX (LIVRO I,9,XXXV -PROGRAMA BEFIEX)"
+    },
+    {
+     "code": "RS051067",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de mercadorias e bens previstos na Lei nº 11.508/07 a estabelecimento localizado em ZPE (LIVRO I,9,XCVI-ZONAS PROCESSAMENTO EXPORT-ZPE)"
+    },
+    {
+     "code": "RS051068",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias pelo Secretariado de Ação Social Arquidiocese de PoA, programa \"Mensageiro da Caridade\" (LIVRO I,9,XCVII - MENSAGEIRO DA CARIDADE)"
+    },
+    {
+     "code": "RS051069",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com equipamentos e insumos destinados à prestação de serviços de saúde, relacionados no Apêndice XIX (LIVRO I,9,XCVIII-EQUIP.PRESTACAO SERV.SAUDE)"
+    },
+    {
+     "code": "RS051072",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Devolução de bem cuja entrada tenha ocorrido sob amparo de regime especial aduaneiro de admissão temporária. (LIVRO I,9,CI -IMP.MERC.OU BENS REGIME ESP ADU ADM)"
+    },
+    {
+     "code": "RS051073",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-10-23",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CII-VEICULOS P/DEP.POLICIA FEDERAL)"
+    },
+    {
+     "code": "RS051074",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-12-06",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CIII -MERCADORIAS EM PENHORA)"
+    },
+    {
+     "code": "RS051075",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações com equipamentos médico-hospitalares destinados ao Ministério da Saúde (LIVRO I,9,CIV-EQUIP MED HOSPIT.P/MINIST.SAUDE)"
+    },
+    {
+     "code": "RS051079",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações de devolução impositiva de embalagens vazias de agrotóxicos e respectivas tampas,realizadas sem ônus (LIVRO I,9,CVIII-EMB.VAZIAS DE AGROTOX. E TAMPAS)"
+    },
+    {
+     "code": "RS051080",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-10-23",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CIX-VEICULOS P/A POLICIA ROD.FEDERA)"
+    },
+    {
+     "code": "RS051081",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações de venda do bem arrendado ao arrendatário, desde que este seja contribuinte do imposto (LIVRO I,9,CX ARRENDAMENTO MERCANTIL)"
+    },
+    {
+     "code": "RS051082",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de produtos alimentícios considerados \"perdas\" a banco de alimentos para pessoas carentes (LIVRO I,9,CXI-PROD.ALIM.CONSIDERADOS PERDAS P/)"
+    },
+    {
+     "code": "RS051083",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas promovidas por bancos de alimentos a pessoas carentes (LIVRO I,9,CXII-PROD.ALIM.CONSIDRADOS PERDAS RE)"
+    },
+    {
+     "code": "RS051085",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com medicamentos relacionados no RICMS, Livro I, art. 9º, inciso CXIV (LIVRO I,9,CXIV-MEDICAMENTOS)"
+    },
+    {
+     "code": "RS051086",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com os fármacos e medicamentos relacionados no Apêndice XXIII, a órgãos da administração pública (LIVRO I,9,CXV - FARMACOS E MEDICAMENTOS P/ORG)"
+    },
+    {
+     "code": "RS051087",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de mercadorias/prest.de serviços de transporte, nas doações ao Prog.de Seg. Alimentar e Nutricional (LIVRO I,9,CXVI - PROG.SEGURANÇA ALIMENTAR E NUTRICIONAL)"
+    },
+    {
+     "code": "RS051088",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-10-23",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXVII-VEIC.P/O DEP.POLICIA ROD.FED)"
+    },
+    {
+     "code": "RS051090",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2018-06-07",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXIX-CERVEJAS,REFRIG,SUCOS E AGUA_M)"
+    },
+    {
+     "code": "RS051091",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de mercadorias listadas no RICMS, Lv.I,art.9º,inciso CXX a Admin.Pública Est.e Legis. e Jud. (LIVRO I,9,CXX-PROD.FARMAC,INSTRUM E APARELHOS)"
+    },
+    {
+     "code": "RS051092",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2018-04-01",
+     "description": "ISENÇÃO - Revogada (LIVRO I,9,CXXI -MERC DE PROD PROM POR CO)"
+    },
+    {
+     "code": "RS051093",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-04-01",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXXII-GUINDASTE MOVEL PORTUARIO,P/A)"
+    },
+    {
+     "code": "RS051094",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-02-12",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXXIII-REPORTO-IMPORT.AT.IMOBILIZ.)"
+    },
+    {
+     "code": "RS051095",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de maçãs e peras, desde que frescas (LIVRO I,9, CXXIV - MAÇÃS E PERAS)"
+    },
+    {
+     "code": "RS051096",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2024-04-30",
+     "description": "ISENÇÃO - Substituído pelo cód.191 a partir de 01/06/2024. (LIVRO I,9, CXXV - PAO FRANCES)"
+    },
+    {
+     "code": "RS051097",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de tijolos de cerâmica, exceto refratários, classificados no código 6904.10.00 da NBM/SH-NCM (LIVRO I,9,CXXVI -TIJOLOS DE CERAMICA)"
+    },
+    {
+     "code": "RS051098",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de energia elétrica na parcela da subvenção a consumidores da \"Baixa Renda\" (LIVRO I,9,CXXVII -SUBVENCAO DE ENERGIA ELETRICA FO)"
+    },
+    {
+     "code": "RS051099",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de pilhas e baterias usadas para reciclagem ou disposição final ambientalmente adequada (LIVRO I,9,CXXVIII -PILHAS E BATERIAS USADAS)"
+    },
+    {
+     "code": "RS051100",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de produtos farmacêuticos/fraldas geriátricas da FIOCRUZ à Farmácia Popular (LIVRO I,9,CXXIX-PROD FARMAC DA FIOCRUZ)"
+    },
+    {
+     "code": "RS051101",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de \"Big Mac\" pela Rede McDonald's, na data do evento \"McDia Feliz (LIVRO I,9,CXXX-SANDUICHES BIG MAC)"
+    },
+    {
+     "code": "RS051102",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de medidores de vazão,condutivímetros a estab. industriais fabricantes de prod.2202/2203 da NBM/SH-NCM; (LIVRO I,9,CXXXI-EQUIPAMENTOS DE MEDICAO DE VAZAO)"
+    },
+    {
+     "code": "RS051103",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de selos destinados ao controle fiscal federal, promovidas pela Casa da Moeda do Brasil (LIVRO I,9,CXXXII-SELOS PARA CONTROLE FISCAL FEDERAL)"
+    },
+    {
+     "code": "RS051104",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-04-01",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXXXIII-MERC.IMP.S/COB.CAMB.DEP.AFIANCADO)"
+    },
+    {
+     "code": "RS051105",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas de bens relacionados no Apêndice XXVII, ao ativo imobilizado de empresas do REPORTO (LIVRO I,9,CXXXIV-REPORTO-SAIDAS INT. AT.IMOB.)"
+    },
+    {
+     "code": "RS051106",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Transferências,no território nacional, de bens do Ap.XXVIII, à manutenção do Gasoduto Brasil-Bolívia, pela TBG (LIVRO I,9,CXXXV-PRODUTOS MANUT.GAS.BR.BOLIVRO IA)"
+    },
+    {
+     "code": "RS051107",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações de mercadorias com emissão/negociação do Cert. de Depósito Agropec. - CDA e do Warrant Agropec. - WA (LIVRO I,9,CXXXVI-OPER. COM EMISSAO CDA E WA)"
+    },
+    {
+     "code": "RS051108",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com cimento asfáltico de petróleo classificado no código 2713.20.00 da NBM/SH-NCM (LIVRO I,9,CXXXVII-CIMENTO ASFALTICO DE PETROL)"
+    },
+    {
+     "code": "RS051109",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de partes/peças defeituosas,em garantia,por oficina autorizada a fabricante de veículos autopropulsados (LIVRO I,9CXXXVIII-PES E PE-AS DEF.,SUB.GAR.,)"
+    },
+    {
+     "code": "RS051111",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-12-06",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9, CXL -ATIVO IMOBILIZADO EMPRESA PORTUÁRIA)"
+    },
+    {
+     "code": "RS051112",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com ônibus, micro-ônibus e embarcações, para transporte escolar, adquiridos por Estados, DF e Munic. (LIVRO I,9,CXLI-ONIB,MICROONIB E EMB P TRANSP ESCO)"
+    },
+    {
+     "code": "RS051113",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-01-31",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXLII -EQUIP P/SEGP/UTIL XV JOGOS PAN)"
+    },
+    {
+     "code": "RS051114",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-12-06",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXLIII -MAQ E EQUIP P/CONCES PREST SERV)"
+    },
+    {
+     "code": "RS051115",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de reagente para diagnóstico da Doença de Chagas, código 3002.10.29 da NCM, para Administração Pública (LIVRO I,9,CXLIV-REAGENTE P DIAGNOST DOENCA CHAGAS)"
+    },
+    {
+     "code": "RS051116",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de partes/peças defeituosas, em garantia, por oficina credenciada destinadas ao fabricante (LIVRO I,9,CXLV-PES/PECAS DEF.,SUBS.GAR..EXC.AT.)"
+    },
+    {
+     "code": "RS051117",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-12-31",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXLVI. PROINFO)"
+    },
+    {
+     "code": "RS051118",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de óleo comestível usado destinado à utilização como insumo industrial (LIVRO I,9,CXLVII.OLEO COMESTIVEL USADO)"
+    },
+    {
+     "code": "RS051119",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ISENÇÃO - Revogada (LIVRO I,9,CXLVIII)"
+    },
+    {
+     "code": "RS051122",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de partes/peças defeituosas de produtos aeronáuticos, em garantia, da oficina para o fabricante (LIVRO I, 9,CLI. GARANTIA-FABR.PROD.AERONAUT.)"
+    },
+    {
+     "code": "RS051123",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de partes/peças defeituosas de produtos aeronáuticos, em garantia, do fabricante para oficina (LIVRO I, 9,CLII.GARANTIA-COMER.PROD.AERONAUT.)"
+    },
+    {
+     "code": "RS051124",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-02-12",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CLIII. PROD.DEST.DEN.,MAL.,FEBRE AM.)"
+    },
+    {
+     "code": "RS051128",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-12-06",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CLVII -VEIC COMB E SUAS PARTES)"
+    },
+    {
+     "code": "RS051129",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de pneus usados para reciclagem, tratamento ou disposição final ambientalmente adequada (LIVRO I,9,CLVIII.PNEUS USADOS P/RECICLAGEM)"
+    },
+    {
+     "code": "RS051130",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações/prestações na compra de equip.de segurança eletrônica pelo Depto.Penit. Nac. CNPJ 00.394.494/0008-02 (LIVRO I,9,CLIX.EQUIP.DE SEGURANCA ELETRONICA)"
+    },
+    {
+     "code": "RS051131",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Fornecimento pela União dos Escoteiros do Brasil, de materiais/equiptos. de uso dos escoteiros a associados (LIVRO I,9,CLX.MAT.E EQUIP.USO DOS ESCOTEIROS)"
+    },
+    {
+     "code": "RS051132",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com fosfato de oseltamivir vinculadas ao Farmácia Popular do Brasil ao tratamento da Gripe A (H1N1) (LIVRO I,9,CLXI.FOSF.DE OSELTAMIVIR,PAC.GRIPE A)"
+    },
+    {
+     "code": "RS051135",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de mercadorias promovidas pela Fundação O Pão dos Pobres de Santo Antônio, CGC/TE 096/0217657 (LIVRO I,9,CLXVI.MERC.FUND.PAO DOS POBRES.S.ANT)"
+    },
+    {
+     "code": "RS051136",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas de reprodutores de camarão marinho produzidos no País (LIVRO I,9,CLXVIII.REPR.CAMARAO MARINHO)"
+    },
+    {
+     "code": "RS051137",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas,ao exterior,dos bens/merc.que serão importados, utiliz.em ativ.de expl./prod. de petróleo/gás natural (LIVRO I,9,CLXXII.BENS/MERC.ATV.EXP.PET./GAS NAT.)"
+    },
+    {
+     "code": "RS051138",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de gên.alimentícios regionais p/merenda escolar por produtores rurais do Pronaf (LIVRO I,9,CLXXIV.GEN.AL.REG.P/MER.ESC.-PRONAF)"
+    },
+    {
+     "code": "RS051139",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-01-31",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CLXXVIII.FARM./MED.DERIVADOS PLASMA HUM.)"
+    },
+    {
+     "code": "RS051141",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2018-12-31",
+     "description": "ISENÇÃO - Revogada (LIVRO I,9,CLXXX -ARROZ BENEFICIADO-PMA)"
+    },
+    {
+     "code": "RS051142",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias por fabricante, às embarcações utilizadas no serviço de transporte aquaviário de cargas (LIVRO I,9,CLXXXI.MERC.CONST.CONS.MOD.REP.EMBARC.)"
+    },
+    {
+     "code": "RS051143",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações internas/serviço de transporte com gado vacum a ser utilizado em testes de vacinas para febre aftosa (LIVRO I,9,CLXXXIII.GADO VACUM P/TESTE VAC.FEB.AFT.)"
+    },
+    {
+     "code": "RS051144",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CLXXXIV -RAC.ANI./INS.P/SEMIARIDO)"
+    },
+    {
+     "code": "RS051145",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas das máquinas, aparelhos e equipamentos industriais, constantes do Apêndice XLII (LIVRO I,9,CLXXXV.MAQ./EQ.IND.P/GER.HIDRELETRICAS)"
+    },
+    {
+     "code": "RS051146",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações internas e as correspondentes prestações de serviço de transporte com cinzas de casca de arroz (LIVRO I,9,CLXXXVI.CINZAS DE CASCA DE ARROZ)"
+    },
+    {
+     "code": "RS051148",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias, decorrentes de vendas, destinadas à Itaipu Binacional (LIVRO I,9,CXC.MERC.DEST.A ITAIPU BINACIONAL)"
+    },
+    {
+     "code": "RS051149",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações com aceleradores lineares, classificados no código 9022.21.90 da NBM/SH-NCM (LIVRO I, 9,CXCI.ACEL.LIMEARES)"
+    },
+    {
+     "code": "RS051150",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-02-12",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9, CXCII. TRENS UNIDADE ELETRICOS)"
+    },
+    {
+     "code": "RS051151",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2017-12-31",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9, CXCIII. AP./EQUIP.P/JOGOS OLIMP./PO)"
+    },
+    {
+     "code": "RS051152",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2017-04-30",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9, CXCIV. MAQ.EQ.AT.IM.P/SENAI,S.,S.)"
+    },
+    {
+     "code": "RS051153",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas interestaduais de arroz orgânico à merenda escolar da rede públ.de ensino, por coop.produtores - Pronaf (LIVRO I,9, CXCV. ARROZ ORG.P/ENSINO PUBLICO)"
+    },
+    {
+     "code": "RS051154",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-12-06",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9, CXCVI. MEDICAMENTOS PAGOS PELO RS)"
+    },
+    {
+     "code": "RS051155",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-02-12",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9,CXCVII.MERC.IMP.UTE PAMPA SUL)"
+    },
+    {
+     "code": "RS051156",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de energia elétrica por distribuidora à unidade consumidora (Sistema Compensação de Energia) (LIVRO I,9,CXCVIII. ENERGIA ELET.MICRO/MINIGER)"
+    },
+    {
+     "code": "RS051157",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2018-03-23",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de armas,coletes a prova de bala,EPIs,munições,veículos e equip. videomonit.em doação à SSP/RS (LIVRO I,9, CXCIX. EQUIPAMENTOS P/ SECR.SEGUR.)"
+    },
+    {
+     "code": "RS051158",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2018-04-30",
+     "to": "2019-12-06",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,9, CC. EPI IMP.P/BOMBEIROS)"
+    },
+    {
+     "code": "RS051159",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2019-01-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações com o medicamento Spinraza (Nusinersena) injection 12mg/5ml, destinado a tratamento da AME (LIVRO I.9, CCI. MEDIC.SPINRAZA - AME)"
+    },
+    {
+     "code": "RS051160",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2019-02-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas por exportação de bens/mercadorias fabricados no país que serão admitidos/adquiridos nos termos Repetro (LIVRO I,9, CCIII. REPETRO-SPED)"
+    },
+    {
+     "code": "RS051161",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2020-01-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas de produtos para montagem de Kits diagnósticos para detecção imuno-rápida (LIVRO I,9, CCV. PRODUTOS P/ MONTAGEM DE KITS DIAGNÓSTICOS)"
+    },
+    {
+     "code": "RS051162",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2020-04-06",
+     "to": null,
+     "description": "ISENÇÃO - Remessa expressa internacional devolvida ao exterior (LIVRO I,9,CCVII. REMESSA EXPRESSA DEV EXTERIOR)"
+    },
+    {
+     "code": "RS051163",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-09-30",
+     "description": "ISENÇÃO - Revogada (LIVRO V, ART.35 -OPERACOES SOFTWARES E PROGRAMAS POR TED)"
+    },
+    {
+     "code": "RS051164",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas, de mercadorias destinadas à ampliação do Sistema de Informática da Secretaria da Fazenda (LIVRO I,9,LXXXI.SISTEMA DE INFORMATICA/SEFAZ)"
+    },
+    {
+     "code": "RS051165",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2020-08-19",
+     "to": null,
+     "description": "ISENÇÃO - Operações com o medicamento Zolgensma, destinado a tratamento da AME (LIVRO I,9,CCVIII.MEDIC.ZOLGENSMA - TRAT. AME)"
+    },
+    {
+     "code": "RS051166",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2020-09-09",
+     "to": "2020-11-29",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,ART.9º,CCIX.DOAÇÕES P/TSE ELEIÇÕES MUN.2020)"
+    },
+    {
+     "code": "RS051167",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2021-03-22",
+     "to": null,
+     "description": "ISENÇÃO - Operações com vacina e insumos para enfrentamente ao Coronavírus, e prest.de serviços de transporte corresp. (L.I,ART.9,CCX.VACINAS E INSUMOS P/VACINA SARS-CoV-2)"
+    },
+    {
+     "code": "RS051168",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2021-04-09",
+     "to": "2021-07-31",
+     "description": "ISENÇÃO - Código encerrado (L.I,ART.9,CCXI.MERC.P/PREVENCAO AO SARS-COV-2)"
+    },
+    {
+     "code": "RS051169",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2021-04-20",
+     "to": "2024-04-30",
+     "description": "ISENÇÃO - Saídas a prestadoras de serviço de saúde, doações, bem como prestação de serviço de transporte. (L.I,ART.9,CCXII.EQUIP.RESP.ELMO,PARTES E PEÇAS)"
+    },
+    {
+     "code": "RS051170",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2021-05-12",
+     "to": "2024-04-30",
+     "description": "ISENÇÃO - Saídas internas kits teste Covid-19 (3002.15.90 e 3822.0090) e aparelhos respiratórios (9019.20 e 9020.00) (L.I,ART.9,CCXIII.KITS TESTE COVID-19 E APARELHOS RESPIRATÓRIOS)"
+    },
+    {
+     "code": "RS051171",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2021-05-21",
+     "to": "2024-04-30",
+     "description": "ISENÇÃO - Saídas internas e interestaduais em relação às UFs que especifica bem como nas prest.de serviço de transporte (L.I,ART.9,CCXIV.OXIGENIO MEDICINAL)"
+    },
+    {
+     "code": "RS051172",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2021-08-16",
+     "to": null,
+     "description": "ISENÇÃO - Operações com o medicamento Risdiplam, destinado a tratamento da AME, NCMs 3003.90.99 e 3004.90.99. (L.I,ART.9,CCXVI. MEDIC.RISDIPLAM - TRAT. AME)"
+    },
+    {
+     "code": "RS051173",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2022-04-08",
+     "to": null,
+     "description": "ISENÇÃO - Operações Operações com mat.prima, partes, peças, máq./equip., prest. de serv. de transporte - PROSUB (L.I,ART.9,CCXVIII.PROG.DESENV.SUBMARINOS - PROSUB)"
+    },
+    {
+     "code": "RS051174",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2023-01-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas de mercadorias às redes de transp.públ.sobre trilhos de passageiros (ver lista de NCMs no inciso) (174 L.I,ART.9,CCXIX.MERC.P/REDE TRANSP.PUB.S/TRILHOS DE PASSAGEIROS)"
+    },
+    {
+     "code": "RS051175",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2023-01-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações internas com mercadorias classificadas nos códigos 8424.82.21 e 8424.82.29 da NBM/SH-NCM (LIVRO I,9,CCXX.IRRIGADORES E SISTEMAS DE IRRIGAÇÃO)"
+    },
+    {
+     "code": "RS051176",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "ISENÇÃO - Operações com medicamentos relativas a doações com destino a entidades beneficentes que atuem na área da saúde (L.I,ART.9,CCXXI.MEDIC. EM DOACAO A ENT. BENEF.)"
+    },
+    {
+     "code": "RS051177",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "ISENÇÃO - Operações com medicamentos com NCM 3004.90.69, destinados ao tratamento da Fibrose Cística (L.I,ART.9,CCXXII.MEDIC. P/ TRAT. FIBROSE CIST.)"
+    },
+    {
+     "code": "RS051178",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": null,
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas, e prest.serv.transporte correspondentes, por doação de gêneros alimentícios e excedentes de alimentos (L.I,ART.9,CCXXIII.DOAÇÃO DE GÊNEROS ALIMENTÍCIOS E EXCEDENTES DE ALIMENTOS)"
+    },
+    {
+     "code": "RS051179",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": null,
+     "to": "2027-04-30",
+     "description": "ISENÇÃO - Saídas internas de querosene de aviação à companhia aérea que opere HUB no Estado (L.I,ART.9,CCXXV.QUEROSENE DE AVIACAO)"
+    },
+    {
+     "code": "RS051180",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2023-10-09",
+     "to": "2024-03-31",
+     "description": "ISENÇÃO - Saídas internas de mercadorias ao ativo imobilizado, município em estado de calamidade pública - Dec.57.177/23 (L.I,ART.9,CCXXVI.MERCADORIAS PARA ATIVO IMOBILIZADO CALAMIDADE PUBLICA)"
+    },
+    {
+     "code": "RS051181",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-02-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas de produtos destinados à geração de energia elétrica a partir do biogás (L.I,ART.9,CCXXXI.PRODUTOS P/ GERACAO DE ENERGIA ELETRICA COM BIOGAS)"
+    },
+    {
+     "code": "RS051182",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-01-01",
+     "to": "2025-01-01",
+     "description": "ISENÇÃO - REVOGADO (L.I,ART.9,CCXXVII.OVOS SAIDAS INTERNAS)"
+    },
+    {
+     "code": "RS051183",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-05-01",
+     "to": "2024-05-01",
+     "description": "ISENÇÃO - REVOGADO (L.I,ART.9,CCXXVIII.FLORES NATURAIS SAIDAS INTERNAS)"
+    },
+    {
+     "code": "RS051184",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-01-01",
+     "to": "2025-01-01",
+     "description": "ISENÇÃO - REVOGADO (L.I,ART.9,CCXXIX.FRUTAS FRESCAS, VEGETAIS E HORTALIÇAS SAÍDAS INTERNAS)"
+    },
+    {
+     "code": "RS051185",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-01-01",
+     "to": "2025-01-01",
+     "description": "ISENÇÃO - REVOGADO (L.I,ART.9,CCXXX.MAÇÃS E PERAS FRESCAS SAÍDAS INTERNAS)"
+    },
+    {
+     "code": "RS051186",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-04-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas de ativadores de vulcanização, código NCM 28051990, a partir de resíduos da ind.de celulose (L.I,ART.9,CCXXXII.ATIVADORES DE VULCANIZAÇÃO DA BORRACHA)"
+    },
+    {
+     "code": "RS051187",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-01-01",
+     "to": null,
+     "description": "ISENÇÃO - Operações internas de fornecimento de energia elétrica, destinadas a templos de qualquer culto religioso (L.I,ART.9,CLXXXVII.ENERGIA ELÉTRICA PARA TEMPLOS)"
+    },
+    {
+     "code": "RS051188",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-05-14",
+     "to": "2024-12-31",
+     "description": "ISENÇÃO - Saídas internas por venda para contribuintes dos municípios em calamidade pública (Dec.57596/24) (L.I.ART.9,CCXXXIII.ATIVO IMOBILIZADO CALAMIDADE PÚBLICA)"
+    },
+    {
+     "code": "RS051189",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-05-22",
+     "to": "2024-12-31",
+     "description": "ISENÇÃO - Saídas internas, prestação de serviços de transporte de doações para ASBANCOS (Dec.57601/24) (L.I.ART.9,CCXXXIV.DOAÇÃO PARA ASBANCOS CALAMIDADE PÚBLICA)"
+    },
+    {
+     "code": "RS051190",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-06-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas de leite fluido leite fluido pronto para consumo humano, exceto UHT (L.I,ART.9,XX.LEITE FLUIDO EXCETO UTH)"
+    },
+    {
+     "code": "RS051191",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-06-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de pão francês e massa congelada destinada ao preparo de pão francês (L.I,ART.9,CXXV.PÃO FRANCÊS E MASSA CONGELADA PARA PREPARO DE PÃO FRANCÊS)"
+    },
+    {
+     "code": "RS051192",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-07-04",
+     "to": "2025-02-28",
+     "description": "ISENÇÃO - Operações internas e prest.serv.transporte de merc. na reconstrução do Aeroporto S.F.e da Base Aérea de Canoas (L.I,ART.9,CCXXXV.MERCADORIAS PARA RECONSTRUÇÃO DO AEROPORTO SALGADO FILHO E DA BASE AÉREA DE CANOAS)"
+    },
+    {
+     "code": "RS051193",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-07-04",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com o medicamento Elevidys(delandistrogene moxeparvovec) no tratamento de DMD (L.I,ART.9,CCXXXVI.MEDIC. ELEVIDYS P/ TRATAMENTO DE DISTROFIA MUSCULAR DE DUCHENNE)"
+    },
+    {
+     "code": "RS051194",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2024-07-27",
+     "to": "2025-03-31",
+     "description": "ISENÇÃO - Saídas internas de ônibus e caminhões para contribuintes afetados pelas chuvas de abril e maio de 2024 (L.I,ART.9,CCXXXVII.ONIBUS/CAMINHOES PARA CONTRIBUINTE IMPACTADO PELA ENCHENTE)"
+    },
+    {
+     "code": "RS051195",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-01-01",
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de mercadorias rel.Apend.XLIX do RICMS por MPR cadastrado no Prog.Agroindústria Familiar do RS (L.I,ART.9,CCXXXVIII.MICROPRODUTOR RURAL)"
+    },
+    {
+     "code": "RS051196",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-02-24",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas de veículos automóveis e tratores, por fabricante, em doação à oficina de aprendizagem SENAI (L.I,ART.9,CCXXXIX.VEICULO DOACAO SENAI)"
+    },
+    {
+     "code": "RS051197",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-05-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Saídas internas promovidas por microprodutor rural, decorrentes de venda de cachaça a consumidor final (L.I,ART.9,CCXL.PRODUTOR RURAL CHACHAÇA)"
+    },
+    {
+     "code": "RS051198",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-12-22",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Operações com o medicamento Duvyzat (givinostat) (L.I,ART.9,CCXLIII-MEDICAMENTO DUVYZAT)"
+    },
+    {
+     "code": "RS051208",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2026-06-19",
+     "to": "2028-12-31",
+     "description": "ISENÇÃO - Operações vinculadas à organização e realização da Copa do Mundo Feminina da FIFA 2027 (L.I,ART.9,CCXLV-COPA_MUNDO_FEM2027)"
+    },
+    {
+     "code": "RS051400",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de telecomunicação para administraçao pública (LIVRO I,10,I -TELECOMUNICACAO P/ ADM PUBLICA)"
+    },
+    {
+     "code": "RS051401",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de telecomunicação para Missões Diplomáticas e Repartições Consulares (LIVRO I,10,II -TELECOMUNIC P/ MISSOES DIPLOMATICAS)"
+    },
+    {
+     "code": "RS051403",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço locais de difusão sonora (LIVRO I,10,IV -DIFUSAO SONORA)"
+    },
+    {
+     "code": "RS051404",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de transporte rodoviário de pessoas, realizadas táxi (LIVRO I,10,V -TAXI)"
+    },
+    {
+     "code": "RS051405",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Prestação de serviço de transporte de calcário, interna, vinculada a programas de preservação ambiental do RS (LIVRO I,10,VI -TRANSPORTE DE CALCARIO)"
+    },
+    {
+     "code": "RS051406",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de transp. ferroviário de carga,na exp/imp de países do \"Acordo sobre o Transp. Intern.\" (LIVRO I,10,VII -TRANSPORTE FERROVIARIO DE CARGA)"
+    },
+    {
+     "code": "RS051407",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Prestação de serviço de transporte de mercadorias adquiridas em licitações/contratações destinadas ao PROMOFAZ (LIVRO I,10,VIII -TRANSPORTE DE MERCADORIA-PROMOFAZ)"
+    },
+    {
+     "code": "RS051408",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ISENÇÃO - Prestação de serviço de transporte intermunicipal de cargas realizadas a contribuinte inscrito no CGC/TE (LIVRO I,10,IX-TRANSP CARGA A CONTR.INSC NO CGC)"
+    },
+    {
+     "code": "RS051409",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de comunicação referentes a acesso à internet e conectividade em banda larga do GESAC (LIVRO I,10,X.GESAC)"
+    },
+    {
+     "code": "RS051411",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-12-31",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,10,XII.TELECOM.P/TEMPLOS DE QQ CULTO)"
+    },
+    {
+     "code": "RS051412",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2020-09-09",
+     "to": "2020-11-29",
+     "description": "ISENÇÃO - Código encerrado (LIVRO I,ART.10,XIII.TRANSP.DOAÇÕES TSE ELEIÇÃO 2020)"
+    },
+    {
+     "code": "RS051413",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2021-06-08",
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de transp.na logística reversa de prods.eletrônicos usados, rol no DF 10240/20, Anexo I (LV.I,ART.10,XIV.TRANSP.PROD.ELETR.LOG.REVERSA)"
+    },
+    {
+     "code": "RS051414",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2025-01-01",
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de de telecomunicação destinada a templos de qualquer culto religioso (L.I,ART.10,XII.TELECOMUNICAÇÃO PARA TEMPLOS)"
+    },
+    {
+     "code": "RS051415",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2026-06-19",
+     "to": "2028-12-31",
+     "description": "ISENÇÃO - Transporte vinculado à organização e realização da Copa do Mundo Feminina da FIFA 2027 (LIVRO I,ART.10,XV.TRANSPORTE_COPAMUNDIALFEM27)"
+    },
+    {
+     "code": "RS051500",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Saídas de papel destinado exclusivamente à impressão de jornais, periódicos e livros (LIVRO I,11,I -PAPEL P/JORNAIS, PERIODICOS E LIVROS)"
+    },
+    {
+     "code": "RS051501",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Saídas de jornais, periódicos e livros, excluídos os livros em branco ou para escrituração (LIVRO I,11,II -JORNAIS, PERIODICOS E LIVROS)"
+    },
+    {
+     "code": "RS051502",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações interestaduais de energia elétrica e petróleo, lubrif. e combust. dele derivados (LIVRO I,11,III -ENERG ELET,PETROLEO,COMB-INTEREST)"
+    },
+    {
+     "code": "RS051503",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações com ouro, quando definido em lei como ativo financeiro ou instrumento cambial (LIVRO I,11,IV -OURO COMO ATIVO FINANCEIRO)"
+    },
+    {
+     "code": "RS051504",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações e prestações que destinem mercadorias ao exterior (LIVRO I,11,V -EXPORTACOES)"
+    },
+    {
+     "code": "RS051505",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações relativas a mercadorias sujeita ao ISS, de competência dos Municípios (LIVRO I,11,VI -MERC P/UTILI PREST SERV SUJEITA ISS)"
+    },
+    {
+     "code": "RS051506",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações de qualquer natureza de que decorra a transferência de propriedade de estabelecimento (LIVRO I,11,VII -TRANSF PROPRIEDADE ESTABELECIMENTO)"
+    },
+    {
+     "code": "RS051507",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações decorrentes de alienação fiduciária em garantia (LIVRO I,11,VIII -ALIENACAO FIDUCIARIA EM GARANTIA)"
+    },
+    {
+     "code": "RS051508",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações de arrendamento mercantil, não compreendida a venda do bem arrendado ao arrendatário (LIVRO I,11,IX -ARRENDAMENTO MERCANTIL)"
+    },
+    {
+     "code": "RS051509",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações decorrentes da transferência de bens móveis salvados de sinistro a seguradoras (LIVRO I,11,X -SALVADOS DE SINISTRO)"
+    },
+    {
+     "code": "RS051510",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Saídas de mercadorias a armazém-geral situado neste Estado, para depósito em nome do remetente (LIVRO I,11,XI -ARMAZEM-GERAL)"
+    },
+    {
+     "code": "RS051511",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Saídas de mercadorias a depósito fechado do próprio contribuinte, localizado neste Estado (LIVRO I,11,XII -DEPOSITO FECHADO)"
+    },
+    {
+     "code": "RS051512",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Saídas de mercadorias de dep.fechado/armazém geral em devolução ao estabelecimento de origem (LIVRO I,11,XIII -DEVOLUCAO ARMAZ GERAL,DEP FECHADO)"
+    },
+    {
+     "code": "RS051513",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Saídas na prestação de serviço de transporte, por transportadora, de mercadorias de terceiros (LIVRO I,11,XIV -MERCADORIAS DE TERCEIROS)"
+    },
+    {
+     "code": "RS051514",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Saída de bem do ativo imobilizado ou do uso e consumo do estabelecimento (LIVRO I,11,XV. ATIVO IMOB./MAT. USO E CONSUMO)"
+    },
+    {
+     "code": "RS051515",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações de licenciamento ou cessão do direito de uso de software, decisão do STF n° 688.223 (LIVRO I,11,XVI-LICENCIAMENTO/CESSÃO DE DIREITO DE USO DE SOFTWARE)"
+    },
+    {
+     "code": "RS051516",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2020-05-25",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Saídas de fonogramas e videofonogramas musicais produzidos no Brasil de autores brasileiros (LIVRO I,11,XVII - FONOGRAMAS E VIDEOGRAMAS MUSICAIS)"
+    },
+    {
+     "code": "RS051517",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "from": "2022-06-23",
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Serviços de transm.e distrib.e encargos setoriais vinculados às operações com energia elétrica (L.I,11,XVIII.SERV.TRANSM./DISTRIB.ENERGIA ELETRICA)"
+    },
+    {
+     "code": "RS051600",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída de mercadorias usadas (LIVRO I,23,I -MERCADORIAS USADAS)"
+    },
+    {
+     "code": "RS051601",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de mercadorias relacionadas no Ap.IV, da cesta básica de alimentos do RS (LIVRO I,23,II -CESTA BASICA DE ALIMENTOS)"
+    },
+    {
+     "code": "RS051602",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de óleo em bruto, mesmo degomado, quando destinado à industrialização (LIVRO I,23,III -OLEO EM BRUTO/EMBALAGENS)"
+    },
+    {
+     "code": "RS051604",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas e nas importações do exterior de trigo em grão (LIVRO I,23,V -TRIGO EM GRAO)"
+    },
+    {
+     "code": "RS051605",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Fornecimento de refeições por bares,restaurantes,empresas preparadoras de refeições colet. (LIVRO I,23,VI -REFEICOES-RESTAURANTES)"
+    },
+    {
+     "code": "RS051606",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Revogada (LIVRO I,23,VII -ÁGUA NATURAL CANALIZADA)"
+    },
+    {
+     "code": "RS051607",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas das mercadorias da cesta básica de medicamentos do RS, cfe. Apêndice V (LIVRO I,23,VIII -CESTA BASICA DE MEDICAMENTOS)"
+    },
+    {
+     "code": "RS051608",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2027-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais de insumos agropecuários (LIVRO I,23,IX -INSUMOS AGROPECUARIOS)"
+    },
+    {
+     "code": "RS051609",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2027-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais de produtos para alim.animal/fabricação de ração e fertilizantes (LIVRO I,23,X -INSUMOS PARA ALIMENTAÇÃO ANIMAL/FERTILIZANTES)"
+    },
+    {
+     "code": "RS051611",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de máq./equip. a ativo permanente de empresa industrial que os adquiriu pelo BEFIEX (LIVRO I,23,XII -BEFIEX)"
+    },
+    {
+     "code": "RS051612",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de máquinas, aparelhos e equipamentos, industriais, relacionados no Apêndice X (LIVRO I,23,XIII -MAQ,EQUIPAM APARELHOS,INDUSTRIAIS)"
+    },
+    {
+     "code": "RS051613",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de máquinas e implementos agrícolas, relacionados no Apêndice XI (LIVRO I,23,XIV -MAQUINAS E IMPLEMENTOS AGRICOLAS)"
+    },
+    {
+     "code": "RS051614",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas e importação do exterior de aeronaves, peças,acessórios relacionados no Apêndice XII (LIVRO I,23,XV -AERONAVES, PECAS E ACESSORIOS)"
+    },
+    {
+     "code": "RS051615",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23,XVI -PROD ACABADOS DE INFORM/AUTOMACAO)"
+    },
+    {
+     "code": "RS051616",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operações internas com ferros e aços não-planos (LIVRO I,23,XVII -FERROS E ACOS NAO-PLANOS)"
+    },
+    {
+     "code": "RS051617",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de telhas,tubos,manilhas(de argila/barro),tijoleiras e tapa-vigas(cerâmica) (LIVRO I,23,XVIII -TIJ,TELHA,TUBO,MANILHA,TAPA-VIGA)"
+    },
+    {
+     "code": "RS051618",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Revogada (LIVRO I,23,XIX -ZONA FRANCA DE MANAUS)"
+    },
+    {
+     "code": "RS051620",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas e importações de veículos automotores conforme Ap.II,S.III, X, e no Ap.XXII (LIVRO I,23,XXI -VEICULOS AUTOMOTORES)"
+    },
+    {
+     "code": "RS051623",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de blocos e tijolos de concreto para construção,NBM/SH-NCM cód.6810.11.00 (LIVRO I,23,XXIV - BLOCOS E TIJOLOS DE CONCRETO)"
+    },
+    {
+     "code": "RS051624",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas e importações de veículos novos motorizados posição 8711 da NBM/SH-NCM (LIVRO I,23,XXV- VEICULOS DE DUAS RODAS)"
+    },
+    {
+     "code": "RS051626",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2019-12-06",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23,XXVII -IMP.MERC.OU BENS SOB REGIME ESP)"
+    },
+    {
+     "code": "RS051627",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23,XXVIII -EQUIP P/EMP JORN OU EDIT OU LIV)"
+    },
+    {
+     "code": "RS051628",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais a contrib.por industrializador/importador de medicamentos/perfumaria (LIVRO I,23,XXIX-MEDICAMENTOS E PROD PERFUMARIA)"
+    },
+    {
+     "code": "RS051629",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2024-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Substituído pelo cód.691 a partir de 01/06/2024. (LIVRO I 23,XXX-EMBALAG.P/MERC.QUE COMPOEM_CESTA B)"
+    },
+    {
+     "code": "RS051630",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de mel puro destinadas a consumidor final, promovidas por produtor (LIVRO I, 23, XXXI- MEL PURO)"
+    },
+    {
+     "code": "RS051631",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais por estabelecimento fabric./imp. de veículos/caminhões/chassi (LIVRO I,23,XXXII-VEICULOS,MAQ,APARELHOS E CHASS)"
+    },
+    {
+     "code": "RS051632",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais por fabric./imp. de pneumáticos novos de borracha/câmaras-de-ar (LIVRO I,AR.23,XXXIII-PNEUMATICOS,CAMARAS DE AR BOR)"
+    },
+    {
+     "code": "RS051634",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de pedra britada e de mão classificadas no código 2517.10.00, da NBM/SH-NCM (LIVRO I,23,XXXV-PEDRA BRITADA E DE MAO)"
+    },
+    {
+     "code": "RS051639",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interest.de carne/prod.comest.de aves,leporídeos,gado bov.,bufal.,capr.,ovino,suíno (LIVRO I, 23, XL-CARNE AVES,LEPOR-DEOS E GADO)"
+    },
+    {
+     "code": "RS051640",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Revogada (LIVRO I, 23, XLI -TERMINAIS PORTÁTEIS TELEFONIA CELU)"
+    },
+    {
+     "code": "RS051642",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2018-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Revogada (LIVRO I,23, XLIII E LVII.MERC.BENS REPETRO)"
+    },
+    {
+     "code": "RS051642",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2018-05-01",
+     "to": "2020-04-09",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23, LVII.MERC.BENS REPETRO)"
+    },
+    {
+     "code": "RS051643",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23,XLIV.TRIGO EM GRAO P/ OUF)"
+    },
+    {
+     "code": "RS051644",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais de feijão, quando a alíquota aplicável for 12% (LIVRO I, 23, XLV - FEIJAO)"
+    },
+    {
+     "code": "RS051645",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas por fabricante de sacolas plásticas a mercados,padarias,açougues e armazéns (LIVRO I, 23,XLVI,SACOLAS PLAST.P/ACOND.MERC.)"
+    },
+    {
+     "code": "RS051646",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operações internas/interest.de merc. adquiridas pela Adm.Pública às Unid.Mod.de Saúde(UMS) (LIVRO I, 23, XLVII.MERCADORIAS PARA UMS)"
+    },
+    {
+     "code": "RS051647",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de máq./apar. Importados, rol no Ap.XXXVI, por fabricante. Exige Termo de Acordo. (LIVRO I, 23, XLIX.MAQ./APAR.IMP.APEND.XXXVI)"
+    },
+    {
+     "code": "RS051648",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de máquinas e aparelhos relacionados no Apêndice XXXVII, produzidos neste Estado (LIVRO I, 23, L.MAQ.APR.APEND.XXXVII)"
+    },
+    {
+     "code": "RS051650",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de ureia classificada no código 3102.10.10 da NBM/SH-NCM (LIVRO I,23,LIII.SAIDAS INTERNAS DE UREIA.)"
+    },
+    {
+     "code": "RS051651",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23,LIV. CAMINHOES-GUINDASTES)"
+    },
+    {
+     "code": "RS051652",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23,LV. CAM.-GUIND/GUIND. IMPORTADOS)"
+    },
+    {
+     "code": "RS051653",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23,LVI -MERC.AP.XXXVIII.A.P.TERMOEL.CV.)"
+    },
+    {
+     "code": "RS051654",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2025-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais de suínos vivos realizadas por produtor rural (LIVRO I,23,LVIII.SUINOS VIVOS)"
+    },
+    {
+     "code": "RS051655",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de mercadorias promovidas por estabelecimento de cooperativa (LIVRO I,23,LIX.MERC.EST.COOP.Q.NAO OPTA SN)"
+    },
+    {
+     "code": "RS051656",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2024-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Substituído pelo cód.692 a partir de 01/06/2024. (LIVRO I,23,LX.ERVA MATE)"
+    },
+    {
+     "code": "RS051657",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,23,LXI. PROD.FERRO E AÇO APÊNDICE XLI RICMS)"
+    },
+    {
+     "code": "RS051658",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2024-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Substituído pelo cód.693 a partir de 01/06/2024. (LIVRO I,23,LXII,EMBALAGENS PARA ERVA-MATE)"
+    },
+    {
+     "code": "RS051660",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de prod.têxteis,art.do vestuário,botões de plásticos,de fabricação própria (LIVRO I, 23,LXIV.PROD.TEX. VESTUARIOS)"
+    },
+    {
+     "code": "RS051662",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de cosméticos,perfum.,art.de higiene,rol no Ap.II, S.III,XXII,por indústria (LIVRO I,23,LXVI.COSM.PERF.HIG.PES.TOUC.)"
+    },
+    {
+     "code": "RS051663",
+     "csts": [
+      "20",
+      "51",
+      "53",
+      "61",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2027-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de querosene de aviação à prest.de serv.aerov.passag.em mun.do interior/RS (LIVRO I,23,LXVII.QUEROSENE DE AVIACAO)"
+    },
+    {
+     "code": "RS051664",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operações com veículos/aparelhos p/uso militar,por fabricante, ao Ministério da Defesa BR (LIVRO I,23,LXVIII.VEIC.MILITARES P/ EX.BR.)"
+    },
+    {
+     "code": "RS051665",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de carne e produtos comestíveis temperados, do abate de aves e de suínos (LIVRO I,23,LXIX.CARNE E PROD.TEMP.AVES E SUIN.)"
+    },
+    {
+     "code": "RS051666",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de estab. comercial a estab. industrial, de mármores,travertinos e granitos (LIVRO I,23,LXX.MARM.TRAVERTINOS E GRANITOS)"
+    },
+    {
+     "code": "RS051667",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de lentes e armações p/óculos, óculos de sol, por atacado (LIVRO I,23,LXXI.MAT.P/OCULOS)"
+    },
+    {
+     "code": "RS051668",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Revogada (LIVRO I,23,LXXII. POST.CONC.,TR.PORT.DE FE/AC)"
+    },
+    {
+     "code": "RS051669",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas/interes. a consumidor final,de pá carreg.,escavad.hidr.,retroesc.e dumpers (LIVRO I, 23,LXXIII.PA CARR.ROD.,ESC.HD.RET.CA)"
+    },
+    {
+     "code": "RS051670",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de embarcações de recreação ou de esporte, na posição 8903 da NBM/SH-NCM (LIVRO I,23,LXXIV.EMBARCACAO DE REC./ESPORTE)"
+    },
+    {
+     "code": "RS051671",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista (LIVRO I,23,LXXV.VEIC.AUT.P/10 PESSOAS OU +)"
+    },
+    {
+     "code": "RS051672",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO -Suspensa (LIVRO I,23,LXXVI. ARROZ BENEFICIADO)"
+    },
+    {
+     "code": "RS051673",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Revogada (LIVRO I,23,LXXVII. VEIC.COMB.INC.VEIC.ELET.)"
+    },
+    {
+     "code": "RS051674",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Revogada (LIVRO I,23,LXXVIII. MÓVEIS P/ADM. PUB.)"
+    },
+    {
+     "code": "RS051676",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de luvas e botas para uso como EPI pelo adquirente (LIVRO I,23, LXXX.LUVAS E BOTAS P/ EPI)"
+    },
+    {
+     "code": "RS051677",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-09-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Revogada (LIVRO I,23,LXXXI.SOF.,PROG,JOGOS,APP,CONG.PAD.)"
+    },
+    {
+     "code": "RS051678",
+     "csts": [
+      "20",
+      "51",
+      "53",
+      "61",
+      "70"
+     ],
+     "from": "2019-02-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas por venda de bens/mercadorias permanentes p/explor./prod.de petróleo e gás natural (LIVRO I,23, LXXXII. REPETRO-SPED)"
+    },
+    {
+     "code": "RS051679",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2020-01-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de transformadores e reatores(8504.23.00/8504.50 da NCM) p/prest.pública (LIVRO I,23, LXXXIII. FABRICANTES DE TRAFO E REATORES ACIMA DE 230kV.)"
+    },
+    {
+     "code": "RS051680",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2020-04-01",
+     "to": "2028-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operações internas com máq./equip. a contrib. p/constr./ampl.dos Terminais Portuários do RS (L.I,ART.23,LXXXIV.MAQ.APAR.P/TERM.PORTUARIOS)"
+    },
+    {
+     "code": "RS051681",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-01-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operações de estabelecimento industrial com carrocerias (inc. cabinas) e semirreboques (L.I,ART.23,LXXXV CARROCERIAS E SEMIRREBOQUES)"
+    },
+    {
+     "code": "RS051682",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-01-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de alho promovidas por produtor rural ou cooperativa de produtores rurais (L.I,ART.23,LXXXVI ALHO PRODUTOR RURAL)"
+    },
+    {
+     "code": "RS051683",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-01-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais de arroz beneficiado de produção própria (L.I,ART.23,LXXXVII SAIDA INTEREST. ARROZ BENEF)"
+    },
+    {
+     "code": "RS051684",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-07-01",
+     "to": "2025-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operações com veículos classificados no cód. 8705.30.00 da NBM/SH-NCM. (L.I,ART.23,LXXXVIII VEÍCULOS DE COMBATE A INCÊNDIO)"
+    },
+    {
+     "code": "RS051685",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2022-01-01",
+     "to": "2027-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas dos fertilizantes elencados nas alíneas \"a\" e \"b\" do inciso LXXXIX do art.23 (L.I,ART.23,LXXXIX.FERTILIZANTES)"
+    },
+    {
+     "code": "RS051686",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2022-01-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de areia (L.I,ART.23,XC.AREIA, LAVADA OU NÃO)"
+    },
+    {
+     "code": "RS051687",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2022-01-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas, nos NBM/SH-NCMs 6811, 6902.20.10 e 6810.91.00 (L.I,ART.23,XCI.TELHA DE FIBROCIM.,TIJOLO REFRAT., TUBOS/MANILHAS DE CONCRETO)"
+    },
+    {
+     "code": "RS051688",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2022-01-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operações com blocos de concreto intertravados cód. 6810.19.00 da NBM/SH-NCM (L.I,ART.23,XCII.BLOCO DE CONCRETO INTERTRAVADO)"
+    },
+    {
+     "code": "RS051689",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2023-04-01",
+     "to": "2026-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de batatas preparadas e congeladas de produção própria de NCM 2004.10.00 (L.I,ART.23,XCIII.BATATA PREPARADA E CONGELADA)"
+    },
+    {
+     "code": "RS051690",
+     "csts": [
+      "20",
+      "51",
+      "53",
+      "61",
+      "70"
+     ],
+     "from": "2024-01-01",
+     "to": "2027-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de querosene de aviação à companhia aérea que opere HUB no Estado (L.I,ART.23,XCIV.QUEROSENE DE AVIAÇÃO)"
+    },
+    {
+     "code": "RS051691",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2024-06-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de embalagens p/merc.da cesta básica e p/merc.benef.com RBC art.23, LXIX. (L.I,ART.23,XXX.EMBALAGENS PARA MERCADORIAS QUE COMPÕEM A CESTA BASICA DO RS)"
+    },
+    {
+     "code": "RS051692",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2024-06-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de erva-mate, mesmo as com açúcar, espécies vegetais ou aromas naturais (L.I,ART.23,LX.ERVA-MATE)"
+    },
+    {
+     "code": "RS051693",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2024-06-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de de embalagens, produzidas no RS, para erva-mate (L.I,ART.23,LXII.EMBALAGENS PARA ERVA-MATE)"
+    },
+    {
+     "code": "RS051694",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2025-01-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais promovidas por fabricante de azeite de oliva. (L.I.ART.23,XCVI.AZEITE DE OLIVA)"
+    },
+    {
+     "code": "RS051695",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2025-01-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas de produção própria, por fabricante, de glúten de trigo NCM 1109.00.00. (L.I.ART.23,XCVII.GLÚTEN DE TRIGO)"
+    },
+    {
+     "code": "RS051696",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2025-03-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de produção própria, por microcervejarias, de cerveja e chope. (L.I.ART.23,XCVIII.CERVEJA E CHOPE)"
+    },
+    {
+     "code": "RS051697",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2025-05-06",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interestaduais de suínos vivos sujeitas à alíquota de 12% (L.I,ART.23,LVIII.SUINOS VIVOS)"
+    },
+    {
+     "code": "RS051698",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2025-07-01",
+     "to": "2027-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de QAV destinada à Cia. Aérea com Termo de Acordo (L.I,ART.23,XCIX.SAíDA INTERNA QAV)"
+    },
+    {
+     "code": "RS051699",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2026-05-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas internas de bombas centrifugas 8413.70.80 e 8413.70.90 da NBM/SH-NCM (L.I,ART.23,C.SAíDA BOMBAS CENTRIFUGAS)"
+    },
+    {
+     "code": "RS051800",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestações de serviço de transporte intermunicipal de pessoas, exceto o aéreo (LIVRO I,24,I -TRANSP INTERMUNICIPAL DE PASSAGEIROS)"
+    },
+    {
+     "code": "RS051801",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Suspensa (LIVRO I,24,II -TELEVISAO POR ASSINATURA)"
+    },
+    {
+     "code": "RS051803",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2017-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,24,IV -ACESSO ONEROSO À INTERNET)"
+    },
+    {
+     "code": "RS051804",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2018-12-31",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Código encerrado (LIVRO I,24,V -TELEFONIA FIXA A EMP DE CALL)"
+    },
+    {
+     "code": "RS051805",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestações de serviço de comunicação onerosas, para monit./rastreamento de veículo e carga (LIVRO I,24,VI-MONITORAMENTO E RASTR.DE VEIC/CARGA)"
+    },
+    {
+     "code": "RS051806",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-02-15",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestações de serviço de transp.intermunicipal de passag. no transp.urbano ou metropolitano (LIVRO I,24, VII.TRANSP.INTER.DE PASSAG.)"
+    },
+    {
+     "code": "RS051807",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-04-30",
+     "to": "2024-04-30",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestações de serviço de transp.intermunicipal de pessoas durante calamidade pública(COVID) (LIVRO I,24,VIII.TRANSP.INTERMUN.PESSOAS PANDEMIA)"
+    },
+    {
+     "code": "RS051808",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2023-01-01",
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestações de serviço de telecomunic. a consumidor final no RS por empresa participante (LIVRO I,24,IX.PROGRAMA DE FOMENTO SERVIÇO DE COMUNICAÇÃO MULTIMÍDIA)"
+    },
+    {
+     "code": "RS051901",
+     "csts": [
+      "20",
+      "30",
+      "40",
+      "41",
+      "70"
+     ],
+     "from": "2020-08-24",
+     "to": null,
+     "description": "OUTRAS - Saídas desoneradas por decisões judiciais (LIVRO II, ART. 12 - DECISÕES JUDICIAIS)"
+    },
+    {
+     "code": "RS051902",
+     "csts": [
+      "41"
+     ],
+     "from": "2020-09-01",
+     "to": null,
+     "description": "OUTRAS - Regime diferenciado de apuração para bares e restaurantes, gorjeta limitada a 10% do valor da conta (LIVRO I,ART.38-A,§4º,E - RDA GORJETA)"
+    },
+    {
+     "code": "RS051904",
+     "csts": [
+      "41"
+     ],
+     "from": "2021-05-20",
+     "to": null,
+     "description": "OUTRAS - Demanda de potência não utilizada pelo consumidor, no fornecimento de energia elétrica por demanda contratada (L.I,ART.19,IV – DEMANDA CONTRATADA NÃO UTILIZADA)"
+    },
+    {
+     "code": "RS052001",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Operações internas de remessa de mercadoria entre estabelecimentos da mesma empresa (LIVRO I,53,I -ESTABELEC PERTENCENTE A MESMA PESSOA)"
+    },
+    {
+     "code": "RS052002",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Remessa p/industrialização/demonstração/conserto de máquinas e aparelhos, com posterior devolução à origem (AP II,S.I,I -REMESSA P/FINS INDUSTRIALIZACAO,ETC)"
+    },
+    {
+     "code": "RS052003",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Devolução de máquinas e aparelhos remetidos p/industrialização/demonstração/conserto (AP II,S.I,II -DEVOLUCAO DE MERCADORIAS)"
+    },
+    {
+     "code": "RS052004",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadoria de produção própria, por produtor a produtor ou indústria, comércio ou cooperativa (AP II,S.I,III -PRODUTOR)"
+    },
+    {
+     "code": "RS052005",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadoria de produção própria, por produtor/cooperativa a órgão oficial (AP II,S.I,IV -SAIDA DE PRODUTOR P/ORGAO OFICIAL)"
+    },
+    {
+     "code": "RS052006",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadoria de cooperativa a outra cooperativa de que a cooperativa remetente faça parte (AP II,S.I,V -COOPERATIVA)"
+    },
+    {
+     "code": "RS052007",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de águas, exceto a potável e de vapor d'água, para estabelecimento industrial (AP II,S.I,VI -AGUA)"
+    },
+    {
+     "code": "RS052008",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de álcool combustível e biodiesel, do estabelecimento industrial para estabelecimento distribuidor (AP II,S.I,VII -ALCOOL COMBUSTIVEL)"
+    },
+    {
+     "code": "RS052009",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de arroz, em casca ou beneficiado, canjicão, canjica e quirera, exceto a estab. de microempresa (AP II,S.I,VIII -ARROZ,CANJICAO,CANJICA E QUIRERA)"
+    },
+    {
+     "code": "RS052010",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de carvão min./calcário,por estab.extrator;de óleo combustível,a geradora/supridora de energ.elét. (AP II,S.I,IX -CARVAO MINERAL)"
+    },
+    {
+     "code": "RS052011",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de carvão vegetal (AP II,S.I,X -CARVAO VEGETAL)"
+    },
+    {
+     "code": "RS052012",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de cevada em grão (AP II,S.I,XI -CEVADA EM GRAO)"
+    },
+    {
+     "code": "RS052013",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de cinzas de carvão mineral, para estabelecimentos fabricantes de cimento (AP II,S.I,XII -CINZAS DE CARVAO MINERAL)"
+    },
+    {
+     "code": "RS052014",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de couros e peles, em estado natural, secos, salgados ou salmourados (AP II,S.I,XIII -COUROS E PELES)"
+    },
+    {
+     "code": "RS052015",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de erva-mate em folha ou cancheada (AP II,S.I,XIV -ERVA-MATE EM FOLHA OU CANCHEADA)"
+    },
+    {
+     "code": "RS052016",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de energia elétrica do gerador ao distribuidor; ao estab.rural; ao estab.industrial em área indust. (AP II,S.I,XV -ENERGIA ELETRICA)"
+    },
+    {
+     "code": "RS052017",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de eqüino que tenha controle genealógico oficial e idade de até 3 anos (AP II,S.I,XVI -EQUINO)"
+    },
+    {
+     "code": "RS052018",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de farelo e torta de girassol (AP II,S.I,XVII -FARELO E TORTA DE GIRASSOL)"
+    },
+    {
+     "code": "RS052019",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de ferro velho,sucata,resíduos destinados à produção industrial ou à comercialização (AP II,S.I,XVIII -FERRO VELHO,SUCATAS,RESIDUOS,ETC.)"
+    },
+    {
+     "code": "RS052020",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de fosfato bi-cálcio destinado à alimentação animal (AP II,S.I,XIX -FOSFATO BI-CALCIO)"
+    },
+    {
+     "code": "RS052021",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de frutas frescas nacionais ou oriundas de países membros da ALADI e de verduras e hortaliças (AP II,S.I,XX -HORTIFRUTIGRANJEIROS)"
+    },
+    {
+     "code": "RS052022",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de fumo em folha cru (AP II,S.I,XXI -FUMO EM FOLHA CRU)"
+    },
+    {
+     "code": "RS052023",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de gado vacum,ovino e bufalino,por atac., ao abatedor; remet./dest. devem participar do AGREGAR-RS (AP II,S.I,XXII -PROGRAMA AGREGAR CARNES)"
+    },
+    {
+     "code": "RS052024",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída, de galerias de arte e estabelecimentos similares, de obras de arte para demonstrações ou exposições (AP II,S.I,XXIII -OBRAS DE ARTE)"
+    },
+    {
+     "code": "RS052025",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de grão de girassol (AP II,S.I,XXIV -GRAO DE GIRASSOL)"
+    },
+    {
+     "code": "RS052026",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de lãs, pêlos e cabelos, de origem animal (AP II,S.I,XXV -LAS,PELOS E CABELOS,ORIGEM ANIMAL)"
+    },
+    {
+     "code": "RS052027",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de leitões de até 70 dias com até 25 kg, destinados à engorda (AP II,S.I,XXVII -LEITOES)"
+    },
+    {
+     "code": "RS052028",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de ovos frescos;ovos integrais past., por estab.industrial para fins de industrialização;embalagens (AP II,S.I,XXVIII -OVOS FRESCOS)"
+    },
+    {
+     "code": "RS052029",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de peixes como matéria-prima em processos industriais de cozimento ou enlatamento (AP II,S.I,XXIX -PEIXES)"
+    },
+    {
+     "code": "RS052030",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de sebo, chifre e casco (AP II,S.I,XXX -SEBO,CHIFRE E CASCO)"
+    },
+    {
+     "code": "RS052031",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de soja em grão (AP II,S.I,XXXI -SOJA EM GRAO)"
+    },
+    {
+     "code": "RS052032",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de suínos vivos, com destino a estabelecimento abatedor (AP II,S.I,XXXII -SUINOS VIVOS)"
+    },
+    {
+     "code": "RS052033",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de trigo e de triticale, em grão, com destino à indústria moageira de trigo (AP II,S.I,XXXIII -TRIGO E TRITICALE, EM GRAO)"
+    },
+    {
+     "code": "RS052034",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "DIFERIMENTO - Código encerrado (AP II,S.I,XXXIV -INSUMOS IND INFORMATICA/AUTOMACAO)"
+    },
+    {
+     "code": "RS052035",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de matérias-primas para implementos agrícolas a estabelecimento industrial, localizado no Estado (AP II,S.I,XXXV -MAT-PRIMAS P/TRATORES IMPLEM AGRIC)"
+    },
+    {
+     "code": "RS052036",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída dos produtos tratores e implementos agrícolas para uso exclusivo na produção agropecuária (AP II,S.I,XXXVIII -TRATORES E IMPLEMENTOS AGRICOL)"
+    },
+    {
+     "code": "RS052037",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de transformadores,pirômetros,quadros de comando,a produtor, para ativo permanente do seu estab. (AP II,S.I,XXXIX -PRODUTOR - ATIVO PERMANENTE)"
+    },
+    {
+     "code": "RS052038",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de peças,partes e compon.a estab.industrial,desde remet./dest. estejam instalados em área industrial (AP II,S.I,XL -PECAS,PES E COMPONENTES P/VEICULO)"
+    },
+    {
+     "code": "RS052039",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída, por importador, de veículos relacionados no item X da Seção III deste Apêndice a estab.industrial (AP II,S.I,XLI -VEICULOS,PECAS,PES E COMP,IMPORT)"
+    },
+    {
+     "code": "RS052040",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "DIFERIMENTO - Código encerrado (AP II,S.I,XLII -PEC P/VEI P/COMPLEX IND LEI FDI/RS)"
+    },
+    {
+     "code": "RS052041",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de material de embalagem utilizado para o acondicionamento de ovos frescos (AP II,S.I,XLIII -EMBALAGEM DE OVOS FRESCOS)"
+    },
+    {
+     "code": "RS052042",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de insumos petroquímicos a dest.c/Protocolo visando ramo petroq./plástico; seja benef.do FUNDOPEM/RS (AP II,S.I,XLIV -INSUMOS PETROQUIMICOS)"
+    },
+    {
+     "code": "RS052043",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de cogumelos (AP II,S.I,XLV -COGUMELOS)"
+    },
+    {
+     "code": "RS052044",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "DIFERIMENTO - Código encerrado (LIVRO III ART.2 -PRESTACAO SERV. TRANSPORTE CARGA)"
+    },
+    {
+     "code": "RS052045",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadorias destinadas a estabelecimentos situados nas Zonas de Processamento de Exportação - ZPE (AP II,S,I,XLVI-ZONAS PROCESSAMENTO EXPORTACAO-ZPE)"
+    },
+    {
+     "code": "RS052046",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de gás liqüefeito de petróleo e gás natural, a estab.industrial em área industrial (AP II,S,I,XLVII-GAS LIQUEFEITO DE PETROLEO E GAS N)"
+    },
+    {
+     "code": "RS052047",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de sal, exceto sal de mesa, a produtor e a cooperativa de produtores para emprego na pecuária (AP II,S,I,XLVIII-SAL PARA PECUARIA)"
+    },
+    {
+     "code": "RS052048",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de gás natural na industrialização em usina geradora de energ.elét., do importador/gerador até usina (AP II,S,I,XLIX-GAS NATURAL)"
+    },
+    {
+     "code": "RS052049",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip. a estabelecimento instalado em complexo industrial previsto FITEC/RS (AP II,S.I,L-MAQ E EQUIP P/COMPLEXO IND LEI FITEC/RS)"
+    },
+    {
+     "code": "RS052050",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de proteína isolada/texturizada e gorduras veget. de soja por estab.beneficiador a estab.industrial (AP II,S.I,LI-PROTEINAS E GORDURAS VEGETAIS DE SOJA)"
+    },
+    {
+     "code": "RS052051",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de resíduos de madeira, a centrais geradoras termelétricas,como combust.na prod. de energia elétrica (AP II, S. I, LII-RESIDUOS DE MADEIRA E DE CASCA D)"
+    },
+    {
+     "code": "RS052052",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de carvão mineral por estab.extrator, e de óleo combustível, destinados à industria de celulose (AP II, S. I, LIII-CARVAO MINERAL P/ INDUSTRIA DE)"
+    },
+    {
+     "code": "RS052053",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadorias a estabelecimento industrial integrante Programa SLP Cerâmico (AP II, S. I, LIV-MERCADORIAS P/ INDUSTRIA DO PROG)"
+    },
+    {
+     "code": "RS052054",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída, de estab.industrial,de matérias-primas e mat.de embalagem,a estab.industrial em área industrial (AP II, S. I, LV-MATERIAS-PRIMAS E MATERIAIS DE EM)"
+    },
+    {
+     "code": "RS052055",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de benzeno a destinatário com Protocolo p/ampliação de indústria petroquímica e benef.do FUNDOPEM (AP II, S. I, LVI - BENZENO)"
+    },
+    {
+     "code": "RS052056",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente de indústria de cerveja,refrigerante,suco,envase de água mineral (AP II, S.I,LVII-MAQUINAS E EQUIPAMENTOS P/A FABRIC)"
+    },
+    {
+     "code": "RS052057",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máquinas e equipamentos industriais ao ativo permanente de estabelecimento industrial naval (AP II,S.I,LVIII-ATIVO PERMANENTE P/IND DE NAVIOS)"
+    },
+    {
+     "code": "RS052058",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de peças, partes e componentes, matérias-primas e materiais de embalagem a estab.industrial naval (AP II,S.I,LIX-INSUMOS P/IND DE NAVIOS)"
+    },
+    {
+     "code": "RS052059",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de aves vivas, com destino a estabelecimento abatedor (AP II,S, I,LX - AVES VIVAS)"
+    },
+    {
+     "code": "RS052060",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": "2017-02-09",
+     "description": "DIFERIMENTO - Alterado (AP II,S, I,LX - ATIVO PERMANENTE P SET MOV)"
+    },
+    {
+     "code": "RS052060",
+     "csts": [
+      "51"
+     ],
+     "from": "2017-02-10",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.industriais a ativo permanente de estab.industrial moveleiro e coureiro-calçadista (AP II,S, I,LXI - ATIVO PERMANENTE P SET MOV)"
+    },
+    {
+     "code": "RS052061",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de óleo lubrificante básico decorrente de re-refino de óleo lubrificante usado ou contaminado (AP II, S. I, LXII - OLEO LUBRIFICANTE BASICO)"
+    },
+    {
+     "code": "RS052062",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip./peças ao ativo permanente de produtor de biodiesel, que tenha firmado Termo de Acordo (AP II, S. I, LXIII-MAQU. EQUIP. P/ IND. BIODIESEL)"
+    },
+    {
+     "code": "RS052063",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.industriais ao ativo perman.de estab.p/produção de filme de polipropileno biorientado (AP II, S. I, LXIV-MAQU.EQUIP.FILME POLIPR.BIORIEN)"
+    },
+    {
+     "code": "RS052064",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.industriais ao ativo perman.de estab.industriais p/fabricação de derivados de leite (AP II, S. I, LXV-MAQU.EQUIP.P/IND.DERIVADOS LEITE)"
+    },
+    {
+     "code": "RS052065",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de matérias-primas,mat.de embalagem,peças a estab.industrial p/fabr.de celulose p/ fabric.de papel (AP II,S.I,LXVI-PE-,MAT-PRI E MAT EMB P/PROD CELULO)"
+    },
+    {
+     "code": "RS052066",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.industriais a ativo perm.de estab.industrial p/fabr.de celulose p/fabr.icação de papel (AP II,S.I,LXVII-ATIVO PERM IND CELULOSE E OUTRAS P)"
+    },
+    {
+     "code": "RS052067",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.industriais a ativo perm.de estab.abatedor de gado vacum, ovino e bufalino (AP II,S.I,LXVIII-ATIVO PERM DE ABAT DE GADO VACUM)"
+    },
+    {
+     "code": "RS052068",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo perm.de estab.industrial p/prod.de resinas uréicas/fenólicas e de formaldeído (AP II,S.I,LXIX-ATIVO PERM DE IND DE RESINAS)"
+    },
+    {
+     "code": "RS052069",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip./peças a ativo perm.de destilaria produtora de álcool neutro e de álcool combustível (AP II,S.I,LXX-ATIVO PERM DE IND DE ALCOOL)"
+    },
+    {
+     "code": "RS052070",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": "2017-12-31",
+     "description": "DIFERIMENTO - Alterado (AP II,S.I,LXXI-OLEO VEGETAL P/ IND DE BIODIESEL)"
+    },
+    {
+     "code": "RS052070",
+     "csts": [
+      "51"
+     ],
+     "from": "2018-01-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de óleos e gorduras, vegetais ou animais, à indústria de biodiesel; e de sabão, detergente, etc (AP II,S.I,LXXI-OLEO VEG/ANIMAL P/IND. DE BIODIESEL E FAB. SABÃO)"
+    },
+    {
+     "code": "RS052071",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo perm. e mat.prima/peça a estab.industrial p/fabric.de aerogeradores eólicos (AP II,S.I,LXXII-PEC,MAT-PRI E MAT EMB E ATIVO PERM)"
+    },
+    {
+     "code": "RS052072",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente a estab.industrial p/produção de painéis de MDP (AP.II,S.I,LXXIII.MAQ/EQUIP ATIVO PERM.P/IND.MDP)"
+    },
+    {
+     "code": "RS052073",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mamona destinada a estabelecimento industrial produtor de biodiesel (AP II, S. I, LXXIV-GRAOS MAMONA P/IND.BIOD)"
+    },
+    {
+     "code": "RS052074",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de petróleo (AP II, S. I, LXXV. PETROLEO)"
+    },
+    {
+     "code": "RS052075",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de casca de arroz e \"pellets' de casca de arroz, destinada a estabelecimento industrial (AP II, S. I, LXXVI. CASCA DE ARROZ E \"PELLETS\" DE CASCA DE ARROZ P/IND.)"
+    },
+    {
+     "code": "RS052076",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente de usina termelétrica a carvão mineral, da contratada p/contratante (AP.II,S.I,LXXVII.ATIVO PERM.USINA TERM.A CARVAO)"
+    },
+    {
+     "code": "RS052077",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente de indústria para encapsulamento e teste de semicondutores (AP II,S.I,LXXVIII.)"
+    },
+    {
+     "code": "RS052078",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente de indústria para a produção de butadieno (AP II, S. I, LXXIX)"
+    },
+    {
+     "code": "RS052079",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente de indústria para a produção de pneumáticos (AP II, S. I, LXXX)"
+    },
+    {
+     "code": "RS052080",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente de indústria c/Protocolo de Intenções prevendo diferimento (AP II, S. I, LXXXI)"
+    },
+    {
+     "code": "RS052081",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente de indústria de guindastes e caminhões-guindaste (AP II, S. I, LXXXII)"
+    },
+    {
+     "code": "RS052082",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de matérias-primas, material de embalagem, peças a indústria de guindastes e caminhões-guindaste (AP II, S. I, LXXXIII)"
+    },
+    {
+     "code": "RS052083",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de ureia, por importador, a fabricante de resinas ureicas, fenólicas e melamínicas (AP II, S. I, LXXXIV)"
+    },
+    {
+     "code": "RS052084",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de matérias-primas, materiais de embalagem a estab.industrial p/fabricação de pneumáticos (AP II, S. I, LXXXV)"
+    },
+    {
+     "code": "RS052085",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de trigo em grão, produzido neste Estado, com destino à indústria de ração (AP II,S.I,LXXXVI.TRIGO EM GRAO P/ IND. DE RACAO)"
+    },
+    {
+     "code": "RS052086",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadorias para construção, conservação, modernização e reparo de embarcações (AP II,S.I,LXXXVII,CONSTR.CONSER.MODER.EMBARCA--ES)"
+    },
+    {
+     "code": "RS052087",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de máq./equip.a ativo permamente de indústria de construção/reparo de embarcações (AP II,S.I,LXXXVIII,ATI.PERM.CONSTR.MODER.EMBARCA--)"
+    },
+    {
+     "code": "RS052088",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de querosene de aviação e óleo combustível, por refinaria, destinada à distribuidora de combustíveis (AP II,S.I,LXXXIX.QUEROS.AV/OLEO COMB.P/DISTR.COMB.)"
+    },
+    {
+     "code": "RS052089",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída dos produtos acabados de informática e automação relacionados no Apêndice XIII (AP II, S. I, XC. PROD.ACAB.INFOR.E AUTOM.)"
+    },
+    {
+     "code": "RS052090",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "DIFERIMENTO - Saída de cosméticos, perfumaria, art.de higiene pessoal e de toucador, relacionados no Ap.II, S.III, XXII (AP II,S.I,XCI.COSM.PERF.HIG.PES.E TOUCADOR)"
+    },
+    {
+     "code": "RS052091",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de resíduos de madeira, destinados à produção industrial ou à comercialização (AP II,S.I,XCII.RESIDUOS DE MADEIRA)"
+    },
+    {
+     "code": "RS052092",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": "2017-12-31",
+     "description": "DIFERIMENTO - Código encerrado (AP II,S.I,XCIII.MAT.PRIM.P/ESTR.MAR.P/PETR.E G.N.)"
+    },
+    {
+     "code": "RS052093",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadoria importada com diferimento destinada a estab.industrial do PROCAM/RS (AP.II,S.I,XCIV. MERC.IMP.C/DIF.P/PROCAM/RS)"
+    },
+    {
+     "code": "RS052094",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadorias à distribuidora de água localizada no Polo Petroquímico de Triunfo (AP II,S.I,XCV. MERC.DEST.DISTR.AGUA-POLO PETROQ.)"
+    },
+    {
+     "code": "RS052095",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de cal viva e de dolomita calcinada, destinadas à usina termelétrica (AP II,S.I,XCVI.CAL VIVA E DOLOMITA P/TERMELETRICA)"
+    },
+    {
+     "code": "RS052096",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de merc. p/fabricação de eixos utilizados em tratores agríc.de 4 rodas, retroescav.e empilhadeiras (AP II,S.I,XCVII.MERC.PARA TRAT.4 RODAS,RET.EMP.)"
+    },
+    {
+     "code": "RS052097",
+     "csts": [
+      "51"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-03-31",
+     "description": "DIFERIMENTO - Código encerrado (AP II,S.I,XCVIII.FAB.VEIC.TRANSP.CARGAS.PROCAM/RS)"
+    },
+    {
+     "code": "RS052098",
+     "csts": [
+      "51"
+     ],
+     "from": "2020-01-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de leite fresco, pasteurizado ou não (AP.II,S.I,XXVI.LEITE FRESCO, PASTEURIZADO OU NÃO)"
+    },
+    {
+     "code": "RS052099",
+     "csts": [
+      "51"
+     ],
+     "from": "2020-10-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de milho (AP.II,S.I,XCIX. MILHO)"
+    },
+    {
+     "code": "RS052100",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,S.IV,SUBS.I,ITENS:I,II,IVaVI,VIIIaXV,XVIIaXX)"
+    },
+    {
+     "code": "RS052101",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,S.IV,SUBSI,ITENS:III,VII,XVI,XXVII,XLIVAXLI)"
+    },
+    {
+     "code": "RS052102",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II, S. IV, SUBS. I, ITENS: L ALXV, LXVIII, LXI)"
+    },
+    {
+     "code": "RS052103",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,S.IV,SUBS.I,ITENS:XXIII,LXX,LXXX,LXXXVII)"
+    },
+    {
+     "code": "RS052104",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II, S. IV, SUBS. II, ITENS I A IV-VESTUARIO E)"
+    },
+    {
+     "code": "RS052105",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II, S. IV, SUBS. II, ITENS V A VII-DE VIAG)"
+    },
+    {
+     "code": "RS052106",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II, S. IV, SUBS. II, ITEM VIII-MOVEIS E MOBILI)"
+    },
+    {
+     "code": "RS052107",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP IIS,IV,SUBSI,ITEM XCVI-CAL VIVA, CAL APAGADA E C)"
+    },
+    {
+     "code": "RS052108",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,S.IV,SUBS.III,ITENSI,IIEVIAXIEXXIIMERC.SET P)"
+    },
+    {
+     "code": "RS052109",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,S.IV,SUBS.III,ITENS:XII A XXI-MERC.SETOR PLA)"
+    },
+    {
+     "code": "RS052110",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,S.IV,SUBS.III,IT.:V E XXXII A XXXVI)"
+    },
+    {
+     "code": "RS052111",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,SIV,SUBSIII,ITENS XXV A XXXI-MERC P ALIMEN)"
+    },
+    {
+     "code": "RS052112",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,S.IV,SUBS.V,ITENS:I A XIV. MERC.COUR-CALC.)"
+    },
+    {
+     "code": "RS052113",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de insumos para ind.de ônibus,micro-ônibus,miniônibus e furgões,suas carrocerias (LIVRO III, 1A, V)"
+    },
+    {
+     "code": "RS052114",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Livro III, art.1º-A, IV - Saídas internas de mercadorias p/envasar bebidas e alim. líq./pastosos (AP II,S.IV.SUBS.VI.I.BENS/MERC.DEST.ENV.BEB.AL.PAS)"
+    },
+    {
+     "code": "RS052115",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (AP II,S.IV,SUBS.VII,ITENS I A XI. AVIC./SUINOCULT.)"
+    },
+    {
+     "code": "RS052116",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1A,VII.MOLAS,FL.MOLAS, A/F.FAB.MAQ.)"
+    },
+    {
+     "code": "RS052117",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1A,X.PROD.FARM.RELAC.NO RICMS)"
+    },
+    {
+     "code": "RS052118",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Livro III, art.1º-A, IX - Saídas internas de mercadorias relacionadas no Apêndice do RICMS citado (AP II,S.IV,SUBS.VIII.ITENS I A IV. ACOS/FERROS)"
+    },
+    {
+     "code": "RS052119",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III, 1-A,XI.PROD.PLAST.P/BRINQUEDOS)"
+    },
+    {
+     "code": "RS052120",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III, 1-A,XII.COPOS PLAST.COM.P/DEST.)"
+    },
+    {
+     "code": "RS052121",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de produtos laminados planos p/fabricação de vagões ou caixas de carga de vagões (LIVRO III, 1-A, XIII)"
+    },
+    {
+     "code": "RS052122",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de mercadorias p/fabr.de transformadores, autotransformadores e reatores elétricos (LIVRO III,1-A,XIV.MERC.P/FAB.TR.ATR.R.ELETR.)"
+    },
+    {
+     "code": "RS052123",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de merc.p/industrializ.de reatores nucleares,caldeiras,máq.,aparelhos mecânicos (LIVRO III, 1-D E AP II,S.IV,MERC.P/IND.N.MEC.)"
+    },
+    {
+     "code": "RS052124",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1A,XV.INS.IND.INF.AUT.E ELETR.)"
+    },
+    {
+     "code": "RS052126",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1A,XVI,AP II,S.IV,SUBS.X.MERC.SETOR PL.)"
+    },
+    {
+     "code": "RS052127",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1A, I E AP II,S.IV,SUB.I,CX.FOLHAS ACO)"
+    },
+    {
+     "code": "RS052128",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III, 1A,XVII. MUCOSA INTES.SUINA)"
+    },
+    {
+     "code": "RS052129",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de insumos p/fabr.de transp.de granéis,carregadores/descarreg.de navios e barcaças (LIVRO III, 1A,XVIII.INS.P/FAB.TRANSP.GRAN.;C/D B)"
+    },
+    {
+     "code": "RS052130",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de laminados planos a fabricantes de veículos beneficiário do FOMENTAR/RS (LIVRO III,1-A,XIX.LAM.PL.FB.VEIC. FOMENTAR.)"
+    },
+    {
+     "code": "RS052131",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III, 1-A, XX. LIGAS DE ALUMINIO)"
+    },
+    {
+     "code": "RS052132",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de laminados planos a fabricantes de veículos beneficiário do FOMENTAR/RS (LIVRO III,1-A,XXI.)"
+    },
+    {
+     "code": "RS052133",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1-A,XXII.)"
+    },
+    {
+     "code": "RS052134",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1E.MERC.P/IND.POR ESTAB.ATIV.ECON.)"
+    },
+    {
+     "code": "RS052135",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1-A,XXIII.NAFTA DEST.A INDUSTR.)"
+    },
+    {
+     "code": "RS052136",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1-A,XXIV. MET.SOD.IND.NOVOS PROD.)"
+    },
+    {
+     "code": "RS052137",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de cobre não refinado, eixos motores, bobinas/chapas de aço, e folhas de flandres (L.III,ART.1-F,AP.II,S.V,ITENS I,II,III e V)"
+    },
+    {
+     "code": "RS052138",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,1-A,XXV.MATERIAIS PARA PNEUMATICOS)"
+    },
+    {
+     "code": "RS052139",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Operações com mat.-prima,peças,partes p/fabr.de automóveis das posições 8702 e 8704 da NBM/SH-NCM (LIVRO III,ART. 1-G. MAT.P/FAB.VEICULOS DE TRANSP.)"
+    },
+    {
+     "code": "RS052140",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de aços planos para fabricação de tubos de aço (LIVRO III,1-H.ACOS PLANOS,P/FAB.TUBOS DE ACO)"
+    },
+    {
+     "code": "RS052141",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III, 1-A, XXVI. GLICEROL EM BRUTO)"
+    },
+    {
+     "code": "RS052142",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de embalagens metálicas promovidas por estabelcimento fabricante (LIVRO III,1-A, XXVII. EMB. METALICAS)"
+    },
+    {
+     "code": "RS052143",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de matéria-prima,peças p/fabr.de armas,revólveres,pistolas,cartuchos e munições (LIVRO III, 1-A,XXVIII.MAT.P/FAB.ARMAS E MUN.)"
+    },
+    {
+     "code": "RS052144",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-03-31",
+     "description": "DIFERIMENTO PARCIAL - Código encerrado (LIVRO III,1-A,XXIX. BOB.CHP.ACO-PROCAM/RS)"
+    },
+    {
+     "code": "RS052145",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2020-10-01",
+     "to": "2025-03-31",
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de mercadorias a fabricantes de sistemas construtivos e de estruturas metálicas (L.III,ART1-I FAB SIST CONSTR E ESTRUT METAL)"
+    },
+    {
+     "code": "RS052146",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2020-01-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de produtos laminados de ferro/aço p/.fabricação de silos e secadores para grãos (LIVRO III,ART.1-A,XXX. PROD.LAMIN.PLAN.FERRO/ACO)"
+    },
+    {
+     "code": "RS052147",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas por contribuinte que exerça a atividade de Central de Negócios (LIVRO III,ART.1-C.SAIDAS DE CENTRAL DE NEGOCIOS)"
+    },
+    {
+     "code": "RS052148",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2020-05-01",
+     "to": "2021-03-31",
+     "description": "DIFERIMENTO PARCIAL - Revogado (LIVRO III,ART.1-A,XXXI.CIMENTO ASFALT.DE PETROLEO)"
+    },
+    {
+     "code": "RS052149",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2020-10-01",
+     "to": "2032-12-31",
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de etileno destinadas a estabelecimento fabricante de estireno, benef. FUNDOPEM (L.III,ART.1-F,AP.II,S.V,IV.ETILENO)"
+    },
+    {
+     "code": "RS052150",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2021-01-02",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de biogás e biometano por estab.industrial produtor à empresa concessionária distrib.de gás natural (AP.II,S.I,CI. BIOGÁS E BIOMETANO P/ DISTRIBUIDORA)"
+    },
+    {
+     "code": "RS052151",
+     "csts": [
+      "51"
+     ],
+     "from": "2021-01-02",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de resíduos agrossilvopastoris, destinada a estabelecimento industrial produtor de biogás ou de biometano (AP.II,S.I,CII. RESÍDUOS AGROSSILVOPASTORIS)"
+    },
+    {
+     "code": "RS052152",
+     "csts": [
+      "51",
+      "53",
+      "61"
+     ],
+     "from": "2021-01-02",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de carvão mineral a estab.industrial localizado no Polo Carboquímico do RS (AP.II,S.I,CIII. CARVÃO MINERAL P/ ESTAB DO POLO CARBOQUÍMICO)"
+    },
+    {
+     "code": "RS052153",
+     "csts": [
+      "51"
+     ],
+     "from": "2021-01-02",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de “pellets” de madeira, classificados na posição 4401.31.00 da NBM/SH-NCM (AP.II,S.I,CIV. \"PELLETS\" DE MADEIRA NCM 4401.31.00)"
+    },
+    {
+     "code": "RS052154",
+     "csts": [
+      "51"
+     ],
+     "from": "2022-05-01",
+     "to": null,
+     "description": "DIFERIMENTO - Saída de mercadorias quando houver previsão específica no Ato Declaratório de inclusão no REF (AP.II,S.I,C. SAÍDA POR CONTRIBUITE NO REF)"
+    },
+    {
+     "code": "RS052155",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-04-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de lam.planos NCMs 7209.1700,7209.1800 e 7225.5090 para fabric.de móveis de aço. (L.III,ART.1-J,I.LAMINADOS PLANOS DE FERRO/AÇO)"
+    },
+    {
+     "code": "RS052156",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-04-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas com destino a fabricantes de móveis de aço. Ver tabela de NCMs no inciso II. (L.III,ART.1-J,II,A.BOBINAS,CHAPAS DE FERRO/AÇO)"
+    },
+    {
+     "code": "RS052157",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-04-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas por importador, de merc. importadas ao abrigo do diferimento do L.I,art.53,VI. (L.III,ART.1-J,III,MERC.IMP.ABRIGO L.I,ART.53,VI)"
+    },
+    {
+     "code": "RS052158",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-04-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Hipóteses em que não se aplica o disposto nos arts.1º-A, 1º-C, 1º-D e 1º-F a 1º-J. (L.III,ART.1-K.DIF. PARCIAL NÃO ESPECIFICADO)"
+    },
+    {
+     "code": "RS052159",
+     "csts": [
+      "51"
+     ],
+     "from": "2021-04-01",
+     "to": "2028-12-31",
+     "description": "DIFERIMENTO - Saídas de laminados e perfis cfe.lista de NCMs na legislação para empresas benef.do Fundopem. (AP.II,S.I,CV. LAM.PLANOS E PERFIS DE ACO/FERRO)"
+    },
+    {
+     "code": "RS052160",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2021-05-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas por importador, de merc. sob ST importadas ao abrigo do difer. do L.I,art.53,VI. (L.III,ART.1-L.MERC.SOB ST IMP.ABRIGO L.I,ART.53,VI)"
+    },
+    {
+     "code": "RS052161",
+     "csts": [
+      "51"
+     ],
+     "from": "2022-01-01",
+     "to": "2027-12-31",
+     "description": "DIFERIMENTO - Saídas de merc. tais como defensivos agrícolas, vacinas, medicamentos, rações, sementes, dentre outros (AP.II,S.I,XXXVI.MERC./INSUMO P/PROD.AGROPECUÁRIA)"
+    },
+    {
+     "code": "RS052162",
+     "csts": [
+      "51"
+     ],
+     "from": "2022-01-01",
+     "to": "2027-12-31",
+     "description": "DIFERIMENTO - Saídas de milho, farelos e tortas de soja e de canola, e demais itens relacionados no Ap.II, S.I, XXXVII (AP.II,S.I,XXXVII.RAÇÃO ANIMAL,ADUBO E FERTILIZANTE)"
+    },
+    {
+     "code": "RS052163",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": "2023-01-01",
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas por importador de merc.sob ST sem similar nacional definidas em lista Camex (L.III,ART.1-M.MERC.IMPORTADA S/SIMILAR-LISTA CAMEX)"
+    },
+    {
+     "code": "RS052164",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "DIFERIMENTO - Saída de grãos de canola (AP.II.S.I,CVI. SAIDA DE GRAOS DE CANOLA)"
+    },
+    {
+     "code": "RS052165",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "DIFERIMENTO - Saída internas de areia NCM 2505.10.00 e oxigênio NCM 2804.40.00 a fabricante de embalagens de vidro (AP.II.S.I,CVII. SAIDA DE AREIA E OXIGÊNIO A FAB. EMB. VIDRO)"
+    },
+    {
+     "code": "RS052166",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "DIFERIMENTO - Saídas de soro de leite, exceto em pó, a fabricante de NCM 1702.11.00 ou 3502.20.00 (AP.II.S.I,CVIII. SAIDA SORO DE LEITE, EXCETO EM PO)"
+    },
+    {
+     "code": "RS052167",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": null,
+     "to": "2027-03-31",
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de painéis de MDP/MDF e de pisos laminados (L.III,ART.1-F,AP.II,S.V,ITEM VI.PAINEIS DE MDP/MDF E PISOS LAMINADOS)"
+    },
+    {
+     "code": "RS052168",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": null,
+     "to": "2025-03-31",
+     "description": "DIFERIMENTO PARCIAL - Saídas internas entre empresas com sócios/acionistas em comum. Ver tabela de NCMs no inciso II. (L.III,ART.1-J,II,B.BOBINA,CHAPA DE FERRO/ACO SAÍDA POR CD)"
+    },
+    {
+     "code": "RS052169",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de óleos e gorduras destinadas a industrial produtor de diesel verde, etc. (AP.II,S.I,LXX SAÍDA ÓLEO/GORDURA P/ INDUSTRIAL DIESEL VERDE)"
+    },
+    {
+     "code": "RS052170",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de cal e de calcário, destinados a usina termelétrica. (AP.II,S.I,XCVI SAÍDA CAL/CALCÁRIO P/ TERMELÉTRICA)"
+    },
+    {
+     "code": "RS052171",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de gás natural destinado a estabelecimento industrial fabricante de celulose. (AP.II,S.I,CVII SAÍDA GÁS NATURAL P/ FABRICANTE CELULOSE)"
+    },
+    {
+     "code": "RS052172",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": null,
+     "to": "2026-01-19",
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de energia elétrica renováveil para industrial que produza hidrogênio ou amônia. (AP.II,S.I,CVIII ENERGIA RENOVÁVEL P/ INDUSTRIAL HIDROGÊNIO/AMÔNIA)"
+    },
+    {
+     "code": "RS052173",
+     "csts": [
+      "20",
+      "51",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "DIFERIMENTO PARCIAL - Saídas internas de energia elétrica renovável para industrial que produza hidrogênio ou amônia. (AP.II,S.I,CX ENERGIA RENOVÁVEL P/ INDUSTRIAL HIDROGÊNIO/AMÔNIA)"
+    },
+    {
+     "code": "RS052300",
+     "csts": [
+      "50"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "SUSPENSÃO - Saídas de mercadorias p/conserto,reparo,industrializ. em estab.situado em outra UF, desde que haja devolução (LIVRO I,55,I -CONSERTO, REPARO OU INDUSTRIALIZACAO)"
+    },
+    {
+     "code": "RS052301",
+     "csts": [
+      "50"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "SUSPENSÃO - Saídas em devolução à origem situado em outra UF,das mercadorias/produtos industrializados delas resultantes (LIVRO I,55,II -DEVOLUCAO)"
+    },
+    {
+     "code": "RS052302",
+     "csts": [
+      "50"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "SUSPENSÃO - Saídas para outra UF de eqüino para cobertura, participação em prova ou treinamento (LIVRO I,55,III -EQUINO)"
+    },
+    {
+     "code": "RS052303",
+     "csts": [
+      "50",
+      "53",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "SUSPENSÃO - Saídas para outra UF de álcool etílico anidro combustível e biodiesel - B100,à distribuidora de combustíveis (LIVRO I,55,V-ALCOOL ETILICO ANIDRO COMBUSTIVEL)"
+    },
+    {
+     "code": "RS052304",
+     "csts": [
+      "50"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "SUSPENSÃO - Outras operações previstas em protocolos celebrados entre as unidades da Federação interessadas (LIVRO I,55,VI - OUTRAS OP.PREV EM PROTOC CELEB)"
+    },
+    {
+     "code": "RS052305",
+     "csts": [
+      "50"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-04-13",
+     "description": "SUSPENSÃO - Código encerrado (LIVRO I,55,VII.)"
+    },
+    {
+     "code": "RS052308",
+     "csts": [
+      "50"
+     ],
+     "from": "2020-06-12",
+     "to": null,
+     "description": "SUSPENSÃO - Condicionado ao retorno da mercadoria ao estabelecimento de origem em até 60 dias, contados da data da saída (LIVRO I,55,X.MERCADORIA REMETIDA P/DEMONSTRAÇÃO)"
+    },
+    {
+     "code": "RS052309",
+     "csts": [
+      "50"
+     ],
+     "from": "2020-06-12",
+     "to": null,
+     "description": "SUSPENSÃO - Condicionado ao retorno da mercadoria ao estabelecimento de origem em até 90 dias, contados da data da saída (LIVRO I,55,XI.MERCADORIA REMETIDA P/MOSTRUÁRIO)"
+    },
+    {
+     "code": "RS052400",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-12-31",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Código encerrado (LIVRO III,54 -PREST SERVICO TRANSPORTE DE CARGAS)"
+    },
+    {
+     "code": "RS052401",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Por revendedor ambulante de outra unidade da Federação (LIVRO III,57 -REVENDEDOR AMBULANTE DE OUTRA UF)"
+    },
+    {
+     "code": "RS052402",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Por editora que destine a distribuidor fitas, discos e similares, integrantes de \"kit\" (LIVRO III,73 -MERCAD P/VENDA EM BANCAS JORNAIS/REV)"
+    },
+    {
+     "code": "RS052403",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Carne de gado bovino, ovino e bufalino e demais produtos comestíveis (AP II,S.II,I - CARNES/PROD.COMEST. BOVINO, OVINO E BUFALINO)"
+    },
+    {
+     "code": "RS052405",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2024-05-31",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Sorvetes, inclusive sanduíches de sorvetes e preparados para fabricação de sorvete em máquina (AP II,S.III,XVI -SORVETES)"
+    },
+    {
+     "code": "RS052407",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Papel para cigarro, classificação na NBM/SH-NCM 4813.10.00 (AP II,S.II,II -PAPEL PARA CIGARRO)"
+    },
+    {
+     "code": "RS052408",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Bebidas, incluindo água mineral, refrigerantes, energéticos, cerveja e chopp (AP II,S.III,I -BEBIDAS)"
+    },
+    {
+     "code": "RS052409",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Cigarros e outros produtos derivados do fumo (AP II,S.III,II -CIGARROS)"
+    },
+    {
+     "code": "RS052410",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Cimento, classificação na NBM/SH-NCM 2523 (AP II,S.III,III -CIMENTO)"
+    },
+    {
+     "code": "RS052411",
+     "csts": [
+      "53",
+      "60",
+      "61"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Combustíves e lubrificantes derivados ou não de petróleo, e outros produtos (AP II,S.III,IV -COMBUSTIVEIS)"
+    },
+    {
+     "code": "RS052412",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Pneumáticos, câmaras de ar e protetores de borracha, exceto os pneus e câmaras de bicicleta (AP II,S.III,V -PNEUMAT,CAMARAS AR,PROTET BORRACHA)"
+    },
+    {
+     "code": "RS052413",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Consulte o Apêndice II,Seção III, item VI, do RICMS, para ver a lista completa (AP II,S.III,VI -PRODUTOS FARMACEUTICOS)"
+    },
+    {
+     "code": "RS052415",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Tintas e vernizes, xadrez e pós assemelhados, e corantes (AP II,S.III,VIII -TINTAS,VERNIZES,OUTRAS(IND QUIM))"
+    },
+    {
+     "code": "RS052416",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Veículos de duas e três rodas motorizados (AP II,S.III,IX -MOTOCICLETAS)"
+    },
+    {
+     "code": "RS052417",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Veículos automotores novos (AP II,S.III,X -AUTOMOVEIS)"
+    },
+    {
+     "code": "RS052418",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Revogado (AP II,S.III,XI -DISCOS FONOG.E FITAS VIRGENS OU GRA)"
+    },
+    {
+     "code": "RS052419",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Revogado (AP II,S.III,XII -FILMES FOTOG.E CINEMATOG.E SLIDES)"
+    },
+    {
+     "code": "RS052420",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Aparelhos e lâminas de barbear, classificação na NBM/SH-NCM 8212.10.20 e 8212.20.10 (AP II,S.III,XIII-LAMINAS BARBEAR,AP.BARBEAR DESC E)"
+    },
+    {
+     "code": "RS052421",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-09-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Lâmpadas elétricas, diodos e aparelhos de iluminação (AP II,S.III,XIV-LAMPADAS ELETR., REATORES E STE)"
+    },
+    {
+     "code": "RS052422",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Revogado (AP.II,S.III,XV-PILHAS E BATERIAS ELETRICAS)"
+    },
+    {
+     "code": "RS052423",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2020-11-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Código encerrado (AP II, S.III,XVII - ENERGIA ELETRICA)"
+    },
+    {
+     "code": "RS052425",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Aparelhos celulares e cartões inteligentes (AP II,S.III,XVIII-APAR.CELULARES E COES INT.)"
+    },
+    {
+     "code": "RS052426",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Rações tipo \"pet\" para animais domésticos, classificação na NBM/SH-NCM 2309 (AP II,S.III,XIX-RACOES TIPO PET P/ANIMAIS DOM.)"
+    },
+    {
+     "code": "RS052427",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2024-10-31",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Autopeças, consulte o Apêndice II,Seção III, item XX, do RICMS, para ver a lista completa (AP II,S.III,XX-PECAS,COMP.E ACES.P/PROD.AUTOP.)"
+    },
+    {
+     "code": "RS052428",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Revogado (AP.II,S.III,XXI - COLCHOARIA)"
+    },
+    {
+     "code": "RS052429",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2026-12-31",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Perfumaria, higiene pessoal e cosméticos, lista completa no Ap.II,S.III, XXII, do RICMS (AP II,S.III,XXII - COSM.,PERF.,HIG.PESSOAL E TOUC.)"
+    },
+    {
+     "code": "RS052430",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Código encerrado (AP.II, S.II,VII - ARROZ BENEFICIADO)"
+    },
+    {
+     "code": "RS052432",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Ferramentas, consulte o Apêndice II,Seção III, item XXIV, do RICMS, para ver a lista completa (AP II,S.III,XXIV. FERRAMENTAS)"
+    },
+    {
+     "code": "RS052433",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Materiais elétricos, lista completa no Apêndice II, Seção III, item XXV, do RICMS (AP II,S.III,XXV. MATERIAIS ELETRICOS)"
+    },
+    {
+     "code": "RS052434",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Materiais de construção, acabamento, bricolagem ou adorno (AP II,S.III,XXVI. MAT.CONSTR.,ACAB.,BRIC. E ADORNO)"
+    },
+    {
+     "code": "RS052435",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Pneus novos e câmaras de ar, de borracha, dos tipos utilizados em bicicletas (AP II,S.III, XXVII. BICICLETAS)"
+    },
+    {
+     "code": "RS052436",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Revogado (AP.II,S.III,XXVIII. BRINQUEDOS)"
+    },
+    {
+     "code": "RS052437",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-09-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Materiais de limpeza, lista completa no Apêndice II,Seção III, item XXIX, do RICMS (AP II,S.III,XXIX.MATERIAIS DE LIMPEZA)"
+    },
+    {
+     "code": "RS052438",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-09-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Produtos alimentícios, lista completa no Apêndice II,Seção III, item XXX, do RICMS (AP II,S.III.XXX.PRODUTOS ALIMENTICIOS)"
+    },
+    {
+     "code": "RS052439",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Artefatos de uso doméstico, lista completa no Apêndice II,Seção III, item XXXI, do RICMS (AP II,S.III.XXXI.ARTEF.DE USO DOMESTICO)"
+    },
+    {
+     "code": "RS052440",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Bebidas alcoólicas quentes, lista completa no Apêndice II,Seção III, item XXXII, do RICMS (AP II,S.III,XXXII.BEBIDAS QUENTES)"
+    },
+    {
+     "code": "RS052441",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Artigos de papelaria, lista completa no Apêndice II,Seção III, item XXXIII, do RICMS (AP II, S. III, XXXIII - ARTIGOS DE PAPELARIA)"
+    },
+    {
+     "code": "RS052442",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Revogado (AP. II, S. III, XXXIV - INSTRUMENTOS MUSICAIS)"
+    },
+    {
+     "code": "RS052443",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Produtos eletrônicos, eletroeletrônicos e eletrodomésticos (AP II, S. III, XXXV - PROD.ELETRONICOS/ELETROELET)"
+    },
+    {
+     "code": "RS052444",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-06-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Ferramentas pneumáticas, balanças de uso doméstico e motosserras portáteis de corrente (AP II,S.III,XXXVI.MQ.AP.MEC.ELTR.ELETROMEC.AUT.)"
+    },
+    {
+     "code": "RS052445",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Revogado (AP. II, S. III, XXXVII.ARTIGOS PARA BEBE)"
+    },
+    {
+     "code": "RS052446",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2016-10-01",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Revogado (AP. II, S. III, XXXVIII.ARTIGOS DE VESTUARIO)"
+    },
+    {
+     "code": "RS052447",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Aves inteiras, carnes e demais produtos comestíveis resultantes do abate de aves e de suínos (AP II,S.II,III. CARNES/PROD.COMEST. AVES E SUINOS)"
+    },
+    {
+     "code": "RS052448",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Telhas metálicas e artefatos para apetrechamento de construções, de plástico (AP II,S.II,IV. TELHAS E ARTEFATOS P/ CONSTRUCOES)"
+    },
+    {
+     "code": "RS052449",
+     "csts": [
+      "60"
+     ],
+     "from": "2016-10-01",
+     "to": "2022-09-30",
+     "description": "ICMS JÁ RECOLHIDO POR ST - Biscoitos e bolachas dos tipos \"maisena\", \"maria\", \"cream cracker\" e \"água e sal\" (AP II,S.II,V. BISCOITOS E BOLACHAS)"
+    },
+    {
+     "code": "RS052450",
+     "csts": [
+      "60"
+     ],
+     "from": "2025-02-01",
+     "to": null,
+     "description": "ICMS JÁ RECOLHIDO POR ST - Naftas, exceto a Nafta petroquímica (AP II,S.III,V-A, NAFTAS,EXCETO A PETROQUÍMICA)"
+    },
+    {
+     "code": "RS052901",
+     "csts": [
+      "10",
+      "20",
+      "50",
+      "51",
+      "60",
+      "70",
+      "90"
+     ],
+     "from": "2020-08-24",
+     "to": null,
+     "description": "OUTRAS - Saídas desoneradas por decisões judiciais (LIVRO II, ART. 12 - DECISÕES JUDICIAIS)"
+    },
+    {
+     "code": "RS052902",
+     "csts": [
+      "90"
+     ],
+     "from": "2020-08-24",
+     "to": null,
+     "description": "OUTRAS - Operações de transferência e das destinadas à comercialização pela Petrobras por navegação de cabotagem (IN45 - T.I - CAP. XXVIII - 2.2 - OPERAÇÕES ESPECÍFICAS DA PETROBRAS)"
+    },
+    {
+     "code": "RS052904",
+     "csts": [
+      "90"
+     ],
+     "from": "2020-11-27",
+     "to": null,
+     "description": "OUTRAS - Operações de remessa p/armazenagem e moviment.de petróleo/deriv./gás natural, dutoviário, PETROBRAS/TRANSPETRO (AJUSTE SINIEF 13-2017 - OPERAÇÕES ESPECÍFICAS DA PETROBRAS E TRANSPETRO)"
+    },
+    {
+     "code": "RS052905",
+     "csts": [
+      "02",
+      "15",
+      "53",
+      "61"
+     ],
+     "from": "2023-05-01",
+     "to": null,
+     "description": "OUTRAS - Regime de tributação monofásica, Conv.199/2022 (a partir de mai/2023) e Conv.11/2023 (a partir de jul/2023). (ICMS MONOFÁSICO SOBRE COMBUSTÍVEIS)"
+    },
+    {
+     "code": "RS052999",
+     "csts": [
+      "10",
+      "15",
+      "50",
+      "51",
+      "53",
+      "60",
+      "61",
+      "90"
+     ],
+     "from": "2016-10-01",
+     "to": null,
+     "description": "OUTRAS - Utilizar apenas quando não houver código correspondente disponibilizado na Tabela 5.2 do Sped Fiscal (Anexo V.B - OUTRAS)"
+    }
+   ]
   }
  ]
 }

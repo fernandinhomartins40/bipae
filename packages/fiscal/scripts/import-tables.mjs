@@ -24,6 +24,7 @@ import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences } from './s
 import { pdfItems, pdfLines } from './pdf-text.mjs';
 import { parseCbenefPr } from './cbenef-pr.mjs';
 import { parseCbenefSc } from './cbenef-sc.mjs';
+import { parseCbenefRs } from './cbenef-rs.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
@@ -699,6 +700,13 @@ tables['cbenef.json'] = {
       source: 'cbenefSc',
       url: manifest.cbenefSc.page,
       codes: parseCbenefSc(await pdfItems(readFileSync(join(sourcesDir, manifest.cbenefSc.file)))),
+    },
+    {
+      uf: 'RS',
+      act: 'Tabela cBenef x CST da Receita Estadual do RS',
+      source: 'cbenefRs',
+      url: manifest.cbenefRs.page,
+      codes: parseCbenefRs(readXlsx(join(sourcesDir, manifest.cbenefRs.file))),
     },
   ],
 };

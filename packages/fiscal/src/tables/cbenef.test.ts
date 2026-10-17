@@ -85,3 +85,18 @@ describe('cBenef de Santa Catarina (Tabela 5.2A)', () => {
     expect(isencoes.every((c) => c.csts.length > 0)).toBe(true);
   });
 });
+
+describe('cBenef do Rio Grande do Sul (Tabela cBenef x CST)', () => {
+  it('a planilha inteira, com a descrição legível e a referência legal', () => {
+    expect(CBENEF_UFS).toContain('RS');
+    const r = cbenefLookup('RS', 'RS051001', '2026-10-17', '40');
+    expect(r).toMatchObject({ covered: true, valid: true, cstOk: true });
+    expect(r.entry!.description).toMatch(/^ISENÇÃO - Saídas de reprodutores ou matrizes/);
+    expect(r.entry!.from).toBe('2016-10-01');
+  });
+
+  it('a data de fim vem da planilha: insumos agropecuários até 31/12/2027', () => {
+    expect(cbenefLookup('RS', 'RS051007', '2027-12-31').valid).toBe(true);
+    expect(cbenefLookup('RS', 'RS051007', '2028-01-01').valid).toBe(false);
+  });
+});
