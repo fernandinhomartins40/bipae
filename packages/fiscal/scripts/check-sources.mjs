@@ -24,6 +24,7 @@ import { parseScAnexo1A } from './st-sc.mjs';
 import { parseBaAnexo1 } from './st-ba.mjs';
 import { parseGoApendiceII } from './st-go.mjs';
 import { parseRjAnexoI } from './st-rj.mjs';
+import { parseEsPortaria16R } from './st-es.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -527,6 +528,41 @@ async function checkRj() {
   };
 }
 
+/** Espírito Santo: a Portaria 16-R atualizada de hoje, lida como na geração. */
+async function checkEs() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (html) =>
+    parseEsPortaria16R(html, known).flatMap((s) =>
+      s.items.map((i) => [s.roman, i.item, i.cest, i.ncms.join(' '), i.mva ?? '']),
+    );
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stEsPortaria16R.file))).toString('latin1'),
+  );
+  const title = 'ST no Espírito Santo (Portaria 16-R/2019 atualizada)';
+  let now;
+  try {
+    now = rowsOf((await download(manifest.stEsPortaria16R.page)).body.toString('latin1'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stEsPortaria16R.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stEsPortaria16R.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -556,6 +592,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST na Bahia', manifest.stBaAnexo1.page, checkBa),
     await safe('ST em Goiás', manifest.stGoAnexoVIII.page, checkGo),
     await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
+    await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

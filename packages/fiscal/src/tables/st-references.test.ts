@@ -394,3 +394,32 @@ describe('Rio de Janeiro: Anexo I do Livro II do RICMS/RJ (F3-26.c.RJ)', () => {
     expect(outros).toMatchObject({ ncms: ['33', '34'], mva: '49.39' });
   });
 });
+
+describe('Espírito Santo: Portaria 16-R/2019 atualizada (F3-26.d.ES)', () => {
+  const es = ST_REFERENCES.filter((r) => r.uf === 'ES');
+
+  it('a redação atual (preta) e não a anterior (verde): limpeza com 70% e 40,88%', () => {
+    const itens = es.flatMap((r) => r.items);
+    expect(itens.length).toBeGreaterThan(300);
+    expect(itens.find((i) => i.cest === '1100100')).toMatchObject({ mva: '70.00' });
+    expect(itens.find((i) => i.cest === '1100500')).toMatchObject({ mva: '40.88' });
+    // A seção de óleos aparece uma vez só (a redação original de 2020 fica de fora).
+    expect(es.filter((r) => r.segment === 'VII')).toHaveLength(1);
+  });
+
+  it('já traz a Portaria 30-R/2026: produtos de cereais por expansão com 60%', () => {
+    const cereal = stReferencesFor('ES', '19041000', '2026-10-17').find(
+      (m) => m.cest === '1703000',
+    );
+    expect(cereal).toMatchObject({ mva: '60.00' });
+  });
+
+  it('itens revogados viram "saiu da ST" com a data da portaria', () => {
+    const es2 = ST_SEGMENTS.find((s) => s.uf === 'ES')!;
+    const bebidas = es2.annexes.find((a) => a.annex === 'II')!;
+    expect(bebidas.cests.find((c) => c.cest === '0300400')).toMatchObject({
+      excludedFrom: '2022-09-02',
+      excludedBy: 'Portaria 81-R',
+    });
+  });
+});

@@ -28,6 +28,7 @@ import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
 import { baStReferences, parseBaAnexo1 } from './st-ba.mjs';
 import { goStReferences, parseGoApendiceII } from './st-go.mjs';
 import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
+import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { docText } from './doc-text.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
@@ -591,6 +592,14 @@ async function importStReferences(cest) {
     ),
     { url: manifest.stRjAnexoI.page },
   );
+  // Espírito Santo (F3-26.d.ES): Portaria 16-R/2019 no texto atualizado da SEFAZ-ES.
+  const es = esStReferences(
+    parseEsPortaria16R(
+      gunzipSync(readFileSync(join(sourcesDir, manifest.stEsPortaria16R.file))).toString('latin1'),
+      known,
+    ),
+    { url: manifest.stEsPortaria16R.page },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -614,6 +623,7 @@ async function importStReferences(cest) {
       ba.segment,
       go.segment,
       rj.segment,
+      es.segment,
     ],
     references: [
       {
@@ -635,6 +645,7 @@ async function importStReferences(cest) {
       ...ba.references,
       ...go.references,
       ...rj.references,
+      ...es.references,
     ],
   };
 }

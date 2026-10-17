@@ -246,6 +246,10 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Saíram da ST em 01/03/2018 (Decreto 9.108):** autopeças, ração pet, materiais de construção e materiais elétricos.
   - **Venda porta a porta (marketing direto):** o mesmo NCM pode continuar na ST por esse sistema, e a tela mostra isso.
   - **Conferência:** se mais de 10% dos CEST em vigor ficarem fora do Convênio ICMS 142/18, a geração para.
+- **Atualização de 17/10/2026 (F3-26.d.ES, Espírito Santo, fonte oficial):** Portaria SEFAZ 16-R/2019 no texto atualizado da Legislação On-Line da SEFAZ-ES, até a Portaria 81-R/2026. A lista da página "Mercadorias sujeitas a ST" é de 24/04/2024 e está defasada, por isso não foi usada. O texto está guardado em `packages/fiscal/sources` e é lido por gerador:
+  - **Itens:** 352 linhas com a MVA original, em 22 seções. Já inclui os produtos de cereais e os salgadinhos da Portaria 30-R/2026.
+  - **Redação anterior:** a página a pinta de verde, e essas linhas ficam de fora. Trechos que começam com "Redação Original, efeitos até ..." também ficam de fora, mesmo sem cor.
+  - **Revogados:** itens revogados (verdes, logo depois da nota "revogado pela Portaria ..., efeitos a partir de ...") viram "saiu da ST", com a data.
 - **Atualização de 17/10/2026 (F3-26.c.RJ, Rio de Janeiro, fonte oficial):** Anexo I do Livro II do RICMS/RJ (Decreto 27.427/2000), no arquivo .doc que a SEFAZ-RJ publica, na redação do Decreto 47.864/2021. Está guardado em `packages/fiscal/sources` e é lido por gerador com o `word-extractor`, sem depender de programa instalado:
   - **Itens:** 702 linhas com a MVA original, em 25 segmentos.
   - **Água mineral e refrigerante:** a MVA muda pela embalagem e por quem vende (industrial ou importador, ou atacadista e distribuidor). Cada combinação vira uma linha com o nome.

@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.d.ES Substituição tributária no Espírito Santo] — 17/10/2026
+
+### Adicionado
+- **Espírito Santo na regra de ICMS:** 352 linhas com a MVA original, da Portaria SEFAZ 16-R/2019 no texto atualizado até a Portaria 81-R/2026.
+  - **Novidade de 2026:** inclui os produtos de cereais e os salgadinhos.
+  - **O que saiu da ST:** a tela avisa os itens revogados, com a data e a portaria.
+- **Monitor semanal das fontes:** passou a conferir a portaria do ES.
+
 ## [F3-26.c.RJ Substituição tributária no Rio de Janeiro] — 17/10/2026
 
 ### Adicionado

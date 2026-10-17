@@ -369,5 +369,14 @@
   "publishedAt": "2023-11-08",
   "downloadedAt": "2026-10-17",
   "sha256": "6bbd437350e3eec4db2bfd05dc445ce26da64415390f939d682206e8b66cd508"
+ },
+ "stEsPortaria16R": {
+  "file": "SEFAZ-ES_Portaria_16-R-2019_atualizada_2026-10-17.html.gz",
+  "title": "Portaria SEFAZ 16-R/2019 (ES), texto atualizado até a Portaria 81-R/2026: relação de produtos em substituição tributária e MVA",
+  "publisher": "Secretaria de Estado da Fazenda do Espírito Santo",
+  "page": "https://www3.sefaz.es.gov.br/legislacao/doc/PORTARIAS/2019/Port16-R%20-%20ATUALIZADA.htm",
+  "publishedAt": "2026-10-02",
+  "downloadedAt": "2026-10-17",
+  "sha256": "d48ede26b0d8ea6b2a6a7749fb0b0e92c30d2f2842530f5b5b9c80d82c2a7de1"
  }
 }
