@@ -186,6 +186,16 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Como o Bipaê usa:** a regra de ICMS da empresa mostra a MVA oficial pelo NCM, e o botão "Usar" preenche a MVA e a fonte. A empresa confere a descrição do CEST (limites de embalagem e exceções) e confirma.
   - **O motor não decide sozinho se há ST:** só calcula com a regra que a empresa salvou.
   - **Em aberto:** os outros segmentos de SP (bebidas, higiene e limpeza, que mudaram em 2026) e as demais UFs, nas tarefas F3-26.b a F3-26.d.
+- **Atualização de 16/10/2026 (F3-26.b, fonte oficial):** o que está e o que saiu da ST em SP vem do texto consolidado da Portaria CAT 68/2019, guardado e lido por gerador, por anexo e por item:
+  - **saíram da ST em 01/01/2026 (Portaria SRE 64/2025):** medicamentos, bebidas alcoólicas, lâmpadas e artefatos de uso doméstico;
+  - **saíram em 01/04/2026 (Portaria SRE 94/2025):** perfumaria e higiene pessoal;
+  - **saíram em 01/07/2026 (Portaria SRE 9/2026):** papelaria e as águas do Anexo III;
+  - **saíram em 01/08/2026 (Portaria SRE 20/2026):** produtos de limpeza e ração;
+  - **saíram em 01/10/2026 (Portaria SRE 34/2026):** pneus, tintas, autopeças, ferramentas e materiais elétricos;
+  - **continuam na ST:** fumo, cimento, cerveja, chope e refrigerante (Anexo III), veículos, alimentícios (com 39 itens já fora), construção e eletrônicos (em parte).
+  - **Conferência:** nenhum CEST com IVA-ST na Portaria SRE 12/2026 aparece como fora da ST. As duas portarias concordam.
+  - **Regra no Bipaê:** a regra de ICMS avisa quando o NCM saiu da ST, com a data e a portaria.
+  - **Ainda falta (F3-26.e):** a base de cálculo de cerveja, chope e refrigerante depois que a Portaria SRE 9/2026 revogou os valores da Portaria SRE 89/2025.
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração
 

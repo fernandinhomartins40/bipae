@@ -70,3 +70,75 @@ export function stReferencesFor(uf: string, ncm: string, date: string): StRefere
     Math.max(...m.ncms.filter((n) => code.startsWith(n)).map((n) => n.length));
   return found.sort((a, b) => depth(b) - depth(a));
 }
+
+/** Um anexo (segmento) de ST da UF, com os CEST e o que saiu da ST. */
+export interface StSegment {
+  annex: string;
+  name: string;
+  cests: { cest: string; excludedFrom?: string | null; excludedBy?: string | null }[];
+  excludedFrom?: string;
+  excludedBy?: string;
+}
+
+export interface StUfSegments {
+  uf: string;
+  act: string;
+  source: string;
+  url: string;
+  annexes: StSegment[];
+}
+
+export const ST_SEGMENTS: readonly StUfSegments[] = (data as { segments: StUfSegments[] }).segments;
+
+export interface StStatus {
+  uf: string;
+  annex: string;
+  segmentName: string;
+  cest: string;
+  /** Está na ST na data? */
+  inSt: boolean;
+  /** Quando saiu da ST (o anexo inteiro ou só o item) e por qual ato. */
+  excludedFrom: string | null;
+  excludedBy: string | null;
+  act: string;
+  url: string;
+}
+
+/**
+ * Situação do NCM na ST da UF, pelos CEST dos anexos que a SEFAZ publica (o NCM de cada CEST vem
+ * do Convênio ICMS 142/18). Vazio quando a UF não tem a lista no Bipaê ou o NCM não aparece nela.
+ */
+export function stStatusFor(
+  uf: string,
+  ncm: string,
+  date: string,
+  cestNcms: (cest: string) => readonly string[],
+): StStatus[] {
+  const code = ncm.replace(/\D/g, '');
+  const result: StStatus[] = [];
+  for (const block of ST_SEGMENTS) {
+    if (block.uf !== uf.toUpperCase()) continue;
+    for (const annex of block.annexes) {
+      for (const item of annex.cests) {
+        if (!cestNcms(item.cest).some((n) => code.startsWith(n))) continue;
+        const from = annex.excludedFrom ?? item.excludedFrom ?? null;
+        const by = annex.excludedBy ?? item.excludedBy ?? null;
+        result.push({
+          uf: block.uf,
+          annex: annex.annex,
+          segmentName: annex.name,
+          cest: item.cest,
+          inSt: !from || date < from,
+          excludedFrom: from,
+          excludedBy: by,
+          act: block.act,
+          url: block.url,
+        });
+      }
+    }
+  }
+  return result;
+}
+
+/** UFs que já têm a lista de mercadorias em ST no Bipaê. */
+export const ST_SEGMENT_UFS: readonly string[] = ST_SEGMENTS.map((s) => s.uf);

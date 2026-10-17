@@ -407,6 +407,16 @@ function PortalReference({ uf }: { uf: string }) {
 }
 
 const cestText = (cest: string) => cest.replace(/^(\d{2})(\d{3})(\d{2})$/, '$1.$2.$3');
+const day = (iso: string | null) => (iso ? iso.split('-').reverse().join('/') : '');
+
+interface StStatus {
+  annex: string;
+  segmentName: string;
+  cest: string;
+  inSt: boolean;
+  excludedFrom: string | null;
+  excludedBy: string | null;
+}
 
 interface StMatch {
   item: string;
@@ -439,23 +449,42 @@ function StSuggestion({
   const found = useQuery({
     queryKey: ['st-references', uf, code, date],
     queryFn: () =>
-      api.get<{ uf: string; covered: boolean; items: StMatch[] }>(
-        `/fiscal/st-references?uf=${uf}&ncm=${code}${date ? `&date=${date}` : ''}`,
-      ),
+      api.get<{
+        uf: string;
+        covered: boolean;
+        items: StMatch[];
+        listed: boolean;
+        status: StStatus[];
+      }>(`/fiscal/st-references?uf=${uf}&ncm=${code}${date ? `&date=${date}` : ''}`),
     enabled: code.length >= 4,
   });
   if (code.length < 4 || !found.data) return null;
-  if (!found.data.covered) {
+  const { items, status, listed, covered } = found.data;
+  if (items.length === 0) {
+    const inSt = status.filter((s) => s.inSt);
+    const out = status.filter((s) => !s.inSt);
+    if (status.length > 0 && inSt.length === 0) {
+      const first = out[0]!;
+      return (
+        <Alert tone="warning" title={`Saiu da substituição tributária em ${uf}`}>
+          {`${first.segmentName} (CEST ${cestText(first.cest)}) saiu da ST em ${day(first.excludedFrom)}, pela ${first.excludedBy ?? 'legislação da SEFAZ'}. O ICMS deste produto passa a ser cobrado normalmente, sem ST.`}
+        </Alert>
+      );
+    }
+    if (inSt.length > 0) {
+      return (
+        <p className="text-sm text-muted">
+          {`Este NCM está na ST em ${uf} (Anexo ${inSt[0]!.annex}: ${inSt[0]!.segmentName}), mas a MVA dele não está nas portarias que o Bipaê tem. Confira na legislação da SEFAZ.`}
+        </p>
+      );
+    }
     return (
       <p className="text-sm text-muted">
-        A tabela oficial de MVA de {uf} ainda não está no Bipaê: confira na legislação da SEFAZ.
-      </p>
-    );
-  }
-  if (found.data.items.length === 0) {
-    return (
-      <p className="text-sm text-muted">
-        Na tabela oficial de {uf} que o Bipaê tem, este NCM não aparece com MVA nesta data.
+        {listed
+          ? `Este NCM não está na lista de mercadorias em ST de ${uf}.`
+          : covered
+            ? `Na tabela oficial de ${uf} que o Bipaê tem, este NCM não aparece com MVA nesta data.`
+            : `A tabela oficial de ST de ${uf} ainda não está no Bipaê: confira na legislação da SEFAZ.`}
       </p>
     );
   }
@@ -463,7 +492,7 @@ function StSuggestion({
     <section className="rounded-ui border border-border p-3 text-sm" aria-label="MVA oficial">
       <p className="mb-2 font-semibold">MVA publicada pela SEFAZ de {uf} para este NCM</p>
       <ul className="flex flex-col gap-2">
-        {found.data.items.slice(0, 5).map((m) => (
+        {items.slice(0, 5).map((m) => (
           <li key={m.cest} className="flex flex-wrap items-center justify-between gap-2">
             <span>
               <span className="font-semibold">IVA-ST {m.mva.replace('.', ',')}%</span> · CEST{' '}
@@ -476,8 +505,7 @@ function StSuggestion({
         ))}
       </ul>
       <p className="mt-2 text-muted">
-        {found.data.items[0]!.act}. {found.data.items[0]!.note} Confira se o produto é o da
-        descrição antes de usar.
+        {items[0]!.act}. {items[0]!.note} Confira se o produto é o da descrição antes de usar.
       </p>
     </section>
   );

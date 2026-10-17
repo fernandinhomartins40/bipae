@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-26.b SP: o que está e o que saiu da substituição tributária] — 16/10/2026
+
+### Adicionado
+- **Aviso quando o produto saiu da ST:** a regra de ICMS avisa quando o NCM deixou a substituição tributária em São Paulo, com a data e a portaria. Exemplos:
+  - produtos de limpeza saíram em 01/08/2026 (Portaria SRE 20/2026);
+  - higiene pessoal saiu em 01/04/2026 (Portaria SRE 94/2025);
+  - bebidas alcoólicas saíram em 01/01/2026 (Portaria SRE 64/2025).
+- **Lista de SP gerada do texto oficial:** vem do texto consolidado da Portaria CAT 68/2019, da SEFAZ-SP, por anexo e por item. Ela também pega os itens que saíram dentro de anexos que continuam valendo, como as águas do Anexo III em 01/07/2026.
+- **Produto na ST sem MVA publicada nas portarias que o Bipaê tem:** a tela diz isso, em vez de inventar um valor.
+
 ## [F3-26.a Substituição tributária por UF: base e SP alimentícios] — 16/10/2026
 
 ### Adicionado

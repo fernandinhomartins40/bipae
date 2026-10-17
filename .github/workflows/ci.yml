@@ -243,12 +243,23 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: tauri-driver
         run: cargo install tauri-driver --locked
-      - name: msedgedriver na versão do WebView2 (Windows)
+      # O driver precisa ser da versão do WebView2 Runtime (que o app usa), não da do navegador
+      # Edge: os dois se atualizam separados na máquina do GitHub.
+      - name: msedgedriver na versão do WebView2 Runtime (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          cargo install --git https://github.com/chippers/msedgedriver-tool --locked
-          msedgedriver-tool
+          $key = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}'
+          $version = (Get-ItemProperty -Path $key -Name pv).pv
+          Write-Output "WebView2 Runtime: $version"
+          Write-Output "::notice title=WebView2 Runtime::$version"
+          $zip = "edgedriver.zip"
+          try {
+            Invoke-WebRequest -Uri "https://msedgedriver.microsoft.com/$version/edgedriver_win64.zip" -OutFile $zip
+          } catch {
+            Invoke-WebRequest -Uri "https://msedgedriver.azureedge.net/$version/edgedriver_win64.zip" -OutFile $zip
+          }
+          Expand-Archive $zip -DestinationPath . -Force
           $dir = (Get-Location).Path
           echo "$dir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: App em modo de teste (sem instalador)
@@ -266,18 +277,6 @@ jobs:
           nohup pnpm --filter @bipae/api exec tsx src/main.ts > api.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:3333/v1/health && exit 0; sleep 2; done
           cat api.log; exit 1
-      - name: O app abre e fica aberto? (diagnóstico, Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        continue-on-error: true
-        run: |
-          $exe = "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop.exe"
-          $p = Start-Process -FilePath $exe -PassThru -RedirectStandardOutput app-out.log -RedirectStandardError app-err.log
-          Start-Sleep -Seconds 15
-          $vivo = -not $p.HasExited
-          $saida = (Get-Content app-out.log, app-err.log -ErrorAction SilentlyContinue | Select-Object -Last 30) -join '%0A'
-          if ($vivo) { Stop-Process -Id $p.Id -Force }
-          Write-Output "::warning title=App no Windows::aberto depois de 15 s: $vivo; código: $($p.ExitCode)%0A$saida"
       - name: Venda dentro do app (Windows)
         if: runner.os == 'Windows'
         shell: bash

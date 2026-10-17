@@ -28,8 +28,26 @@ describe('referências de ST por UF (F3-26)', () => {
         }),
       ]),
     );
+    expect(sp.status).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ cest: '1701600', annex: 'XVI', inSt: true }),
+      ]),
+    );
+    // Limpeza saiu da ST em SP em 01/08/2026.
+    const limpeza = (
+      await admin.get('/fiscal/st-references?uf=SP&ncm=28289011&date=2026-10-16')
+    ).json();
+    expect(limpeza.status).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          inSt: false,
+          excludedFrom: '2026-08-01',
+          excludedBy: 'Portaria SRE 20/2026',
+        }),
+      ]),
+    );
     const outra = (await admin.get('/fiscal/st-references?uf=PR&ncm=04011010')).json();
-    expect(outra).toEqual({ uf: 'PR', covered: false, items: [] });
+    expect(outra).toEqual({ uf: 'PR', covered: false, items: [], listed: false, status: [] });
     expect((await admin.get('/fiscal/st-references?uf=SP&ncm=abc')).statusCode).toBe(400);
     expect((await api(t.app, {}).get('/fiscal/st-references?uf=SP&ncm=0401')).statusCode).toBe(401);
   });

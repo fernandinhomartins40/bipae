@@ -18,7 +18,10 @@ export function parseSpAlimenticios(html, knownCest) {
   const items = [];
   for (const row of html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)) {
     const cells = [...row[1].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((c) =>
-      htmlText(c[1]).replace(/\u200b/g, '').replace(/\n/g, ' ').trim(),
+      htmlText(c[1])
+        .replace(/\u200b/g, '')
+        .replace(/\n/g, ' ')
+        .trim(),
     );
     if (cells.length !== 5 || !/^\d{2}\.\d{3}\.\d{2}$/.test(cells[1])) continue;
     const [item, cestText, ncmText, description, iva] = cells;

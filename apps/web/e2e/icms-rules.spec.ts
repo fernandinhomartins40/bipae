@@ -107,4 +107,11 @@ test('MVA oficial de SP sugerida pelo NCM e usada com um clique (F3-26)', async 
   await expect(page.getByLabel('Fonte')).toHaveValue(
     /Portaria SRE 12\/2026.*CEST 17\.016\.00.*23,06%/,
   );
+
+  // Água sanitária: os produtos de limpeza saíram da ST em SP (F3-26.b).
+  await page.getByLabel('NCM', { exact: true }).fill('2828.90.11');
+  await expect(page.getByText('Saiu da substituição tributária em SP')).toBeVisible();
+  const aviso = page.getByText(/Produtos de limpeza \(CEST 11\.001\.00\) saiu da ST/);
+  await expect(aviso).toContainText('01/08/2026');
+  await expect(aviso).toContainText('Portaria SRE 20/2026');
 });

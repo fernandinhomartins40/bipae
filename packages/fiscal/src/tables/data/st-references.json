@@ -1,4 +1,2685 @@
 {
+ "segments": [
+  {
+   "uf": "SP",
+   "act": "Portaria CAT 68/2019 (texto consolidado)",
+   "source": "stSpCat68",
+   "url": "https://legislacao.fazenda.sp.gov.br/Paginas/Portaria-CAT-68-de-2019.aspx",
+   "annexes": [
+    {
+     "annex": "I",
+     "name": "Fumo ou seus sucedâneos manufaturados",
+     "cests": [
+      {
+       "cest": "0400100"
+      },
+      {
+       "cest": "0400200"
+      }
+     ]
+    },
+    {
+     "annex": "II",
+     "name": "Cimento",
+     "cests": [
+      {
+       "cest": "0500100"
+      }
+     ]
+    },
+    {
+     "annex": "III",
+     "name": "Cerveja, chope, refrigerante, água e outras bebidas",
+     "cests": [
+      {
+       "cest": "0302400"
+      },
+      {
+       "cest": "0302500"
+      },
+      {
+       "cest": "0300300",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300301",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300500",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300501",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300502",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300503",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300504",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300505",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300600",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300700",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0300800",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "0301000"
+      },
+      {
+       "cest": "0301101"
+      },
+      {
+       "cest": "0301001"
+      },
+      {
+       "cest": "0301002"
+      },
+      {
+       "cest": "0301100"
+      },
+      {
+       "cest": "0301200"
+      },
+      {
+       "cest": "0301201"
+      },
+      {
+       "cest": "0301300"
+      },
+      {
+       "cest": "0301301"
+      },
+      {
+       "cest": "0301302"
+      },
+      {
+       "cest": "0301500"
+      },
+      {
+       "cest": "0302100"
+      },
+      {
+       "cest": "0302101"
+      },
+      {
+       "cest": "0302102"
+      },
+      {
+       "cest": "0302103"
+      },
+      {
+       "cest": "0302104"
+      },
+      {
+       "cest": "0302105"
+      },
+      {
+       "cest": "0302106"
+      },
+      {
+       "cest": "0302200"
+      },
+      {
+       "cest": "0302201"
+      },
+      {
+       "cest": "0302202"
+      },
+      {
+       "cest": "0302203"
+      },
+      {
+       "cest": "0302204"
+      },
+      {
+       "cest": "0302205"
+      },
+      {
+       "cest": "0302206"
+      },
+      {
+       "cest": "0302300"
+      },
+      {
+       "cest": "2300100"
+      },
+      {
+       "cest": "2300200"
+      }
+     ]
+    },
+    {
+     "annex": "V",
+     "name": "Veículo novo de duas e três rodas motorizado",
+     "cests": [
+      {
+       "cest": "2600100"
+      },
+      {
+       "cest": "2600101"
+      }
+     ]
+    },
+    {
+     "annex": "VI",
+     "name": "Veículo automotor novo",
+     "cests": [
+      {
+       "cest": "2500100"
+      },
+      {
+       "cest": "2500200"
+      },
+      {
+       "cest": "2500300"
+      },
+      {
+       "cest": "2500400"
+      },
+      {
+       "cest": "2500500"
+      },
+      {
+       "cest": "2500600"
+      },
+      {
+       "cest": "2500700"
+      },
+      {
+       "cest": "2500800"
+      },
+      {
+       "cest": "2500900"
+      },
+      {
+       "cest": "2501000"
+      },
+      {
+       "cest": "2501100"
+      },
+      {
+       "cest": "2501200"
+      },
+      {
+       "cest": "2501300"
+      },
+      {
+       "cest": "2501400"
+      },
+      {
+       "cest": "2501500"
+      },
+      {
+       "cest": "2501600"
+      },
+      {
+       "cest": "2501700"
+      },
+      {
+       "cest": "2501800"
+      },
+      {
+       "cest": "2501900"
+      },
+      {
+       "cest": "2502000"
+      },
+      {
+       "cest": "2502100"
+      },
+      {
+       "cest": "2502200"
+      },
+      {
+       "cest": "2502300"
+      },
+      {
+       "cest": "2502400"
+      },
+      {
+       "cest": "2502500"
+      },
+      {
+       "cest": "2502600"
+      },
+      {
+       "cest": "2502700"
+      },
+      {
+       "cest": "2502800"
+      },
+      {
+       "cest": "2502900"
+      },
+      {
+       "cest": "2503000"
+      },
+      {
+       "cest": "2503100"
+      },
+      {
+       "cest": "2503200"
+      }
+     ]
+    },
+    {
+     "annex": "VII",
+     "name": "Pneumáticos, câmaras de ar e protetores de borracha",
+     "cests": [
+      {
+       "cest": "1600100"
+      },
+      {
+       "cest": "1600200"
+      },
+      {
+       "cest": "1600300"
+      },
+      {
+       "cest": "1600400"
+      },
+      {
+       "cest": "1600500"
+      },
+      {
+       "cest": "1600700"
+      },
+      {
+       "cest": "1600701"
+      },
+      {
+       "cest": "1600800"
+      },
+      {
+       "cest": "1600900"
+      }
+     ],
+     "excludedFrom": "2026-10-01",
+     "excludedBy": "Portaria SRE 34/2026"
+    },
+    {
+     "annex": "VIII",
+     "name": "Tintas, vernizes e outros produtos da indústria química",
+     "cests": [
+      {
+       "cest": "2400100"
+      },
+      {
+       "cest": "2400200"
+      },
+      {
+       "cest": "2400300"
+      }
+     ],
+     "excludedFrom": "2026-10-01",
+     "excludedBy": "Portaria SRE 34/2026"
+    },
+    {
+     "annex": "IX",
+     "name": "Medicamentos",
+     "cests": [
+      {
+       "cest": "1300100"
+      },
+      {
+       "cest": "1300101"
+      },
+      {
+       "cest": "1300102"
+      },
+      {
+       "cest": "1300200"
+      },
+      {
+       "cest": "1300201"
+      },
+      {
+       "cest": "1300202"
+      },
+      {
+       "cest": "1300300"
+      },
+      {
+       "cest": "1300301"
+      },
+      {
+       "cest": "1300302"
+      },
+      {
+       "cest": "1300400"
+      },
+      {
+       "cest": "1300401"
+      },
+      {
+       "cest": "1300402"
+      },
+      {
+       "cest": "1300500"
+      },
+      {
+       "cest": "1300501"
+      },
+      {
+       "cest": "1300502"
+      },
+      {
+       "cest": "1300503"
+      },
+      {
+       "cest": "1300504"
+      },
+      {
+       "cest": "1300505"
+      },
+      {
+       "cest": "1300600"
+      },
+      {
+       "cest": "1300800"
+      },
+      {
+       "cest": "1300801"
+      },
+      {
+       "cest": "1300900"
+      },
+      {
+       "cest": "1300901"
+      },
+      {
+       "cest": "1301000"
+      },
+      {
+       "cest": "1301001"
+      },
+      {
+       "cest": "1301100"
+      },
+      {
+       "cest": "1301200"
+      },
+      {
+       "cest": "1301400"
+      },
+      {
+       "cest": "1301500"
+      },
+      {
+       "cest": "1301600"
+      }
+     ],
+     "excludedFrom": "2026-01-01",
+     "excludedBy": "Portaria SRE 64/2025"
+    },
+    {
+     "annex": "X",
+     "name": "Bebidas alcoólicas",
+     "cests": [
+      {
+       "cest": "0200100"
+      },
+      {
+       "cest": "0200200"
+      },
+      {
+       "cest": "0200300"
+      },
+      {
+       "cest": "0200400"
+      },
+      {
+       "cest": "0200500"
+      },
+      {
+       "cest": "0200600"
+      },
+      {
+       "cest": "0200700"
+      },
+      {
+       "cest": "0200800"
+      },
+      {
+       "cest": "0200900"
+      },
+      {
+       "cest": "0201000"
+      },
+      {
+       "cest": "0201100"
+      },
+      {
+       "cest": "0201200"
+      },
+      {
+       "cest": "0201300"
+      },
+      {
+       "cest": "0201400"
+      },
+      {
+       "cest": "0201500"
+      },
+      {
+       "cest": "0201600"
+      },
+      {
+       "cest": "0201700"
+      },
+      {
+       "cest": "0201800"
+      },
+      {
+       "cest": "0201900"
+      },
+      {
+       "cest": "0202000"
+      },
+      {
+       "cest": "0202100"
+      },
+      {
+       "cest": "0202200"
+      },
+      {
+       "cest": "0202300"
+      },
+      {
+       "cest": "0202400"
+      },
+      {
+       "cest": "0299900"
+      }
+     ],
+     "excludedFrom": "2026-01-01",
+     "excludedBy": "Portaria SRE 64/2025"
+    },
+    {
+     "annex": "XI",
+     "name": "Produtos de perfumaria e de higiene pessoal",
+     "cests": [
+      {
+       "cest": "2000100"
+      },
+      {
+       "cest": "2000200"
+      },
+      {
+       "cest": "2000300"
+      },
+      {
+       "cest": "2000400"
+      },
+      {
+       "cest": "2000500"
+      },
+      {
+       "cest": "2000600"
+      },
+      {
+       "cest": "2000700"
+      },
+      {
+       "cest": "2000800"
+      },
+      {
+       "cest": "2000900"
+      },
+      {
+       "cest": "2001000"
+      },
+      {
+       "cest": "2001100"
+      },
+      {
+       "cest": "2001200"
+      },
+      {
+       "cest": "2001300"
+      },
+      {
+       "cest": "2001400"
+      },
+      {
+       "cest": "2001500"
+      },
+      {
+       "cest": "2001600"
+      },
+      {
+       "cest": "2001700"
+      },
+      {
+       "cest": "2001800"
+      },
+      {
+       "cest": "2001900"
+      },
+      {
+       "cest": "2002000"
+      },
+      {
+       "cest": "2002100"
+      },
+      {
+       "cest": "2002200"
+      },
+      {
+       "cest": "2002300"
+      },
+      {
+       "cest": "2002400"
+      },
+      {
+       "cest": "2002500"
+      },
+      {
+       "cest": "2002600"
+      },
+      {
+       "cest": "2002700"
+      },
+      {
+       "cest": "2002701"
+      },
+      {
+       "cest": "2002800"
+      },
+      {
+       "cest": "2002900"
+      },
+      {
+       "cest": "2002901"
+      },
+      {
+       "cest": "2003000"
+      },
+      {
+       "cest": "2003100"
+      },
+      {
+       "cest": "2003200"
+      },
+      {
+       "cest": "2003201"
+      },
+      {
+       "cest": "2003300"
+      },
+      {
+       "cest": "2003400"
+      },
+      {
+       "cest": "2003401"
+      },
+      {
+       "cest": "2003500"
+      },
+      {
+       "cest": "2003600"
+      },
+      {
+       "cest": "2003700"
+      },
+      {
+       "cest": "2003800"
+      },
+      {
+       "cest": "2003900"
+      },
+      {
+       "cest": "2004000"
+      },
+      {
+       "cest": "2004100"
+      },
+      {
+       "cest": "2004200"
+      },
+      {
+       "cest": "2004300"
+      },
+      {
+       "cest": "2004400"
+      },
+      {
+       "cest": "2004500"
+      },
+      {
+       "cest": "2004600"
+      },
+      {
+       "cest": "2004700"
+      },
+      {
+       "cest": "2004800"
+      },
+      {
+       "cest": "2004801"
+      },
+      {
+       "cest": "2004900"
+      },
+      {
+       "cest": "2005000"
+      },
+      {
+       "cest": "2005100"
+      },
+      {
+       "cest": "2005200"
+      },
+      {
+       "cest": "2005300"
+      },
+      {
+       "cest": "2005400"
+      },
+      {
+       "cest": "2005500"
+      },
+      {
+       "cest": "2005600"
+      },
+      {
+       "cest": "2005700"
+      },
+      {
+       "cest": "2005800"
+      },
+      {
+       "cest": "2005900"
+      },
+      {
+       "cest": "2006000"
+      },
+      {
+       "cest": "2006100"
+      },
+      {
+       "cest": "2006200"
+      },
+      {
+       "cest": "2006300"
+      },
+      {
+       "cest": "2006400"
+      }
+     ],
+     "excludedFrom": "2026-04-01",
+     "excludedBy": "Portaria SRE 94/2025"
+    },
+    {
+     "annex": "XII",
+     "name": "Ração animal",
+     "cests": [
+      {
+       "cest": "2200100"
+      }
+     ],
+     "excludedFrom": "2026-08-01",
+     "excludedBy": "Portaria SRE 20/2026"
+    },
+    {
+     "annex": "XIII",
+     "name": "Produtos de limpeza",
+     "cests": [
+      {
+       "cest": "1100100"
+      },
+      {
+       "cest": "1100200"
+      },
+      {
+       "cest": "1100300"
+      },
+      {
+       "cest": "1100400"
+      },
+      {
+       "cest": "1100500"
+      },
+      {
+       "cest": "1100600"
+      },
+      {
+       "cest": "1100700"
+      },
+      {
+       "cest": "1100800"
+      },
+      {
+       "cest": "1100900"
+      },
+      {
+       "cest": "1101000"
+      },
+      {
+       "cest": "1101100"
+      },
+      {
+       "cest": "1101200"
+      }
+     ],
+     "excludedFrom": "2026-08-01",
+     "excludedBy": "Portaria SRE 20/2026"
+    },
+    {
+     "annex": "XIV",
+     "name": "Autopeças",
+     "cests": [
+      {
+       "cest": "0100100"
+      },
+      {
+       "cest": "0100200"
+      },
+      {
+       "cest": "0100300"
+      },
+      {
+       "cest": "0100400"
+      },
+      {
+       "cest": "0100500"
+      },
+      {
+       "cest": "0100600"
+      },
+      {
+       "cest": "0100700"
+      },
+      {
+       "cest": "0100800"
+      },
+      {
+       "cest": "0100900"
+      },
+      {
+       "cest": "0101000"
+      },
+      {
+       "cest": "0101100"
+      },
+      {
+       "cest": "0101200"
+      },
+      {
+       "cest": "0101300"
+      },
+      {
+       "cest": "0101400"
+      },
+      {
+       "cest": "0101500",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "0101600"
+      },
+      {
+       "cest": "0101700"
+      },
+      {
+       "cest": "0101800"
+      },
+      {
+       "cest": "0102000"
+      },
+      {
+       "cest": "0102100"
+      },
+      {
+       "cest": "0102200"
+      },
+      {
+       "cest": "0102300"
+      },
+      {
+       "cest": "0102400"
+      },
+      {
+       "cest": "0102500"
+      },
+      {
+       "cest": "0102600"
+      },
+      {
+       "cest": "0102700"
+      },
+      {
+       "cest": "0102800"
+      },
+      {
+       "cest": "0102900"
+      },
+      {
+       "cest": "0103000"
+      },
+      {
+       "cest": "0103100"
+      },
+      {
+       "cest": "0103200"
+      },
+      {
+       "cest": "0103300"
+      },
+      {
+       "cest": "0103400"
+      },
+      {
+       "cest": "0103500"
+      },
+      {
+       "cest": "0103600"
+      },
+      {
+       "cest": "0103700"
+      },
+      {
+       "cest": "0103800"
+      },
+      {
+       "cest": "0103900"
+      },
+      {
+       "cest": "0104000"
+      },
+      {
+       "cest": "0104100"
+      },
+      {
+       "cest": "0104200"
+      },
+      {
+       "cest": "0104300"
+      },
+      {
+       "cest": "0104400"
+      },
+      {
+       "cest": "0104500"
+      },
+      {
+       "cest": "0104501"
+      },
+      {
+       "cest": "0104600"
+      },
+      {
+       "cest": "0104700"
+      },
+      {
+       "cest": "0104800"
+      },
+      {
+       "cest": "0104900"
+      },
+      {
+       "cest": "0105000"
+      },
+      {
+       "cest": "0105100"
+      },
+      {
+       "cest": "0105200"
+      },
+      {
+       "cest": "0105300"
+      },
+      {
+       "cest": "0105301"
+      },
+      {
+       "cest": "0105400"
+      },
+      {
+       "cest": "0105500"
+      },
+      {
+       "cest": "0105600"
+      },
+      {
+       "cest": "0105700"
+      },
+      {
+       "cest": "0105800"
+      },
+      {
+       "cest": "0105900"
+      },
+      {
+       "cest": "0106000"
+      },
+      {
+       "cest": "0106100"
+      },
+      {
+       "cest": "0106200"
+      },
+      {
+       "cest": "0106201"
+      },
+      {
+       "cest": "0106300"
+      },
+      {
+       "cest": "0106400"
+      },
+      {
+       "cest": "0106500"
+      },
+      {
+       "cest": "0106600"
+      },
+      {
+       "cest": "0106700"
+      },
+      {
+       "cest": "0106800"
+      },
+      {
+       "cest": "0106900"
+      },
+      {
+       "cest": "0107000"
+      },
+      {
+       "cest": "0107100"
+      },
+      {
+       "cest": "0107200"
+      },
+      {
+       "cest": "0107300"
+      },
+      {
+       "cest": "0107400"
+      },
+      {
+       "cest": "0107500"
+      },
+      {
+       "cest": "0107600"
+      },
+      {
+       "cest": "0107700"
+      },
+      {
+       "cest": "0107800"
+      },
+      {
+       "cest": "0107900"
+      },
+      {
+       "cest": "0108000"
+      },
+      {
+       "cest": "0108100"
+      },
+      {
+       "cest": "0108200"
+      },
+      {
+       "cest": "0108300"
+      },
+      {
+       "cest": "0108400"
+      },
+      {
+       "cest": "0108500"
+      },
+      {
+       "cest": "0108600"
+      },
+      {
+       "cest": "0108700"
+      },
+      {
+       "cest": "0108800"
+      },
+      {
+       "cest": "0108900"
+      },
+      {
+       "cest": "0109000"
+      },
+      {
+       "cest": "0109100"
+      },
+      {
+       "cest": "0109200"
+      },
+      {
+       "cest": "0109300"
+      },
+      {
+       "cest": "0109400"
+      },
+      {
+       "cest": "0109500"
+      },
+      {
+       "cest": "0109600"
+      },
+      {
+       "cest": "0109700"
+      },
+      {
+       "cest": "0109800"
+      },
+      {
+       "cest": "0109900"
+      },
+      {
+       "cest": "0110000"
+      },
+      {
+       "cest": "0110100"
+      },
+      {
+       "cest": "0110200"
+      },
+      {
+       "cest": "0110300"
+      },
+      {
+       "cest": "0110400"
+      },
+      {
+       "cest": "0110500"
+      },
+      {
+       "cest": "0110600"
+      },
+      {
+       "cest": "0110700"
+      },
+      {
+       "cest": "0110800"
+      },
+      {
+       "cest": "0110900"
+      },
+      {
+       "cest": "0111100"
+      },
+      {
+       "cest": "0111300"
+      },
+      {
+       "cest": "0111400"
+      },
+      {
+       "cest": "0111500"
+      },
+      {
+       "cest": "0111600"
+      },
+      {
+       "cest": "0111700"
+      },
+      {
+       "cest": "0111800"
+      },
+      {
+       "cest": "0111900"
+      },
+      {
+       "cest": "0112000"
+      },
+      {
+       "cest": "0112100"
+      },
+      {
+       "cest": "0112200"
+      },
+      {
+       "cest": "0112300"
+      },
+      {
+       "cest": "0112400"
+      },
+      {
+       "cest": "0112500"
+      },
+      {
+       "cest": "0112600"
+      }
+     ],
+     "excludedFrom": "2026-10-01",
+     "excludedBy": "Portaria SRE 34/2026"
+    },
+    {
+     "annex": "XV",
+     "name": "Lâmpadas, reatores e “starter”",
+     "cests": [
+      {
+       "cest": "0900100"
+      },
+      {
+       "cest": "0900200"
+      },
+      {
+       "cest": "0900300"
+      },
+      {
+       "cest": "0900400"
+      },
+      {
+       "cest": "0900500"
+      }
+     ],
+     "excludedFrom": "2026-01-01",
+     "excludedBy": "Portaria SRE 64/2025"
+    },
+    {
+     "annex": "XVI",
+     "name": "Produtos da indústria alimentícia",
+     "cests": [
+      {
+       "cest": "1700100"
+      },
+      {
+       "cest": "1700500"
+      },
+      {
+       "cest": "1700101"
+      },
+      {
+       "cest": "1700200"
+      },
+      {
+       "cest": "1700201"
+      },
+      {
+       "cest": "1700300"
+      },
+      {
+       "cest": "1700400"
+      },
+      {
+       "cest": "1700501"
+      },
+      {
+       "cest": "1700600"
+      },
+      {
+       "cest": "1700602"
+      },
+      {
+       "cest": "1700700"
+      },
+      {
+       "cest": "1710900"
+      },
+      {
+       "cest": "1700401"
+      },
+      {
+       "cest": "1700800"
+      },
+      {
+       "cest": "1700900"
+      },
+      {
+       "cest": "1701000",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1701100",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1701200"
+      },
+      {
+       "cest": "1701300"
+      },
+      {
+       "cest": "1701400"
+      },
+      {
+       "cest": "1701500"
+      },
+      {
+       "cest": "1701600"
+      },
+      {
+       "cest": "1701900"
+      },
+      {
+       "cest": "1701902"
+      },
+      {
+       "cest": "1702000"
+      },
+      {
+       "cest": "1702100"
+      },
+      {
+       "cest": "1702200"
+      },
+      {
+       "cest": "1702300"
+      },
+      {
+       "cest": "1702500"
+      },
+      {
+       "cest": "1702600"
+      },
+      {
+       "cest": "1702700"
+      },
+      {
+       "cest": "1702702"
+      },
+      {
+       "cest": "1703000",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1703100"
+      },
+      {
+       "cest": "1703101"
+      },
+      {
+       "cest": "1703102"
+      },
+      {
+       "cest": "1703200",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1703300",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1703400"
+      },
+      {
+       "cest": "1703500"
+      },
+      {
+       "cest": "1703600"
+      },
+      {
+       "cest": "1703700"
+      },
+      {
+       "cest": "1703800"
+      },
+      {
+       "cest": "1703900"
+      },
+      {
+       "cest": "1704000"
+      },
+      {
+       "cest": "1704100"
+      },
+      {
+       "cest": "1704200",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1704300",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1704700"
+      },
+      {
+       "cest": "1704701"
+      },
+      {
+       "cest": "1704800"
+      },
+      {
+       "cest": "1704801"
+      },
+      {
+       "cest": "1704802"
+      },
+      {
+       "cest": "1705000"
+      },
+      {
+       "cest": "1705100"
+      },
+      {
+       "cest": "1705300"
+      },
+      {
+       "cest": "1705400"
+      },
+      {
+       "cest": "1705600"
+      },
+      {
+       "cest": "1705601"
+      },
+      {
+       "cest": "1705602"
+      },
+      {
+       "cest": "1705700"
+      },
+      {
+       "cest": "1705800"
+      },
+      {
+       "cest": "1705900"
+      },
+      {
+       "cest": "1706000"
+      },
+      {
+       "cest": "1706200"
+      },
+      {
+       "cest": "1706203"
+      },
+      {
+       "cest": "1706201"
+      },
+      {
+       "cest": "1706202"
+      },
+      {
+       "cest": "1706300"
+      },
+      {
+       "cest": "1706500",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1706600",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1706700",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1706800"
+      },
+      {
+       "cest": "1706900",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1706901",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1707000",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1707100",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1707200",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1707300",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1707400",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1707600"
+      },
+      {
+       "cest": "1707700"
+      },
+      {
+       "cest": "1707701"
+      },
+      {
+       "cest": "1707800"
+      },
+      {
+       "cest": "1707900"
+      },
+      {
+       "cest": "1707901"
+      },
+      {
+       "cest": "1707902"
+      },
+      {
+       "cest": "1707903"
+      },
+      {
+       "cest": "1707904"
+      },
+      {
+       "cest": "1707905"
+      },
+      {
+       "cest": "1707906"
+      },
+      {
+       "cest": "1707907"
+      },
+      {
+       "cest": "1707908"
+      },
+      {
+       "cest": "1708000"
+      },
+      {
+       "cest": "1708001"
+      },
+      {
+       "cest": "1708100"
+      },
+      {
+       "cest": "1708200"
+      },
+      {
+       "cest": "1708800",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1708900",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709000",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709100",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709200",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709300",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709400",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709500",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709600",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709604"
+      },
+      {
+       "cest": "1709605"
+      },
+      {
+       "cest": "1709700",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709800",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1709900",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1710100",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1710300",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1710600",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1710700",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1710701"
+      },
+      {
+       "cest": "1710800",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1710801"
+      },
+      {
+       "cest": "1711000",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1711100",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "0300700"
+      },
+      {
+       "cest": "1711200"
+      },
+      {
+       "cest": "1711300",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1711400",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1711500",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      }
+     ]
+    },
+    {
+     "annex": "XVII",
+     "name": "Materiais de construção e congêneres",
+     "cests": [
+      {
+       "cest": "1000100"
+      },
+      {
+       "cest": "1000200"
+      },
+      {
+       "cest": "1000300"
+      },
+      {
+       "cest": "1000400"
+      },
+      {
+       "cest": "1000500"
+      },
+      {
+       "cest": "1000600"
+      },
+      {
+       "cest": "1000700"
+      },
+      {
+       "cest": "1000800"
+      },
+      {
+       "cest": "1000900"
+      },
+      {
+       "cest": "1001000"
+      },
+      {
+       "cest": "1001100"
+      },
+      {
+       "cest": "1001200"
+      },
+      {
+       "cest": "1001300"
+      },
+      {
+       "cest": "1001400"
+      },
+      {
+       "cest": "1001500"
+      },
+      {
+       "cest": "1001600"
+      },
+      {
+       "cest": "1001700",
+       "excludedFrom": "2022-04-01",
+       "excludedBy": "Portaria SRE 18/2022"
+      },
+      {
+       "cest": "1001800"
+      },
+      {
+       "cest": "1001900",
+       "excludedFrom": "2022-04-01",
+       "excludedBy": "Portaria SRE 18/2022"
+      },
+      {
+       "cest": "1002000"
+      },
+      {
+       "cest": "1002100"
+      },
+      {
+       "cest": "1002200"
+      },
+      {
+       "cest": "1002400"
+      },
+      {
+       "cest": "1002500",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1002600",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1002700",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1002800",
+       "excludedFrom": "2026-07-01",
+       "excludedBy": "Portaria SRE 9/2026"
+      },
+      {
+       "cest": "1002900"
+      },
+      {
+       "cest": "1003000"
+      },
+      {
+       "cest": "1003100"
+      },
+      {
+       "cest": "1003200"
+      },
+      {
+       "cest": "1003300",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1003400",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1003500",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1003600",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1003700",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      },
+      {
+       "cest": "1003800",
+       "excludedFrom": "2022-04-01",
+       "excludedBy": "Portaria SRE 18/2022"
+      },
+      {
+       "cest": "1004000"
+      },
+      {
+       "cest": "1004100"
+      },
+      {
+       "cest": "1004101"
+      },
+      {
+       "cest": "1004200"
+      },
+      {
+       "cest": "1004300"
+      },
+      {
+       "cest": "1004400"
+      },
+      {
+       "cest": "1004500"
+      },
+      {
+       "cest": "1004501"
+      },
+      {
+       "cest": "1004600"
+      },
+      {
+       "cest": "1004700"
+      },
+      {
+       "cest": "1004800"
+      },
+      {
+       "cest": "1004900"
+      },
+      {
+       "cest": "1005100"
+      },
+      {
+       "cest": "1005200"
+      },
+      {
+       "cest": "1005300"
+      },
+      {
+       "cest": "1005400"
+      },
+      {
+       "cest": "1005500"
+      },
+      {
+       "cest": "1005600"
+      },
+      {
+       "cest": "1005700"
+      },
+      {
+       "cest": "1005800",
+       "excludedFrom": "2022-04-01",
+       "excludedBy": "Portaria SRE 18/2022"
+      },
+      {
+       "cest": "1005900"
+      },
+      {
+       "cest": "1005901"
+      },
+      {
+       "cest": "1006000"
+      },
+      {
+       "cest": "1006100"
+      },
+      {
+       "cest": "1006200"
+      },
+      {
+       "cest": "1006400",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "1006500"
+      },
+      {
+       "cest": "1006600"
+      },
+      {
+       "cest": "1006700"
+      },
+      {
+       "cest": "1006800"
+      },
+      {
+       "cest": "1006900"
+      },
+      {
+       "cest": "1007000"
+      },
+      {
+       "cest": "1007100"
+      },
+      {
+       "cest": "1007200"
+      },
+      {
+       "cest": "1007300",
+       "excludedFrom": "2022-04-01",
+       "excludedBy": "Portaria SRE 18/2022"
+      },
+      {
+       "cest": "1007400"
+      },
+      {
+       "cest": "1007500"
+      },
+      {
+       "cest": "1007600"
+      },
+      {
+       "cest": "1007700"
+      },
+      {
+       "cest": "1007800"
+      },
+      {
+       "cest": "1007900"
+      },
+      {
+       "cest": "1008000",
+       "excludedFrom": "2026-01-01",
+       "excludedBy": "Portaria SRE 64/2025"
+      }
+     ]
+    },
+    {
+     "annex": "XVIII",
+     "name": "Ferramentas",
+     "cests": [
+      {
+       "cest": "0800100"
+      },
+      {
+       "cest": "0800200"
+      },
+      {
+       "cest": "0800300"
+      },
+      {
+       "cest": "0800400"
+      },
+      {
+       "cest": "0800700"
+      },
+      {
+       "cest": "0800500"
+      },
+      {
+       "cest": "0800600"
+      },
+      {
+       "cest": "0800800"
+      },
+      {
+       "cest": "0800900"
+      },
+      {
+       "cest": "0801000"
+      },
+      {
+       "cest": "0801100"
+      },
+      {
+       "cest": "0801300"
+      },
+      {
+       "cest": "0801200"
+      },
+      {
+       "cest": "0801400"
+      },
+      {
+       "cest": "0801600"
+      },
+      {
+       "cest": "0801500"
+      },
+      {
+       "cest": "0801700"
+      },
+      {
+       "cest": "0801800"
+      },
+      {
+       "cest": "0801900"
+      },
+      {
+       "cest": "0801901"
+      },
+      {
+       "cest": "0802000"
+      },
+      {
+       "cest": "0802100"
+      },
+      {
+       "cest": "0802200"
+      },
+      {
+       "cest": "0802300"
+      }
+     ],
+     "excludedFrom": "2026-10-01",
+     "excludedBy": "Portaria SRE 34/2026"
+    },
+    {
+     "annex": "XIX",
+     "name": "Produtos de papelaria e papel",
+     "cests": [
+      {
+       "cest": "1900100"
+      },
+      {
+       "cest": "1900200"
+      },
+      {
+       "cest": "1900300"
+      },
+      {
+       "cest": "1900400"
+      },
+      {
+       "cest": "1900500"
+      },
+      {
+       "cest": "1900501"
+      },
+      {
+       "cest": "1900600"
+      },
+      {
+       "cest": "1900700"
+      },
+      {
+       "cest": "1900800"
+      },
+      {
+       "cest": "1900900"
+      },
+      {
+       "cest": "1901000"
+      },
+      {
+       "cest": "1901100"
+      },
+      {
+       "cest": "1901200"
+      },
+      {
+       "cest": "1901300"
+      },
+      {
+       "cest": "1901400"
+      },
+      {
+       "cest": "1901500"
+      },
+      {
+       "cest": "1901600"
+      },
+      {
+       "cest": "1901700"
+      },
+      {
+       "cest": "1901800"
+      },
+      {
+       "cest": "1901900"
+      },
+      {
+       "cest": "1902000"
+      },
+      {
+       "cest": "1902100"
+      },
+      {
+       "cest": "1902200"
+      },
+      {
+       "cest": "1902300"
+      },
+      {
+       "cest": "1902400"
+      },
+      {
+       "cest": "1902500"
+      },
+      {
+       "cest": "1902600"
+      },
+      {
+       "cest": "1902700"
+      },
+      {
+       "cest": "1902800"
+      },
+      {
+       "cest": "1902900"
+      },
+      {
+       "cest": "1903000"
+      },
+      {
+       "cest": "1903100"
+      },
+      {
+       "cest": "1903200"
+      },
+      {
+       "cest": "1903300"
+      }
+     ],
+     "excludedFrom": "2026-07-01",
+     "excludedBy": "Portaria SRE 9/2026"
+    },
+    {
+     "annex": "XX",
+     "name": "Artefatos de uso doméstico",
+     "cests": [
+      {
+       "cest": "1400100"
+      },
+      {
+       "cest": "1400200"
+      },
+      {
+       "cest": "1400300"
+      },
+      {
+       "cest": "1400600"
+      },
+      {
+       "cest": "1400601"
+      },
+      {
+       "cest": "1400700"
+      },
+      {
+       "cest": "1400800"
+      },
+      {
+       "cest": "1400900"
+      },
+      {
+       "cest": "1401000"
+      },
+      {
+       "cest": "1401100"
+      },
+      {
+       "cest": "1401200"
+      }
+     ],
+     "excludedFrom": "2026-01-01",
+     "excludedBy": "Portaria SRE 64/2025"
+    },
+    {
+     "annex": "XXI",
+     "name": "Materiais elétricos",
+     "cests": [
+      {
+       "cest": "1200100"
+      },
+      {
+       "cest": "1200200"
+      },
+      {
+       "cest": "1200300"
+      },
+      {
+       "cest": "1200400"
+      },
+      {
+       "cest": "1200500"
+      },
+      {
+       "cest": "1200600"
+      },
+      {
+       "cest": "1200700"
+      },
+      {
+       "cest": "1200800"
+      },
+      {
+       "cest": "1200900"
+      }
+     ],
+     "excludedFrom": "2026-10-01",
+     "excludedBy": "Portaria SRE 34/2026"
+    },
+    {
+     "annex": "XXII",
+     "name": "Produtos eletrônicos, eletroeletrônicos e eletrodomésticos",
+     "cests": [
+      {
+       "cest": "2100100"
+      },
+      {
+       "cest": "2100200",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2100300",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2100400",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2100500",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2100600",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2100700",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2100800",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2100900",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2101000",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2101300"
+      },
+      {
+       "cest": "2101100",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2101200",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2101400",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2109800"
+      },
+      {
+       "cest": "2101500",
+       "excludedFrom": "2026-10-01",
+       "excludedBy": "Portaria SRE 34/2026"
+      },
+      {
+       "cest": "2101600"
+      },
+      {
+       "cest": "2101700"
+      },
+      {
+       "cest": "2101800"
+      },
+      {
+       "cest": "2101900",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2102000",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2102100",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2102200",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2102300"
+      },
+      {
+       "cest": "2102400",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2102500",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2102600",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2102700",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2102800"
+      },
+      {
+       "cest": "2102900"
+      },
+      {
+       "cest": "2103000"
+      },
+      {
+       "cest": "2103100"
+      },
+      {
+       "cest": "2103200"
+      },
+      {
+       "cest": "2103300"
+      },
+      {
+       "cest": "2103400"
+      },
+      {
+       "cest": "2103500"
+      },
+      {
+       "cest": "2103600"
+      },
+      {
+       "cest": "2103700"
+      },
+      {
+       "cest": "2103800"
+      },
+      {
+       "cest": "2104000",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2104100",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2104200",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2104300",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2104400",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2104500"
+      },
+      {
+       "cest": "2104600",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2104700",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2104800",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2104900",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2105000",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2105100",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2105200"
+      },
+      {
+       "cest": "2105300"
+      },
+      {
+       "cest": "2105301"
+      },
+      {
+       "cest": "2105400"
+      },
+      {
+       "cest": "2105500"
+      },
+      {
+       "cest": "2105501"
+      },
+      {
+       "cest": "2105600"
+      },
+      {
+       "cest": "2105601"
+      },
+      {
+       "cest": "2105700"
+      },
+      {
+       "cest": "2105800"
+      },
+      {
+       "cest": "2105900"
+      },
+      {
+       "cest": "2106100"
+      },
+      {
+       "cest": "2106200"
+      },
+      {
+       "cest": "2106300"
+      },
+      {
+       "cest": "2106400"
+      },
+      {
+       "cest": "2106500"
+      },
+      {
+       "cest": "2106600"
+      },
+      {
+       "cest": "2106700"
+      },
+      {
+       "cest": "2106701"
+      },
+      {
+       "cest": "2106800"
+      },
+      {
+       "cest": "2106900"
+      },
+      {
+       "cest": "2107000"
+      },
+      {
+       "cest": "2107100"
+      },
+      {
+       "cest": "2107200"
+      },
+      {
+       "cest": "2107300"
+      },
+      {
+       "cest": "2107400"
+      },
+      {
+       "cest": "2107500"
+      },
+      {
+       "cest": "2107600"
+      },
+      {
+       "cest": "2107700"
+      },
+      {
+       "cest": "2107800"
+      },
+      {
+       "cest": "2107900"
+      },
+      {
+       "cest": "2108000"
+      },
+      {
+       "cest": "2108100"
+      },
+      {
+       "cest": "2108200"
+      },
+      {
+       "cest": "2108300"
+      },
+      {
+       "cest": "2108400"
+      },
+      {
+       "cest": "2108500"
+      },
+      {
+       "cest": "2108600"
+      },
+      {
+       "cest": "2108700"
+      },
+      {
+       "cest": "2108800",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2108801"
+      },
+      {
+       "cest": "2109000",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2109100",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2109200"
+      },
+      {
+       "cest": "2109300"
+      },
+      {
+       "cest": "2109400"
+      },
+      {
+       "cest": "2109500"
+      },
+      {
+       "cest": "2109600"
+      },
+      {
+       "cest": "2109700"
+      },
+      {
+       "cest": "2109801"
+      },
+      {
+       "cest": "2109900",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2110000",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2110100",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2110200"
+      },
+      {
+       "cest": "2110300"
+      },
+      {
+       "cest": "2110400"
+      },
+      {
+       "cest": "2110500"
+      },
+      {
+       "cest": "2110600"
+      },
+      {
+       "cest": "2110700"
+      },
+      {
+       "cest": "2110800",
+       "excludedFrom": "2026-08-01",
+       "excludedBy": "Portaria SRE 19/2026"
+      },
+      {
+       "cest": "2110900"
+      },
+      {
+       "cest": "2111000"
+      },
+      {
+       "cest": "2112700"
+      },
+      {
+       "cest": "2111100"
+      },
+      {
+       "cest": "2111200"
+      },
+      {
+       "cest": "2111300"
+      },
+      {
+       "cest": "2111400"
+      },
+      {
+       "cest": "2111500"
+      },
+      {
+       "cest": "2111600"
+      },
+      {
+       "cest": "2111700"
+      },
+      {
+       "cest": "2111800"
+      },
+      {
+       "cest": "2111900"
+      },
+      {
+       "cest": "2112000"
+      },
+      {
+       "cest": "2112100"
+      },
+      {
+       "cest": "2112200"
+      },
+      {
+       "cest": "2112300"
+      },
+      {
+       "cest": "2112400"
+      },
+      {
+       "cest": "2112500"
+      }
+     ]
+    }
+   ]
+  }
+ ],
  "references": [
   {
    "uf": "SP",

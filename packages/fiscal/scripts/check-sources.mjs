@@ -15,6 +15,7 @@ import { gunzipSync } from 'node:zlib';
 import { parseCest } from './cest.mjs';
 import { parseDifal } from './difal.mjs';
 import { parseSpAlimenticios } from './st-sp.mjs';
+import { parseSpCat68 } from './st-sp-cat68.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -104,6 +105,17 @@ const PARSED = [
     parse: (p) =>
       parseSpAlimenticios(
         p.stSpAlimenticios,
+        new Set(
+          JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+        ),
+      ),
+  },
+  {
+    title: 'Mercadorias em ST em SP (Portaria CAT 68/2019 consolidada)',
+    keys: ['stSpCat68'],
+    parse: (p) =>
+      parseSpCat68(
+        p.stSpCat68,
         new Set(
           JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
         ),

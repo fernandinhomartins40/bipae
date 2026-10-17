@@ -205,5 +205,14 @@
   "publishedAt": "2026-03-25",
   "downloadedAt": "2026-10-16",
   "sha256": "d87d3175defa41be8af04b7609510c538e7b53a49572b8d1e9ee5c9ff9f4d651"
+ },
+ "stSpCat68": {
+  "file": "SEFAZ-SP_Portaria_CAT_68-2019_consolidada_2026-10-16.html.gz",
+  "title": "Portaria CAT 68/2019 (SP), texto consolidado: mercadorias sujeitas à substituição tributária, por anexo",
+  "publisher": "Secretaria da Fazenda e Planejamento de São Paulo",
+  "page": "https://legislacao.fazenda.sp.gov.br/Paginas/Portaria-CAT-68-de-2019.aspx",
+  "publishedAt": "2026-06-30",
+  "downloadedAt": "2026-10-16",
+  "sha256": "1099cac593944f43abc8aaab20b70b410934025782c1449aad472ac9bc05ba82"
  }
 }

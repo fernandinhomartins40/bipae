@@ -26,7 +26,9 @@ import {
   cfopGroup,
   icmsProductRates,
   ST_REFERENCE_UFS,
+  ST_SEGMENT_UFS,
   stReferencesFor,
+  stStatusFor,
   classTribStatus,
   findCestSegment,
   isCfopValidOn,
@@ -227,6 +229,9 @@ export class FiscalController {
       uf,
       covered: ST_REFERENCE_UFS.includes(uf),
       items: stReferencesFor(uf, ncm, day),
+      // Está ou saiu da ST na UF (lista de mercadorias da SEFAZ, por CEST).
+      listed: ST_SEGMENT_UFS.includes(uf),
+      status: stStatusFor(uf, ncm, day, (cest) => CESTS.find((c) => c.cest === cest)?.ncm ?? []),
     };
   }
 

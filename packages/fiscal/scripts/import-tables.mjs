@@ -19,6 +19,7 @@ import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { markStale, parseDifal } from './difal.mjs';
 import { parseSpAlimenticios } from './st-sp.mjs';
+import { parseSpCat68 } from './st-sp-cat68.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -494,7 +495,20 @@ function importStReferences(cest) {
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
+  const cat68 = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpCat68.file))).toString(
+    'utf8',
+  );
   return {
+    // Que mercadorias estão (ou saíram) da ST em cada UF, por anexo e por CEST.
+    segments: [
+      {
+        uf: 'SP',
+        act: 'Portaria CAT 68/2019 (texto consolidado)',
+        source: 'stSpCat68',
+        url: manifest.stSpCat68.page,
+        annexes: parseSpCat68(cat68, known),
+      },
+    ],
     references: [
       {
         uf: 'SP',

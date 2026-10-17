@@ -169,7 +169,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Feito em 13/10/2026: `icms-products.json` gerado da página oficial guardada, rota `/v1/fiscal/icms-products` e referência na tela Regras de ICMS. Referência, não regra do motor.
 - [~] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
   - [x] F3-26.a · Base: tabela st-references.json gerada do ato oficial guardado em sources/, consulta por UF, NCM e data, rota /fiscal/st-references e sugestão "Usar" na regra de ICMS; SP alimentícios (Portaria SRE 12/2026, 69 itens)
-  - [ ] F3-26.b · SP: bebidas (cerveja, refrigerante e água), higiene e limpeza, conferindo o que saiu da ST em 2026 (Portarias SRE 64/2025, 74/2025, 94/2025, 9/2026 e 20/2026) — depende: F3-26.a
+  - [x] F3-26.b · SP: o que está e o que saiu da ST, por anexo e por item, gerado do texto consolidado da Portaria CAT 68/2019 (higiene saiu em 01/04/2026, limpeza e ração em 01/08/2026, bebidas alcoólicas e medicamentos em 01/01/2026, águas do Anexo III em 01/07/2026); aviso na regra de ICMS — depende: F3-26.a
+  - [ ] F3-26.e · SP: base de cálculo de cerveja, chope e refrigerante depois da Portaria SRE 9/2026 (que revogou os valores da Portaria SRE 89/2025) — depende: F3-26.b
   - [ ] F3-26.c · PR, MG, RJ, RS, SC e BA (uma subtarefa por UF quando começar) — depende: F3-26.a
   - [ ] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
