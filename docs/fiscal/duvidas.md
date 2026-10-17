@@ -261,6 +261,9 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **MT:** a lista é o Apêndice do Anexo X do RICMS/MT, e as MVAs estão na Portaria 195/2019. Ficam no sistema Lotus Notes da SEFAZ-MT (app1.sefaz.mt.gov.br), sem endereço direto conhecido.
   - **MS:** a lista é o Anexo III do RICMS/MS (Decreto 9.203/1998), também em Lotus Notes (aacpdappls.net.ms.gov.br). Parte dos produtos usa preço médio (PMPF) em vez de MVA.
   - **PB:** a lista é o Anexo 05 do RICMS/PB (Decreto 18.930/1997). O portal da SEFAZ-PB lista os decretos novos, mas não oferece o RICMS consolidado na navegação.
+  - **PI:** a lista é o Anexo X do RICMS/PI (Decreto 21.866/2023), com mudanças em 2026 (Decretos 24.458 e 24.615). O portal é uma aplicação em JavaScript, sem o texto consolidado acessível.
+  - **AC:** a página de legislação da SEFAZ-AC não traz o regulamento nem as listas de ST.
+  - **AM, PA, SE, RN, MA, TO, AP e RR:** o portal de legislação não respondeu, recusou o acesso ou devolveu página de erro no teste de 17/10/2026.
   - **Próximo passo:** achar o endereço direto do texto compilado e só então montar, sem usar cópias de terceiros.
 - **Pernambuco (F3-26.d.PE): em transição, fica para depois.**
   - **Hoje:** a lista de ST está no Decreto 42.563/2015 (texto consolidado da SEFAZ-PE, de 09/09/2026). Vários anexos foram revogados entre 2023 e 2025: cerveja e refrigerante, cigarros, cimento, tintas, construção, pneus e outros.

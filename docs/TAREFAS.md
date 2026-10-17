@@ -186,6 +186,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [ ] F3-26.d.MT · Mato Grosso: Anexo X do RICMS/MT e Portaria 195/2019 (Lotus Notes, sem endereço direto)
     - [ ] F3-26.d.MS · Mato Grosso do Sul: Anexo III do RICMS/MS (Lotus Notes, sem endereço direto)
     - [ ] F3-26.d.PB · Paraíba: Anexo 05 do RICMS/PB (sem o texto consolidado na navegação do portal)
+    - [ ] F3-26.d.PI · Piauí: Anexo X do RICMS/PI (portal em JavaScript, sem o texto consolidado)
+    - [ ] F3-26.d.AC · Acre e F3-26.d.AM, PA, SE, RN, MA, TO, AP, RR: achar a fonte oficial acessível (portais sem resposta ou sem o texto)
     - [ ] F3-26.d.PE · Pernambuco: regime em transição (Decreto 42.563/2015 revogado pelo 61.284/2026 a partir de 01/01/2027); montar com o RICMS/PE consolidado novo
     - [x] F3-26.d.RO · Rondônia: Anexo VI do RICMS/RO consolidado até o Decreto 31.963/2026 (403 linhas); monitor semanal pela API do portal
     - [x] F3-26.d.AL · Alagoas: Decreto 90.309/2023 com MVAs (795 linhas; revogados com data, inclusive faixas de itens); monitor semanal pela API do portal
