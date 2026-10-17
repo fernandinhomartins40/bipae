@@ -209,6 +209,13 @@ export function Shell() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* WCAG 2.4.1: quem usa teclado pula o menu e vai direto ao conteúdo. */}
+      <a
+        href="#conteudo"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-ui focus:bg-surface focus:px-4 focus:py-2 focus:font-semibold focus:shadow-lg"
+      >
+        Pular para o conteúdo
+      </a>
       {me.support && (
         <div
           role="status"
@@ -295,7 +302,7 @@ export function Shell() {
             </Button>
           </div>
         </aside>
-        <main className="min-w-0 flex-1 p-4 md:p-8">
+        <main id="conteudo" tabIndex={-1} className="min-w-0 flex-1 p-4 outline-none md:p-8">
           {announcements.data && announcements.data.length > 0 && (
             <div className="mb-4 flex flex-col gap-2">
               {announcements.data.map((a) => (

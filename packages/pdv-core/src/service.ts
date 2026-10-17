@@ -353,7 +353,22 @@ export class PdvService {
       await setMeta(tx, 'promotions', JSON.stringify(pricing.promotions ?? []));
       await setMeta(tx, 'delivery_zones', JSON.stringify(pricing.deliveryZones ?? []));
       await setMeta(tx, 'loyalty', JSON.stringify(pricing.loyalty ?? null));
+      // Momento do retrato: vendas enviadas depois dele ainda não aparecem nos saldos do servidor.
+      await setMeta(tx, 'pricing_applied_at', this.now().toISOString());
     });
+  }
+
+  /**
+   * Vendas que o retrato de preços ainda não contém: as que não subiram e as que subiram depois
+   * dele. Sem a segunda parte, entre o envio da venda e a chegada do retrato novo, o crediário e
+   * os pontos pareciam inteiros de novo e dava para gastar duas vezes.
+   */
+  private async salesNotInSnapshot(): Promise<{ payload: string }[]> {
+    const appliedAt = (await getMeta(this.storage, 'pricing_applied_at')) ?? '';
+    return this.storage.query<{ payload: string }>(
+      "SELECT payload FROM outbox WHERE type = 'sale.completed' AND (sent_at IS NULL OR sent_at >= ?)",
+      [appliedAt],
+    );
   }
 
   /**
@@ -366,9 +381,7 @@ export class PdvService {
     const program = snapshot?.program ?? null;
     if (!program?.active) return { program, points: 0 };
     const balance = snapshot!.balances.find((b) => b.taxId === taxId)?.points ?? 0;
-    const pending = await this.storage.query<{ payload: string }>(
-      "SELECT payload FROM outbox WHERE sent_at IS NULL AND type = 'sale.completed'",
-    );
+    const pending = await this.salesNotInSnapshot();
     let used = 0;
     for (const { payload } of pending) {
       const sale = (
@@ -436,9 +449,7 @@ export class PdvService {
       blocked: number;
     }>('SELECT limit_cents, balance_cents, blocked FROM customer_credit WHERE tax_id = ?', [taxId]);
     if (!row) return null;
-    const pending = await this.storage.query<{ payload: string }>(
-      "SELECT payload FROM outbox WHERE sent_at IS NULL AND type = 'sale.completed'",
-    );
+    const pending = await this.salesNotInSnapshot();
     let pendingCents = 0;
     for (const { payload } of pending) {
       // A coluna guarda o evento inteiro; a venda está em `payload`.

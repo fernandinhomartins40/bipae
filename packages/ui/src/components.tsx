@@ -3,6 +3,7 @@ import { formatBRL, formatTaxId, parseBRL, type Cents } from '@bipae/domain';
 import { X } from 'lucide-react';
 import {
   forwardRef,
+  useEffect,
   useId,
   useState,
   type ButtonHTMLAttributes,
@@ -419,6 +420,29 @@ export function DataTable<T extends { id: string }>({
   );
 }
 
+/**
+ * Foco de volta para quem abriu (WCAG 2.4.3). As gavetas e janelas costumam ser montadas só
+ * quando abertas; ao fechar, somem sem o Radix devolver o foco, e quem usa teclado se perdia.
+ * Só age se o foco ficou perdido (na página): quem já levou o foco para outro lugar, como o
+ * caixa de volta ao campo de bipar, continua mandando.
+ */
+function useReturnFocus(open: boolean) {
+  const [opener] = useState(() =>
+    typeof document === 'undefined' ? null : (document.activeElement as HTMLElement | null),
+  );
+  useEffect(() => {
+    const restore = () =>
+      setTimeout(() => {
+        const lost = !document.activeElement || document.activeElement === document.body;
+        if (lost && opener?.isConnected) opener.focus();
+      }, 0);
+    if (!open) restore();
+    return () => {
+      if (open) restore();
+    };
+  }, [open, opener]);
+}
+
 export function Drawer({
   open,
   onOpenChange,
@@ -430,6 +454,7 @@ export function Drawer({
   title: string;
   children: ReactNode;
 }) {
+  useReturnFocus(open);
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
@@ -464,6 +489,7 @@ export function Modal({
   children: ReactNode;
   wide?: boolean;
 }) {
+  useReturnFocus(open);
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>

@@ -490,6 +490,27 @@ describe('crediário no caixa (F2-02)', () => {
     ).rejects.toBeInstanceOf(PdvError);
   });
 
+  it('venda já enviada, mas ainda fora do retrato, continua descontando do limite', async () => {
+    const arroz = product({ priceCents: 4000 });
+    await pdv.applyCatalog([arroz]);
+    await pdv.applyPricing(pricing(2000));
+    await pdv.openSession(0);
+    const item = (await pdv.search('arroz'))[0]!;
+    const cart = { ...addItem(EMPTY_CART, item, 1000), customerTaxId: CPF };
+    await pdv.completeSale(cart, [{ method: 'store_credit', receivedCents: 4000 }], {
+      discountLimitPercent: 10,
+    });
+    // A venda subiu, mas o retrato novo (com o saldo de R$ 60,00) ainda não chegou.
+    const ids = (await pdv.pendingEvents(50)).map((e) => e.id);
+    await new Promise((r) => setTimeout(r, 5));
+    await pdv.markSent(ids);
+    expect((await pdv.creditAvailable(CPF))!.availableCents).toBe(4000);
+    // O retrato novo já tem a venda: ela não conta duas vezes.
+    await new Promise((r) => setTimeout(r, 5));
+    await pdv.applyPricing(pricing(6000));
+    expect((await pdv.creditAvailable(CPF))!.availableCents).toBe(4000);
+  });
+
   it('sem CPF ou cliente sem crediário, a venda no crediário é recusada', async () => {
     const arroz = product({ priceCents: 1000 });
     await pdv.applyCatalog([arroz]);

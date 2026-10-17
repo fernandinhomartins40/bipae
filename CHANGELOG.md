@@ -1,5 +1,16 @@
 # Changelog
 
+## [F7-03 Acessibilidade] — 16/10/2026
+
+### Adicionado
+- **Auditoria automática de acessibilidade (WCAG 2.2 AA)** a cada envio. Ela passa nas telas principais da retaguarda e do caixa, no tema claro, no tema escuro e no celular. Resultado: nenhuma violação.
+- **Link "Pular para o conteúdo":** é o primeiro item do Tab. Quem usa teclado não precisa passar pelo menu inteiro.
+- O que foi conferido e o que ainda se confere à mão está em `docs/acessibilidade.md`.
+
+### Corrigido
+- **Foco ao fechar gavetas e janelas:** volta para o botão que as abriu. Antes, o foco se perdia na página.
+- **Crediário e pontos de fidelidade no caixa:** depois que uma venda subia e antes de chegar o saldo novo do servidor, o limite do crediário e os pontos apareciam inteiros de novo por alguns instantes, e dava para gastar duas vezes. Agora a venda continua sendo descontada até o saldo novo chegar.
+
 ## [F7-01 Teste de carga do caixa] — 16/10/2026
 
 ### Corrigido
