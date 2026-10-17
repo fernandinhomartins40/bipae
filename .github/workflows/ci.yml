@@ -269,11 +269,14 @@ jobs:
       - name: Venda dentro do app (Windows)
         if: runner.os == 'Windows'
         shell: bash
-        run: node apps/desktop/e2e-webview/sale.mjs "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop.exe"
+        run: bash scripts/ci-annotate.sh "WebView (Windows)" node apps/desktop/e2e-webview/sale.mjs "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop.exe"
       - name: Venda dentro do app (Linux)
         if: runner.os == 'Linux'
-        run: xvfb-run -a node apps/desktop/e2e-webview/sale.mjs "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop"
+        run: bash scripts/ci-annotate.sh "WebView (Linux)" xvfb-run -a node apps/desktop/e2e-webview/sale.mjs "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop"
       - name: Log da API
         if: failure()
         shell: bash
-        run: tail -100 api.log || true
+        run: |
+          tail -60 api.log || true
+          msg=$(tail -30 api.log 2>/dev/null | sed ':a;N;$!ba;s/%/%25/g;s/\n/%0A/g')
+          echo "::error title=Log da API::${msg}"

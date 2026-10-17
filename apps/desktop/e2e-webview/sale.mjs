@@ -124,13 +124,14 @@ try {
   console.log('· venda recebida pelo servidor');
   ok = true;
 } catch (error) {
-  console.error(`F2-10 falhou: ${error.message}`);
   try {
-    const src = await driver.getPageSource();
-    console.error(src.slice(0, 3000));
+    // O texto da tela ajuda a ver onde parou (sem o HTML inteiro).
+    const body = await driver.findElement(By.css('body')).getText();
+    console.error(`Tela: ${body.replace(/\s+/g, ' ').slice(0, 600)}`);
   } catch {
     // sem página para mostrar
   }
+  console.error(`Error: F2-10 falhou: ${error.message}`);
 } finally {
   await driver.quit().catch(() => undefined);
   driverProcess.kill();
