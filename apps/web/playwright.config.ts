@@ -6,8 +6,8 @@ const DESKTOP_UI_PORT = 1421;
 
 /**
  * E2E against the real API (in-memory PostgreSQL via PGlite) and both shells' frontends.
- * The same specs run for "web" and "desktop-ui" (ADR-0012). Running them inside the real
- * Tauri WebView (WebdriverIO + tauri-driver) is a CI job added with the native drivers.
+ * The same specs run for "web" and "desktop-ui" (ADR-0012). A venda dentro do WebView real do
+ * Tauri (tauri-driver) é o job "desktop-webview" da CI: apps/desktop/e2e-webview/sale.mjs (F2-10).
  */
 export default defineConfig({
   testDir: './e2e',

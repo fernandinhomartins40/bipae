@@ -214,3 +214,66 @@ jobs:
             apps/desktop/src-tauri/target/release/bundle/deb/*.deb
             apps/desktop/src-tauri/target/release/bundle/appimage/*.AppImage
             apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+
+  # F2-10: o app de verdade, no WebView do sistema (WebView2 no Windows, WebKitGTK no Linux),
+  # pilotado pelo tauri-driver: entra, abre o caixa e vende com o banco SQLite nativo.
+  desktop-webview:
+    name: Desktop no WebView real (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+      - name: Dependências do WebKitGTK e do WebDriver (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libudev-dev webkit2gtk-driver xvfb
+      - run: pnpm install --frozen-lockfile
+      - name: tauri-driver
+        run: cargo install tauri-driver --locked
+      - name: msedgedriver na versão do WebView2 (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cargo install --git https://github.com/chippers/msedgedriver-tool --locked
+          msedgedriver-tool
+          $dir = (Get-Location).Path
+          echo "$dir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: App em modo de teste (sem instalador)
+        env:
+          VITE_API_URL: http://localhost:3333
+        run: pnpm --filter @bipae/desktop tauri build --debug --no-bundle
+      - name: API local (PGlite em memória)
+        shell: bash
+        env:
+          PORT: '3333'
+          DATABASE_URL: pglite://memory
+          CORS_ORIGINS: http://tauri.localhost,tauri://localhost,http://localhost:1420
+          LOGIN_RATE_LIMIT_PER_MINUTE: '1000'
+        run: |
+          nohup pnpm --filter @bipae/api exec tsx src/main.ts > api.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://localhost:3333/v1/health && exit 0; sleep 2; done
+          cat api.log; exit 1
+      - name: Venda dentro do app (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: node apps/desktop/e2e-webview/sale.mjs "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop.exe"
+      - name: Venda dentro do app (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a node apps/desktop/e2e-webview/sale.mjs "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop"
+      - name: Log da API
+        if: failure()
+        shell: bash
+        run: tail -100 api.log || true

@@ -14,14 +14,14 @@
   },
   "dependencies": {
     "@bipae/erp-ui": "workspace:*",
+    "@bipae/local-db": "workspace:*",
     "@bipae/platform": "workspace:*",
     "@bipae/ui": "workspace:*",
     "@tauri-apps/api": "^2.12.3",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "@bipae/local-db": "workspace:*",
+    "@tauri-apps/plugin-process": "^2.4.0",
     "@tauri-apps/plugin-updater": "^2.13.3",
-    "@tauri-apps/plugin-process": "^2.4.0"
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -29,6 +29,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "selenium-webdriver": "4.50.0",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.4"
   }
