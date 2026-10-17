@@ -12,6 +12,7 @@
     "db:seed": "tsx src/seed-cli.ts"
   },
   "dependencies": {
+    "@bipae/danfe": "workspace:*",
     "@bipae/domain": "workspace:*",
     "@bipae/fiscal": "workspace:*",
     "@electric-sql/pglite": "^0.5.8",

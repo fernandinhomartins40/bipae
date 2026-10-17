@@ -110,6 +110,9 @@ export const companies = pgTable('companies', {
     .$type<Record<string, string>>()
     .notNull()
     .default({}),
+  /** Série da NF-e da retaguarda e o próximo número (F3-33.b). */
+  nfeSeries: integer('nfe_series').notNull().default(1),
+  nfeNextNumber: integer('nfe_next_number').notNull().default(1),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
@@ -981,7 +984,9 @@ export const stockLotMoves = pgTable('stock_lot_moves', {
 export const fiscalDocuments = pgTable('fiscal_documents', {
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),
-  saleId: uuid('sale_id').notNull(),
+  /** Venda do caixa (NFC-e) ou rascunho da retaguarda (NF-e, F3-33): só um dos dois. */
+  saleId: uuid('sale_id'),
+  invoiceId: uuid('invoice_id'),
   companyId: uuid('company_id').notNull(),
   model: char('model', { length: 2 }).notNull().default('65'),
   series: integer('series'),
@@ -1021,6 +1026,33 @@ export const fiscalDocuments = pgTable('fiscal_documents', {
   cancelReason: text('cancel_reason'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Rascunho da NF-e da retaguarda (F3-33.b): o que a pessoa preencheu, antes e depois de emitir. */
+export const nfeInvoices = pgTable('nfe_invoices', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  status: text('status', { enum: ['draft', 'issued', 'discarded'] })
+    .notNull()
+    .default('draft'),
+  nature: text('nature').notNull(),
+  purpose: text('purpose', { enum: ['normal', 'devolucao'] }).notNull(),
+  presence: text('presence').notNull(),
+  finalConsumer: boolean('final_consumer'),
+  refs: text('refs').array().notNull().default([]),
+  customerId: uuid('customer_id'),
+  recipient: jsonb('recipient').notNull(),
+  items: jsonb('items').notNull(),
+  transport: jsonb('transport').notNull(),
+  installments: jsonb('installments').notNull().default([]),
+  payments: jsonb('payments').notNull(),
+  additionalInfo: text('additional_info'),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+  issuedAt: ts('issued_at'),
 });
 
 /** Eventos da nota enviados à SEFAZ: o cancelamento (F3-17). */

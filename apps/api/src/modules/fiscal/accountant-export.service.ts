@@ -13,6 +13,7 @@ import {
   fiscalDocuments,
   fiscalEvents,
   fiscalInutilizations,
+  nfeInvoices,
   sales,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
@@ -21,6 +22,14 @@ const query = z.object({
   companyId: z.string().uuid('Escolha a empresa'),
   month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Mês inválido (use AAAA-MM)'),
 });
+
+/** Data de emissão e valor da NF-e autorizada, direto do XML. */
+function readNfeSummary(xml: string): { issuedAt: string; totalCents: number } {
+  const issuedAt = /<dhEmi>([^<]+)<\/dhEmi>/.exec(xml)?.[1];
+  const total = /<ICMSTot>[\s\S]*?<vNF>(\d+)\.(\d{2})<\/vNF>/.exec(xml);
+  if (!issuedAt || !total) throw new Error('XML da NF-e sem data ou valor.');
+  return { issuedAt, totalCents: Number(total[1]) * 100 + Number(total[2]) };
+}
 
 const STATUS: Record<string, string> = {
   authorized: 'Autorizada',
@@ -76,6 +85,21 @@ export class AccountantExportService {
           ),
         )
         .orderBy(asc(fiscalDocuments.series), asc(fiscalDocuments.number));
+      // NF-e da retaguarda (F3-33): pelo mês em que foi emitida.
+      const nfes = await tx
+        .select({ d: fiscalDocuments })
+        .from(fiscalDocuments)
+        .innerJoin(nfeInvoices, eq(nfeInvoices.id, fiscalDocuments.invoiceId))
+        .where(
+          and(
+            eq(fiscalDocuments.companyId, companyId),
+            inArray(fiscalDocuments.status, ['authorized', 'cancelled', 'denied']),
+            gte(nfeInvoices.issuedAt, start),
+            lt(nfeInvoices.issuedAt, end),
+          ),
+        )
+        .orderBy(asc(fiscalDocuments.series), asc(fiscalDocuments.number));
+      docs.push(...nfes);
       const events = docs.length
         ? await tx
             .select()
@@ -109,7 +133,11 @@ export class AccountantExportService {
       let totalCents = 0;
       for (const { d } of docs) {
         if (!d.nfeProc || !d.accessKey) continue;
-        files.push({ name: `NFCe/${d.accessKey}-procNFCe.xml`, data: d.nfeProc });
+        files.push(
+          d.model === '55'
+            ? { name: `NFe/${d.accessKey}-procNFe.xml`, data: d.nfeProc }
+            : { name: `NFCe/${d.accessKey}-procNFCe.xml`, data: d.nfeProc },
+        );
         const cancel = events.find((e) => e.documentId === d.id);
         if (cancel?.procXml) {
           files.push({ name: `Eventos/${d.accessKey}-cancelamento.xml`, data: cancel.procXml });
@@ -117,7 +145,7 @@ export class AccountantExportService {
         let issuedAt = '';
         let value = 0;
         try {
-          const nota = readSaleNfce(d.nfeProc);
+          const nota = d.model === '55' ? readNfeSummary(d.nfeProc) : readSaleNfce(d.nfeProc);
           issuedAt = nota.issuedAt;
           value = nota.totalCents;
         } catch {

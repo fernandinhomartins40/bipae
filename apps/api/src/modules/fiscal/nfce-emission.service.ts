@@ -88,6 +88,7 @@ const toView = (
 ): FiscalDocumentView => ({
   id: d.id,
   saleId: d.saleId,
+  invoiceId: d.invoiceId,
   model: d.model,
   series: d.series,
   number: d.number,
@@ -196,7 +197,7 @@ export class NfceEmissionService implements OnModuleInit {
     tx: Tx,
     doc: typeof fiscalDocuments.$inferSelect,
   ): Promise<{ input: SaleNfceInput; occurredAt: Date }> {
-    const [sale] = await tx.select().from(sales).where(eq(sales.id, doc.saleId));
+    const [sale] = doc.saleId ? await tx.select().from(sales).where(eq(sales.id, doc.saleId)) : [];
     if (!sale) throw notFound('Venda');
     const [terminal] = await tx
       .select({ series: terminals.nfceSeries })
@@ -307,6 +308,8 @@ export class NfceEmissionService implements OnModuleInit {
         .where(eq(fiscalDocuments.id, documentId));
       // Ainda não visível: a transação da venda não terminou. A fila tenta de novo.
       if (!doc) throw new Error('Documento fiscal ainda não disponível.');
+      // NF-e da retaguarda (F3-33.b) tem a própria emissão.
+      if (!doc.saleId) return null;
       if (!['pending', 'error', 'not_configured', 'rejected'].includes(doc.status)) return null;
       // Venda cancelada antes de a nota sair: quem decide é o cancelamento (F3-17).
       if (doc.cancelRequestedAt && doc.origin === 'server') return null;
@@ -444,7 +447,7 @@ export class NfceEmissionService implements OnModuleInit {
           })
           .where(eq(fiscalDocuments.id, id))
           .returning({ saleId: fiscalDocuments.saleId });
-        if (protocol.outcome !== 'authorized' || !doc) return;
+        if (protocol.outcome !== 'authorized' || !doc?.saleId) return;
         // MF-08: a venda vai para o MercadoFlow na mesma transação da autorização.
         const [sale] = await tx
           .select({ storeId: sales.storeId })
@@ -518,6 +521,13 @@ export class NfceEmissionService implements OnModuleInit {
     const doc = await withTenant(this.db, ctx, async (tx) => {
       const [row] = await tx.select().from(fiscalDocuments).where(eq(fiscalDocuments.id, id));
       if (!row) throw notFound('Documento fiscal');
+      if (!row.saleId) {
+        throw new AppError(
+          409,
+          'nfe_document',
+          'Esta é uma NF-e: tente de novo pela tela da NF-e.',
+        );
+      }
       if (['authorized', 'denied', 'cancelled', 'voided'].includes(row.status)) {
         throw new AppError(409, 'already_final', 'Esta nota já tem resposta final da SEFAZ.');
       }

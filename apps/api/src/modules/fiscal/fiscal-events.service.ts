@@ -277,10 +277,9 @@ export class FiscalEventsService implements OnModuleInit {
           .set({ status: 'cancelled', updatedAt: new Date() })
           .where(eq(fiscalDocuments.id, doc.id));
         // MF-08: o cancelamento vai ao MercadoFlow depois da venda.
-        const [sale] = await tx
-          .select({ storeId: sales.storeId })
-          .from(sales)
-          .where(eq(sales.id, doc.saleId));
+        const [sale] = doc.saleId
+          ? await tx.select({ storeId: sales.storeId }).from(sales).where(eq(sales.id, doc.saleId))
+          : [];
         if (sale && doc.accessKey) {
           await this.mercadoflow.enqueueCancel(
             tx,

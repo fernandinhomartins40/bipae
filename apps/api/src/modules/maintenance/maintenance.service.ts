@@ -14,6 +14,7 @@ import { rowsOf } from '../../db/migrate';
 import {
   adminSessions,
   fiscalDocuments,
+  nfeInvoices,
   sales,
   sessions,
   tenants,
@@ -23,6 +24,7 @@ import { tenantTables } from '../account/data-export.service';
 import { PlatformAuditService } from '../admin/platform-audit.service';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
+import { NfeInvoicesService } from '../fiscal/nfe-invoices.service';
 import { WebhooksService } from '../public-api/webhooks.service';
 
 export const SESSIONS_CLEANUP = 'manutencao.limpar-sessoes';
@@ -50,6 +52,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(QUEUE) private readonly queue: JobQueue,
     @Inject(PlatformAuditService) private readonly platformAudit: PlatformAuditService,
     @Inject(NfceEmissionService) private readonly nfce: NfceEmissionService,
+    @Inject(NfeInvoicesService) private readonly nfe: NfeInvoicesService,
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
     @Inject(WebhooksService) private readonly webhooks: WebhooksService,
   ) {}
@@ -126,7 +129,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * NFC-e paradas na fila (F3-14.b): pendentes ou com falha temporária há mais de um minuto, das
+   * NFC-e e NF-e paradas na fila (F3-14.b, F3-33.b): pendentes ou com falha temporária há mais de um minuto, das
    * últimas 24 horas, voltam para a fila (a fila em memória perde tarefas numa reinicialização, e
    * a SEFAZ pode ficar fora mais tempo do que as tentativas automáticas). "Falta configurar" e
    * recusadas não voltam sozinhas: dependem de alguém corrigir.
@@ -154,6 +157,27 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .limit(200),
     );
     for (const doc of stuck) await this.nfce.schedule(doc.tenantId, doc.operatorId, doc.id);
+    // NF-e da retaguarda (F3-33.b) paradas do mesmo jeito, em nome de quem emitiu.
+    const stuckNfe = await asPlatform(this.db, (tx) =>
+      tx
+        .select({
+          id: fiscalDocuments.id,
+          tenantId: fiscalDocuments.tenantId,
+          userId: nfeInvoices.createdBy,
+        })
+        .from(fiscalDocuments)
+        .innerJoin(nfeInvoices, eq(nfeInvoices.id, fiscalDocuments.invoiceId))
+        .where(
+          and(
+            sql`${fiscalDocuments.status} in ('pending', 'error')`,
+            lt(fiscalDocuments.updatedAt, new Date(now.getTime() - 60_000)),
+            sql`${fiscalDocuments.createdAt} > ${new Date(now.getTime() - UM_DIA)}`,
+            lt(fiscalDocuments.attempts, 10),
+          ),
+        )
+        .limit(200),
+    );
+    for (const doc of stuckNfe) await this.nfe.schedule(doc.tenantId, doc.userId, doc.id);
     // Cancelamentos parados (F3-17): venda cancelada cuja nota ainda não foi cancelada nem
     // deixada de emitir, sem resposta final da SEFAZ ao evento.
     const cancels = await asPlatform(this.db, (tx) =>
@@ -180,7 +204,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     for (const doc of cancels) {
       await this.fiscalEvents.schedule(doc.tenantId, doc.operatorId, doc.id);
     }
-    return stuck.length + cancels.length;
+    return stuck.length + stuckNfe.length + cancels.length;
   }
 
   /** Apaga logins vencidos ou encerrados há mais de 30 dias, de todas as empresas. */

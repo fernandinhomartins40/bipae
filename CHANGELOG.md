@@ -1,5 +1,20 @@
 # Changelog
 
+## [F3-33.b API da NF-e da retaguarda] — 17/10/2026
+
+### Adicionado
+- **Rascunho da NF-e:** guarda o destinatário, os itens, o transporte, as parcelas e o pagamento, e mostra a cada mudança o que falta para emitir.
+- **Emissão:** a nota recebe o próximo número da série de NF-e da empresa e vai para a fila, que assina e envia à SEFAZ de homologação.
+  - Antes de reenviar, a fila consulta a nota pela chave, para nunca autorizar duas vezes.
+  - Sem certificado, a nota fica em "falta configurar".
+  - A varredura da manutenção põe de volta na fila a nota que ficou parada.
+- **XML e DANFE em PDF:** os da nota autorizada, e uma prévia do DANFE ainda no rascunho.
+- **Pacote do contador:** a NF-e autorizada entra no ZIP do mês (pasta NFe) e no resumo.
+- **Auditoria:** cada emissão fica registrada.
+
+### Ainda não
+- A NF-e não baixa o estoque nem lança a conta a receber. Isso vem na F3-33.e.
+
 ## [F3-33.a Motor da NF-e da retaguarda] — 17/10/2026
 
 ### Adicionado

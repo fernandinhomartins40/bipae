@@ -1504,7 +1504,9 @@ export interface RejectionHelpView {
 
 export interface FiscalDocumentView {
   id: string;
-  saleId: string;
+  /** Venda do caixa (NFC-e) ou rascunho da retaguarda (NF-e, F3-33). */
+  saleId: string | null;
+  invoiceId: string | null;
   model: string;
   series: number | null;
   number: number | null;
@@ -1990,4 +1992,161 @@ export interface LoyaltyStatement {
     createdAt: string;
     expiresAt: string | null;
   }[];
+}
+
+// ---------- NF-e da retaguarda (F3-33) ----------
+
+/** Destinatário da NF-e: copiado do cadastro do cliente e conferido na própria nota. */
+export const nfeRecipientInput = z.object({
+  customerId: z.string().uuid().nullish(),
+  taxId: taxIdSchema,
+  name: trimmed(2, 60, 'Nome do destinatário'),
+  /** 1 contribuinte do ICMS (com IE), 2 contribuinte isento de inscrição, 9 não contribuinte. */
+  ieIndicator: z.union([z.literal(1), z.literal(2), z.literal(9)], {
+    message: 'Diga se o destinatário é contribuinte do ICMS',
+  }),
+  ie: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, ''))
+    .pipe(z.string().regex(/^\d{2,14}$/, 'Inscrição estadual inválida'))
+    .nullish()
+    .or(z.literal('').transform(() => null)),
+  email: emailSchema.nullish().or(z.literal('').transform(() => null)),
+  phone: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, ''))
+    .pipe(z.string().regex(/^\d{10,13}$/, 'Telefone inválido'))
+    .nullish()
+    .or(z.literal('').transform(() => null)),
+  address: addressSchema,
+});
+
+export const NFE_FREIGHT_MODES = [
+  'porContaDoRemetente',
+  'porContaDoDestinatario',
+  'porContaDeTerceiros',
+  'proprioPorContaDoRemetente',
+  'proprioPorContaDoDestinatario',
+  'semFrete',
+] as const;
+
+export const NFE_PRESENCE_MODES = [
+  'presencial',
+  'internet',
+  'teleatendimento',
+  'entregaEmDomicilio',
+  'presencialForaDoEstabelecimento',
+  'outros',
+] as const;
+
+export const nfeInvoiceInput = z
+  .object({
+    companyId: z.string().uuid('Escolha a empresa emitente'),
+    storeId: z.string().uuid('Escolha a loja'),
+    nature: trimmed(1, 60, 'Natureza da operação').default('Venda de mercadoria'),
+    purpose: z.enum(['normal', 'devolucao']).default('normal'),
+    presence: z.enum(NFE_PRESENCE_MODES).default('presencial'),
+    /** Sem a escolha, é consumidor final quem não é contribuinte do ICMS. */
+    finalConsumer: z.boolean().nullish(),
+    references: z
+      .array(z.string().regex(/^[0-9A-Z]{44}$/, 'Chave de acesso com 44 caracteres'))
+      .max(20)
+      .default([]),
+    recipient: nfeRecipientInput,
+    items: z
+      .array(
+        z.object({
+          productId: z.string().uuid(),
+          quantityMilli: z.number().int().positive('Quantidade inválida').max(1_000_000_000),
+          unitPriceCents: centsSchema,
+          discountCents: centsSchema.default(0),
+          /** CFOP próprio do item; sem ele, vale o do perfil fiscal do produto. */
+          cfop: z
+            .string()
+            .regex(/^\d{4}$/, 'CFOP com 4 dígitos')
+            .nullish(),
+        }),
+      )
+      .min(1, 'Escolha pelo menos um produto')
+      .max(990, 'A NF-e aceita no máximo 990 itens'),
+    transport: z
+      .object({
+        freight: z.enum(NFE_FREIGHT_MODES).default('semFrete'),
+        freightCents: centsSchema.default(0),
+        carrier: z
+          .object({
+            taxId: optionalTaxId,
+            name: trimmed(2, 60, 'Nome da transportadora'),
+            uf: z.enum(UFS).nullish(),
+          })
+          .nullish(),
+        volumes: z
+          .object({
+            quantity: z.number().int().positive().max(999_999).nullish(),
+            species: optionalText(60),
+            grossKg: z
+              .string()
+              .regex(/^\d{1,12}(\.\d{1,3})?$/, 'Peso em kg, com ponto')
+              .nullish(),
+          })
+          .nullish(),
+      })
+      .default({ freight: 'semFrete', freightCents: 0 }),
+    installments: z
+      .array(z.object({ dueDate: isoDay, amountCents: centsSchema }))
+      .max(120)
+      .default([]),
+    /** Pagamentos pelo código tPag da tabela oficial (90 = sem pagamento). */
+    payments: z
+      .array(
+        z.object({
+          code: z.string().regex(/^\d{2}$/, 'Meio de pagamento inválido'),
+          amountCents: centsSchema,
+          description: optionalText(60),
+        }),
+      )
+      .min(1, 'Informe o pagamento')
+      .max(100),
+    additionalInfo: optionalText(2000),
+  })
+  .refine((v) => v.purpose !== 'devolucao' || v.references.length > 0, {
+    message: 'A devolução precisa da chave da nota devolvida',
+    path: ['references'],
+  });
+export type NfeInvoiceInput = z.input<typeof nfeInvoiceInput>;
+
+export interface NfeInvoiceView {
+  id: string;
+  companyId: string;
+  storeId: string;
+  status: 'draft' | 'issued' | 'discarded';
+  nature: string;
+  purpose: 'normal' | 'devolucao';
+  presence: (typeof NFE_PRESENCE_MODES)[number];
+  finalConsumer: boolean | null;
+  references: string[];
+  recipient: z.output<typeof nfeRecipientInput>;
+  items: {
+    productId: string;
+    productName: string;
+    unit: string;
+    quantityMilli: number;
+    unitPriceCents: number;
+    discountCents: number;
+    cfop: string | null;
+  }[];
+  transport: z.output<typeof nfeInvoiceInput>['transport'];
+  installments: { dueDate: string; amountCents: number }[];
+  payments: { code: string; amountCents: number; description: string | null }[];
+  additionalInfo: string | null;
+  /** Total dos produtos menos os descontos, mais o frete (sem a ST e o IPI). */
+  totalCents: number;
+  /** Conferência com o motor: o que falta para emitir e os avisos (CFOP trocado, FCP...). */
+  check: { ok: boolean; pending: string[]; notes: string[]; totalCents: number | null };
+  /** A nota na SEFAZ, depois de emitida. */
+  document: FiscalDocumentView | null;
+  createdAt: string;
+  updatedAt: string;
 }
