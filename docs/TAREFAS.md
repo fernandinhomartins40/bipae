@@ -315,6 +315,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - Feito em 16/10/2026: axe-core nas telas principais (tema claro, escuro e celular) e teste de teclado na CI; corrigidos o link "Pular para o conteúdo" e a volta do foco ao fechar gavetas e janelas (ver `docs/acessibilidade.md`).
 - [x] F7-04 · Central de ajuda (documentação do usuário)
   - Feito em 16/10/2026: tela "Ajuda" dentro do aplicativo (funciona sem internet), com busca e 16 artigos em passos; teste que confere os links para as telas (`packages/erp-ui/src/help/articles.ts`).
-- [ ] F7-05 · Guia de implantação para revendas e técnicos
+- [x] F7-05 · Guia de implantação para revendas e técnicos
+  - Feito em 16/10/2026: `docs/implantacao.md` (levantamento, equipamentos, instalação, configuração, treinamento, checklist, problemas comuns e o que ainda não está disponível).
 - [ ] F7-06 · Bipaê Desktop para macOS
 - [ ] F7-07 · Teste de usabilidade com 10 pessoas (meta: 9 de 10 vendem e emitem sem ajuda) — depende: F3-14 · externo: E15

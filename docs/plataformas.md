@@ -1,6 +1,8 @@
 # Plataformas: Bipaê Online e Bipaê Desktop
 
 > Atualizado ao fim da Fase 2 (12/10/2026). Decisão de arquitetura: [ADR-0012](adr/0012-pdv-web-desktop-codigo-compartilhado.md).
+>
+> Para implantar numa loja (revendas e técnicos), veja o [guia de implantação](implantacao.md).
 
 Uma conta, os mesmos dados e as mesmas telas. A loja pode misturar: um caixa no app desktop e outro no navegador do tablet, sincronizados. Cada caixa recebe **sua própria série de NFC-e**, para dois caixas sem internet nunca gerarem o mesmo número.
 

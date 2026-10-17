@@ -1,5 +1,18 @@
 # Changelog
 
+## [F7-05 Guia de implantação] — 16/10/2026
+
+### Adicionado
+- **Guia para revendas e técnicos** (`docs/implantacao.md`), com o roteiro para colocar uma loja no ar:
+  - o que pedir ao lojista antes da visita;
+  - equipamentos compatíveis;
+  - instalação do desktop e do navegador com o Conector;
+  - configuração fiscal e de periféricos;
+  - treinamento de 15 minutos;
+  - checklist antes de liberar o caixa;
+  - problemas comuns.
+- **Sem promessa do que ainda não existe:** o guia deixa claro que a NFC-e sai só em homologação, sem valor fiscal, até a liberação da produção. Também lista o que ainda não está disponível.
+
 ## [F7-04 Central de ajuda] — 16/10/2026
 
 ### Adicionado
