@@ -17,8 +17,13 @@ const effectOf = (input: Input): CompanyIcmsEffect => ({
   ...(input.rate && { rate: input.rate }),
   ...(input.baseReduction && { baseReduction: input.baseReduction }),
   ...(input.fcpRate && { fcpRate: input.fcpRate }),
+  ...(input.benefitCode && { benefitCode: input.benefitCode }),
   ...(input.st && {
-    st: { mva: input.st.mva, rate: input.st.rate, ...(input.st.baseReduction && { baseReduction: input.st.baseReduction }) },
+    st: {
+      mva: input.st.mva,
+      rate: input.st.rate,
+      ...(input.st.baseReduction && { baseReduction: input.st.baseReduction }),
+    },
   }),
 });
 
@@ -69,7 +74,10 @@ export class IcmsRulesService {
 
   save(ctx: RequestContext, id: string | null, input: Input) {
     return withTenant(this.db, ctx, async (tx) => {
-      const [company] = await tx.select({ id: companies.id }).from(companies).where(eq(companies.id, input.companyId));
+      const [company] = await tx
+        .select({ id: companies.id })
+        .from(companies)
+        .where(eq(companies.id, input.companyId));
       if (!company) throw notFound('Empresa');
       const values = {
         companyId: input.companyId,
@@ -84,13 +92,17 @@ export class IcmsRulesService {
       if (id) {
         [before] = await tx.select().from(companyIcmsRules).where(eq(companyIcmsRules.id, id));
         if (!before) throw notFound('Regra de ICMS');
-        await tx.update(companyIcmsRules).set({ ...values, updatedAt: new Date() }).where(eq(companyIcmsRules.id, id));
+        await tx
+          .update(companyIcmsRules)
+          .set({ ...values, updatedAt: new Date() })
+          .where(eq(companyIcmsRules.id, id));
       } else {
         id = uuidv7();
         await tx.insert(companyIcmsRules).values({ id, tenantId: ctx.tenantId, ...values });
       }
       await this.assertConsistent(tx, input.companyId);
-      if (before && before.companyId !== input.companyId) await this.assertConsistent(tx, before.companyId);
+      if (before && before.companyId !== input.companyId)
+        await this.assertConsistent(tx, before.companyId);
       await this.audit.record(tx, ctx, {
         action: before ? 'fiscal_rule.updated' : 'fiscal_rule.created',
         entity: 'company_icms_rule',
@@ -118,7 +130,10 @@ export class IcmsRulesService {
   }
 
   private async assertConsistent(tx: Tx, companyId: string) {
-    const rows = await tx.select().from(companyIcmsRules).where(eq(companyIcmsRules.companyId, companyId));
+    const rows = await tx
+      .select()
+      .from(companyIcmsRules)
+      .where(eq(companyIcmsRules.companyId, companyId));
     const problems = checkCompanyIcmsRules(rows.map(toMotorRule));
     if (problems.length > 0) {
       throw new AppError(

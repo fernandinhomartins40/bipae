@@ -41,6 +41,8 @@ export interface NfeItem {
   description: string;
   ncm: string;
   cest?: string | null;
+  /** Código de benefício fiscal da UF (cBenef), quando a regra de ICMS da empresa traz um. */
+  benefitCode?: string | null;
   cfop: string;
   unit: string;
   /** Quantidade em milésimos (como no caixa). */
@@ -269,6 +271,7 @@ export function detGroup(item: NfeItem, index: number, model: '55' | '65'): stri
         req('xProd', item.description),
         req('NCM', item.ncm),
         opt('CEST', item.cest),
+        opt('cBenef', item.benefitCode),
         req('CFOP', item.cfop),
         req('uCom', item.unit),
         req('qCom', qty(item.quantityMilli)),

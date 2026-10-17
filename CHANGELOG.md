@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-27.a Código de benefício fiscal (cBenef) na nota] — 17/10/2026
+
+### Adicionado
+- **Código de benefício fiscal na regra de ICMS:** a empresa informa o cBenef da isenção ou redução que a SEFAZ do estado deu (por exemplo, PR810001). O código vai em cada item da NFC-e daquele NCM, no lugar certo do leiaute.
+  - **Por que importa:** algumas UFs recusam a nota sem ele.
+  - **Validação:** o código é conferido pelo formato oficial (8 ou 10 letras e números, ou SEM CBENEF).
+- **No caixa:** o código chega pela sincronização, junto com a regra.
+
 ## [F3-26.d.RO Substituição tributária em Rondônia] — 17/10/2026
 
 ### Adicionado

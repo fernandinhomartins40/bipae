@@ -112,6 +112,28 @@ describe('venda → NFC-e (F3-14.a)', () => {
     expect(again.ok && again.document.accessKey).toBe(r.document.accessKey);
   });
 
+  it('o cBenef da regra de ICMS vai no item, depois do CEST, válido no schema (F3-27)', async () => {
+    const r = buildSaleNfce(
+      venda({
+        rules: [
+          {
+            id: 'arroz',
+            name: 'Arroz',
+            ncm: ['1006'],
+            validity: { start: '2026-01-01' },
+            effect: { benefitCode: 'PR810001' },
+            source: 'Exemplo de cadastro',
+          },
+        ],
+      }),
+    );
+    if (!r.ok) throw new Error(r.pending.join('; '));
+    expect(await validate(r.document.xml)).toEqual([]);
+    expect(r.document.xml).toMatch(/<NCM>10063021<\/NCM><cBenef>PR810001<\/cBenef><CFOP>/);
+    // Só o item do NCM da regra leva o código.
+    expect(r.document.xml.match(/<cBenef>/g)).toHaveLength(1);
+  });
+
   it('cartão vai com o grupo card (tpIntegra 2) e o CPF com o nome de homologação', async () => {
     const r = buildSaleNfce(
       venda({

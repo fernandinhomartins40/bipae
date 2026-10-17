@@ -613,11 +613,27 @@ export const companyIcmsRuleInput = z
         baseReduction: percentText('Redução da base da ST').nullish(),
       })
       .nullish(),
+    // Código de benefício fiscal da UF (cBenef, F3-27): 8 ou 10 caracteres, ou "SEM CBENEF",
+    // como o leiaute da NF-e aceita.
+    benefitCode: z
+      .string()
+      .trim()
+      .transform((v) => v.toUpperCase())
+      .pipe(
+        z
+          .string()
+          .regex(
+            /^([A-Z0-9]{8}|[A-Z0-9]{10}|SEM CBENEF)$/,
+            'Código de benefício (cBenef): 8 ou 10 letras e números, como PR810001, ou SEM CBENEF',
+          ),
+      )
+      .nullish()
+      .or(z.literal('').transform(() => null)),
     source: trimmed(3, 200, 'Fonte (lei, decreto ou orientação do contador)'),
   })
-  .refine((v) => v.rate || v.baseReduction || v.fcpRate || v.st, {
+  .refine((v) => v.rate || v.baseReduction || v.fcpRate || v.st || v.benefitCode, {
     message:
-      'Informe o que muda no ICMS: alíquota, redução da base, FCP ou substituição tributária',
+      'Informe o que muda no ICMS: alíquota, redução da base, FCP, substituição tributária ou código de benefício',
     path: ['rate'],
   })
   .refine((v) => !v.validTo || v.validTo > v.validFrom, {
@@ -638,6 +654,8 @@ export interface CompanyIcmsRuleRow {
     baseReduction?: string;
     fcpRate?: string;
     st?: { mva: string; rate: string; baseReduction?: string };
+    /** Código de benefício fiscal da UF (cBenef). */
+    benefitCode?: string;
   };
   source: string;
   updatedAt: string;

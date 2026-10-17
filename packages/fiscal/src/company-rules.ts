@@ -17,6 +17,8 @@ export interface CompanyIcmsEffect {
   fcpRate?: string;
   /** Substituição tributária: MVA e alíquota interna do destino. */
   st?: { mva: string; rate: string; baseReduction?: string };
+  /** Código de benefício fiscal da UF (cBenef, F3-27), que vai no item da nota. */
+  benefitCode?: string;
 }
 
 export interface CompanyIcmsRule {
@@ -44,11 +46,14 @@ export function checkCompanyIcmsRules(rules: readonly CompanyIcmsRule[]): string
   const problems: string[] = [];
   const names = new Map(rules.map((rule) => [rule.id, rule.name]));
   for (const rule of rules) {
-    if (rule.ncm.length === 0) problems.push(`A regra "${rule.name}" precisa de pelo menos um NCM.`);
+    if (rule.ncm.length === 0)
+      problems.push(`A regra "${rule.name}" precisa de pelo menos um NCM.`);
     for (const prefix of rule.ncm) {
-      if (!/^\d{2,8}$/.test(prefix)) problems.push(`NCM "${prefix}" inválido na regra "${rule.name}".`);
+      if (!/^\d{2,8}$/.test(prefix))
+        problems.push(`NCM "${prefix}" inválido na regra "${rule.name}".`);
     }
-    if (Object.keys(rule.effect).length === 0) problems.push(`A regra "${rule.name}" não diz o que muda no ICMS.`);
+    if (Object.keys(rule.effect).length === 0)
+      problems.push(`A regra "${rule.name}" não diz o que muda no ICMS.`);
     try {
       assertValidity(rule.validity);
     } catch (error) {
@@ -73,7 +78,7 @@ export function companyIcmsSettings(
   rules: readonly CompanyIcmsRule[],
   ncm: string | null | undefined,
   date: string,
-): Pick<SaleTaxSettings, 'icms' | 'icmsBlocked'> & { ruleId?: string } {
+): Pick<SaleTaxSettings, 'icms' | 'icmsBlocked'> & { ruleId?: string; benefitCode?: string } {
   if (rules.length === 0 || !ncm) return {};
   try {
     const rule = selectRule(rules.map(toRule), 'ICMS', {
@@ -83,7 +88,10 @@ export function companyIcmsSettings(
       ufDestino: '',
       ncm,
     });
-    return rule ? { icms: rule.effect, ruleId: rule.id } : {};
+    if (!rule) return {};
+    // O cBenef não mexe no cálculo: vai para o item da nota.
+    const { benefitCode, ...icms } = rule.effect;
+    return { icms, ruleId: rule.id, ...(benefitCode && { benefitCode }) };
   } catch (error) {
     if (!(error instanceof AmbiguousRuleError)) throw error;
     const names = error.ruleIds.map((id) => rules.find((rule) => rule.id === id)?.name ?? id);

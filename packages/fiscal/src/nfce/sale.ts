@@ -198,13 +198,14 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
   const items: NfeItem[] = input.items.map((item, index) => {
     const label = `Item ${index + 1} (${item.description})`;
     if (!item.ncm) pending.push(`${label}: o produto não tem NCM.`);
+    const settings = companyIcmsSettings(input.rules ?? [], item.ncm, date);
     const taxes = calculateSaleItemTaxes({
       company: { uf: c.uf, regime: regime?.id ?? null },
       profile: item.profile,
       // O frete compõe o valor da operação do item (base do ICMS, quando há destaque).
       item: { operationCents: item.grossCents - item.discountCents + freight[index]! },
       date,
-      settings: companyIcmsSettings(input.rules ?? [], item.ncm, date),
+      settings,
     });
     const icms = result(taxes.icms, `${label}, ICMS`, pending);
     const pis = result(taxes.pis, `${label}, PIS`, pending);
@@ -216,6 +217,7 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
       description: index === 0 ? HOMOLOGATION_FIRST_ITEM : item.description,
       ncm: item.ncm ?? '',
       ...(item.cest && { cest: item.cest }),
+      ...(settings.benefitCode && { benefitCode: settings.benefitCode }),
       cfop: taxes.cfop ?? '',
       unit: item.unit,
       quantityMilli: item.quantityMilli,

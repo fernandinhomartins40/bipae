@@ -46,6 +46,20 @@ test('cadastrar, conferir conflito, editar e excluir uma regra de ICMS', async (
   await linha.click();
   await page.getByRole('button', { name: 'Excluir regra' }).click();
   await expect(page.getByText('Nenhuma regra de ICMS ainda')).toBeVisible();
+
+  // Só o código de benefício fiscal (cBenef, F3-27): a isenção vem do CST do produto.
+  await page.getByRole('button', { name: 'Nova regra' }).click();
+  await page.getByLabel('Nome da regra').fill('Isenção do arroz');
+  await page.getByLabel('NCM', { exact: true }).fill('1006');
+  await page.getByLabel('Código de benefício fiscal (cBenef, opcional)').fill('pr81');
+  await page.getByLabel('Fonte').fill('Orientação do contador');
+  await page.getByRole('button', { name: 'Salvar regra' }).click();
+  await expect(page.getByText(/8 ou 10 letras e números/)).toBeVisible();
+  await page.getByLabel('Código de benefício fiscal (cBenef, opcional)').fill('pr810001');
+  await page.getByRole('button', { name: 'Salvar regra' }).click();
+  await expect(page.getByRole('row', { name: /Isenção do arroz/ })).toContainText(
+    'cBenef PR810001',
+  );
 });
 
 test('ver a referência do Portal da DIFAL com as linhas defasadas (F3-25)', async ({ page }) => {

@@ -385,6 +385,7 @@ export interface FiscalSnapshot {
       baseReduction?: string;
       fcpRate?: string;
       st?: { mva: string; rate: string; baseReduction?: string };
+      benefitCode?: string;
     };
     source: string;
   }[];

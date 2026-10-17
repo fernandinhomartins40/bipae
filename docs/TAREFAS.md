@@ -194,7 +194,9 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-26.d.ES · Espírito Santo: Portaria 16-R/2019 atualizada até a 81-R/2026 (352 linhas, redação verde de fora, revogados com data); monitor semanal
     - [x] F3-26.d.GO · Goiás: Apêndice II do Anexo VIII do RCTE/GO (213 linhas, industrial e atacadista separados; autopeças, construção, elétricos e ração fora da ST desde 01/03/2018); monitor semanal
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
-- [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
+- [~] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
+  - [x] F3-27.a · Base: a regra de ICMS da empresa leva o cBenef (8 ou 10 caracteres ou SEM CBENEF, como no leiaute PL_010f), o motor o separa do cálculo e a NFC-e o põe no item depois do CEST, válida no XSD; chega ao caixa pela sincronização
+  - [ ] F3-27.b · Tabelas oficiais de cBenef das UFs que exigem o código (PR, RJ, RS, SC, GO, DF, ES e outras), geradas do arquivo da SEFAZ, para sugerir e conferir o código pelo CST — depende: F3-27.a
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
   - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entraram com a F3-08.b (Portal Nacional da NF-e).
 - [x] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c

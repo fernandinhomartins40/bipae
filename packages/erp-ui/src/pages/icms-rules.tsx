@@ -37,6 +37,7 @@ function describeEffect(effect: CompanyIcmsRuleRow['effect']): string {
     pct(effect.baseReduction) && `Redução da base ${pct(effect.baseReduction)}`,
     pct(effect.fcpRate) && `FCP ${pct(effect.fcpRate)}`,
     effect.st && `ST com MVA ${pct(effect.st.mva)} e alíquota ${pct(effect.st.rate)}`,
+    effect.benefitCode && `cBenef ${effect.benefitCode}`,
   ]
     .filter(Boolean)
     .join(' · ');
@@ -158,6 +159,7 @@ function RuleForm({
     fcpRate: e?.fcpRate ?? '',
     stMva: e?.st?.mva ?? '',
     stRate: e?.st?.rate ?? '',
+    benefitCode: e?.benefitCode ?? '',
     source: rule?.source ?? '',
   });
   const reload = () => queryClient.invalidateQueries({ queryKey: ['icms-rules'] });
@@ -177,6 +179,7 @@ function RuleForm({
         baseReduction: v.baseReduction || null,
         fcpRate: v.fcpRate || null,
         st: v.stMva || v.stRate ? { mva: v.stMva, rate: v.stRate } : null,
+        benefitCode: v.benefitCode || null,
         source: v.source,
       };
       if (rule) await api.put(`/fiscal/icms-rules/${rule.id}`, body);
@@ -269,6 +272,13 @@ function RuleForm({
             }}
           />
         )}
+        <TextField
+          label="Código de benefício fiscal (cBenef, opcional)"
+          hint="O código que a SEFAZ da UF dá para a isenção ou redução, como PR810001. Vai em cada item da nota; algumas UFs recusam a nota sem ele."
+          value={form.values.benefitCode}
+          onChange={text('benefitCode')}
+          error={form.errors.benefitCode}
+        />
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField
             label="Vale a partir de"

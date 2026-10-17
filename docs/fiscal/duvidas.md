@@ -37,6 +37,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-031 | 🟡 aguarda o dono | SPED EFD ICMS/IPI: gerar no Bipaê ou deixar com o contador (E21) |
 | D-032 | ✅ resolvida | NFC-e de entrega a domicílio (delivery) |
 | D-033 | 🟡 parcial | Venda condicional: notas da remessa, da volta e da venda |
+| D-034 | 🟡 parcial | Código de benefício fiscal (cBenef) por UF |
 
 ---
 
@@ -569,3 +570,12 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - a tela avisa que as notas de remessa e de retorno ainda são emitidas fora do Bipaê.
   - As notas do Ajuste (5.912, 1.913, 1.949 e a venda referenciada) dependem da NF-e da retaguarda (tarefa F5-12.c, que depende da F3-33).
 - **Pergunta em aberto:** quando a remessa foi feita por NF-e, a venda do que ficou pode sair em NFC-e, ou tem de ser NF-e para referenciar a chave da remessa, como pede a cláusula oitava, II, "c"? Quando a F5-12.c chegar, a venda do condicional passa a ser feita por NF-e com a referência, a menos que uma fonte oficial permita a NFC-e.
+
+### D-034 — Código de benefício fiscal (cBenef) por UF
+
+- **Contexto:** o leiaute da NF-e e da NFC-e (PL_010f) tem o campo cBenef no item, com 8 ou 10 caracteres ou "SEM CBENEF". Algumas UFs exigem o código quando a situação tributária traz benefício (isenção, redução de base, diferimento), e recusam a nota sem ele (rejeição 930). Cada UF publica a própria tabela de códigos.
+- **Implementação de 17/10/2026 (F3-27.a):**
+  - **Cadastro:** a regra de ICMS da empresa leva o código. Quem cadastra é a empresa, com o contador.
+  - **Nota:** o Bipaê põe o código em cada item do NCM da regra, logo depois do CEST, e o XML é conferido no XSD oficial.
+  - **O que o sistema não faz:** não decide sozinho qual código usar nem se a UF exige.
+- **Em aberto (F3-27.b):** gerar as tabelas oficiais de cada UF que exige o código, a partir do arquivo publicado pela SEFAZ, para sugerir o código e conferir se ele combina com o CST do produto.

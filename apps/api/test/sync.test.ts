@@ -872,9 +872,18 @@ describe('regras de ICMS da empresa (F3-06.e)', () => {
 
     // Mudar a regra chega ao caixa; apagar também, e volta a alíquota geral de SP.
     const id = criada.json().id;
-    await admin.put(`/fiscal/icms-rules/${id}`, { ...base, name: 'Cerveja', rate: '27' });
+    // O código de benefício (cBenef, F3-27) é gravado em maiúsculas e chega ao caixa com a regra.
+    await admin.put(`/fiscal/icms-rules/${id}`, {
+      ...base,
+      name: 'Cerveja',
+      rate: '27',
+      benefitCode: 'sp000001',
+    });
     await caixa.sync.sync();
-    expect((await caixa.pdv.fiscalContext()).icmsRules[0]!.effect.rate).toBe('27');
+    expect((await caixa.pdv.fiscalContext()).icmsRules[0]!.effect).toMatchObject({
+      rate: '27',
+      benefitCode: 'SP000001',
+    });
     expect((await admin.delete(`/fiscal/icms-rules/${id}`)).statusCode).toBe(200);
     await caixa.sync.sync();
     expect((await caixa.pdv.fiscalContext()).icmsRules).toEqual([]);
