@@ -266,9 +266,23 @@ jobs:
           nohup pnpm --filter @bipae/api exec tsx src/main.ts > api.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:3333/v1/health && exit 0; sleep 2; done
           cat api.log; exit 1
+      - name: O app abre e fica aberto? (diagnóstico, Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          $exe = "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop.exe"
+          $p = Start-Process -FilePath $exe -PassThru -RedirectStandardOutput app-out.log -RedirectStandardError app-err.log
+          Start-Sleep -Seconds 15
+          $vivo = -not $p.HasExited
+          $saida = (Get-Content app-out.log, app-err.log -ErrorAction SilentlyContinue | Select-Object -Last 30) -join '%0A'
+          if ($vivo) { Stop-Process -Id $p.Id -Force }
+          Write-Output "::warning title=App no Windows::aberto depois de 15 s: $vivo; código: $($p.ExitCode)%0A$saida"
       - name: Venda dentro do app (Windows)
         if: runner.os == 'Windows'
         shell: bash
+        env:
+          NATIVE_DRIVER: ${{ github.workspace }}\msedgedriver.exe
         run: bash scripts/ci-annotate.sh "WebView (Windows)" node apps/desktop/e2e-webview/sale.mjs "$PWD/apps/desktop/src-tauri/target/debug/bipae-desktop.exe"
       - name: Venda dentro do app (Linux)
         if: runner.os == 'Linux'

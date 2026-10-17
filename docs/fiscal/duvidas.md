@@ -21,7 +21,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-015 | ✅ resolvida | Split payment no grupo de pagamento da NFC-e (NT 2026.006) |
 | D-016 | ✅ resolvida | cClassTrib: o dia do fim da vigência ainda vale? |
 | D-017 | ✅ resolvida | CFOP para contribuinte exclusivo do IBS/CBS: 84 ou 72 códigos? |
-| D-018 | 🔴 aberta | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
+| D-018 | 🟡 parcial | CEST: conferência da tabela extraída e quais mercadorias estão em ST na UF |
 | D-019 | 🔴 aberta | Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração |
 | D-020 | 🔴 aberta | IBS/CBS/IS: o que ainda não é calculado e o que depende de publicação |
 | D-022 | ✅ resolvida | NFC-e em MG: ambiente próprio ou SVRS? |
@@ -181,6 +181,11 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Contexto:** a tabela de CEST (1.043 códigos) foi extraída do texto consolidado do Convênio ICMS 142/18 no site do CONFAZ, porque não existe arquivo oficial estruturado. A lista é nacional e diz o que **pode** estar em substituição tributária; quem decide o que **está** é cada UF, por legislação própria, que não está no sistema.
 - **Implementação provisória:** o sistema valida o código e sugere CEST pelo NCM, sem decidir sozinho se há ST. A data de início de cada item é a que o convênio informa; quando ele não informa item a item, fica 01/01/2019. O Anexo XXVII (escala industrial não relevante) não foi importado.
 - **Pergunta:** o contador pode conferir uma amostra dos CEST do ramo da loja? De onde virá a lista de mercadorias em ST da UF (item E2, UF de homologação)?
+- **Atualização de 16/10/2026 (F3-26.a, fonte oficial):** a lista da UF vem do ato publicado pela própria SEFAZ, guardado em `packages/fiscal/sources` e lido por um gerador (nada digitado à mão).
+  - **SP, produtos alimentícios:** Portaria SRE 12/2026, Anexo Único, com 69 itens com CEST, NCM e IVA-ST, válidos de 01/05/2026 a 31/01/2029. Todos os CEST conferem com o Convênio ICMS 142/18.
+  - **Como o Bipaê usa:** a regra de ICMS da empresa mostra a MVA oficial pelo NCM, e o botão "Usar" preenche a MVA e a fonte. A empresa confere a descrição do CEST (limites de embalagem e exceções) e confirma.
+  - **O motor não decide sozinho se há ST:** só calcula com a regra que a empresa salvou.
+  - **Em aberto:** os outros segmentos de SP (bebidas, higiene e limpeza, que mudaram em 2026) e as demais UFs, nas tarefas F3-26.b a F3-26.d.
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração
 

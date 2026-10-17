@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-26.a Substituição tributária por UF: base e SP alimentícios] — 16/10/2026
+
+### Adicionado
+- **MVA oficial na regra de ICMS:** ao digitar o NCM, a tela mostra a MVA (IVA-ST) que a SEFAZ do estado da empresa publicou para aquele produto, com o CEST e a descrição. O botão "Usar" preenche a MVA e a fonte da regra, e a empresa confere o produto e salva.
+- **São Paulo, produtos alimentícios:** os 69 itens da Portaria SRE 12/2026, válidos de 01/05/2026 a 31/01/2029. A tabela é gerada do ato oficial guardado no Bipaê; nada é digitado à mão.
+- **Estado sem tabela no Bipaê ainda:** a tela avisa em vez de inventar.
+- **Monitor semanal das fontes oficiais:** passou a conferir também a página da SEFAZ-SP.
+
+### Corrigido (CI)
+- **Teste do app desktop no WebView real:**
+  - no Linux, já passa;
+  - no Windows, o passo ganhou diagnóstico para descobrir por que o WebView2 não abre a sessão.
+
 ## [F7-06 Bipaê Desktop para macOS] — 16/10/2026
 
 ### Adicionado

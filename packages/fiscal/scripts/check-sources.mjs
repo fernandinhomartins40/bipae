@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import { parseCest } from './cest.mjs';
 import { parseDifal } from './difal.mjs';
+import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -96,6 +97,17 @@ const PARSED = [
     title: 'Alíquotas por produto (Portal Nacional da DIFAL)',
     keys: ['difal'],
     parse: (p) => parseDifal(p.difal, ufByCode),
+  },
+  {
+    title: 'IVA-ST dos alimentícios em SP (Portaria SRE 12/2026)',
+    keys: ['stSpAlimenticios'],
+    parse: (p) =>
+      parseSpAlimenticios(
+        p.stSpAlimenticios,
+        new Set(
+          JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+        ),
+      ),
   },
   {
     title: 'Endereços da NFC-e (SVRS e ENCAT)',

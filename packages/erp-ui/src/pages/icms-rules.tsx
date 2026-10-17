@@ -125,6 +125,7 @@ export function IcmsRulesPage() {
       {editing && companyId && (
         <RuleForm
           companyId={companyId}
+          uf={company?.uf ?? null}
           rule={editing === 'new' ? null : editing}
           onClose={() => setEditing(null)}
         />
@@ -135,10 +136,12 @@ export function IcmsRulesPage() {
 
 function RuleForm({
   companyId,
+  uf,
   rule,
   onClose,
 }: {
   companyId: string;
+  uf: string | null;
   rule: CompanyIcmsRuleRow | null;
   onClose: () => void;
 }) {
@@ -252,6 +255,20 @@ function RuleForm({
             error={form.errors['st.rate']}
           />
         </fieldset>
+        {uf && (
+          <StSuggestion
+            uf={uf}
+            ncm={form.values.ncm.split(/[,\s]+/).filter(Boolean)[0] ?? ''}
+            date={form.values.validFrom}
+            onUse={(m) => {
+              form.set('stMva', m.mva);
+              form.set(
+                'source',
+                `${m.act}, CEST ${cestText(m.cest)}: IVA-ST de ${m.mva.replace('.', ',')}%`,
+              );
+            }}
+          />
+        )}
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField
             label="Vale a partir de"
@@ -385,6 +402,83 @@ function PortalReference({ uf }: { uf: string }) {
           },
         ]}
       />
+    </section>
+  );
+}
+
+const cestText = (cest: string) => cest.replace(/^(\d{2})(\d{3})(\d{2})$/, '$1.$2.$3');
+
+interface StMatch {
+  item: string;
+  cest: string;
+  ncmText: string;
+  description: string;
+  mva: string;
+  act: string;
+  url: string;
+  note: string;
+}
+
+/**
+ * MVA oficial da UF para o NCM (F3-26): o que a SEFAZ publicou, para a empresa conferir o
+ * produto (a descrição do CEST tem limites de embalagem e exceções) e usar com um clique.
+ */
+function StSuggestion({
+  uf,
+  ncm,
+  date,
+  onUse,
+}: {
+  uf: string;
+  ncm: string;
+  date: string;
+  onUse: (m: StMatch) => void;
+}) {
+  const { api } = useApp();
+  const code = ncm.replace(/\D/g, '');
+  const found = useQuery({
+    queryKey: ['st-references', uf, code, date],
+    queryFn: () =>
+      api.get<{ uf: string; covered: boolean; items: StMatch[] }>(
+        `/fiscal/st-references?uf=${uf}&ncm=${code}${date ? `&date=${date}` : ''}`,
+      ),
+    enabled: code.length >= 4,
+  });
+  if (code.length < 4 || !found.data) return null;
+  if (!found.data.covered) {
+    return (
+      <p className="text-sm text-muted">
+        A tabela oficial de MVA de {uf} ainda não está no Bipaê: confira na legislação da SEFAZ.
+      </p>
+    );
+  }
+  if (found.data.items.length === 0) {
+    return (
+      <p className="text-sm text-muted">
+        Na tabela oficial de {uf} que o Bipaê tem, este NCM não aparece com MVA nesta data.
+      </p>
+    );
+  }
+  return (
+    <section className="rounded-ui border border-border p-3 text-sm" aria-label="MVA oficial">
+      <p className="mb-2 font-semibold">MVA publicada pela SEFAZ de {uf} para este NCM</p>
+      <ul className="flex flex-col gap-2">
+        {found.data.items.slice(0, 5).map((m) => (
+          <li key={m.cest} className="flex flex-wrap items-center justify-between gap-2">
+            <span>
+              <span className="font-semibold">IVA-ST {m.mva.replace('.', ',')}%</span> · CEST{' '}
+              {cestText(m.cest)} · {m.description}
+            </span>
+            <Button variant="secondary" onClick={() => onUse(m)}>
+              {`Usar ${m.mva.replace('.', ',')}%`}
+            </Button>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-2 text-muted">
+        {found.data.items[0]!.act}. {found.data.items[0]!.note} Confira se o produto é o da
+        descrição antes de usar.
+      </p>
     </section>
   );
 }

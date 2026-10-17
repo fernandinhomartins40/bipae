@@ -25,6 +25,8 @@ import {
   cestsForNcm,
   cfopGroup,
   icmsProductRates,
+  ST_REFERENCE_UFS,
+  stReferencesFor,
   classTribStatus,
   findCestSegment,
   isCfopValidOn,
@@ -197,6 +199,37 @@ export class FiscalController {
    * Alíquotas por mercadoria que o Portal Nacional da DIFAL publica para a UF (F3-25), com a data
    * e a marcação de defasado. Referência para o contador, não regra do motor.
    */
+  /**
+   * Substituição tributária por UF (F3-26): a MVA (IVA-ST) oficial da SEFAZ para o NCM na data,
+   * gerada do ato publicado. Referência para a regra de ICMS da empresa, não regra do motor.
+   */
+  @Get('st-references')
+  @RequirePermission('catalog.read')
+  stReferences(@Query() query: unknown) {
+    const { uf, ncm, date } = parse(
+      z.object({
+        uf: z.string({ message: 'Informe a UF' }).trim().toUpperCase().length(2, 'Informe a UF'),
+        ncm: z
+          .string({ message: 'Informe o NCM' })
+          .trim()
+          .regex(/^[\d.]{2,10}$/, 'NCM inválido'),
+        date: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional(),
+      }),
+      query,
+    );
+    const day =
+      date ??
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
+    return {
+      uf,
+      covered: ST_REFERENCE_UFS.includes(uf),
+      items: stReferencesFor(uf, ncm, day),
+    };
+  }
+
   @Get('icms-products')
   @RequirePermission('catalog.read')
   icmsProducts(@Query() query: unknown) {

@@ -196,5 +196,14 @@
   "publishedAt": "2018-12-21",
   "downloadedAt": "2026-10-15",
   "sha256": "49a32c2c4dc64413f6ef47ed4756b54121ec56514d5352d6931b9bf43a0706a1"
+ },
+ "stSpAlimenticios": {
+  "file": "SEFAZ-SP_Portaria_SRE_12-2026_IVA-ST_alimenticios_2026-10-16.html.gz",
+  "title": "Portaria SRE 12/2026 (SP): IVA-ST dos produtos alimentícios do Anexo XVI da Portaria CAT 68/2019",
+  "publisher": "Secretaria da Fazenda e Planejamento de São Paulo",
+  "page": "https://legislacao.fazenda.sp.gov.br/Paginas/Portaria-SRE-12-de-2026.aspx",
+  "publishedAt": "2026-03-25",
+  "downloadedAt": "2026-10-16",
+  "sha256": "d87d3175defa41be8af04b7609510c538e7b53a49572b8d1e9ee5c9ff9f4d651"
  }
 }

@@ -167,7 +167,11 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Feito em 13/10/2026: MA, PI, RS, SE e TO confirmadas. AL (divergente) e AP (sem fonte) ficam com o contador, dúvida D-021.
 - [x] F3-25 · Importar as alíquotas por produto das 27 UFs do Portal Nacional da DIFAL, com a data de cada linha e marcação do que está defasado — depende: F3-06.c
   - Feito em 13/10/2026: `icms-products.json` gerado da página oficial guardada, rota `/v1/fiscal/icms-products` e referência na tela Regras de ICMS. Referência, não regra do motor.
-- [ ] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
+- [~] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
+  - [x] F3-26.a · Base: tabela st-references.json gerada do ato oficial guardado em sources/, consulta por UF, NCM e data, rota /fiscal/st-references e sugestão "Usar" na regra de ICMS; SP alimentícios (Portaria SRE 12/2026, 69 itens)
+  - [ ] F3-26.b · SP: bebidas (cerveja, refrigerante e água), higiene e limpeza, conferindo o que saiu da ST em 2026 (Portarias SRE 64/2025, 74/2025, 94/2025, 9/2026 e 20/2026) — depende: F3-26.a
+  - [ ] F3-26.c · PR, MG, RJ, RS, SC e BA (uma subtarefa por UF quando começar) — depende: F3-26.a
+  - [ ] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
 - [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07

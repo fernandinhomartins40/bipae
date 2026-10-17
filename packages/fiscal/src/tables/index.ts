@@ -19,3 +19,4 @@ export * from './pdv-payments';
 export * from './ibs-cbs-scope';
 export * from './sefaz-rejections';
 export * from './purchase-cost-credits';
+export * from './st-references';

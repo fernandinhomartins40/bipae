@@ -1,0 +1,717 @@
+{
+ "references": [
+  {
+   "uf": "SP",
+   "segment": "17",
+   "segmentName": "Produtos alimentícios",
+   "act": "Portaria SRE 12/2026 (Anexo XVI da Portaria CAT 68/2019)",
+   "source": "stSpAlimenticios",
+   "url": "https://legislacao.fazenda.sp.gov.br/Paginas/Portaria-SRE-12-de-2026.aspx",
+   "validFrom": "2026-05-01",
+   "validTo": "2029-01-31",
+   "note": "Base: preço praticado + frete, seguro, impostos e encargos, mais o IVA-ST. Vindo de outra UF com alíquota interna maior que a interestadual, usar o IVA-ST ajustado (art. 1º, parágrafo único).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "1700100",
+     "ncms": [
+      "17049010"
+     ],
+     "ncmText": "1704.90.10",
+     "description": "Chocolate branco, em embalagens de conteúdo inferior ou igual a 1 kg, exceto os classificados nos CEST 17.005.00",
+     "mva": "72.41"
+    },
+    {
+     "item": "1.1",
+     "cest": "1700101",
+     "ncms": [
+      "17049010"
+     ],
+     "ncmText": "1704.90.10",
+     "description": "Chocolate branco, em embalagens de conteúdo superior a 1 kg e inferior ou igual a 2 kg, exceto os classificados nos CEST 17.005.00",
+     "mva": "71.01"
+    },
+    {
+     "item": "2",
+     "cest": "1700200",
+     "ncms": [
+      "18063110"
+     ],
+     "ncmText": "1806.31.10",
+     "description": "Chocolates, em tabletes, barras ou paus, recheados, em recipientes ou embalagens imediatas de conteúdo inferior ou igual a 1 kg",
+     "mva": "88.15"
+    },
+    {
+     "item": "2.1",
+     "cest": "1700201",
+     "ncms": [
+      "18063110"
+     ],
+     "ncmText": "1806.31.10",
+     "description": "Chocolates, em tabletes, barras ou paus, recheados, em recipientes ou embalagens de conteúdo superior a 1 kg e inferior ou igual a 2 kg",
+     "mva": "102.40"
+    },
+    {
+     "item": "3",
+     "cest": "1700300",
+     "ncms": [
+      "18063210"
+     ],
+     "ncmText": "1806.32.10",
+     "description": "Chocolates, em tabletes, barras ou paus, não recheados, em recipientes ou embalagens imediatas de conteúdo inferior ou igual a 2 kg",
+     "mva": "74.80"
+    },
+    {
+     "item": "4",
+     "cest": "1700400",
+     "ncms": [
+      "18069000"
+     ],
+     "ncmText": "1806.90.00",
+     "description": "Chocolates e outras preparações alimentícias contendo cacau, em embalagens de conteúdo inferior ou igual a 1 kg, exceto os classificados nos CEST 17.005.01, 17.006.00, 17.006.02, 17.007.00 e 17.109.00",
+     "mva": "64.95"
+    },
+    {
+     "item": "4.1",
+     "cest": "1700401",
+     "ncms": [
+      "18069000"
+     ],
+     "ncmText": "1806.90.00",
+     "description": "Chocolates e outras preparações alimentícias contendo cacau, em embalagens de conteúdo superior a 1 kg e inferior ou igual a 2 kg, exceto os classificados nos CEST 17.005.01, 17.006.00, 17.006.02 e 17.007.00",
+     "mva": "91.11"
+    },
+    {
+     "item": "5",
+     "cest": "1700600",
+     "ncms": [
+      "18069000"
+     ],
+     "ncmText": "1806.90.00",
+     "description": "Achocolatados em pó, em embalagens de conteúdo inferior ou igual a 1 kg, exceto os classificados no CEST 17.006.02",
+     "mva": "43.85"
+    },
+    {
+     "item": "6",
+     "cest": "1700602",
+     "ncms": [
+      "18069000"
+     ],
+     "ncmText": "1806.90.00",
+     "description": "Achocolatados em pó, em cápsulas",
+     "mva": "41.95"
+    },
+    {
+     "item": "7",
+     "cest": "1700700",
+     "ncms": [
+      "18069000"
+     ],
+     "ncmText": "1806.90.00",
+     "description": "Caixas de bombons contendo cacau, em embalagens de conteúdo inferior ou igual a 1 kg",
+     "mva": "54.59"
+    },
+    {
+     "item": "8",
+     "cest": "1700800",
+     "ncms": [
+      "17049090"
+     ],
+     "ncmText": "1704.90.90",
+     "description": "Bombons, inclusive à base de chocolate branco sem cacau",
+     "mva": "169.12"
+    },
+    {
+     "item": "9",
+     "cest": "1700900",
+     "ncms": [
+      "18069000"
+     ],
+     "ncmText": "1806.90.00",
+     "description": "Bombons, balas, caramelos, confeitos, pastilhas e outros produtos de confeitaria, contendo cacau",
+     "mva": "89.79"
+    },
+    {
+     "item": "10",
+     "cest": "1701200",
+     "ncms": [
+      "0402"
+     ],
+     "ncmText": "0402.1; 0402.2; 0402.9",
+     "description": "Leite em pó, blocos ou grânulos, exceto creme de leite",
+     "mva": "34.10"
+    },
+    {
+     "item": "11",
+     "cest": "1701300",
+     "ncms": [
+      "19011020"
+     ],
+     "ncmText": "1901.10.20",
+     "description": "Farinha láctea",
+     "mva": "39.69"
+    },
+    {
+     "item": "12",
+     "cest": "1701400",
+     "ncms": [
+      "19011010"
+     ],
+     "ncmText": "1901.10.10",
+     "description": "Leite modificado para alimentação de crianças",
+     "mva": "43.07"
+    },
+    {
+     "item": "13",
+     "cest": "1701500",
+     "ncms": [
+      "19011090",
+      "19011030"
+     ],
+     "ncmText": "1901.10.90; 1901.10.30",
+     "description": "Preparações para alimentação infantil à base de farinhas, grumos, sêmolas ou amidos e outros",
+     "mva": "45.95"
+    },
+    {
+     "item": "14",
+     "cest": "1701600",
+     "ncms": [
+      "04011010",
+      "04012010"
+     ],
+     "ncmText": "0401.10.10; 0401.20.10",
+     "description": "Leite “longa vida” (UHT - “Ultra High Temperature”), em recipiente de conteúdo inferior ou igual a 2 litros",
+     "mva": "23.06"
+    },
+    {
+     "item": "15",
+     "cest": "1701900",
+     "ncms": [
+      "040140",
+      "04022130",
+      "04022930",
+      "0402"
+     ],
+     "ncmText": "0401.40.2; 0402.21.30; 0402.29.30; 0402.9",
+     "description": "Creme de leite, em recipiente de conteúdo inferior ou igual a 1 kg",
+     "mva": "52.04"
+    },
+    {
+     "item": "16",
+     "cest": "1701902",
+     "ncms": [
+      "040110",
+      "040120",
+      "040150",
+      "040210",
+      "04022920"
+     ],
+     "ncmText": "0401.10; 0401.20; 0401.50; 0402.10; 0402.29.20",
+     "description": "Outros cremes de leite, em recipiente de conteúdo inferior ou igual a 1kg",
+     "mva": "52.51"
+    },
+    {
+     "item": "17",
+     "cest": "1702000",
+     "ncms": [
+      "0402"
+     ],
+     "ncmText": "0402.9",
+     "description": "Leite condensado, em recipiente de conteúdo inferior ou igual a 1 kg",
+     "mva": "41.82"
+    },
+    {
+     "item": "18",
+     "cest": "1702100",
+     "ncms": [
+      "0403"
+     ],
+     "ncmText": "403",
+     "description": "Iogurte e leite fermentado em recipiente de conteúdo inferior ou igual a 2 litros, exceto o item classificado no CEST 17.022.00",
+     "mva": "70.10"
+    },
+    {
+     "item": "19",
+     "cest": "1702300",
+     "ncms": [
+      "0406"
+     ],
+     "ncmText": "406",
+     "description": "Requeijão e similares, em recipiente de conteúdo inferior ou igual a 1 kg, exceto as embalagens individuais de conteúdo inferior ou igual a 10 g",
+     "mva": "71.11"
+    },
+    {
+     "item": "20",
+     "cest": "1702500",
+     "ncms": [
+      "04051000"
+     ],
+     "ncmText": "0405.10.00",
+     "description": "Manteiga, em embalagem de conteúdo inferior ou igual a 1 kg, exceto as embalagens individuais de conteúdo inferior ou igual a 10 g",
+     "mva": "45.69"
+    },
+    {
+     "item": "21",
+     "cest": "1702600",
+     "ncms": [
+      "15171000"
+     ],
+     "ncmText": "1517.10.00",
+     "description": "Margarina e creme vegetal em recipiente de conteúdo inferior ou igual a 500 g, exceto as embalagens individuais de conteúdo inferior ou igual a 10 g",
+     "mva": "48.60"
+    },
+    {
+     "item": "22",
+     "cest": "1702700",
+     "ncms": [
+      "15171000"
+     ],
+     "ncmText": "1517.10.00",
+     "description": "Margarina e creme vegetal, em recipiente de conteúdo superior a 500 g e inferior ou igual a 1 kg, exceto as embalagens individuais de conteúdo inferior ou igual a 10 g",
+     "mva": "40.55"
+    },
+    {
+     "item": "23",
+     "cest": "1702702",
+     "ncms": [
+      "151790"
+     ],
+     "ncmText": "1517.90",
+     "description": "Outras margarinas e cremes vegetais em recipiente de conteúdo inferior a 1 kg, exceto as embalagens individuais de conteúdo inferior ou igual a 10 g",
+     "mva": "40.55"
+    },
+    {
+     "item": "24",
+     "cest": "1703400",
+     "ncms": [
+      "21032010"
+     ],
+     "ncmText": "2103.20.10",
+     "description": "Catchup em embalagens imediatas de conteúdo inferior ou igual a 650 g, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "66.34"
+    },
+    {
+     "item": "25",
+     "cest": "1703500",
+     "ncms": [
+      "21039021",
+      "21039091"
+     ],
+     "ncmText": "2103.90.21; 2103.90.91",
+     "description": "Condimentos e temperos compostos, incluindo molho de pimenta e outros molhos, em embalagens imediatas de conteúdo inferior ou igual a 1 kg, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 3 g",
+     "mva": "68.98"
+    },
+    {
+     "item": "26",
+     "cest": "1703600",
+     "ncms": [
+      "21031010"
+     ],
+     "ncmText": "2103.10.10",
+     "description": "Molhos de soja preparados em embalagens imediatas de conteúdo inferior ou igual a 650 g, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "83.64"
+    },
+    {
+     "item": "27",
+     "cest": "1703700",
+     "ncms": [
+      "21033010"
+     ],
+     "ncmText": "2103.30.10",
+     "description": "Farinha de mostarda em embalagens de conteúdo inferior ou igual a 1 kg",
+     "mva": "75.75"
+    },
+    {
+     "item": "28",
+     "cest": "1703800",
+     "ncms": [
+      "21033021"
+     ],
+     "ncmText": "2103.30.21",
+     "description": "Mostarda preparada em embalagens imediatas de conteúdo inferior ou igual a 650 g, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "76.24"
+    },
+    {
+     "item": "29",
+     "cest": "1703900",
+     "ncms": [
+      "21039011"
+     ],
+     "ncmText": "2103.90.11",
+     "description": "Maionese em embalagens imediatas de conteúdo inferior ou igual a 650 g, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "44.16"
+    },
+    {
+     "item": "30",
+     "cest": "1704000",
+     "ncms": [
+      "2002"
+     ],
+     "ncmText": "2002",
+     "description": "Tomates preparados ou conservados, exceto em vinagre ou em ácido acético, em embalagens de conteúdo inferior ou igual a 1 kg",
+     "mva": "53.20"
+    },
+    {
+     "item": "31",
+     "cest": "1704100",
+     "ncms": [
+      "21032010"
+     ],
+     "ncmText": "2103.20.10",
+     "description": "Molhos de tomate em embalagens imediatas de conteúdo inferior ou igual a 1 kg",
+     "mva": "74.32"
+    },
+    {
+     "item": "32",
+     "cest": "1704700",
+     "ncms": [
+      "19023000"
+     ],
+     "ncmText": "1902.30.00",
+     "description": "Massas alimentícias tipo instantânea, exceto as descritas no CEST 17.047.01",
+     "mva": "84.25"
+    },
+    {
+     "item": "32.1",
+     "cest": "1704701",
+     "ncms": [
+      "19023000"
+     ],
+     "ncmText": "1902.30.00",
+     "description": "Massas alimentícias tipo instantânea, derivadas de farinha de trigo",
+     "mva": "74.21"
+    },
+    {
+     "item": "33",
+     "cest": "1704800",
+     "ncms": [
+      "1902"
+     ],
+     "ncmText": "1902",
+     "description": "Massas alimentícias, cozidas ou recheadas (de carne ou de outras substâncias) ou preparadas de outro modo, exceto as descritas nos CEST 17.047.00, 17.048.01, e 17.048.02",
+     "mva": "49.14"
+    },
+    {
+     "item": "34",
+     "cest": "1704801",
+     "ncms": [
+      "19024000"
+     ],
+     "ncmText": "1902.40.00",
+     "description": "Cuscuz",
+     "mva": "55.43"
+    },
+    {
+     "item": "35",
+     "cest": "1704802",
+     "ncms": [
+      "19022000"
+     ],
+     "ncmText": "1902.20.00",
+     "description": "Massas alimentícias recheadas (mesmo cozidas ou preparadas de outro modo)",
+     "mva": "59.85"
+    },
+    {
+     "item": "36",
+     "cest": "1705000",
+     "ncms": [
+      "190520"
+     ],
+     "ncmText": "1905.20",
+     "description": "Pães industrializados, inclusive de especiarias, exceto panetones e bolo de forma",
+     "mva": "62.64"
+    },
+    {
+     "item": "37",
+     "cest": "1705100",
+     "ncms": [
+      "19052090"
+     ],
+     "ncmText": "1905.20.90",
+     "description": "Bolo de forma, inclusive de especiarias",
+     "mva": "68.62"
+    },
+    {
+     "item": "38",
+     "cest": "1705300",
+     "ncms": [
+      "19053100"
+     ],
+     "ncmText": "1905.31.00",
+     "description": "Biscoitos e bolachas derivados de farinha de trigo; (exceto dos tipos “cream cracker”, “água e sal”, “maisena”, “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial)",
+     "mva": "59.67"
+    },
+    {
+     "item": "39",
+     "cest": "1705400",
+     "ncms": [
+      "19053100"
+     ],
+     "ncmText": "1905.31.00",
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo; (exceto dos tipos \"cream cracker\", \"água e sal\", \"maisena\" e \"maria\" e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial)",
+     "mva": "102.44"
+    },
+    {
+     "item": "40",
+     "cest": "1705600",
+     "ncms": [
+      "19059020"
+     ],
+     "ncmText": "1905.90.20",
+     "description": "Biscoitos e bolachas derivados de farinha de trigo dos tipos “cream cracker” e “água e sal”",
+     "mva": "66.18"
+    },
+    {
+     "item": "41",
+     "cest": "1705601",
+     "ncms": [
+      "19059020"
+     ],
+     "ncmText": "1905.90.20",
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo dos tipos “cream cracker” e “água e sal”",
+     "mva": "102.44"
+    },
+    {
+     "item": "42",
+     "cest": "1705602",
+     "ncms": [
+      "19059020"
+     ],
+     "ncmText": "1905.90.20",
+     "description": "Outras bolachas, exceto casquinhas para sorvete e os biscoitos e bolachas relacionados nos CEST 17.056.00 e 17.056.01",
+     "mva": "60.77"
+    },
+    {
+     "item": "43",
+     "cest": "1705700",
+     "ncms": [
+      "19053200"
+     ],
+     "ncmText": "1905.32.00",
+     "description": "“Waffles” e “wafers” - sem cobertura",
+     "mva": "52.09"
+    },
+    {
+     "item": "44",
+     "cest": "1705800",
+     "ncms": [
+      "19053200"
+     ],
+     "ncmText": "1905.32.00",
+     "description": "“Waffles” e “wafers” - com cobertura",
+     "mva": "64.17"
+    },
+    {
+     "item": "45",
+     "cest": "1705900",
+     "ncms": [
+      "19054000"
+     ],
+     "ncmText": "1905.40.00",
+     "description": "Torradas, pão torrado e produtos semelhantes torrados",
+     "mva": "62.65"
+    },
+    {
+     "item": "46",
+     "cest": "1706000",
+     "ncms": [
+      "19059010"
+     ],
+     "ncmText": "1905.90.10",
+     "description": "Outros pães de forma",
+     "mva": "42.04"
+    },
+    {
+     "item": "47",
+     "cest": "1706200",
+     "ncms": [
+      "19059090"
+     ],
+     "ncmText": "1905.90.90",
+     "description": "Outros pães, exceto o classificado no CEST 17.062.03",
+     "mva": "43.02"
+    },
+    {
+     "item": "48",
+     "cest": "1706201",
+     "ncms": [
+      "19059090"
+     ],
+     "ncmText": "1905.90.90",
+     "description": "Outros bolos industrializados e produtos de panificação não especificados anteriormente, incluindo as pizzas; exceto os classificados nos CEST 17.062.02 e 17.062.03",
+     "mva": "63.29"
+    },
+    {
+     "item": "49",
+     "cest": "1706300",
+     "ncms": [
+      "19051000"
+     ],
+     "ncmText": "1905.10.00",
+     "description": "Pão denominado knackebrot",
+     "mva": "114.24"
+    },
+    {
+     "item": "50",
+     "cest": "1707600",
+     "ncms": [
+      "16010000"
+     ],
+     "ncmText": "1601.00.00",
+     "description": "Enchidos (embutidos) e produtos semelhantes, de carne, miudezas ou sangue; exceto salsicha, linguiça e mortadela",
+     "mva": "57.62"
+    },
+    {
+     "item": "51",
+     "cest": "1707700",
+     "ncms": [
+      "16010000"
+     ],
+     "ncmText": "1601.00.00",
+     "description": "Salsicha e linguiça, exceto as descritas nos CEST 17.077.01",
+     "mva": "56.17"
+    },
+    {
+     "item": "52",
+     "cest": "1707701",
+     "ncms": [
+      "16010000"
+     ],
+     "ncmText": "1601.00.00",
+     "description": "Salsicha em lata",
+     "mva": "60.52"
+    },
+    {
+     "item": "53",
+     "cest": "1707800",
+     "ncms": [
+      "16010000"
+     ],
+     "ncmText": "1601.00.00",
+     "description": "Mortadela",
+     "mva": "47.61"
+    },
+    {
+     "item": "54",
+     "cest": "1707900",
+     "ncms": [
+      "1602"
+     ],
+     "ncmText": "1602",
+     "description": "Outras preparações e conservas de carne, miudezas ou de sangue, exceto as descritas nos CEST 17.079.01, 17.079.02, 17.079.03, 17.079.04, 17.079.05, 17.079.06, 17.079.07 e 17.079.08",
+     "mva": "64.62"
+    },
+    {
+     "item": "55",
+     "cest": "1707901",
+     "ncms": [
+      "16023100"
+     ],
+     "ncmText": "1602.31.00",
+     "description": "Outras preparações e conservas de carne, de miudezas ou de sangue, de aves da posição 01.05: de peruas e de perus, exceto as descritas no CEST 17.079.08",
+     "mva": "64.00"
+    },
+    {
+     "item": "56",
+     "cest": "1707902",
+     "ncms": [
+      "16023210"
+     ],
+     "ncmText": "1602.32.10",
+     "description": "Outras preparações e conservas de carne, de miudezas ou de sangue, de aves da posição 01.05: de galos e de galinhas, com conteúdo de carne ou de miudezas superior ou igual a 57 %, em peso, não cozidas, exceto as descritas no CEST 17.079.08",
+     "mva": "65.17"
+    },
+    {
+     "item": "57",
+     "cest": "1707903",
+     "ncms": [
+      "16023220"
+     ],
+     "ncmText": "1602.32.20",
+     "description": "Outras preparações e conservas de carne, de miudezas ou de sangue, de aves da posição 01.05: de galos e de galinhas, com conteúdo de carne ou de miudezas superior ou igual a 57 %, em peso, cozidas, exceto as descritas no CEST 17.079.08",
+     "mva": "52.30"
+    },
+    {
+     "item": "58",
+     "cest": "1707904",
+     "ncms": [
+      "16024100"
+     ],
+     "ncmText": "1602.41.00",
+     "description": "Outras preparações e conservas de carne, de miudezas ou de sangue, da espécie suína: pernas e respectivos pedaços",
+     "mva": "61.45"
+    },
+    {
+     "item": "59",
+     "cest": "1707905",
+     "ncms": [
+      "16024900"
+     ],
+     "ncmText": "1602.49.00",
+     "description": "Outras preparações e conservas de carne, de miudezas ou de sangue, da espécie suína: outras, incluindo as misturas, exceto os descritos no CEST 17.079.07",
+     "mva": "60.43"
+    },
+    {
+     "item": "60",
+     "cest": "1707906",
+     "ncms": [
+      "16025000"
+     ],
+     "ncmText": "1602.50.00",
+     "description": "Outras preparações e conservas de carne, de miudezas ou de sangue, da espécie bovina",
+     "mva": "53.99"
+    },
+    {
+     "item": "61",
+     "cest": "1707907",
+     "ncms": [
+      "16024900"
+     ],
+     "ncmText": "1602.49.00",
+     "description": "Apresuntado",
+     "mva": "55.01"
+    },
+    {
+     "item": "62",
+     "cest": "1708000",
+     "ncms": [
+      "1604"
+     ],
+     "ncmText": "1604",
+     "description": "Preparações e conservas de peixes; caviar e seus sucedâneos preparados a partir de ovas de peixe; exceto os descritos nos CEST 17.080.01 e 17.081.00",
+     "mva": "60.23"
+    },
+    {
+     "item": "63",
+     "cest": "1708001",
+     "ncms": [
+      "16042010"
+     ],
+     "ncmText": "1604.20.10",
+     "description": "Outras preparações e conservas de atuns",
+     "mva": "62.99"
+    },
+    {
+     "item": "64",
+     "cest": "1708100",
+     "ncms": [
+      "1604"
+     ],
+     "ncmText": "1604",
+     "description": "Sardinha em conserva",
+     "mva": "40.63"
+    },
+    {
+     "item": "65",
+     "cest": "1708200",
+     "ncms": [
+      "1605"
+     ],
+     "ncmText": "1605",
+     "description": "Crustáceos, moluscos e outros invertebrados aquáticos, preparados ou em conservas",
+     "mva": "71.50"
+    }
+   ]
+  }
+ ]
+}

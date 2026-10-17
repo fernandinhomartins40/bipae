@@ -78,3 +78,33 @@ test('ver a referência do Portal da DIFAL com as linhas defasadas (F3-25)', asy
   await page.getByLabel('Procurar no portal').fill('regra geral');
   await expect.poll(() => tabela.getByRole('row').count()).toBeLessThan(linhas);
 });
+
+test('MVA oficial de SP sugerida pelo NCM e usada com um clique (F3-26)', async ({ page }) => {
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Rita Dona');
+  await page.getByLabel('Nome do negócio').fill(`Laticínios ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`rita-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Rita!' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await page.getByRole('button', { name: 'Editar', exact: true }).click();
+  await page.getByLabel('UF').selectOption('SP');
+  await page.getByRole('button', { name: 'Salvar empresa' }).click();
+  await expect(page.getByText(/ · SP/)).toBeVisible();
+
+  await page.getByRole('link', { name: 'Regras de ICMS' }).click();
+  await page.getByRole('button', { name: 'Nova regra' }).click();
+  await page.getByLabel('Nome da regra').fill('Leite UHT');
+  await page.getByLabel('Vale a partir de').fill('2026-10-16');
+  await page.getByLabel('NCM', { exact: true }).fill('0401.10.10');
+  const sugestao = page.getByRole('region', { name: 'MVA oficial' });
+  await expect(sugestao).toContainText('IVA-ST 23,06%');
+  await expect(sugestao).toContainText('Portaria SRE 12/2026');
+  await sugestao.getByRole('button', { name: 'Usar 23,06%' }).click();
+  await expect(page.getByLabel('MVA (%)')).toHaveValue('23.06');
+  await expect(page.getByLabel('Fonte')).toHaveValue(
+    /Portaria SRE 12\/2026.*CEST 17\.016\.00.*23,06%/,
+  );
+});

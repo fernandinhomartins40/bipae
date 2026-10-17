@@ -41,7 +41,11 @@ await api(
   conta.accessToken,
 );
 
-const driverProcess = spawn('tauri-driver', [], { stdio: ['ignore', 'inherit', 'inherit'] });
+// No Windows, o msedgedriver fica no PATH (passo da CI); o caminho explícito evita outro na máquina.
+const native = process.env.NATIVE_DRIVER;
+const driverProcess = spawn('tauri-driver', native ? ['--native-driver', native] : [], {
+  stdio: ['ignore', 'inherit', 'inherit'],
+});
 await new Promise((r) => setTimeout(r, 2000));
 
 const driver = await new Builder()

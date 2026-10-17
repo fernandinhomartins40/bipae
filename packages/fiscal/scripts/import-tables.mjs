@@ -18,6 +18,7 @@ import { parseCest } from './cest.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { markStale, parseDifal } from './difal.mjs';
+import { parseSpAlimenticios } from './st-sp.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -29,14 +30,16 @@ const manifest = JSON.parse(readFileSync(join(sourcesDir, 'manifest.json'), 'utf
 const isoDate = (serial) => {
   if (serial === '') return null;
   const n = Number(serial);
-  if (!Number.isInteger(n) || n < 20000 || n > 80000) throw new Error(`Data inesperada: "${serial}"`);
+  if (!Number.isInteger(n) || n < 20000 || n > 80000)
+    throw new Error(`Data inesperada: "${serial}"`);
   return new Date((n - 25569) * 86_400_000).toISOString().slice(0, 10);
 };
 
 const clean = (text) => String(text).replace(/\s+/g, ' ').trim();
 
 const flag = (value, where) => {
-  if (value !== '0' && value !== '1') throw new Error(`Indicador fora de 0/1 em ${where}: "${value}"`);
+  if (value !== '0' && value !== '1')
+    throw new Error(`Indicador fora de 0/1 em ${where}: "${value}"`);
   return value === '1';
 };
 
@@ -45,7 +48,9 @@ function header(sheet, expected) {
   const found = sheet.rows[0].map(clean);
   for (const [index, name] of expected.entries()) {
     if (found[index] !== name) {
-      throw new Error(`Planilha "${sheet.name}": coluna ${index + 1} deveria ser "${name}", veio "${found[index]}"`);
+      throw new Error(
+        `Planilha "${sheet.name}": coluna ${index + 1} deveria ser "${name}", veio "${found[index]}"`,
+      );
     }
   }
   return new Map(found.map((name, index) => [name, index]));
@@ -134,7 +139,12 @@ function importClassTrib() {
     }));
 
   const sheet = sheetOf('classTrib', (name) => name.startsWith('cClass '));
-  const col = header(sheet, ['CST-IBS/CBS', 'Descrição CST-IBS/CBS', 'cClassTrib', 'Nome cClassTrib']);
+  const col = header(sheet, [
+    'CST-IBS/CBS',
+    'Descrição CST-IBS/CBS',
+    'cClassTrib',
+    'Nome cClassTrib',
+  ]);
   const need = (name) => {
     if (!col.has(name)) throw new Error(`Coluna "${name}" sumiu da planilha de cClassTrib`);
     return col.get(name);
@@ -167,7 +177,8 @@ function importClassTrib() {
   );
   const percent = (value, code) => {
     const d = new Decimal(value);
-    if (d.isNegative() || d.greaterThan(100)) throw new Error(`Redução fora de 0 a 100 no cClassTrib ${code}`);
+    if (d.isNegative() || d.greaterThan(100))
+      throw new Error(`Redução fora de 0 a 100 no cClassTrib ${code}`);
     return d.toString();
   };
   const known = new Set(csts.map((item) => item.cst));
@@ -177,7 +188,8 @@ function importClassTrib() {
     .map((row) => {
       const code = row[2];
       if (!/^\d{6}$/.test(code)) throw new Error(`cClassTrib inesperado: "${code}"`);
-      if (!known.has(row[0])) throw new Error(`cClassTrib ${code} aponta para CST desconhecido: ${row[0]}`);
+      if (!known.has(row[0]))
+        throw new Error(`cClassTrib ${code} aponta para CST desconhecido: ${row[0]}`);
       const end = isoDate(row[c.dFimVig]);
       const annex = clean(row[c.ANEXO]);
       const law = clean(row[c['LC 214/25']]);
@@ -236,7 +248,8 @@ function importCbsRates() {
     .filter((row) => row[0])
     .map((row) => {
       const year = Number(row[0]);
-      if (!Number.isInteger(year) || year < 2026 || year > 2100) throw new Error(`Ano inesperado: ${row[0]}`);
+      if (!Number.isInteger(year) || year < 2026 || year > 2100)
+        throw new Error(`Ano inesperado: ${row[0]}`);
       // A planilha guarda a fração (0,009); a tabela guarda o percentual, como na lei ("0.9").
       if (/^[\d.]+(E-?\d+)?$/i.test(row[1])) {
         return { year, rate: new Decimal(row[1]).times(100).toDecimalPlaces(8).toString() };
@@ -260,7 +273,8 @@ function importFcp() {
         return { kind: match[1] === 'Fixo' ? 'fixed' : 'max', rate: match[2] };
       });
       const kinds = new Set(parsed.map((p) => p.kind));
-      if (parsed.length === 0 || kinds.size !== 1) throw new Error(`FCP de ${row[1]} mistura tipos de alíquota`);
+      if (parsed.length === 0 || kinds.size !== 1)
+        throw new Error(`FCP de ${row[1]} mistura tipos de alíquota`);
       return {
         cUF: row[0],
         uf: row[1],
@@ -279,10 +293,13 @@ const brDate = (text) => {
   return `${match[3]}-${match[2]}-${match[1]}`;
 };
 
-const nextDay = (iso) => new Date(Date.parse(`${iso}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+const nextDay = (iso) =>
+  new Date(Date.parse(`${iso}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
 
 function importNcm() {
-  const raw = JSON.parse(gunzipSync(readFileSync(join(sourcesDir, manifest.ncm.file))).toString('utf8'));
+  const raw = JSON.parse(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.ncm.file))).toString('utf8'),
+  );
   const items = raw.Nomenclaturas.map((item) => {
     // Capítulo (99), posição (99.99), subposição (9999.9 e 9999.99), item (9999.99.9) e NCM (9999.99.99).
     if (!/^(\d{2}|\d{2}\.\d{2}|\d{4}\.\d{1,2}|\d{4}\.\d{2}\.\d{1,2})$/.test(item.Codigo)) {
@@ -317,7 +334,13 @@ function importNfeSchema() {
   if (!layoutEntry) throw new Error('Pacote de schemas sem o leiaute da NF-e');
   const layout = layoutEntry[1].toString('utf8');
 
-  const found = { icms: new Map(), csosn: new Map(), pis: new Map(), cofins: new Map(), ipi: new Map() };
+  const found = {
+    icms: new Map(),
+    csosn: new Map(),
+    pis: new Map(),
+    cofins: new Map(),
+    ipi: new Map(),
+  };
   const names = [...layout.matchAll(/<xs:element name="([A-Za-z0-9]+)"/g)];
   for (const match of layout.matchAll(/<xs:element name="(CST|CSOSN)">([\s\S]*?)<\/xs:element>/g)) {
     // O grupo é o último elemento de tributo aberto antes deste campo.
@@ -342,7 +365,8 @@ function importNfeSchema() {
 
   const origin = /<xs:simpleType name="Torig">([\s\S]*?)<\/xs:simpleType>/.exec(layout);
   if (!origin) throw new Error('Tipo Torig (origem da mercadoria) não encontrado no schema');
-  const list = (map) => [...map].sort(([a], [b]) => (a < b ? -1 : 1)).map(([code, groups]) => ({ code, groups }));
+  const list = (map) =>
+    [...map].sort(([a], [b]) => (a < b ? -1 : 1)).map(([code, groups]) => ({ code, groups }));
   const result = {
     package: manifest.nfeSchema.file.replace(/\.zip$/, ''),
     icms: list(found.icms),
@@ -353,7 +377,8 @@ function importNfeSchema() {
     orig: [...origin[1].matchAll(/<xs:enumeration value="([^"]*)"/g)].map((m) => m[1]),
   };
   for (const [kind, value] of Object.entries(result)) {
-    if (Array.isArray(value) && value.length === 0) throw new Error(`Schema sem códigos de ${kind}`);
+    if (Array.isArray(value) && value.length === 0)
+      throw new Error(`Schema sem códigos de ${kind}`);
   }
   return result;
 }
@@ -374,12 +399,18 @@ function importPaymentMeans() {
     .filter((row) => /^\d{2}$/.test(row[0]))
     .map((row) => {
       const end = isoDate(row[3]);
-      return { code: row[0], description: clean(row[1]), start: isoDate(row[2]), ...(end && { end }) };
+      return {
+        code: row[0],
+        description: clean(row[1]),
+        start: isoDate(row[2]),
+        ...(end && { end }),
+      };
     });
 }
 
 function importNfceEndpoints() {
-  const page = (key) => gunzipSync(readFileSync(join(sourcesDir, manifest[key].file))).toString('utf8');
+  const page = (key) =>
+    gunzipSync(readFileSync(join(sourcesDir, manifest[key].file))).toString('utf8');
   return parseNfceEndpoints({
     svrsHtml: page('nfceAuthorizers'),
     encatWsHtml: page('nfceWebservicesEncat'),
@@ -389,7 +420,8 @@ function importNfceEndpoints() {
 }
 
 function importNfeEndpoints() {
-  const page = (key) => gunzipSync(readFileSync(join(sourcesDir, manifest[key].file))).toString('utf8');
+  const page = (key) =>
+    gunzipSync(readFileSync(join(sourcesDir, manifest[key].file))).toString('utf8');
   return parseNfeEndpoints({
     producaoHtml: page('nfeWebservicesProducao'),
     homologacaoHtml: page('nfeWebservicesHomologacao'),
@@ -406,7 +438,13 @@ function importIcpBrasil() {
       if (!/^-----BEGIN CERTIFICATE-----\n[\s\S]+\n-----END CERTIFICATE-----$/.test(pem)) {
         throw new Error(`Certificado fora do formato PEM: ${name}`);
       }
-      return { name: name.split('/').pop().replace(/\.crt$/, ''), pem };
+      return {
+        name: name
+          .split('/')
+          .pop()
+          .replace(/\.crt$/, ''),
+        pem,
+      };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -449,8 +487,34 @@ const tables = {
   'municipios.json': importMunicipios(),
 };
 
+// Substituição tributária por UF (F3-26): a MVA (IVA-ST) publicada por cada SEFAZ, por CEST e
+// NCM. É referência para a regra de ICMS da empresa, não regra do motor: a empresa confirma.
+function importStReferences(cest) {
+  const known = new Set(cest.items.map((c) => c.cest));
+  const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
+    'utf8',
+  );
+  return {
+    references: [
+      {
+        uf: 'SP',
+        segment: '17',
+        segmentName: 'Produtos alimentícios',
+        act: 'Portaria SRE 12/2026 (Anexo XVI da Portaria CAT 68/2019)',
+        source: 'stSpAlimenticios',
+        url: manifest.stSpAlimenticios.page,
+        validFrom: '2026-05-01',
+        validTo: '2029-01-31',
+        note: 'Base: preço praticado + frete, seguro, impostos e encargos, mais o IVA-ST. Vindo de outra UF com alíquota interna maior que a interestadual, usar o IVA-ST ajustado (art. 1º, parágrafo único).',
+        items: parseSpAlimenticios(sp, known),
+      },
+    ],
+  };
+}
+
 // Depende do FCP (para o código de cada UF).
 tables['icms-products.json'] = importIcmsProducts(tables['fcp.json']);
+tables['st-references.json'] = importStReferences(tables['cest.json']);
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha
 // sem regerar os dados.
@@ -459,7 +523,9 @@ tables['sources.json'] = Object.fromEntries(
     key,
     {
       ...source,
-      sha256: createHash('sha256').update(readFileSync(join(sourcesDir, source.file))).digest('hex'),
+      sha256: createHash('sha256')
+        .update(readFileSync(join(sourcesDir, source.file)))
+        .digest('hex'),
     },
   ]),
 );
@@ -475,8 +541,8 @@ for (const [name, data] of Object.entries(tables)) {
       : name === 'municipios.json'
         ? `{"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
         : name === 'cest.json'
-        ? `{"segments":${JSON.stringify(data.segments)},"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
-        : `${JSON.stringify(data, null, 1)}\n`;
+          ? `{"segments":${JSON.stringify(data.segments)},"items":[\n${data.items.map((row) => JSON.stringify(row)).join(',\n')}\n]}\n`
+          : `${JSON.stringify(data, null, 1)}\n`;
   if (check) {
     let current = '';
     try {
