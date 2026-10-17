@@ -598,4 +598,9 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Códigos:** 247, com a capitulação legal e o tipo do benefício.
   - **Datas:** vêm como número de série do Excel e são convertidas pelo gerador.
   - **Obrigatoriedade no ES:** desde 01/07/2024 (Decreto 5.630-R/2024), na NF-e, no NF3-e e no CT-e.
+- **Atualização de 17/10/2026 (F3-27.b, São Paulo):** planilha "Tabela CST x cBenef" do portal da NF-e da SEFAZ-SP, versão 20260901:
+  - **Obrigatoriedade em SP:** o §15 do art. 212-O do RICMS exige o código em operações com isenção, não incidência, redução de base, regime especial sobre a receita bruta, suspensão ou diferimento.
+  - **Códigos:** 316, com o dispositivo legal.
+  - **Vigência:** a planilha não tem coluna de datas. O fim vem da observação: "Vigorou até ..." (5 códigos encerrados em 30/04/2026) e o "SEM CBENEF", que não é aceito a partir de 01/07/2026.
+  - **CST 00 com crédito outorgado:** não leva o cBenef (Portaria CAT 147/09).
 - **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, DF e das outras UFs que exigem o código.

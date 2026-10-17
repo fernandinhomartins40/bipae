@@ -392,5 +392,13 @@
   "page": "https://sefaz.es.gov.br/media/Receita%20Estadual/GEFIS/cBenef%20ES%20V6.xlsx",
   "publishedAt": "2026-10-17",
   "downloadedAt": "2026-10-17"
+ },
+ "cbenefSp": {
+  "file": "SEFAZ-SP_Tabela_cBenef_SP_v20260901.xlsx",
+  "title": "Tabela CST x cBenef de São Paulo (versão 20260901), códigos de benefício fiscal da NF-e e da NFC-e",
+  "publisher": "Secretaria da Fazenda e Planejamento de São Paulo",
+  "page": "https://portal.fazenda.sp.gov.br/servicos/nfe/Downloads/Tabela-cBenef-SP-v20260901.xlsx",
+  "publishedAt": "2026-09-01",
+  "downloadedAt": "2026-10-17"
  }
 }

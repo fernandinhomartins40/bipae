@@ -125,3 +125,19 @@ describe('cBenef do Espírito Santo (cBenef ES V6)', () => {
     expect(cbenefLookup('ES', 'ES120001', '2033-01-01').valid).toBe(false);
   });
 });
+
+describe('cBenef de São Paulo (Tabela CST x cBenef)', () => {
+  it('a planilha com o dispositivo e a descrição; SEM CBENEF não vale mais desde 01/07/2026', () => {
+    expect(CBENEF_UFS).toContain('SP');
+    const r = cbenefLookup('SP', 'SP099009', '2026-10-17', '40');
+    expect(r).toMatchObject({ covered: true, valid: true, cstOk: true });
+    expect(r.entry!.description).toMatch(/Nota Fiscal Fácil/);
+    expect(cbenefLookup('SP', 'SEM CBENEF', '2026-06-30').valid).toBe(true);
+    expect(cbenefLookup('SP', 'SEM CBENEF', '2026-07-01').valid).toBe(false);
+  });
+
+  it('"Vigorou até" encerra o código na data', () => {
+    expect(cbenefLookup('SP', 'SP010340', '2026-04-30').valid).toBe(true);
+    expect(cbenefLookup('SP', 'SP010340', '2026-05-01').valid).toBe(false);
+  });
+});

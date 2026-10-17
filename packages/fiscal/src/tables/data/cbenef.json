@@ -23058,6 +23058,3063 @@
      "description": "Situações não previstas nos cBenefs anteriores. (Benefício fiscal cujo cBenef não foi contemplado na lista. Informar capitulação legal nas informações complementares.)"
     }
    ]
+  },
+  {
+   "uf": "SP",
+   "act": "Tabela CST x cBenef da SEFAZ-SP",
+   "source": "cbenefSp",
+   "url": "https://portal.fazenda.sp.gov.br/servicos/nfe/Downloads/Tabela-cBenef-SP-v20260901.xlsx",
+   "codes": [
+    {
+     "code": "SEM CBENEF",
+     "csts": [
+      "20",
+      "30",
+      "40",
+      "41",
+      "50",
+      "51",
+      "53",
+      "70",
+      "90"
+     ],
+     "from": null,
+     "to": "2026-06-30",
+     "description": "Item sem cBenef e UF exige cBenef para o CST"
+    },
+    {
+     "code": "SP099090",
+     "csts": [
+      "20",
+      "30",
+      "40",
+      "41",
+      "50",
+      "51",
+      "53",
+      "70",
+      "90"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Benefício concedido por decisão judicial em sentença individual ou coletiva"
+    },
+    {
+     "code": "SP099000",
+     "csts": [
+      "90"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Remessas de mercadorias entre estabelecimentos do mesmo titular"
+    },
+    {
+     "code": "SP099009",
+     "csts": [
+      "20",
+      "30",
+      "40",
+      "41",
+      "50",
+      "51",
+      "53",
+      "70",
+      "90"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Operações com emissão de documento realizada por meio do Regime Especial da NFF - Nota Fiscal Fácil"
+    },
+    {
+     "code": "SP099999",
+     "csts": [
+      "41",
+      "90"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Operações, sem benefício fiscal, para as quais a legislação determine a emissão da NF sem destaque de ICMS"
+    },
+    {
+     "code": "SP010010",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ADJUDICAÇÃO EFETUADA PELO ESTADO (Artigo 001 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010020",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - AIDS - MEDICAMENTOS PARA TRATAMENTO (Artigo 002 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010030",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - AMOSTRA GRÁTIS (Artigo 003 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010040",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - APAE - IMPORTAÇÃO DE MEDICAMENTOS (Artigo 004 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010070",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ARRENDAMENTO MERCANTIL (Artigo 007 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010080",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - BAGAGEM DE VIAJANTE (Artigo 008 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010090",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - BANCO DE ALIMENTOS (Artigo 009 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010140",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - CIRURGIAS - EQUIPAMENTOS E INSUMOS (Artigo 014 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010160",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - DEFICIENTES - CADEIRA DE RODAS E PRÓTESES (Artigo 016 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010170",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - DEFICIENTES - PRODUTOS DIVERSOS (Artigo 017 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010180",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - DEFICIENTES - PRODUTOS PARA INSTITUIÇÃO PÚBLICA OU ENTIDADE ASSISTENCIAL (Artigo 018 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010190",
+     "csts": [
+      "20",
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PESSOA COM DEFICIÊNCIA OU AUTISTA - VEÍCULO AUTOMOTOR (Artigo 019 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010220",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - \"DRAWBACK\" (Artigo 022 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010230",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - EMBARCAÇÃO NACIONAL (Artigo 023 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010260",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - EMBRAPA - IMPORTAÇÃO DE PRODUTOS PARA PESQUISA (Artigo 026 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010270",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - EMBRAPA - OPERAÇÕES DIVERSAS (Artigo 027 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010280",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - OÓCITO/EMBRIÃO/SÊMEN (Artigo 028 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010290",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ENERGIA ELÉTRICA (Artigo 029 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010300",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ENERGIA SOLAR E EÓLICA (Artigo 030 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010310",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ENTIDADE ASSISTENCIAL OU DE EDUCAÇÃO - PRODUÇÃO PRÓPRIA (Artigo 031 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010330",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - EXPOSIÇÕES/FEIRAS (Artigo 033 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010340",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": "2026-04-30",
+     "description": "Isenção - FUNDAÇÃO NACIONAL DE SAÚDE - IMPORTAÇÃO - MEDICAMENTOS (Artigo 034 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010360",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - HORTIFRUTIGRANJEIROS (Artigo 036 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010370",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - IMPORTAÇÃO - HIPÓTESES DIVERSAS (Artigo 037 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010380",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - IMPORTAÇÃO DE PRODUTOS HOSPITALARES (Artigo 038 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010390",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - IMPORTAÇÃO - RETORNO DE EXPORTAÇÃO (Artigo 039 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010400",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - IMPORTAÇÃO - SANEAMENTO BÁSICO (Artigo 040 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010410",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - INSUMOS AGROPECUÁRIOS (Artigo 041 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010420",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ITAIPU BINACIONAL (Artigo 042 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010440",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - LOJA FRANCA (Artigo 044 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010510",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓLEO LUBRIFICANTE USADO OU CONTAMINADO (Artigo 051 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010520",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": "2026-04-30",
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - DOAÇÕES PARA A SECRETARIA DA EDUCAÇÃO (Artigo 052 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010530",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - DOAÇÕES PARA VÍTIMAS DA SECA (Artigo 053 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010540",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - DOAÇÕES PARA VÍTIMAS DE CATÁSTROFES (Artigo 054 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010550",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - AQUISIÇÃO DE BENS, MERCADORIAS OU SERVIÇOS (Artigo 055 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010560",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - IMPORTAÇÃO (Artigo 056 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010590",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - PRODUTO FARMACÊUTICO (Artigo 059 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010600",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - PRODUTOS E EQUIPAMENTOS MÉDICOS (Artigo 060 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010630",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - VEÍCULOS PARA AS SECRETARIAS DA FAZENDA E DE SEGURANÇA (Artigo 063 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010640",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PENITENCIÁRIAS - MERCADORIAS PRODUZIDAS POR DETENTOS (Artigo 064 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010680",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PRÓ-TAMAR (Artigo 068 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010710",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - REPRESENTAÇÕES DIPLOMÁTICAS (Artigo 071 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010730",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - REPRODUTOR/MATRIZ (Artigo 073 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010750",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": "2026-04-30",
+     "description": "Isenção - SANGUE - IMPORTAÇÃO DE INSUMOS POR ENTIDADE DE HEMATOLOGIA OU HEMOTERAPIA (Artigo 075 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010760",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - SENAI, SENAC E SENAR (Artigo 076 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010770",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - TÁXI - PRESTAÇÃO DE SERVIÇO (Artigo 077 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010780",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - TRANSPORTE DE PASSAGEIROS (Artigo 078 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010800",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - TRENS METROPOLITANOS - IMPORTAÇÃO (Artigo 080 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010820",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - VASILHAME/RECIPIENTE/EMBALAGEM (Artigo 082 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010830",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - VÍTIMAS DE CALAMIDADES - DOAÇÃO (Artigo 083 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010840",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ZONA FRANCA DE MANAUS (Artigo 084 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010880",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - TÁXI - VEÍCULO (Artigo 088 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010890",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - AGROTÓXICO - EMBALAGEM - VAZIA (Artigo 089 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010910",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - FUNDO SOCIAL DE SÃO PAULO - DOAÇÕES (Artigo 091 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010920",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - MEDICAMENTOS (Artigo 092 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010940",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - MEDICAMENTOS - ÓRGÃOS PÚBLICOS (Artigo 094 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010970",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PROGRAMA DE SEGURANÇA ALIMENTAR E NUTRICIONAL (Artigo 097 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010980",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ALGODÃO (Artigo 098 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP010990",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - BORRACHA (Artigo 099 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011010",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - COELHO E AVE (Artigo 101 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011020",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - GADO (Artigo 102 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011030",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - LEITE (Artigo 103 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011040",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - HORTIFRUTIGRANJEIROS PARA INDUSTRIALIZAÇÃO (Artigo 104 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011050",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PARTES E PEÇAS PARA FABRICAÇÃO DE TRATOR, CAMINHÃO E ÔNIBUS (Artigo 105 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011070",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - INDÚSTRIA NAVAL/INFRA-ESTRUTURA PORTUÁRIA (Artigo 107 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011090",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": "2026-04-30",
+     "description": "Isenção - AERONAVES - INSUMOS PARA A FABRICAÇÃO (Artigo 109 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011120",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - FUNDAÇÃO ZERBINI (Artigo 112 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011130",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - AMIGOS DO BEM - DOAÇÃO (Artigo 113 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011150",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - FARMÁCIA POPULAR DO BRASIL (Artigo 115 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011160",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - REPORTO - MODERNIZAÇÃO DE ZONAS PORTUÁRIAS (Artigo 116 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011170",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - DEPÓSITO AFIANÇADO (Artigo 117 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011190",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PILHAS E BATERIAS USADAS (Artigo 119 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011200",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - PROGRAMAS DE FORTALECIMENTO E MODERNIZAÇÃO ESTADUAL (Artigo 120 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011230",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - FARINHA DE MANDIOCA (Artigo 123 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011270",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PEÇA DE VEÍCULO AUTOMOTOR SUBSTITUÍDA EM GARANTIA (Artigo 127 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011290",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - REAGENTE PARA DIAGNÓSTICO DA DOENÇA DE CHAGAS (Artigo 129 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011300",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - MEDICAMENTOS E EQUIPAMENTOS DESTINADOS À PESQUISA COM SERES HUMANOS (Artigo 130 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011320",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PEÇA SUBSTITUÍDA EM VIRTUDE DE GARANTIA (Artigo 132 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011330",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - METRÔ - IMPLANTAÇÃO DA LINHA 4 (Artigo 133 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011340",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PROGRAMA CAMINHO DA ESCOLA - MINISTÉRIO DA EDUCAÇÃO (Artigo 134 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011350",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - FARINHA DE TRIGO E PRODUTOS RESULTANTES DE SUA INDUSTRIALIZAÇÃO (Artigo 135 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011360",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - GESAC - GOVERNO FEDERAL (Artigo 136 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011370",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓLEO COMESTÍVEL (Artigo 137 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011400",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - OPERAÇÕES INTERNAS COM MAÇÃ E PÊRA (Artigo 140 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011420",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - AACD (Artigo 142 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011430",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PEÇA DE AERONAVE SUBSTITUÍDA EM VIRTUDE DE GARANTIA (Artigo 143 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011470",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÓRGÃOS PÚBLICOS - EQUIPAMENTOS DE SEGURANÇA ELETRÔNICA (Artigo 147 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011480",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - IMPORTAÇÃO - FORÇAS ARMADAS (Artigo 148 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011490",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - SERVIÇO DE TRANSPORTE - EXPORTAÇÃO (Artigo 149 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011500",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - GRIPE A - MEDICAMENTO PARA TRATAMENTO (Artigo 150 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011510",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - LOCOMOTIVA (Artigo 151 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011520",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": "2026-04-30",
+     "description": "Isenção - UNIÃO DOS ESCOTEIROS DO BRASIL (Artigo 152 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011530",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - FUNDAÇÃO FACULDADE DE MEDICINA (Artigo 153 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011540",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - TRATAMENTO DE CÂNCER (Artigo 154 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011550",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - TRANSPORTE DE PASSAGEIROS - CPTM (Artigo 155 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011560",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - OBRA SOCIAL NOSSA SENHORA DA GLÓRIA (Artigo 156 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011570",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - HEMOBRÁS (Artigo 157 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011580",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - TREM, LOCOMOTIVA OU VAGÃO (Artigo 158 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011590",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - MATÉRIA-PRIMA, MATERIAL SECUNDÁRIO, EMBALAGENS, PARTES, PEÇAS, MÁQUINAS E EQUIPAMENTOS - TRANSPORTE PÚBLICO SOBRE TRILHOS DE PASSAGEIROS (Artigo 159 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011600",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - METRÔ - IMPLANTAÇÃO DA LINHA 6 (Artigo 160 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011610",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - METRÔ - IMPLANTAÇÃO DA LINHA 18 (Artigo 161 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011620",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - PARCERIA PÚBLICO-PRIVADA - HOSPITAIS (Artigo 162 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011660",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ENERGIA ELÉTRICA - MICROGERADORES E MINIGERADORES (Artigo 166 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011680",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ARROZ (Artigo 168 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011690",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - FEIJÃO (Artigo 169 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011700",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ENERGIA SOLAR - PRÉDIOS PÚBLICOS (Artigo 170 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011710",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - IPT - MATERIAIS DE REFERÊNCIA (Artigo 171 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011730",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - AME - MEDICAMENTO PARA TRATAMENTO (Artigo 173 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011740",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - AUTOMATED PEOPLE MOVER (Artigo 174 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011760",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ABSORVENTES (Artigo 176 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011770",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ACELERADORES LINEARES (Artigo 177 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011780",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - METRÔ - EXPANSÃO DA LINHA 2 (Artigo 178 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011790",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - FIBROSE CÍSTICA (Artigo 179 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011810",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - EQUIPAMENTOS RECREATIVOS PARA USO EM PARQUE DE DIVERSÃO - IMPORTAÇÃO (Artigo 181 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011820",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - REFEIÇÃO (Artigo 182 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011830",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - LEVEDURAS (Artigo 183 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011840",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - TREM INTERCIDADES - TIC EIXO NORTE (Artigo 184 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP011850",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - ÁREAS DE LIVRE COMÉRCIO (Artigo 185 do Anexo I do RICMS)"
+    },
+    {
+     "code": "SP020010",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - AERONAVES, PARTES E PEÇAS (Artigo 001 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020030",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - CESTA BÁSICA (Artigo 003 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020080",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - GÁS NATURAL (Artigo 008 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020090",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - INSUMOS AGROPECUÁRIOS (Artigo 009 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020100",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - INSUMOS AGROPECUÁRIOS - RAÇÕES E ADUBOS (Artigo 010 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020110",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - MÁQUINAS, APARELHOS E VEÍCULOS USADOS (Artigo 011 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020120",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - MÁQUINAS INDUSTRIAIS E IMPLEMENTOS AGRÍCOLAS (Artigo 012 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020150",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - PÓ DE ALUMÍNIO (Artigo 015 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020190",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - TRANSPORTE DE LEITE (Artigo 019 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020260",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - DESENVOLVIMENTO AGROPECUÁRIO (Artigo 026 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020290",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - CARROÇARIA DE ÔNIBUS (Artigo 029 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020300",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - PRODUTOS DE COURO, SAPATOS, BOLSAS, CINTOS, CARTEIRAS E OUTROS ACESSÓRIOS (Artigo 030 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020320",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - ATACADISTA DE COURO (Artigo 032 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020330",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - VINHO (Artigo 033 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020340",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - PERFUMES, COSMETICOS E PRODUTOS DE HIGIENE PESSOAL (Artigo 034 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020350",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - INSTRUMENTOS MUSICAIS (Artigo 035 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020370",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - BRINQUEDOS (Artigo 037 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020380",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - REGIME DE ADMISSÃO TEMPORÁRIA (Artigo 038 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020390",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - PRODUTOS ALIMENTÍCIOS (Artigo 039 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020450",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - CARNE (Artigo 045 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020520",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - PRODUTOS TÊXTEIS (Artigo 052 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020530",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - HIDROCARBONETOS LÍQUIDOS - SOLVENTES (Artigo 053 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020550",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - LÂMPADAS LED, LUMINÁRIAS LED, REFLETORES LED, FITAS LED E PAINÉIS LED (Artigo 055 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020560",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - MDP, MDF e CHAPAS DE FIBRAS DE MADEIRA (Artigo 056 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020580",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - BARRAS DE AÇO (Artigo 058 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020590",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - TRATAMENTO DE EFLUENTES DOMÉSTICOS E INDUSTRIAIS (Artigo 059 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020610",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - SUCO DE LARANJA (Artigo 061 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020620",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - SOLUÇÃO PARENTERAL (Artigo 062 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020630",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - REGIME DE TRIBUTAÇÃO UNIFICADA - RTU (Artigo 063 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020650",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - CARROCERIAS SOBRE CHASSI, VAGÕES FERROVIÁRIOS DE CARGA, CARROCERIAS PARA VEÍCULOS AUTOMÓVEIS, REBOQUES E SEMIRREBOQUES (Artigo 065 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020660",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - MERCADORIAS DE COBRE (Artigo 066 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020690",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - BIOGÁS E BIOMETANO (Artigo 069 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020710",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - AMIDO DE MILHO, GLICOSE E XAROPE DE GLICOSE, OUTROS AÇÚCARES E XAROPES DE AÇÚCARES ORIUNDOS DO MILHO, AMIDO MODIFICADO E DEXTRINA DE MILHO, COLAS À BASE DE AMIDOS DE MILHO, DE DEXTRINA OU DE OUTROS AMIDOS MODIFICADOS DE MILHO (Artigo 071 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP050710",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento amparado por regime especial concedido nos termos do § 1º do artigo 71 do Anexo II do RICMS (Artigo 071 do Anexo II do RICMS, § 1º)"
+    },
+    {
+     "code": "SP020740",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - CARNE (Artigo 074 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020750",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - PNEUS E CÂMARAS DE AR – SAÍDA INTERNA (Artigo 075 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020770",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - INSUMOS AGROPECUÁRIOS - ADUBOS (Artigo 077 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020780",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - FABRICANTE DE ÔNIBUS (Artigo 078 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP020800",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - IMPORTAÇÃO POR REMESSAS POSTAIS OU EXPRESSAS (Artigo 080 do Anexo II do RICMS)"
+    },
+    {
+     "code": "SP040100",
+     "csts": [
+      "90"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Tributação sobre a Receita Bruta - FORNECIMENTO DE ALIMENTAÇÃO (Decreto 51.597/07)"
+    },
+    {
+     "code": "SP040200",
+     "csts": [
+      "90"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Tributação sobre a Receita Bruta - COMÉRCIO VAREJISTA DE CARNES (Decreto 62.647/17)"
+    },
+    {
+     "code": "SP018000",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - REPETRO (Decreto 63.208/18)"
+    },
+    {
+     "code": "SP028000",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - REPETRO (Decreto 63.208/18)"
+    },
+    {
+     "code": "SP029000",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Redução de Base de Cálculo - Indústria de informática (Decreto 51.624/07)"
+    },
+    {
+     "code": "SP070010",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída de mercadoria com destino a armazém geral situado neste Estado, para depósito em nome do remetente (Artigo 7º, I do RICMS)"
+    },
+    {
+     "code": "SP070020",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída de mercadoria com destino a depósito fechado, localizado neste Estado, do próprio contribuinte (Artigo 7º, II do RICMS)"
+    },
+    {
+     "code": "SP070030",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída de mercadoria de estabelecimento referido no inciso I ou II, em retorno ao estabelecimento depositante (Artigo 7º, III do RICMS)"
+    },
+    {
+     "code": "SP070040",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída de mercadoria, pertencente a terceiro, de estabelecimento de empresa de transporte ou de depósito, por conta e ordem desta, ressalvada a aplicação do disposto no inciso X do Artigo 2º (Artigo 7º, IV do RICMS)"
+    },
+    {
+     "code": "SP070050",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída de mercadoria com destino ao exterior e a prestação que destine serviço ao exterior (Artigo 7º, V do RICMS)"
+    },
+    {
+     "code": "SP070051",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Remessa de mercadoria de produção nacional com destino a armazém alfandegado, para depósito sob o regime de Depósito Alfandegado Certificado (Artigos 447 e 448 do RICMS)"
+    },
+    {
+     "code": "SP070060",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída com destino a outro Estado de energia elétrica ou de petróleo, inclusive lubrificante ou combustível líquido ou gasoso, dele derivados (Artigo 7º, VI do RICMS)"
+    },
+    {
+     "code": "SP070070",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída e o correspondente retorno de equipamentos e materiais, promovidos por pessoa ou entidade adiante indicada, utilizados exclusivamente nas operações vinculadas às suas atividades ou finalidades essenciais, observado o disposto no § 4º: a) a União, os Estados e os Municípios; b) os templos de qualquer culto; c) os partidos políticos e suas fundações, as entidades sindicais dos trabalhadores e as instituições de educação ou de assistência social, sem fins lucrativos, atendidos os requisitos da lei (Artigo 7º, VII do RICMS)"
+    },
+    {
+     "code": "SP070080",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída, de estabelecimento prestador de serviço de qualquer natureza definido em lei complementar como de competência tributária do município, de mercadoria a ser ou que tenha sido utilizada na prestação de tal serviço, ressalvadas as hipóteses previstas na alínea \"b\" do inciso III do artigo 2º (Artigo 7º, VIII do RICMS)"
+    },
+    {
+     "code": "SP070090",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída de máquinas, equipamentos, ferramentas ou objetos de uso do contribuinte, bem como de suas partes e peças, com destino a outro estabelecimento para lubrificação, limpeza, revisão, conserto, restauração ou recondicionamento ou em razão de empréstimo ou locação, desde que os referidos bens voltem ao estabelecimento de origem (Artigo 7º, IX do RICMS)"
+    },
+    {
+     "code": "SP070100",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída, em retorno ao estabelecimento de origem, de bem mencionado no inciso anterior, ressalvadas as hipóteses de fornecimento de mercadoria previstas no inciso III do artigo 2º (Artigo 7º, X do RICMS)"
+    },
+    {
+     "code": "SP070110",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Operação com ouro, quando definido em lei como ativo financeiro ou instrumento cambial (Artigo 7º, XI do RICMS)"
+    },
+    {
+     "code": "SP070120",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Operação decorrente de alienação fiduciária em garantia, bem como sobre a operação posterior ao vencimento do respectivo contrato de financiamento efetuada pelo credor fiduciário em razão do inadimplemento do devedor; (Artigo 7º, XII do RICMS)"
+    },
+    {
+     "code": "SP070130",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Operação ou prestação que envolver livro, jornal ou periódico ou o papel destinado à sua impressão (Artigo 7º, XIII do RICMS)"
+    },
+    {
+     "code": "SP070140",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída de bem do ativo permanente (Artigo 7º, XIV do RICMS)"
+    },
+    {
+     "code": "SP070150",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída, com destino a outro estabelecimento do mesmo titular, de material de uso ou consumo (Artigo 7º, XV do RICMS)"
+    },
+    {
+     "code": "SP070160",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Operação de qualquer natureza de que decorra a transmissão de bens móveis salvados de sinistro para companhias seguradoras. (Artigo 7º, XVI do RICMS)"
+    },
+    {
+     "code": "SP070170",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Saída de bem ou mercadoria com destino ao exterior sob amparo do Regime Aduaneiro Especial de Exportação Temporária, bem como a posterior reimportação, em retorno, desse mesmo bem ou mercadoria, desde que observados os prazos e condições previstos na legislação federal (Artigo 7º, XVII do RICMS)"
+    },
+    {
+     "code": "SP070180",
+     "csts": [
+      "41"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Não incidência - Operações e prestações praticadas por órgãos da administração pública direta estadual paulista, bem como pelas autarquias e fundações instituídas e mantidas pelo Estado de São Paulo (Artigo 7º, XVIII do RICMS)"
+    },
+    {
+     "code": "SP052600",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída promovida por produtor situado em território paulista com destino a comerciante, industrial, cooperativa ou qualquer outro contribuinte, exceto produtor (Artigo 260 do RICMS)"
+    },
+    {
+     "code": "SP053160",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Prestação de serviço de transporte de carga, com início em território paulista, realizada por transportador autônomo, qualquer que seja o seu domicílio, ou por empresa transportadora estabelecida fora do território paulista, inclusive a optante pelo Regime Especial Unificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e Empresas de Pequeno Porte - “Simples Nacional” e não inscrita no Cadastro de Contribuintes (Artigo 316 do RICMS)"
+    },
+    {
+     "code": "SP053190",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Saída de mercadoria remetida para demonstração, inclusive com destino a consumidor ou usuário final, até o momento em que ocorrer a transmissão de sua propriedade (Artigo 319 do RICMS)"
+    },
+    {
+     "code": "SP053191",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Saída de mercadoria remetida para mostruário, condicionada ao seu retorno ao estabelecimento de origem em até 180 (cento e oitenta) dias (Artigo 319-A do RICMS)"
+    },
+    {
+     "code": "SP053260",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Saída, de estabelecimento fabricante, de produtos específicos com destino a hospitais para utilização em cirurgia cardiovascular ou de implantação de prótese de silicone (Artigo 326 do RICMS)"
+    },
+    {
+     "code": "SP053270",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Saída de moldes, matrizes, gabaritos, padrões, chapelonas, modelos e estampos, não integrados ao ativo imobilizado, para fornecimento de trabalho fora do estabelecimento, ou com destino a outro estabelecimento inscrito como contribuinte para serem utilizados na elaboração de produtos encomendados pelo remetente, e desde que devam retornar ao estabelecimento de origem dentro do prazo de 180 (cento e oitenta) dias (Artigo 327 do RICMS)"
+    },
+    {
+     "code": "SP053271",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de mercadoria ou bem importados sem cobertura cambial, destinados à manutenção e ao reparo de aeronave pertencente a empresa autorizada a operar no transporte comercial internacional, e utilizados nessa atividade para estocagem no Regime Aduaneiro Especial de Depósito Afiançado (DAF), nos termos da legislação federal (Artigo 327-A do RICMS)"
+    },
+    {
+     "code": "SP053272",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Saída de partes, peças e componentes aeronáuticos para estoque próprio em poder de terceiros (Artigo 327-D do RICMS)"
+    },
+    {
+     "code": "SP053273",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de mercadoria ou bem importado do exterior e admitido nos Regimes Aduaneiros Especiais de Depósito Especial, Entreposto Aduaneiro na Importação e Trânsito Aduaneiro (Artigo 327-H do RICMS)"
+    },
+    {
+     "code": "SP053274",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de cátodo de cobre, NCM 7403.11.00, quando a importação for efetuada diretamente por estabelecimento industrial que realize a metalurgia do cobre importado em seu próprio estabelecimento localizado em território paulista, na proporção de 33,33% (trinta e três inteiros e trinta e três centésimos por cento) do valor da respectiva base de cálculo, para o momento em que o estabelecimento importador promover a saída do produto resultante da industrialização (Artigo 327-I do RICMS)"
+    },
+    {
+     "code": "SP053275",
+     "csts": [
+      "50",
+      "51",
+      "90"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão ou diferimento amparado por regime especial concedido nos termos do artigo 327-J do RICMS (Artigo 327-J do RICMS)"
+    },
+    {
+     "code": "SP053276",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de bens destinados à integração ao ativo imobilizado, importados do exterior por estabelecimento industrial paulista classificado na CNAE 29.10-7/01 – “Fabricação de automóveis, camionetas e utilitários” (Artigo 327-K do RICMS)"
+    },
+    {
+     "code": "SP053280",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída de mercadoria, promovida por estabelecimento rural com destino a cooperativa de que fizer parte, situado neste Estado (Artigo 328 do RICMS)"
+    },
+    {
+     "code": "SP053290",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de algodão em caroço de produção paulista (Artigo 329 do RICMS)"
+    },
+    {
+     "code": "SP053300",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de algodão em pluma ou de caroço de algodão, resultantes do beneficiamento de algodão em caroço de produção paulista (Artigo 330 do RICMS)"
+    },
+    {
+     "code": "SP053330",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de café cru, em coco ou em grão (Artigo 333 do RICMS)"
+    },
+    {
+     "code": "SP053450",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas das matérias-primas de produção paulista e subprodutos destinados à fabricação de açúcar, álcool ou melaço (Artigo 345 do RICMS)"
+    },
+    {
+     "code": "SP053460",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna dos produtos resultantes da industrialização de matérias-primas de produção paulista e subprodutos relacionados no § 4º do artigo 345, com destino à cooperativa de que faça parte o remetente (Artigo 346 do RICMS)"
+    },
+    {
+     "code": "SP053461",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas com destino a empresa geradora de energia termoelétrica de bagaço e torta de filtro resultantes da fabricação de açúcar, álcool ou melaço, palha, cavaco e outros resíduos da colheita das matérias- primas indicadas no item 1 do § 4º do artigo 345 e água ou vapor d’água (Artigo 346-A do RICMS)"
+    },
+    {
+     "code": "SP053462",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas de energia elétrica e de energia térmica (vapor d’água), promovidas por empresa geradora de energia termoelétrica, com destino a estabelecimento fabricante de açúcar, álcool ou melaço (Artigo 346-B do RICMS)"
+    },
+    {
+     "code": "SP053480",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de feijão (Artigo 348 do RICMS)"
+    },
+    {
+     "code": "SP053500",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de produtos agropecuários relacionados no artigo 350 do RICMS (Artigo 3​50 do RICMS)"
+    },
+    {
+     "code": "SP053512",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de amendoim em baga ou em grão de estabelecimento industrial beneficiador com destino a outro estabelecimento industrial, na proporção de 40% (quarenta por cento) do valor da operação. (Artigo 351-B do RICMS)"
+    },
+    {
+     "code": "SP053520",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Ope​rações com cominho (Artigo 352 do RICMS)"
+    },
+    {
+     "code": "SP053521",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações internas com trigo em grão, exceto para semeadura, classificado na posição 1001.00 da Nomenclatura Brasileira de Mercadorias - Sistema Harmonizado - NBM/SH (Artigo 352-A do RICMS)"
+    },
+    {
+     "code": "SP053522",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações internas com triticale, exceto para semeadura, classificado na posição 1008.60 da Nomenclatura Comum do Mercosul - Sistema Harmonizado - NCM/SH (Artigo 352-B do RICMS)"
+    },
+    {
+     "code": "SP053530",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída dos produtos hortifrutigranjeiros em estado natural relacionados no artigo 36 do Anexo I do RICMS com destino a estabelecimento industrial localizado neste Estado, para fins de industrialização (Artigo 353 do RICMS)"
+    },
+    {
+     "code": "SP053540",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Primeira saída, para o território do Estado, de produto \"in natura\" relacionado no artigo 354 do RICMS, ainda que acondicionado ou embalado para transporte, promovida pelo estabelecimento em que tiver sido produzido, com destino a estabelecimento comercial ou industrial (Artigo 354 do RICMS)"
+    },
+    {
+     "code": "SP053550",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações com semente destinada ao plantio (Artigo 355 do RICMS)"
+    },
+    {
+     "code": "SP053560",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações com ração animal, concentrado ou suplemento, sendo o fabricante ou importador registrado no Ministério da Agricultura e do Abastecimento (Artigo 356 do RICMS)"
+    },
+    {
+     "code": "SP053570",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações com amônia, ácido nítrico, ácido sulfúrico, ácido fosfórico, cloreto de potássio, enxofre, fosfato de amônia, fosfato natural bruto, nitrato de amônio, ou de suas soluções, nitrocálcio, uréia, sulfato de amônio, MAP (mono-amônio-fosfato), DAP (di-amônio fosfato) (Artigo 357 do RICMS)"
+    },
+    {
+     "code": "SP053580",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações com adubo, simples ou composto, fertilizante, calcário ou gesso, destinados exclusivamente a uso na agricultura (Artigo 358 do RICMS)"
+    },
+    {
+     "code": "SP053590",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações com acaricida, carrapaticida, desfolhante, desinfetante, dessecante, espalhante adesivo, estimulador ou inibidor de crescimento (regulador), germicida, fungicida, formicida, herbicida, inseticida, nematicida, parasiticida, raticida, sarnicida, soro ou medicamento de uso veterinário, vacina, vermífugo, vermicida, com destinação exclusiva a uso na agricultura, pecuária, apicultura, aqüicultura, avicultura, cunicultura, ranicultura ou sericicultura (Artigo 359 do RICMS)"
+    },
+    {
+     "code": "SP053600",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações realizadas com insumos destinados à alimentação animal ou a emprego na composição ou fabricação de ração animal, concentrado ou suplemento, em qualquer caso com destinação exclusiva a uso na pecuária, apicultura, aqüicultura, avicultura, cunicultura, ranicultura, ou sericicultura (Artigo 360 do RICMS)"
+    },
+    {
+     "code": "SP053610",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações realizadas com insumos agropecuários indicados no artigo 361 do RICMS (Artigo 361 do RICMS)"
+    },
+    {
+     "code": "SP053611",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Primeira saída de levedura inativa seca, levedura autolisada, levedura hidrolisada, parede celular de levedura e extrato de levedura (Artigo 361-A do RICMS)"
+    },
+    {
+     "code": "SP053620",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de coelho (Artigo 362 do RICMS)"
+    },
+    {
+     "code": "SP053630",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de aves (Artigo 363 do RICMS)"
+    },
+    {
+     "code": "SP053640",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações com gado em pé bovino ou suíno (Artigo 364 do RICMS)"
+    },
+    {
+     "code": "SP053650",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações com gado em pé das demais espécies (Artigo 365 do RICMS)"
+    },
+    {
+     "code": "SP053830",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas de subprodutos da matança do gado (couro ou pele, em estado fresco, salmourado ou salgado, de produto gorduroso não comestível de origem animal, inclusive o sebo, de osso, de chifre ou de casco) (Artigo 383 do RICMS)"
+    },
+    {
+     "code": "SP053880",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Saída de equino de raça com idade superior a 3 (três) anos para fora do Estado, para cobertura ou para participação em provas ou para treinamento, e cujo imposto ainda não tenha sido pago, desde que emitida a Nota Fiscal respectiva e que o retorno do animal ocorra dentro do prazo de 60 (sessenta) dias, prorrogável, uma única vez, por período igual ou menor, a critério da repartição fiscal a que estiver vinculado o remetente (Artigo 388, § 13 do RICMS)"
+    },
+    {
+     "code": "SP053890",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de leite cru, pasteurizado ou reidratado (Artigo 389 do RICMS)"
+    },
+    {
+     "code": "SP053910",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas com pescados, exceto os crustáceos e os moluscos, em estado natural, resfriados, congelados, salgados, secos, eviscerados, filetados, postejados ou defumados para conservação, desde que não enlatados ou cozidos, excluídas as saídas internas realizadas por estabelecimento que tenha como CNAE principal os códigos 1020-1/01 ou 1020-1/02 (Artigo 391 do RICMS)"
+    },
+    {
+     "code": "SP053920",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de papel usado ou apara de papel, sucata de metal, caco de vidro, retalho, fragmento ou resíduo de plástico, de borracha ou de tecido (Artigo 392 do RICMS)"
+    },
+    {
+     "code": "SP053941",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas de garrafas PET usadas e do produto resultante de sua moagem ou trituração (Artigo 394-A do RICMS)"
+    },
+    {
+     "code": "SP053942",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas de garrafas de vidro com valor comercial (Artigo 394-B do RICMS)"
+    },
+    {
+     "code": "SP053951",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operação interna promovida pelo estabelecimento fabricante de partes, peças e componentes destinados ao estabelecimento fabricante de máquinas e equipamentos de uso na extração mineral e na construção, classificado no código do grupo 285 da Classificação Nacional de Atividades Econômicas - CNAE (Artigo 395-A do RICMS)"
+    },
+    {
+     "code": "SP053952",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de partes, peças e componentes, quando a importação for efetuada diretamente por estabelecimento fabricante de máquinas e equipamentos de uso na extração mineral e na construção, classificado no código do grupo 285 da Classificação Nacional de Atividades Econômicas - CNAE (Artigo 395-B do RICMS)"
+    },
+    {
+     "code": "SP053953",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de matéria-prima e produto intermediário destinados a estabelecimento fabricante de fogões, refrigeradores, congeladores (freezers), máquinas de lavar louça, máquinas de lavar roupa ou máquinas de secar roupa, fornos elétricos de cozinha do tipo fritadeira a ar, ventiladores de mesa e liquidificadores de uso doméstico. (Artigo 395-C do RICMS)"
+    },
+    {
+     "code": "SP053954",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de matéria-prima e produto intermediário destinados a estabelecimento fabricante de compressores para uso não industrial, classificado no código 2814-3/02 da Classificação Nacional de Atividades Econômicas - CNAE (Artigo 395-C1 do RICMS)"
+    },
+    {
+     "code": "SP053955",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de matéria-prima e produto intermediário, quando a importação for efetuada diretamente por estabelecimento fabricante de fogões, refrigeradores, congeladores (freezers), máquinas de lavar louça, máquinas de lavar roupa ou máquinas de secar roupa, fornos elétricos de cozinha do tipo fritadeira a ar, ventiladores de mesa e liquidificadores de uso doméstico. (Artigo 395-D do RICMS)"
+    },
+    {
+     "code": "SP053956",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de matéria-prima e produto intermediário, destinados estabelecimento fabricante classificado no código 2740-6/01 da CNAE, para fabricação de lâmpada LED (NCM 8543.70.99), luminária LED (NCM 9405.10.99), refletor LED (NCM 9405.10.93), fita LED (NCM 9405.40.90) e painel LED (NCM 8531.20.00) ou no código 2740-6/02 da CNAE, para fabricação de luminária LED (NCM 9405.40.90). (Artigo 395-F do RICMS)"
+    },
+    {
+     "code": "SP053957",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de matéria-prima e produto intermediário, quando a importação for efetuada diretamente por estabelecimento fabricante classificado no código 2740-6/01 da CNAE, para fabricação de lâmpada LED (NCM 8543.70.99), luminária LED (NCM 9405.10.99), refletor LED (NCM 9405.10.93), fita LED (NCM 9405.40.90) e painel LED (NCM 8531.20.00) ou no código 2740-6/02 da CNAE, para fabricação de luminária LED (NCM 9405.40.90). (Artigo 395-G do RICMS)"
+    },
+    {
+     "code": "SP053958",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de matéria-prima e produto intermediário destinados a estabelecimento fabricante de células fotovoltaicas em módulos ou painéis, classificadas nos códigos 8541.40.31 ou 8541.40.32 da Nomenclatura Comum do Mercosul - NCM (Artigo 395-I do RICMS)"
+    },
+    {
+     "code": "SP053959",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de matéria-prima e produto intermediário, quando a importação for efetuada diretamente por estabelecimento fabricante de células fotovoltaicas em módulos ou painéis, classificadas nos códigos 8541.40.31 ou 8541.40.32 da Nomenclatura Comum do Mercosul - NCM (Artigo 395-J do RICMS)"
+    },
+    {
+     "code": "SP053960",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna efetuada pelo estabelecimento fabricante de resina de uréia-formaldeído, classificada nos códigos 3909.10.00 ou 3909.20.29 da Nomenclatura Comum do Mercosul - NCM, com destino a estabelecimento fabricante dos produtos relacionados no Artigo 395-L do RICMS, na proporção de 33,33% (trinta e três inteiros e trinta e três centésimos por cento) do valor da operação (Artigo 395-L do RICMS)"
+    },
+    {
+     "code": "SP059900",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de matéria-prima e outros insumos produzidos em território paulista e destinados ao processo de industrialização de biodiesel ou máquinas, equipamentos, peças, partes e acessórios destinados a integrar o ativo imobilizado de estabelecimento fabricante de biodiesel (Artigo 395-M do RICMS)"
+    },
+    {
+     "code": "SP059901",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de matéria-prima e outros insumos produzidos em território paulista e destinados ao processo de industrialização de biodiesel ou máquinas, equipamentos, peças, partes e acessórios destinados a integrar o ativo imobilizado de estabelecimento fabricante de biodiesel (Artigo 395-N do RICMS)"
+    },
+    {
+     "code": "SP059902",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de matéria-prima e insumos exclusivamente a estabelecimento fabricante de ônibus ou carroçaria de ônibus ou máquinas e equipamentos destinados a estabelecimento fabricante de ônibus ou carroçaria de ônibus para integração ao ativo imobilizado (Artigo 395-P do RICMS)"
+    },
+    {
+     "code": "SP059903",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de matéria-prima e insumos importados diretamente por estabelecimento fabricante de ônibus ou carroçaria de ônibus ou máquinas e equipamentos destinados a integrar o ativo imobilizado de estabelecimento fabricante de ônibus ou carroçaria de ônibus (Artigo 395-Q do RICMS)"
+    },
+    {
+     "code": "SP059904",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de máquinas e equipamentos destinados a integrar o ativo imobilizado de estabelecimento fabricante de sucos de fruta e sucos mistos (Artigo 395-V do RICMS)"
+    },
+    {
+     "code": "SP059905",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de máquinas e equipamentos destinados a integrar o ativo imobilizado de estabelecimento fabricante de sucos de fruta e sucos mistos (Artigo 395-W do RICMS)"
+    },
+    {
+     "code": "SP053961",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de partes, peças, componentes e matérias-primas, quando a importação for efetuada diretamente por estabelecimento fabricante de produtos da indústria de processamento eletrônico de dados, abrangido pelo artigo 4° da Lei federal n° 8.248, de 23 de outubro de 1991, para serem utiliza dos na fabricação de produto da referida indústria (Artigo 396-A do RICMS)"
+    },
+    {
+     "code": "SP054001",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações internas com alumínio em formas brutas, alumínio não ligado, ligas de alumínio, inclusive a granalha de alumínio, e quaisquer outras mercadorias classificadas na posição 7601 da Nomenclatura Brasileira de Mercadorias - Sistema Harmonizado - NBM/SH (Artigo 400-D do RICMS)"
+    },
+    {
+     "code": "SP054002",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de vergalhão de alumínio classificado na posição 7605 da Nomenclatura Comum do Mercosul - NCM, promovida pelo estabelecimento fabricante com destino a estabelecimento fabricante de fios e cabos classificados na posição 7614 ou 8544 da Nomenclatura Comum do Mercosul - NCM (Artigo 400-E1 do RICMS)"
+    },
+    {
+     "code": "SP054003",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna dos insumos relacionados no § 1º promovida pelo estabelecimento fabricante com destino a estabelecimento fabricante dos aminoácidos especificados no artigo 400-F do RICMS (Artigo 400-F do RICMS)"
+    },
+    {
+     "code": "SP054004",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro das mercadorias relacionadas no § 1º do artigo 400-F, quando a importação for efetuada diretamente por estabelecimento fabricante dos aminoácidos relacionados (Artigo 400-G do RICMS)"
+    },
+    {
+     "code": "SP054005",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de lisina, classificada nos códigos 2922.41.10, 2922.41.90 e 2309.90.90 da Nomenclatura Comum do Mercosul - NCM, de triptofano, classificado nos códigos 2933.99.19, 2922.49.90 e 2309.90.90 da NCM, e de treonina, classificada nos códigos 2922.49.90, 2922.50.99 e 2309.90.90 da NCM (Artigo 400-G1 do RICMS)"
+    },
+    {
+     "code": "SP054006",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de mercadoria utilizada como matéria-prima ou produto intermediário na fabricação dos produtos para produção de energia eólica indicados no § 1º do Artigo 400-H do RICMS (Artigo 400-H do RICMS)"
+    },
+    {
+     "code": "SP054007",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro da mercadoria, sem similar produzida no país, utilizada como matéria-prima ou produto intermediário na fabricação dos produtos indicados no § 1º do artigo 400-H do RICMS, quando a importação for efetuada diretamente por estabelecimento fabricante dos referidos produtos (Artigo 400-I do RICMS)"
+    },
+    {
+     "code": "SP054008",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas das embalagens industriais usadas indicadas no § 3º do Artigo 400-J do RICMS (Artigo 400-J do RICMS)"
+    },
+    {
+     "code": "SP054009",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de mercadoria utilizada como matéria-prima ou produto intermediário na fabricação de aquecedores solares de água, classificados no código 8419.19.10 da Nomenclatura Comum do MERCOSUL - NCM, fica diferido (Artigo 400-K do RICMS)"
+    },
+    {
+     "code": "SP054010",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro da mercadoria, sem similar produzida no país, utilizada como matéria-prima ou produto intermediário na fabricação de aquecedor solar de água indicado no \"caput\" do artigo 400-K do RICMS, quando a importação for efetuada diretamente por estabelecimento fabricante do referido produto (Artigo 400-L do RICMS)"
+    },
+    {
+     "code": "SP054011",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de mercadoria destinada a sociedade de propósito específico, localizada neste Estado, para posterior fornecimento como matéria-prima ou produto intermediário na fabricação de medicamento pela Fundação para o Remédio Popular - FURP (Artigo 400-M do RICMS)"
+    },
+    {
+     "code": "SP054012",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de mercadoria, sem similar produzida no país, destinada a sociedade de propósito específico, localizada neste Estado, para posterior fornecimento como matériaprima ou produto intermediário na fabricação de medicamento pela Fundação para o Remédio Popular - FURP, quando a importação for efetuada diretamente pela referida sociedade (Artigo 400-N do RICMS)"
+    },
+    {
+     "code": "SP054013",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas de nafta para petroquímica, NCM 2710.12.41 (Artigo 400-O do RICMS)"
+    },
+    {
+     "code": "SP054014",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas de etileno, NCM 2901.21.00, e propeno, NCM 2901.22.00, destinadas a estabelecimento fabricante de polietileno, NCM 39.01, polipropileno, NCM 39.02, e policloreto de vinila, NCM 39.04 (Artigo 400-P do RICMS)"
+    },
+    {
+     "code": "SP054015",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de nafta para petroquímica, NCM 2710.12.41, etileno, NCM 2901.21.00, e propeno, NCM 2901.22.00, quando a importação for efetuada diretamente por estabelecimento fabricante das referidas mercadorias ou de polietileno, NCM 39.01, polipropileno, NCM 39.02, e policloreto de vinila, NCM 39.04 (Artigo 400-S do RICMS)"
+    },
+    {
+     "code": "SP054016",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna, promovida pelo estabelecimento fabricante, de mercadoria utilizada como embalagem para acondicionamento de leite esterilizado “longa vida” (UHT – Ultra High Temperature), classificada nos códigos 3920.10.99, 3923.30.00 e 4811.59.23 da NCM, com destino a estabelecimento fabricante classificado nas CNAEs 1051-1/00 e 1052-0/00 (Artigo 400-T do RICMS)"
+    },
+    {
+     "code": "SP054017",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de mercadoria utilizada como matéria-prima ou produto intermediário na fabricação de embarcações para esporte e lazer, classificadas na posição 8903 da Nomenclatura Comum do MERCOSUL - NCM, com destino a fabricante das referidas embarcações (Artigo 400-U do RICMS)"
+    },
+    {
+     "code": "SP054018",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de mercadoria, sem similar produzida no país, utilizada como matéria-prima ou produto intermediário na fabricação das embarcações indicadas no \"caput\" do artigo 400-U, quando a importação for efetuada diretamente por estabelecimento fabricante das referidas embarcações (Artigo 400-V do RICMS)"
+    },
+    {
+     "code": "SP054019",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de insumos agropecuários indicados no § 1º do Artigo 400-W do RICMS, realizada por estabelecimento centralizador de aquisição de insumos que pertença a sociedade que exerça exclusivamente atividade agropecuária, com destino a estabelecimento do mesmo titular (Artigo 400-W do RICMS)"
+    },
+    {
+     "code": "SP054021",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna, promovida pelo estabelecimento fabricante, de “stand up pouche” para embalagens de atomatados ou vegetais (NCM 3921.90.19 e 3923.29.10), de latas próprias para serem fechadas por soldadura ou cravação - próprias para acondicionar produtos alimentícios (NCM 7310.21.10), e de embalagem do tipo caixas e cartonagens, dobráveis, de papel ou cartão, não ondulados (NCM 4819.20.00) para acondicionamento de ervilha em conserva (NCM 2005.40.00), milho em conserva (NCM 2005.80.00), ervilha e cenoura, ervilha e milho, jardineira ou seleta (NCM 2005.90.00), com destino a estabelecimento fabricante classificado nas CNAEs 1031-7/00, 1069-4/00 e 1032-5/99 (Artigo 400-X do RICMS)"
+    },
+    {
+     "code": "SP054023",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna promovida pelo estabelecimento fabricante de partes, peças, componentes, matérias-primas e materiais de embalagem com destino a estabelecimento fabricante beneficiado pelo Programa de Apoio ao Desenvolvimento Tecnológico da Indústria de Semicondutores e Displays – PADIS (Artigo 400-Y do RICMS)"
+    },
+    {
+     "code": "SP054024",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de partes, peças, componentes e matérias-primas, quando a importação for efetuada diretamente por estabelecimento fabricante beneficiado pelo Programa de Apoio ao Desenvolvimento Tecnológico da Indústria de Semicondutores e Displays – PADIS (Artigo 400-Z do RICMS)"
+    },
+    {
+     "code": "SP054022",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de negros-de-carbono (NCM 2803.00.19) e óleos combustíveis (NCM 2710.19.22) obtidos por meio da reciclagem de pneus e de resíduos de borracha, promovida pelo estabelecimento reciclador, com destino a estabelecimento industrial (Artigo 400-Z1 do RICMS)"
+    },
+    {
+     "code": "SP054025",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - saída interna de resina de polipropileno, classificada no código 3902.10.20 da Nomenclatura Comum do Mercosul - NCM (Artigo 400-Z2 do RICMS)"
+    },
+    {
+     "code": "SP054026",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Desembaraço aduaneiro e saída interna de insumos, matérias-primas, produtos intermediários e embalagens com destino a estabelecimento fabricante de máquinas e equipamentos para integração ao ativo imobilizado de fabricantes de celulose e de produtos de papel para uso doméstico e higiênico sanitário (Artigo 400-Z3 do RICMS)"
+    },
+    {
+     "code": "SP054027",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - saída interna de cimento asfáltico de petróleo, classificado no código 2713.20.00 da Nomenclatura Comum do Mercosul - NCM, destinado a estabelecimento fabricante de cimento asfáltico de petróleo (Artigo 400-Z4 do RICMS)"
+    },
+    {
+     "code": "SP054028",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de resíduo de óleo, classificado no código 2710.99.00 da Nomenclatura Comum do Mercosul - NCM, obtido por meio da reciclagem do material oleoso retirado de embarcações, promovida pelo estabelecimento reciclador (Artigo 400-Z5 do RICMS)"
+    },
+    {
+     "code": "SP054020",
+     "csts": [
+      "50",
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão ou diferimento - Saída de mercadoria com destino a outro estabelecimento ou a trabalhador autônomo ou avulso que prestar serviço pessoal, num e noutro caso, para industrialização por encomenda, e posterior retorno de produto industrializado (Artigo 402 do RICMS e Portaria CAT 22/2007)"
+    },
+    {
+     "code": "SP054110",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações com petróleo bruto, desde a importação ou extração, desde que o contribuinte que realize tais operações seja credenciado perante a Secretaria da Fazenda conforme disciplina por ela estabelecida (Artigo 411 do RICMS)"
+    },
+    {
+     "code": "SP054111",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de óleo lubrificante básico decorrente do re-refino do óleo lubrificante usado ou contaminado, processado de acordo com a legislação em vigor por empresas devidamente autorizadas pelo órgão federal competente, quando destinado a fabricante de óleo lubrificante para utilização exclusiva como matéria-prima na sua produção (Artigo 411-A do RICMS)"
+    },
+    {
+     "code": "SP054112",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de lubrificantes derivados de petróleo classificados nos códigos 2710.19.31 e 2710.19.32 da NCM, de aditivos classificados no código 3811 da NCM e de material de embalagem, quando destinados a fabricante localizado neste Estado de óleo ou graxa lubrificantes derivados de petróleo, para utilização exclusiva como matéria-prima na sua produção ou como embalagem para o seu acondicionamento (Artigo 411-B do RICMS)"
+    },
+    {
+     "code": "SP054113",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro, que ocorra em território paulista, de lubrificantes derivados do petróleo classificados nos códigos 2710.19.31 e 2710.19.32 da NCM, de aditivos classificados no código 3811 da NCM e de material de embalagem, quando a importação for realizada por fabricante localizado neste Estado de óleo ou graxa lubrificantes derivados de petróleo, para utilização exclusiva como matéria-prima na sua produção ou como embalagem para o seu acondicionamento (Artigo 411-C do RICMS)"
+    },
+    {
+     "code": "SP054114",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de matéria prima, material secundário ou intermediário e material de embalagem, quando destinados a estabelecimento rerrefinador de óleo lubrificante usado e contaminado localizado nesse Estado, devidamente autorizado por órgão federal competente e classificado no código 1922-5/02 - “Rerrefino de óleos lubrificantes” da Classificação Nacional de Atividades Econômicas - CNAE (Artigo 411-D do RICMS)"
+    },
+    {
+     "code": "SP054115",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro, que ocorra em território paulista, de matéria prima, material secundário ou intermediário e material de embalagem, quando a importação for realizada por estabelecimento rerrefinador de óleo lubrificante usado e contaminado localizado nesse Estado, devidamente autorizado por órgão federal competente e classificado no código 1922-5/02 - “Rerrefino de óleos lubrificantes” da Classificação Nacional de Atividades Econômicas - CNAE (Artigo 411-E do RICMS)"
+    },
+    {
+     "code": "SP054181",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída de etanol hidratado combustível - EHC promovida por fabricante, cooperativa de produtores ou empresa comercializadora de etanol localizado em território paulista, não credenciado nos termos do Artigo 418-A do RICMS, com destino a contribuinte credenciado (Artigo 418-B, II do RICMS)"
+    },
+    {
+     "code": "SP054182",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas de etanol hidratado combustível - EHC, promovidas por distribuidor de combustíveis com destino a outro distribuidor de combustíveis, em ambos os casos como definido e autorizado por órgão federal competente (Artigo 418-F do RICMS)"
+    },
+    {
+     "code": "SP054190",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operação interna ou interestadual que destinar etanol anidro combustível - EAC a estabelecimento do distribuidor de combustíveis, como tal definido e autorizado por órgão federal competente (Artigo 419 do RICMS)"
+    },
+    {
+     "code": "SP054191",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de etanol anidro combustível - EAC com destino a estabelecimento localizado em território paulista (Artigo 419-B do RICMS)"
+    },
+    {
+     "code": "SP054201",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operação interna ou interestadual que destinar biodiesel puro - B100 a estabelecimento do distribuidor de combustíveis, como tal definido e autorizado por órgão federal competente (Artigo 420-A do RICMS)"
+    },
+    {
+     "code": "SP054210",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações anteriores com querosene de aviação, querosene iluminante, gasolina de aviação e óleo combustível, assim como com o petróleo bruto utilizado na sua fabricação (Artigo 421 do RICMS)"
+    },
+    {
+     "code": "SP054220",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações internas com gás natural, biogás e biometano a serem consumidos em processo de industrialização em usina geradora de energia elétrica (Artigo 422 do RICMS)"
+    },
+    {
+     "code": "SP054221",
+     "csts": [
+      "51",
+      "53"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de gás natural destinado a estabelecimento fabricante de vidro classificado nas posições 7003, 7005, 7006, 7007, 7009 e 7010 da Nomenclatura Comum do Mercosul - NCM (Artigo 422-B do RICMS)"
+    },
+    {
+     "code": "SP054250",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações internas com energia elétrica, desde a sua importação ou produção (Artigo 425 do RICMS)"
+    },
+    {
+     "code": "SP054251",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Imposto devido sobre o valor dos encargos de conexão e de uso da rede básica de transmissão nas operações internas com energia elétrica (Artigo 425-C do RICMS)"
+    },
+    {
+     "code": "SP054501",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna de matéria-prima, produto intermediário e material de embalagem, com destino a contribuinte beneficiário do Regime Especial Simplificado de Exportação para fabricação de mercadoria a ser exportada, quando o contribuinte fornecedor constar do despacho relativo ao credenciamento (Artigo 450-B do RICMS)"
+    },
+    {
+     "code": "SP054502",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de matéria-prima, produto intermediário e material de embalagem empregados na fabricação de mercadoria destinada à exportação, quando a importação seja promovida por contribuinte beneficiário do Regime Especial Simplificado de Exportação (Artigo 450-C do RICMS)"
+    },
+    {
+     "code": "SP054890",
+     "csts": [
+      "50",
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento ou suspensão com amparo em regime especial de ofício no interesse do contribuinte ou do fisco, estabelecido nos termos do Artigo 489 do RICMS (Artigo 489 do RICMS)"
+    },
+    {
+     "code": "SP058270",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna promovida pelo estabelecimento fabricante das mercadorias relacionadas no § 1° do Artigo 27 DDTT do RICMS diretamente a estabelecimento fabricante de vagão ferroviário de carga (Artigo 27 DDTT do RICMS)"
+    },
+    {
+     "code": "SP058290",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Desembaraço aduaneiro de bens destinados à integração ao ativo imobilizado (Artigo 29 DDTT do RICMS)"
+    },
+    {
+     "code": "SP058810",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações internas com insumos, materiais e equipamentos, para construção, conservação, modernização e reparo de embarcações, enquanto igual tratamento for concedido pelo Estado do Rio de Janeiro (Decreto 46.082/01)"
+    },
+    {
+     "code": "SP058811",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saídas internas de máquinas ou implementos agrícolas (Decreto 51.608/07)"
+    },
+    {
+     "code": "SP058820",
+     "csts": [
+      "50",
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão ou diferimento amparado por regime especial concedido nos termos do artigo 11 do Decreto 53.051/08, que instutuiu o Programa de Incentivo ao Investimento pelo Fabricante de Veículo Automotor - ProVeículo (Artigo 11 do Decreto 53.051/08)"
+    },
+    {
+     "code": "SP058821",
+     "csts": [
+      "50",
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão ou diferimento amparado por regime especial concedido nos termos do artigo 11 do Decreto 54.904/09, que instutuiu o Programa de Incentivo ao Investimento pelo Fabricante de Produtos da Indústria de Processamento Eletrônico de Dados - Pro-Informática (Artigo 11 do Decreto 54.904/09)"
+    },
+    {
+     "code": "SP058822",
+     "csts": [
+      "50",
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão ou diferimento - Programa de Incentivo ao Setor Ferroviário - Pro-Trens (Decreto 55.901/10)"
+    },
+    {
+     "code": "SP058823",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída de etanol a ser utilizado na operacionalização de transporte dutoviário (Decreto 58.977/13)"
+    },
+    {
+     "code": "SP058824",
+     "csts": [
+      "50"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Suspensão - Remessa de etanol com destino ao terminal de armazenagem do sistema dutoviário e retorno simbólico do etanol armazenado ao estabelecimento depositante (Artigo 6º do Decreto 59.302/13)"
+    },
+    {
+     "code": "SP058825",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Operações interestaduais realizadas entre os Estados de Mato Grosso do Sul, Minas Gerais, Pará, Paraná e São Paulo e o Distrito Federal, com desperdícios e resíduos, nos termos do Convênio ICMS 36/2016 (Convênio ICMS 36/2016)"
+    },
+    {
+     "code": "SP058826",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento -Ooperações interestaduais realizadas entre os Estados de Minas Gerais e São Paulo, com desperdícios e resíduos, nos termos do Protocolo ICMS 35/2018 (Protocolo ICMS 35/2018)"
+    },
+    {
+     "code": "SP058830",
+     "csts": [
+      "50",
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento ou suspensão - Operações realizadas por fabricante de bens finais ou por fabricante intermediário, devidamente habilitados no Repetro (Artigo 1º-A do Decreto 63.208/18)"
+    },
+    {
+     "code": "SP059001",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Prestação de serviços de telecomunicação entre empresas sujeitas a regime especial na cessão de meios de rede, relacionadas em Ato Cotepe (Artigo 8º do Anexo XVII do RICMS)"
+    },
+    {
+     "code": "SP059002",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Prestações de serviço de comunicação realizadas em território paulista para empresas de comunicações (Artigo 9º do Anexo XVII do RICMS)"
+    },
+    {
+     "code": "SP059003",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Saída interna promovida por produtor ou cooperativa com destino a estabelecimento da CONAB (Artigo 7º do Anexo XIX do RICMS)"
+    },
+    {
+     "code": "SP059004",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Sucessivas operações com produto primário agrícola realizadas por intermédio de Bolsa quando a mercadoria se encontra depositada em armazém geral, salvo se houver regra específica (Artigo 1º do Anexo VIII do RICMS)"
+    },
+    {
+     "code": "SP019010",
+     "csts": [
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Isenção - Produto de artesanato (Artigo 2º do Anexo XXI do RICMS)"
+    },
+    {
+     "code": "SP059010",
+     "csts": [
+      "51"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Diferimento - Produto de artesanato (Artigo 3º do Anexo XXI do RICMS)"
+    },
+    {
+     "code": "SP019090",
+     "csts": [
+      "40"
+     ],
+     "from": null,
+     "to": null,
+     "description": "Exclusão da gorjeta da base de cálculo de ICMS ou da receita bruta no caso de contribuintes optantes pelo regime especial para fornecimento de alimentação (Artigo 37, § 4º-A do RICMS ou item 3 do § 2º do Decreto 51.597/2007)"
+    }
+   ]
   }
  ]
 }

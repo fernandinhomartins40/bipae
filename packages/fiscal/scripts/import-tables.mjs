@@ -27,6 +27,7 @@ import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
 import { parseCbenefEs } from './cbenef-es.mjs';
+import { parseCbenefSp } from './cbenef-sp.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
@@ -725,6 +726,13 @@ tables['cbenef.json'] = {
       source: 'cbenefEs',
       url: manifest.cbenefEs.page,
       codes: parseCbenefEs(readXlsx(join(sourcesDir, manifest.cbenefEs.file))),
+    },
+    {
+      uf: 'SP',
+      act: 'Tabela CST x cBenef da SEFAZ-SP',
+      source: 'cbenefSp',
+      url: manifest.cbenefSp.page,
+      codes: parseCbenefSp(readXlsx(join(sourcesDir, manifest.cbenefSp.file))),
     },
   ],
 };

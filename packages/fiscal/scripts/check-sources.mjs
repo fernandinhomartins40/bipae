@@ -23,6 +23,7 @@ import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
 import { parseCbenefEs } from './cbenef-es.mjs';
+import { parseCbenefSp } from './cbenef-sp.mjs';
 import { readXlsx } from './xlsx.mjs';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -810,6 +811,38 @@ async function checkCbenefEs() {
   };
 }
 
+/** cBenef de São Paulo: a planilha de hoje (cada versão nova muda o nome do arquivo). */
+async function checkCbenefSp() {
+  const rowsOf = (path) =>
+    parseCbenefSp(readXlsx(path)).map((c) => [c.code, c.csts.join(' '), c.to ?? '']);
+  const old = rowsOf(join(sourcesDir, manifest.cbenefSp.file));
+  const title = 'cBenef de São Paulo (Tabela CST x cBenef)';
+  let now;
+  try {
+    const tmp = join(mkdtempSync(join(tmpdir(), 'bipae-cbenef-')), 'sp.xlsx');
+    writeFileSync(tmp, (await download(manifest.cbenefSp.page)).body);
+    now = rowsOf(tmp);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.cbenefSp.page,
+      status: 'mudou',
+      details: [
+        `o arquivo não abre ou não passa no leitor do Bipaê (talvez uma versão nova): ${error.message}`,
+      ],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.cbenefSp.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} código(s) novo(s) ou alterado(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -847,6 +880,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('cBenef do Rio Grande do Sul', manifest.cbenefRs.page, checkCbenefRs),
     await safe('cBenef de Goiás', manifest.cbenefGo.page, checkCbenefGo),
     await safe('cBenef do Espírito Santo', manifest.cbenefEs.page, checkCbenefEs),
+    await safe('cBenef de São Paulo', manifest.cbenefSp.page, checkCbenefSp),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

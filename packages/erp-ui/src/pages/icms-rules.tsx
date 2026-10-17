@@ -561,9 +561,10 @@ function CbenefInfo({ uf, code, date }: { uf: string; code: string; date: string
       api.get<CbenefAnswer>(
         `/fiscal/cbenef?uf=${uf}&code=${encodeURIComponent(wanted)}${date ? `&date=${date}` : ''}`,
       ),
-    enabled: wanted.length >= 8 && wanted !== 'SEM CBENEF',
+    // SEM CBENEF também é consultado: algumas UFs deixaram de aceitá-lo (SP, a partir de 01/07/2026).
+    enabled: wanted.length >= 8,
   });
-  if (wanted === 'SEM CBENEF' || !found.data) return null;
+  if (!found.data) return null;
   const { covered, entry, valid } = found.data;
   if (!covered) {
     return (

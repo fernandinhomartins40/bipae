@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-27.b.SP Tabela oficial de cBenef de São Paulo] — 17/10/2026
+
+### Adicionado
+- **cBenef de São Paulo explicado na regra de ICMS:** são 316 códigos da Tabela CST x cBenef da SEFAZ-SP, com o dispositivo legal.
+  - **SEM CBENEF:** a tela avisa que ele não é aceito em SP desde 01/07/2026.
+- **Monitor semanal das fontes:** passou a conferir a planilha de SP.
+
 ## [F3-27.b.ES Tabela oficial de cBenef do Espírito Santo] — 17/10/2026
 
 ### Adicionado

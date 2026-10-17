@@ -136,6 +136,10 @@ test('MVA oficial de SP sugerida pelo NCM e usada com um clique (F3-26)', async 
     page.getByText(/de 01\/07\/2026 a 31\/12\/2026 \(Portaria SRE 27\/2026/),
   ).toBeVisible();
   await expect(page.getByText(/chega em breve/)).toBeVisible();
+
+  // cBenef em SP: o SEM CBENEF não é mais aceito desde 01/07/2026 (Tabela CST x cBenef).
+  await page.getByLabel('Código de benefício fiscal (cBenef, opcional)').fill('SEM CBENEF');
+  await expect(page.getByText('Código fora da vigência')).toBeVisible();
 });
 
 test('Paraná: MVA da Resolução SEFA 571/2019 e eletrônicos fora da ST (F3-26.c)', async ({
