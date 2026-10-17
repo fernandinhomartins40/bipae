@@ -183,6 +183,9 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [~] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
     - [ ] F3-26.d.DF · Distrito Federal: Caderno I do Anexo IV do RICMS/DF; achar o endereço direto do texto compilado no SINJ-DF
     - [ ] F3-26.d.CE · Ceará: Anexo IX do RICMS/CE (Decreto 33.327/2019); achar o texto consolidado oficial
+    - [ ] F3-26.d.MT · Mato Grosso: Anexo X do RICMS/MT e Portaria 195/2019 (Lotus Notes, sem endereço direto)
+    - [ ] F3-26.d.MS · Mato Grosso do Sul: Anexo III do RICMS/MS (Lotus Notes, sem endereço direto)
+    - [ ] F3-26.d.PB · Paraíba: Anexo 05 do RICMS/PB (sem o texto consolidado na navegação do portal)
     - [ ] F3-26.d.PE · Pernambuco: regime em transição (Decreto 42.563/2015 revogado pelo 61.284/2026 a partir de 01/01/2027); montar com o RICMS/PE consolidado novo
     - [x] F3-26.d.ES · Espírito Santo: Portaria 16-R/2019 atualizada até a 81-R/2026 (352 linhas, redação verde de fora, revogados com data); monitor semanal
     - [x] F3-26.d.GO · Goiás: Apêndice II do Anexo VIII do RCTE/GO (213 linhas, industrial e atacadista separados; autopeças, construção, elétricos e ração fora da ST desde 01/03/2018); monitor semanal

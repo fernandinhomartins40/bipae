@@ -249,6 +249,9 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 - **Distrito Federal e Ceará (F3-26.d.DF e F3-26.d.CE): fonte oficial ainda não localizada.**
   - **DF:** a lista é o Caderno I do Anexo IV do RICMS/DF (Decreto 18.955/1997). O texto compilado fica no SINJ-DF, que só abre por uma busca sem endereço direto para a norma.
   - **CE:** a lista é o Anexo IX do RICMS/CE (Decreto 33.327/2019). O site da SEFAZ-CE não tem a legislação consolidada, e o antigo portal de legislação não responde.
+  - **MT:** a lista é o Apêndice do Anexo X do RICMS/MT, e as MVAs estão na Portaria 195/2019. Ficam no sistema Lotus Notes da SEFAZ-MT (app1.sefaz.mt.gov.br), sem endereço direto conhecido.
+  - **MS:** a lista é o Anexo III do RICMS/MS (Decreto 9.203/1998), também em Lotus Notes (aacpdappls.net.ms.gov.br). Parte dos produtos usa preço médio (PMPF) em vez de MVA.
+  - **PB:** a lista é o Anexo 05 do RICMS/PB (Decreto 18.930/1997). O portal da SEFAZ-PB lista os decretos novos, mas não oferece o RICMS consolidado na navegação.
   - **Próximo passo:** achar o endereço direto do texto compilado e só então montar, sem usar cópias de terceiros.
 - **Pernambuco (F3-26.d.PE): em transição, fica para depois.**
   - **Hoje:** a lista de ST está no Decreto 42.563/2015 (texto consolidado da SEFAZ-PE, de 09/09/2026). Vários anexos foram revogados entre 2023 e 2025: cerveja e refrigerante, cigarros, cimento, tintas, construção, pneus e outros.
