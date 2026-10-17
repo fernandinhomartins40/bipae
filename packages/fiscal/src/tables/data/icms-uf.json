@@ -13,7 +13,14 @@
       "RS",
       "SC",
       "SP"
-    ]
+    ],
+    "importedOrigins": [
+      "1",
+      "2",
+      "3",
+      "8"
+    ],
+    "importedOriginsSource": "Resolução do Senado Federal 13/2012, art. 1º (alíquota de 4% para bem ou mercadoria importada e para a nacional com Conteúdo de Importação acima de 40%), e Ajuste SINIEF 20/12 (Tabela A, origem da mercadoria: 1, 2, 3 e 8; as origens 6 e 7, sem similar nacional na lista da CAMEX, ficam fora pelo § 4º do art. 1º)"
   },
   "general": [
     {

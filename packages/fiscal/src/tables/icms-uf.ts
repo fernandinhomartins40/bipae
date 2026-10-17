@@ -64,3 +64,13 @@ export function interstateRate(
   }
   return { rate: INTERSTATE.general, reason: 'geral', source: INTERSTATE.source };
 }
+
+const importedOrigins = new Set<string>(INTERSTATE.importedOrigins);
+
+/**
+ * A origem da mercadoria (0 a 8, Ajuste SINIEF 20/12) leva a alíquota interestadual de 4%? Vale
+ * para as origens da tabela (Resolução do Senado Federal 13/2012).
+ */
+export function isImportedOrigin(origem: string | number | null | undefined): boolean {
+  return origem !== null && origem !== undefined && importedOrigins.has(String(origem));
+}

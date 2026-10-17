@@ -102,8 +102,10 @@ export function calculateSaleItemTaxes(input: {
   /** Data do fato gerador (AAAA-MM-DD). */
   date: string;
   settings?: SaleTaxSettings;
+  /** Modelo da nota: 65 (NFC-e do caixa, o padrão) ou 55 (NF-e da retaguarda). */
+  model?: '55' | '65';
 }): SaleItemTaxes {
-  const { company, profile, item, date, settings = {} } = input;
+  const { company, profile, item, date, settings = {}, model = '65' } = input;
   const assumptions: string[] = [];
   const regime = company.regime ? findCompanyRegime(company.regime) : null;
 
@@ -150,9 +152,9 @@ export function calculateSaleItemTaxes(input: {
   // ---------------------------------------------------------------- ICMS
   let icms: TaxOutcome<IcmsResult>;
   const code = regime.icmsCode === 'csosn' ? profile.csosn : profile.cstIcms;
-  // MEI (CRT 4): a NFC-e do caixa só aceita CSOSN 102 ou 300 e CFOP 5102 (NT 2024.001).
+  // MEI (CRT 4): CSOSN e CFOP permitidos em cada modelo de nota (NT 2024.001).
   const meiProblem =
-    regime.id === 'mei' && code && cfop ? meiItemProblem({ model: '65', csosn: code, cfop }) : null;
+    regime.id === 'mei' && code && cfop ? meiItemProblem({ model, csosn: code, cfop }) : null;
   if (settings.icmsBlocked) {
     icms = missing(settings.icmsBlocked);
   } else if (meiProblem) {

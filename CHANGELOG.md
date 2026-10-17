@@ -1,5 +1,16 @@
 # Changelog
 
+## [F3-33.a Motor da NF-e da retaguarda] — 17/10/2026
+
+### Adicionado
+- **NF-e a partir do rascunho da retaguarda:** o motor monta a nota com os mesmos impostos do caixa e devolve a lista do que falta para emitir.
+  - **Venda para outro estado:** usa a alíquota interestadual, e 4% para mercadoria importada pela origem (Resolução do Senado 13/2012).
+  - **Consumidor final não contribuinte de outro estado:** a nota leva a partilha do ICMS e o CFOP próprio de venda a não contribuinte (6.108, 6.107), tirado da tabela oficial de CFOP.
+  - **Venda a prazo:** fatura e duplicatas.
+
+### Alterado
+- **F3-27.b fechada:** as 8 UFs com tabela oficial de cBenef estão no Bipaê. As demais aguardam a confirmação em fonte oficial (F3-27.c).
+
 ## [F3-27.b.DF Tabela oficial de cBenef do Distrito Federal] — 17/10/2026
 
 ### Adicionado

@@ -116,3 +116,11 @@ describe('regimes de empresa', () => {
     expect(findCompanyRegime('ltda')).toBeNull();
   });
 });
+
+describe('origem importada (Resolução do Senado Federal 13/2012)', () => {
+  it('as origens 1, 2, 3 e 8 levam 4%; 0, 6 e 7 não', async () => {
+    const { isImportedOrigin } = await import('./icms-uf');
+    for (const o of [1, 2, 3, 8, '8']) expect(isImportedOrigin(o), String(o)).toBe(true);
+    for (const o of [0, 4, 5, 6, 7, null, undefined]) expect(isImportedOrigin(o), String(o)).toBe(false);
+  });
+});

@@ -196,7 +196,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
 - [~] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
   - [x] F3-27.a · Base: a regra de ICMS da empresa leva o cBenef (8 ou 10 caracteres ou SEM CBENEF, como no leiaute PL_010f), o motor o separa do cálculo e a NFC-e o põe no item depois do CEST, válida no XSD; chega ao caixa pela sincronização
-  - [~] F3-27.b · Tabelas oficiais de cBenef das UFs que exigem o código, geradas do arquivo da SEFAZ, para sugerir e conferir o código pelo CST — depende: F3-27.a
+  - [x] F3-27.b · Tabelas oficiais de cBenef das UFs que exigem o código, geradas do arquivo da SEFAZ, para sugerir e conferir o código pelo CST — depende: F3-27.a
     - [x] F3-27.b.PR · Paraná: Tabela de Códigos de Benefício Fiscal por CST, V27 de 17/07/2026 (502 códigos, CST pela posição no PDF); aviso na regra de ICMS e rota /fiscal/cbenef; monitor semanal
     - [x] F3-27.b.SC · Santa Catarina: Tabela 5.2A (cBenef) de 09/10/2026 (665 códigos, com o tipo do benefício; crédito presumido marcado à parte, porque vai no cCredPresumido); monitor semanal
     - [x] F3-27.b.RS · Rio Grande do Sul: planilha Tabela cBenef x CST de 10/09/2026 (541 códigos, com descrição legível e referência legal); monitor semanal
@@ -205,12 +205,16 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-27.b.SP · São Paulo: Tabela CST x cBenef v20260901 (316 códigos; fim da vigência lido da observação; SEM CBENEF não vale desde 01/07/2026); monitor semanal
     - [x] F3-27.b.RJ · Rio de Janeiro: Tabela de códigos de benefício X CST de 02/10/2026 (653 códigos; mesmo leitor do PR, com o cabeçalho só na primeira página); monitor semanal
     - [x] F3-27.b.DF · Distrito Federal: planilha consolidada do Anexo Único do Ato Declaratório (252 códigos; arquivo de 15/05/2023, o único que a Receita-DF publica); monitor semanal
-    - [ ] F3-27.b.UFs · As demais UFs que exigem o cBenef, uma por vez
+  - [ ] F3-27.c · Demais UFs: confirmar em fonte oficial se exigem o cBenef e, se exigirem, gerar a tabela do arquivo da SEFAZ (a planilha de regras de validação por UF do portal da NFC-e saiu do ar; nenhuma outra UF publica tabela própria que tenha sido achada) — depende: F3-27.b
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
   - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entraram com a F3-08.b (Portal Nacional da NF-e).
 - [x] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c
 - [x] F3-30 · Regras do MEI na nota (CRT 4, CFOP permitidos) — depende: F3-06.c
-- [ ] F3-33 · Retaguarda emite NF-e (modelo 55): tela da nota com destinatário, itens, transporte e cobrança, envio pela fila e DANFE em PDF — depende: F3-11, F3-08, F3-13.c
+- [~] F3-33 · Retaguarda emite NF-e (modelo 55): tela da nota com destinatário, itens, transporte e cobrança, envio pela fila e DANFE em PDF — depende: F3-11, F3-08, F3-13.c
+  - [x] F3-33.a · Motor: do rascunho da retaguarda ao XML da NF-e com os impostos (alíquota interestadual, 4% para importado pela origem, partilha do ICMS, CFOP de venda a não contribuinte tirado da tabela oficial), fatura e duplicatas, e a lista do que falta; válido no XSD — depende: F3-08.a
+  - [ ] F3-33.b · API: rascunho da NF-e, numeração por série da empresa, tarefa na fila que assina e envia (consulta antes de reenviar), XML e DANFE em PDF, testada contra a SEFAZ simulada; auditoria — depende: F3-33.a, F3-11.a, F3-13.c
+  - [ ] F3-33.c · Tela da NF-e na retaguarda: destinatário pelo cadastro de clientes, itens pelos produtos, transporte, parcelas e pagamento; o que falta, status da SEFAZ, XML e DANFE; E2E — depende: F3-33.b
+  - [ ] F3-33.d · Primeira NF-e autorizada na SEFAZ de homologação com o certificado da empresa — depende: F3-33.c · externo: E1
 - [x] F3-32 · Partilha do ICMS (DIFAL, grupo ICMSUFDest) na venda interestadual para consumidor final não contribuinte — depende: F3-08.a
 - [x] F3-31 · Rotina que baixa de novo as fontes oficiais, compara com o que está guardado e avisa quando uma tabela ou alíquota mudou — depende: F3-25
 
