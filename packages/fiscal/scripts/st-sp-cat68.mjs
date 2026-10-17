@@ -128,3 +128,27 @@ function romanValue(r) {
   }
   return total;
 }
+
+/**
+ * Base de cálculo da ST de bebidas em SP (Portaria SRE 27/2026): a pauta (valor em reais por
+ * marca e embalagem) vale no período do artigo 1º; o IVA-ST do Capítulo II dos anexos só quando o
+ * produto não tem valor na pauta (artigo 2º). Lê o período do próprio texto oficial.
+ */
+export function parseSpBebidasBase(html) {
+  const text = htmlText(html).replace(/\u200b/g, '');
+  const art1 = /Artigo 1º - Para determinação da base de cálculo[^\n]*/.exec(text)?.[0] ?? '';
+  const period =
+    /no período de (1º de \S+ de \d{4}|\d{1,2} de \S+ de \d{4}) a (\d{1,2}º? de \S+ de \d{4})/.exec(
+      art1,
+    );
+  if (!period) throw new Error('Portaria SRE 27/2026 sem o período do artigo 1º');
+  const from = dateFromText(period[1]);
+  const to = dateFromText(period[2]);
+  if (!from || !to) throw new Error(`Período ilegível na Portaria SRE 27/2026: ${period[0]}`);
+  if (!/IVA-ST para cerveja e chope/.test(text) || !/IVA-ST para refrigerantes/.test(text)) {
+    throw new Error(
+      'Portaria SRE 27/2026 sem os capítulos de IVA-ST de cerveja e de refrigerantes',
+    );
+  }
+  return { from, to };
+}

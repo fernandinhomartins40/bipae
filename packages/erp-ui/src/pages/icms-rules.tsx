@@ -416,6 +416,7 @@ interface StStatus {
   inSt: boolean;
   excludedFrom: string | null;
   excludedBy: string | null;
+  base: { kind: 'pauta'; act: string; validFrom: string; validTo: string; note: string } | null;
 }
 
 interface StMatch {
@@ -468,6 +469,14 @@ function StSuggestion({
       return (
         <Alert tone="warning" title={`Saiu da substituição tributária em ${uf}`}>
           {`${first.segmentName} (CEST ${cestText(first.cest)}) saiu da ST em ${day(first.excludedFrom)}, pela ${first.excludedBy ?? 'legislação da SEFAZ'}. O ICMS deste produto passa a ser cobrado normalmente, sem ST.`}
+        </Alert>
+      );
+    }
+    const pauta = inSt.find((x) => x.base?.kind === 'pauta');
+    if (pauta?.base) {
+      return (
+        <Alert tone="warning" title={`Base da ST pela pauta em ${uf}`}>
+          {`${pauta.segmentName}, de ${day(pauta.base.validFrom)} a ${day(pauta.base.validTo)} (${pauta.base.act}). ${pauta.base.note} O cálculo da ST por pauta chega em breve no Bipaê; até lá, confira o valor da pauta na SEFAZ.`}
         </Alert>
       );
     }

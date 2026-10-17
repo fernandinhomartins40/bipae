@@ -176,7 +176,15 @@
       {
        "cest": "2300200"
       }
-     ]
+     ],
+     "base": {
+      "kind": "pauta",
+      "act": "Portaria SRE 27/2026 (alterada pelas Portarias SRE 42/2026 e 45/2026)",
+      "url": "https://legislacao.fazenda.sp.gov.br/Paginas/Portaria-SRE-27-de-2026.aspx",
+      "validFrom": "2026-07-01",
+      "validTo": "2026-12-31",
+      "note": "A base da ST é o valor em reais da pauta, por marca e embalagem (Capítulo I dos anexos). O IVA-ST do Capítulo II só vale quando o produto não tem valor na pauta (artigo 2º)."
+     }
     },
     {
      "annex": "V",

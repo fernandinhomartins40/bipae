@@ -96,3 +96,26 @@ describe('mercadorias em ST em SP (Portaria CAT 68/2019, F3-26.b)', () => {
     expect(iva.filter((i) => fora.has(i.cest))).toEqual([]);
   });
 });
+
+describe('bebidas em SP: base pela pauta da Portaria SRE 27/2026 (F3-26.e)', () => {
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+
+  it('cerveja continua na ST, com a base pela pauta de 01/07 a 31/12/2026', () => {
+    const cerveja = stStatusFor('SP', '22030000', '2026-10-16', ncmsOf).filter(
+      (s) => s.annex === 'III',
+    );
+    expect(cerveja.length).toBeGreaterThan(0);
+    expect(cerveja.every((s) => s.inSt)).toBe(true);
+    expect(cerveja[0]!.base).toMatchObject({
+      kind: 'pauta',
+      validFrom: '2026-07-01',
+      validTo: '2026-12-31',
+      act: expect.stringContaining('Portaria SRE 27/2026'),
+    });
+    // Fora do período da pauta, a base não é afirmada.
+    const depois = stStatusFor('SP', '22030000', '2027-01-15', ncmsOf).filter(
+      (s) => s.annex === 'III',
+    );
+    expect(depois[0]!.base).toBeNull();
+  });
+});

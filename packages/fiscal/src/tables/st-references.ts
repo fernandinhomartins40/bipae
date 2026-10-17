@@ -78,6 +78,17 @@ export interface StSegment {
   cests: { cest: string; excludedFrom?: string | null; excludedBy?: string | null }[];
   excludedFrom?: string;
   excludedBy?: string;
+  /** Base de cálculo própria do segmento (ex.: pauta em reais por marca, nas bebidas de SP). */
+  base?: StBase;
+}
+
+export interface StBase {
+  kind: 'pauta';
+  act: string;
+  url: string;
+  validFrom: string;
+  validTo: string;
+  note: string;
 }
 
 export interface StUfSegments {
@@ -102,6 +113,8 @@ export interface StStatus {
   excludedBy: string | null;
   act: string;
   url: string;
+  /** Base própria do segmento na data (só quando vale nela). */
+  base: StBase | null;
 }
 
 /**
@@ -133,6 +146,10 @@ export function stStatusFor(
           excludedBy: by,
           act: block.act,
           url: block.url,
+          base:
+            annex.base && date >= annex.base.validFrom && date <= annex.base.validTo
+              ? annex.base
+              : null,
         });
       }
     }

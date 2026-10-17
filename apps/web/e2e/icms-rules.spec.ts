@@ -114,4 +114,12 @@ test('MVA oficial de SP sugerida pelo NCM e usada com um clique (F3-26)', async 
   const aviso = page.getByText(/Produtos de limpeza \(CEST 11\.001\.00\) saiu da ST/);
   await expect(aviso).toContainText('01/08/2026');
   await expect(aviso).toContainText('Portaria SRE 20/2026');
+
+  // Cerveja: continua na ST, com a base pela pauta da Portaria SRE 27/2026 (F3-26.e).
+  await page.getByLabel('NCM', { exact: true }).fill('2203.00.00');
+  await expect(page.getByText('Base da ST pela pauta em SP')).toBeVisible();
+  await expect(
+    page.getByText(/de 01\/07\/2026 a 31\/12\/2026 \(Portaria SRE 27\/2026/),
+  ).toBeVisible();
+  await expect(page.getByText(/chega em breve/)).toBeVisible();
 });

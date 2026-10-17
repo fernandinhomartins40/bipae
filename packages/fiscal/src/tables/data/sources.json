@@ -214,5 +214,14 @@
   "publishedAt": "2026-06-30",
   "downloadedAt": "2026-10-16",
   "sha256": "1099cac593944f43abc8aaab20b70b410934025782c1449aad472ac9bc05ba82"
+ },
+ "stSpBebidas": {
+  "file": "SEFAZ-SP_Portaria_SRE_27-2026_bebidas_2026-10-16.html.gz",
+  "title": "Portaria SRE 27/2026 (SP): base de cálculo da ST de refrigerantes, energéticos, cerveja e chope (pauta e IVA-ST), de 1º/07 a 31/12/2026",
+  "publisher": "Secretaria da Fazenda e Planejamento de São Paulo",
+  "page": "https://legislacao.fazenda.sp.gov.br/Paginas/Portaria-SRE-27-de-2026.aspx",
+  "publishedAt": "2026-06-09",
+  "downloadedAt": "2026-10-16",
+  "sha256": "832b9c1490f896b50858dc6d7a737489126f8837e2f8c9653473d236ef343d56"
  }
 }

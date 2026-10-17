@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.e SP: base da ST de cerveja, chope e refrigerante] — 16/10/2026
+
+### Adicionado
+- **Cerveja, chope e refrigerante em São Paulo:** a regra de ICMS explica que a base da ST é a pauta fiscal, um valor em reais por marca e embalagem.
+  - **Fonte:** Portaria SRE 27/2026, de 01/07 a 31/12/2026. O período é lido do texto oficial.
+  - **Quando vale o IVA-ST:** só quando o produto não tem valor na pauta.
+  - **Ainda não calculado:** o cálculo da ST por pauta aparece como "chega em breve" (tarefa F3-26.f), em vez de usar um percentual errado.
+
 ## [F3-26.b SP: o que está e o que saiu da substituição tributária] — 16/10/2026
 
 ### Adicionado

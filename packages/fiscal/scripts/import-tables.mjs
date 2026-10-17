@@ -19,7 +19,7 @@ import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { markStale, parseDifal } from './difal.mjs';
 import { parseSpAlimenticios } from './st-sp.mjs';
-import { parseSpCat68 } from './st-sp-cat68.mjs';
+import { parseSpBebidasBase, parseSpCat68 } from './st-sp-cat68.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -488,6 +488,29 @@ const tables = {
   'municipios.json': importMunicipios(),
 };
 
+// Bebidas em SP (F3-26.e): a base da ST é a pauta da Portaria SRE 27/2026, no período que ela diz.
+function withSpDrinksBase(annexes) {
+  const html = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpBebidas.file))).toString(
+    'utf8',
+  );
+  const { from, to } = parseSpBebidasBase(html);
+  return annexes.map((a) =>
+    a.annex === 'III'
+      ? {
+          ...a,
+          base: {
+            kind: 'pauta',
+            act: 'Portaria SRE 27/2026 (alterada pelas Portarias SRE 42/2026 e 45/2026)',
+            url: manifest.stSpBebidas.page,
+            validFrom: from,
+            validTo: to,
+            note: 'A base da ST é o valor em reais da pauta, por marca e embalagem (Capítulo I dos anexos). O IVA-ST do Capítulo II só vale quando o produto não tem valor na pauta (artigo 2º).',
+          },
+        }
+      : a,
+  );
+}
+
 // Substituição tributária por UF (F3-26): a MVA (IVA-ST) publicada por cada SEFAZ, por CEST e
 // NCM. É referência para a regra de ICMS da empresa, não regra do motor: a empresa confirma.
 function importStReferences(cest) {
@@ -506,7 +529,7 @@ function importStReferences(cest) {
         act: 'Portaria CAT 68/2019 (texto consolidado)',
         source: 'stSpCat68',
         url: manifest.stSpCat68.page,
-        annexes: parseSpCat68(cat68, known),
+        annexes: withSpDrinksBase(parseSpCat68(cat68, known)),
       },
     ],
     references: [
