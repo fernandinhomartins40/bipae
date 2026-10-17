@@ -246,7 +246,13 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Saíram da ST em 01/03/2018 (Decreto 9.108):** autopeças, ração pet, materiais de construção e materiais elétricos.
   - **Venda porta a porta (marketing direto):** o mesmo NCM pode continuar na ST por esse sistema, e a tela mostra isso.
   - **Conferência:** se mais de 10% dos CEST em vigor ficarem fora do Convênio ICMS 142/18, a geração para.
-- **Rio de Janeiro (F3-26.c.RJ): bloqueado.** O site de legislação da SEFAZ-RJ (`legislacao.fazenda.rj.gov.br` e `portal.fazenda.rj.gov.br`) devolve uma página de bloqueio por endereço de IP, tanto daqui quanto da VPS. Sem acesso ao texto oficial, o RJ fica como "falta configurar" até conseguirmos baixar de outra origem.
+- **Atualização de 17/10/2026 (F3-26.c.RJ, Rio de Janeiro, fonte oficial):** Anexo I do Livro II do RICMS/RJ (Decreto 27.427/2000), no arquivo .doc que a SEFAZ-RJ publica, na redação do Decreto 47.864/2021. Está guardado em `packages/fiscal/sources` e é lido por gerador com o `word-extractor`, sem depender de programa instalado:
+  - **Itens:** 702 linhas com a MVA original, em 25 segmentos.
+  - **Água mineral e refrigerante:** a MVA muda pela embalagem e por quem vende (industrial ou importador, ou atacadista e distribuidor). Cada combinação vira uma linha com o nome.
+  - **Bebidas:** a base é o PMPF da SEFAZ-RJ; a MVA só vale quando não há PMPF nem preço sugerido.
+  - **Fora da sugestão:** autopeças, medicamentos e bebidas alcoólicas, cuja MVA está no texto ou numa tabela por NCM sem CEST.
+  - **Acesso ao site:** o site da SEFAZ-RJ mostra uma página de "bloqueio por endereço de IP" quando o pedido não tem os cabeçalhos de um navegador comum. Não era bloqueio do endereço. Com os cabeçalhos, abre de qualquer lugar, e o monitor semanal já os envia.
+  - **Atenção:** o .doc é de 13/12/2021. Alterações posteriores do Anexo I que a SEFAZ-RJ publicar só como nota no Livro II não entram até ela atualizar o arquivo, e o monitor avisa quando o arquivo mudar.
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração
 

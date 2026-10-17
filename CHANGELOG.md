@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-26.c.RJ Substituição tributária no Rio de Janeiro] — 17/10/2026
+
+### Adicionado
+- **Rio de Janeiro na regra de ICMS:** 702 linhas com a MVA original, do Anexo I do Livro II do RICMS/RJ, gerado do arquivo .doc oficial da SEFAZ-RJ.
+  - **Água mineral e refrigerante:** a MVA aparece por embalagem e por quem vende (industrial ou atacadista).
+- **Monitor semanal das fontes:** passou a conferir o arquivo do RJ.
+
+### Corrigido
+- **Acesso ao site da SEFAZ-RJ:** o "bloqueio por endereço de IP" era falta de cabeçalhos de navegador no pedido. Com eles, o site abre normalmente, inclusive no monitor semanal.
+
 ## [F3-26.d.GO Substituição tributária em Goiás] — 17/10/2026
 
 ### Adicionado

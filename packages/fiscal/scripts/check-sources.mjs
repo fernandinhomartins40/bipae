@@ -23,6 +23,8 @@ import { parseRsApendiceII } from './st-rs.mjs';
 import { parseScAnexo1A } from './st-sc.mjs';
 import { parseBaAnexo1 } from './st-ba.mjs';
 import { parseGoApendiceII } from './st-go.mjs';
+import { parseRjAnexoI } from './st-rj.mjs';
+import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -41,6 +43,15 @@ const system = typeof tls.getCACertificates === 'function' ? tls.getCACertificat
 const ca = [...new Set([...tls.rootCertificates, ...system, ...icp])];
 
 /** GET com redirecionamentos e cookies (o Portal da NF-e exige os dois). */
+// A SEFAZ-RJ recusa pedidos sem os cabeçalhos de um navegador comum (mostra uma página de bloqueio).
+const BROWSER = {
+  'user-agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'accept-language': 'pt-BR,pt;q=0.9',
+  'upgrade-insecure-requests': '1',
+};
+
 function download(url, jar = new Map(), hops = 0) {
   return new Promise((resolve, reject) => {
     if (hops > 10) return reject(new Error('redirecionamentos demais'));
@@ -50,7 +61,12 @@ function download(url, jar = new Map(), hops = 0) {
       {
         ca,
         timeout: 60_000,
-        headers: { 'user-agent': 'Mozilla/5.0 (Bipae fontes)', ...(cookie && { cookie }) },
+        headers: {
+          ...(/fazenda\.rj\.gov\.br/.test(url)
+            ? BROWSER
+            : { 'user-agent': 'Mozilla/5.0 (Bipae fontes)' }),
+          ...(cookie && { cookie }),
+        },
       },
       (res) => {
         for (const raw of res.headers['set-cookie'] ?? []) {
@@ -478,6 +494,39 @@ async function checkGo() {
   };
 }
 
+/** Rio de Janeiro: o .doc do Anexo I de hoje, lido como na geração. */
+async function checkRj() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = async (bytes) =>
+    parseRjAnexoI(await docText(bytes), known).flatMap((s) =>
+      s.items.map((i) => [s.name, i.item, i.cest, i.ncms.join(' '), i.mva ?? '']),
+    );
+  const old = await rowsOf(gunzipSync(readFileSync(join(sourcesDir, manifest.stRjAnexoI.file))));
+  const title = 'ST no Rio de Janeiro (RICMS/RJ, Livro II, Anexo I)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.stRjAnexoI.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stRjAnexoI.page,
+      status: 'mudou',
+      details: [`o arquivo novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stRjAnexoI.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -506,6 +555,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Santa Catarina', manifest.stScAnexo1A.page, checkSc),
     await safe('ST na Bahia', manifest.stBaAnexo1.page, checkBa),
     await safe('ST em Goiás', manifest.stGoAnexoVIII.page, checkGo),
+    await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

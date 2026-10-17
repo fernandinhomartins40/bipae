@@ -27,6 +27,8 @@ import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
 import { baStReferences, parseBaAnexo1 } from './st-ba.mjs';
 import { goStReferences, parseGoApendiceII } from './st-go.mjs';
+import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
+import { docText } from './doc-text.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -581,6 +583,14 @@ async function importStReferences(cest) {
     ),
     { url: manifest.stGoAnexoVIII.page },
   );
+  // Rio de Janeiro (F3-26.c.RJ): Anexo I do Livro II do RICMS/RJ (.doc da SEFAZ-RJ).
+  const rj = rjStReferences(
+    parseRjAnexoI(
+      await docText(gunzipSync(readFileSync(join(sourcesDir, manifest.stRjAnexoI.file)))),
+      known,
+    ),
+    { url: manifest.stRjAnexoI.page },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -603,6 +613,7 @@ async function importStReferences(cest) {
       sc.segment,
       ba.segment,
       go.segment,
+      rj.segment,
     ],
     references: [
       {
@@ -623,6 +634,7 @@ async function importStReferences(cest) {
       ...sc.references,
       ...ba.references,
       ...go.references,
+      ...rj.references,
     ],
   };
 }

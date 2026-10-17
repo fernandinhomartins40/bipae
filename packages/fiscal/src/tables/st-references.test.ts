@@ -360,3 +360,37 @@ describe('Goiás: Apêndice II do Anexo VIII do RCTE/GO (F3-26.d.GO)', () => {
     expect(tubo.find((s) => s.annex === 'XVII')).toMatchObject({ inSt: true });
   });
 });
+
+describe('Rio de Janeiro: Anexo I do Livro II do RICMS/RJ (F3-26.c.RJ)', () => {
+  const rj = ST_REFERENCES.filter((r) => r.uf === 'RJ');
+
+  it('o Anexo I inteiro, com CEST, NCM e a MVA original', () => {
+    expect(ST_REFERENCE_UFS).toContain('RJ');
+    const itens = rj.flatMap((r) => r.items);
+    expect(itens.length).toBeGreaterThan(600);
+    for (const item of itens) {
+      expect(item.mva, item.item).toMatch(/^\d{1,3}(\.\d{1,2})?$/);
+      for (const n of item.ncms) expect(n, item.item).toMatch(/^\d{2,8}$/);
+    }
+  });
+
+  it('água mineral em vidro: a MVA muda pela embalagem e por quem vende', () => {
+    const agua = rj.flatMap((r) => r.items).filter((i) => i.cest === '0300300');
+    expect(agua.find((i) => /301 a 500ml, industrial/.test(i.description))).toMatchObject({
+      mva: '250',
+    });
+    expect(agua.find((i) => /301 a 500ml, demais/.test(i.description))).toMatchObject({
+      mva: '170',
+    });
+  });
+
+  it('NCM colado no Word ("2202.10.002202.99.00") vira os dois códigos', () => {
+    const refri = rj.flatMap((r) => r.items).find((i) => i.cest === '0301000')!;
+    expect(refri.ncms).toEqual(['22021000', '22029900']);
+  });
+
+  it('venda porta a porta: "Capítulos 33 e 34" vira os capítulos', () => {
+    const outros = rj.flatMap((r) => r.items).find((i) => i.cest === '2805600')!;
+    expect(outros).toMatchObject({ ncms: ['33', '34'], mva: '49.39' });
+  });
+});

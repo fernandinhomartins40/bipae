@@ -176,7 +176,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-26.c.PR · Paraná: MVA da Resolução SEFA 571/2019 consolidada (444 itens) e o que saiu da ST pelo Anexo IX do RICMS/PR (eletrônicos e celulares em 01/03/2026, limpeza e papelaria em 01/08/2024, sorvetes em 01/02/2025); monitor semanal confere os dois PDFs
     - [ ] F3-26.c.PR2 · Paraná: MVA única por hipótese, escrita no artigo (autopeças, medicamentos, veículos e porta a porta)
     - [x] F3-26.c.MG · Minas Gerais: MVA da Parte 2 do Anexo XV do RICMS/MG (986 itens, com indústria e atacadista separados), data de cada linha pelas notas de rodapé e itens revogados com a data; monitor semanal
-    - [ ] F3-26.c.RJ · Rio de Janeiro: o site da SEFAZ-RJ bloqueia o nosso IP e o da VPS; tentar baixar pela CI do GitHub ou outra origem
+    - [x] F3-26.c.RJ · Rio de Janeiro: Anexo I do Livro II do RICMS/RJ (.doc oficial, 702 linhas; água e refrigerante por embalagem e por quem vende); o "bloqueio" era falta de cabeçalho de navegador; monitor semanal
     - [x] F3-26.c.RS · Rio Grande do Sul: Apêndice II do RICMS/RS, Seções II e III (194 itens com MVA da operação interna, 18 segmentos na lista); monitor semanal
     - [x] F3-26.c.SC · Santa Catarina: Anexo 1-A do RICMS/SC (80 linhas de MVA original em bebidas; 16 seções que saíram da ST, com data e decreto); monitor semanal
     - [x] F3-26.c.BA · Bahia: Anexo 1 do RICMS/BA vigente em 2026 (282 linhas de MVA original, faixas de CEST expandidas); monitor semanal

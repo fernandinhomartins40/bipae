@@ -360,5 +360,14 @@
   "publishedAt": "2026-10-08",
   "downloadedAt": "2026-10-17",
   "sha256": "06ed6d31e905cfcf8b72b57f4d34998dbaaaf3709fd331e800d66aec200c45f8"
+ },
+ "stRjAnexoI": {
+  "file": "SEFAZ-RJ_RICMS_Livro_II_Anexo_I_2026-10-17.doc.gz",
+  "title": "RICMS/RJ (Decreto 27.427/2000), Livro II, Anexo I: mercadorias sujeitas à substituição tributária e MVA (arquivo .doc publicado pela SEFAZ-RJ, redação do Decreto 47.864/2021)",
+  "publisher": "Secretaria de Estado de Fazenda do Rio de Janeiro",
+  "page": "https://legislacao.fazenda.rj.gov.br/wcc-migracao/Contribution_Folders/site_fazenda/legislacao/tributaria/decretos/2000/ricms/livro%20II/anexo_I_livroII.doc",
+  "publishedAt": "2023-11-08",
+  "downloadedAt": "2026-10-17",
+  "sha256": "6bbd437350e3eec4db2bfd05dc445ce26da64415390f939d682206e8b66cd508"
  }
 }
