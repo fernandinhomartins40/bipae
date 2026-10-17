@@ -351,5 +351,14 @@
   "publishedAt": "2026-09-30",
   "downloadedAt": "2026-10-17",
   "sha256": "46768ebfef042531bf7e25d5bed460e64c8001a901360edf7e6e6b9171ca65b3"
+ },
+ "stGoAnexoVIII": {
+  "file": "SEFAZ-GO_RCTE_Anexo_VIII_2026-10-17.html.gz",
+  "title": "RCTE/GO (Decreto 4.852/1997), Anexo VIII, da substituição tributária: Apêndice II, mercadorias por inciso e alínea, com CEST, NCM e MVA",
+  "publisher": "Secretaria de Estado da Economia de Goiás",
+  "page": "https://appasp.economia.go.gov.br/legislacao/arquivos/Rcte/Anexos/ANEXO_08_Substituicao_Tributaria.htm",
+  "publishedAt": "2026-10-08",
+  "downloadedAt": "2026-10-17",
+  "sha256": "06ed6d31e905cfcf8b72b57f4d34998dbaaaf3709fd331e800d66aec200c45f8"
  }
 }

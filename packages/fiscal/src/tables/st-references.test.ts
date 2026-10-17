@@ -328,3 +328,35 @@ describe('Bahia: Anexo 1 do RICMS/BA, redação vigente em 2026 (F3-26.c.BA)', (
     expect(ba.find((r) => r.segment === '1')).toBeUndefined();
   });
 });
+
+describe('Goiás: Apêndice II do Anexo VIII do RCTE/GO (F3-26.d.GO)', () => {
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+
+  it('cerveja em lata: 140% quando quem vende é a indústria e 70% no atacadista', () => {
+    const lata = stReferencesFor('GO', '22030000', '2026-10-17').filter(
+      (m) => m.cest === '0302103',
+    );
+    expect(lata.map((m) => m.mva).sort()).toEqual(['140', '70']);
+    expect(lata.find((m) => m.mva === '140')!.description).toMatch(/industrial/);
+  });
+
+  it('a redação nova vale: pneus de automóvel com 42% (Decreto 10.799/2025)', () => {
+    const pneu = stReferencesFor('GO', '40111000', '2026-10-17').find((m) => m.cest === '1600100');
+    expect(pneu).toMatchObject({ mva: '42' });
+  });
+
+  it('autopeças e materiais de construção saíram da ST em 01/03/2018 (Decreto 9.108)', () => {
+    const go = ST_SEGMENTS.find((s) => s.uf === 'GO')!;
+    expect(go.annexes.find((a) => a.annex === 'XIII')).toMatchObject({
+      excludedFrom: '2018-03-01',
+      excludedBy: 'Decreto 9.108',
+    });
+    const tubo = stStatusFor('GO', '39172100', '2026-10-17', ncmsOf);
+    expect(tubo.find((s) => s.annex === 'XV')).toMatchObject({
+      inSt: false,
+      excludedFrom: '2018-03-01',
+    });
+    // Na venda porta a porta (marketing direto, inciso XVII) o mesmo NCM continua na ST.
+    expect(tubo.find((s) => s.annex === 'XVII')).toMatchObject({ inSt: true });
+  });
+});

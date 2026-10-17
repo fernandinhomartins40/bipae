@@ -26,6 +26,7 @@ import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
 import { baStReferences, parseBaAnexo1 } from './st-ba.mjs';
+import { goStReferences, parseGoApendiceII } from './st-go.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -572,6 +573,14 @@ async function importStReferences(cest) {
     parseBaAnexo1(await pdfLines(readFileSync(join(sourcesDir, manifest.stBaAnexo1.file))), known),
     { url: manifest.stBaAnexo1.page },
   );
+  // Goiás (F3-26.d.GO): Apêndice II do Anexo VIII do RCTE/GO.
+  const go = goStReferences(
+    parseGoApendiceII(
+      gunzipSync(readFileSync(join(sourcesDir, manifest.stGoAnexoVIII.file))).toString('latin1'),
+      known,
+    ),
+    { url: manifest.stGoAnexoVIII.page },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -593,6 +602,7 @@ async function importStReferences(cest) {
       rs.segment,
       sc.segment,
       ba.segment,
+      go.segment,
     ],
     references: [
       {
@@ -612,6 +622,7 @@ async function importStReferences(cest) {
       ...rs.references,
       ...sc.references,
       ...ba.references,
+      ...go.references,
     ],
   };
 }

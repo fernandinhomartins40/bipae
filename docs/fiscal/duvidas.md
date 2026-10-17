@@ -238,6 +238,14 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Fora da sugestão:**
     - autopeças, porque o item remete ao Anexo II do Convênio ICMS 142/18 inteiro;
     - combustíveis, que não têm MVA na tabela.
+- **Atualização de 17/10/2026 (F3-26.d.GO, Goiás, fonte oficial):** Apêndice II do Anexo VIII do RCTE/GO (Decreto 4.852/1997), na página da Secretaria da Economia, que traz cada redação antiga antes da nova. Está guardado em `packages/fiscal/sources` e é lido por gerador:
+  - **Regra de leitura:** vale a última ocorrência de cada inciso, de cada alínea e de cada subitem; subitens marcados como revogados saem.
+  - **Itens:** 213 linhas com a MVA das operações internas, em 16 grupos.
+  - **Cerveja e refrigerante:** têm a MVA do industrial e a do atacadista, cada uma com o nome.
+  - **Já vale o Decreto 10.799/2025:** por exemplo, pneus de automóvel com 42%.
+  - **Saíram da ST em 01/03/2018 (Decreto 9.108):** autopeças, ração pet, materiais de construção e materiais elétricos.
+  - **Venda porta a porta (marketing direto):** o mesmo NCM pode continuar na ST por esse sistema, e a tela mostra isso.
+  - **Conferência:** se mais de 10% dos CEST em vigor ficarem fora do Convênio ICMS 142/18, a geração para.
 - **Rio de Janeiro (F3-26.c.RJ): bloqueado.** O site de legislação da SEFAZ-RJ (`legislacao.fazenda.rj.gov.br` e `portal.fazenda.rj.gov.br`) devolve uma página de bloqueio por endereço de IP, tanto daqui quanto da VPS. Sem acesso ao texto oficial, o RJ fica como "falta configurar" até conseguirmos baixar de outra origem.
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração

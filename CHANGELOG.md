@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-26.d.GO Substituição tributária em Goiás] — 17/10/2026
+
+### Adicionado
+- **Goiás na regra de ICMS:** 213 linhas com a MVA das operações internas, do Apêndice II do Anexo VIII do RCTE/GO, já com as MVAs do Decreto 10.799/2025. Cerveja e refrigerante trazem a MVA do industrial e a do atacadista.
+- **O que saiu da ST em GO:** autopeças, materiais de construção, materiais elétricos e ração, em 01/03/2018.
+- **Monitor semanal das fontes:** passou a conferir o Anexo VIII.
+
 ## [F3-26.c.BA Substituição tributária na Bahia] — 17/10/2026
 
 ### Adicionado

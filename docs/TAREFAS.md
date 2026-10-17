@@ -180,7 +180,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-26.c.RS · Rio Grande do Sul: Apêndice II do RICMS/RS, Seções II e III (194 itens com MVA da operação interna, 18 segmentos na lista); monitor semanal
     - [x] F3-26.c.SC · Santa Catarina: Anexo 1-A do RICMS/SC (80 linhas de MVA original em bebidas; 16 seções que saíram da ST, com data e decreto); monitor semanal
     - [x] F3-26.c.BA · Bahia: Anexo 1 do RICMS/BA vigente em 2026 (282 linhas de MVA original, faixas de CEST expandidas); monitor semanal
-  - [ ] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
+  - [~] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
+    - [x] F3-26.d.GO · Goiás: Apêndice II do Anexo VIII do RCTE/GO (213 linhas, industrial e atacadista separados; autopeças, construção, elétricos e ração fora da ST desde 01/03/2018); monitor semanal
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
 - [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07

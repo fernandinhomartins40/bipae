@@ -22,6 +22,7 @@ import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII } from './st-rs.mjs';
 import { parseScAnexo1A } from './st-sc.mjs';
 import { parseBaAnexo1 } from './st-ba.mjs';
+import { parseGoApendiceII } from './st-go.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -432,6 +433,51 @@ async function checkBa() {
   };
 }
 
+/** Goiás: o Anexo VIII de hoje, lido como na geração. */
+async function checkGo() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (html) =>
+    parseGoApendiceII(html, known).flatMap((b) =>
+      b.alineas.flatMap((a) =>
+        a.items.map((i) => [
+          b.inciso,
+          a.key,
+          i.item,
+          i.cest,
+          i.ncms.join(' '),
+          i.mva ?? '',
+          b.excludedFrom ?? '',
+        ]),
+      ),
+    );
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stGoAnexoVIII.file))).toString('latin1'),
+  );
+  const title = 'ST em Goiás (RCTE/GO, Anexo VIII, Apêndice II)';
+  let now;
+  try {
+    now = rowsOf((await download(manifest.stGoAnexoVIII.page)).body.toString('latin1'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stGoAnexoVIII.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stGoAnexoVIII.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -459,6 +505,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Rio Grande do Sul', manifest.stRsRicms.page, checkRs),
     await safe('ST em Santa Catarina', manifest.stScAnexo1A.page, checkSc),
     await safe('ST na Bahia', manifest.stBaAnexo1.page, checkBa),
+    await safe('ST em Goiás', manifest.stGoAnexoVIII.page, checkGo),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),
