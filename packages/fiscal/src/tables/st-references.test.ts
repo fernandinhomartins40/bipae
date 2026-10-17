@@ -423,3 +423,36 @@ describe('Espírito Santo: Portaria 16-R/2019 atualizada (F3-26.d.ES)', () => {
     });
   });
 });
+
+describe('Alagoas: Decreto 90.309/2023 com as MVAs (F3-26.d.AL)', () => {
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+  const al = ST_REFERENCES.filter((r) => r.uf === 'AL');
+
+  it('os anexos por segmento, com a MVA-ST original', () => {
+    expect(ST_REFERENCE_UFS).toContain('AL');
+    expect(al.flatMap((r) => r.items).length).toBeGreaterThan(700);
+    const pneu = stReferencesFor('AL', '40111000', '2026-10-17').find((m) => m.cest === '1600100');
+    expect(pneu).toMatchObject({ mva: '42' });
+  });
+
+  it('o CEST quebrado no PDF ("04.00" + "1.00") é lido inteiro: cigarros com 50%', () => {
+    const cigarro = stReferencesFor('AL', '24022000', '2026-10-17').find(
+      (m) => m.cest === '0400100',
+    );
+    expect(cigarro).toMatchObject({ mva: '50' });
+  });
+
+  it('salgadinho de trigo saiu da ST em 01/09/2025 (Decreto 103.496/2025)', () => {
+    const status = stStatusFor('AL', '19059090', '2026-10-17', ncmsOf).find(
+      (s) => s.cest === '1703101',
+    );
+    expect(status).toMatchObject({
+      inSt: false,
+      excludedFrom: '2025-09-01',
+      excludedBy: 'Decreto 103.496/2025',
+    });
+    expect(stReferencesFor('AL', '19059090', '2026-10-17').map((m) => m.cest)).not.toContain(
+      '1703101',
+    );
+  });
+});

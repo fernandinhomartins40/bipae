@@ -378,5 +378,14 @@
   "publishedAt": "2026-10-02",
   "downloadedAt": "2026-10-17",
   "sha256": "d48ede26b0d8ea6b2a6a7749fb0b0e92c30d2f2842530f5b5b9c80d82c2a7de1"
+ },
+ "stAlDecreto90309": {
+  "file": "SEFAZ-AL_Decreto_90309-2023_MVAs_atualizado_2026-05-01.pdf",
+  "title": "Decreto 90.309/2023 (AL): regimes de substituição tributária e antecipação, com as MVAs, versão da SEFAZ-AL atualizada até 01/05/2026",
+  "publisher": "Secretaria de Estado da Fazenda de Alagoas",
+  "page": "https://gcs.sefaz.al.gov.br/documentos/visualizarDocumento.action?key=dx9aIL23hOg%3D",
+  "publishedAt": "2026-05-01",
+  "downloadedAt": "2026-10-17",
+  "sha256": "2c9e3bf8f234ad00e58ed7f5aa42c9cf5929318b835720c970c600cccd4a4815"
  }
 }

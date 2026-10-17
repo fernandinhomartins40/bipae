@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-26.d.AL Substituição tributária em Alagoas] — 17/10/2026
+
+### Adicionado
+- **Alagoas na regra de ICMS:** 795 linhas com a MVA-ST original, do Decreto 90.309/2023 na versão atualizada da SEFAZ-AL (01/05/2026).
+- **O que saiu da ST em AL:** a tela avisa os itens revogados, com a data e o decreto (por exemplo, salgadinhos de trigo em 01/09/2025).
+- **Monitor semanal das fontes:** passou a conferir o decreto de AL.
+
 ## [F3-26.d.ES Substituição tributária no Espírito Santo] — 17/10/2026
 
 ### Adicionado

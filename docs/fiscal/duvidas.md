@@ -246,6 +246,11 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Saíram da ST em 01/03/2018 (Decreto 9.108):** autopeças, ração pet, materiais de construção e materiais elétricos.
   - **Venda porta a porta (marketing direto):** o mesmo NCM pode continuar na ST por esse sistema, e a tela mostra isso.
   - **Conferência:** se mais de 10% dos CEST em vigor ficarem fora do Convênio ICMS 142/18, a geração para.
+- **Atualização de 17/10/2026 (F3-26.d.AL, Alagoas, fonte oficial):** Decreto 90.309/2023, na versão "com MVAs ajustadas" que a SEFAZ-AL publica no portal GCS, atualizada até 01/05/2026. O PDF vem da API do próprio portal, em base64, e fica guardado em `packages/fiscal/sources`:
+  - **Itens:** 795 linhas com a MVA-ST original, em 22 anexos (um por segmento).
+  - **CEST quebrado no PDF** ("04.00" + "1.00", "17.031.0" + "0"): a leitura junta os pedaços até formar o código.
+  - **Revogados:** itens com a nota "*Item ... revogado pelo Decreto ... Efeitos a partir de ..." (inclusive faixas, "Itens 49.2 a 53.2") viram "saiu da ST", com a data. Exemplo: salgadinhos de trigo em 01/09/2025 (Decreto 103.496/2025).
+  - **Fonte descartada:** a lista "Mercadorias sujeitas à ST" do mesmo portal é de 25/07/2018 e não foi usada.
 - **Distrito Federal e Ceará (F3-26.d.DF e F3-26.d.CE): fonte oficial ainda não localizada.**
   - **DF:** a lista é o Caderno I do Anexo IV do RICMS/DF (Decreto 18.955/1997). O texto compilado fica no SINJ-DF, que só abre por uma busca sem endereço direto para a norma.
   - **CE:** a lista é o Anexo IX do RICMS/CE (Decreto 33.327/2019). O site da SEFAZ-CE não tem a legislação consolidada, e o antigo portal de legislação não responde.

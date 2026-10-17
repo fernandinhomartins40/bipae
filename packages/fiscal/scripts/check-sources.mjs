@@ -25,6 +25,7 @@ import { parseBaAnexo1 } from './st-ba.mjs';
 import { parseGoApendiceII } from './st-go.mjs';
 import { parseRjAnexoI } from './st-rj.mjs';
 import { parseEsPortaria16R } from './st-es.mjs';
+import { parseAlDecreto90309 } from './st-al.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -563,6 +564,49 @@ async function checkEs() {
   };
 }
 
+/** Alagoas: o PDF de hoje, pela API do portal da SEFAZ-AL (devolve o arquivo em base64). */
+async function checkAl() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = async (bytes) =>
+    parseAlDecreto90309(await pdfLines(bytes), known).flatMap((a) =>
+      a.items.map((i) => [
+        a.annex,
+        i.item,
+        i.cest,
+        i.ncms.join(' '),
+        i.mva ?? '',
+        i.excludedFrom ?? '',
+      ]),
+    );
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.stAlDecreto90309.file)));
+  const key = new URL(manifest.stAlDecreto90309.page).searchParams.get('key');
+  const api = `https://gcs.sefaz.al.gov.br/sfz-gcs-api/api/documentos/visualizarDocumento?key=${encodeURIComponent(key)}`;
+  const title = 'ST em Alagoas (Decreto 90.309/2023)';
+  let now;
+  try {
+    const json = JSON.parse((await download(api)).body.toString('utf8'));
+    now = await rowsOf(Buffer.from(json.arquivo.base64, 'base64'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stAlDecreto90309.page,
+      status: 'mudou',
+      details: [`o arquivo novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stAlDecreto90309.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -593,6 +637,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Goiás', manifest.stGoAnexoVIII.page, checkGo),
     await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
+    await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

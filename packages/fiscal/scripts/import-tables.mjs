@@ -29,6 +29,7 @@ import { baStReferences, parseBaAnexo1 } from './st-ba.mjs';
 import { goStReferences, parseGoApendiceII } from './st-go.mjs';
 import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
 import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
+import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
 import { docText } from './doc-text.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
@@ -600,6 +601,14 @@ async function importStReferences(cest) {
     ),
     { url: manifest.stEsPortaria16R.page },
   );
+  // Alagoas (F3-26.d.AL): Decreto 90.309/2023, versão com as MVAs da SEFAZ-AL.
+  const al = alStReferences(
+    parseAlDecreto90309(
+      await pdfLines(readFileSync(join(sourcesDir, manifest.stAlDecreto90309.file))),
+      known,
+    ),
+    { url: manifest.stAlDecreto90309.page },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -624,6 +633,7 @@ async function importStReferences(cest) {
       go.segment,
       rj.segment,
       es.segment,
+      al.segment,
     ],
     references: [
       {
@@ -646,6 +656,7 @@ async function importStReferences(cest) {
       ...go.references,
       ...rj.references,
       ...es.references,
+      ...al.references,
     ],
   };
 }
