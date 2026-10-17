@@ -22,7 +22,7 @@ import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpBebidasBase, parseSpCat68 } from './st-sp-cat68.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences } from './st-pr.mjs';
 import { pdfItems, pdfLines } from './pdf-text.mjs';
-import { parseCbenefPr } from './cbenef-pr.mjs';
+import { parseCbenefPr, parseCbenefRj } from './cbenef-pr.mjs';
 import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
@@ -733,6 +733,13 @@ tables['cbenef.json'] = {
       source: 'cbenefSp',
       url: manifest.cbenefSp.page,
       codes: parseCbenefSp(readXlsx(join(sourcesDir, manifest.cbenefSp.file))),
+    },
+    {
+      uf: 'RJ',
+      act: 'Tabela de códigos de benefício X CST da SEFAZ-RJ (Resolução SEFAZ 720/14, Parte II, Anexo XVIII)',
+      source: 'cbenefRj',
+      url: manifest.cbenefRj.page,
+      codes: parseCbenefRj(await pdfItems(readFileSync(join(sourcesDir, manifest.cbenefRj.file)))),
     },
   ],
 };

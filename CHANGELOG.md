@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-27.b.RJ Tabela oficial de cBenef do Rio de Janeiro] — 17/10/2026
+
+### Adicionado
+- **cBenef do Rio de Janeiro explicado na regra de ICMS:** são 653 códigos da tabela oficial da SEFAZ-RJ (outubro de 2026), com os CST e a vigência.
+- **Monitor semanal das fontes:** passou a conferir a tabela do RJ.
+
 ## [F3-27.b.SP Tabela oficial de cBenef de São Paulo] — 17/10/2026
 
 ### Adicionado

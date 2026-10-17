@@ -141,3 +141,22 @@ describe('cBenef de São Paulo (Tabela CST x cBenef)', () => {
     expect(cbenefLookup('SP', 'SP010340', '2026-05-01').valid).toBe(false);
   });
 });
+
+describe('cBenef do Rio de Janeiro (Tabela de códigos de benefício X CST)', () => {
+  it('a tabela de outubro de 2026, com o cabeçalho só na primeira página', () => {
+    expect(CBENEF_UFS).toContain('RJ');
+    const rj = CBENEF_TABLES.find((t) => t.uf === 'RJ')!;
+    expect(rj.codes.length).toBeGreaterThan(600);
+    const r = cbenefLookup('RJ', 'RJ801001', '2026-10-17', '40');
+    expect(r).toMatchObject({ covered: true, valid: true, cstOk: true });
+    expect(r.entry!.description).toMatch(/Convênio AE 5 de 1972 - Isenção/);
+  });
+
+  it('diferimento no CST 51; códigos de suspensão sem CST na tabela', () => {
+    expect(cbenefLookup('RJ', 'RJ818024', '2026-10-17', '51')).toMatchObject({
+      valid: true,
+      cstOk: true,
+    });
+    expect(cbenefLookup('RJ', 'RJ823024', '2026-10-17').entry!.csts).toEqual([]);
+  });
+});

@@ -203,7 +203,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-27.b.GO · Goiás: Anexo Único da IN 1.518/2022-GSE consolidada (303 códigos; códigos revogados valem até a data da nota); monitor semanal
     - [x] F3-27.b.ES · Espírito Santo: planilha cBenef ES V6 (247 códigos, vigência em número de série do Excel, tipo do benefício); monitor semanal
     - [x] F3-27.b.SP · São Paulo: Tabela CST x cBenef v20260901 (316 códigos; fim da vigência lido da observação; SEM CBENEF não vale desde 01/07/2026); monitor semanal
-    - [ ] F3-27.b.UFs · RJ, DF e as demais UFs que exigem o cBenef, uma por vez
+    - [x] F3-27.b.RJ · Rio de Janeiro: Tabela de códigos de benefício X CST de 02/10/2026 (653 códigos; mesmo leitor do PR, com o cabeçalho só na primeira página); monitor semanal
+    - [ ] F3-27.b.UFs · DF e as demais UFs que exigem o cBenef, uma por vez
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
   - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entraram com a F3-08.b (Portal Nacional da NF-e).
 - [x] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c

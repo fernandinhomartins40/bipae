@@ -26115,6 +26115,5838 @@
      "description": "Exclusão da gorjeta da base de cálculo de ICMS ou da receita bruta no caso de contribuintes optantes pelo regime especial para fornecimento de alimentação (Artigo 37, § 4º-A do RICMS ou item 3 do § 2º do Decreto 51.597/2007)"
     }
    ]
+  },
+  {
+   "uf": "RJ",
+   "act": "Tabela de códigos de benefício X CST da SEFAZ-RJ (Resolução SEFAZ 720/14, Parte II, Anexo XVIII)",
+   "source": "cbenefRj",
+   "url": "https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2026/10/Tabela-codigo-de-beneficio-X-CST.pdf",
+   "codes": [
+    {
+     "code": "SEM CBENEF",
+     "csts": [],
+     "from": null,
+     "to": null,
+     "description": "SEM PREENCHIMENTO DO cBenef Informar apenas com letras maiúsculas. ITEM SEM cBenef E UF EXIGE cBenef PARA O CST"
+    },
+    {
+     "code": "RJ801001",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio AE 5 de 1972 - Isenção"
+    },
+    {
+     "code": "RJ823002",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio AE 15 de 1974 - Suspensão"
+    },
+    {
+     "code": "RJ801003",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio do Rio de Janeiro I de 1967 - Isenção"
+    },
+    {
+     "code": "RJ801004",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio do Rio de Janeiro V de 1968 - Isenção"
+    },
+    {
+     "code": "RJ801005",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 01 de 1975 - Isenção"
+    },
+    {
+     "code": "RJ801006",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 10 de 1975 - Isenção"
+    },
+    {
+     "code": "RJ801007",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 12 de 1975 - Isenção"
+    },
+    {
+     "code": "RJ802008",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 15 de 1981 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ808009",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 24 de 1975 - Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ801010",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 26 de 1975 - Isenção"
+    },
+    {
+     "code": "RJ803010",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 26 de 1975 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801011",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 32 de 1975 - Isenção"
+    },
+    {
+     "code": "RJ801012",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 33 de 1977 - Isenção"
+    },
+    {
+     "code": "RJ801013",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 35 de 1977 - Isenção"
+    },
+    {
+     "code": "RJ801014",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 38 de 1982 - Isenção"
+    },
+    {
+     "code": "RJ801015",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 40 de 1975 - Isenção"
+    },
+    {
+     "code": "RJ801016",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 44 de 1975 - Isenção"
+    },
+    {
+     "code": "RJ801017",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 65 de 1988 - Isenção"
+    },
+    {
+     "code": "RJ803017",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICM 65 de 1988 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801018",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 1 de 1991 - Isenção"
+    },
+    {
+     "code": "RJ801019",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2025-01-01",
+     "to": null,
+     "description": "Convênio ICMS 1 de 1999 - Isenção"
+    },
+    {
+     "code": "RJ803019",
+     "csts": [],
+     "from": "2025-01-01",
+     "to": null,
+     "description": "Convênio ICMS 1 de 1999 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801020",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 1 de 2013 - Isenção"
+    },
+    {
+     "code": "RJ802020",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 1 de 2013 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801021",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 3 de 1990 - Isenção"
+    },
+    {
+     "code": "RJ801022",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 3 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ801023",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 3 de 2010 - Isenção"
+    },
+    {
+     "code": "RJ801024",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 3 de 2018 - Isenção"
+    },
+    {
+     "code": "RJ802024",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 3 de 2018 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ803024",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 3 de 2018 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ823024",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 3 de 2018 - Suspensão"
+    },
+    {
+     "code": "RJ818024",
+     "csts": [
+      "51"
+     ],
+     "from": "2020-07-01",
+     "to": null,
+     "description": "Convênio ICMS 3 de 2018 - Diferimento"
+    },
+    {
+     "code": "RJ801025",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 4 de 1997 - Isenção"
+    },
+    {
+     "code": "RJ821025",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 4 de 1997 - Repasse do Crédito Fiscal"
+    },
+    {
+     "code": "RJ801026",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 4 de 1998 - Isenção"
+    },
+    {
+     "code": "RJ801027",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 5 de 1993 - Isenção"
+    },
+    {
+     "code": "RJ801028",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 5 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ801029",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 5 de 2008 - Isenção"
+    },
+    {
+     "code": "RJ801030",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 8 de 1989 - Isenção"
+    },
+    {
+     "code": "RJ805031",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 8 de 2003 - Crédito Presumido"
+    },
+    {
+     "code": "RJ823032",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 8 de 2005 - Suspensão"
+    },
+    {
+     "code": "RJ823033",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 9 de 2005 - Suspensão"
+    },
+    {
+     "code": "RJ801033",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 9 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ803034",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 9 de 2006 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801034",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 9 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ801035",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 10 de 2002 - Isenção"
+    },
+    {
+     "code": "RJ801036",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 10 de 2007 - Isenção"
+    },
+    {
+     "code": "RJ801037",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 11 de 1993 - Isenção"
+    },
+    {
+     "code": "RJ801038",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 12 de 1993 - Isenção"
+    },
+    {
+     "code": "RJ802039",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Convênio ICMS 13 de 1994 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801040",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 14 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ803041",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 15 de 2000 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801041",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 15 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ801042",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 16 de 2015 - Isenção"
+    },
+    {
+     "code": "RJ801043",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 17 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ801044",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 17 de 2002 - Isenção"
+    },
+    {
+     "code": "RJ801045",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-11-23",
+     "description": "Convênio ICMS 17 de 2013 - Isenção"
+    },
+    {
+     "code": "RJ802046",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 18 de 1992 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801047",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 18 de 1995 - Isenção"
+    },
+    {
+     "code": "RJ801048",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 18 de 1997 - Isenção"
+    },
+    {
+     "code": "RJ801049",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 18 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ823050",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 19 de 1991 - Suspensão"
+    },
+    {
+     "code": "RJ801051",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 20 de 1989 - Isenção"
+    },
+    {
+     "code": "RJ803052",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 23 de 2007 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801052",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 23 de 2007 - Isenção"
+    },
+    {
+     "code": "RJ801053",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 24 de 1989 - Isenção"
+    },
+    {
+     "code": "RJ821054",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 26 de 2003 - Repasse do Crédito Fiscal"
+    },
+    {
+     "code": "RJ803054",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 26 de 2003 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801054",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 26 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ801055",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 27 de 1990 - Isenção"
+    },
+    {
+     "code": "RJ803056",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 27 de 2005 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801056",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 27 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ805057",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 27 de 2006 - Crédito Presumido"
+    },
+    {
+     "code": "RJ801058",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 27 de 2007 - Isenção"
+    },
+    {
+     "code": "RJ818059",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Convênio ICMS 28 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ803059",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 28 de 2005 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801059",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 28 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ801060",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 29 de 1990 - Isenção"
+    },
+    {
+     "code": "RJ801061",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 30 de 1996 - Isenção"
+    },
+    {
+     "code": "RJ803062",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 30 de 2000 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801062",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 30 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ801063",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 30 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ801064",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 32 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ802065",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 33 de 1993 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802066",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 33 de 1996 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801067",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 33 de 2001 - Isenção"
+    },
+    {
+     "code": "RJ801068",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 33 de 2010 - Isenção"
+    },
+    {
+     "code": "RJ801069",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 34 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ803069",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 34 de 1992 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ803070",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 34 de 2006 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802070",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 34 de 2006 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801071",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 35 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ801072",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 35 de 1993 - Isenção"
+    },
+    {
+     "code": "RJ801073",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 37 de 1989 - Isenção"
+    },
+    {
+     "code": "RJ803074",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 38 de 2001 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801074",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 38 de 2001 - Isenção"
+    },
+    {
+     "code": "RJ801075",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 38 de 2009 - Isenção"
+    },
+    {
+     "code": "RJ803075",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 38 de 2009 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801076",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 38 de 2012 - Isenção"
+    },
+    {
+     "code": "RJ803076",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 38 de 2012 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801077",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 41 de 1991 - Isenção"
+    },
+    {
+     "code": "RJ802078",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 41 de 2005 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801079",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 42 de 1995 - Isenção"
+    },
+    {
+     "code": "RJ801080",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 42 de 2001 - Isenção"
+    },
+    {
+     "code": "RJ801081",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 42 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ801082",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 43 de 1999 - Isenção"
+    },
+    {
+     "code": "RJ801083",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 43 de 2010 - Isenção"
+    },
+    {
+     "code": "RJ801084",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 47 de 1998 - Isenção"
+    },
+    {
+     "code": "RJ801085",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 48 de 1993 - Isenção"
+    },
+    {
+     "code": "RJ803086",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 49 de 1994 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801086",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 49 de 1994 - Isenção"
+    },
+    {
+     "code": "RJ801087",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 49 de 2001 - Isenção"
+    },
+    {
+     "code": "RJ802088",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 50 de 1992 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802089",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 50 de 1993 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ803090",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 52 de 1991 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802090",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 52 de 1991 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801091",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 52 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ801092",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 52 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ803093",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Convênio ICMS 53 de 2007 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801093",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Convênio ICMS 53 de 2007 - Isenção"
+    },
+    {
+     "code": "RJ801094",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 55 de 1989 - Isenção"
+    },
+    {
+     "code": "RJ801095",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 55 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ801096",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 55 de 2012 - Isenção"
+    },
+    {
+     "code": "RJ803097",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 57 de 1998 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801097",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 57 de 1998 - Isenção"
+    },
+    {
+     "code": "RJ802098",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Convênio ICMS 57 de 1999 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801099",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 58 de 1996 - Isenção"
+    },
+    {
+     "code": "RJ802100",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 58 de 1999 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801100",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 58 de 1999 - Isenção"
+    },
+    {
+     "code": "RJ803101",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 60 de 1992 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801101",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 60 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ801102",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 61 de 1997 - Isenção"
+    },
+    {
+     "code": "RJ803103",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 62 de 2003 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801103",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 62 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ818104",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 63 de 1998 - Diferimento"
+    },
+    {
+     "code": "RJ801105",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 63 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ801106",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 64 de 1995 - Isenção"
+    },
+    {
+     "code": "RJ803107",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 65 de 2005 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801107",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 65 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ801108",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 69 de 2001 - Isenção"
+    },
+    {
+     "code": "RJ801109",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 69 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ801110",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 70 de 1990 - Isenção"
+    },
+    {
+     "code": "RJ801111",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 70 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ801112",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 73 de 2010 - Isenção"
+    },
+    {
+     "code": "RJ801113",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 74 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ823114",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 75 de 1990 - Suspensão"
+    },
+    {
+     "code": "RJ802114",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 75 de 1990 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802115",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 75 de 1991 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ803116",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-30",
+     "description": "Convênio ICMS 75 de 1997 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801116",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-30",
+     "description": "Convênio ICMS 75 de 1997 - Isenção"
+    },
+    {
+     "code": "RJ802117",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Convênio ICMS 77 de 1995 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801118",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 77 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ803119",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 78 de 1992 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801119",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 78 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ801120",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 79 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ801121",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 80 de 1995 - Isenção"
+    },
+    {
+     "code": "RJ801122",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 80 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ801123",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 81 de 2008 - Isenção"
+    },
+    {
+     "code": "RJ803124",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 82 de 1995 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801124",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 82 de 1995 - Isenção"
+    },
+    {
+     "code": "RJ801125",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-06-25",
+     "description": "Convênio ICMS 84 de 1990 - Isenção"
+    },
+    {
+     "code": "RJ803126",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 84 de 1997 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801126",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 84 de 1997 - Isenção"
+    },
+    {
+     "code": "RJ805127",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 85 de 2011 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802128",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 86 de 1999 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ803129",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 87 de 2002 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801129",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 87 de 2002 - Isenção"
+    },
+    {
+     "code": "RJ801130",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 88 de 1991 - Isenção"
+    },
+    {
+     "code": "RJ823131",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 88 de 2012 - Suspensão"
+    },
+    {
+     "code": "RJ801131",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 88 de 2012 - Isenção"
+    },
+    {
+     "code": "RJ802132",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 89 de 2005 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801133",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 89 de 2010 - Isenção"
+    },
+    {
+     "code": "RJ801134",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 91 de 1991 - Isenção"
+    },
+    {
+     "code": "RJ803134",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 91 de 1991 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802135",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-06-30",
+     "description": "Convênio ICMS 91 de 2012 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801136",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 93 de 1998 - Isenção"
+    },
+    {
+     "code": "RJ801137",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 94 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ801138",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 94 de 2012 - Isenção"
+    },
+    {
+     "code": "RJ803138",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 94 de 2012 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801139",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 95 de 1998 - Isenção"
+    },
+    {
+     "code": "RJ802140",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 95 de 2012 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801141",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 98 de 2008 - Isenção"
+    },
+    {
+     "code": "RJ801142",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 99 de 1989 - Isenção"
+    },
+    {
+     "code": "RJ801143",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2027-12-31",
+     "description": "Convênio ICMS 100 de 1997 - Isenção"
+    },
+    {
+     "code": "RJ802143",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2027-12-31",
+     "description": "Convênio ICMS 100 de 1997 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805143",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2027-12-31",
+     "description": "Convênio ICMS 100 de 1997 - Crédito Presumido"
+    },
+    {
+     "code": "RJ803143",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-12-31",
+     "description": "Convênio ICMS 100 de 1997 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801144",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 101 de 1997 - Isenção"
+    },
+    {
+     "code": "RJ803144",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 101 de 1997 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801145",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 103 de 2011 - Isenção"
+    },
+    {
+     "code": "RJ801146",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 104 de 1989 - Isenção"
+    },
+    {
+     "code": "RJ801147",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 105 de 1995 - Isenção"
+    },
+    {
+     "code": "RJ801148",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 105 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ805149",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 106 de 1996 - Crédito Presumido"
+    },
+    {
+     "code": "RJ801150",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 106 de 2010 - Isenção"
+    },
+    {
+     "code": "RJ801151",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 107 de 1995 - Isenção"
+    },
+    {
+     "code": "RJ818152",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 110 de 2007 - Diferimento"
+    },
+    {
+     "code": "RJ819152",
+     "csts": [
+      "30"
+     ],
+     "from": "2019-08-01",
+     "to": "2019-08-31",
+     "description": "CONVÊNIO ICMS 110 de 2007 - não incidência"
+    },
+    {
+     "code": "RJ802153",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 112 de 1989 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801154",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 112 de 1998 - Isenção"
+    },
+    {
+     "code": "RJ802155",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 113 de 2006 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ803156",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 114 de 2009 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802156",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 114 de 2009 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801157",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 116 de 1998 - Isenção"
+    },
+    {
+     "code": "RJ803157",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 116 de 1998 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801158",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 120 de 2002 - Isenção"
+    },
+    {
+     "code": "RJ801159",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 122 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ803159",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 122 de 2003 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801160",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 123 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ801161",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Convênio ICMS 123 de 1997 - Isenção"
+    },
+    {
+     "code": "RJ801162",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 125 de 2001 - Isenção"
+    },
+    {
+     "code": "RJ801163",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 126 de 2010 - Isenção"
+    },
+    {
+     "code": "RJ803163",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 126 de 2010 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ803164",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 128 de 1994 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802164",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 128 de 1994 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801165",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 129 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ801166",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 129 de 2012 - Isenção"
+    },
+    {
+     "code": "RJ820167",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-10-31",
+     "description": "Convênio ICMS 130 de 1994 - Redução de alíquota"
+    },
+    {
+     "code": "RJ801167",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 130 de 1994 - Isenção"
+    },
+    {
+     "code": "RJ803167",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 130 de 1994 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ821168",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 130 de 2007 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ801168",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 130 de 2007 - Isenção"
+    },
+    {
+     "code": "RJ802168",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 130 de 2007 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802169",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 132 de 1993 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801170",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 132 de 2004 - Isenção"
+    },
+    {
+     "code": "RJ803171",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 133 de 2002 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802171",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 133 de 2002 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ823172",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 136 de 1993 - Suspensão"
+    },
+    {
+     "code": "RJ801173",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 136 de 1994 - Isenção"
+    },
+    {
+     "code": "RJ801174",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 138 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ801175",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 140 de 2001 - Isenção"
+    },
+    {
+     "code": "RJ803175",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 140 de 2001 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ803176",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 141 de 2007 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801176",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 141 de 2007 - Isenção"
+    },
+    {
+     "code": "RJ805177",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 141 de 2011 - Crédito Presumido"
+    },
+    {
+     "code": "RJ801178",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 142 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ801179",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 144 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ803180",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Convênio ICMS 147 de 2007 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801180",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Convênio ICMS 147 de 2007 - Isenção"
+    },
+    {
+     "code": "RJ801181",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 150 de 2013 - Isenção"
+    },
+    {
+     "code": "RJ802182",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 153 de 2004 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801183",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 158 de 1994 - Isenção"
+    },
+    {
+     "code": "RJ801184",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 162 de 1994 - Isenção"
+    },
+    {
+     "code": "RJ801185",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 165 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ802186",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 45 de 2014 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818187",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 14.236 de 1989 - Diferimento"
+    },
+    {
+     "code": "RJ818188",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 16.358 de 1991 - Diferimento"
+    },
+    {
+     "code": "RJ808189",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 21.550 de 1995 - Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ805189",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 21.550 de 1995 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818190",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 22.266 de 1996 - Diferimento"
+    },
+    {
+     "code": "RJ818191",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 23.082 de 1997 - Diferimento|"
+    },
+    {
+     "code": "RJ805192",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 25.404 de 1999 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818193",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 25.665 de 1999 - Diferimento"
+    },
+    {
+     "code": "RJ808193",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 25.665 de 1999 - Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ805194",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 25.666 de 1999 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802195",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 26.004 de 2000 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802196",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 26.116 de 2000 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802197",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 26.140 de 2000 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801198",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 26.260 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ808199",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 26.274 de 2000 - Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ818199",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 26.274 de 2000 - Diferimento"
+    },
+    {
+     "code": "RJ805200",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 26.788 de 2000 - Crédito Presumido"
+    },
+    {
+     "code": "RJ821201",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.091 de 2000 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ801202",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.159 de 2000 - Isenção"
+    },
+    {
+     "code": "RJ802203",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.308 de 2000 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801204",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.815 de 2001 - Isenção"
+    },
+    {
+     "code": "RJ808205",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.857 de 2001 - Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ802206",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 28.494 de 2001 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802207",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-30",
+     "description": "Decreto 28.940 de 2001 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805208",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 29.042 de 2001 - Crédito Presumido"
+    },
+    {
+     "code": "RJ803208",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 29.042 de 2001 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802209",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 29.366 de 2001 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802210",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 29.722 de 2001 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802211",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 29.882 de 2001 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818211",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 29.882 de 2001 - Diferimento"
+    },
+    {
+     "code": "RJ818212",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 30.853 de 2002 - Diferimento"
+    },
+    {
+     "code": "RJ805212",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 30.853 de 2002 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818213",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 31.175 de 2002 - Diferimento"
+    },
+    {
+     "code": "RJ808214",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 32.701 de 2003 - Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ818215",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 33.934 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ801215",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 33.934 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ805216",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-02-31",
+     "description": "Convênio 23 de 1990 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818217",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 34.169 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ818218",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 34.170 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ818219",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 34.171 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ801220",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 35.220 de 2004 - Isenção"
+    },
+    {
+     "code": "RJ818220",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 35.220 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ802221",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 35.418 de 2004 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818221",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 35.418 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ821221",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 35.418 de 2004 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ805222",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 35.419 de 2004 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818223",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 35.985 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ805224",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.111 de 2004 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818225",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.279 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ803226",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.297 de 2004 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802226",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.297 de 2004 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ821227",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 36.324 de 2004 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ818228",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.376 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ805228",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.376 de 2004 - Crédito Presumido"
+    },
+    {
+     "code": "RJ803229",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.448 de 2004 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ818229",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.448 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ802229",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.448 de 2004 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818230",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.449 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ805230",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.449 de 2004 - Crédito Presumido"
+    },
+    {
+     "code": "RJ803231",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.450 de 2004 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ821231",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.450 de 2004 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ802231",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.450 de 2004 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805231",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.450 de 2004 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818231",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.450 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ802232",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.451 de 2004 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818232",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.451 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ803232",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.451 de 2004 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ805233",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.452 de 2004 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818234",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.453 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ802234",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.453 de 2004 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818235",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.458 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818236",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.460 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818237",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.461 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818238",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 36.463 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818239",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 36.468 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818240",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.474 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818241",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 36.478 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818242",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 36.489 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818243",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.149 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818244",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 37.152 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818245",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.154 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818246",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.159 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818247",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.168 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818248",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.170 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818249",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.172 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818250",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 37.177 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818251",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 37.179 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818252",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.198 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818253",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.207 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818254",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.210 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818255",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.256 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818256",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 37.257 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818257",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.260 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818258",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.261 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818259",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.263 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818260",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 37.590 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818261",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.598 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818262",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.599 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818263",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.600 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818264",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 37.888 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ818265",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 38.231 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ802266",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 38.938 de 2006 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805266",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 38.938 de 2006 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818266",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 38.938 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ801266",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 38.938 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ818267",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 39.116 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ803268",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 39.565 de 2006 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ803269",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 39.566 de 2006 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ818270",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 39.784 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ805270",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 39.784 de 2006 - Crédito Presumido"
+    },
+    {
+     "code": "RJ801271",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 40.435 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ818271",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 40.435 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ803272",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 40.442 de 2006 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ821272",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 40.442 de 2006 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ802272",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 40.442 de 2006 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801272",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 40.442 de 2006 - Isenção"
+    },
+    {
+     "code": "RJ820272",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 40.442 de 2006 - Redução de alíquota"
+    },
+    {
+     "code": "RJ818272",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 40.442 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ818273",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 40.456 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ805274",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 40.478 de 2006 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818274",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 40.478 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ808275",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 40.562 de 2007 - Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ818276",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.244 de 2008 - Diferimento"
+    },
+    {
+     "code": "RJ802277",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.483 de 2008 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ821277",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.483 de 2008 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ822277",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.483 de 2008 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ805277",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.483 de 2008 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818277",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.483 de 2008 - Diferimento"
+    },
+    {
+     "code": "RJ818278",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.557 de 2008 - Diferimento"
+    },
+    {
+     "code": "RJ802278",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.557 de 2008 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805279",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-30",
+     "description": "Decreto 41.596 de 2008 - Crédito Presumido"
+    },
+    {
+     "code": "RJ805280",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-12-31",
+     "description": "Decreto 41.681 de 2009 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818280",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-12-31",
+     "description": "Decreto 41.681 de 2009 - Diferimento"
+    },
+    {
+     "code": "RJ821281",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.766 de 2009 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ818282",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 41.858 de 2009 - Diferimento"
+    },
+    {
+     "code": "RJ805283",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 41.860 de 2009 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802283",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 41.860 de 2009 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801284",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 42.042 de 2009 - Isenção"
+    },
+    {
+     "code": "RJ801285",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 42.109 de 2009 - Isenção"
+    },
+    {
+     "code": "RJ818286",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 42.139 de 2009 - Diferimento"
+    },
+    {
+     "code": "RJ823287",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 42.398 de 2010 - Suspensão"
+    },
+    {
+     "code": "RJ818288",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 42.565 de 2010 - Diferimento"
+    },
+    {
+     "code": "RJ805289",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 42.569 de 2010 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818289",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 42.569 de 2010 - Diferimento"
+    },
+    {
+     "code": "RJ805290",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 42.588 de 2010 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818290",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 42.588 de 2010 - Diferimento"
+    },
+    {
+     "code": "RJ805291",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 42.643 de 2010 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818292",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 42.647 de 2010 - Diferimento"
+    },
+    {
+     "code": "RJ805293",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 42.649 de 2010 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818293",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 42.649 de 2010 - Diferimento"
+    },
+    {
+     "code": "RJ818294",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 42.683 de 2010 - Diferimento"
+    },
+    {
+     "code": "RJ805295",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 42.771 de 2010 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802296",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-05-08",
+     "description": "Decreto 42.897 de 2011 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ820297",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 43.066 de 2011 - Redução de alíquota"
+    },
+    {
+     "code": "RJ818298",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 43.128 de 2011 - Diferimento"
+    },
+    {
+     "code": "RJ801298",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Decreto 43.128 de 2011 - Isenção"
+    },
+    {
+     "code": "RJ818299",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.209 de 2011 - Diferimento"
+    },
+    {
+     "code": "RJ818300",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.210 de 2011 - Diferimento"
+    },
+    {
+     "code": "RJ818301",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.457 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ805301",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.457 de 2012 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802302",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.502 de 2012 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805303",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.503 de 2012 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818303",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.503 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ821304",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.603 de 2012 - Repasse do Crédito Fiscal"
+    },
+    {
+     "code": "RJ818304",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.603 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ805304",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.603 de 2012 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818305",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-08-06",
+     "description": "Decreto 43.709 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ805305",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2022-08-06",
+     "description": "Decreto 43.709 de 2012 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818306",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.739 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ822306",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.739 de 2012 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ818307",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.751 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ818308",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.771 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ802308",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.771 de 2012 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805308",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.771 de 2012 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818309",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.879 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ802310",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.922 de 2012 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ802311",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.418 de 2013 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818311",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.418 de 2013 - Diferimento"
+    },
+    {
+     "code": "RJ805311",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.418 de 2013 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802312",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-12-31",
+     "description": "Decreto 44.498 de 2013 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818312",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-12-31",
+     "description": "Decreto 44.498 de 2013 - Diferimento"
+    },
+    {
+     "code": "RJ802313",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.550 de 2014 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818314",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.607 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ805314",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.607 de 2014 - Crédito Presumido"
+    },
+    {
+     "code": "RJ803315",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 44.608 de 2014 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ802316",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.615 de 2014 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805316",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.615 de 2014 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818316",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.615 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ818317",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.629 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ802317",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.629 de 2014 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818318",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.636 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ805318",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.636 de 2014 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802319",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.677 de 2014 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818320",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.868 de 2014 - Diferiment"
+    },
+    {
+     "code": "RJ822320",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 44.868 de 2014 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ818321",
+     "csts": [
+      "51"
+     ],
+     "from": "2020-12-28",
+     "to": null,
+     "description": "Decreto 44.900 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ818322",
+     "csts": [
+      "51"
+     ],
+     "from": "2020-12-28",
+     "to": null,
+     "description": "Decreto 44.901 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ802323",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 44.945 de 2014 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805323",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 44.945 de 2014 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802324",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.047 de 2014 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818324",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.047 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ818325",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.072 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ818326",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.308 de 2015 - Diferimento"
+    },
+    {
+     "code": "RJ801326",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.308 de 2015 - Isenção"
+    },
+    {
+     "code": "RJ818327",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.339 de 2015 - Diferimento"
+    },
+    {
+     "code": "RJ802328",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.417 de 2015 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805328",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.417 de 2015 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818328",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.417 de 2015 - Diferimento"
+    },
+    {
+     "code": "RJ818329",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.446 de 2015 - Diferimento"
+    },
+    {
+     "code": "RJ805330",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.450 de 2015 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818331",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.586 de 2016 - Diferimento"
+    },
+    {
+     "code": "RJ802332",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-08-12",
+     "description": "Decreto 45.607 de 2016 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805333",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.631 de 2016 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818333",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.631 de 2016 - Diferimento"
+    },
+    {
+     "code": "RJ805334",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 45.777 de 2016 - Crédito Presumido"
+    },
+    {
+     "code": "RJ803334",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 45.777 de 2016 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ818335",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.780 de 2016 - Diferimento"
+    },
+    {
+     "code": "RJ805335",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.780 de 2016 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818336",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 45.781 de 2016 - Diferimento"
+    },
+    {
+     "code": "RJ822337",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2026-10-04",
+     "description": "Decreto 45782 de 2016 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ818337",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2026-10-04",
+     "description": "Decreto 45782 de 2016 - Diferimento"
+    },
+    {
+     "code": "RJ801337",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2026-10-04",
+     "description": "Decreto 45782 de 2016 - Isenção"
+    },
+    {
+     "code": "RJ823338",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 27.427/00, Livro I, Título IX, Art. 52, I de 2000 - Suspensão"
+    },
+    {
+     "code": "RJ823339",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 27.427/00, Livro I, Título IX, Art. 52, inc. II de 2000 - Suspensão"
+    },
+    {
+     "code": "RJ818340",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.427/00, Livro IV, Título VIII de 2000 - Diferimento"
+    },
+    {
+     "code": "RJ822341",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.427/00, Livro V, Título VA de 2000 - Tributação sobre Receita"
+    },
+    {
+     "code": "RJ818342",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.427/00, Livro XII, Título I de 2000 - Diferimento"
+    },
+    {
+     "code": "RJ802343",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-01-10",
+     "description": "Decreto 27.427/00, Livro XIII, Título I, Capítulo I de 2000 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805344",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2022-01-10",
+     "description": "Decreto 27.427/00, Livro XIII, Título II, Art. 14 de 2000 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802344",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-01-10",
+     "description": "Decreto 27.427/00, Livro XIII, Título II, Art. 14 de 2000 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818345",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.427/00, Livro XV, Título I, Capítulo I de 2000 - Diferimento"
+    },
+    {
+     "code": "RJ818346",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.427/00, Livro XV, Título I, Capítulo II de 2000 - Diferimento"
+    },
+    {
+     "code": "RJ801347",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 27.427/00, Livro XV, Título III de 2000 - Isenção"
+    },
+    {
+     "code": "RJ818347",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.427/00, Livro XV, Título III de 2000 - Diferimento"
+    },
+    {
+     "code": "RJ821348",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.427/00, Livro XV, Título IV, Art. 31 de 2000 - Repasse do Crédito Fiscal"
+    },
+    {
+     "code": "RJ823348",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Decreto 27.427/00, Livro XV, Título IV, Art. 31 de 2000 - Suspensão"
+    },
+    {
+     "code": "RJ818348",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 27.427/00, Livro XV, Título IV, Art. 31 de 2000 - Diferimento"
+    },
+    {
+     "code": "RJ822349",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 2.804 de 1997 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ822350",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 2.869 de 1997 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ818351",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 3.578 de 2001 - Diferimento"
+    },
+    {
+     "code": "RJ820352",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 3.916 de 2002 - Redução de alíquota"
+    },
+    {
+     "code": "RJ818353",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.164 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ801354",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.166 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ820355",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.169 de 2003 - Redução de alíquota"
+    },
+    {
+     "code": "RJ818355",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.169 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ805355",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.169 de 2003 - Crédito Presumido"
+    },
+    {
+     "code": "RJ808355",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.169 de 2003 - Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ818356",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.170 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ818357",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-12-31",
+     "description": "Lei 4.173 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ805357",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2022-12-31",
+     "description": "Lei 4.173 de 2003 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802358",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.174 de 2003 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818358",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.174 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ805358",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.174 de 2003 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818359",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.177 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ801359",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2020-12-31",
+     "description": "Lei 4.177 de 2003 - Isenção"
+    },
+    {
+     "code": "RJ802359",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.177 de 2003 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805359",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.177 de 2003 - Crédito Presumido"
+    },
+    {
+     "code": "RJ822359",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.177 de 2003 - Tributação sobre Receita"
+    },
+    {
+     "code": "RJ802360",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.178 de 2003 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818360",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.178 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ805360",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.178 de 2003 - Crédito Presumido"
+    },
+    {
+     "code": "RJ805361",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.183 de 2003 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818362",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2025-12-31",
+     "description": "Lei 4.184 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ818363",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.189 de 2003 - Diferimento"
+    },
+    {
+     "code": "RJ805363",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.189 de 2003 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802364",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.344 de 2004 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801365",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.485 de 2004 - Isenção"
+    },
+    {
+     "code": "RJ818366",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.529 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ803366",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.529 de 2005 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ801366",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-06-25",
+     "description": "Lei 4.529 de 2005 - Isenção"
+    },
+    {
+     "code": "RJ820366",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-06-25",
+     "description": "Lei 4.529 de 2005 - Redução de alíquota"
+    },
+    {
+     "code": "RJ802366",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2022-06-25",
+     "description": "Lei 4.529 de 2005 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ821366",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.529 de 2005 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ818367",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-04-30",
+     "description": "Lei 4.531 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ822367",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-30",
+     "description": "Lei 4.531 de 2005 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ818368",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 5.592 de 2009 - Diferimento"
+    },
+    {
+     "code": "RJ821368",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 5.592 de 2009 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ821369",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.078 de 2011 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ818369",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.078 de 2011 - Diferimento"
+    },
+    {
+     "code": "RJ818370",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.108 de 2011 - Diferimento"
+    },
+    {
+     "code": "RJ821370",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.108 de 2011 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ803371",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.331 de 2012 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ822371",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2026-04-30",
+     "description": "Lei 6.331 de 2012 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ818371",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.331 de 2012 - Diferimento"
+    },
+    {
+     "code": "RJ805472",
+     "csts": [],
+     "from": "2025-10-03",
+     "to": null,
+     "description": "Lei 6.331 de 2012 - Crédito presumido"
+    },
+    {
+     "code": "RJ802372",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.648 de 2013 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818373",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.662 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ821373",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.662 de 2014 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ802374",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.821 de 2014 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ803375",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.868 de 2014 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ818375",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.868 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ822375",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.868 de 2014 - Tributação sobre Faturamento"
+    },
+    {
+     "code": "RJ821376",
+     "csts": [
+      "90"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.953 de 2015 - Transferência de saldo credor acumulado"
+    },
+    {
+     "code": "RJ818376",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.953 de 2015 - Diferimento"
+    },
+    {
+     "code": "RJ822377",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.979 de 2015 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ818377",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.979 de 2015 - Diferimento"
+    },
+    {
+     "code": "RJ823377",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.979 de 2015 - Suspensão"
+    },
+    {
+     "code": "RJ801377",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 6.979 de 2015 - Isenção"
+    },
+    {
+     "code": "RJ820377",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2022-07-20",
+     "to": null,
+     "description": "Lei 6.979 de 2015 - Redução de Alíquota"
+    },
+    {
+     "code": "RJ801378",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": "2020-06-30",
+     "description": "Lei 7.122 de 2015 - Isenção"
+    },
+    {
+     "code": "RJ820379",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": "2020-12-28",
+     "description": "Lei 2.657/1996, art.14, inciso IX de 1996 - Redução de alíquota"
+    },
+    {
+     "code": "RJ803379",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Lei 2.657/1996, art.14, inciso IX de 1996 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ820380",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 2.657/1996, art.14, inciso VI, alínea d de 1996 - Redução de alíquota"
+    },
+    {
+     "code": "RJ820381",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 2.657/1996, art.14, inciso XIII, alínea b de 1996 - Redução de alíquota"
+    },
+    {
+     "code": "RJ803382",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-04-01",
+     "description": "Lei 2.657/1996, art.14, inciso XVI de 1996 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ820382",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 2.657/1996, art.14, inciso XVI de 1996 - Redução de alíquota"
+    },
+    {
+     "code": "RJ820383",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 2.657/1996, art.14, inciso XXV de 1996 - Redução de alíquota"
+    },
+    {
+     "code": "RJ802384",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 2.657/96, Art. 4º de 1996 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ823385",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": "2019-12-31",
+     "description": "Protocolo ICMS 22 de 1999 - Suspensão"
+    },
+    {
+     "code": "RJ818386",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Resolução SEEF 2.286 de 1993 - Diferimento"
+    },
+    {
+     "code": "RJ818387",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Resolução SEEF 2.397 de 1994 - Diferimento"
+    },
+    {
+     "code": "RJ823388",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Resolução SEF 1.606 de 1989 - Suspensão"
+    },
+    {
+     "code": "RJ818389",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Resolução SEF 1.607 de 1989 - Diferimento"
+    },
+    {
+     "code": "RJ818390",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Resolução SEF 1.610 de 1989 - Diferimento"
+    },
+    {
+     "code": "RJ818391",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Resolução SEF 1.649 de 1989 - Diferimento"
+    },
+    {
+     "code": "RJ818392",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Resolução SEF 6.484 de 2002 - Diferimento"
+    },
+    {
+     "code": "RJ818393",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-11-30",
+     "description": "Resolução SEFAZ 726 de 2014 - Diferimento"
+    },
+    {
+     "code": "RJ818394",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Resolução SER 84 de 2004 - Diferimento"
+    },
+    {
+     "code": "RJ818395",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-07-31",
+     "description": "Resolução SER 319 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ801396",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio ICMS 63 de 2008 - Isenção"
+    },
+    {
+     "code": "RJ818397",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.117 de 2011 - Diferimento"
+    },
+    {
+     "code": "RJ801397",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Decreto 43.117 de 2011 - Isenção"
+    },
+    {
+     "code": "RJ801398",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 3.266 de 1999 - Isenção"
+    },
+    {
+     "code": "RJ802399",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio 5 de 2018 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ803399",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio 5 de 2018 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ805400",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio 64 de 2006 - Crédito Presumido"
+    },
+    {
+     "code": "RJ819401",
+     "csts": [
+      "30"
+     ],
+     "from": "2019-08-01",
+     "to": "2019-08-31",
+     "description": "Convênio 83 de 2000 - Não incidência"
+    },
+    {
+     "code": "RJ805402",
+     "csts": [],
+     "from": "2019-07-01",
+     "to": null,
+     "description": "Lei 8489 de 2019 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802402",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-07-01",
+     "to": "2020-10-07",
+     "description": "Lei 8489 de 2019 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ820402",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2020-10-07",
+     "to": null,
+     "description": "Lei 8489 de 2019 - Redução de Alíquota"
+    },
+    {
+     "code": "RJ818403",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2021-01-06",
+     "description": "Decreto 38.501/2005, §§ 2º e 3º do art. 3º. de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ823404",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Ajuste SINIEF 2 de 2018 - Suspensão"
+    },
+    {
+     "code": "RJ818405",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": "2019-07-31",
+     "description": "Decreto 46.079 de 2017 - Diferimento"
+    },
+    {
+     "code": "RJ805406",
+     "csts": [],
+     "from": "2019-07-01",
+     "to": "2021-01-06",
+     "description": "Lei 8.482/2019, art. 1º inciso V de 2019 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802406",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2020-07-01",
+     "to": "2021-01-06",
+     "description": "Lei 8.482/2019, art. 1º incisos I, II, III e IV de 2019 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ800000",
+     "csts": [
+      "20",
+      "30",
+      "40",
+      "51",
+      "70",
+      "90"
+     ],
+     "from": "2019-08-27",
+     "to": "2019-09-30",
+     "description": "Devolução interestadual - benefício fiscal aplicado em outra UF"
+    },
+    {
+     "code": "RJ818407",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-07-01",
+     "to": null,
+     "description": "Decreto 46.629 de 2019 - Diferimento"
+    },
+    {
+     "code": "RJ802408",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-07-01",
+     "to": null,
+     "description": "Decreto 46.680 de 2019 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818367",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.531 de 2005 - Diferimento"
+    },
+    {
+     "code": "RJ822367",
+     "csts": [],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Lei 4.531 de 2005 - Tributação sobre saída"
+    },
+    {
+     "code": "RJ802409",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Convênio 6 de 2009 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818410",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-04-01",
+     "to": null,
+     "description": "Ajuste SINIEF 13 de 2017 - Diferimento"
+    },
+    {
+     "code": "RJ818411",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-11-01",
+     "to": "2020-12-28",
+     "description": "Decreto 46793 de 2019 - Diferimento"
+    },
+    {
+     "code": "RJ805411",
+     "csts": [],
+     "from": "2019-11-01",
+     "to": "2020-12-28",
+     "description": "Decreto 46793 de 2019 - Crédito Presumido"
+    },
+    {
+     "code": "RJ802411",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-11-01",
+     "to": "2020-12-28",
+     "description": "Decreto 46793 de 2019 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818412",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-12-01",
+     "to": null,
+     "description": "Decreto 46.781 de 2019 - Diferimento"
+    },
+    {
+     "code": "RJ818413",
+     "csts": [
+      "51"
+     ],
+     "from": "2019-12-01",
+     "to": null,
+     "description": "Decreto 46.799 de 2019 - Diferimento"
+    },
+    {
+     "code": "RJ802414",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2019-12-01",
+     "to": "2025-12-31",
+     "description": "Convênio ICMS 188 de 2017 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801416",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2020-01-01",
+     "to": null,
+     "description": "Convênio ICMS 194 de 2019 - Isenção"
+    },
+    {
+     "code": "RJ801417",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2020-01-01",
+     "to": null,
+     "description": "Convênio ICMS 66 de 2019 - Isenção"
+    },
+    {
+     "code": "RJ802419",
+     "csts": [],
+     "from": "2020-02-01",
+     "to": null,
+     "description": "Convênio ICMS 78 de 2015 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818418",
+     "csts": [
+      "51"
+     ],
+     "from": "2020-02-18",
+     "to": "2020-02-26",
+     "description": "Decreto 46.944 de 2020 - Diferimento"
+    },
+    {
+     "code": "RJ801424",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2020-10-07",
+     "to": null,
+     "description": "Convênio ICM 4 de 1979 - Isenção"
+    },
+    {
+     "code": "RJ801425",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2020-10-07",
+     "to": null,
+     "description": "Convênio ICM 25 de 1983 - Isenção"
+    },
+    {
+     "code": "RJ802425",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2020-10-07",
+     "to": null,
+     "description": "Convênio ICM 25 de 1983 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818426",
+     "csts": [
+      "51"
+     ],
+     "from": "2020-10-07",
+     "to": "2021-01-06",
+     "description": "Decreto 39.729 de 2006 - Diferimento"
+    },
+    {
+     "code": "RJ801427",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2020-10-07",
+     "to": "2020-11-29",
+     "description": "Convênio ICMS 81 de 2020 - Isenção"
+    },
+    {
+     "code": "RJ802428",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2020-10-19",
+     "to": null,
+     "description": "Convênio ICMS 51 de 2020 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ801429",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Convênio ICMS 26 de 2019 - Isenção"
+    },
+    {
+     "code": "RJ801430",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 9.162 de 2020, art. 2º - Isenção"
+    },
+    {
+     "code": "RJ801431",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Convênio ICMS 52 de 2020 - Isenção"
+    },
+    {
+     "code": "RJ805432",
+     "csts": [],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 9.025 de 2020 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818432",
+     "csts": [
+      "51"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 9.025 de 2020 - Diferimento"
+    },
+    {
+     "code": "RJ820432",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 9.025 de 2020 - Redução de Alíquota"
+    },
+    {
+     "code": "RJ801433",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Convênio ICMS 20 de 1992 - Isenção"
+    },
+    {
+     "code": "RJ802420",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 8.792 de 2020 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ805420",
+     "csts": [],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 8.792 de 2020 - Crédito Presumido"
+    },
+    {
+     "code": "RJ805434",
+     "csts": [],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 8.960 de 2020 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818434",
+     "csts": [
+      "51"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 8.960 de 2020 - Diferimento"
+    },
+    {
+     "code": "RJ802434",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 8.960 de 2020 - Redução de Base de Cáculo"
+    },
+    {
+     "code": "RJ801435",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-05-03",
+     "to": "2024-04-30",
+     "description": "Convênio ICMS 63 de 2020 - Isenção"
+    },
+    {
+     "code": "RJ801436",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-05-03",
+     "to": "2026-02-28",
+     "description": "Convênio ICMS 15 de 2021 - Isenção"
+    },
+    {
+     "code": "RJ801437",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-05-03",
+     "to": "2024-04-30",
+     "description": "Convênio ICMS 13 de 2021 - Isenção"
+    },
+    {
+     "code": "RJ801438",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2021-11-01",
+     "to": null,
+     "description": "Convênio ICMS 224 de 2017 - Isenção"
+    },
+    {
+     "code": "RJ818439",
+     "csts": [
+      "51"
+     ],
+     "from": "2021-11-23",
+     "to": null,
+     "description": "Convênio ICMS 17 de 2013 - Diferimento"
+    },
+    {
+     "code": "RJ802440",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2022-01-06",
+     "to": "2022-10-31",
+     "description": "Lei 5.147 de 2007 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ818441",
+     "csts": [
+      "51"
+     ],
+     "from": "2022-01-06",
+     "to": null,
+     "description": "Lei 9.214 de 2021 - Diferimento"
+    },
+    {
+     "code": "RJ801441",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2022-01-06",
+     "to": null,
+     "description": "Lei 9.214 de 2021 - Isenção"
+    },
+    {
+     "code": "RJ818442",
+     "csts": [
+      "51"
+     ],
+     "from": "2022-01-06",
+     "to": null,
+     "description": "Lei 9.289 de 2021 - Diferimento"
+    },
+    {
+     "code": "RJ805443",
+     "csts": [],
+     "from": "2021-01-06",
+     "to": null,
+     "description": "Lei 9.355 de 2021 - Crédito Presumido"
+    },
+    {
+     "code": "RJ820444",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2021-12-01",
+     "to": null,
+     "description": "Lei 2.657/1996, art.14, inciso VI, alínea a.1 - Redução de alíquota"
+    },
+    {
+     "code": "RJ801445",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2022-03-01",
+     "to": null,
+     "description": "Convênio ICMS 76/1991- Isenção."
+    },
+    {
+     "code": "RJ801446",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2022-04-05",
+     "to": "2022-08-23",
+     "description": "Convênio ICMS 12/2022- Isenção."
+    },
+    {
+     "code": "RJ808446",
+     "csts": [],
+     "from": "2022-04-05",
+     "to": "2022-08-23",
+     "description": "Convênio ICMS 12/2022- Ampliação de prazo de pagamento"
+    },
+    {
+     "code": "RJ802447",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2022-04-07",
+     "to": null,
+     "description": "Convênio ICMS 112/2013- Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ803428",
+     "csts": [],
+     "from": "2022-06-25",
+     "to": null,
+     "description": "Convenio ICMS 12 de 1975 - Inexigibilidade de estorno de crédito"
+    },
+    {
+     "code": "RJ820449",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2022-08-12",
+     "to": null,
+     "description": "Decreto 45.607 de 2016 - art. 4° - Redução de alíquota"
+    },
+    {
+     "code": "RJ802450",
+     "csts": [],
+     "from": "2022-10-13",
+     "to": null,
+     "description": "Decreto 45.446, art 4 de 2015 -Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ823451",
+     "csts": [],
+     "from": "2022-11-01",
+     "to": null,
+     "description": "Protocolo ICMS 2 de 2014 - Suspensão"
+    },
+    {
+     "code": "RJ823452",
+     "csts": [],
+     "from": "2022-11-01",
+     "to": null,
+     "description": "Protocolo ICMS 5 de 2014 - Suspensão"
+    },
+    {
+     "code": "RJ823453",
+     "csts": [],
+     "from": "2022-11-01",
+     "to": null,
+     "description": "Protocolo ICMS 64 de 2015 - Suspensão"
+    },
+    {
+     "code": "RJ820454",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2022-11-01",
+     "to": "2022-11-01",
+     "description": "Lei 2.657/1996, art. 14, inciso XV de 1996 - Redução de alíquota"
+    },
+    {
+     "code": "RJ823455",
+     "csts": [],
+     "from": "2022-11-01",
+     "to": null,
+     "description": "Protocolo ICMS 28 de 2008 - Suspensão"
+    },
+    {
+     "code": "RJ823456",
+     "csts": [],
+     "from": "2022-11-01",
+     "to": null,
+     "description": "Protocolo ICMS 4 de 2011 - Suspensão"
+    },
+    {
+     "code": "RJ801457",
+     "csts": [],
+     "from": "2022-11-01",
+     "to": null,
+     "description": "Convênio ICMS 88 de 2012 - Isenção"
+    },
+    {
+     "code": "RJ820458",
+     "csts": [],
+     "from": "2022-11-01",
+     "to": null,
+     "description": "Lei 5.147, art. 2 de 2007 - Redução de alíquota"
+    },
+    {
+     "code": "RJ802459",
+     "csts": [],
+     "from": "2022-11-01",
+     "to": null,
+     "description": "Convênio ICMS 130 de 1994 - Redução de Base de Cálculo"
+    },
+    {
+     "code": "RJ822464",
+     "csts": [],
+     "from": "2024-02-17",
+     "to": "2024-12-31",
+     "description": "Lei 10.067/2023 -Tributação sobre a saída - Decreto n° 48.955/2024"
+    },
+    {
+     "code": "RJ805465",
+     "csts": [],
+     "from": "2024-05-21",
+     "to": "2024-12-31",
+     "description": "Lei 10.068/2023 - Crédito Presumido ; Decreto 49.098/2024"
+    },
+    {
+     "code": "RJ805466",
+     "csts": [],
+     "from": "2024-06-03",
+     "to": null,
+     "description": "Lei 10.329/2024 - Crédito Presumido ; Decreto 49.114/2024"
+    },
+    {
+     "code": "RJ818466",
+     "csts": [
+      "51"
+     ],
+     "from": "2024-06-03",
+     "to": null,
+     "description": "Lei 10.329/2024 - Diferimento ; Decreto 49.114/2024"
+    },
+    {
+     "code": "RJ802467",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "from": "2024-06-03",
+     "to": null,
+     "description": "Lei 10.335/2024 - Redução de Base de Cálculo ; Decreto 49.118/2024"
+    },
+    {
+     "code": "RJ805467",
+     "csts": [],
+     "from": "2024-06-03",
+     "to": null,
+     "description": "Lei 10.335/2024 - Crédito Presumido ; Decreto 49.118/2024"
+    },
+    {
+     "code": "RJ818467",
+     "csts": [
+      "51"
+     ],
+     "from": "2024-06-03",
+     "to": null,
+     "description": "Lei 10.335/2024 - Diferimento ; Decreto 49.118/2024"
+    },
+    {
+     "code": "RJ805470",
+     "csts": [],
+     "from": "2025-01-10",
+     "to": null,
+     "description": "Lei 10.638/2024 - Crédito Presumido"
+    },
+    {
+     "code": "RJ818470",
+     "csts": [
+      "51"
+     ],
+     "from": "2025-01-10",
+     "to": null,
+     "description": "Lei 10.638/2024 - Diferimento"
+    },
+    {
+     "code": "RJ801471",
+     "csts": [
+      "30",
+      "40"
+     ],
+     "from": "2024-05-16",
+     "to": "2026-04-30",
+     "description": "Convênio ICMS 56/2024; Lei n° 10.707/2025 - Isenção"
+    }
+   ]
   }
  ]
 }

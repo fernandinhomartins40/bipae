@@ -18,7 +18,7 @@ import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpCat68 } from './st-sp-cat68.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences, prStRows } from './st-pr.mjs';
 import { pdfItems, pdfLines } from './pdf-text.mjs';
-import { parseCbenefPr } from './cbenef-pr.mjs';
+import { parseCbenefPr, parseCbenefRj } from './cbenef-pr.mjs';
 import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
@@ -843,6 +843,41 @@ async function checkCbenefSp() {
   };
 }
 
+/** cBenef do Rio de Janeiro: o PDF de hoje (com os cabeçalhos de navegador que a SEFAZ-RJ exige). */
+async function checkCbenefRj() {
+  const rowsOf = async (bytes) =>
+    parseCbenefRj(await pdfItems(bytes)).map((c) => [
+      c.code,
+      c.csts.join(' '),
+      c.from ?? '',
+      c.to ?? '',
+    ]);
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.cbenefRj.file)));
+  const title = 'cBenef do Rio de Janeiro (Tabela de códigos de benefício X CST)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.cbenefRj.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.cbenefRj.page,
+      status: 'mudou',
+      details: [
+        `o arquivo não abre ou não passa no leitor do Bipaê (talvez uma versão nova): ${error.message}`,
+      ],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.cbenefRj.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} código(s) novo(s) ou alterado(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -881,6 +916,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('cBenef de Goiás', manifest.cbenefGo.page, checkCbenefGo),
     await safe('cBenef do Espírito Santo', manifest.cbenefEs.page, checkCbenefEs),
     await safe('cBenef de São Paulo', manifest.cbenefSp.page, checkCbenefSp),
+    await safe('cBenef do Rio de Janeiro', manifest.cbenefRj.page, checkCbenefRj),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

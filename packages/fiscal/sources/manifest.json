@@ -400,5 +400,13 @@
   "page": "https://portal.fazenda.sp.gov.br/servicos/nfe/Downloads/Tabela-cBenef-SP-v20260901.xlsx",
   "publishedAt": "2026-09-01",
   "downloadedAt": "2026-10-17"
+ },
+ "cbenefRj": {
+  "file": "SEFAZ-RJ_Tabela_cBenef_x_CST_2026-10-02.pdf",
+  "title": "Tabela de códigos de benefício fiscal X CST do Rio de Janeiro (atualizada em 02/10/2026), Anexo XVIII da Parte II da Resolução SEFAZ 720/14",
+  "publisher": "Secretaria de Estado de Fazenda do Rio de Janeiro (portal do DF-e)",
+  "page": "https://portal.fazenda.rj.gov.br/dfe/wp-content/uploads/sites/17/2026/10/Tabela-codigo-de-beneficio-X-CST.pdf",
+  "publishedAt": "2026-10-02",
+  "downloadedAt": "2026-10-17"
  }
 }

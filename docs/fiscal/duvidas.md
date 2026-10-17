@@ -603,4 +603,10 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Códigos:** 316, com o dispositivo legal.
   - **Vigência:** a planilha não tem coluna de datas. O fim vem da observação: "Vigorou até ..." (5 códigos encerrados em 30/04/2026) e o "SEM CBENEF", que não é aceito a partir de 01/07/2026.
   - **CST 00 com crédito outorgado:** não leva o cBenef (Portaria CAT 147/09).
-- **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, DF e das outras UFs que exigem o código.
+- **Atualização de 17/10/2026 (F3-27.b, Rio de Janeiro):** "Tabela de códigos de benefício X CST" do portal do DF-e da SEFAZ-RJ (atualizada em 02/10/2026; Anexo XVIII da Parte II da Resolução SEFAZ 720/14):
+  - **Códigos:** 653. Os 176 de suspensão, ampliação de prazo e inexigibilidade de estorno não marcam CST.
+  - **Orientações da SEFAZ-RJ:**
+    - não informar o literal SEM CBENEF;
+    - nota sem o campo é aceita, mas, se preenchido, só valem códigos da tabela e habilitados para o CST;
+    - a validação não dispensa a obrigação de preencher quando a legislação exige.
+- **Em aberto (F3-27.b, demais UFs):** as tabelas do DF e das outras UFs que exigem o código.
