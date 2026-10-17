@@ -41,6 +41,30 @@ fn connector_mode() -> bool {
     std::env::args().any(|a| a == "--connector")
 }
 
+/// A janela principal vem da configuração (tauri.conf.json, com "create": false) e é criada aqui.
+/// No Windows, o WebDriver de teste (msedgedriver) pede a porta de depuração pela variável
+/// WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS; os argumentos padrão do WebView2 não podem apagá-la (F2-10).
+fn create_main_window(app: &tauri::App) -> tauri::Result<()> {
+    let config = app
+        .config()
+        .app
+        .windows
+        .iter()
+        .find(|w| w.label == "main")
+        .cloned()
+        .expect("janela principal na configuração");
+    #[allow(unused_mut)]
+    let mut builder = tauri::WebviewWindowBuilder::from_config(app.handle(), &config)?;
+    #[cfg(windows)]
+    if let Ok(extra) = std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS") {
+        builder = builder.additional_browser_args(&format!(
+            "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection {extra}"
+        ));
+    }
+    builder.build()?;
+    Ok(())
+}
+
 fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
     let open = MenuItem::with_id(app, "open", "Abrir o Bipaê", true, None::<&str>)?;
     let quit = MenuItem::with_id(app, "quit", "Sair do Bipaê Conector", true, None::<&str>)?;
@@ -83,6 +107,7 @@ pub fn run() {
         .manage(db::DbState::default())
         .manage(Arc::new(connector::ConnectorState::default()))
         .setup(|app| {
+            create_main_window(app)?;
             connector::start(app.handle().clone());
             if connector_mode() {
                 setup_tray(app)?;
