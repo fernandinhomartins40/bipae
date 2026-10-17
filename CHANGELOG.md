@@ -1,5 +1,13 @@
 # Changelog
 
+## [F2-10 Teste do caixa dentro do app desktop de verdade] — 17/10/2026
+
+### Adicionado
+- **Venda testada no app desktop real, a cada envio:** a CI abre o Bipaê desktop no WebView do sistema (WebView2 no Windows, WebKitGTK no Linux) e faz uma venda pelo `tauri-driver`. Antes, o teste usava só o navegador.
+
+### Corrigido
+- **App desktop no Windows:** a janela principal passou a ser criada no código. Assim o WebView2 aceita a porta de teste sem perder as proteções padrão, e o teste no Windows deixou de falhar.
+
 ## [F3-26.e SP: base da ST de cerveja, chope e refrigerante] — 16/10/2026
 
 ### Adicionado
