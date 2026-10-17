@@ -25,6 +25,7 @@ import { pdfLines } from './pdf-text.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
+import { baStReferences, parseBaAnexo1 } from './st-ba.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -566,6 +567,11 @@ async function importStReferences(cest) {
     ),
     { url: manifest.stScAnexo1A.page },
   );
+  // Bahia (F3-26.c.BA): Anexo 1 do RICMS/BA, redação vigente no ano.
+  const ba = baStReferences(
+    parseBaAnexo1(await pdfLines(readFileSync(join(sourcesDir, manifest.stBaAnexo1.file))), known),
+    { url: manifest.stBaAnexo1.page },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -586,6 +592,7 @@ async function importStReferences(cest) {
       mg.segment,
       rs.segment,
       sc.segment,
+      ba.segment,
     ],
     references: [
       {
@@ -604,6 +611,7 @@ async function importStReferences(cest) {
       ...mg.references,
       ...rs.references,
       ...sc.references,
+      ...ba.references,
     ],
   };
 }

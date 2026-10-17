@@ -231,6 +231,13 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
     - sorvetes em 01/04/2023 (Decreto 74/2023).
   - **CEST que saíram:** vêm da redação passada de cada seção revogada.
   - **Venda porta a porta (Seção XXVI):** perfumes e cosméticos vendidos assim continuam na ST, e a tela mostra isso.
+- **Atualização de 17/10/2026 (F3-26.c.BA, Bahia, fonte oficial):** PDF do Anexo 1 do RICMS/BA (Decreto 13.780/2012), na redação vigente em 2026, publicado pela DITRI da SEFAZ-BA. Está guardado em `packages/fiscal/sources` e é lido por gerador:
+  - **Itens:** 282 linhas com CEST, NCM e a MVA original das operações internas, em 13 segmentos.
+  - **Faixas de CEST** ("17.044.00 a 17.044.27") entram inteiras, pelos CEST do Convênio ICMS 142/18.
+  - **Notas e redação anterior** (entre aspas) ficam de fora. A sugestão vale de 01/01 a 31/12/2026, porque a SEFAZ-BA publica um arquivo por ano.
+  - **Fora da sugestão:**
+    - autopeças, porque o item remete ao Anexo II do Convênio ICMS 142/18 inteiro;
+    - combustíveis, que não têm MVA na tabela.
 - **Rio de Janeiro (F3-26.c.RJ): bloqueado.** O site de legislação da SEFAZ-RJ (`legislacao.fazenda.rj.gov.br` e `portal.fazenda.rj.gov.br`) devolve uma página de bloqueio por endereço de IP, tanto daqui quanto da VPS. Sem acesso ao texto oficial, o RJ fica como "falta configurar" até conseguirmos baixar de outra origem.
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração

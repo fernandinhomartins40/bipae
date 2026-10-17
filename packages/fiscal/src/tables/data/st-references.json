@@ -17107,6 +17107,1941 @@
      ]
     }
    ]
+  },
+  {
+   "uf": "BA",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "annexes": [
+    {
+     "annex": "3",
+     "name": "Cervejas, chope, refrigerantes, água e outras bebidas",
+     "cests": [
+      {
+       "cest": "0300300",
+       "ncms": [
+        "22011",
+        "22019"
+       ]
+      },
+      {
+       "cest": "0300301",
+       "ncms": [
+        "22011",
+        "22019"
+       ]
+      },
+      {
+       "cest": "0300500",
+       "ncms": [
+        "22011",
+        "22019"
+       ]
+      },
+      {
+       "cest": "0300501",
+       "ncms": [
+        "22011",
+        "22019"
+       ]
+      },
+      {
+       "cest": "0300502",
+       "ncms": [
+        "22011",
+        "22019"
+       ]
+      },
+      {
+       "cest": "0300503",
+       "ncms": [
+        "22011",
+        "22019"
+       ]
+      },
+      {
+       "cest": "0300504",
+       "ncms": [
+        "22011",
+        "22019"
+       ]
+      },
+      {
+       "cest": "0300505",
+       "ncms": [
+        "22011",
+        "22019"
+       ]
+      },
+      {
+       "cest": "0300600",
+       "ncms": [
+        "22011"
+       ]
+      },
+      {
+       "cest": "0302400",
+       "ncms": [
+        "22011"
+       ]
+      },
+      {
+       "cest": "0302500",
+       "ncms": [
+        "22011"
+       ]
+      },
+      {
+       "cest": "0300700",
+       "ncms": [
+        "2202"
+       ]
+      },
+      {
+       "cest": "0300800",
+       "ncms": [
+        "2202"
+       ]
+      },
+      {
+       "cest": "0301000",
+       "ncms": [
+        "220210",
+        "220299"
+       ]
+      },
+      {
+       "cest": "0301001",
+       "ncms": [
+        "220210",
+        "220299"
+       ]
+      },
+      {
+       "cest": "0301002",
+       "ncms": [
+        "220210",
+        "220299"
+       ]
+      },
+      {
+       "cest": "0301100",
+       "ncms": [
+        "220210",
+        "220299"
+       ]
+      },
+      {
+       "cest": "0301200",
+       "ncms": [
+        "2106901"
+       ]
+      },
+      {
+       "cest": "0301201",
+       "ncms": [
+        "2106901"
+       ]
+      },
+      {
+       "cest": "0301300",
+       "ncms": [
+        "21069",
+        "220299"
+       ]
+      },
+      {
+       "cest": "0301301",
+       "ncms": [
+        "21069",
+        "220299"
+       ]
+      },
+      {
+       "cest": "0301302",
+       "ncms": [
+        "21069",
+        "220299"
+       ]
+      },
+      {
+       "cest": "0301500",
+       "ncms": [
+        "21069",
+        "220299"
+       ]
+      },
+      {
+       "cest": "0302100",
+       "ncms": [
+        "2203"
+       ]
+      },
+      {
+       "cest": "0302101",
+       "ncms": [
+        "2203"
+       ]
+      },
+      {
+       "cest": "0302102",
+       "ncms": [
+        "2203"
+       ]
+      },
+      {
+       "cest": "0302103",
+       "ncms": [
+        "2203"
+       ]
+      },
+      {
+       "cest": "0302104",
+       "ncms": [
+        "2203"
+       ]
+      },
+      {
+       "cest": "0302105",
+       "ncms": [
+        "2203"
+       ]
+      },
+      {
+       "cest": "0302106",
+       "ncms": [
+        "2203"
+       ]
+      },
+      {
+       "cest": "0302200",
+       "ncms": [
+        "220291"
+       ]
+      },
+      {
+       "cest": "0302201",
+       "ncms": [
+        "220291"
+       ]
+      },
+      {
+       "cest": "0302202",
+       "ncms": [
+        "220291"
+       ]
+      },
+      {
+       "cest": "0302203",
+       "ncms": [
+        "220291"
+       ]
+      },
+      {
+       "cest": "0302204",
+       "ncms": [
+        "220291"
+       ]
+      },
+      {
+       "cest": "0302205",
+       "ncms": [
+        "220291"
+       ]
+      },
+      {
+       "cest": "0302206",
+       "ncms": [
+        "220291"
+       ]
+      },
+      {
+       "cest": "0302300",
+       "ncms": [
+        "2203"
+       ]
+      },
+      {
+       "cest": "0200300",
+       "ncms": [
+        "22089"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "4",
+     "name": "Cigarros e outros produtos derivados do fumo",
+     "cests": [
+      {
+       "cest": "0400100",
+       "ncms": [
+        "2402"
+       ]
+      },
+      {
+       "cest": "0400200",
+       "ncms": [
+        "24031"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "5",
+     "name": "Cimentos",
+     "cests": [
+      {
+       "cest": "0500100",
+       "ncms": [
+        "2523"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "6",
+     "name": "Combustíveis e lubrificantes",
+     "cests": [
+      {
+       "cest": "0600101",
+       "ncms": [
+        "2207109"
+       ]
+      },
+      {
+       "cest": "0600400",
+       "ncms": [
+        "27101919"
+       ]
+      },
+      {
+       "cest": "0600500",
+       "ncms": [
+        "27101911"
+       ]
+      },
+      {
+       "cest": "0600609",
+       "ncms": [
+        "2710192"
+       ]
+      },
+      {
+       "cest": "0600610",
+       "ncms": [
+        "2710192"
+       ]
+      },
+      {
+       "cest": "0600611",
+       "ncms": [
+        "27101922"
+       ]
+      },
+      {
+       "cest": "0600700",
+       "ncms": [
+        "2710193"
+       ]
+      },
+      {
+       "cest": "0600800",
+       "ncms": [
+        "2710199"
+       ]
+      },
+      {
+       "cest": "0600801",
+       "ncms": [
+        "2710199"
+       ]
+      },
+      {
+       "cest": "0600900",
+       "ncms": [
+        "27109"
+       ]
+      },
+      {
+       "cest": "0601000",
+       "ncms": [
+        "2711"
+       ]
+      },
+      {
+       "cest": "0601200",
+       "ncms": [
+        "271111"
+       ]
+      },
+      {
+       "cest": "0601300",
+       "ncms": [
+        "271121"
+       ]
+      },
+      {
+       "cest": "0601400",
+       "ncms": [
+        "2711299"
+       ]
+      },
+      {
+       "cest": "0601500",
+       "ncms": [
+        "2713"
+       ]
+      },
+      {
+       "cest": "0601700",
+       "ncms": [
+        "3403"
+       ]
+      },
+      {
+       "cest": "0601800",
+       "ncms": [
+        "27102"
+       ]
+      },
+      {
+       "cest": "0601900",
+       "ncms": [
+        "27101249"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "7",
+     "name": "Lâmpadas, reatores e “starter”",
+     "cests": [
+      {
+       "cest": "0900100",
+       "ncms": [
+        "8539"
+       ]
+      },
+      {
+       "cest": "0900200",
+       "ncms": [
+        "8540"
+       ]
+      },
+      {
+       "cest": "0900300",
+       "ncms": [
+        "85041"
+       ]
+      },
+      {
+       "cest": "0900400",
+       "ncms": [
+        "85365"
+       ]
+      },
+      {
+       "cest": "0900500",
+       "ncms": [
+        "853952"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "8",
+     "name": "Materiais de construção e congêneres",
+     "cests": [
+      {
+       "cest": "1000100",
+       "ncms": [
+        "2522"
+       ]
+      },
+      {
+       "cest": "1000200",
+       "ncms": [
+        "3816001",
+        "38245"
+       ]
+      },
+      {
+       "cest": "1000300",
+       "ncms": [
+        "32149"
+       ]
+      },
+      {
+       "cest": "1000400",
+       "ncms": [
+        "3910"
+       ]
+      },
+      {
+       "cest": "1000500",
+       "ncms": [
+        "3916"
+       ]
+      },
+      {
+       "cest": "1000600",
+       "ncms": [
+        "3917"
+       ]
+      },
+      {
+       "cest": "1000700",
+       "ncms": [
+        "3918"
+       ]
+      },
+      {
+       "cest": "1000800",
+       "ncms": [
+        "3919"
+       ]
+      },
+      {
+       "cest": "1000900",
+       "ncms": [
+        "3920",
+        "3921"
+       ]
+      },
+      {
+       "cest": "1001000",
+       "ncms": [
+        "3921"
+       ]
+      },
+      {
+       "cest": "1001100",
+       "ncms": [
+        "3921"
+       ]
+      },
+      {
+       "cest": "1001200",
+       "ncms": [
+        "3921"
+       ]
+      },
+      {
+       "cest": "1001300",
+       "ncms": [
+        "3922"
+       ]
+      },
+      {
+       "cest": "1001400",
+       "ncms": [
+        "3924"
+       ]
+      },
+      {
+       "cest": "1001500",
+       "ncms": [
+        "39251"
+       ]
+      },
+      {
+       "cest": "1001600",
+       "ncms": [
+        "39259"
+       ]
+      },
+      {
+       "cest": "1001700",
+       "ncms": [
+        "39251",
+        "39259"
+       ]
+      },
+      {
+       "cest": "1001800",
+       "ncms": [
+        "39252"
+       ]
+      },
+      {
+       "cest": "1001900",
+       "ncms": [
+        "39253"
+       ]
+      },
+      {
+       "cest": "1002000",
+       "ncms": [
+        "39269"
+       ]
+      },
+      {
+       "cest": "1002100",
+       "ncms": [
+        "4814"
+       ]
+      },
+      {
+       "cest": "1002200",
+       "ncms": [
+        "681019"
+       ]
+      },
+      {
+       "cest": "1002400",
+       "ncms": [
+        "6811"
+       ]
+      },
+      {
+       "cest": "1002500",
+       "ncms": [
+        "6901"
+       ]
+      },
+      {
+       "cest": "1002600",
+       "ncms": [
+        "6902"
+       ]
+      },
+      {
+       "cest": "1002700",
+       "ncms": [
+        "6904"
+       ]
+      },
+      {
+       "cest": "1002800",
+       "ncms": [
+        "6905"
+       ]
+      },
+      {
+       "cest": "1002900",
+       "ncms": [
+        "6906"
+       ]
+      },
+      {
+       "cest": "1003000",
+       "ncms": [
+        "6907"
+       ]
+      },
+      {
+       "cest": "1003001",
+       "ncms": [
+        "6907"
+       ]
+      },
+      {
+       "cest": "1003100",
+       "ncms": [
+        "6910"
+       ]
+      },
+      {
+       "cest": "1003200",
+       "ncms": [
+        "6912"
+       ]
+      },
+      {
+       "cest": "1003300",
+       "ncms": [
+        "7003"
+       ]
+      },
+      {
+       "cest": "1003400",
+       "ncms": [
+        "7004"
+       ]
+      },
+      {
+       "cest": "1003500",
+       "ncms": [
+        "7005"
+       ]
+      },
+      {
+       "cest": "1003600",
+       "ncms": [
+        "700719"
+       ]
+      },
+      {
+       "cest": "1003700",
+       "ncms": [
+        "700729"
+       ]
+      },
+      {
+       "cest": "1003800",
+       "ncms": [
+        "7008"
+       ]
+      },
+      {
+       "cest": "1003900",
+       "ncms": [
+        "7016"
+       ]
+      },
+      {
+       "cest": "1004000",
+       "ncms": [
+        "72142"
+       ]
+      },
+      {
+       "cest": "1004100",
+       "ncms": [
+        "7308901"
+       ]
+      },
+      {
+       "cest": "1004101",
+       "ncms": [
+        "7308901"
+       ]
+      },
+      {
+       "cest": "1004200",
+       "ncms": [
+        "72142"
+       ]
+      },
+      {
+       "cest": "1004300",
+       "ncms": [
+        "7213"
+       ]
+      },
+      {
+       "cest": "1004400",
+       "ncms": [
+        "7217109",
+        "7312"
+       ]
+      },
+      {
+       "cest": "1004500",
+       "ncms": [
+        "7217201"
+       ]
+      },
+      {
+       "cest": "1004501",
+       "ncms": [
+        "7217209"
+       ]
+      },
+      {
+       "cest": "1004600",
+       "ncms": [
+        "7307"
+       ]
+      },
+      {
+       "cest": "1004700",
+       "ncms": [
+        "73083"
+       ]
+      },
+      {
+       "cest": "1004800",
+       "ncms": [
+        "73084",
+        "73089"
+       ]
+      },
+      {
+       "cest": "1004900",
+       "ncms": [
+        "73084"
+       ]
+      },
+      {
+       "cest": "1005000",
+       "ncms": [
+        "7308909"
+       ]
+      },
+      {
+       "cest": "1005100",
+       "ncms": [
+        "7310"
+       ]
+      },
+      {
+       "cest": "1005200",
+       "ncms": [
+        "7313"
+       ]
+      },
+      {
+       "cest": "1005300",
+       "ncms": [
+        "7314"
+       ]
+      },
+      {
+       "cest": "1005400",
+       "ncms": [
+        "731511"
+       ]
+      },
+      {
+       "cest": "1005500",
+       "ncms": [
+        "7315129"
+       ]
+      },
+      {
+       "cest": "1005600",
+       "ncms": [
+        "731582"
+       ]
+      },
+      {
+       "cest": "1005700",
+       "ncms": [
+        "7317"
+       ]
+      },
+      {
+       "cest": "1005800",
+       "ncms": [
+        "7318"
+       ]
+      },
+      {
+       "cest": "1005900",
+       "ncms": [
+        "7323",
+        "73231000"
+       ]
+      },
+      {
+       "cest": "1005901",
+       "ncms": [
+        "7323",
+        "73231000"
+       ]
+      },
+      {
+       "cest": "1006000",
+       "ncms": [
+        "7324"
+       ]
+      },
+      {
+       "cest": "1006100",
+       "ncms": [
+        "7325"
+       ]
+      },
+      {
+       "cest": "1006200",
+       "ncms": [
+        "7326"
+       ]
+      },
+      {
+       "cest": "1006300",
+       "ncms": [
+        "7407"
+       ]
+      },
+      {
+       "cest": "1006400",
+       "ncms": [
+        "7411101"
+       ]
+      },
+      {
+       "cest": "1006500",
+       "ncms": [
+        "7412"
+       ]
+      },
+      {
+       "cest": "1006600",
+       "ncms": [
+        "7415"
+       ]
+      },
+      {
+       "cest": "1006700",
+       "ncms": [
+        "74182"
+       ]
+      },
+      {
+       "cest": "1006800",
+       "ncms": [
+        "7607199"
+       ]
+      },
+      {
+       "cest": "1006900",
+       "ncms": [
+        "7608"
+       ]
+      },
+      {
+       "cest": "1007000",
+       "ncms": [
+        "76090000"
+       ]
+      },
+      {
+       "cest": "1007100",
+       "ncms": [
+        "7610"
+       ]
+      },
+      {
+       "cest": "1007200",
+       "ncms": [
+        "76152000"
+       ]
+      },
+      {
+       "cest": "1007300",
+       "ncms": [
+        "7616"
+       ]
+      },
+      {
+       "cest": "1007400",
+       "ncms": [
+        "83024100"
+       ]
+      },
+      {
+       "cest": "1007500",
+       "ncms": [
+        "8301"
+       ]
+      },
+      {
+       "cest": "1007600",
+       "ncms": [
+        "83021000"
+       ]
+      },
+      {
+       "cest": "1007700",
+       "ncms": [
+        "8307"
+       ]
+      },
+      {
+       "cest": "1007800",
+       "ncms": [
+        "8311"
+       ]
+      },
+      {
+       "cest": "1007900",
+       "ncms": [
+        "8481"
+       ]
+      },
+      {
+       "cest": "1008000",
+       "ncms": [
+        "7009"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "9",
+     "name": "Medicamentos, produtos farmacêuticos para uso humano e higiene pessoal",
+     "cests": [
+      {
+       "cest": "1300100",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300101",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300102",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300200",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300201",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300202",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300300",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300301",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300302",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300400",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300401",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300402",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300500",
+       "ncms": [
+        "30066",
+        "2937"
+       ]
+      },
+      {
+       "cest": "1300501",
+       "ncms": [
+        "30066",
+        "2937"
+       ]
+      },
+      {
+       "cest": "1300502",
+       "ncms": [
+        "30066",
+        "2937"
+       ]
+      },
+      {
+       "cest": "1300503",
+       "ncms": [
+        "30066",
+        "2937"
+       ]
+      },
+      {
+       "cest": "1300504",
+       "ncms": [
+        "30066",
+        "2937"
+       ]
+      },
+      {
+       "cest": "1300505",
+       "ncms": [
+        "30066",
+        "2937"
+       ]
+      },
+      {
+       "cest": "1300600",
+       "ncms": [
+        "2936"
+       ]
+      },
+      {
+       "cest": "1300700",
+       "ncms": [
+        "30063"
+       ]
+      },
+      {
+       "cest": "1300701",
+       "ncms": [
+        "30063"
+       ]
+      },
+      {
+       "cest": "1300800",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300801",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300900",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300901",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1301000",
+       "ncms": [
+        "3005101"
+       ]
+      },
+      {
+       "cest": "1301001",
+       "ncms": [
+        "3005101"
+       ]
+      },
+      {
+       "cest": "1301100",
+       "ncms": [
+        "3005"
+       ]
+      },
+      {
+       "cest": "1301200",
+       "ncms": [
+        "401512",
+        "401519"
+       ]
+      },
+      {
+       "cest": "1301300",
+       "ncms": [
+        "40141"
+       ]
+      },
+      {
+       "cest": "1301400",
+       "ncms": [
+        "901831"
+       ]
+      },
+      {
+       "cest": "1301500",
+       "ncms": [
+        "9018321"
+       ]
+      },
+      {
+       "cest": "1301600",
+       "ncms": [
+        "3926909",
+        "90189099"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "10",
+     "name": "Pneumáticos, câmaras de ar e protetores de borracha",
+     "cests": [
+      {
+       "cest": "1600100",
+       "ncms": [
+        "4011"
+       ]
+      },
+      {
+       "cest": "1600200",
+       "ncms": [
+        "4011"
+       ]
+      },
+      {
+       "cest": "1600300",
+       "ncms": [
+        "4011"
+       ]
+      },
+      {
+       "cest": "1600400",
+       "ncms": [
+        "4011"
+       ]
+      },
+      {
+       "cest": "1600500",
+       "ncms": [
+        "40115"
+       ]
+      },
+      {
+       "cest": "1600700",
+       "ncms": [
+        "40129"
+       ]
+      },
+      {
+       "cest": "1600701",
+       "ncms": [
+        "40129"
+       ]
+      },
+      {
+       "cest": "1600800",
+       "ncms": [
+        "4013"
+       ]
+      },
+      {
+       "cest": "1600900",
+       "ncms": [
+        "40132"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "11",
+     "name": "Produtos alimentícios",
+     "cests": [
+      {
+       "cest": "1704400",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704427",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704401",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704402",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704403",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704404",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704405",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704406",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704407",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704408",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704409",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704410",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704411",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704412",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704413",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704414",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704415",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704416",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704417",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704418",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704419",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704420",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704421",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704422",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704423",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704424",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704425",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704426",
+       "ncms": [
+        "1101001"
+       ]
+      },
+      {
+       "cest": "1704500",
+       "ncms": [
+        "1101002"
+       ]
+      },
+      {
+       "cest": "1704605",
+       "ncms": [
+        "19012",
+        "1901909"
+       ]
+      },
+      {
+       "cest": "1704609",
+       "ncms": [
+        "19012",
+        "1901909"
+       ]
+      },
+      {
+       "cest": "1704606",
+       "ncms": [
+        "19012",
+        "1901909"
+       ]
+      },
+      {
+       "cest": "1704607",
+       "ncms": [
+        "19012",
+        "1901909"
+       ]
+      },
+      {
+       "cest": "1704608",
+       "ncms": [
+        "19012",
+        "1901909"
+       ]
+      },
+      {
+       "cest": "1704610",
+       "ncms": [
+        "1901"
+       ]
+      },
+      {
+       "cest": "1704614",
+       "ncms": [
+        "1901"
+       ]
+      },
+      {
+       "cest": "1704611",
+       "ncms": [
+        "1901"
+       ]
+      },
+      {
+       "cest": "1704612",
+       "ncms": [
+        "1901"
+       ]
+      },
+      {
+       "cest": "1704613",
+       "ncms": [
+        "1901"
+       ]
+      },
+      {
+       "cest": "1704616",
+       "ncms": [
+        "19012",
+        "1901909"
+       ]
+      },
+      {
+       "cest": "1704701",
+       "ncms": [
+        "19023"
+       ]
+      },
+      {
+       "cest": "1704800",
+       "ncms": [
+        "1902"
+       ]
+      },
+      {
+       "cest": "1704802",
+       "ncms": [
+        "19022000"
+       ]
+      },
+      {
+       "cest": "1704902",
+       "ncms": [
+        "190211"
+       ]
+      },
+      {
+       "cest": "1704903",
+       "ncms": [
+        "190219"
+       ]
+      },
+      {
+       "cest": "1704904",
+       "ncms": [
+        "190219"
+       ]
+      },
+      {
+       "cest": "1704905",
+       "ncms": [
+        "190219"
+       ]
+      },
+      {
+       "cest": "1704906",
+       "ncms": [
+        "190211"
+       ]
+      },
+      {
+       "cest": "1704907",
+       "ncms": [
+        "190211"
+       ]
+      },
+      {
+       "cest": "1705000",
+       "ncms": [
+        "19052"
+       ]
+      },
+      {
+       "cest": "1705100",
+       "ncms": [
+        "1905209"
+       ]
+      },
+      {
+       "cest": "1705200",
+       "ncms": [
+        "1905201"
+       ]
+      },
+      {
+       "cest": "1705900",
+       "ncms": [
+        "19054"
+       ]
+      },
+      {
+       "cest": "1706000",
+       "ncms": [
+        "1905901"
+       ]
+      },
+      {
+       "cest": "1706200",
+       "ncms": [
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1706201",
+       "ncms": [
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1706202",
+       "ncms": [
+        "1905902",
+        "1905909"
+       ]
+      },
+      {
+       "cest": "1706203",
+       "ncms": [
+        "1905909"
+       ]
+      },
+      {
+       "cest": "1706300",
+       "ncms": [
+        "19051"
+       ]
+      },
+      {
+       "cest": "1706400",
+       "ncms": [
+        "19059"
+       ]
+      },
+      {
+       "cest": "1708300",
+       "ncms": [
+        "021099",
+        "1502"
+       ]
+      },
+      {
+       "cest": "1708400",
+       "ncms": [
+        "0204",
+        "0206"
+       ]
+      },
+      {
+       "cest": "1708500",
+       "ncms": [
+        "0204"
+       ]
+      },
+      {
+       "cest": "1708600",
+       "ncms": [
+        "15021019",
+        "15029"
+       ]
+      },
+      {
+       "cest": "1708700",
+       "ncms": [
+        "021099",
+        "1501"
+       ]
+      },
+      {
+       "cest": "1708701",
+       "ncms": [
+        "021099",
+        "1501"
+       ]
+      },
+      {
+       "cest": "1708702",
+       "ncms": [
+        "02071",
+        "02072"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "15",
+     "name": "Sorvetes",
+     "cests": [
+      {
+       "cest": "2300100",
+       "ncms": [
+        "2105"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "16",
+     "name": "Tintas e vernizes",
+     "cests": [
+      {
+       "cest": "2400100",
+       "ncms": [
+        "3209",
+        "3210"
+       ]
+      },
+      {
+       "cest": "2400200",
+       "ncms": [
+        "320417",
+        "3206",
+        "32061110"
+       ]
+      },
+      {
+       "cest": "2400201",
+       "ncms": [
+        "320417",
+        "3206",
+        "32061110"
+       ]
+      },
+      {
+       "cest": "2400300",
+       "ncms": [
+        "3206",
+        "3212"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "17",
+     "name": "Veículos automotores",
+     "cests": [
+      {
+       "cest": "2500100",
+       "ncms": [
+        "87021"
+       ]
+      },
+      {
+       "cest": "2500200",
+       "ncms": [
+        "8702409"
+       ]
+      },
+      {
+       "cest": "2500300",
+       "ncms": [
+        "870321",
+        "1000"
+       ]
+      },
+      {
+       "cest": "2500400",
+       "ncms": [
+        "8703221",
+        "1000",
+        "1500"
+       ]
+      },
+      {
+       "cest": "2500500",
+       "ncms": [
+        "8703229",
+        "1000",
+        "1500"
+       ]
+      },
+      {
+       "cest": "2500600",
+       "ncms": [
+        "8703231",
+        "1500",
+        "3000"
+       ]
+      },
+      {
+       "cest": "2500700",
+       "ncms": [
+        "8703239",
+        "1500",
+        "3000"
+       ]
+      },
+      {
+       "cest": "2500800",
+       "ncms": [
+        "8703241",
+        "3000"
+       ]
+      },
+      {
+       "cest": "2500900",
+       "ncms": [
+        "8703249",
+        "3000"
+       ]
+      },
+      {
+       "cest": "2501000",
+       "ncms": [
+        "8703321",
+        "1500",
+        "2500"
+       ]
+      },
+      {
+       "cest": "2501100",
+       "ncms": [
+        "8703329",
+        "1500",
+        "2500"
+       ]
+      },
+      {
+       "cest": "2501200",
+       "ncms": [
+        "8703331",
+        "2500"
+       ]
+      },
+      {
+       "cest": "2501300",
+       "ncms": [
+        "8703339",
+        "2500"
+       ]
+      },
+      {
+       "cest": "2501400",
+       "ncms": [
+        "8704211"
+       ]
+      },
+      {
+       "cest": "2501500",
+       "ncms": [
+        "8704212"
+       ]
+      },
+      {
+       "cest": "2501600",
+       "ncms": [
+        "8704213"
+       ]
+      },
+      {
+       "cest": "2501700",
+       "ncms": [
+        "8704219"
+       ]
+      },
+      {
+       "cest": "2501800",
+       "ncms": [
+        "8704311"
+       ]
+      },
+      {
+       "cest": "2501900",
+       "ncms": [
+        "8704312"
+       ]
+      },
+      {
+       "cest": "2502000",
+       "ncms": [
+        "8704313"
+       ]
+      },
+      {
+       "cest": "2502100",
+       "ncms": [
+        "8704319"
+       ]
+      },
+      {
+       "cest": "2502200",
+       "ncms": [
+        "87022"
+       ]
+      },
+      {
+       "cest": "2502300",
+       "ncms": [
+        "87023"
+       ]
+      },
+      {
+       "cest": "2502400",
+       "ncms": [
+        "87029"
+       ]
+      },
+      {
+       "cest": "2502500",
+       "ncms": [
+        "87034"
+       ]
+      },
+      {
+       "cest": "2502600",
+       "ncms": [
+        "87035"
+       ]
+      },
+      {
+       "cest": "2502700",
+       "ncms": [
+        "87036"
+       ]
+      },
+      {
+       "cest": "2502800",
+       "ncms": [
+        "87037"
+       ]
+      },
+      {
+       "cest": "2502900",
+       "ncms": [
+        "87038000"
+       ]
+      },
+      {
+       "cest": "2503000",
+       "ncms": [
+        "870441"
+       ]
+      },
+      {
+       "cest": "2503100",
+       "ncms": [
+        "870451"
+       ]
+      },
+      {
+       "cest": "2503200",
+       "ncms": [
+        "87046000"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "18",
+     "name": "Veículos de duas e três rodas motorizados",
+     "cests": [
+      {
+       "cest": "2600100",
+       "ncms": [
+        "8711"
+       ]
+      }
+     ]
+    }
+   ]
   }
  ],
  "references": [
@@ -36130,6 +38065,3073 @@
      "ncmText": "2203.00.00",
      "description": "Chope — industrial, importador, arrematante ou engarrafador de água mineral",
      "mva": "140.00"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "3",
+   "segmentName": "Cervejas, chope, refrigerantes, água e outras bebidas",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "3.3",
+     "cest": "0300300",
+     "ncms": [
+      "22011",
+      "22019"
+     ],
+     "ncmText": "22011 22019",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em embalagem de vidro descartável",
+     "mva": "114"
+    },
+    {
+     "item": "3.3.1",
+     "cest": "0300301",
+     "ncms": [
+      "22011",
+      "22019"
+     ],
+     "ncmText": "22011 22019",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, adicionadas de sais, em embalagem de vidro descartável",
+     "mva": "114"
+    },
+    {
+     "item": "3.5.0",
+     "cest": "0300500",
+     "ncms": [
+      "22011",
+      "22019"
+     ],
+     "ncmText": "22011 22019",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em copo plástico descartável",
+     "mva": "114"
+    },
+    {
+     "item": "3.5.1",
+     "cest": "0300501",
+     "ncms": [
+      "22011",
+      "22019"
+     ],
+     "ncmText": "22011 22019",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, adicionadas de sais, em copo plástico descartável",
+     "mva": "114"
+    },
+    {
+     "item": "3.5.2",
+     "cest": "0300502",
+     "ncms": [
+      "22011",
+      "22019"
+     ],
+     "ncmText": "22011 22019",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em jarra descartável",
+     "mva": "114"
+    },
+    {
+     "item": "3.5.3",
+     "cest": "0300503",
+     "ncms": [
+      "22011",
+      "22019"
+     ],
+     "ncmText": "22011 22019",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, adicionadas de sais, em jarra descartável",
+     "mva": "114"
+    },
+    {
+     "item": "3.5.4",
+     "cest": "0300504",
+     "ncms": [
+      "22011",
+      "22019"
+     ],
+     "ncmText": "22011 22019",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em demais embalagens descartáveis",
+     "mva": "114"
+    },
+    {
+     "item": "3.5.5",
+     "cest": "0300505",
+     "ncms": [
+      "22011",
+      "22019"
+     ],
+     "ncmText": "22011 22019",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, adicionadas de sais, em demais embalagens descartáveis",
+     "mva": "114"
+    },
+    {
+     "item": "3.6/1",
+     "cest": "0300600",
+     "ncms": [
+      "22011"
+     ],
+     "ncmText": "22011",
+     "description": "Outras águas minerais, gasosas ou não, ou potáveis, naturais, exceto as classificadas no CEST 03.003.00, 03.003.01, 03.005.00 a 03.005.05, 03.024.00 e 03.025.00",
+     "mva": "114"
+    },
+    {
+     "item": "3.6/2",
+     "cest": "0302400",
+     "ncms": [
+      "22011"
+     ],
+     "ncmText": "22011",
+     "description": "Outras águas minerais, gasosas ou não, ou potáveis, naturais, exceto as classificadas no CEST 03.003.00, 03.003.01, 03.005.00 a 03.005.05, 03.024.00 e 03.025.00",
+     "mva": "114"
+    },
+    {
+     "item": "3.6/3",
+     "cest": "0302500",
+     "ncms": [
+      "22011"
+     ],
+     "ncmText": "22011",
+     "description": "Outras águas minerais, gasosas ou não, ou potáveis, naturais, exceto as classificadas no CEST 03.003.00, 03.003.01, 03.005.00 a 03.005.05, 03.024.00 e 03.025.00",
+     "mva": "114"
+    },
+    {
+     "item": "3.7/1",
+     "cest": "0300700",
+     "ncms": [
+      "2202"
+     ],
+     "ncmText": "2202",
+     "description": "Águas, incluindo as águas minerais e as águas gaseificadas, adicionadas de açúcar ou de outros edulcorantes ou aromatizadas, exceto os refrescos e refrigerantes",
+     "mva": "114"
+    },
+    {
+     "item": "3.7/2",
+     "cest": "0300800",
+     "ncms": [
+      "2202"
+     ],
+     "ncmText": "2202",
+     "description": "Águas, incluindo as águas minerais e as águas gaseificadas, adicionadas de açúcar ou de outros edulcorantes ou aromatizadas, exceto os refrescos e refrigerantes",
+     "mva": "114"
+    },
+    {
+     "item": "3.9",
+     "cest": "0301000",
+     "ncms": [
+      "220210",
+      "220299"
+     ],
+     "ncmText": "220210 220299",
+     "description": "Refrigerantes em vidro descartável",
+     "mva": "114"
+    },
+    {
+     "item": "3.9.1",
+     "cest": "0301001",
+     "ncms": [
+      "220210",
+      "220299"
+     ],
+     "ncmText": "220210 220299",
+     "description": "Refrigerantes em embalagem pet",
+     "mva": "114"
+    },
+    {
+     "item": "3.9.2",
+     "cest": "0301002",
+     "ncms": [
+      "220210",
+      "220299"
+     ],
+     "ncmText": "220210 220299",
+     "description": "Refrigerantes em lata",
+     "mva": "114"
+    },
+    {
+     "item": "3.10",
+     "cest": "0301100",
+     "ncms": [
+      "220210",
+      "220299"
+     ],
+     "ncmText": "220210 220299",
+     "description": "Demais refrigerantes, exceto os classificados no CEST 03.010.00, 03.010.01, 03.010.02 e 03.011.01",
+     "mva": "114"
+    },
+    {
+     "item": "3.11.0",
+     "cest": "0301200",
+     "ncms": [
+      "2106901"
+     ],
+     "ncmText": "2106901",
+     "description": "Xarope ou extrato concentrado destinados ao preparo de refrigerante em máquina “pré-mix” ou “post-mix”, exceto o classificado no CEST 03.012.01",
+     "mva": "114"
+    },
+    {
+     "item": "3.11.1",
+     "cest": "0301201",
+     "ncms": [
+      "2106901"
+     ],
+     "ncmText": "2106901",
+     "description": "Cápsula de refrigerante",
+     "mva": "114"
+    },
+    {
+     "item": "3.12.0",
+     "cest": "0301300",
+     "ncms": [
+      "21069",
+      "220299"
+     ],
+     "ncmText": "21069 220299",
+     "description": "Bebidas energéticas em lata",
+     "mva": "114"
+    },
+    {
+     "item": "3.12.1",
+     "cest": "0301301",
+     "ncms": [
+      "21069",
+      "220299"
+     ],
+     "ncmText": "21069 220299",
+     "description": "Bebidas energéticas em embalagem PET",
+     "mva": "114"
+    },
+    {
+     "item": "3.12.2",
+     "cest": "0301302",
+     "ncms": [
+      "21069",
+      "220299"
+     ],
+     "ncmText": "21069 220299",
+     "description": "Bebidas energéticas em vidro",
+     "mva": "114"
+    },
+    {
+     "item": "3.14",
+     "cest": "0301500",
+     "ncms": [
+      "21069",
+      "220299"
+     ],
+     "ncmText": "21069 220299",
+     "description": "Bebidas hidroeletrolíticas",
+     "mva": "114"
+    },
+    {
+     "item": "3.16.0",
+     "cest": "0302100",
+     "ncms": [
+      "2203"
+     ],
+     "ncmText": "2203",
+     "description": "Cerveja em garrafa de vidro retornável",
+     "mva": "140"
+    },
+    {
+     "item": "3.16.1",
+     "cest": "0302101",
+     "ncms": [
+      "2203"
+     ],
+     "ncmText": "2203",
+     "description": "Cerveja em garrafa de vidro descartável",
+     "mva": "140"
+    },
+    {
+     "item": "3.16.2",
+     "cest": "0302102",
+     "ncms": [
+      "2203"
+     ],
+     "ncmText": "2203",
+     "description": "Cerveja em garrafa de alumínio",
+     "mva": "140"
+    },
+    {
+     "item": "3.16.3",
+     "cest": "0302103",
+     "ncms": [
+      "2203"
+     ],
+     "ncmText": "2203",
+     "description": "Cerveja em lata",
+     "mva": "140"
+    },
+    {
+     "item": "3.16.4",
+     "cest": "0302104",
+     "ncms": [
+      "2203"
+     ],
+     "ncmText": "2203",
+     "description": "Cerveja em barril",
+     "mva": "140"
+    },
+    {
+     "item": "3.16.5",
+     "cest": "0302105",
+     "ncms": [
+      "2203"
+     ],
+     "ncmText": "2203",
+     "description": "Cerveja em embalagem PET",
+     "mva": "140"
+    },
+    {
+     "item": "3.16.6",
+     "cest": "0302106",
+     "ncms": [
+      "2203"
+     ],
+     "ncmText": "2203",
+     "description": "Cerveja em outras embalagens",
+     "mva": "140"
+    },
+    {
+     "item": "3.17.0",
+     "cest": "0302200",
+     "ncms": [
+      "220291"
+     ],
+     "ncmText": "220291",
+     "description": "Cerveja sem álcool em garrafa de vidro retornável",
+     "mva": "140"
+    },
+    {
+     "item": "3.17.1",
+     "cest": "0302201",
+     "ncms": [
+      "220291"
+     ],
+     "ncmText": "220291",
+     "description": "Cerveja sem álcool em garrafa de vidro descartável",
+     "mva": "140"
+    },
+    {
+     "item": "3.17.2",
+     "cest": "0302202",
+     "ncms": [
+      "220291"
+     ],
+     "ncmText": "220291",
+     "description": "Cerveja sem álcool em garrafa de alumínio",
+     "mva": "140"
+    },
+    {
+     "item": "3.17.3",
+     "cest": "0302203",
+     "ncms": [
+      "220291"
+     ],
+     "ncmText": "220291",
+     "description": "Cerveja sem álcool em lata",
+     "mva": "140"
+    },
+    {
+     "item": "3.17.4",
+     "cest": "0302204",
+     "ncms": [
+      "220291"
+     ],
+     "ncmText": "220291",
+     "description": "Cerveja sem álcool em barril",
+     "mva": "140"
+    },
+    {
+     "item": "3.17.5",
+     "cest": "0302205",
+     "ncms": [
+      "220291"
+     ],
+     "ncmText": "220291",
+     "description": "Cerveja sem álcool em embalagem PET",
+     "mva": "140"
+    },
+    {
+     "item": "3.17.6",
+     "cest": "0302206",
+     "ncms": [
+      "220291"
+     ],
+     "ncmText": "220291",
+     "description": "Cerveja sem álcool em outras embalagens",
+     "mva": "140"
+    },
+    {
+     "item": "3.18",
+     "cest": "0302300",
+     "ncms": [
+      "2203"
+     ],
+     "ncmText": "2203",
+     "description": "Chope",
+     "mva": "140"
+    },
+    {
+     "item": "3.19",
+     "cest": "0200300",
+     "ncms": [
+      "22089"
+     ],
+     "ncmText": "22089",
+     "description": "Bebida refrescante com teor alcoólico inferior a 8%",
+     "mva": "29.04"
+    },
+    {
+     "item": "3.20",
+     "cest": "0302400",
+     "ncms": [
+      "22011"
+     ],
+     "ncmText": "22011",
+     "description": "Água mineral em embalagens retornáveis com capacidade igual ou superior a 10 (dez) e inferior a 20 (vinte) litros",
+     "mva": "114"
+    },
+    {
+     "item": "3.21",
+     "cest": "0302500",
+     "ncms": [
+      "22011"
+     ],
+     "ncmText": "22011",
+     "description": "Água mineral em embalagens retornáveis com capacidade igual ou superior a 20 (vinte) litros",
+     "mva": "114"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "4",
+   "segmentName": "Cigarros e outros produtos derivados do fumo",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "4.1",
+     "cest": "0400100",
+     "ncms": [
+      "2402"
+     ],
+     "ncmText": "2402",
+     "description": "Charutos, cigarrilhas e cigarros, de tabaco ou dos seus sucedâneos",
+     "mva": "50"
+    },
+    {
+     "item": "4.2",
+     "cest": "0400200",
+     "ncms": [
+      "24031"
+     ],
+     "ncmText": "24031",
+     "description": "Tabaco para fumar, mesmo contendo sucedâneos de tabaco em qualquer proporção",
+     "mva": "50"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "5",
+   "segmentName": "Cimentos",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "5.1",
+     "cest": "0500100",
+     "ncms": [
+      "2523"
+     ],
+     "ncmText": "2523",
+     "description": "Cimento",
+     "mva": "20"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "6",
+   "segmentName": "Combustíveis e lubrificantes",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "6.12",
+     "cest": "0601200",
+     "ncms": [
+      "271111"
+     ],
+     "ncmText": "271111",
+     "description": "Gás Natural Liquefeito",
+     "mva": "217.36"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "7",
+   "segmentName": "Lâmpadas, reatores e “starter”",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "7.1",
+     "cest": "0900100",
+     "ncms": [
+      "8539"
+     ],
+     "ncmText": "8539",
+     "description": "Lâmpadas elétricas",
+     "mva": "60.03"
+    },
+    {
+     "item": "7.2",
+     "cest": "0900200",
+     "ncms": [
+      "8540"
+     ],
+     "ncmText": "8540",
+     "description": "Lâmpadas eletrônicas",
+     "mva": "102.31"
+    },
+    {
+     "item": "7.3",
+     "cest": "0900300",
+     "ncms": [
+      "85041"
+     ],
+     "ncmText": "85041",
+     "description": "Reatores para lâmpadas ou tubos de descargas",
+     "mva": "53.13"
+    },
+    {
+     "item": "7.4",
+     "cest": "0900400",
+     "ncms": [
+      "85365"
+     ],
+     "ncmText": "85365",
+     "description": "09.004.00 8536.5 “Starter”",
+     "mva": "102.31"
+    },
+    {
+     "item": "7.5",
+     "cest": "0900500",
+     "ncms": [
+      "853952"
+     ],
+     "ncmText": "853952",
+     "description": "Lâmpadas de LED (diodos emissores de luz)",
+     "mva": "63.67"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "8",
+   "segmentName": "Materiais de construção e congêneres",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "8.1",
+     "cest": "1000100",
+     "ncms": [
+      "2522"
+     ],
+     "ncmText": "2522",
+     "description": "Cal",
+     "mva": "45"
+    },
+    {
+     "item": "8.2",
+     "cest": "1000200",
+     "ncms": [
+      "3816001",
+      "38245"
+     ],
+     "ncmText": "3816001 38245",
+     "description": "Argamassas",
+     "mva": "45"
+    },
+    {
+     "item": "8.3",
+     "cest": "1000300",
+     "ncms": [
+      "32149"
+     ],
+     "ncmText": "32149",
+     "description": "Outras argamassas",
+     "mva": "45"
+    },
+    {
+     "item": "8.4",
+     "cest": "1000400",
+     "ncms": [
+      "3910"
+     ],
+     "ncmText": "3910",
+     "description": "Silicones em formas primárias, para uso na construção",
+     "mva": "55"
+    },
+    {
+     "item": "8.5",
+     "cest": "1000500",
+     "ncms": [
+      "3916"
+     ],
+     "ncmText": "3916",
+     "description": "Revestimentos de PVC e outros plásticos; forro, sancas e afins de PVC, para uso na construção",
+     "mva": "55"
+    },
+    {
+     "item": "8.6",
+     "cest": "1000600",
+     "ncms": [
+      "3917"
+     ],
+     "ncmText": "3917",
+     "description": "Tubos, e seus acessórios (por exemplo, juntas, cotovelos, flanges, uniões), de plásticos, para uso na construção",
+     "mva": "35"
+    },
+    {
+     "item": "8.7",
+     "cest": "1000700",
+     "ncms": [
+      "3918"
+     ],
+     "ncmText": "3918",
+     "description": "Revestimento de pavimento de PVC e outros plásticos",
+     "mva": "55"
+    },
+    {
+     "item": "8.8",
+     "cest": "1000800",
+     "ncms": [
+      "3919"
+     ],
+     "ncmText": "3919",
+     "description": "Chapas, folhas, tiras, fitas, películas e outras formas planas, autoadesivas, de plásticos, mesmo em rolos, para uso na construção",
+     "mva": "55"
+    },
+    {
+     "item": "8.9",
+     "cest": "1000900",
+     "ncms": [
+      "3920",
+      "3921"
+     ],
+     "ncmText": "3920 3921",
+     "description": "Veda rosca, lona plástica para uso na construção, fitas isolantes e afins",
+     "mva": "55"
+    },
+    {
+     "item": "8.10",
+     "cest": "1001000",
+     "ncms": [
+      "3921"
+     ],
+     "ncmText": "3921",
+     "description": "Telha de plástico, mesmo reforçada com fibra de vidro",
+     "mva": "55"
+    },
+    {
+     "item": "8.11",
+     "cest": "1001100",
+     "ncms": [
+      "3921"
+     ],
+     "ncmText": "3921",
+     "description": "Cumeeira de plástico, mesmo reforçada com fibra de vidro",
+     "mva": "45"
+    },
+    {
+     "item": "8.12",
+     "cest": "1001200",
+     "ncms": [
+      "3921"
+     ],
+     "ncmText": "3921",
+     "description": "Chapas, laminados plásticos em bobina, para uso na construção, exceto os descritos nos CEST 10.010.00 e 10.011.00",
+     "mva": "55"
+    },
+    {
+     "item": "8.13",
+     "cest": "1001300",
+     "ncms": [
+      "3922"
+     ],
+     "ncmText": "3922",
+     "description": "Banheiras, boxes para chuveiros, pias, lavatórios, bidês, sanitários e seus assentos e tampas, caixas de descarga e artigos semelhantes para usos sanitários ou higiênicos, de plásticos",
+     "mva": "45"
+    },
+    {
+     "item": "8.14",
+     "cest": "1001400",
+     "ncms": [
+      "3924"
+     ],
+     "ncmText": "3924",
+     "description": "Artefatos de higiene / toucador de plástico, para uso na construção",
+     "mva": "85"
+    },
+    {
+     "item": "8.15",
+     "cest": "1001500",
+     "ncms": [
+      "39251"
+     ],
+     "ncmText": "39251",
+     "description": "Caixa-d’água, inclusive sua tampa, de plástico, mesmo reforçadas com fibra de vidro",
+     "mva": "45"
+    },
+    {
+     "item": "8.16",
+     "cest": "1001600",
+     "ncms": [
+      "39259"
+     ],
+     "ncmText": "39259",
+     "description": "Outras telhas, cumeeira e caixa-d’água, inclusive sua tampa, de plástico, mesmo reforçadas com fibra de vidro",
+     "mva": "45"
+    },
+    {
+     "item": "8.17",
+     "cest": "1001700",
+     "ncms": [
+      "39251",
+      "39259"
+     ],
+     "ncmText": "39251 39259",
+     "description": "Artefatos para apetrechamento de construções, de plásticos, não especificados nem compreendidos em outras posições, incluindo persianas, sancas, molduras, apliques e rosetas, caixilhos de polietileno e outros plásticos, exceto os descritos",
+     "mva": "45"
+    },
+    {
+     "item": "8.18",
+     "cest": "1001800",
+     "ncms": [
+      "39252"
+     ],
+     "ncmText": "39252",
+     "description": "Portas, janelas e seus caixilhos, alizares e soleiras",
+     "mva": "45"
+    },
+    {
+     "item": "8.19",
+     "cest": "1001900",
+     "ncms": [
+      "39253"
+     ],
+     "ncmText": "39253",
+     "description": "Postigos, estores (incluídas as venezianas) e artefatos semelhantes e suas partes",
+     "mva": "75"
+    },
+    {
+     "item": "8.20",
+     "cest": "1002000",
+     "ncms": [
+      "39269"
+     ],
+     "ncmText": "39269",
+     "description": "Outras obras de plástico, para uso na construção",
+     "mva": "45"
+    },
+    {
+     "item": "8.21",
+     "cest": "1002100",
+     "ncms": [
+      "4814"
+     ],
+     "ncmText": "4814",
+     "description": "Papel de parede e revestimentos de parede semelhantes; papel para vitrais",
+     "mva": "75"
+    },
+    {
+     "item": "8.22",
+     "cest": "1002200",
+     "ncms": [
+      "681019"
+     ],
+     "ncmText": "681019",
+     "description": "Telhas de concreto",
+     "mva": "55"
+    },
+    {
+     "item": "8.24",
+     "cest": "1002400",
+     "ncms": [
+      "6811"
+     ],
+     "ncmText": "6811",
+     "description": "Caixas d’água, tanques e reservatórios e suas tampas, telhas, calhas, cumeeiras e afins, de fibrocimento, cimento-celulose ou semelhantes, contendo ou não amianto",
+     "mva": "45"
+    },
+    {
+     "item": "8.25",
+     "cest": "1002500",
+     "ncms": [
+      "6901"
+     ],
+     "ncmText": "6901",
+     "description": "Tijolos, placas (lajes), ladrilhos e outras peças cerâmicas de farinhas siliciosas fósseis, (tripolita, diatomita, por exemplo) ou de terras siliciosas semelhantes",
+     "mva": "39"
+    },
+    {
+     "item": "8.26",
+     "cest": "1002600",
+     "ncms": [
+      "6902"
+     ],
+     "ncmText": "6902",
+     "description": "Tijolos, placas (lajes), ladrilhos e peças cerâmicas semelhantes, para construção, refratários, que não sejam de farinhas siliciosas fósseis nem de terras siliciosas semelhantes",
+     "mva": "39"
+    },
+    {
+     "item": "8.27",
+     "cest": "1002700",
+     "ncms": [
+      "6904"
+     ],
+     "ncmText": "6904",
+     "description": "Tijolos para construção, tijoleiras, tapa-vigas e produtos semelhantes, de cerâmica",
+     "mva": "39"
+    },
+    {
+     "item": "8.28",
+     "cest": "1002800",
+     "ncms": [
+      "6905"
+     ],
+     "ncmText": "6905",
+     "description": "Telhas, elementos de chaminés, condutores de fumaça, ornamentos arquitetônicos, de cerâmica, e outros produtos cerâmicos para construção",
+     "mva": "39"
+    },
+    {
+     "item": "8.29",
+     "cest": "1002900",
+     "ncms": [
+      "6906"
+     ],
+     "ncmText": "6906",
+     "description": "Tubos, calhas ou algerozes e acessórios para canalizações, de cerâmica",
+     "mva": "39"
+    },
+    {
+     "item": "8.30.0",
+     "cest": "1003000",
+     "ncms": [
+      "6907"
+     ],
+     "ncmText": "6907",
+     "description": "Ladrilhos e placas de cerâmica, exclusivamente para pavimentação ou revestimentos",
+     "mva": "55"
+    },
+    {
+     "item": "8.30.1",
+     "cest": "1003001",
+     "ncms": [
+      "6907"
+     ],
+     "ncmText": "6907",
+     "description": "Cubos, pastilhas e artigos semelhantes de cerâmica, mesmo com suporte, exceto os descritos CEST 10.030.00",
+     "mva": "55"
+    },
+    {
+     "item": "8.31",
+     "cest": "1003100",
+     "ncms": [
+      "6910"
+     ],
+     "ncmText": "6910",
+     "description": "Pias, lavatórios, colunas para lavatórios, banheiras, bidês, sanitários, caixas de descarga, mictórios e aparelhos fixos semelhantes para usos sanitários, de cerâmica",
+     "mva": "45"
+    },
+    {
+     "item": "8.32",
+     "cest": "1003200",
+     "ncms": [
+      "6912"
+     ],
+     "ncmText": "6912",
+     "description": "Artefatos de higiene/toucador de cerâmica",
+     "mva": "85"
+    },
+    {
+     "item": "8.33",
+     "cest": "1003300",
+     "ncms": [
+      "7003"
+     ],
+     "ncmText": "7003",
+     "description": "Vidro vazado ou laminado, em chapas, folhas ou perfis, mesmo com camada absorvente, refletora ou não, mas sem qualquer outro trabalho",
+     "mva": "45"
+    },
+    {
+     "item": "8.34",
+     "cest": "1003400",
+     "ncms": [
+      "7004"
+     ],
+     "ncmText": "7004",
+     "description": "Vidro estirado ou soprado, em folhas, mesmo com camada absorvente, refletora ou não, mas sem qualquer outro trabalho",
+     "mva": "101"
+    },
+    {
+     "item": "8.35",
+     "cest": "1003500",
+     "ncms": [
+      "7005"
+     ],
+     "ncmText": "7005",
+     "description": "Vidro flotado e vidro desbastado ou polido em uma ou em ambas as faces, em chapas ou em folhas, mesmo com camada absorvente, refletora ou não, mas sem qualquer outro trabalho",
+     "mva": "45"
+    },
+    {
+     "item": "8.36",
+     "cest": "1003600",
+     "ncms": [
+      "700719"
+     ],
+     "ncmText": "700719",
+     "description": "Vidros temperados",
+     "mva": "45"
+    },
+    {
+     "item": "8.37",
+     "cest": "1003700",
+     "ncms": [
+      "700729"
+     ],
+     "ncmText": "700729",
+     "description": "Vidros laminados",
+     "mva": "45"
+    },
+    {
+     "item": "8.38",
+     "cest": "1003800",
+     "ncms": [
+      "7008"
+     ],
+     "ncmText": "7008",
+     "description": "Vidros isolantes de paredes múltiplas",
+     "mva": "45"
+    },
+    {
+     "item": "8.39",
+     "cest": "1003900",
+     "ncms": [
+      "7016"
+     ],
+     "ncmText": "7016",
+     "description": "Blocos, placas, tijolos, ladrilhos, telhas e outros artefatos, de vidro prensado ou moldado, mesmo armado, para construção; cubos, pastilhas e outros artigos semelhantes",
+     "mva": "65"
+    },
+    {
+     "item": "8.40",
+     "cest": "1004000",
+     "ncms": [
+      "72142"
+     ],
+     "ncmText": "72142",
+     "description": "Barras próprias para construções, excetos vergalhões",
+     "mva": "35"
+    },
+    {
+     "item": "8.41",
+     "cest": "1004100",
+     "ncms": [
+      "7308901"
+     ],
+     "ncmText": "7308901",
+     "description": "Outras barras próprias para construções, excetos vergalhões",
+     "mva": "35"
+    },
+    {
+     "item": "8.41.1",
+     "cest": "1004101",
+     "ncms": [
+      "7308901"
+     ],
+     "ncmText": "7308901",
+     "description": "Outros vergalhões",
+     "mva": "35"
+    },
+    {
+     "item": "8.42",
+     "cest": "1004200",
+     "ncms": [
+      "72142"
+     ],
+     "ncmText": "72142",
+     "description": "Vergalhões",
+     "mva": "45"
+    },
+    {
+     "item": "8.43",
+     "cest": "1004300",
+     "ncms": [
+      "7213"
+     ],
+     "ncmText": "7213",
+     "description": "Outros vergalhões",
+     "mva": "45"
+    },
+    {
+     "item": "8.44",
+     "cest": "1004400",
+     "ncms": [
+      "7217109"
+     ],
+     "ncmText": "7217109",
+     "description": "Fios de ferro ou aço não ligados, não revestidos, mesmo polidos;",
+     "mva": "45"
+    },
+    {
+     "item": "8.44.1",
+     "cest": "1004400",
+     "ncms": [
+      "7312"
+     ],
+     "ncmText": "7312",
+     "description": "Cordas, cabos, tranças (entrançados), lingas e artefatos semelhantes, de ferro ou aço, não isolados para usos elétricos",
+     "mva": "45"
+    },
+    {
+     "item": "8.45.0",
+     "cest": "1004500",
+     "ncms": [
+      "7217201"
+     ],
+     "ncmText": "7217201",
+     "description": "Outros fios de ferro ou aço, não ligados, galvanizados com um teor de carbono superior ou igual a 0,6%, em peso",
+     "mva": "45"
+    },
+    {
+     "item": "8.45.1",
+     "cest": "1004501",
+     "ncms": [
+      "7217209"
+     ],
+     "ncmText": "7217209",
+     "description": "Outros fios de ferro ou aço, não ligados, galvanizados",
+     "mva": "45"
+    },
+    {
+     "item": "8.46",
+     "cest": "1004600",
+     "ncms": [
+      "7307"
+     ],
+     "ncmText": "7307",
+     "description": "Acessórios para tubos (inclusive uniões, cotovelos, luvas ou mangas), de ferro fundido, ferro ou aço",
+     "mva": "35"
+    },
+    {
+     "item": "8.47",
+     "cest": "1004700",
+     "ncms": [
+      "73083"
+     ],
+     "ncmText": "73083",
+     "description": "Portas e janelas, e seus caixilhos, alizares e soleiras de ferro fundido, ferro ou aço",
+     "mva": "45"
+    },
+    {
+     "item": "8.48",
+     "cest": "1004800",
+     "ncms": [
+      "73084",
+      "73089"
+     ],
+     "ncmText": "73084 73089",
+     "description": "Material para andaimes, para armações (cofragens) e para escoramentos, (inclusive armações prontas, para estruturas de concreto armado ou argamassa armada), eletrocalhas e perfilados de ferro fundido, ferro ou aço, próprios para",
+     "mva": "65"
+    },
+    {
+     "item": "8.49",
+     "cest": "1004900",
+     "ncms": [
+      "73084"
+     ],
+     "ncmText": "73084",
+     "description": "Treliças de aço",
+     "mva": "65"
+    },
+    {
+     "item": "8.50",
+     "cest": "1005000",
+     "ncms": [
+      "7308909"
+     ],
+     "ncmText": "7308909",
+     "description": "Telhas metálicas",
+     "mva": "45"
+    },
+    {
+     "item": "8.51",
+     "cest": "1005100",
+     "ncms": [
+      "7310"
+     ],
+     "ncmText": "7310",
+     "description": "Caixas diversas (tais como caixa de correio, de entrada de água, de energia, de instalação) de ferro fundido, ferro ou aço; próprias para a construção",
+     "mva": "85"
+    },
+    {
+     "item": "8.52",
+     "cest": "1005200",
+     "ncms": [
+      "7313"
+     ],
+     "ncmText": "7313",
+     "description": "Arame farpado, de ferro ou aço arames ou tiras, retorcidos, mesmo farpados, de ferro ou aço, dos tipos utilizados em cercas",
+     "mva": "35"
+    },
+    {
+     "item": "8.53",
+     "cest": "1005300",
+     "ncms": [
+      "7314"
+     ],
+     "ncmText": "7314",
+     "description": "Telas metálicas, grades e redes, de fios de ferro ou aço",
+     "mva": "35"
+    },
+    {
+     "item": "8.54",
+     "cest": "1005400",
+     "ncms": [
+      "731511"
+     ],
+     "ncmText": "731511",
+     "description": "Correntes de rolos, de ferro fundido, ferro ou aço",
+     "mva": "101"
+    },
+    {
+     "item": "8.55",
+     "cest": "1005500",
+     "ncms": [
+      "7315129"
+     ],
+     "ncmText": "7315129",
+     "description": "Outras correntes de elos articulados, de ferro fundido, ferro ou aço",
+     "mva": "101"
+    },
+    {
+     "item": "8.56",
+     "cest": "1005600",
+     "ncms": [
+      "731582"
+     ],
+     "ncmText": "731582",
+     "description": "Correntes de elos soldados, de ferro fundido, de ferro ou aço",
+     "mva": "65"
+    },
+    {
+     "item": "8.57",
+     "cest": "1005700",
+     "ncms": [
+      "7317"
+     ],
+     "ncmText": "7317",
+     "description": "Tachas, pregos, percevejos, escápulas, grampos ondulados ou biselados e artefatos semelhantes, de ferro fundido, ferro ou aço, mesmo com a cabeça de outra matéria, exceto cobre",
+     "mva": "45"
+    },
+    {
+     "item": "8.58",
+     "cest": "1005800",
+     "ncms": [
+      "7318"
+     ],
+     "ncmText": "7318",
+     "description": "Parafusos, pinos ou pernos, roscados, porcas, tira-fundos, ganchos roscados, rebites, chavetas, contrapinos ou troços, arruelas (anilhas) (incluindo as de pressão) e artigos semelhantes, de ferro fundido, ferro ou aço",
+     "mva": "55"
+    },
+    {
+     "item": "8.59.0",
+     "cest": "1005900",
+     "ncms": [
+      "7323",
+      "73231000"
+     ],
+     "ncmText": "7323 73231000",
+     "description": "Palha de ferro ou aço, exceto os de uso doméstico classificados na posição NCM 7323.10.00",
+     "mva": "101"
+    },
+    {
+     "item": "8.59.1",
+     "cest": "1005901",
+     "ncms": [
+      "7323",
+      "73231000"
+     ],
+     "ncmText": "7323 73231000",
+     "description": "Esponjas, esfregões, luvas e artefatos semelhantes para limpeza, polimento e usos semelhantes, de ferro ou aço, exceto os de uso doméstico classificados na posição NCM 7323.10.00",
+     "mva": "101"
+    },
+    {
+     "item": "8.60",
+     "cest": "1006000",
+     "ncms": [
+      "7324"
+     ],
+     "ncmText": "7324",
+     "description": "Artefatos de higiene ou de toucador, e suas partes, de ferro fundido, ferro ou aço, incluídas as pias, banheiras, lavatórios, cubas, mictórios, tanques e afins de ferro fundido, ferro ou aço, para uso na construção",
+     "mva": "65"
+    },
+    {
+     "item": "8.61",
+     "cest": "1006100",
+     "ncms": [
+      "7325"
+     ],
+     "ncmText": "7325",
+     "description": "Outras obras moldadas, de ferro fundido, ferro ou aço, para uso na construção civil",
+     "mva": "85"
+    },
+    {
+     "item": "8.62",
+     "cest": "1006200",
+     "ncms": [
+      "7326"
+     ],
+     "ncmText": "7326",
+     "description": "Abraçadeiras",
+     "mva": "85"
+    },
+    {
+     "item": "8.63",
+     "cest": "1006300",
+     "ncms": [
+      "7407"
+     ],
+     "ncmText": "7407",
+     "description": "Barras de cobre",
+     "mva": "35"
+    },
+    {
+     "item": "8.64",
+     "cest": "1006400",
+     "ncms": [
+      "7411101"
+     ],
+     "ncmText": "7411101",
+     "description": "Tubos de cobre e suas ligas, para instalações de água quente e gás, de uso na construção",
+     "mva": "35"
+    },
+    {
+     "item": "8.65",
+     "cest": "1006500",
+     "ncms": [
+      "7412"
+     ],
+     "ncmText": "7412",
+     "description": "Acessórios para tubos (por exemplo, uniões, cotovelos, luvas ou mangas) de cobre e suas ligas, para uso na construção",
+     "mva": "35"
+    },
+    {
+     "item": "8.66",
+     "cest": "1006600",
+     "ncms": [
+      "7415"
+     ],
+     "ncmText": "7415",
+     "description": "Tachas, pregos, percevejos, escápulas e artefatos semelhantes, de cobre, ou de ferro ou aço com cabeça de cobre, parafusos, pinos ou pernos, roscados, porcas, ganchos roscados, rebites, chavetas, cavilhas, contrapinos, arruelas (incluídas as de",
+     "mva": "65"
+    },
+    {
+     "item": "8.67",
+     "cest": "1006700",
+     "ncms": [
+      "74182"
+     ],
+     "ncmText": "74182",
+     "description": "Artefatos de higiene/toucador de cobre, para uso na construção",
+     "mva": "45"
+    },
+    {
+     "item": "8.68",
+     "cest": "1006800",
+     "ncms": [
+      "7607199"
+     ],
+     "ncmText": "7607199",
+     "description": "Manta de subcobertura aluminizada",
+     "mva": "55"
+    },
+    {
+     "item": "8.69",
+     "cest": "1006900",
+     "ncms": [
+      "7608"
+     ],
+     "ncmText": "7608",
+     "description": "Tubos de alumínio e suas ligas, para refrigeração e ar condicionado, de uso na construção",
+     "mva": "65"
+    },
+    {
+     "item": "8.70",
+     "cest": "1007000",
+     "ncms": [
+      "76090000"
+     ],
+     "ncmText": "76090000",
+     "description": "Acessórios para tubos (por exemplo, uniões, cotovelos, luvas ou mangas), de alumínio, para uso na construção",
+     "mva": "65"
+    },
+    {
+     "item": "8.71",
+     "cest": "1007100",
+     "ncms": [
+      "7610"
+     ],
+     "ncmText": "7610",
+     "description": "Construções e suas partes (por exemplo, pontes e elementos de pontes, torres, pórticos ou pilones, pilares, colunas, armações, estruturas para telhados, portas e janelas, e seus caixilhos, alizares e soleiras, balaustradas), de alumínio, exceto as",
+     "mva": "35"
+    },
+    {
+     "item": "8.72",
+     "cest": "1007200",
+     "ncms": [
+      "76152000"
+     ],
+     "ncmText": "76152000",
+     "description": "Artefatos de higiene / toucador de alumínio, para uso na construção",
+     "mva": "75"
+    },
+    {
+     "item": "8.73",
+     "cest": "1007300",
+     "ncms": [
+      "7616"
+     ],
+     "ncmText": "7616",
+     "description": "Outras obras de alumínio, próprias para construções, incluídas as persianas",
+     "mva": "45"
+    },
+    {
+     "item": "8.74",
+     "cest": "1007400",
+     "ncms": [
+      "83024100"
+     ],
+     "ncmText": "83024100",
+     "description": "Outras guarnições, ferragens e artigos semelhantes de metais comuns, para construções, inclusive puxadores.",
+     "mva": "45"
+    },
+    {
+     "item": "8.75",
+     "cest": "1007500",
+     "ncms": [
+      "8301"
+     ],
+     "ncmText": "8301",
+     "description": "Fechaduras e ferrolhos (de chave, de segredo ou elétricos), de metais comuns, incluídas as suas partes fechos e armações com fecho, com fechadura, de metais comuns chaves para estes artigos, de metais comuns excluídos os de uso",
+     "mva": "55"
+    },
+    {
+     "item": "8.76",
+     "cest": "1007600",
+     "ncms": [
+      "83021000"
+     ],
+     "ncmText": "83021000",
+     "description": "Dobradiças de metais comuns, de qualquer tipo",
+     "mva": "55"
+    },
+    {
+     "item": "8.77",
+     "cest": "1007700",
+     "ncms": [
+      "8307"
+     ],
+     "ncmText": "8307",
+     "description": "Tubos flexíveis de metais comuns, mesmo com acessórios, para uso na construção",
+     "mva": "65"
+    },
+    {
+     "item": "8.78",
+     "cest": "1007800",
+     "ncms": [
+      "8311"
+     ],
+     "ncmText": "8311",
+     "description": "Fios, varetas, tubos, chapas, eletrodos e artefatos semelhantes, de metais comuns ou de carbonetos metálicos, revestidos exterior ou interiormente de decapantes ou de fundentes, para soldagem (soldadura) ou depósito de metal ou de carbonetos",
+     "mva": "65"
+    },
+    {
+     "item": "8.79",
+     "cest": "1007900",
+     "ncms": [
+      "8481"
+     ],
+     "ncmText": "8481",
+     "description": "Torneiras, válvulas (incluídas as redutoras de pressão e as termostáticas) e dispositivos semelhantes, para canalizações, caldeiras, reservatórios, cubas e outros recipientes",
+     "mva": "45"
+    },
+    {
+     "item": "8.80",
+     "cest": "1008000",
+     "ncms": [
+      "7009"
+     ],
+     "ncmText": "7009",
+     "description": "Espelhos de vidro, mesmo emoldurados, exceto os de uso automotivo",
+     "mva": "45"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "9",
+   "segmentName": "Medicamentos, produtos farmacêuticos para uso humano e higiene pessoal",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "9.1.0",
+     "cest": "1300100",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos de referência - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.1.1",
+     "cest": "1300101",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos de referência - negativa, exceto para uso veterinário",
+     "mva": "33"
+    },
+    {
+     "item": "9.1.2",
+     "cest": "1300102",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos de referência - neutra, exceto para uso veterinário",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.2.0",
+     "cest": "1300200",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "13.002.00 3003 e 3004 Medicamentos genérico - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.2.1",
+     "cest": "1300201",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "13.002.01 3003 e 3004 Medicamentos genérico - negativa, exceto para uso veterinário",
+     "mva": "33"
+    },
+    {
+     "item": "9.2.2",
+     "cest": "1300202",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "13.002.02 3003 e 3004 Medicamentos genérico - neutra, exceto para uso veterinário",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.3.0",
+     "cest": "1300300",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "13.003.00 3003 e 3004 Medicamentos similar - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.3.1",
+     "cest": "1300301",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "13.003.01 3003 e 3004 Medicamentos similar - negativa, exceto para uso veterinário",
+     "mva": "33"
+    },
+    {
+     "item": "9.3.2",
+     "cest": "1300302",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "13.003.02 3003 e 3004 Medicamentos similar - neutra, exceto para uso veterinário",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.4.0",
+     "cest": "1300400",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Outros tipos de medicamentos - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.4.1",
+     "cest": "1300401",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Outros tipos de medicamentos - negativa, exceto para uso veterinário",
+     "mva": "33"
+    },
+    {
+     "item": "9.4.2",
+     "cest": "1300402",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Outros tipos de medicamentos - neutra, exceto para uso veterinário",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.5.0",
+     "cest": "1300500",
+     "ncms": [
+      "30066",
+      "2937"
+     ],
+     "ncmText": "30066 2937",
+     "description": "Preparações químicas contraceptivas de referência, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.5.1",
+     "cest": "1300501",
+     "ncms": [
+      "30066",
+      "2937"
+     ],
+     "ncmText": "30066 2937",
+     "description": "Preparações químicas contraceptivas de referência, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - negativa.",
+     "mva": "33"
+    },
+    {
+     "item": "9.5.2",
+     "cest": "1300502",
+     "ncms": [
+      "30066",
+      "2937"
+     ],
+     "ncmText": "30066 2937",
+     "description": "Preparações químicas contraceptivas genérico, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.5.3",
+     "cest": "1300503",
+     "ncms": [
+      "30066",
+      "2937"
+     ],
+     "ncmText": "30066 2937",
+     "description": "Preparações químicas contraceptivas genérico, à base de hormônios, de outros produtos da posição 29.37 ou de",
+     "mva": "33"
+    },
+    {
+     "item": "9.5.4",
+     "cest": "1300504",
+     "ncms": [
+      "30066",
+      "2937"
+     ],
+     "ncmText": "30066 2937",
+     "description": "Preparações químicas contraceptivas similar, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.5.5",
+     "cest": "1300505",
+     "ncms": [
+      "30066",
+      "2937"
+     ],
+     "ncmText": "30066 2937",
+     "description": "Preparações químicas contraceptivas similar, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - negativa.",
+     "mva": "33"
+    },
+    {
+     "item": "9.6",
+     "cest": "1300600",
+     "ncms": [
+      "2936"
+     ],
+     "ncmText": "2936",
+     "description": "Provitaminas e vitaminas, naturais ou reproduzidas por síntese (incluídos os concentrados naturais), bem como os seus derivados utilizados principalmente como vitaminas, misturados ou não entre si, mesmo em quaisquer soluções",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.7.0",
+     "cest": "1300700",
+     "ncms": [
+      "30063"
+     ],
+     "ncmText": "30063",
+     "description": "Preparações opacificantes (contrastantes) para exames radiográficos e reagentes de diagnóstico concebidos para serem administrados ao paciente - Lista Positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.7.1",
+     "cest": "1300701",
+     "ncms": [
+      "30063"
+     ],
+     "ncmText": "30063",
+     "description": "Preparações opacificantes (contrastantes) para exames radiográficos e reagentes de diagnóstico concebidos para serem administrados ao paciente - Lista Negativa",
+     "mva": "33"
+    },
+    {
+     "item": "9.8.0",
+     "cest": "1300800",
+     "ncms": [
+      "3002"
+     ],
+     "ncmText": "3002",
+     "description": "Antissoro, outras frações do sangue, produtos imunológicos modificados, mesmo obtidos por via biotecnológica, exceto para uso veterinário - Lista Positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.8.1",
+     "cest": "1300801",
+     "ncms": [
+      "3002"
+     ],
+     "ncmText": "3002",
+     "description": "Antissoro, outras frações do sangue, produtos imunológicos modificados, mesmo obtidos por via biotecnológica, exceto para uso veterinário - Lista Negativa",
+     "mva": "33"
+    },
+    {
+     "item": "9.9.0",
+     "cest": "1300900",
+     "ncms": [
+      "3002"
+     ],
+     "ncmText": "3002",
+     "description": "Vacinas, exceto para uso veterinário - Lista Positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.9.1",
+     "cest": "1300901",
+     "ncms": [
+      "3002"
+     ],
+     "ncmText": "3002",
+     "description": "Vacinas, exceto para uso veterinário - Lista Negativa",
+     "mva": "33"
+    },
+    {
+     "item": "9.10.0",
+     "cest": "1301000",
+     "ncms": [
+      "3005101"
+     ],
+     "ncmText": "3005101",
+     "description": "Curativos (pensos) adesivos e outros artigos com uma camada adesiva, impregnados ou recobertos de substâncias farmacêuticas - Lista Positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.10.1",
+     "cest": "1301001",
+     "ncms": [
+      "3005101"
+     ],
+     "ncmText": "3005101",
+     "description": "Curativos (pensos) adesivos e outros artigos com uma camada adesiva, impregnados ou recobertos de substâncias farmacêuticas - Lista Negativa",
+     "mva": "33"
+    },
+    {
+     "item": "9.11",
+     "cest": "1301100",
+     "ncms": [
+      "3005"
+     ],
+     "ncmText": "3005",
+     "description": "Algodão, atadura, esparadrapo, gazes, pensos, sinapismos, e outros, acondicionados para venda a retalho para usos medicinais, cirúrgicos ou dentários, não impregnados ou recobertos de substâncias farmacêuticas - Lista Neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.12",
+     "cest": "1301200",
+     "ncms": [
+      "401512",
+      "401519"
+     ],
+     "ncmText": "401512 401519",
+     "description": "Luvas cirúrgicas e luvas de procedimento - neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.13",
+     "cest": "1301300",
+     "ncms": [
+      "40141"
+     ],
+     "ncmText": "40141",
+     "description": "Preservativo - neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.14",
+     "cest": "1301400",
+     "ncms": [
+      "901831"
+     ],
+     "ncmText": "901831",
+     "description": "Seringas, mesmo com agulhas - neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.15",
+     "cest": "1301500",
+     "ncms": [
+      "9018321"
+     ],
+     "ncmText": "9018321",
+     "description": "Agulhas para seringas - neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "9.16",
+     "cest": "1301600",
+     "ncms": [
+      "3926909",
+      "90189099"
+     ],
+     "ncmText": "3926909 90189099",
+     "description": "Contraceptivos (dispositivos intrauterinos - DIU) - neutra",
+     "mva": "41.38"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "10",
+   "segmentName": "Pneumáticos, câmaras de ar e protetores de borracha",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "10.1",
+     "cest": "1600100",
+     "ncms": [
+      "4011"
+     ],
+     "ncmText": "4011",
+     "description": "Pneus novos, dos tipos utilizados em automóveis de passageiros (incluídos os veículos de uso misto - camionetas e os automóveis de corrida",
+     "mva": "42"
+    },
+    {
+     "item": "10.2",
+     "cest": "1600200",
+     "ncms": [
+      "4011"
+     ],
+     "ncmText": "4011",
+     "description": "Pneus novos, dos tipos utilizados em caminhões (inclusive para os fora-de-estrada), ônibus, aviões, máquinas de terraplenagem, de construção e conservação de estradas, máquinas e tratores agrícolas, pá-carregadeira",
+     "mva": "32"
+    },
+    {
+     "item": "10.3",
+     "cest": "1600300",
+     "ncms": [
+      "4011"
+     ],
+     "ncmText": "4011",
+     "description": "Pneus novos para motocicletas",
+     "mva": "60"
+    },
+    {
+     "item": "10.4",
+     "cest": "1600400",
+     "ncms": [
+      "4011"
+     ],
+     "ncmText": "4011",
+     "description": "Outros tipos de pneus novos, exceto os itens classificados no CEST 16.005.00",
+     "mva": "45"
+    },
+    {
+     "item": "10.5",
+     "cest": "1600500",
+     "ncms": [
+      "40115"
+     ],
+     "ncmText": "40115",
+     "description": "Pneus novos de borracha dos tipos utilizados em bicicletas",
+     "mva": "64.67"
+    },
+    {
+     "item": "10.6.0",
+     "cest": "1600700",
+     "ncms": [
+      "40129"
+     ],
+     "ncmText": "40129",
+     "description": "Protetores de borracha, exceto os itens classificados no CEST 16.007.01",
+     "mva": "45"
+    },
+    {
+     "item": "10.6.1",
+     "cest": "1600701",
+     "ncms": [
+      "40129"
+     ],
+     "ncmText": "40129",
+     "description": "Protetores de borracha para bicicletas",
+     "mva": "45"
+    },
+    {
+     "item": "10.7",
+     "cest": "1600800",
+     "ncms": [
+      "4013"
+     ],
+     "ncmText": "4013",
+     "description": "Câmaras de ar de borracha, exceto os itens classificados no CEST 16.009.00",
+     "mva": "45"
+    },
+    {
+     "item": "10.8",
+     "cest": "1600900",
+     "ncms": [
+      "40132"
+     ],
+     "ncmText": "40132",
+     "description": "Câmaras de ar de borracha dos tipos utilizados em bicicletas",
+     "mva": "64.67"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "11",
+   "segmentName": "Produtos alimentícios",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "11.1/1",
+     "cest": "1704400",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/2",
+     "cest": "1704427",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/3",
+     "cest": "1704401",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/4",
+     "cest": "1704402",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/5",
+     "cest": "1704403",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/6",
+     "cest": "1704404",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/7",
+     "cest": "1704405",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/8",
+     "cest": "1704406",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/9",
+     "cest": "1704407",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/10",
+     "cest": "1704408",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/11",
+     "cest": "1704409",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/12",
+     "cest": "1704410",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/13",
+     "cest": "1704411",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/14",
+     "cest": "1704412",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/15",
+     "cest": "1704413",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/16",
+     "cest": "1704414",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/17",
+     "cest": "1704415",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/18",
+     "cest": "1704416",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/19",
+     "cest": "1704417",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/20",
+     "cest": "1704418",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/21",
+     "cest": "1704419",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/22",
+     "cest": "1704420",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/23",
+     "cest": "1704421",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/24",
+     "cest": "1704422",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/25",
+     "cest": "1704423",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/26",
+     "cest": "1704424",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/27",
+     "cest": "1704425",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.1/28",
+     "cest": "1704426",
+     "ncms": [
+      "1101001"
+     ],
+     "ncmText": "1101001",
+     "description": "Farinha de trigo, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.2",
+     "cest": "1704500",
+     "ncms": [
+      "1101002"
+     ],
+     "ncmText": "1101002",
+     "description": "Farinha de mistura de trigo com centeio (méteil)",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.3/1",
+     "cest": "1704605",
+     "ncms": [
+      "19012",
+      "1901909"
+     ],
+     "ncmText": "19012 1901909",
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "102.0"
+    },
+    {
+     "item": "11.3/2",
+     "cest": "1704609",
+     "ncms": [
+      "19012",
+      "1901909"
+     ],
+     "ncmText": "19012 1901909",
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "102.0"
+    },
+    {
+     "item": "11.3/3",
+     "cest": "1704606",
+     "ncms": [
+      "19012",
+      "1901909"
+     ],
+     "ncmText": "19012 1901909",
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "102.0"
+    },
+    {
+     "item": "11.3/4",
+     "cest": "1704607",
+     "ncms": [
+      "19012",
+      "1901909"
+     ],
+     "ncmText": "19012 1901909",
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "102.0"
+    },
+    {
+     "item": "11.3/5",
+     "cest": "1704608",
+     "ncms": [
+      "19012",
+      "1901909"
+     ],
+     "ncmText": "19012 1901909",
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "102.0"
+    },
+    {
+     "item": "11.4/1",
+     "cest": "1704610",
+     "ncms": [
+      "1901"
+     ],
+     "ncmText": "1901",
+     "description": "Misturas e preparações para pães com, no mínimo, 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.4/2",
+     "cest": "1704614",
+     "ncms": [
+      "1901"
+     ],
+     "ncmText": "1901",
+     "description": "Misturas e preparações para pães com, no mínimo, 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.4/3",
+     "cest": "1704611",
+     "ncms": [
+      "1901"
+     ],
+     "ncmText": "1901",
+     "description": "Misturas e preparações para pães com, no mínimo, 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.4/4",
+     "cest": "1704612",
+     "ncms": [
+      "1901"
+     ],
+     "ncmText": "1901",
+     "description": "Misturas e preparações para pães com, no mínimo, 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.4/5",
+     "cest": "1704613",
+     "ncms": [
+      "1901"
+     ],
+     "ncmText": "1901",
+     "description": "Misturas e preparações para pães com, no mínimo, 80% de farinha de trigo na sua composição final, em qualquer embalagem",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.4.1",
+     "cest": "1704616",
+     "ncms": [
+      "19012",
+      "1901909"
+     ],
+     "ncmText": "19012 1901909",
+     "description": "Misturas e preparações com, no mínimo, 80% de farinha de trigo na sua composição final, exceto as descritas nos CEST 17.046.10 a 17.046.15.",
+     "mva": "77.37"
+    },
+    {
+     "item": "11.6.0",
+     "cest": "1704701",
+     "ncms": [
+      "19023"
+     ],
+     "ncmText": "19023",
+     "description": "Massas alimentícias tipo instantânea, derivadas de farinha de trigo",
+     "mva": "20"
+    },
+    {
+     "item": "11.6.1",
+     "cest": "1704800",
+     "ncms": [
+      "1902"
+     ],
+     "ncmText": "1902",
+     "description": "Massas alimentícias, cozidas ou recheadas (de carne ou de outras substâncias) ou preparadas de outro modo, exceto as descritas nos CEST 17.047.00, 17.048.01 e 17.048.02",
+     "mva": "20"
+    },
+    {
+     "item": "11.6.2",
+     "cest": "1704802",
+     "ncms": [
+      "19022000"
+     ],
+     "ncmText": "19022000",
+     "description": "Massas alimentícias recheadas (mesmo cozidas ou preparadas de outro modo)",
+     "mva": "20"
+    },
+    {
+     "item": "11.7.2",
+     "cest": "1704902",
+     "ncms": [
+      "190211"
+     ],
+     "ncmText": "190211",
+     "description": "Massas alimentícias do tipo grano duro, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos",
+     "mva": "20"
+    },
+    {
+     "item": "11.7.3",
+     "cest": "1704903",
+     "ncms": [
+      "190219"
+     ],
+     "ncmText": "190219",
+     "description": "Outras massas alimentícias do tipo comum, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham ovos, derivadas de farinha de trigo",
+     "mva": "20"
+    },
+    {
+     "item": "11.7.4",
+     "cest": "1704904",
+     "ncms": [
+      "190219"
+     ],
+     "ncmText": "190219",
+     "description": "Outras massas alimentícias do tipo sêmola, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham",
+     "mva": "20"
+    },
+    {
+     "item": "11.7.5",
+     "cest": "1704905",
+     "ncms": [
+      "190219"
+     ],
+     "ncmText": "190219",
+     "description": "Outras massas alimentícias do tipo grano duro, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham ovos",
+     "mva": "20"
+    },
+    {
+     "item": "11.7.6",
+     "cest": "1704906",
+     "ncms": [
+      "190211"
+     ],
+     "ncmText": "190211",
+     "description": "Massas alimentícias do tipo comum, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos, derivadas de farinha de trigo",
+     "mva": "20"
+    },
+    {
+     "item": "11.7.7",
+     "cest": "1704907",
+     "ncms": [
+      "190211"
+     ],
+     "ncmText": "190211",
+     "description": "Massas alimentícias do tipo sêmola, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos, derivadas do trigo",
+     "mva": "20"
+    },
+    {
+     "item": "11.8",
+     "cest": "1705000",
+     "ncms": [
+      "19052"
+     ],
+     "ncmText": "19052",
+     "description": "Pães industrializados, inclusive de especiarias, exceto panetones e bolo de forma",
+     "mva": "20"
+    },
+    {
+     "item": "11.9",
+     "cest": "1705100",
+     "ncms": [
+      "1905209"
+     ],
+     "ncmText": "1905209",
+     "description": "Bolo de forma, inclusive de especiarias",
+     "mva": "30"
+    },
+    {
+     "item": "11.10",
+     "cest": "1705200",
+     "ncms": [
+      "1905201"
+     ],
+     "ncmText": "1905201",
+     "description": "Panetones",
+     "mva": "20"
+    },
+    {
+     "item": "11.16",
+     "cest": "1705900",
+     "ncms": [
+      "19054"
+     ],
+     "ncmText": "19054",
+     "description": "Torradas, pão torrado e produtos semelhantes torrados",
+     "mva": "30"
+    },
+    {
+     "item": "11.17",
+     "cest": "1706000",
+     "ncms": [
+      "1905901"
+     ],
+     "ncmText": "1905901",
+     "description": "Outros pães de forma",
+     "mva": "20"
+    },
+    {
+     "item": "11.18.0",
+     "cest": "1706200",
+     "ncms": [
+      "19059090"
+     ],
+     "ncmText": "19059090",
+     "description": "Outros pães, exceto o classificado no CEST 17.062.03",
+     "mva": "20"
+    },
+    {
+     "item": "11.18.1",
+     "cest": "1706201",
+     "ncms": [
+      "19059090"
+     ],
+     "ncmText": "19059090",
+     "description": "Outros bolos industrializados e produtos de panificação não especificados anteriormente, incluindo as pizzas; exceto os classificados nos CEST 17.062.02 e 17.062.03",
+     "mva": "30"
+    },
+    {
+     "item": "11.18.2",
+     "cest": "1706202",
+     "ncms": [
+      "1905902",
+      "1905909"
+     ],
+     "ncmText": "1905902 1905909",
+     "description": "Casquinhas para sorvete",
+     "mva": "30"
+    },
+    {
+     "item": "11.18.3",
+     "cest": "1706203",
+     "ncms": [
+      "1905909"
+     ],
+     "ncmText": "1905909",
+     "description": "Pão francês até 200g",
+     "mva": "20"
+    },
+    {
+     "item": "11.19",
+     "cest": "1706300",
+     "ncms": [
+      "19051"
+     ],
+     "ncmText": "19051",
+     "description": "Pão denominado knackebrot",
+     "mva": "20"
+    },
+    {
+     "item": "11.20",
+     "cest": "1706400",
+     "ncms": [
+      "19059"
+     ],
+     "ncmText": "19059",
+     "description": "Demais pães industrializados",
+     "mva": "20"
+    },
+    {
+     "item": "11.21",
+     "cest": "1708300",
+     "ncms": [
+      "021099",
+      "1502"
+     ],
+     "ncmText": "021099 1502",
+     "description": "Carne de gado bovino, ovino e bufalino e produtos comestíveis resultantes da matança desse gado submetidos à salga, secagem ou desidratação (exceto charque e jerked beef)",
+     "mva": "25"
+    },
+    {
+     "item": "11.22",
+     "cest": "1708400",
+     "ncms": [
+      "0204",
+      "0206"
+     ],
+     "ncmText": "0204 0206",
+     "description": "Carne de gado bovino, ovino e bufalino e demais produtos comestíveis resultantes da matança desse gado frescos, refrigerados ou congelados",
+     "mva": "25"
+    },
+    {
+     "item": "11.23",
+     "cest": "1708500",
+     "ncms": [
+      "0204"
+     ],
+     "ncmText": "0204",
+     "description": "Carnes de animais das espécies caprina, frescas, refrigeradas ou congeladas",
+     "mva": "25"
+    },
+    {
+     "item": "11.24",
+     "cest": "1708600",
+     "ncms": [
+      "15021019",
+      "15029"
+     ],
+     "ncmText": "15021019 15029",
+     "description": "Carnes e demais produtos comestíveis frescos, resfriados, congelados, salgados ou salmourados resultantes do abate de caprinos",
+     "mva": "25"
+    },
+    {
+     "item": "11.25.0",
+     "cest": "1708700",
+     "ncms": [
+      "021099",
+      "1501"
+     ],
+     "ncmText": "021099 1501",
+     "description": "Carnes e demais produtos comestíveis frescos, resfriados, congelados, salgados, em salmoura, simplesmente temperados, secos ou defumados, resultantes do abate de aves, exceto os descritos no CEST 17.087.02",
+     "mva": "25"
+    },
+    {
+     "item": "11.25.1",
+     "cest": "1708701",
+     "ncms": [
+      "021099",
+      "1501"
+     ],
+     "ncmText": "021099 1501",
+     "description": "Carnes e demais produtos comestíveis frescos, resfriados, congelados, salgados, em salmoura, simplesmente temperados, secos ou defumados, resultantes do abate de suínos",
+     "mva": "25"
+    },
+    {
+     "item": "11.25.2",
+     "cest": "1708702",
+     "ncms": [
+      "02071",
+      "02072"
+     ],
+     "ncmText": "02071 02072",
+     "description": "Carnes de aves inteiras com peso unitário superior a 3Kg, temperadas",
+     "mva": "25"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "15",
+   "segmentName": "Sorvetes",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "15.1",
+     "cest": "2300100",
+     "ncms": [
+      "2105"
+     ],
+     "ncmText": "2105",
+     "description": "Sorvetes de qualquer espécie",
+     "mva": "70"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "16",
+   "segmentName": "Tintas e vernizes",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "16.1",
+     "cest": "2400100",
+     "ncms": [
+      "3209",
+      "3210"
+     ],
+     "ncmText": "3209 3210",
+     "description": "Tintas, vernizes",
+     "mva": "35"
+    },
+    {
+     "item": "16.2",
+     "cest": "2400200",
+     "ncms": [
+      "320417",
+      "3206",
+      "32061110"
+     ],
+     "ncmText": "320417 3206 32061110",
+     "description": "Xadrez e pós assemelhados, em embalagem de conteúdo inferior ou igual a 1 kg, exceto pigmentos à base de dióxido de titânio classificados no código NCM 3206.11.10",
+     "mva": "35"
+    },
+    {
+     "item": "16.2.1",
+     "cest": "2400201",
+     "ncms": [
+      "320417",
+      "3206",
+      "32061110"
+     ],
+     "ncmText": "320417 3206 32061110",
+     "description": "Xadrez e pós assemelhados, em embalagem de conteúdo superior a 1 kg, exceto pigmentos à base de dióxido de titânio classificados no código NCM 3206.11.10",
+     "mva": "35"
+    },
+    {
+     "item": "16.3",
+     "cest": "2400300",
+     "ncms": [
+      "3206",
+      "3212"
+     ],
+     "ncmText": "3206 3212",
+     "description": "Corantes para aplicação em bases, tintas e vernizes",
+     "mva": "50"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "17",
+   "segmentName": "Veículos automotores",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "17.1",
+     "cest": "2500100",
+     "ncms": [
+      "87021"
+     ],
+     "ncmText": "87021",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, unicamente com motor de pistão, de ignição por compressão (diesel ou semidiesel), com volume interno de habitáculo, destinado a passageiros e motorista,",
+     "mva": "30"
+    },
+    {
+     "item": "17.2",
+     "cest": "2500200",
+     "ncms": [
+      "8702409"
+     ],
+     "ncmText": "8702409",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, unicamente com motor elétrico para propulsão, com volume interno de habitáculo, destinado a",
+     "mva": "30"
+    },
+    {
+     "item": "17.3",
+     "cest": "2500300",
+     "ncms": [
+      "870321",
+      "1000"
+     ],
+     "ncmText": "870321 1000",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada não superior a 1000 cm³",
+     "mva": "30"
+    },
+    {
+     "item": "17.4",
+     "cest": "2500400",
+     "ncms": [
+      "8703221",
+      "1000",
+      "1500"
+     ],
+     "ncmText": "8703221 1000 1500",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1000 cm³, mas não superior a 1500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o",
+     "mva": "30"
+    },
+    {
+     "item": "17.5",
+     "cest": "2500500",
+     "ncms": [
+      "8703229",
+      "1000",
+      "1500"
+     ],
+     "ncmText": "8703229 1000 1500",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1000 cm³, mas não superior a 1500 cm³, exceto carro celular",
+     "mva": "30"
+    },
+    {
+     "item": "17.6",
+     "cest": "2500600",
+     "ncms": [
+      "8703231",
+      "1500",
+      "3000"
+     ],
+     "ncmText": "8703231 1500 3000",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1500 cm³, mas não superior a 3000 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o",
+     "mva": "30"
+    },
+    {
+     "item": "17.7",
+     "cest": "2500700",
+     "ncms": [
+      "8703239",
+      "1500",
+      "3000"
+     ],
+     "ncmText": "8703239 1500 3000",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1500 cm³, mas não superior a 3000 cm³, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "17.8",
+     "cest": "2500800",
+     "ncms": [
+      "8703241",
+      "3000"
+     ],
+     "ncmText": "8703241 3000",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 3000 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular,",
+     "mva": "30"
+    },
+    {
+     "item": "17.9",
+     "cest": "2500900",
+     "ncms": [
+      "8703249",
+      "3000"
+     ],
+     "ncmText": "8703249 3000",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 3000 cm³, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "17.10",
+     "cest": "2501000",
+     "ncms": [
+      "8703321",
+      "1500",
+      "2500"
+     ],
+     "ncmText": "8703321 1500 2500",
+     "description": "Automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 1500 cm³, mas não superior a 2500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto ambulância, carro",
+     "mva": "30"
+    },
+    {
+     "item": "17.11",
+     "cest": "2501100",
+     "ncms": [
+      "8703329",
+      "1500",
+      "2500"
+     ],
+     "ncmText": "8703329 1500 2500",
+     "description": "Outros automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 1500 cm³, mas não superior a 2500 cm³, exceto ambulância, carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "17.12",
+     "cest": "2501200",
+     "ncms": [
+      "8703331",
+      "2500"
+     ],
+     "ncmText": "8703331 2500",
+     "description": "Automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 2500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "17.13",
+     "cest": "2501300",
+     "ncms": [
+      "8703339",
+      "2500"
+     ],
+     "ncmText": "8703339 2500",
+     "description": "Outros automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 2500 cm³, exceto carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "17.14",
+     "cest": "2501400",
+     "ncms": [
+      "8704211"
+     ],
+     "ncmText": "8704211",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, chassis com motor diesel ou semidiesel e cabina, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.15",
+     "cest": "2501500",
+     "ncms": [
+      "8704212"
+     ],
+     "ncmText": "8704212",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor diesel ou semidiesel, com caixa basculante, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.16",
+     "cest": "2501600",
+     "ncms": [
+      "8704213"
+     ],
+     "ncmText": "8704213",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, frigoríficos ou isotérmicos, com motor diesel ou semidiesel, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.17",
+     "cest": "2501700",
+     "ncms": [
+      "8704219"
+     ],
+     "ncmText": "8704219",
+     "description": "Outros veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor",
+     "mva": "30"
+    },
+    {
+     "item": "17.18",
+     "cest": "2501800",
+     "ncms": [
+      "8704311"
+     ],
+     "ncmText": "8704311",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor a explosão, chassis e cabina, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.19",
+     "cest": "2501900",
+     "ncms": [
+      "8704312"
+     ],
+     "ncmText": "8704312",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor explosão com caixa basculante, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.20",
+     "cest": "2502000",
+     "ncms": [
+      "8704313"
+     ],
+     "ncmText": "8704313",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, frigoríficos ou isotérmicos com motor explosão, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.21",
+     "cest": "2502100",
+     "ncms": [
+      "8704319"
+     ],
+     "ncmText": "8704319",
+     "description": "Outros veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor a explosão, exceto carro-forte para transporte de valores e caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.22",
+     "cest": "2502200",
+     "ncms": [
+      "87022"
+     ],
+     "ncmText": "87022",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com motor de pistão, de ignição por compressão (diesel ou semidiesel) e um motor elétrico, com volume interno de habitáculo, destinado a passageiros e",
+     "mva": "30"
+    },
+    {
+     "item": "17.23",
+     "cest": "2502300",
+     "ncms": [
+      "87023"
+     ],
+     "ncmText": "87023",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com motor de pistão alternativo, de ignição por centelha (faísca) e um motor elétrico, com volume interno de habitáculo, destinado a passageiros e motorista,",
+     "mva": "30"
+    },
+    {
+     "item": "17.24",
+     "cest": "2502400",
+     "ncms": [
+      "87029"
+     ],
+     "ncmText": "87029",
+     "description": "Outros veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas",
+     "mva": "30"
+    },
+    {
+     "item": "17.25",
+     "cest": "2502500",
+     "ncms": [
+      "87034"
+     ],
+     "ncmText": "87034",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão alternativo de ignição por centelha (faísca*) e um motor elétrico, exceto os suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, o carro",
+     "mva": "30"
+    },
+    {
+     "item": "17.26",
+     "cest": "2502600",
+     "ncms": [
+      "87035"
+     ],
+     "ncmText": "87035",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão por compressão (diesel ou semidiesel) e um motor elétrico, exceto os suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro",
+     "mva": "30"
+    },
+    {
+     "item": "17.27",
+     "cest": "2502700",
+     "ncms": [
+      "87036"
+     ],
+     "ncmText": "87036",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão alternativo de ignição por centelha (faísca*) e um motor elétrico, suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro",
+     "mva": "30"
+    },
+    {
+     "item": "17.28",
+     "cest": "2502800",
+     "ncms": [
+      "87037"
+     ],
+     "ncmText": "87037",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão por compressão (diesel ou semidiesel) e um motor elétrico, suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o",
+     "mva": "30"
+    },
+    {
+     "item": "17.29",
+     "cest": "2502900",
+     "ncms": [
+      "87038000"
+     ],
+     "ncmText": "87038000",
+     "description": "Outros veículos, equipados unicamente com motor elétrico para propulsão",
+     "mva": "30"
+    },
+    {
+     "item": "17.30",
+     "cest": "2503000",
+     "ncms": [
+      "870441"
+     ],
+     "ncmText": "870441",
+     "description": "Outros veículos para transportes de mercadorias equipados para propulsão, simultaneamente, com motor de pistão de ignição por compressão (diesel ou semidiesel) e motor elétrico de peso em carga máxima (bruto) não superior a 5 toneladas, exceto",
+     "mva": "30"
+    },
+    {
+     "item": "17.31",
+     "cest": "2503100",
+     "ncms": [
+      "870451"
+     ],
+     "ncmText": "870451",
+     "description": "Outros veículos para transportes de mercadorias equipados para propulsão, simultaneamente, com motor de pistão de ignição por centelha (faísca) e motor elétrico de peso em carga máxima (bruto) não superior a 5 toneladas, exceto caminhão de peso em",
+     "mva": "30"
+    },
+    {
+     "item": "17.32",
+     "cest": "2503200",
+     "ncms": [
+      "87046000"
+     ],
+     "ncmText": "87046000",
+     "description": "Outros veículos para transporte de mercadorias, unicamente",
+     "mva": "30"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "segment": "18",
+   "segmentName": "Veículos de duas e três rodas motorizados",
+   "act": "RICMS/BA, Anexo 1 (redação vigente em 2026)",
+   "source": "stBaAnexo1",
+   "url": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+   "validFrom": "2026-01-01",
+   "validTo": "2026-12-31",
+   "note": "MVA original das operações internas. Nas aquisições de outra UF, a tabela traz a MVA ajustada para 4%, 7% e 12%, e alguns itens seguem o acordo interestadual citado. Vale a redação vigente no ano.",
+   "items": [
+    {
+     "item": "18.1",
+     "cest": "2600100",
+     "ncms": [
+      "8711"
+     ],
+     "ncmText": "8711",
+     "description": "Motocicletas (incluídos os ciclomotores) e outros ciclos equipados com motor auxiliar, mesmo com carro lateral, exceto os classificados no CEST 26.001.01; carros laterais.",
+     "mva": "34"
+    },
+    {
+     "item": "18.2",
+     "cest": "2600100",
+     "ncms": [
+      "8711"
+     ],
+     "ncmText": "8711",
+     "description": "Bicicletas e outros ciclos (incluídos os triciclos) com propulsão de motor elétrico auxiliar assistido pela força humana.",
+     "mva": "34"
     }
    ]
   }

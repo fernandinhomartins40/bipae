@@ -179,7 +179,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [ ] F3-26.c.RJ · Rio de Janeiro: o site da SEFAZ-RJ bloqueia o nosso IP e o da VPS; tentar baixar pela CI do GitHub ou outra origem
     - [x] F3-26.c.RS · Rio Grande do Sul: Apêndice II do RICMS/RS, Seções II e III (194 itens com MVA da operação interna, 18 segmentos na lista); monitor semanal
     - [x] F3-26.c.SC · Santa Catarina: Anexo 1-A do RICMS/SC (80 linhas de MVA original em bebidas; 16 seções que saíram da ST, com data e decreto); monitor semanal
-    - [ ] F3-26.c.BA · Bahia
+    - [x] F3-26.c.BA · Bahia: Anexo 1 do RICMS/BA vigente em 2026 (282 linhas de MVA original, faixas de CEST expandidas); monitor semanal
   - [ ] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
 - [ ] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25

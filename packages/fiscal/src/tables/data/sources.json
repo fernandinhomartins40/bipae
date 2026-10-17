@@ -342,5 +342,14 @@
   "publishedAt": "2026-06-25",
   "downloadedAt": "2026-10-17",
   "sha256": "c71b6922683eb84e087f43be84f151e1a8309c156a409846778d2ed27480ac34"
+ },
+ "stBaAnexo1": {
+  "file": "SEFAZ-BA_RICMS_Anexo_1_vigente_2026_2026-10-17.pdf",
+  "title": "RICMS/BA (Decreto 13.780/2012), Anexo 1, redação vigente no ano de 2026: mercadorias sujeitas à substituição ou antecipação tributária e MVA",
+  "publisher": "Secretaria da Fazenda do Estado da Bahia (DITRI)",
+  "page": "https://mbusca.sefaz.ba.gov.br/DITRI/normas_complementares/decretos/decreto_2012_13780_ricms_anexo_1_vigente_2026.pdf",
+  "publishedAt": "2026-09-30",
+  "downloadedAt": "2026-10-17",
+  "sha256": "46768ebfef042531bf7e25d5bed460e64c8001a901360edf7e6e6b9171ca65b3"
  }
 }

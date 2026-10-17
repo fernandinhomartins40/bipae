@@ -302,3 +302,29 @@ describe('Santa Catarina: Anexo 1-A do RICMS/SC (F3-26.c.SC)', () => {
     expect(cerveja.some((s) => s.inSt)).toBe(true);
   });
 });
+
+describe('Bahia: Anexo 1 do RICMS/BA, redação vigente em 2026 (F3-26.c.BA)', () => {
+  const ba = ST_REFERENCES.filter((r) => r.uf === 'BA');
+
+  it('itens com CEST, NCM e a MVA original das operações internas, só em 2026', () => {
+    expect(ST_REFERENCE_UFS).toContain('BA');
+    const itens = ba.flatMap((r) => r.items);
+    expect(itens.length).toBeGreaterThan(250);
+    for (const item of itens) {
+      expect(item.mva, item.item).toMatch(/^\d{1,3}(\.\d{1,2})?$/);
+      expect(item.ncms.length, item.item).toBeGreaterThan(0);
+    }
+    for (const r of ba) expect(r).toMatchObject({ validFrom: '2026-01-01', validTo: '2026-12-31' });
+    expect(stReferencesFor('BA', '22030000', '2027-01-15')).toEqual([]);
+  });
+
+  it('farinha de trigo: as faixas de CEST (17.044.00 a 17.044.27) entram inteiras, com 77,37%', () => {
+    const farinha = ba.flatMap((r) => r.items).filter((i) => i.cest.startsWith('17044'));
+    expect(farinha.length).toBeGreaterThan(10);
+    expect(new Set(farinha.map((i) => i.mva))).toEqual(new Set(['77.37']));
+  });
+
+  it('autopeças remetem ao Convênio ICMS 142/18 inteiro: as exceções da nota não viram item', () => {
+    expect(ba.find((r) => r.segment === '1')).toBeUndefined();
+  });
+});

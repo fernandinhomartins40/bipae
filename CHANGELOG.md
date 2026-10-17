@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.c.BA Substituição tributária na Bahia] — 17/10/2026
+
+### Adicionado
+- **Bahia na regra de ICMS:** 282 linhas com a MVA original das operações internas, do Anexo 1 do RICMS/BA vigente em 2026. Inclui bebidas, construção, medicamentos, alimentícios, pneus e veículos.
+  - **Origem:** é gerado do PDF oficial da SEFAZ-BA.
+  - **Faixas de CEST:** entram inteiras.
+- **Monitor semanal das fontes:** passou a conferir o PDF da Bahia.
+
 ## [F3-26.c.SC Substituição tributária em Santa Catarina] — 17/10/2026
 
 ### Adicionado

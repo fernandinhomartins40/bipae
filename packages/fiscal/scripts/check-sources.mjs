@@ -21,6 +21,7 @@ import { pdfLines } from './pdf-text.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII } from './st-rs.mjs';
 import { parseScAnexo1A } from './st-sc.mjs';
+import { parseBaAnexo1 } from './st-ba.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -398,6 +399,39 @@ async function checkSc() {
   };
 }
 
+/** Bahia: o PDF do Anexo 1 de hoje, lido como na geração. */
+async function checkBa() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = async (bytes) =>
+    parseBaAnexo1(await pdfLines(bytes), known).flatMap((s) =>
+      s.items.map((i) => [s.segment, i.item, i.cests.join(' '), i.ncms.join(' '), i.mva ?? '']),
+    );
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.stBaAnexo1.file)));
+  const title = 'ST na Bahia (RICMS/BA, Anexo 1)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.stBaAnexo1.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stBaAnexo1.page,
+      status: 'mudou',
+      details: [`o PDF novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stBaAnexo1.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -424,6 +458,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Minas Gerais', manifest.stMgAnexoXV6.page, checkMg),
     await safe('ST no Rio Grande do Sul', manifest.stRsRicms.page, checkRs),
     await safe('ST em Santa Catarina', manifest.stScAnexo1A.page, checkSc),
+    await safe('ST na Bahia', manifest.stBaAnexo1.page, checkBa),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),
