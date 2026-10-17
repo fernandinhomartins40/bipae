@@ -181,6 +181,9 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-26.c.SC · Santa Catarina: Anexo 1-A do RICMS/SC (80 linhas de MVA original em bebidas; 16 seções que saíram da ST, com data e decreto); monitor semanal
     - [x] F3-26.c.BA · Bahia: Anexo 1 do RICMS/BA vigente em 2026 (282 linhas de MVA original, faixas de CEST expandidas); monitor semanal
   - [~] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
+    - [ ] F3-26.d.DF · Distrito Federal: Caderno I do Anexo IV do RICMS/DF; achar o endereço direto do texto compilado no SINJ-DF
+    - [ ] F3-26.d.CE · Ceará: Anexo IX do RICMS/CE (Decreto 33.327/2019); achar o texto consolidado oficial
+    - [ ] F3-26.d.PE · Pernambuco: regime em transição (Decreto 42.563/2015 revogado pelo 61.284/2026 a partir de 01/01/2027); montar com o RICMS/PE consolidado novo
     - [x] F3-26.d.ES · Espírito Santo: Portaria 16-R/2019 atualizada até a 81-R/2026 (352 linhas, redação verde de fora, revogados com data); monitor semanal
     - [x] F3-26.d.GO · Goiás: Apêndice II do Anexo VIII do RCTE/GO (213 linhas, industrial e atacadista separados; autopeças, construção, elétricos e ração fora da ST desde 01/03/2018); monitor semanal
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
