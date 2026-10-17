@@ -25,6 +25,7 @@ import { pdfItems, pdfLines } from './pdf-text.mjs';
 import { parseCbenefPr } from './cbenef-pr.mjs';
 import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
+import { parseCbenefGo } from './cbenef-go.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
@@ -707,6 +708,15 @@ tables['cbenef.json'] = {
       source: 'cbenefRs',
       url: manifest.cbenefRs.page,
       codes: parseCbenefRs(readXlsx(join(sourcesDir, manifest.cbenefRs.file))),
+    },
+    {
+      uf: 'GO',
+      act: 'Instrução Normativa 1.518/2022-GSE (GO), Anexo Único',
+      source: 'cbenefGo',
+      url: manifest.cbenefGo.page,
+      codes: parseCbenefGo(
+        gunzipSync(readFileSync(join(sourcesDir, manifest.cbenefGo.file))).toString('latin1'),
+      ),
     },
   ],
 };

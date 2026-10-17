@@ -17077,6 +17077,3260 @@
      "description": "OUTRAS - Utilizar apenas quando não houver código correspondente disponibilizado na Tabela 5.2 do Sped Fiscal (Anexo V.B - OUTRAS)"
     }
    ]
+  },
+  {
+   "uf": "GO",
+   "act": "Instrução Normativa 1.518/2022-GSE (GO), Anexo Único",
+   "source": "cbenefGo",
+   "url": "https://appasp.economia.go.gov.br/Legislacao/arquivos/Secretario/IN/IN_1518_2022.htm",
+   "codes": [
+    {
+     "from": null,
+     "code": "GO800001",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação que destine ao exterior mercadoria, inclusive produto primário e produto industrializado semielaborado (RCTE, Art 79, Inciso I, alínea \"a\")"
+    },
+    {
+     "from": null,
+     "code": "GO800002",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação que destine a outro Estado petróleo, inclusive lubrificante, combustível líquido e gasoso dele derivados, e energia elétrica, quando destinados à comercialização ou à industrialização (RCTE, Art 79, Inciso I, alínea \"b\")"
+    },
+    {
+     "from": null,
+     "code": "GO800003",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação com ouro, quando definido em lei como ativo financeiro ou instrumento cambial (RCTE, Art 79, Inciso I, alínea \"c\")"
+    },
+    {
+     "from": null,
+     "code": "GO800004",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação com livro, jornal e periódico e o papel destinado a sua impressão (RCTE, Art 79, Inciso I, alínea \"d\")"
+    },
+    {
+     "from": null,
+     "code": "GO800005",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operações relativas a mercadorias sujeita ao ISS, de competência dos Municípios (RCTE, Art 79, Inciso I, alínea \"e\")"
+    },
+    {
+     "from": null,
+     "code": "GO800006",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação que destine mercadoria a sucessor legal, quando em decorrência desta não haja saída física da mercadoria (RCTE, Art 79, Inciso I, alínea \"f\")"
+    },
+    {
+     "from": null,
+     "code": "GO800007",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação decorrente de alienação fiduciária em garantia, inclusive a operação efetuada pelo credor em decorrência do inadimplemento do devedor (RCTE, Art 79, Inciso I, alínea \"g\")"
+    },
+    {
+     "from": null,
+     "code": "GO800008",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de arrendamento mercantil, não compreendida a venda do bem arrendado ao arrendatário (RCTE, Art 79, Inciso I, alínea \"h\")"
+    },
+    {
+     "from": null,
+     "code": "GO800009",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de qualquer natureza de que decorra a transferência de bem móvel salvado de sinistro para companhia seguradora (RCTE, Art 79, Inciso I, alínea \"i\")"
+    },
+    {
+     "from": null,
+     "code": "GO800010",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação que destine mercadoria a depósito fechado do próprio contribuinte, localizado no território deste Estado, e o seu retorno ao estabelecimento depositante (RCTE, Art 79, Inciso I, alínea \"j\")"
+    },
+    {
+     "from": null,
+     "code": "GO800011",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação que destine mercadoria a armazém geral, situado neste Estado, para depósito em nome do remetente e o seu retorno ao estabelecimento depositante (RCTE, Art 79, Inciso I, alínea \"l\")"
+    },
+    {
+     "from": null,
+     "code": "GO800012",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída decorrente de alienação de mercadoria integrada ao ativo imobilizado do estabelecimento (RCTE, Art 79, Inciso I, alínea \"m\")"
+    },
+    {
+     "from": null,
+     "code": "GO800013",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída de bem em comodato (RCTE, Art 79, Inciso I, alínea \"n\")"
+    },
+    {
+     "from": null,
+     "code": "GO800014",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação com obra de arte, quando comercializada pelo próprio autor ou na primeira venda por intermediário especializado (RCTE, Art 79, Inciso I, alínea \"o\")"
+    },
+    {
+     "from": null,
+     "code": "GO800015",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída de mercadoria em razão de mudança de endereço do estabelecimento, de um para outro local no território do Estado (RCTE, Art 79, Inciso I, alínea \"p\")"
+    },
+    {
+     "from": null,
+     "code": "GO800016",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída interna de mercadoria destinada à industrialização ou outro tratamento (RCTE, Art 79, Inciso I, alínea \"q\")"
+    },
+    {
+     "from": null,
+     "code": "GO800017",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída interna de mercadoria ou bem, que constitua mera movimentação física, desde que retorne ao remetente (RCTE, Art 79, Inciso I, alínea \"s\")"
+    },
+    {
+     "from": null,
+     "code": "GO800018",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída interna de produto agropecuário em estado natural, para fim de beneficiamento ou outro tratamento, desde que deva retornar ao estabelecimento de origem (RCTE, Art 79, Inciso I, alínea \"t\")"
+    },
+    {
+     "from": null,
+     "code": "GO800019",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída interna de mercadoria coletada em campanha de assistência social, obedecidas as condições estabelecidas em ato do Secretário de Estado da Economia (RCTE, Art 79, Inciso I, alínea \"u\")"
+    },
+    {
+     "from": null,
+     "code": "GO800020",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída interna, com os produtos de produção própria do estabelecimento remetente para outro estabelecimento pertencente à mesma pessoa natural ou jurídica (RCTE, Art 79, Inciso I, alínea \"v\")"
+    },
+    {
+     "from": null,
+     "code": "GO800021",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída de mercadoria remetida para demonstração, inclusive com destino a consumidor ou usuário final (RCTE, Art 79, Inciso I, alínea \"x\")"
+    },
+    {
+     "from": null,
+     "code": "GO800022",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Operação de saída de mercadoria remetida para mostruário ou treinamento (RCTE, Art 79, Inciso I, alínea \"z\")"
+    },
+    {
+     "from": null,
+     "code": "GO800023",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Prestação de serviço de transporte vinculada à operação de exportação de mercadoria para o exterior (RCTE, Art 79, Inciso II, alínea \"a\")"
+    },
+    {
+     "from": null,
+     "code": "GO800024",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Prestação de serviço de transporte relativo à primeira remessa da mercadoria diretamente do produtor agropecuário destinada a depósito fechado ou armazém geral, situado neste Estado (RCTE, Art 79, Inciso II, alínea \"b\")"
+    },
+    {
+     "from": null,
+     "code": "GO800025",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Prestação de serviço de comunicação destinado ao exterior (RCTE, Art 79, Inciso III)"
+    },
+    {
+     "from": null,
+     "code": "GO800026",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - saída interna ou interestadual de bem ou mercadoria de estabelecimento para outro de mesma titularidade (CTE, Art. 13, § 3º)"
+    },
+    {
+     "from": null,
+     "code": "GO809000",
+     "csts": [
+      "30",
+      "41"
+     ],
+     "to": null,
+     "description": "NÃO INCIDÊNCIA DO ICMS - Reconhecida judicialmente (RCTE, Art 79)"
+    },
+    {
+     "from": null,
+     "code": "GO811001",
+     "csts": [
+      "30",
+      "40",
+      "41",
+      "50"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de mercadoria com destino a exposição ou feira de amostra (RCTE, Anexo IX, Art 6º, Inciso I)"
+    },
+    {
+     "from": null,
+     "code": "GO811002",
+     "csts": [
+      "30",
+      "40",
+      "41",
+      "50"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de mercadoria promovida por órgãos da Administração Pública, empresa pública, sociedade de economia mista e empresa concessionária de serviço público (RCTE, Anexo IX, Art 6º, Inciso II)"
+    },
+    {
+     "from": null,
+     "code": "GO811003",
+     "csts": [
+      "30",
+      "40",
+      "41",
+      "50"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interestadual de mercadoria remetida para conserto, reparo ou industrialização (RCTE, Anexo IX, Art 6º, Inciso IV)"
+    },
+    {
+     "from": null,
+     "code": "GO811004",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Fornecimento de refeição, sem finalidade lucrativa (RCTE, Anexo IX, Art 6º, Inciso V)"
+    },
+    {
+     "from": null,
+     "code": "GO811005",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de mercadoria decorrente de venda efetuada à empresa Itaipu Binacional (RCTE, Anexo IX, Art 6º, Inciso VI)"
+    },
+    {
+     "from": null,
+     "code": "GO811006",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produto industrializado de origem nacional, destinado à embarcação ou aeronave, de bandeira estrangeira (RCTE, Anexo IX, Art 6º, Inciso VII)"
+    },
+    {
+     "from": null,
+     "code": "GO811007",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de mercadoria e a respectiva prestação de serviço de transporte, realizadas em decorrência de doação a entidade governamental ou a entidade assistencial (RCTE, Anexo IX, Art 6º, Inciso VIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811008",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produto típico de artesanato, promovida pelo próprio artesão ou por entidade da qual faça parte (RCTE, Anexo IX, Art 6º, Inciso IX)"
+    },
+    {
+     "from": null,
+     "code": "GO811009",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produto farmacêutico entre órgãos da Administração Pública Federal, Estadual ou Municipal (RCTE, Anexo IX, Art 6º, Inciso X)"
+    },
+    {
+     "from": null,
+     "code": "GO811010",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de hortifrutícola, de pintos de um dia, de ovos, em estado natural e desde que não destinados à industrialização (RCTE, Anexo IX, Art 6º, Inciso XI)"
+    },
+    {
+     "from": null,
+     "code": "GO811011",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de embarcação construída no País e de peça, parte e componente, aplicados pela indústria naval (RCTE, Anexo IX, Art 6º, Inciso XII)"
+    },
+    {
+     "from": null,
+     "code": "GO811012",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de reprodutor e matriz de animais registrados destinados a estabelecimento agropecuário (RCTE, Anexo IX, Art 6º, Inciso XIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811013",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada de reprodutor e matriz dos animais mencionados no inciso XIII do art. 6º do Anexo IX do RCTE, importados do exterior (RCTE, Anexo IX, Art 6º, Inciso XIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811014",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de mercadoria de produção própria promovida por instituições de assistência social e de educação, sem finalidade lucrativa (RCTE, Anexo IX, Art 6º, Inciso XV)"
+    },
+    {
+     "from": null,
+     "code": "GO811015",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna do estabelecimento varejista com destino a consumidor final de leite pasteurizado tipo especial (RCTE, Anexo IX, Art 6º, Inciso XVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811016",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produto industrializado de origem nacional para comercialização ou industrialização na Zona Franca de Manaus e outras localidades (RCTE, Anexo IX, Art 6º, Inciso XVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811017",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Serviço de telecomunicação efetuado a partir de equipamento terminal instalado em dependência de Operadora (RCTE, Anexo IX, Art 6º, Inciso XVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811018",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de estabelecimento de Operadora de bem destinado à utilização em sua própria instalação ou a guarda em outro estabelecimento da mesma empresa (RCTE, Anexo IX, Art 6º, Inciso XIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811019",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de comunicação, efetuada por contribuinte que promova a divulgação, por meio do veículo beneficiário do favor fiscal, de matéria aprovada pelo Conselho Nacional de Política Fazendária - CONFAZ (RCTE, Anexo IX, Art 6º, Inciso XX)"
+    },
+    {
+     "from": null,
+     "code": "GO811020",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Fornecimento de energia elétrica para consumo residencial que não ultrapasse a 50 (cinquenta) KW/h mensais (RCTE, Anexo IX, Art 6º, Inciso XXI)"
+    },
+    {
+     "from": null,
+     "code": "GO811021",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de transporte de passageiros desde que com características de transporte urbano ou metropolitano, com cobrança de tarifa reduzida (RCTE, Anexo IX, Art 6º, Inciso XXII)"
+    },
+    {
+     "from": null,
+     "code": "GO811022",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada decorrente de importação de mercadoria doada por organização internacional ou estrangeira ou por país estrangeiro para distribuição gratuita (RCTE, Anexo IX, Art 6º, Inciso XXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811023",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": "2023-06-21",
+     "description": "ISENÇÃO - Operação de que decorra fornecimento de água natural canalizada, pela SANEAGO ou outra empresa concessionária, desde que o consumo mensal não ultrapasse 30m 3 (RCTE, Anexo IX, Art 6º, Inciso XXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811024",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de transporte rodoviário de passageiro, realizada por veículo registrado na categoria de aluguel - táxi (RCTE, Anexo IX, Art 6º, Inciso XXV)"
+    },
+    {
+     "from": null,
+     "code": "GO811025",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - recebimento ou a entrada no estabelecimento importador de mercadoria importada sob o regime aduaneiro especial na modalidade drawback (RCTE, Anexo IX, Art 6º, Inciso XXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811026",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída, a título de distribuição gratuita, de amostra de produto de diminuto ou nenhum valor comercial (RCTE, Anexo IX, Art 6º, Inciso XXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811027",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna entre estabelecimentos de uma mesma empresa, de bem integrado ao ativo imobilizado, cuja entrada no estabelecimento do remetente tenha ocorrido até 31 de outubro de 1996 (RCTE, Anexo IX, Art 6º, Inciso XXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811028",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de bem integrado ao ativo imobilizado para fornecimento de serviço fora do estabelecimento (RCTE, Anexo IX, Art 6º, Inciso XXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811029",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna dos bens a que se refere o inciso XXIX do art. 6º do Anexo IX do RCTE, em retorno ao estabelecimento de origem (RCTE, Anexo IX, Art 6º, Inciso XXX)"
+    },
+    {
+     "from": null,
+     "code": "GO811030",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": "2023-06-21",
+     "description": "ISENÇÃO - Saída de combustível e lubrificante para o abastecimento de embarcação e aeronave nacionais com destino ao exterior (RCTE, Anexo IX, Art 6º, Inciso XXXI)"
+    },
+    {
+     "from": null,
+     "code": "GO811031",
+     "csts": [
+      "30",
+      "40",
+      "41",
+      "50"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interestadual de bem integrado ao ativo imobilizado para fornecimento de serviço fora do estabelecimento (RCTE, Anexo IX, Art 6º, Inciso XXXII)"
+    },
+    {
+     "from": null,
+     "code": "GO811032",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Fornecimento de energia elétrica para estabelecimento de produtor rural, cujo consumo não ultrapasse a 50 (cinquenta) KW/h mensais (RCTE, Anexo IX, Art 6º, Inciso XXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811033",
+     "csts": [
+      "30",
+      "40",
+      "41",
+      "50"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de vasilhame, recipiente ou embalagem, inclusive sacaria, quando não cobrado do destinatário ou não incluído no valor da mercadoria que acondiciona (RCTE, Anexo IX, Art 6º, Inciso XXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811034",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de botijão vazio destinado ao acondicionamento de gás liquefeito de petróleo (GLP), em destroca efetuada por distribuidor de gás (RCTE, Anexo IX, Art 6º, Inciso XXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO811035",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produto industrializado promovida por loja franca (\"free-shops\"), instalada na zona primária do aeroporto de categoria internacional (RCTE, Anexo IX, Art 6º, Inciso XXXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811036",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produto industrializado destinado à comercialização por loja franca referida no inciso anterior (RCTE, Anexo IX, Art 6º, Inciso XXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811037",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada de máquina para limpar e selecionar fruta, sem similar produzido no País, quando importada diretamente do exterior (RCTE, Anexo IX, Art 6º, Inciso XXXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811038",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de veículo quando adquirido pela Secretaria de Segurança Pública ou pela Secretaria de Estado da Economia (RCTE, Anexo IX, Art 6º, Inciso XXXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811039",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de trava-bloco para a construção de casa popular, vinculada a programa habitacional para a população de baixa renda (RCTE, Anexo IX, Art 6º, Inciso XL)"
+    },
+    {
+     "from": null,
+     "code": "GO811040",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de oócito, de sêmen e de embrião, de bovino, caprino, ovino ou suíno congelados ou resfriados (RCTE, Anexo IX, Art 6º, Inciso XLI)"
+    },
+    {
+     "from": null,
+     "code": "GO811041",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - relativamente ao diferencial de alíquotas, a entrada, no local de construção do Centro Integrado de Apoio à Criança - CIAC, de peça de argamassa armada ou de concreto armado (RCTE, Anexo IX, Art 6º, Inciso XLII)"
+    },
+    {
+     "from": null,
+     "code": "GO811042",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de gado asinino, bovino, bufalino, caprino, equino, muar, ovino e suíno destinado a criar, recriar ou engorda, realizada entre produtores agropecuários (RCTE, Anexo IX, Art 6º, Inciso XLIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811043",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produto resultante de aula prática dos cursos profissionalizantes ministrados pelo Serviço Nacional de Aprendizagem Comercial - SENAC (RCTE, Anexo IX, Art 6º, Inciso XLIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811044",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Recebimento, por órgão da Administração Pública Direta, autarquia ou fundação do Estado de Goiás, de mercadoria importada do exterior (RCTE, Anexo IX, Art 6º, Inciso XLV)"
+    },
+    {
+     "from": null,
+     "code": "GO811045",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de casulo do bicho-da-seda (RCTE, Anexo IX, Art 6º, Inciso XLVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811046",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada de trator agrícola de quatro rodas e de colheitadeira mecânica de algodão, sem similar produzido no País (RCTE, Anexo IX, Art 6º, Inciso XLVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811047",
+     "csts": [
+      "30",
+      "40",
+      "41",
+      "50"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de equino destinado a outra unidade da Federação, para cobertura ou para participação em prova, ou para treinamento (RCTE, Anexo IX, Art 6º, Inciso XLVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811048",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de produto hortifrutícola destinado à industrialização (RCTE, Anexo IX, Art 6º, Inciso XLIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811049",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações com produtos e medicamentos destinados ao tratamento de portadores do vírus da AIDS (RCTE, Anexo IX, Art 6º, Inciso L)"
+    },
+    {
+     "from": null,
+     "code": "GO811050",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operações com máquina, equipamento, aparelho, instrumento e material, ou seu respectivo acessório, sobressalente e ferramenta, amparadas no Programa BEFIEX (RCTE, Anexo IX, Art 6º, Inciso LI)"
+    },
+    {
+     "from": null,
+     "code": "GO811051",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produtos alimentícios, com destino a estabelecimento do Banco de Alimentos (\"Food Bank\"), do Instituto de Integração e de Promoção da Cidadania (INTEGRA) e do Mesa Brasil SESC (RCTE, Anexo IX, Art 6º, Inciso LII)"
+    },
+    {
+     "from": null,
+     "code": "GO811052",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada interestadual de máquinas e equipamentos destinados à execução do projeto de construção do Poliduto Replan-Brasília (RCTE, Anexo IX, Art 6º, Inciso LIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811053",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de mercadoria constante da cesta básica (RCTE, Anexo IX, Art 6º, Inciso LIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811054",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações relacionadas no Convênio ICMS 18/95 (RCTE, Anexo IX, Art 6º, Inciso LV)"
+    },
+    {
+     "from": null,
+     "code": "GO811055",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Recebimento de amostra do exterior, sem valor comercial, tal como definida pela legislação federal que outorga a isenção do Imposto de Importação (RCTE, Anexo IX, Art 6º, Inciso LVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811056",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Ingresso de bem procedente do exterior integrante de bagagem de viajante (RCTE, Anexo IX, Art 6º, Inciso LVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811057",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada do exterior de máquinas e equipamentos destinados à pesquisa científica e tecnológica, realizada diretamente pela EMBRAPA (RCTE, Anexo IX, Art 6º, Inciso LIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811058",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Recebimento, por doação, de produto importado do exterior, diretamente por órgão ou entidade da administração pública (RCTE, Anexo IX, Art 6º, Inciso LX)"
+    },
+    {
+     "from": null,
+     "code": "GO811059",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada, a qualquer título, de equipamento científico e de informática efetuada por órgão da administração pública direta e indireta (RCTE, Anexo IX, Art 6º, Inciso LXI)"
+    },
+    {
+     "from": null,
+     "code": "GO811060",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interestadual de equipamento de propriedade da Empresa Brasileira de Telecomunicações S.A. - EMBRATEL (RCTE, Anexo IX, Art 6º, Inciso LXII)"
+    },
+    {
+     "from": null,
+     "code": "GO811061",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação e a prestação internas de fornecimento de energia elétrica e de prestação serviço de telecomunicação, destinadas ao consumo por órgão da administração pública estadual (RCTE, Anexo IX, Art 6º, Inciso LXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811062",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de transporte ferroviário de carga vinculada à operação de importação de país signatário do Acordo sobre o Transporte Internacional (RCTE, Anexo IX, Art 6º, Inciso LXV)"
+    },
+    {
+     "from": null,
+     "code": "GO811063",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna com mamona em baga (RCTE, Anexo IX, Art 6º, Inciso LXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811064",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação com equipamentos ou acessórios destinados a portadores de deficiência física (RCTE, Anexo IX, Art 6º, Inciso LXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811065",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação e a saída interna de mercadoria destinada à ampliação do sistema de informática da Secretaria de Estado da Economia de Goiás (RCTE, Anexo IX, Art 6º, Inciso LXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811066",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação interna com resíduos e sucata de qualquer tipo de material (RCTE, Anexo IX, Art 6º, Inciso LXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811067",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Doação efetuada pelo fabricante de microcomputador usado para escola pública especial e profissionalizante, associação destinada a portador de deficiência e comunidade carente (RCTE, Anexo IX, Art 6º, Inciso LXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO811068",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de produção própria de caroço de algodão com destino à industrialização (RCTE, Anexo IX, Art 6º, Inciso LXXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811069",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação de mercadoria ou bem sob o amparo do Regime Especial Aduaneiro de Admissão Temporária previsto na legislação federal específica (RCTE, Anexo IX, Art 6º, Inciso LXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811070",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de produção própria do estabelecimento do produtor com destino à industrialização (RCTE, Anexo IX, Art 6º, Inciso LXXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811071",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Sucessivas saídas internas, com destino à industrialização, de produto não comestível resultante do abate de animal no Estado de Goiás (RCTE, Anexo IX, Art 6º, Inciso LXXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811072",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna com animal silvestre ou exótico vivo reproduzido com o fim de industrialização ou comercialização em criatório estabelecido no Estado de Goiás (RCTE, Anexo IX, Art 6º, Inciso LXXXI)"
+    },
+    {
+     "from": null,
+     "code": "GO811073",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna, com destino à industrialização, inclusive ao resfriamento, de leite em estado natural de produção própria do estabelecimento do produtor (RCTE, Anexo IX, Art 6º, Inciso LXXXII)"
+    },
+    {
+     "from": null,
+     "code": "GO811074",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de veículo adquirido pelo Departamento de Polícia Federal, com recurso do Fundo para Aparelhamento e Operacionalização das Atividades Fim da Polícia Federal (RCTE, Anexo IX, Art 6º, Inciso LXXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811075",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída que destine ao Ministério da Saúde os equipamentos médico-hospitalares arrolados no Apêndice XI do Anexo IX do RCTE (RCTE, Anexo IX, Art 6º, Inciso LXXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811076",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação de devolução impositiva de embalagem vazia de agrotóxico e respectiva tampa (RCTE, Anexo IX, Art 6º, Inciso LXXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO811077",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação com veículo adquirido pela Polícia Rodoviária Federal, de acordo com o previsto no Plano Anual de Reaparelhamento da Polícia Rodoviária Federal (RCTE, Anexo IX, Art 6º, Inciso LXXXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811078",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna destinada ao ativo fixo de estabelecimento apicultor (RCTE, Anexo IX, Art 6º, Inciso LXXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811079",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de produção própria do estabelecimento apicultor remetente (RCTE, Anexo IX, Art 6º, Inciso LXXXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811080",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada decorrente de importação do exterior de aparelhos, máquinas, equipamentos e instrumentos (RCTE, Anexo IX, Art 6º, Inciso LXXXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811081",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída realizada pela empresa Furnas Centrais Elétricas S/A em doação de material de consumo, de equipamento e de outro bem móvel (RCTE, Anexo IX, Art 6º, Inciso XC)"
+    },
+    {
+     "from": null,
+     "code": "GO811082",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação e prestação internas, relativas à aquisição de bem, mercadoria e serviço por órgãos da Administração Pública Estadual Direta e suas fundações e autarquias (RCTE, Anexo IX, Art 6º, Inciso XCI)"
+    },
+    {
+     "from": null,
+     "code": "GO811083",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Relativamente à aplicação do diferencial de alíquotas na aquisição interestadual de bem destinado ao ativo imobilizado de estabelecimento industrial (RCTE, Anexo IX, Art 6º, Inciso XCII)"
+    },
+    {
+     "from": null,
+     "code": "GO811084",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação relativa à venda do bem arrendado ao arrendatário contribuinte do ICMS (RCTE, Anexo IX, Art 6º, Inciso XCIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811085",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de algodão, produzido no Estado de Goiás, em retorno ao estabelecimento que o tenha remetido para descaroçamento (RCTE, Anexo IX, Art 6º, Inciso XCV)"
+    },
+    {
+     "from": null,
+     "code": "GO811086",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de bambu produzido no Estado de Goiás com destino à industrialização ou à construção civil (RCTE, Anexo IX, Art 6º, Inciso XCVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811087",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Sucessivas saídas internas de produto reciclado no Estado de Goiás, com destino à industrialização (RCTE, Anexo IX, Art 6º, Inciso XCVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811088",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de muda de planta, inclusive a ornamental (RCTE, Anexo IX, Art 6º, Inciso C)"
+    },
+    {
+     "from": null,
+     "code": "GO811089",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação interna com produto vegetal destinado à produção de biodiesel e de querosene de aviação alternativo (RCTE, Anexo IX, Art 6º, Inciso CI)"
+    },
+    {
+     "from": null,
+     "code": "GO811090",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de pilha e bateria usadas, após seu esgotamento energético, que contenham em suas composições chumbo, cádmio, mercúrio e seus compostos (RCTE, Anexo IX, Art 6º, Inciso CII)"
+    },
+    {
+     "from": null,
+     "code": "GO811091",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de produto típico do cerrado goiano, exceto a lenha e a madeira, com destino à industrialização (RCTE, Anexo IX, Art 6º, Inciso CIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811092",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna do estabelecimento produtor agropecuário com destino a central ou posto de coleta e recebimento de embalagem de agrotóxico usada e lavada (RCTE, Anexo IX, Art 6º, Inciso CIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811093",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação que destine a contribuinte abrangido por projeto agroindustrial de avicultura ou de suinocultura mercadorias para uso exclusivo na construção de granjas e aviários (RCTE, Anexo IX, Art 6º, Inciso CV)"
+    },
+    {
+     "from": null,
+     "code": "GO811094",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produto farmacêutico e de fralda geriátrica da Fundação Oswaldo Cruz - FIOCRUZ - com destino à farmácia que faça parte do Programa Farmácia Popular do Brasil (RCTE, Anexo IX, Art 6º, Inciso CVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811095",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de soja, produzida no Estado de Goiás, em retorno ao estabelecimento que a tenha remetido para industrialização (RCTE, Anexo IX, Art 6º, Inciso CVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811096",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação de máquinas, aparelhos e equipamentos industriais, bem como suas partes e peças, destinados a integrar o ativo imobilizado de indústria gráfica (RCTE, Anexo IX, Art 6º, Inciso CVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811097",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de medidor de vazão e de condutivímetro quando destinado ao estabelecimento industrial fabricante das bebidas (RCTE, Anexo IX, Art 6º, Inciso CX)"
+    },
+    {
+     "from": null,
+     "code": "GO811098",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de estabelecimento ou de oficina credenciada ou autorizada de peça defeituosa para o fabricante, oriunda de troca em virtude de garantia (RCTE, Anexo IX, Art 6º, Inciso CXII)"
+    },
+    {
+     "from": null,
+     "code": "GO811099",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - relativamente ao diferencial de alíquotas, a aquisição interestadual para o ativo imobilizado de estabelecimento industrial minério de níquel, cobre e seus derivados (RCTE, Anexo IX, Art 6º, Inciso CXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811100",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de comunicação referente ao acesso à internet e ao acesso de conectividade em banda larga no âmbito do Programa GESAC (RCTE, Anexo IX, Art 6º, Inciso CXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811101",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de óleo comestível usado destinado à indústria para utilização como matéria-prima e aquisição interna para comercialização (RCTE, Anexo IX, Art 6º, Inciso CXV)"
+    },
+    {
+     "from": null,
+     "code": "GO811102",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de asinino, ave, bovino, bufalino, caprino, equino, leporídeo, muar, ovino, ranídeo e suíno realizada por produtor agropecuário, destinada ao abate (RCTE, Anexo IX, Art 6º, Inciso CXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811103",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de peixe produzido no Estado de Goiás, destinada a produção, reprodução, abate, comercialização ou industrialização (RCTE, Anexo IX, Art 6º, Inciso CXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811104",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de comunicação referente ao acesso à internet e à conectividade em banda larga destinadas a escolas públicas (RCTE, Anexo IX, Art 6º, Inciso CXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811105",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interestadual em transferência de bem do ativo imobilizado e de uso e consumo realizada por empresa prestadora de serviço de transporte aéreo (RCTE, Anexo IX, Art 6º, Inciso CXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811106",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação e prestação realizada ou contratada pela Alcântara Cyclone Space - ACS e Centro de Lançamento em Alcântara-MA, no âmbito do Tratado Binacional Brasil-Ucrânia (RCTE, Anexo IX, Art 6º, Inciso CXX)"
+    },
+    {
+     "from": null,
+     "code": "GO811107",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - transferência interna de produto de fabricação própria, promovida pelo fabricante de vestuário, de roupas de cama, de mesa e banho, com destino à atacadista (RCTE, Anexo IX, Art 6º, Inciso CXXI)"
+    },
+    {
+     "from": null,
+     "code": "GO811108",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação que destine produto de fabricação própria à comercialização ou industrialização, realizada por fabricante do vestuário, de roupas de cama, de mesa e de banho optante do Simples Nacional (RCTE, Anexo IX, Art 6º, Inciso CXXII)"
+    },
+    {
+     "from": null,
+     "code": "GO811109",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Valor agregado nas sucessivas saídas internas relacionadas ao processo de industrialização de vestuário, de roupas de cama, de mesa e de banho, por encomenda do industrial fabricante (RCTE, Anexo IX, Art 6º, Inciso CXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811110",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Aquisições interestaduais de mercadorias para utilização como matéria-prima na fabricação de nova espécie de mercadoria ou de mercadorias excepcionadas do pagamento no Decreto nº 9.104/2017, realizadas por empresas optantes pelo Simples Nacional (RCTE, Anexo IX, Art 6º, Inciso CXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811111",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de pneu usado, mesmo que recuperado de abandono, que tenha como objetivo sua reciclagem, tratamento ou disposição final ambientalmente adequada (RCTE, Anexo IX, Art 6º, Inciso CXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO811112",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação e a respectiva prestação de serviço de transporte decorrente da aquisição de equipamento de segurança eletrônica realizada por meio do Departamento Penitenciário Nacional (RCTE, Anexo IX, Art 6º, Inciso CXXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811113",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de areia artificial de produção própria do estabelecimento com destino à industrialização (RCTE, Anexo IX, Art 6º, Inciso CXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811114",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de gênero alimentício para alimentação escolar promovida por agricultor familiar ou empreendedor familiar rural ou por suas organizações (RCTE, Anexo IX, Art 6º, Inciso CXXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811115",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de comunicação referente ao acesso à internet por conectividade em banda larga prestada no âmbito do Programa Internet Popular (RCTE, Anexo IX, Art 6º, Inciso CXXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811116",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação de importação, realizada por produtores de algodão ou por suas associações, de máquina e aparelho para ensaio têxtil (RCTE, Anexo IX, Art 6º, Inciso CXXX)"
+    },
+    {
+     "from": null,
+     "code": "GO811117",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação interna de aquisição de veículo automotor utilitário novo destinado à pessoa que exerça a atividade de feirante ou feirante especial (RCTE, Anexo IX, Art 6º, Inciso CXXXI)"
+    },
+    {
+     "from": null,
+     "code": "GO811118",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Aquisição interestadual para integrar o ativo imobilizado, aquisição interna de insumos e a venda de grupos geradores de energia elétrica pelo industrial produtor de grupos geradores de energia elétrica (RCTE, Anexo IX, Art 6º, Inciso CXXXII)"
+    },
+    {
+     "from": null,
+     "code": "GO811119",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Aquisição interestadual para integrar o ativo imobilizado e venda de veículo para órgão da Administração Pública realizada por industrial de veículo automotor (RCTE, Anexo IX, Art 6º, Inciso CXXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811120",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna do animal que tenha sido criado ou engordado pelo produtor integrado ou parceiro, promovida pela empresa titular do projeto agroindustrial (RCTE, Anexo IX, Art 6º, Inciso CXXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811121",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de mercadoria resultante da industrialização do açafrão, cujo processo industrial tenha sido realizado no Estado de Goiás (RCTE, Anexo IX, Art 6º, Inciso CXXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO811122",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação realizada pela Empresa Brasileira de Hemoderivados e Biotecnologia - Hemobrás - com fármaco e medicamento derivado do plasma humano (RCTE, Anexo IX, Art 6º, Inciso CXXXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811123",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação, realizada por industrial, beneficiário dos Programas Fomentar ou Produzir, fabricante de extintores de incêndio descartáveis de polímero de engenharia (RCTE, Anexo IX, Art 6º, Inciso CXXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811124",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação de serviço de comunicação decorrente de utilização do serviço de assinatura com franquia na modalidade telefonia fixa (RCTE, Anexo IX, Art 6º, Inciso CXXXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811125",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação interna e na importação com bem ou mercadoria destinados à utilização na rede de transporte público de passageiros sobre trilhos (RCTE, Anexo IX, Art 6º, Inciso CXL)"
+    },
+    {
+     "from": null,
+     "code": "GO811126",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de mercadoria de produção própria, realizada por Trabalhador Manual (RCTE, Anexo IX, Art 6º, Inciso CXLI)"
+    },
+    {
+     "from": null,
+     "code": "GO811127",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação interna com óleo diesel destinada a empresa de transporte coletivo detentora de contrato de concessão celebrado com a CMTC (RCTE, Anexo IX, Art 6º, Inciso CXLIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811128",
+     "csts": [
+      "30",
+      "40",
+      "41",
+      "50"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações interna e interestadual, na forma prevista no Capítulo XXXIV do Anexo XII, com etanol anidro combustível para armazenagem no sistema dutoviário (RCTE, Anexo IX, Art 6º, Inciso CXLIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811129",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações realizadas no âmbito do consórcio de empresas constituído com a finalidade de produção de energia elétrica, a partir do bagaço de cana-de-açúcar (RCTE, Anexo IX, Art 6º, Inciso CXLV)"
+    },
+    {
+     "from": null,
+     "code": "GO811130",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Valor cobrado a título de gorjeta, quando do fornecimento de alimentação e bebidas promovido por bares, restaurantes, hotéis e estabelecimentos similares (RCTE, Anexo IX, Art 6º, Inciso CXLVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811131",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Fornecimento de energia elétrica pela distribuidora à unidade consumidora, nos termos do Sistema de Compensação de Energia Elétrica (RCTE, Anexo IX, Art 6º, Inciso CXLVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811132",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Sucessivas saídas internas de trigo, com destino à industrialização (RCTE, Anexo IX, Art 6º, Inciso CXLIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811133",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação interna com os produtos destinados à geração de energia solar (RCTE, Anexo IX, Art 6º, Inciso CLI)"
+    },
+    {
+     "from": null,
+     "code": "GO811134",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Fornecimento de energia elétrica para pessoa jurídica de direito privado, sem fins lucrativos, que recebam do Poder Executivo Estadual auxílio financeiro mensal (RCTE, Anexo IX, Art 6º, Inciso CLII)"
+    },
+    {
+     "from": null,
+     "code": "GO811135",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações anteriores à saída destinada ao consumidor final, com bens e mercadorias digitais (RCTE, Anexo IX, Art 6º, Inciso CLIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811136",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Remessa expressa internacional devolvida ao exterior na forma da legislação federal pertinente, por empresa de courier (RCTE, Anexo IX, Art 6º, Inciso CLIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811137",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saídas internas de mercadorias, novas ou usadas, comercializadas sob a forma de bazar, promovidas pela entidade Obras Sociais do Centro Espírita Irmão Áureo - OSCEIA (RCTE, Anexo IX, Art 6º, Inciso CLV)"
+    },
+    {
+     "from": null,
+     "code": "GO811138",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações com o medicamento Spinraza (Nusinersena) injection 12 mg/5 ml, destinado a tratamento da Atrofia Muscular Espinal - AME (RCTE, Anexo IX, Art 6º, Inciso CLVI)"
+    },
+    {
+     "from": null,
+     "code": "GO811139",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações com aceleradores lineares, classificados no código 9022.21.90 da Nomenclatura Comum do Mercosul - NCM (RCTE, Anexo IX, Art 6º, Inciso CLVII)"
+    },
+    {
+     "from": null,
+     "code": "GO811140",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de óleo lubrificante usado ou contaminado pelo uso, destinado a estabelecimento refinador ou coletor-revendedor (RCTE, Anexo IX, Art 6º, Inciso CLVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811141",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações com vacinas e insumos destinados à produção de vacinas para o enfrentamento ao Coronavírus (RCTE, Anexo IX, Art 6º, Inciso CLIX)"
+    },
+    {
+     "from": null,
+     "code": "GO811142",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operações com radiofármacos, radioisótopos e fármacos utilizados exclusivamente para radiomarcação empregados em procedimentos de medicina nuclear, realizadas no âmbito do Sistema Único de Saúde - SUS (RCTE, Anexo IX, Art. 6º, Inciso CLX)"
+    },
+    {
+     "from": null,
+     "code": "GO811143",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operações com absorventes íntimos femininos, internos e externos, tampões higiênicos, coletores e discos menstruais, calcinhas absorventes e panos absorventes íntimos destinados a órgãos da Administração Pública Direta e Indireta (RCTE, Anexo IX, Art. 6º, Inciso CLXI)"
+    },
+    {
+     "from": null,
+     "code": "GO811144",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - saída interna de produtos destinados à montagem de sistema ou central geradora solar fotovoltaica para atendimento do consumo de energia elétrica de prédios próprios públicos estaduais (RCTE, Anexo IX, Art. 6º, Inciso CLXII)"
+    },
+    {
+     "from": null,
+     "code": "GO811145",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - saídas internas de biogás, considerado o gás oriundo do processo de biodigestão anaeróbica de resíduos orgânicos, quando for utilizado como matéria-prima na geração de energia elétrica (RCTE, Anexo IX, Art. 6º, Inciso CLXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO811146",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - saídas internas das biomassas para o uso na geração de energia elétrica ou a vapor (RCTE, Anexo IX, Art. 6º, Inciso CLXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO811900",
+     "csts": [
+      "30",
+      "40",
+      "41",
+      "50"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Reconhecida judicialmente (RCTE, Anexo IX, Art 6º)"
+    },
+    {
+     "from": null,
+     "code": "GO812001",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada de mercadoria importada do exterior, para ser utilizada no processo de fracionamento e industrialização de componente e derivado do sangue (RCTE, Anexo IX, Art 7º, Inciso I)"
+    },
+    {
+     "from": null,
+     "code": "GO812002",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada de bens importados do exterior por órgão ou entidade da administração pública destinados a atividades de ensino, pesquisa ou prestação de serviços médico-hospitalares (RCTE, Anexo IX, Art 7º, Inciso II)"
+    },
+    {
+     "from": null,
+     "code": "GO812003",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída das mercadorias relacionadas no Apêndice III do Anexo IX do RCTE, que se destinem, exclusivamente, ao atendimento a pessoas portadoras de deficiência (RCTE, Anexo IX, Art 7º, Inciso IV)"
+    },
+    {
+     "from": null,
+     "code": "GO812004",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada do exterior dos medicamentos, sem similares produzidos no País, importados diretamente pela APAE (RCTE, Anexo IX, Art 7º, Inciso V)"
+    },
+    {
+     "from": null,
+     "code": "GO812005",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação do exterior de reprodutor e matriz de caprino de comprovada superioridade genética, quando efetuada diretamente por produtor (RCTE, Anexo IX, Art 7º, Inciso VII)"
+    },
+    {
+     "from": null,
+     "code": "GO812006",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de mercadoria doada à Secretaria de Educação, por contribuinte do ICMS, para distribuição, também por doação, à rede oficial de ensino (RCTE, Anexo IX, Art 7º, Inciso VIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812007",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de pós-larva de camarão (RCTE, Anexo IX, Art 7º, Inciso IX)"
+    },
+    {
+     "from": null,
+     "code": "GO812008",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação interna de serviço de transporte de calcário, desde que vinculado a programa estadual de preservação ambiental (RCTE, Anexo IX, Art 7º, Inciso X)"
+    },
+    {
+     "from": null,
+     "code": "GO812009",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de veículo automotor novo destinado à pessoa portadora de deficiência física, visual, mental severa ou profunda, ou autista (RCTE, Anexo IX, Art 7º, Inciso XIV)"
+    },
+    {
+     "from": null,
+     "code": "GO812010",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Entrada de bem destinado à implantação de projeto de saneamento básico por companhia estadual de saneamento, importado do exterior (RCTE, Anexo IX, Art 7º, Inciso XV)"
+    },
+    {
+     "from": null,
+     "code": "GO812011",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de mercadoria doada ao Governo Estadual para distribuição gratuita a pessoa necessitada ou vítima de catástrofe (RCTE, Anexo IX, Art 7º, Inciso XVII)"
+    },
+    {
+     "from": null,
+     "code": "GO812012",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saídas interna e interestadual do estabelecimento industrial ou concessionário de automóvel novo quando destinado a motorista profissional (táxi) (RCTE, Anexo IX, Art 7º, Inciso XXII)"
+    },
+    {
+     "from": null,
+     "code": "GO812013",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação com produtos e equipamentos utilizados em diagnósticos em imunohematologia, sorologia e coagulação (RCTE, Anexo IX, Art 7º, Inciso XXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812014",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação com preservativo, classificado no código 4014.10.00 da NBM/SH (RCTE, Anexo IX, Art 7º, Inciso XXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO812015",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna com insumos agropecuários (RCTE, Anexo IX, Art 7º, Inciso XXV)"
+    },
+    {
+     "from": null,
+     "code": "GO812016",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de produtos utilizados em sistemas de geração de energia solar e eólica (RCTE, Anexo IX, Art 7º, Inciso XXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO812017",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação que destine equipamentos didático, científico e médico-hospitalar ao Ministério da Educação e do Desporto - MEC (RCTE, Anexo IX, Art 7º, Inciso XXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO812018",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO -Saída ou a aquisição interestadual de bem do ativo imobilizado e de uso ou consumo ou a remessa de animais para inseminação e inovulação efetuada pela EMBRAPA (RCTE, Anexo IX, Art 7º, Inciso XXX)"
+    },
+    {
+     "from": null,
+     "code": "GO812019",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação e a prestação referentes à saída de mercadoria, em decorrência de doação, para assistência à vítima de situação de seca nacionalmente reconhecida (RCTE, Anexo IX, Art 7º, Inciso XXXI)"
+    },
+    {
+     "from": null,
+     "code": "GO812020",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação com equipamentos e insumos destinados à prestação de serviços de saúde (RCTE, Anexo IX, Art 7º, Inciso XXXII)"
+    },
+    {
+     "from": null,
+     "code": "GO812021",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação realizada pela FNS e pelo MS, do produto destinados às campanhas de vacinação, programas nacionais de combate à dengue, malária, febre amarela (RCTE, Anexo IX, Art 7º, Inciso XXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812022",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações com os medicamentos relacionados na cláusula primeira do Convênio ICMS-140/01 (RCTE, Anexo IX, Art 7º, Inciso XXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO812023",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação realizada com fármaco e medicamento relacionados no Apêndice XVII do Anexo IX do RCTE, destinados a órgãos da Administração Pública (RCTE, Anexo IX, Art 7º, Inciso XXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO812024",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação de soro conservante de córnea, realizada pela Fundação Banco de Olhos de Goiás (RCTE, Anexo IX, Art 7º, Inciso XXXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812025",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação de matéria-prima, sem similar produzida no país, destinada à produção de fármaco, relacionados no Apêndice XXIII do Anexo IX do RCTE (RCTE, Anexo IX, Art 7º, Inciso XXXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO812026",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna ou interestadual de mercadoria, em decorrência de doação, destinada ao atendimento do Programa intitulado Fome Zero (RCTE, Anexo IX, Art 7º, Inciso XL)"
+    },
+    {
+     "from": null,
+     "code": "GO812027",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Prestação interna de serviço de transporte de cargas destinada a contribuinte do imposto estabelecido neste Estado (RCTE, Anexo IX, Art 7º, Inciso XLI)"
+    },
+    {
+     "from": null,
+     "code": "GO812028",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação interna, correspondente à doação de mercadoria ou bem à Organização das Voluntárias do Estado de Goiás - OVG (RCTE, Anexo IX, Art 7º, Inciso XLII)"
+    },
+    {
+     "from": null,
+     "code": "GO812029",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação que destine a contribuinte abrangido pelo Projeto Integrado de Exploração Agropecuária e Agroindustrial do Estado de Roraima os produtos arrolados no inciso XXV do Anexo IX do RCTE (RCTE, Anexo IX, Art 7º, Inciso XLIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812030",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação interna em decorrência de doação à entidade filantrópica \"Vila São Bento Cotollengo\" de produtos alimentícios (RCTE, Anexo IX, Art 7º, Inciso XLIV)"
+    },
+    {
+     "from": null,
+     "code": "GO812031",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação com mercadoria destinada aos programas de fortalecimento e modernização das áreas fiscal, de gestão, de planejamento e de controle externo estaduais (RCTE, Anexo IX, Art 7º, Inciso XLV)"
+    },
+    {
+     "from": null,
+     "code": "GO812032",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída interna de bem destinado a integrar o ativo imobilizado de empresa beneficiada pelo REPORTO (RCTE, Anexo IX, Art 7º, Inciso XLVI)"
+    },
+    {
+     "from": null,
+     "code": "GO812033",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Relativamente ao diferencial de alíquotas, a entrada no território goiano de 280 acumuladores elétricos e seus separadores destinados à empresa FURNAS (RCTE, Anexo IX, Art 7º, Inciso XLVII)"
+    },
+    {
+     "from": null,
+     "code": "GO812034",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação de circulação de mercadoria caracterizada pela emissão e negociação do Certificado de Depósito Agropecuário - CDA - e do Warrant Agropecuário - WA (RCTE, Anexo IX, Art 7º, Inciso XLVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812035",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação de máquinas, aparelhos e equipamentos industriais, bem como suas partes e peças relacionados no Apêndice XXIX do Anexo IX do RCTE, pelo SENAI, SENAC e SENAR (RCTE, Anexo IX, Art 7º, Inciso L)"
+    },
+    {
+     "from": null,
+     "code": "GO812036",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação com medicamento e reagente químico, relacionados no Apêndice XXX do Anexo IX do RCTE (RCTE, Anexo IX, Art 7º, Inciso LI)"
+    },
+    {
+     "from": null,
+     "code": "GO812037",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação dos produtos do Apêndice XXXI do Anexo IX do RCTE, efetuada por empresa concessionária de prestação de serviços públicos de radiodifusão (RCTE, Anexo IX, Art 7º, Inciso LII)"
+    },
+    {
+     "from": null,
+     "code": "GO812038",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de reagente para diagnóstico da Doença de Chagas a órgão ou entidade da administração pública direta, suas autarquias e fundações (RCTE, Anexo IX, Art 7º, Inciso LIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812039",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação relativa à aquisição realizada pelo FNDE, de ônibus, micro-ônibus, e embarcação, destinados ao transporte escolar (RCTE, Anexo IX, Art 7º, Inciso LIV)"
+    },
+    {
+     "from": null,
+     "code": "GO812040",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de estabelecimento que efetuar o reparo, conserto ou manutenção de aeronave, de peça defeituosa para o fabricante, oriunda de troca em virtude de garantia (RCTE, Anexo IX, Art 7º, Inciso LIX)"
+    },
+    {
+     "from": null,
+     "code": "GO812041",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação com fosfato de oseltamivir, vinculada ao Programa Farmácia Popular do Brasil, destinado ao tratamento dos portadores da Gripe A (H1N1) (RCTE, Anexo IX, Art 7º, Inciso LX)"
+    },
+    {
+     "from": null,
+     "code": "GO812042",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Importação do exterior, quando efetuada diretamente por produtor, de pós-larvas de camarão e reprodutores SPF (RCTE, Anexo IX, Art 7º, Inciso LXI)"
+    },
+    {
+     "from": null,
+     "code": "GO812043",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Saída de reprodutor de camarão marinho produzido no País (RCTE, Anexo IX, Art 7º, Inciso LXII)"
+    },
+    {
+     "from": null,
+     "code": "GO812044",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operação de comercialização do sanduíche BIG MAC realizada pelo estabelecimento integrante da Rede McDonalds que participar do evento McDia Feliz (RCTE, Anexo IX, Art 7º, Inciso LXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812045",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações internas destinadas à ACCEG ou ao Hospital de Câncer de Inhumas, com as máquinas, os aparelhos e os equipamentos (RCTE, Anexo IX, Art 7º, Inciso LXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO812046",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações com o equipamento respiratório Elmo, suas partes e peças, utilizado no âmbito das medidas de enfrentamento ao Coronavírus (RCTE, Anexo IX, Art 7º, Inciso LXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812047",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operações internas e de importação de oxigênio medicinal, classificado no código 2804.40.00 da NCM (RCTE, Anexo IX, Art 7º, Inciso LXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO812048",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Operações internas com medicamentos que possuem farmacêuticos ativos relacionados no Apêndice XLVIII do Anexo IX do RCTE (RCTE, Anexo IX, Art 7º, Inciso LXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO812049",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operação interna ou interestadual que destine bem ou mercadoria à concessionária ou à autorizatária de transporte ferroviário de cargas e passageiros (RCTE, Anexo IX, Art. 7º, Inciso LXXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO812050",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operação com cimento asfáltico de petróleo constituído de no mínimo 15% e no máximo 25% de borracha moída de pneus usados - NCM 2713.20.00 Convênio ICMS 31/06) (RCTE, Anexo IX, Art. 7º, Inciso LXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO812051",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operação com o medicamento Elevidys (delandistrogene moxeparvovec) destinado ao tratamento da distrofia muscular de Duchenne - DMD (RCTE, Anexo IX, Art. 7º, Inciso LXXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812052",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operações e prestações internas e interestaduais, exceto importações, com garrafas de vidro usadas, já utilizadas como vasilhame para bebidas alcoólicas, quando forem destinadas a estabelecimento industrial que tenha como objetivo a sua reutilização (RCTE, Anexo IX, Art. 7º, Inciso LXXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO812053",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operações internas e relativamente à diferença entre as alíquotas internas e interestaduais com os produtos relacionados com os correspondentes códigos da NCM/SH, quando destinados à geração de energia elétrica a partir do biogás (RCTE, Anexo IX, Art. 7º, Inciso LXXX)"
+    },
+    {
+     "from": null,
+     "code": "GO812054",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - saídas internas decorrentes de doação de bens, veículos, motores, agregados, máquinas e equipamentos destinados ao Serviço Nacional de Aprendizagem Industrial - SENAI (RCTE, Anexo IX, Art. 7º, Inciso LXXXI)"
+    },
+    {
+     "from": null,
+     "code": "GO812055",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - aquisições internas e interestaduais, em relação ao ICMS devido em razão da diferença entre as alíquotas internas e interestaduais, de bens destinados ao ativo imobilizado de biorrefinaria fabricante de combustível sustentável de aviação - SAF, biometano, biogás, metanol e CO2 (RCTE, Anexo IX, Art. 7º, Inciso LXXXII)"
+    },
+    {
+     "from": null,
+     "code": "GO812056",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operação interna com biometano destinado a empresa de transporte coletivo que execute serviços da RMTC e possua contrato de concessão com a CMT C, inclusive as que forem concessionárias do serviço de transporte coletivo no Município de Anápolis/GO (RCTE, Anexo IX, Art. 7º, Inciso LXXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO812057",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - as operações internas com escória de refino mineral (RCTE, Anexo IX, Art. 7º, Inciso LXXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO812058",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operações com materiais de construção e equipamentos destinados às obras de edificação de templos de qualquer culto religioso (RCTE, Anexo IX, Art. 7º, Inciso LXXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO812900",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - Reconhecida judicialmente (RCTE, Anexo IX, Art 7º)"
+    },
+    {
+     "from": null,
+     "code": "GO821001",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída de mercadoria adquirida na condição de usada e quando a operação de que decorra a sua entrada no estabelecimento não tenha sido onerada pelo ICMS (RCTE, Anexo IX, Art 8º, Inciso I)"
+    },
+    {
+     "from": null,
+     "code": "GO821002",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de leite pasteurizado tipo especial com destino a estabelecimento varejista ou a consumidor final (RCTE, Anexo IX, Art 8º, Inciso II)"
+    },
+    {
+     "from": null,
+     "code": "GO821003",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída tributada interna de gás liquefeito de petróleo (RCTE, Anexo IX, Art 8º, Inciso III)"
+    },
+    {
+     "from": null,
+     "code": "GO821004",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Entrada de máquina e equipamento importados do exterior e destinados a integrar o ativo imobilizado de empresa industrial que adquiriu pelo BIFIEX (RCTE, Anexo IX, Art 8º, Inciso VI)"
+    },
+    {
+     "from": null,
+     "code": "GO821005",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna que destine mercadoria para comercialização, produção ou industrialização (RCTE, Anexo IX, Art 8º, Inciso VIII)"
+    },
+    {
+     "from": null,
+     "code": "GO821006",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestação de serviço de televisão por assinatura (RCTE, Anexo IX, Art 8º, Inciso X)"
+    },
+    {
+     "from": null,
+     "code": "GO821007",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": "2023-06-21",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Fornecimento de refeições promovido por bares, restaurantes e estabelecimentos similares (RCTE, Anexo IX, Art 8º, Inciso XII-A)"
+    },
+    {
+     "from": null,
+     "code": "GO821008",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna com produto de informática, telecomunicação ou automação relacionado no Apêndice IV do Anexo IX do RCTE (RCTE, Anexo IX, Art 8º, Inciso XIII)"
+    },
+    {
+     "from": null,
+     "code": "GO821009",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestação de serviço de radiochamada (RCTE, Anexo IX, Art 8º, Inciso XVI)"
+    },
+    {
+     "from": null,
+     "code": "GO821010",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de arroz e feijão industrializados no Estado de Goiás (RCTE, Anexo IX, Art 8º, Inciso XIX)"
+    },
+    {
+     "from": null,
+     "code": "GO821011",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação interna com areia natural e artificial, saibro, material britado (RCTE, Anexo IX, Art 8º, Inciso XXI)"
+    },
+    {
+     "from": null,
+     "code": "GO821012",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação interna com os produtos do Anexo I do RCTE, exceto armas e munições, Programa de Combate à Comercialização Ilegal de Mercadorias (RCTE, Anexo IX, Art 8º, Inciso XXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO821013",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação com os produtos relacionados no Convênio ICMS 34/06, praticada pelo industrial ou importador com destino a contribuinte (RCTE, Anexo IX, Art 8º, Inciso XXV)"
+    },
+    {
+     "from": null,
+     "code": "GO821014",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de máquinas e equipamentos rodoviários relacionados no Apêndice XII do Anexo IX do RCTE (RCTE, Anexo IX, Art 8º, Inciso XXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO821015",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de telha, tijolo, tijoleira e tapa-viga cerâmicos, não esmaltados nem vitrificados (RCTE, Anexo IX, Art 8º, Inciso XXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO821016",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de gasolina de aviação (RCTE, Anexo IX, Art 8º, Inciso XXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO821017",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de bem destinado ao ativo imobilizado de estabelecimento industrial ou agropecuário (RCTE, Anexo IX, Art 8º, Inciso XXX)"
+    },
+    {
+     "from": null,
+     "code": "GO821018",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de algodão em pluma beneficiada com o incentivo de que trata o inciso XIII do art. 11 do Anexo IX do RCTE (RCTE, Anexo IX, Art 8º, Inciso XXXII)"
+    },
+    {
+     "from": null,
+     "code": "GO821019",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação interna com mercadorias que compõem a cesta básica (RCTE, Anexo IX, Art 8º, Inciso XXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO821020",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna com fralda descartável, produzida no Estado de Goiás (RCTE, Anexo IX, Art 8º, Inciso XXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO821021",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de veículo automotor caminhão com peso em carga máxima superior a 5 (cinco) toneladas e caminhão-trator (RCTE, Anexo IX, Art 8º, Inciso XXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO821022",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de produtos relacionados no art. 1º, II, \"i\", 1 e 2 da Lei nº 13.453/99 (RCTE, Anexo IX, Art 8º, Inciso XXXVI)"
+    },
+    {
+     "from": null,
+     "code": "GO821023",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de mármore e granito produzidos no Estado de Goiás (RCTE, Anexo IX, Art 8º, Inciso XXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO821024",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída de mercadoria resultante da industrialização de produto típico do cerrado goiano, exceto bebida alcoólica (RCTE, Anexo IX, Art 8º, Inciso XL)"
+    },
+    {
+     "from": null,
+     "code": "GO821025",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interestadual de carne e demais produtos comestíveis resultantes do abate de gado bovino, bufalino, caprino, ovino ou suíno (RCTE, Anexo IX, Art 8º, Inciso XLI)"
+    },
+    {
+     "from": null,
+     "code": "GO821026",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação interna com massa asfáltica (RCTE, Anexo IX, Art 8º, Inciso XLIII)"
+    },
+    {
+     "from": null,
+     "code": "GO821027",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação interna com pedra-de-pirenópolis (pedra goiás) (RCTE, Anexo IX, Art 8º, Inciso XLIV)"
+    },
+    {
+     "from": null,
+     "code": "GO821028",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestação onerosa de serviço de comunicação, na modalidade de monitoramento e rastreamento de veículo e carga (RCTE, Anexo IX, Art 8º, Inciso XLV)"
+    },
+    {
+     "from": null,
+     "code": "GO821029",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestação de serviço de comunicação por meio de veiculação de mensagens de publicidade e propaganda na televisão por assinatura (RCTE, Anexo IX, Art 8º, Inciso XLVI)"
+    },
+    {
+     "from": null,
+     "code": "GO821030",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de veículo automotor ônibus ou de chassi com motor para ônibus (RCTE, Anexo IX, Art 8º, Inciso XLVII)"
+    },
+    {
+     "from": null,
+     "code": "GO821031",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação interestadual realizada por fabricante ou importador com pneumático novo de borracha e câmara-de-ar de borracha (RCTE, Anexo IX, Art 8º, Inciso XLVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO821032",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saídas interna e interestadual com mercadoria adquirida por Órgãos da Administração Pública Direta, para aplicação nas UMS (RCTE, Anexo IX, Art 8º, Inciso XLIX)"
+    },
+    {
+     "from": null,
+     "code": "GO821033",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de mercadoria ou bem destinado à construção e instalação de LT e subestação de EE produzida a partir do bagaço de cana-de-açúcar (RCTE, Anexo IX, Art 8º, Inciso L)"
+    },
+    {
+     "from": null,
+     "code": "GO821034",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação interna de embalagem destinada ao industrial fabricante de adubo e fertilizante (RCTE, Anexo IX, Art 8º, Inciso LII)"
+    },
+    {
+     "from": null,
+     "code": "GO821035",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação com os produtos listados no Apêndice XXXIII do Anexo IX do RCTE, destinados ao tratamento e controle de efluentes industriais e domésticos (RCTE, Anexo IX, Art 8º, Inciso LIV)"
+    },
+    {
+     "from": null,
+     "code": "GO821036",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna realizada por integrante de grupo econômico que destine mercadoria para comercialização, produção ou industrialização (RCTE, Anexo IX, Art 8º, Inciso LVI)"
+    },
+    {
+     "from": null,
+     "code": "GO821037",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída de medicamento de uso humano destinada a órgão da administração pública direta ou indireta, hospital ou clínica de saúde (RCTE, Anexo IX, Art 8º, Inciso LVII)"
+    },
+    {
+     "from": null,
+     "code": "GO821038",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de veículo automotor (RCTE, Anexo IX, Art 8º, Inciso LIX)"
+    },
+    {
+     "from": null,
+     "code": "GO821039",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída de bem, material ou peça com defeito na prestação de serviços de assistência técnica, manutenção e reparo (RCTE, Anexo IX, Art 8º, Inciso LX)"
+    },
+    {
+     "from": null,
+     "code": "GO821040",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DA BASE DE CÁLCULO - operaç ão de importaç ão realizad a por remess a post al ou express a (RCTE, Anexo IX, Art. 8º, Inciso LXI)"
+    },
+    {
+     "from": null,
+     "code": "GO821041",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DA BASE DE CÁLCULO - prestação interna de serviço de comunicação, em substituição à apropriação de quaisquer créditos de ICMS correspondente à entrada de mercadoria ou ao bem e ao serviço utilizado (RCTE, Anexo IX, Art. 8º, Inciso LXII)"
+    },
+    {
+     "from": null,
+     "code": "GO821042",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - saídas internas com biogás e biometano (RCTE, Anexo IX, Art. 8º, Inciso LXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO821043",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - importação de bem sob o amparo do Regime Especial Aduaneiro de Admissão Temporária previsto na legislação federal específica (RCTE, Anexo IX, Art. 6º, Inciso LXXVII, \"a\")"
+    },
+    {
+     "from": null,
+     "code": "GO821900",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Reconhecida judicialmente (RCTE, Anexo IX, Art 8º)"
+    },
+    {
+     "from": null,
+     "code": "GO822001",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna e interestadual com máquina e equipamento relacionados nos Apêndice V e VI do Anexo IX do RCTE (RCTE, Anexo IX, Art 9º, Inciso I)"
+    },
+    {
+     "from": null,
+     "code": "GO822002",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída dos produtos relacionados no Convênio ICMS 75/91 (RCTE, Anexo IX, Art 9º, Inciso III)"
+    },
+    {
+     "from": null,
+     "code": "GO822003",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de produtos relacionados no Convênio ICMS 50/93 (RCTE, Anexo IX, Art 9º, Inciso V)"
+    },
+    {
+     "from": null,
+     "code": "GO822004",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interestadual com insumos agropecuários relacionados na cláusula primeira do Convênio ICMS 100/97 (RCTE, Anexo IX, Art 9º, Inciso VII)"
+    },
+    {
+     "from": null,
+     "code": "GO822005",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interestadual com insumos agropecuários relacionados na cláusula segunda do Convênio ICMS 100/97 (RCTE, Anexo IX, Art 9º, Inciso VIII)"
+    },
+    {
+     "from": null,
+     "code": "GO822006",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de farelo gordo de arroz, destinado à alimentação animal ou ao emprego na fabricação de ração animal (RCTE, Anexo IX, Art 9º, Inciso IX)"
+    },
+    {
+     "from": null,
+     "code": "GO822007",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operação interestadual realizada por estabelecimento fabricante ou importador com a mercadoria relacionada nos Apêndices XVIII a XX do Anexo IX do RCTE (RCTE, Anexo IX, Art 9º, Inciso XX)"
+    },
+    {
+     "from": null,
+     "code": "GO822008",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída realizada por industrializador de mandioca do produto resultante da industrialização dessa mercadoria (RCTE, Anexo IX, Art 9º, Inciso XXV)"
+    },
+    {
+     "from": null,
+     "code": "GO822009",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": "2023-06-21",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de querosene de aviação (RCTE, Anexo IX, Art 9º, Inciso XXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO822010",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": "2023-06-21",
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de gás natural proveniente de gás natural liquefeito - GNL (RCTE, Anexo IX, Art 9º, Inciso XXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO822011",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de biodiesel (B-100) resultante da industrialização dos produtos da cláusula primeira do Convênio ICMS 113/06 (RCTE, Anexo IX, Art 9º, Inciso XXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO822012",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída de bovino dos Municípios da RIDE para ser abatido em estabelecimento frigorífico localizado no Distrito Federal (RCTE, Anexo IX, Art 9º, Inciso XXXI)"
+    },
+    {
+     "from": null,
+     "code": "GO822013",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de madeira de produção própria do estabelecimento produtor destinada à industrialização (RCTE, Anexo IX, Art 9º, Inciso XXXII)"
+    },
+    {
+     "from": null,
+     "code": "GO822014",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Importação, diretamente do Paraguai, de mercadoria ou bem do anexo do Decreto federal nº 6.956/09, no Regime de Tributação Unificado - optante pelo Simples Nacional (RCTE, Anexo IX, Art 9º, Inciso XXXIII)"
+    },
+    {
+     "from": null,
+     "code": "GO822015",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Operações realizadas pelo estabelecimento industrial fabricante com destino ao Ministério da Defesa e aos seus órgãos (RCTE, Anexo IX, Art 9º, Inciso XXXIV)"
+    },
+    {
+     "from": null,
+     "code": "GO822016",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Prestação de serviço de transporte intermunicipal de passageiros, que tenha início e término em seu território (RCTE, Anexo IX, Art 9º, Inciso XXXV)"
+    },
+    {
+     "from": null,
+     "code": "GO822017",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Saída interna de querosene de aviação - QAV com destino a consumo de empresa de transporte aéreo de carga ou de pessoas (RCTE, Anexo IX, Art 9º, Inciso XXXVII)"
+    },
+    {
+     "from": null,
+     "code": "GO822018",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Importações, saídas internas e interestaduais com os produtos relacionados no Convênio ICMS 100/97 (RCTE, Anexo IX, Art 9º, Inciso XXXVIII)"
+    },
+    {
+     "from": null,
+     "code": "GO822019",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Fornecimento de refeições promovido por bares, restaurantes e estabelecimentos similares (RCTE, Anexo IX, Art 9º, Inciso XXXIX)"
+    },
+    {
+     "from": null,
+     "code": "GO822020",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - operação interna com gás natural veicular - GNV destinado a empresa de transporte coletivo que execute serviços da RMTC e possua contrato de concessão com a CMTC , inclusive as que forem concessionárias do serviço de transporte coletivo no Município de Anápolis/GO (RCTE, Anexo IX, Art. 9º, Inciso XL)"
+    },
+    {
+     "from": null,
+     "code": "GO822900",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DE BASE DE CÁLCULO - Reconhecida judicialmente (RCTE, Anexo IX, Art 9º)"
+    },
+    {
+     "from": null,
+     "code": "GO890001",
+     "csts": [
+      "41"
+     ],
+     "to": null,
+     "description": "OPERAÇÕES ESPECIAIS - Operações, sem benefício fiscal, para as quais a legislação define a emissão da NF sem destaque de ICMS (RCTE)"
+    },
+    {
+     "from": null,
+     "code": "GO890002",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": "2023-07-14",
+     "description": "Operações com produtos de fabricação própria entre as empresas beneficiárias dos Programas FOMENTAR e PRODUZIR ou entre as empresas beneficiárias do programa PRODUZIR (Lei nº 13.591/00, Art. 20, § 4º)"
+    },
+    {
+     "from": null,
+     "code": "GO890003",
+     "csts": [
+      "20",
+      "70"
+     ],
+     "to": null,
+     "description": "REDUÇÃO DA BASE DE CÁLCULO - saída interna promovida por empresa comercial importadora e exportadora, beneficiária do programa COMEXPRODUZIR, com bens e mercadorias importados do exterior e destinados à comercialização, produção ou industrialização (Decreto nº 5.686/02, Art. 6º)"
+    },
+    {
+     "from": null,
+     "code": "GO890004",
+     "csts": [
+      "02",
+      "15",
+      "53",
+      "61"
+     ],
+     "to": null,
+     "description": "Regime de tributação monofásica, Conv.199/2022 (a partir de mai/2023) e Conv.15/2023 (a partir de jul/2023) (RCTE - ICMS MONOFÁSICO SOBRE COMBUSTÍVEIS)"
+    },
+    {
+     "from": null,
+     "code": "GO890005",
+     "csts": [
+      "30",
+      "40",
+      "41"
+     ],
+     "to": null,
+     "description": "ISENÇÃO - operação interna com produtos oriundos da agricultura familiar no Estado de Goiás (Lei nº 18.560/14, Art. 1º)"
+    }
+   ]
   }
  ]
 }

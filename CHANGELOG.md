@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-27.b.GO Tabela oficial de cBenef de Goiás] — 17/10/2026
+
+### Adicionado
+- **cBenef de Goiás explicado na regra de ICMS:** são 303 códigos da Instrução Normativa 1.518/2022-GSE, com o dispositivo legal. Os códigos revogados aparecem como fora da vigência.
+- **Monitor semanal das fontes:** passou a conferir a tabela de GO.
+
 ## [F3-27.b.RS Tabela oficial de cBenef do Rio Grande do Sul] — 17/10/2026
 
 ### Adicionado

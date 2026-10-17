@@ -376,5 +376,13 @@
   "page": "https://atendimento.receita.rs.gov.br/upload/arquivos/202609/10130054-tabela-cbenef-x-cst-10-09-2026.xlsx",
   "publishedAt": "2026-09-10",
   "downloadedAt": "2026-10-17"
+ },
+ "cbenefGo": {
+  "file": "SEFAZ-GO_IN_1518-2022_cBenef_2026-01-05.htm.gz",
+  "title": "Instrução Normativa 1.518/2022-GSE (GO), Anexo Único: Tabela de Códigos de Benefícios Fiscais (texto consolidado de 05/01/2026)",
+  "publisher": "Secretaria de Estado da Economia de Goiás",
+  "page": "https://appasp.economia.go.gov.br/Legislacao/arquivos/Secretario/IN/IN_1518_2022.htm",
+  "publishedAt": "2026-01-05",
+  "downloadedAt": "2026-10-17"
  }
 }

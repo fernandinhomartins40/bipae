@@ -200,7 +200,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-27.b.PR · Paraná: Tabela de Códigos de Benefício Fiscal por CST, V27 de 17/07/2026 (502 códigos, CST pela posição no PDF); aviso na regra de ICMS e rota /fiscal/cbenef; monitor semanal
     - [x] F3-27.b.SC · Santa Catarina: Tabela 5.2A (cBenef) de 09/10/2026 (665 códigos, com o tipo do benefício; crédito presumido marcado à parte, porque vai no cCredPresumido); monitor semanal
     - [x] F3-27.b.RS · Rio Grande do Sul: planilha Tabela cBenef x CST de 10/09/2026 (541 códigos, com descrição legível e referência legal); monitor semanal
-    - [ ] F3-27.b.UFs · RJ, GO, DF, ES e as demais UFs que exigem o cBenef, uma por vez
+    - [x] F3-27.b.GO · Goiás: Anexo Único da IN 1.518/2022-GSE consolidada (303 códigos; códigos revogados valem até a data da nota); monitor semanal
+    - [ ] F3-27.b.UFs · RJ, DF, ES e as demais UFs que exigem o cBenef, uma por vez
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
   - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entraram com a F3-08.b (Portal Nacional da NF-e).
 - [x] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c

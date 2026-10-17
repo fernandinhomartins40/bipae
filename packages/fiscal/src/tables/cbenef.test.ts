@@ -100,3 +100,17 @@ describe('cBenef do Rio Grande do Sul (Tabela cBenef x CST)', () => {
     expect(cbenefLookup('RS', 'RS051007', '2028-01-01').valid).toBe(false);
   });
 });
+
+describe('cBenef de Goiás (IN 1.518/2022-GSE)', () => {
+  it('a tabela com o dispositivo legal; a redação mais nova vence', () => {
+    expect(CBENEF_UFS).toContain('GO');
+    const r = cbenefLookup('GO', 'GO800001', '2026-10-17', '41');
+    expect(r).toMatchObject({ covered: true, valid: true, cstOk: true });
+    expect(r.entry!.description).toMatch(/NÃO INCIDÊNCIA DO ICMS.*RCTE, Art 79/);
+  });
+
+  it('código revogado vale só até a data da nota (21/06/2023)', () => {
+    expect(cbenefLookup('GO', 'GO811023', '2023-06-21').valid).toBe(true);
+    expect(cbenefLookup('GO', 'GO811023', '2026-10-17').valid).toBe(false);
+  });
+});

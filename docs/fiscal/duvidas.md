@@ -590,4 +590,8 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Códigos:** 541, com a descrição legível e a referência legal.
   - **Datas:** vêm sem o zero do dia ("1102016" = 01/10/2016) e são convertidas pelo gerador.
   - **Orientação da Receita-RS:** no CST 00 o cBenef não deve ser preenchido.
-- **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, GO, DF, ES e das outras UFs que exigem o código.
+- **Atualização de 17/10/2026 (F3-27.b, Goiás):** Anexo Único da Instrução Normativa 1.518/2022-GSE, no texto consolidado do portal de legislação (05/01/2026):
+  - **Códigos:** 303, com o dispositivo legal.
+  - **Redação antiga:** vem antes da nota "Redação com vigência de ... a ...", e vale a última. Um código "REVOGADO" vale até a data da nota.
+  - **Obrigatoriedade em GO:** desde 01/07/2023 (IN 1.518/2022). Simples Nacional e MEI ficam fora da obrigação.
+- **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, DF, ES e das outras UFs que exigem o código.

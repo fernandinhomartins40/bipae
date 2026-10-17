@@ -423,5 +423,14 @@
   "publishedAt": "2026-09-10",
   "downloadedAt": "2026-10-17",
   "sha256": "feaa99c8bb8a454f7446c49ec5615156162086fba206a85a26b95be681727315"
+ },
+ "cbenefGo": {
+  "file": "SEFAZ-GO_IN_1518-2022_cBenef_2026-01-05.htm.gz",
+  "title": "Instrução Normativa 1.518/2022-GSE (GO), Anexo Único: Tabela de Códigos de Benefícios Fiscais (texto consolidado de 05/01/2026)",
+  "publisher": "Secretaria de Estado da Economia de Goiás",
+  "page": "https://appasp.economia.go.gov.br/Legislacao/arquivos/Secretario/IN/IN_1518_2022.htm",
+  "publishedAt": "2026-01-05",
+  "downloadedAt": "2026-10-17",
+  "sha256": "91cbc2d9aed930419937996c9523a1eabe16cae9762eaea9df8318e5d0059ce7"
  }
 }

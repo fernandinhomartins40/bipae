@@ -21,6 +21,7 @@ import { pdfItems, pdfLines } from './pdf-text.mjs';
 import { parseCbenefPr } from './cbenef-pr.mjs';
 import { parseCbenefSc } from './cbenef-sc.mjs';
 import { parseCbenefRs } from './cbenef-rs.mjs';
+import { parseCbenefGo } from './cbenef-go.mjs';
 import { readXlsx } from './xlsx.mjs';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -747,6 +748,35 @@ async function checkCbenefRs() {
   };
 }
 
+/** cBenef de Goiás: a IN 1.518/2022 consolidada de hoje. */
+async function checkCbenefGo() {
+  const rowsOf = (html) => parseCbenefGo(html).map((c) => [c.code, c.csts.join(' '), c.to ?? '']);
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.cbenefGo.file))).toString('latin1'),
+  );
+  const title = 'cBenef de Goiás (IN 1.518/2022-GSE)';
+  let now;
+  try {
+    now = rowsOf((await download(manifest.cbenefGo.page)).body.toString('latin1'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.cbenefGo.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.cbenefGo.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} código(s) novo(s) ou alterado(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -782,6 +812,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),
     await safe('cBenef do Rio Grande do Sul', manifest.cbenefRs.page, checkCbenefRs),
+    await safe('cBenef de Goiás', manifest.cbenefGo.page, checkCbenefGo),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),
