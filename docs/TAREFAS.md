@@ -313,7 +313,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [ ] F7-02 · Revisão de segurança OWASP ASVS nível 2 e correções — externo: E15
 - [x] F7-03 · Auditoria de acessibilidade WCAG 2.2 AA e correções
   - Feito em 16/10/2026: axe-core nas telas principais (tema claro, escuro e celular) e teste de teclado na CI; corrigidos o link "Pular para o conteúdo" e a volta do foco ao fechar gavetas e janelas (ver `docs/acessibilidade.md`).
-- [ ] F7-04 · Central de ajuda (documentação do usuário)
+- [x] F7-04 · Central de ajuda (documentação do usuário)
+  - Feito em 16/10/2026: tela "Ajuda" dentro do aplicativo (funciona sem internet), com busca e 16 artigos em passos; teste que confere os links para as telas (`packages/erp-ui/src/help/articles.ts`).
 - [ ] F7-05 · Guia de implantação para revendas e técnicos
 - [ ] F7-06 · Bipaê Desktop para macOS
 - [ ] F7-07 · Teste de usabilidade com 10 pessoas (meta: 9 de 10 vendem e emitem sem ajuda) — depende: F3-14 · externo: E15

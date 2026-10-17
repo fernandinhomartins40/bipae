@@ -71,6 +71,8 @@ test('telas sem violações de acessibilidade WCAG 2.2 AA', async ({ page }) => 
     ['/equipe', 'Equipe'],
     ['/empresas', 'Empresas e lojas'],
     ['/configuracoes', 'Configurações'],
+    ['/ajuda', 'Ajuda'],
+    ['/ajuda/crediario', 'Artigo da ajuda'],
   ];
   for (const [path, nome] of telas) {
     await page.goto(path);

@@ -21,8 +21,8 @@ import {
   HeartHandshake,
   Home,
   Landmark,
-  ListChecks,
   LifeBuoy,
+  ListChecks,
   LogOut,
   Monitor,
   Percent,
@@ -156,6 +156,7 @@ const NAV = [
     icon: Plug,
     permission: 'admin.integrations',
   },
+  { to: '/ajuda', label: 'Ajuda', icon: LifeBuoy, permission: null },
   { to: '/configuracoes', label: 'Configurações', icon: Settings, permission: null },
 ] as const;
 

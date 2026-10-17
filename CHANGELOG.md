@@ -1,5 +1,20 @@
 # Changelog
 
+## [F7-04 Central de ajuda] — 16/10/2026
+
+### Adicionado
+- **Nova tela "Ajuda" no menu:** 16 artigos com o passo a passo do dia a dia. Eles usam os nomes exatos dos botões e funcionam mesmo sem internet. Os assuntos:
+  - primeiros passos e equipe;
+  - abrir o caixa, atalhos F, sangria e fechamento, cancelamento e devolução;
+  - crediário, fidelidade e relacionamento;
+  - produtos e grade, compras pelo XML e condicional;
+  - NFC-e e arquivos para o contador;
+  - financeiro;
+  - API e webhooks.
+- **Busca que entende o jeito de escrever:** acha sem acento, com várias palavras e com palavras do dia a dia, como "fiado" para crediário.
+- **Botão "Ir para..."** em cada artigo, que leva direto à tela.
+- **Teste automático:** confere que nenhum artigo aponta para uma tela que não existe.
+
 ## [F7-03 Acessibilidade] — 16/10/2026
 
 ### Adicionado
