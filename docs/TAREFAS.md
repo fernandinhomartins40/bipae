@@ -175,7 +175,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [~] F3-26.c · PR, MG, RJ, RS, SC e BA, uma subtarefa por UF — depende: F3-26.a
     - [x] F3-26.c.PR · Paraná: MVA da Resolução SEFA 571/2019 consolidada (444 itens) e o que saiu da ST pelo Anexo IX do RICMS/PR (eletrônicos e celulares em 01/03/2026, limpeza e papelaria em 01/08/2024, sorvetes em 01/02/2025); monitor semanal confere os dois PDFs
     - [ ] F3-26.c.PR2 · Paraná: MVA única por hipótese, escrita no artigo (autopeças, medicamentos, veículos e porta a porta)
-    - [ ] F3-26.c.MG · Minas Gerais (RICMS/MG, Anexo XV)
+    - [x] F3-26.c.MG · Minas Gerais: MVA da Parte 2 do Anexo XV do RICMS/MG (986 itens, com indústria e atacadista separados), data de cada linha pelas notas de rodapé e itens revogados com a data; monitor semanal
     - [ ] F3-26.c.RJ · Rio de Janeiro
     - [ ] F3-26.c.RS · Rio Grande do Sul
     - [ ] F3-26.c.SC · Santa Catarina

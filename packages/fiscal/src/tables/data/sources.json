@@ -243,5 +243,86 @@
   "pages": "2818-3318",
   "originalSha256": "dc917a25da84668a0df124bfa65f32521e93cf8f1f3d9b16db8c5f2f7ce721e2",
   "sha256": "e5b54fcd8f4d972f42afa461bfe362c156fc0338e5d090ee3709092a6c0c5341"
+ },
+ "stMgAnexoXV6": {
+  "file": "SEF-MG_RICMS_Anexo_XV_pagina_6_2026-10-17.html.gz",
+  "title": "RICMS/MG (Decreto 43.080/2002), Anexo XV, Parte 2, página 6 de 13 (texto sem dispositivos revogados): mercadorias em ST e MVA",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/anexoxv2002_6.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "ed7186b4fbd6935ae935f6850519b4ded0129296502a800ddef80b279cf66f00"
+ },
+ "stMgAnexoXV7": {
+  "file": "SEF-MG_RICMS_Anexo_XV_pagina_7_2026-10-17.html.gz",
+  "title": "RICMS/MG (Decreto 43.080/2002), Anexo XV, Parte 2, página 7 de 13 (texto sem dispositivos revogados): mercadorias em ST e MVA",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/anexoxv2002_7.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "42b943d53e680795209bdd1c2789a75a61b4e5b9aa09c9bc8d58976ab6bcc530"
+ },
+ "stMgAnexoXV8": {
+  "file": "SEF-MG_RICMS_Anexo_XV_pagina_8_2026-10-17.html.gz",
+  "title": "RICMS/MG (Decreto 43.080/2002), Anexo XV, Parte 2, página 8 de 13 (texto sem dispositivos revogados): mercadorias em ST e MVA",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/anexoxv2002_8.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "b435b22f21122045127dfaca33d0a5115607998526b92be64ba85615a4b3e7db"
+ },
+ "stMgAnexoXV9": {
+  "file": "SEF-MG_RICMS_Anexo_XV_pagina_9_2026-10-17.html.gz",
+  "title": "RICMS/MG (Decreto 43.080/2002), Anexo XV, Parte 2, página 9 de 13 (texto sem dispositivos revogados): mercadorias em ST e MVA",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/anexoxv2002_9.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "f9b6c30fcc295cd91c31cce28346e4029af55dd0736718f5d4402ad5558e0750"
+ },
+ "stMgAnexoXV10": {
+  "file": "SEF-MG_RICMS_Anexo_XV_pagina_10_2026-10-17.html.gz",
+  "title": "RICMS/MG (Decreto 43.080/2002), Anexo XV, Parte 2, página 10 de 13 (texto sem dispositivos revogados): mercadorias em ST e MVA",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/anexoxv2002_10.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "fb206f4987b06e4af91de23e20e6e196843a945fa22234c8a6517b2be8706966"
+ },
+ "stMgAnexoXV11": {
+  "file": "SEF-MG_RICMS_Anexo_XV_pagina_11_2026-10-17.html.gz",
+  "title": "RICMS/MG (Decreto 43.080/2002), Anexo XV, Parte 2, página 11 de 13 (texto sem dispositivos revogados): mercadorias em ST e MVA",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/anexoxv2002_11.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "7599fe74644fef679950cd0a6a5a85cb76890b4b1efddc24881ff72344350ef0"
+ },
+ "stMgNotas2": {
+  "file": "SEF-MG_RICMS_notas_2_2026-10-17.html.gz",
+  "title": "RICMS/MG: notas de rodapé, página 2 (data de efeito e decreto de cada dispositivo)",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/notas_ricms2002_2.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "a0e9cdf4b323de16b3e722c7de98521f0dab2111f9e4b5114bc06bebfb63885e"
+ },
+ "stMgNotas3": {
+  "file": "SEF-MG_RICMS_notas_3_2026-10-17.html.gz",
+  "title": "RICMS/MG: notas de rodapé, página 3 (data de efeito e decreto de cada dispositivo)",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/notas_ricms2002_3.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "df9fa5a647deea781ea31e58d92ad40f7c7cc77ee1547b13ce04dd9133c14ea3"
+ },
+ "stMgNotas4": {
+  "file": "SEF-MG_RICMS_notas_4_2026-10-17.html.gz",
+  "title": "RICMS/MG: notas de rodapé, página 4 (data de efeito e decreto de cada dispositivo)",
+  "publisher": "Secretaria de Estado de Fazenda de Minas Gerais",
+  "page": "https://www.fazenda.mg.gov.br/empresas/legislacao_tributaria/ricms_2002_seco/notas_ricms2002_4.html",
+  "publishedAt": "2026-10-17",
+  "downloadedAt": "2026-10-17",
+  "sha256": "ca6ebd44a5ac1efbc39236199fc92c090b0c54ff6496666ace34165f077dbb7a"
  }
 }

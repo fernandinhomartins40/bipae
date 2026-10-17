@@ -32,7 +32,7 @@ describe('substituição tributária por UF (F3-26)', () => {
     expect(stReferencesFor('sp', '04039000', '2026-10-16').map((m) => m.mva)).toContain('70.10');
     expect(stReferencesFor('SP', '04011010', '2026-04-30')).toEqual([]);
     expect(stReferencesFor('SP', '04011010', '2029-02-01')).toEqual([]);
-    expect(stReferencesFor('MG', '04011010', '2026-10-16')).toEqual([]);
+    expect(stReferencesFor('AC', '04011010', '2026-10-16')).toEqual([]);
     expect(stReferencesFor('SP', '22030000', '2026-10-16')).toEqual([]);
   });
 
@@ -182,5 +182,55 @@ describe('Paraná: Resolução SEFA 571/2019 e Anexo IX do RICMS/PR (F3-26.c)', 
     });
     const chocolate = stStatusFor('PR', '17049010', '2026-10-17', ncmsOf);
     expect(chocolate.find((s) => s.cest === '1700100')).toMatchObject({ inSt: true });
+  });
+});
+
+describe('Minas Gerais: Anexo XV do RICMS/MG, Parte 2 (F3-26.c.MG)', () => {
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+  const mg = ST_REFERENCES.filter((r) => r.uf === 'MG');
+
+  it('os capítulos da Parte 2, com a data de efeito da redação atual', () => {
+    expect(ST_REFERENCE_UFS).toContain('MG');
+    expect(ST_SEGMENT_UFS).toContain('MG');
+    const itens = mg.flatMap((r) => r.items);
+    expect(itens.length).toBeGreaterThan(900);
+    const cests = new Set(CESTS.map((c) => c.cest));
+    for (const item of itens) {
+      expect(cests.has(item.cest), item.cest).toBe(true);
+      expect(item.mva, item.item).toMatch(/^\d{1,3}(\.\d{1,2})?$/);
+      for (const n of item.ncms) expect(n, item.item).toMatch(/^\d{2,8}$/);
+    }
+    for (const r of mg) expect(r.validFrom, r.segment).toMatch(/^20\d{2}-\d{2}-\d{2}$/);
+  });
+
+  it('leite UHT 15% e chocolate branco 77,88%', () => {
+    const leite = stReferencesFor('MG', '04011010', '2026-10-17');
+    expect(leite.find((m) => m.cest === '1701600')).toMatchObject({ mva: '15' });
+    const chocolate = stReferencesFor('MG', '17049010', '2026-10-17');
+    expect(chocolate.find((m) => m.cest === '1700100')).toMatchObject({ mva: '77.88' });
+  });
+
+  it('cerveja em lata: a MVA da indústria (140%) e a do atacadista (70%), cada uma com o nome', () => {
+    const lata = stReferencesFor('MG', '22030000', '2026-10-17').filter(
+      (m) => m.cest === '0302103',
+    );
+    expect(lata.map((m) => m.mva).sort()).toEqual(['140', '70']);
+    expect(lata.find((m) => m.mva === '70')!.description).toMatch(/Atacadista/);
+  });
+
+  it('vinho: importado, nacional do 2204.10 e os demais nacionais têm MVAs diferentes', () => {
+    const vinho = mg.flatMap((r) => r.items).filter((i) => i.cest === '0202400');
+    expect(vinho.map((i) => i.mva)).toEqual(['115.32', '50.61', '72.25']);
+  });
+
+  it('água mineral do CEST 03.001.00 saiu da ST em 01/10/2021 (Decreto 48.248/2021)', () => {
+    const cap3 = ST_SEGMENTS.find((s) => s.uf === 'MG')!.annexes.find((a) => a.annex === '3')!;
+    expect(cap3.cests.find((c) => c.cest === '0300100')).toMatchObject({
+      excludedFrom: '2021-10-01',
+      excludedBy: 'Decreto 48.248/2021',
+    });
+    // A cerveja continua na ST.
+    const cerveja = stStatusFor('MG', '22030000', '2026-10-17', ncmsOf);
+    expect(cerveja.some((s) => s.inSt)).toBe(true);
   });
 });

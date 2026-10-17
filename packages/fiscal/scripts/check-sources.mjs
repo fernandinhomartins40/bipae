@@ -18,6 +18,7 @@ import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpCat68 } from './st-sp-cat68.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences, prStRows } from './st-pr.mjs';
 import { pdfLines } from './pdf-text.mjs';
+import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
@@ -270,6 +271,59 @@ async function checkPr() {
   };
 }
 
+/** Minas Gerais: as seis páginas da Parte 2 do Anexo XV e as notas, lidas como na geração. */
+async function checkMg() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const pages = [6, 7, 8, 9, 10, 11].map((n) => `stMgAnexoXV${n}`);
+  const notes = [2, 3, 4].map((n) => `stMgNotas${n}`);
+  const build = (get) => {
+    const { chapters } = parseMgParte2(pages.map(get), parseMgNotes(notes.map(get)), known);
+    const { segment, references } = mgStReferences(chapters, { url: '' });
+    return [
+      ...references.flatMap((r) =>
+        r.items.map((i) => [r.segment, i.item, i.cest, i.ncms.join(' '), i.mva]),
+      ),
+      ...segment.annexes.flatMap((a) =>
+        a.cests.map((c) => [a.annex, c.cest, c.excludedFrom ?? '']),
+      ),
+    ];
+  };
+  const latin = (key) =>
+    gunzipSync(readFileSync(join(sourcesDir, manifest[key].file))).toString('latin1');
+  const old = build(latin);
+  const fresh = Object.fromEntries(
+    await Promise.all(
+      [...pages, ...notes].map(async (k) => [
+        k,
+        (await download(manifest[k].page)).body.toString('latin1'),
+      ]),
+    ),
+  );
+  const title = 'ST em Minas Gerais (RICMS/MG, Anexo XV, Parte 2)';
+  let now;
+  try {
+    now = build((k) => fresh[k]);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stMgAnexoXV6.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stMgAnexoXV6.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -293,6 +347,7 @@ if (process.argv.includes('--save-listings')) {
     )),
     await safe('NCM (Siscomex)', manifest.ncm.page, checkNcm),
     await safe('ST no Paraná', manifest.stPrRes571.page, checkPr),
+    await safe('ST em Minas Gerais', manifest.stMgAnexoXV6.page, checkMg),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

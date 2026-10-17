@@ -207,6 +207,13 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - **Conferência:** a numeração das seções é a mesma nas duas fontes, e o gerador confere o nome de cada seção. Os itens revogados no RICMS (sucos, carnes temperadas) também foram revogados na resolução.
   - **CEST que o Convênio ICMS 142/18 já tirou:** três CEST de água mineral (03.001.00, 03.002.00 e 03.004.00) continuam na resolução. Ficam, porque o NCM é o que identifica o produto.
   - **Ainda sem tabela por item:** autopeças, medicamentos, veículos, combustíveis e venda porta a porta, que têm MVA única por hipótese, escrita no texto do artigo. A tela não sugere MVA para esses casos.
+- **Atualização de 17/10/2026 (F3-26.c.MG, Minas Gerais, fonte oficial):** Parte 2 do Anexo XV do RICMS/MG, na versão "sem dispositivos" do site da SEF/MG, que traz só o texto em vigor. São as páginas 6 a 11 e as notas de rodapé 2 a 4, guardadas em `packages/fiscal/sources` e lidas por gerador:
+  - **Itens:** 986 itens com MVA, em 24 capítulos. A data de efeito de cada linha sai da nota de rodapé (por exemplo, "Efeitos a partir de 1º/12/2022 - Dec. nº 48.534").
+  - **Duas ou três MVAs no mesmo CEST:** a da indústria e a do atacadista ou distribuidor (cerveja 140% e 70%), ou importado e nacional (vinho 115,32%, 50,61% e 72,25%). Viram linhas separadas, cada uma com o nome na descrição.
+  - **Revogados:** 17 itens. O CEST sai do número do item, porque a numeração da Parte 2 é a do Convênio ICMS 142/18, e o gerador confere isso em todos os itens que continuam. A data vem da nota.
+  - **Coluna "exceções":** as UFs onde o protocolo não vale para o item entram na descrição.
+  - **Fora da sugestão:** combustíveis (remetem ao Capítulo XIV) e energia elétrica, que não têm MVA na tabela.
+  - **Erro no texto oficial:** o item 24/2.1 traz o NCM "33204.17.00". O token malformado fica de fora e o item vale pelos outros NCM (2821 e 3206).
 
 ### D-019 — Tributos atuais: situações ainda não calculadas e escolhas que viraram configuração
 

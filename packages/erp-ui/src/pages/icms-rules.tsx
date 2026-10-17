@@ -502,7 +502,10 @@ function StSuggestion({
       <p className="mb-2 font-semibold">MVA publicada pela SEFAZ de {uf} para este NCM</p>
       <ul className="flex flex-col gap-2">
         {items.slice(0, 5).map((m) => (
-          <li key={m.cest} className="flex flex-wrap items-center justify-between gap-2">
+          <li
+            key={`${m.cest}-${m.item}`}
+            className="flex flex-wrap items-center justify-between gap-2"
+          >
             <span>
               <span className="font-semibold">MVA {m.mva.replace('.', ',')}%</span> · CEST{' '}
               {cestText(m.cest)} · {m.description}

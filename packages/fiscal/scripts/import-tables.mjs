@@ -22,6 +22,7 @@ import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpBebidasBase, parseSpCat68 } from './st-sp-cat68.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences } from './st-pr.mjs';
 import { pdfLines } from './pdf-text.mjs';
+import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -525,9 +526,23 @@ async function importStPr(known) {
   });
 }
 
+// Minas Gerais (F3-26.c.MG): Parte 2 do Anexo XV do RICMS/MG e as notas com a data de cada item.
+function importStMg(known) {
+  const html = (key) =>
+    gunzipSync(readFileSync(join(sourcesDir, manifest[key].file))).toString('latin1');
+  const notes = parseMgNotes([2, 3, 4].map((n) => html(`stMgNotas${n}`)));
+  const { chapters } = parseMgParte2(
+    [6, 7, 8, 9, 10, 11].map((n) => html(`stMgAnexoXV${n}`)),
+    notes,
+    known,
+  );
+  return mgStReferences(chapters, { url: manifest.stMgAnexoXV6.page });
+}
+
 async function importStReferences(cest) {
   const known = new Set(cest.items.map((c) => c.cest));
   const pr = await importStPr(known);
+  const mg = importStMg(known);
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -545,6 +560,7 @@ async function importStReferences(cest) {
         annexes: withSpDrinksBase(parseSpCat68(cat68, known)),
       },
       pr.segment,
+      mg.segment,
     ],
     references: [
       {
@@ -560,6 +576,7 @@ async function importStReferences(cest) {
         items: parseSpAlimenticios(sp, known),
       },
       ...pr.references,
+      ...mg.references,
     ],
   };
 }

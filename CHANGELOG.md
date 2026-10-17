@@ -1,5 +1,17 @@
 # Changelog
 
+## [F3-26.c.MG Substituição tributária em Minas Gerais] — 17/10/2026
+
+### Adicionado
+- **MVA oficial de Minas Gerais na regra de ICMS:** 986 itens da Parte 2 do Anexo XV do RICMS/MG, gerados das páginas oficiais da SEF/MG guardadas no Bipaê.
+  - **Data de cada linha:** sai das notas de rodapé do regulamento.
+  - **Mais de uma MVA no mesmo produto:** cada uma vem com o nome, como cerveja da indústria (140%) e do atacadista (70%), ou vinho importado e nacional.
+- **Itens que saíram da ST em MG:** a regra avisa, com a data e o decreto.
+- **Monitor semanal das fontes:** passou a conferir as páginas do RICMS/MG.
+
+### Corrigido
+- **Sugestão de MVA:** dois valores para o mesmo CEST não se confundem mais na lista.
+
 ## [F3-26.c.PR Substituição tributária no Paraná] — 17/10/2026
 
 ### Adicionado

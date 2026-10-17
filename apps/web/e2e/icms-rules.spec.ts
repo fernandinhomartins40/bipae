@@ -162,3 +162,33 @@ test('Paraná: MVA da Resolução SEFA 571/2019 e eletrônicos fora da ST (F3-26
   await expect(page.getByText('Saiu da substituição tributária em PR')).toBeVisible();
   await expect(page.getByText(/Decreto 12\.828\/2026/).first()).toBeVisible();
 });
+
+test('Minas Gerais: MVA do leite UHT pelo Anexo XV do RICMS/MG (F3-26.c.MG)', async ({ page }) => {
+  await page.goto('/criar-conta');
+  await page.getByLabel('Seu nome').fill('Bia Dona');
+  await page.getByLabel('Nome do negócio').fill(`Empório ${Date.now()}`);
+  await page.getByLabel('E-mail').fill(`bia-${Date.now()}@exemplo.com.br`);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Criar conta grátis' }).click();
+  await expect(page.getByRole('heading', { name: 'Olá, Bia!' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await page.getByRole('button', { name: 'Editar', exact: true }).click();
+  await page.getByLabel('UF').selectOption('MG');
+  await page.getByRole('button', { name: 'Salvar empresa' }).click();
+  await expect(page.getByText(/ · MG/)).toBeVisible();
+
+  await page.getByRole('link', { name: 'Regras de ICMS' }).click();
+  await page.getByRole('button', { name: 'Nova regra' }).click();
+  await page.getByLabel('Nome da regra').fill('Leite UHT');
+  await page.getByLabel('Vale a partir de').fill('2026-10-17');
+  await page.getByLabel('NCM', { exact: true }).fill('0401.10.10');
+  const sugestao = page.getByRole('region', { name: 'MVA oficial' });
+  await expect(sugestao).toContainText('RICMS/MG, Anexo XV, Parte 2');
+  await sugestao
+    .getByRole('listitem')
+    .filter({ hasText: 'CEST 17.016.00' })
+    .getByRole('button', { name: 'Usar 15%' })
+    .click();
+  await expect(page.getByLabel('MVA (%)')).toHaveValue('15');
+});
