@@ -45,3 +45,30 @@ export async function pdfLines(bytes) {
   await doc.destroy();
   return lines;
 }
+
+/** Pedaços de texto com a posição na página (para tabelas em que a coluna importa). */
+export async function pdfItems(bytes) {
+  const doc = await getDocument({
+    data: new Uint8Array(bytes),
+    isEvalSupported: false,
+    verbosity: 0,
+  }).promise;
+  const items = [];
+  for (let p = 1; p <= doc.numPages; p++) {
+    const page = await doc.getPage(p);
+    const content = await page.getTextContent();
+    for (const item of content.items) {
+      if (!('str' in item) || !item.str.trim()) continue;
+      items.push({
+        page: p,
+        x: item.transform[4],
+        y: item.transform[5],
+        width: item.width,
+        str: item.str,
+      });
+    }
+    page.cleanup();
+  }
+  await doc.destroy();
+  return items;
+}

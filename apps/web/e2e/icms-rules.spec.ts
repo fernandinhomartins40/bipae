@@ -175,6 +175,14 @@ test('Paraná: MVA da Resolução SEFA 571/2019 e eletrônicos fora da ST (F3-26
   await page.getByLabel('NCM', { exact: true }).fill('8415.10.11');
   await expect(page.getByText('Saiu da substituição tributária em PR')).toBeVisible();
   await expect(page.getByText(/Decreto 12\.828\/2026/).first()).toBeVisible();
+
+  // cBenef (F3-27.b): a tabela oficial do PR explica o código e os CST.
+  await page.getByLabel('Código de benefício fiscal (cBenef, opcional)').fill('PR810205');
+  const cb = page.getByRole('region', { name: 'Código de benefício' });
+  await expect(cb).toContainText('74-A do Anexo V');
+  await expect(cb).toContainText('CST 30, CST 40');
+  await page.getByLabel('Código de benefício fiscal (cBenef, opcional)').fill('PR999999');
+  await expect(page.getByText('Código fora da tabela de PR')).toBeVisible();
 });
 
 test('Minas Gerais: MVA do leite UHT pelo Anexo XV do RICMS/MG (F3-26.c.MG)', async ({ page }) => {

@@ -21,7 +21,9 @@ import { markStale, parseDifal } from './difal.mjs';
 import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpBebidasBase, parseSpCat68 } from './st-sp-cat68.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences } from './st-pr.mjs';
-import { pdfLines } from './pdf-text.mjs';
+import { pdfItems, pdfLines } from './pdf-text.mjs';
+import { parseCbenefPr } from './cbenef-pr.mjs';
+import { parseCbenefSc } from './cbenef-sc.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
@@ -681,6 +683,25 @@ async function importStReferences(cest) {
 // Depende do FCP (para o código de cada UF).
 tables['icms-products.json'] = importIcmsProducts(tables['fcp.json']);
 tables['st-references.json'] = await importStReferences(tables['cest.json']);
+// Códigos de benefício fiscal por UF (F3-27.b), da tabela oficial de cada SEFAZ.
+tables['cbenef.json'] = {
+  tables: [
+    {
+      uf: 'PR',
+      act: 'Tabela de Códigos de Benefício Fiscal por CST (SEFA-PR)',
+      source: 'cbenefPr',
+      url: manifest.cbenefPr.page,
+      codes: parseCbenefPr(await pdfItems(readFileSync(join(sourcesDir, manifest.cbenefPr.file)))),
+    },
+    {
+      uf: 'SC',
+      act: 'Tabela 5.2A (cBenef) da SEF/SC',
+      source: 'cbenefSc',
+      url: manifest.cbenefSc.page,
+      codes: parseCbenefSc(await pdfItems(readFileSync(join(sourcesDir, manifest.cbenefSc.file)))),
+    },
+  ],
+};
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha
 // sem regerar os dados.

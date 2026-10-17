@@ -279,6 +279,9 @@ function RuleForm({
           onChange={text('benefitCode')}
           error={form.errors.benefitCode}
         />
+        {uf && form.values.benefitCode.trim().length >= 8 && (
+          <CbenefInfo uf={uf} code={form.values.benefitCode} date={form.values.validFrom} />
+        )}
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField
             label="Vale a partir de"
@@ -528,6 +531,77 @@ function StSuggestion({
       </ul>
       <p className="mt-2 text-muted">
         {items[0]!.act}. {items[0]!.note} Confira se o produto é o da descrição antes de usar.
+      </p>
+    </section>
+  );
+}
+
+interface CbenefAnswer {
+  uf: string;
+  covered: boolean;
+  valid: boolean;
+  entry: {
+    code: string;
+    csts: string[];
+    from: string | null;
+    to: string | null;
+    description: string;
+    act: string;
+    kind?: string;
+  } | null;
+}
+
+/** O que a tabela oficial de cBenef da UF diz do código digitado (F3-27.b). */
+function CbenefInfo({ uf, code, date }: { uf: string; code: string; date: string }) {
+  const { api } = useApp();
+  const wanted = code.trim().toUpperCase();
+  const found = useQuery({
+    queryKey: ['cbenef', uf, wanted, date],
+    queryFn: () =>
+      api.get<CbenefAnswer>(
+        `/fiscal/cbenef?uf=${uf}&code=${encodeURIComponent(wanted)}${date ? `&date=${date}` : ''}`,
+      ),
+    enabled: wanted.length >= 8 && wanted !== 'SEM CBENEF',
+  });
+  if (wanted === 'SEM CBENEF' || !found.data) return null;
+  const { covered, entry, valid } = found.data;
+  if (!covered) {
+    return (
+      <p className="text-sm text-muted">
+        {`A tabela oficial de cBenef de ${uf} ainda não está no Bipaê: confira o código na SEFAZ.`}
+      </p>
+    );
+  }
+  if (!entry) {
+    return (
+      <Alert tone="warning" title={`Código fora da tabela de ${uf}`}>
+        {`${wanted} não está na tabela oficial de códigos de benefício de ${uf}. Confira o código com o contador.`}
+      </Alert>
+    );
+  }
+  if (/cr[ée]dito presumido/i.test(entry.kind ?? '')) {
+    return (
+      <Alert tone="warning" title="Código de crédito presumido">
+        {`${entry.code} é de crédito presumido: vai no campo cCredPresumido da nota, não no cBenef. ${entry.description}`}
+      </Alert>
+    );
+  }
+  const csts = entry.csts.map((c) => `CST ${c}`).join(', ');
+  if (!valid) {
+    return (
+      <Alert tone="warning" title="Código fora da vigência">
+        {`${entry.code}: ${entry.description}. ${entry.to ? `Encerrado em ${toDate(entry.to)}` : `Vale a partir de ${toDate(entry.from!)}`} (${entry.act}).`}
+      </Alert>
+    );
+  }
+  return (
+    <section
+      className="rounded-ui border border-border p-3 text-sm"
+      aria-label="Código de benefício"
+    >
+      <p className="font-semibold">{`${entry.code}: ${entry.description}`}</p>
+      <p className="mt-1 text-muted">
+        {`Vale para ${csts}${entry.from ? ` desde ${toDate(entry.from)}` : ''} (${entry.act}). O CST do produto precisa ser um desses.`}
       </p>
     </section>
   );

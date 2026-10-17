@@ -1,5 +1,20 @@
 # Changelog
 
+## [F3-27.b.SC Tabela oficial de cBenef de Santa Catarina] — 17/10/2026
+
+### Adicionado
+- **cBenef de Santa Catarina explicado na regra de ICMS:** são 665 códigos da Tabela 5.2A da SEF/SC, com o tipo do benefício e os CST.
+  - **Código de crédito presumido:** a tela avisa que ele vai no campo de crédito presumido da nota, e não no cBenef.
+- **Monitor semanal das fontes:** passou a conferir a tabela de SC.
+
+## [F3-27.b.PR Tabela oficial de cBenef do Paraná] — 17/10/2026
+
+### Adicionado
+- **cBenef do Paraná explicado na regra de ICMS:** ao digitar o código, a tela mostra o que ele é (por exemplo, "Isenção prevista no item 74-A do Anexo V do RICMS/2017") e para quais CST ele vale.
+  - **Avisos:** a tela avisa quando o código está encerrado ou não está na tabela.
+  - **Origem:** é gerado da tabela oficial da SEFA-PR (versão 27, de julho de 2026, com 502 códigos).
+- **Monitor semanal das fontes:** passou a conferir a tabela de cBenef do PR.
+
 ## [F3-27.a Código de benefício fiscal (cBenef) na nota] — 17/10/2026
 
 ### Adicionado

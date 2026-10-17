@@ -196,7 +196,10 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - O motor já calcula a ST com a MVA da regra da empresa. Falta a tabela oficial por UF: as MVA estão em resoluções esparsas e alteradas (no PR, Resolução SEFA 571/2019 sobre o Anexo IX do RICMS); cada UF exige leitura própria. Feita depois das tarefas de código, uma UF por subtarefa.
 - [~] F3-27 · Código de benefício fiscal (cBenef) por UF — depende: F3-25
   - [x] F3-27.a · Base: a regra de ICMS da empresa leva o cBenef (8 ou 10 caracteres ou SEM CBENEF, como no leiaute PL_010f), o motor o separa do cálculo e a NFC-e o põe no item depois do CEST, válida no XSD; chega ao caixa pela sincronização
-  - [ ] F3-27.b · Tabelas oficiais de cBenef das UFs que exigem o código (PR, RJ, RS, SC, GO, DF, ES e outras), geradas do arquivo da SEFAZ, para sugerir e conferir o código pelo CST — depende: F3-27.a
+  - [~] F3-27.b · Tabelas oficiais de cBenef das UFs que exigem o código, geradas do arquivo da SEFAZ, para sugerir e conferir o código pelo CST — depende: F3-27.a
+    - [x] F3-27.b.PR · Paraná: Tabela de Códigos de Benefício Fiscal por CST, V27 de 17/07/2026 (502 códigos, CST pela posição no PDF); aviso na regra de ICMS e rota /fiscal/cbenef; monitor semanal
+    - [x] F3-27.b.SC · Santa Catarina: Tabela 5.2A (cBenef) de 09/10/2026 (665 códigos, com o tipo do benefício; crédito presumido marcado à parte, porque vai no cCredPresumido); monitor semanal
+    - [ ] F3-27.b.UFs · RJ, RS, GO, DF, ES e as demais UFs que exigem o cBenef, uma por vez
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
   - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entraram com a F3-08.b (Portal Nacional da NF-e).
 - [x] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c

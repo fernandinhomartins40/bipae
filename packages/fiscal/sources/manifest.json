@@ -352,5 +352,21 @@
   "page": "https://legislacao.sefin.ro.gov.br/pesquisar_detalhe_lei/299",
   "publishedAt": "2026-10-17",
   "downloadedAt": "2026-10-17"
+ },
+ "cbenefPr": {
+  "file": "SEFA-PR_Tabela_cBenef_por_CST_V27_2026-07-17.pdf",
+  "title": "Tabela de Códigos de Benefício Fiscal por CST - Paraná (versão 27, atualizada em 17/07/2026)",
+  "publisher": "Secretaria de Estado da Fazenda do Paraná (Portal SPED)",
+  "page": "https://sped.fazenda.pr.gov.br/sites/sped/arquivos_restritos/files/documento/2026-07/TABELA_cbenef_PR_portal_nacional_JULHO_2026_V27_PUB.pdf",
+  "publishedAt": "2026-07-17",
+  "downloadedAt": "2026-10-17"
+ },
+ "cbenefSc": {
+  "file": "SEF-SC_Tabela_5.2A_cBenef_2026-10-09.pdf",
+  "title": "Tabela 5.2A (cBenef) de Santa Catarina: códigos de benefício fiscal por CST, gerada pela SEF/SC em 09/10/2026",
+  "publisher": "Secretaria de Estado da Fazenda de Santa Catarina",
+  "page": "https://www.sef.sc.gov.br/api/download?id=1188&nomeArquivo=Tabela%205.2A%20%28cBenef%29.pdf&mime=application%2Fpdf",
+  "publishedAt": "2026-10-09",
+  "downloadedAt": "2026-10-17"
  }
 }

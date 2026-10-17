@@ -53,6 +53,15 @@ describe('referências de ST por UF (F3-26)', () => {
     expect(pr).toMatchObject({ uf: 'PR', covered: true, listed: true });
     expect(pr.items[0]).toMatchObject({ cest: '1701600', mva: '14.22' });
     expect((await admin.get('/fiscal/st-references?uf=SP&ncm=abc')).statusCode).toBe(400);
+    // cBenef (F3-27.b): o que a tabela oficial do PR diz do código.
+    const cb = (await admin.get('/fiscal/cbenef?uf=PR&code=PR810205&date=2026-10-17')).json();
+    expect(cb).toMatchObject({
+      uf: 'PR',
+      covered: true,
+      valid: true,
+      entry: { csts: ['30', '40'] },
+    });
+    expect((await admin.get('/fiscal/cbenef?uf=PR')).statusCode).toBe(400);
     expect((await api(t.app, {}).get('/fiscal/st-references?uf=SP&ncm=0401')).statusCode).toBe(401);
   });
 });

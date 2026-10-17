@@ -17,7 +17,9 @@ import { parseDifal } from './difal.mjs';
 import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpCat68 } from './st-sp-cat68.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences, prStRows } from './st-pr.mjs';
-import { pdfLines } from './pdf-text.mjs';
+import { pdfItems, pdfLines } from './pdf-text.mjs';
+import { parseCbenefPr } from './cbenef-pr.mjs';
+import { parseCbenefSc } from './cbenef-sc.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII } from './st-rs.mjs';
 import { parseScAnexo1A } from './st-sc.mjs';
@@ -643,6 +645,72 @@ async function checkRo() {
   };
 }
 
+/** cBenef do Paraná: o PDF de hoje (se a SEFA-PR publicar outra versão, o endereço muda e avisa). */
+async function checkCbenefPr() {
+  const rowsOf = async (bytes) =>
+    parseCbenefPr(await pdfItems(bytes)).map((c) => [
+      c.code,
+      c.csts.join(' '),
+      c.from ?? '',
+      c.to ?? '',
+    ]);
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.cbenefPr.file)));
+  const title = 'cBenef do Paraná (tabela por CST da SEFA-PR)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.cbenefPr.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.cbenefPr.page,
+      status: 'mudou',
+      details: [`o arquivo não abre ou não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.cbenefPr.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} código(s) novo(s) ou alterado(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
+/** cBenef de Santa Catarina: a Tabela 5.2A de hoje. */
+async function checkCbenefSc() {
+  const rowsOf = async (bytes) =>
+    parseCbenefSc(await pdfItems(bytes)).map((c) => [
+      c.code,
+      c.csts.join(' '),
+      c.from ?? '',
+      c.to ?? '',
+    ]);
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.cbenefSc.file)));
+  const title = 'cBenef de Santa Catarina (Tabela 5.2A)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.cbenefSc.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.cbenefSc.page,
+      status: 'mudou',
+      details: [`o arquivo não abre ou não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.cbenefSc.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} código(s) novo(s) ou alterado(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 const safe = async (title, page, fn) => {
   try {
     return await fn();
@@ -675,6 +743,8 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),
     await safe('ST em Rondônia', manifest.stRoAnexoVI.page, checkRo),
+    await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
+    await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

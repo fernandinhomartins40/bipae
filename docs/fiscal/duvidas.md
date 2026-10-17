@@ -578,4 +578,12 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Cadastro:** a regra de ICMS da empresa leva o código. Quem cadastra é a empresa, com o contador.
   - **Nota:** o Bipaê põe o código em cada item do NCM da regra, logo depois do CEST, e o XML é conferido no XSD oficial.
   - **O que o sistema não faz:** não decide sozinho qual código usar nem se a UF exige.
-- **Em aberto (F3-27.b):** gerar as tabelas oficiais de cada UF que exige o código, a partir do arquivo publicado pela SEFAZ, para sugerir o código e conferir se ele combina com o CST do produto.
+- **Atualização de 17/10/2026 (F3-27.b, Paraná):** "Tabela de Códigos de Benefício Fiscal por CST" do Portal SPED da SEFA-PR, versão 27, de 17/07/2026. Está guardada em `packages/fiscal/sources` e é lida por gerador:
+  - **Códigos:** 502, dos quais 27 já encerrados.
+  - **Leitura dos CST:** a tabela marca "SIM" sob a coluna de cada CST, e a leitura usa a posição de cada pedaço de texto no PDF.
+  - **Na regra de ICMS:** ao digitar o código, a tela mostra o que ele significa, para quais CST vale e se está encerrado ou fora da tabela.
+  - **Obrigatoriedade no PR:** o preenchimento é obrigatório desde 01/02/2019 (NPF 53/2018).
+- **Atualização de 17/10/2026 (F3-27.b, Santa Catarina):** Tabela 5.2A (cBenef) da SEF/SC, gerada em 09/10/2026, lida pela posição de cada pedaço no PDF:
+  - **Códigos:** 665, com o tipo de cada benefício (isenção, redução de base, diferimento, suspensão, não incidência e crédito presumido), os CST e a vigência.
+  - **Crédito presumido:** os 112 códigos de crédito presumido não têm CST, porque vão no campo cCredPresumido da nota, e não no cBenef. A tela avisa isso.
+- **Em aberto (F3-27.b, demais UFs):** as tabelas de RJ, RS, GO, DF, ES e das outras UFs que exigem o código.

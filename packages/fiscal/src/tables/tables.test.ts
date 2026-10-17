@@ -40,7 +40,7 @@ describe('origem das tabelas', () => {
       // Portal Nacional da NFC-e, mantido pelo ENCAT (os coordenadores tributários das SEFAZ), e os
       // sites de legislação das SEFAZ estaduais (ST por UF, F3-26).
       expect(fonte.page).toMatch(
-        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda|servicodados\.ibge|legislacao\.fazenda\.sp|www\.sefanet\.pr|www\.fazenda\.mg|www\.legislacao\.sefaz\.rs|legislacao\.sef\.sc)\.gov\.br|mbusca\.sefaz\.ba\.gov\.br|appasp\.economia\.go\.gov\.br|legislacao\.fazenda\.rj\.gov\.br|www3\.sefaz\.es\.gov\.br|gcs\.sefaz\.al\.gov\.br|legislacao\.sefin\.ro\.gov\.br|nfce\.encat\.org|www\.gov\.br\/iti)\//,
+        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda|servicodados\.ibge|legislacao\.fazenda\.sp|www\.sefanet\.pr|www\.fazenda\.mg|www\.legislacao\.sefaz\.rs|legislacao\.sef\.sc)\.gov\.br|mbusca\.sefaz\.ba\.gov\.br|appasp\.economia\.go\.gov\.br|legislacao\.fazenda\.rj\.gov\.br|www3\.sefaz\.es\.gov\.br|gcs\.sefaz\.al\.gov\.br|legislacao\.sefin\.ro\.gov\.br|sped\.fazenda\.pr\.gov\.br|www\.sef\.sc\.gov\.br|nfce\.encat\.org|www\.gov\.br\/iti)\//,
       );
       assertDate(fonte.publishedAt);
       assertDate(fonte.downloadedAt);
@@ -52,8 +52,9 @@ describe('origem das tabelas', () => {
       encoding: 'utf8',
     });
     expect(saida).toContain('em dia');
-    // Lê todas as planilhas oficiais: com a máquina ocupada passa dos 5 s padrão.
-  }, 30_000);
+    // Lê todas as fontes oficiais, inclusive os PDFs grandes das UFs (ST e cBenef): com a máquina
+    // ocupada leva alguns minutos.
+  }, 300_000);
 });
 
 describe('tabela de CFOP', () => {

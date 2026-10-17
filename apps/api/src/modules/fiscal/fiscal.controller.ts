@@ -28,6 +28,8 @@ import {
   ST_REFERENCE_UFS,
   ST_SEGMENT_UFS,
   stReferencesFor,
+  cbenefLookup,
+  CBENEF_UFS,
   stStatusFor,
   classTribStatus,
   findCestSegment,
@@ -233,6 +235,34 @@ export class FiscalController {
       listed: ST_SEGMENT_UFS.includes(uf),
       status: stStatusFor(uf, ncm, day, (cest) => CESTS.find((c) => c.cest === cest)?.ncm ?? []),
     };
+  }
+
+  /**
+   * Código de benefício fiscal (cBenef, F3-27.b): o que a tabela oficial da UF diz do código, se
+   * vale na data e para quais CST. Referência para a regra de ICMS; quem escolhe é a empresa.
+   */
+  @Get('cbenef')
+  @RequirePermission('catalog.read')
+  cbenef(@Query() query: unknown) {
+    const { uf, code, date } = parse(
+      z.object({
+        uf: z.string({ message: 'Informe a UF' }).trim().toUpperCase().length(2, 'Informe a UF'),
+        code: z
+          .string({ message: 'Informe o código' })
+          .trim()
+          .min(2, 'Informe o código')
+          .max(10, 'O código tem no máximo 10 caracteres'),
+        date: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional(),
+      }),
+      query,
+    );
+    const day =
+      date ??
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
+    return { ...cbenefLookup(uf, code, day), ufs: CBENEF_UFS };
   }
 
   @Get('icms-products')
