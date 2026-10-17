@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-33.e Estoque e contas a receber da NF-e] — 17/10/2026
+
+### Adicionado
+- **Estoque:** ao emitir, a mercadoria da NF-e sai do estoque da loja. Vale para a venda e para a devolução de compra ao fornecedor.
+- **Contas a receber:** cada parcela da venda a prazo vira uma conta a receber, ligada à nota.
+
 ## [F3-33.c Tela da NF-e na retaguarda] — 17/10/2026
 
 ### Adicionado

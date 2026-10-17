@@ -649,7 +649,7 @@ function DraftForm({
         onChange={(e) => set('purpose', e.target.value as Draft['purpose'])}
         options={[
           { value: 'normal', label: 'Venda (nota normal)' },
-          { value: 'devolucao', label: 'Devolução' },
+          { value: 'devolucao', label: 'Devolução de compra (ao fornecedor)' },
         ]}
       />
       {d.purpose === 'devolucao' && (
@@ -990,10 +990,10 @@ function DraftForm({
           )}
         </div>
       )}
-      <Alert tone="warning" title="Estoque e contas a receber">
-        A NF-e ainda não baixa o estoque nem lança a conta a receber: chega em breve. Por enquanto,
-        faça esses lançamentos à mão.
-      </Alert>
+      <p className="text-sm text-muted">
+        Ao emitir, a mercadoria sai do estoque da loja e cada parcela vira uma conta a receber em
+        Contas a pagar e receber.
+      </p>
     </div>
   );
 }

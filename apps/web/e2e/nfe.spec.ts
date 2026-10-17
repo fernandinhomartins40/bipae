@@ -48,15 +48,17 @@ test('preenche a NF-e para uma empresa, vê o que falta, confere e emite', async
       },
     })
   ).json();
-  await api.post('products', {
-    headers,
-    data: {
-      name: 'Arroz tipo 1 5kg',
-      priceCents: 2500,
-      ncm: '10063021',
-      fiscalProfileId: perfil.id,
-    },
-  });
+  const arroz = await (
+    await api.post('products', {
+      headers,
+      data: {
+        name: 'Arroz tipo 1 5kg',
+        priceCents: 2500,
+        ncm: '10063021',
+        fiscalProfileId: perfil.id,
+      },
+    })
+  ).json();
   await api.post('customers', {
     headers,
     data: {
@@ -114,4 +116,10 @@ test('preenche a NF-e para uma empresa, vê o que falta, confere e emite', async
   const linha = page.getByRole('row', { name: /Mercado do Bairro/ });
   await expect(linha).toContainText('1 (série 1)');
   await expect(linha).toContainText('Falta configurar');
+
+  // Ao emitir, a mercadoria saiu do estoque da loja (F3-33.e).
+  const estoque = await (await api.get(`stock?productId=${arroz.id}`, { headers })).json();
+  expect(estoque.reduce((t: number, r: { quantityMilli: number }) => t + r.quantityMilli, 0)).toBe(
+    -10_000,
+  );
 });

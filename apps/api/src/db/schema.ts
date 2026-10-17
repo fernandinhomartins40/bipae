@@ -474,6 +474,7 @@ export const stockMovements = pgTable('stock_movements', {
       'transfer_in',
       'conditional_out',
       'conditional_in',
+      'nfe_out',
     ],
   }).notNull(),
   refId: uuid('ref_id'),
@@ -831,6 +832,8 @@ export const financialEntries = pgTable('financial_entries', {
   notes: text('notes'),
   /** Venda no crediário que gerou a conta (F4-09). */
   saleId: uuid('sale_id'),
+  /** NF-e da retaguarda que gerou a parcela (F3-33.e). */
+  invoiceId: uuid('invoice_id'),
   createdBy: uuid('created_by'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),

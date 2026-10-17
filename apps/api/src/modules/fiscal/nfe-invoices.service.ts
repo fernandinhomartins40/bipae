@@ -39,11 +39,13 @@ import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   companies,
   companyIcmsRules,
+  financialEntries,
   fiscalDocuments,
   fiscalProfiles,
   nfeInvoices,
   productBarcodes,
   products,
+  stockMovements,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 import { CertificatesService } from './certificates.service';
@@ -95,7 +97,8 @@ const jobContext = (tenantId: string, userId: string): RequestContext => ({
  * parcelas e pagamento) e vê, a cada mudança, o que o motor diz que falta. Ao emitir, a nota ganha
  * o próximo número da série de NF-e da empresa e vai para a fila, que assina com o A1 da empresa
  * e envia à SEFAZ de homologação; antes de reenviar, consulta pela chave, para nunca autorizar a
- * mesma nota duas vezes. A NF-e ainda não baixa o estoque nem lança a conta a receber (F3-33.e).
+ * mesma nota duas vezes. Ao emitir, a nota (sempre de saída) baixa o estoque da loja e as parcelas
+ * da venda viram contas a receber (F3-33.e).
  */
 @Injectable()
 export class NfeInvoicesService implements OnModuleInit {
@@ -476,6 +479,50 @@ export class NfeInvoicesService implements OnModuleInit {
         .update(nfeInvoices)
         .set({ status: 'issued', issuedAt: new Date(), updatedAt: new Date() })
         .where(eq(nfeInvoices.id, invoice.id));
+      const number = taken!.next - 1;
+      const recipient = invoice.recipient as Input['recipient'];
+      // F3-33.e: a nota é de saída (tpNF 1): a venda e a devolução de compra ao fornecedor tiram
+      // a mercadoria do estoque da loja.
+      const isReturn = invoice.purpose === 'devolucao';
+      const now = new Date();
+      for (const item of invoice.items as StoredItem[]) {
+        await tx.insert(stockMovements).values({
+          id: uuidv7(),
+          tenantId: ctx.tenantId,
+          storeId: invoice.storeId,
+          productId: item.productId,
+          deltaMilli: -item.quantityMilli,
+          reason: 'nfe_out',
+          refId: invoice.id,
+          note: `NF-e nº ${number} · ${recipient.name}`,
+          actorId: ctx.userId,
+          occurredAt: now,
+        });
+      }
+      // Cada parcela da venda a prazo vira uma conta a receber (a soma é o total da nota).
+      const installments = invoice.installments as Input['installments'];
+      if (!isReturn && installments.length > 0) {
+        const groupId = uuidv7();
+        await tx.insert(financialEntries).values(
+          installments.map((p, index) => ({
+            id: uuidv7(),
+            tenantId: ctx.tenantId,
+            companyId: invoice.companyId,
+            kind: 'receivable' as const,
+            description: `NF-e nº ${number} · ${recipient.name} · parcela ${index + 1}/${installments.length}`,
+            category: 'Vendas',
+            customerId: invoice.customerId,
+            document: recipient.taxId,
+            amountCents: p.amountCents,
+            dueDate: p.dueDate,
+            groupId,
+            installment: index + 1,
+            installments: installments.length,
+            invoiceId: invoice.id,
+            createdBy: ctx.userId,
+          })),
+        );
+      }
       await this.audit.record(tx, ctx, {
         action: 'nfe.issued',
         entity: 'nfe_invoice',

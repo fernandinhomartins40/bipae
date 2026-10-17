@@ -116,7 +116,7 @@ async function nota(
 describe('NF-e da retaguarda (F3-33.b)', () => {
   it('rascunho conferido, emitido com o número da série e autorizado; XML, DANFE e auditoria', async () => {
     sefaz.mode = 'normal';
-    const { admin, rascunho } = await retaguarda();
+    const { admin, rascunho, produto } = await retaguarda();
     const criada = await admin.post('/fiscal/nfe', rascunho());
     expect(criada.statusCode).toBe(201);
     const view = criada.json();
@@ -149,6 +149,23 @@ describe('NF-e da retaguarda (F3-33.b)', () => {
     const danfe = await admin.get(`/fiscal/nfe/${view.id}/danfe`);
     expect(danfe.headers['content-disposition']).toContain(
       `"DANFE-NFe${pronta.document.accessKey}.pdf"`,
+    );
+
+    // F3-33.e: a venda tirou do estoque e as parcelas viraram contas a receber.
+    const saldo = (await admin.get(`/stock?productId=${produto.id}`))
+      .json()
+      .reduce((t: number, r: { quantityMilli: number }) => t + r.quantityMilli, 0);
+    expect(saldo).toBe(-10_000);
+    const contas = (await admin.get('/finance/entries?kind=receivable')).json() as {
+      description: string;
+      amountCents: number;
+      dueDate: string;
+    }[];
+    expect(contas.map((c) => [c.description, c.amountCents, c.dueDate])).toEqual(
+      expect.arrayContaining([
+        ['NF-e nº 1 · Mercado do Bairro LTDA · parcela 1/2', 13_000, '2026-11-15'],
+        ['NF-e nº 1 · Mercado do Bairro LTDA · parcela 2/2', 13_000, '2026-12-15'],
+      ]),
     );
 
     // Emitida não muda mais, não sai de novo e não vai para a fila de novo.
