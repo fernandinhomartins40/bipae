@@ -40,7 +40,7 @@ describe('origem das tabelas', () => {
       // Portal Nacional da NFC-e, mantido pelo ENCAT (os coordenadores tributários das SEFAZ), e os
       // sites de legislação das SEFAZ estaduais (ST por UF, F3-26).
       expect(fonte.page).toMatch(
-        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda|servicodados\.ibge|legislacao\.fazenda\.sp|portal\.fazenda\.sp|www\.sefanet\.pr|www\.fazenda\.mg|www\.legislacao\.sefaz\.rs|legislacao\.sef\.sc)\.gov\.br|mbusca\.sefaz\.ba\.gov\.br|appasp\.economia\.go\.gov\.br|legislacao\.fazenda\.rj\.gov\.br|portal\.fazenda\.rj\.gov\.br|www3\.sefaz\.es\.gov\.br|gcs\.sefaz\.al\.gov\.br|legislacao\.sefin\.ro\.gov\.br|sped\.fazenda\.pr\.gov\.br|www\.sef\.sc\.gov\.br|atendimento\.receita\.rs\.gov\.br|sefaz\.es\.gov\.br|static\.fazenda\.df\.gov\.br|www\.sefaz\.pe\.gov\.br|nfce\.encat\.org|www\.gov\.br\/iti|www\.gov\.br\/nfse)\//,
+        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda|servicodados\.ibge|legislacao\.fazenda\.sp|portal\.fazenda\.sp|www\.sefanet\.pr|www\.fazenda\.mg|www\.legislacao\.sefaz\.rs|legislacao\.sef\.sc)\.gov\.br|mbusca\.sefaz\.ba\.gov\.br|appasp\.economia\.go\.gov\.br|legislacao\.fazenda\.rj\.gov\.br|portal\.fazenda\.rj\.gov\.br|www3\.sefaz\.es\.gov\.br|gcs\.sefaz\.al\.gov\.br|legislacao\.sefin\.ro\.gov\.br|sped\.fazenda\.pr\.gov\.br|www\.sef\.sc\.gov\.br|atendimento\.receita\.rs\.gov\.br|sefaz\.es\.gov\.br|static\.fazenda\.df\.gov\.br|www\.sefaz\.pe\.gov\.br|www\.sefaz\.pb\.gov\.br|nfce\.encat\.org|www\.gov\.br\/iti|www\.gov\.br\/nfse)\//,
       );
       assertDate(fonte.publishedAt);
       assertDate(fonte.downloadedAt);

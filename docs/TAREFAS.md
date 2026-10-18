@@ -196,7 +196,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
       - Busca de 18/10/2026: o portal oficial (sefazlegis.sefaz.ce.gov.br) abre os arquivos pelo id sem login, mas a busca exige captcha; o único PDF achado é o texto original de 2019, sem as alterações. Falta o id do texto consolidado do Anexo IX.
     - [ ] F3-26.d.MT · Mato Grosso: Anexo X do RICMS/MT e Portaria 195/2019 (Lotus Notes, sem endereço direto)
     - [ ] F3-26.d.MS · Mato Grosso do Sul: Anexo III do RICMS/MS (Lotus Notes, sem endereço direto)
-    - [ ] F3-26.d.PB · Paraíba: Anexo 05 do RICMS/PB (sem o texto consolidado na navegação do portal)
+    - [x] F3-26.d.PB · Paraíba: planilhas oficiais do Anexo 5 do RICMS/PB por segmento (SEFAZ-PB, 10/04/2025; 17 planilhas, 542 linhas), com a vigência de cada linha, MVA original e as duas MVAs das autopeças (com e sem índice de fidelidade); pauta fiscal indicada na nota; combustíveis (PMPF) e energia fora; monitor semanal
     - [ ] F3-26.d.PI · Piauí: Anexo X do RICMS/PI (portal em JavaScript, sem o texto consolidado)
     - [ ] F3-26.d.AC · Acre e F3-26.d.AM, PA, SE, RN, MA, TO, AP, RR: achar a fonte oficial acessível (portais sem resposta ou sem o texto)
     - [x] F3-26.d.PE · Pernambuco: Anexo 37 do RICMS/PE (Decreto 44.650/2017) consolidado, 13 capítulos com a MVA no artigo e as tabelas dos Anexos 37-A a 37-C (334 CEST, ligados pelo item do Convênio ICMS 142/2018); redação anterior descartada; capítulos de pauta, PMC, MVA por remetente, porta a porta e faturamento direto ficam como "falta configurar"; monitor semanal

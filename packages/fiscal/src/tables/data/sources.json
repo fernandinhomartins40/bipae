@@ -352,6 +352,168 @@
   "downloadedAt": "2026-10-17",
   "sha256": "46768ebfef042531bf7e25d5bed460e64c8001a901360edf7e6e6b9171ca65b3"
  },
+ "stPbAnexo5_01": {
+  "file": "SEFAZ-PB_Anexo_5_Autopecas_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Autopeças (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Autope%C3%A7as_1.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "79148261b2b27ee776c9ce31fc7b25092bdea507358e4ec9806264560027255c"
+ },
+ "stPbAnexo5_02": {
+  "file": "SEFAZ-PB_Anexo_5_Bebidas_alcoolicas_exceto_cerveja_e_chope_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Bebidas alcóolicas exceto cerveja e chope (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Bebidas_alc%C3%B3olicas_exceto_cerveja_e_chope_1.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "6920b8e3233c5df2c5f068ec8b98dbdbefca9d8b8f8d2c2ab2f855b3573fa27d"
+ },
+ "stPbAnexo5_03": {
+  "file": "SEFAZ-PB_Anexo_5_Cervejas_chopes_refrigerante_aguas_e_outras_bebidas_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Cervejas chopes refrigerante águas e outras bebidas (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Cervejas_chopes_refrigerante_%C3%A1guas_e_outras_bebidas_2.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "f6e9fb4039b0946d2002c1410fbeb2fd5a853e6fe0aa9a5f994a02dc47f36721"
+ },
+ "stPbAnexo5_04": {
+  "file": "SEFAZ-PB_Anexo_5_Cigarros_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Cigarros (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Cigarros.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "7c40b5d5713774bb455d9e303b335cd17ed356c4075d851a1299e9f5a1bf53ff"
+ },
+ "stPbAnexo5_05": {
+  "file": "SEFAZ-PB_Anexo_5_Cimento_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Cimento (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Cimento_1.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "830610ae8fbb0089497c2d7b332f5215721a06b7ba28947434895d09b7a0273d"
+ },
+ "stPbAnexo5_06": {
+  "file": "SEFAZ-PB_Anexo_5_Lampadas_reatores_e_starter_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Lâmpadas reatores e starter (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_L%C3%A2mpadas_reatores_e_starter.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "ddbb307b4a34f8333c002662b9d0b8231e006f68968abdf9d8485a03145d7955"
+ },
+ "stPbAnexo5_07": {
+  "file": "SEFAZ-PB_Anexo_5_Materiais_de_construcao_e_congeneres_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Materiais de construção e congêneres (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Materiais_de_constru%C3%A7%C3%A3o_e_cong%C3%AAneres.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "f46712bcd843181ef7963cf04c6fac9db17604bc12c54a5b74fcbc373e64d186"
+ },
+ "stPbAnexo5_08": {
+  "file": "SEFAZ-PB_Anexo_5_Materiais_eletricos_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Materiais elétricos (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Materiais_el%C3%A9tricos.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "49fb6f33c5fddc67fe09299cf7b2eaf02279bf8785974b85d88fbc53046f3d51"
+ },
+ "stPbAnexo5_09": {
+  "file": "SEFAZ-PB_Anexo_5_Medicamentos_e_outros_produtos_farmaceuticos_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Medicamentos e outros produtos farmacêuticos (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Medicamentos_e_outros_produtos_farmac%C3%AAuticos.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "421f83b595a8de6342c49f208044a3175a5a965625bb5ee98fabd803549cb357"
+ },
+ "stPbAnexo5_10": {
+  "file": "SEFAZ-PB_Anexo_5_Pneumaticos_camaras_de_ar_e_protetores_de_borracha_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Pneumáticos câmaras de ar e protetores de borracha (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Pneum%C3%A1ticos_c%C3%A2maras_de_ar_e_protetores_de_borracha.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "03816d98ccd1937e2e537d3fef9d739bb2c25743ebd01ab4c89a7ab3eb928407"
+ },
+ "stPbAnexo5_11": {
+  "file": "SEFAZ-PB_Anexo_5_Produtos_alimenticios_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Produtos alimentícios (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Produtos_aliment%C3%ADcios.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "bd1551bb881def47e447838698ab2a474d40935bf71743e48f548c962d3fe11c"
+ },
+ "stPbAnexo5_12": {
+  "file": "SEFAZ-PB_Anexo_5_Produtos_de_perfumaria_higiene_e_cosmeticos_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Produtos de perfumaria higiene e cosméticos (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Produtos_de_perfumaria_higiene_e_cosm%C3%A9ticos_1.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "b8198596506a00721190e11307510bf8e327fe727e5f17a678430489e61c54b4"
+ },
+ "stPbAnexo5_13": {
+  "file": "SEFAZ-PB_Anexo_5_Produtos_eletronicos_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Produtos eletrônicos (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Produtos_eletr%C3%B4nicos.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "4648cf1d77f891bb2e402d636aec1994f052a774829c9bf30c1fc2189129d58a"
+ },
+ "stPbAnexo5_14": {
+  "file": "SEFAZ-PB_Anexo_5_Racoes_para_animais_domesticos_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Rações para animais domésticos (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Ra%C3%A7%C3%B5es_para_animais_dom%C3%A9sticos.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "f68be94ea41b45caa1040c8fe445a3103e149f9b92de65006f25b22f8ccabc69"
+ },
+ "stPbAnexo5_15": {
+  "file": "SEFAZ-PB_Anexo_5_Sorvetes_e_preparados_para_fabricacao_de_sorvetes_em_maquinas_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Sorvetes e preparados para fabricação de sorvetes em máquinas (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Sorvetes_e_preparados_para_fabrica%C3%A7%C3%A3o_de_sorvetes_em_m%C3%A1quinas.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "44ac35c37c4e172594076c5b5b17bf9261b6f0c3873f63444534869578c31bbf"
+ },
+ "stPbAnexo5_16": {
+  "file": "SEFAZ-PB_Anexo_5_Tintas_e_vernizes_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Tintas e vernizes (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Tintas_e_vernizes.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "ec8e8ccabba0694b959c5d574bb80cf3dd9adbe52a87af2f4e9d5b4e44288d8c"
+ },
+ "stPbAnexo5_17": {
+  "file": "SEFAZ-PB_Anexo_5_Veiculos_automotores_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Veículos automotores (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Ve%C3%ADculos_automotores.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "10b7357f76bad358530bb7017a1ff21ee1bd2052f41c3a34c4e44125c80c5427"
+ },
+ "stPbAnexo5_18": {
+  "file": "SEFAZ-PB_Anexo_5_Veiculos_duas_e_tres_rodas_automotores_2025-04-10.xlsx",
+  "title": "RICMS/PB (Decreto 18.930/1997), Anexo 5, planilha da SEFAZ-PB: Veículos duas e três rodas automotores (CEST, NCM, vigência e MVA)",
+  "publisher": "Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB)",
+  "page": "https://www.sefaz.pb.gov.br/images/docs/Anexo_5/10_04_2025/Anexo_5_Ve%C3%ADculos_duas_e_tr%C3%AAs_rodas_automotores_1.xlsx",
+  "publishedAt": "2025-04-10",
+  "downloadedAt": "2026-10-18",
+  "sha256": "68b50780f291a34d749f478d689c1371cc6e2a0c84bd2c0388b64fe551bffbeb"
+ },
  "stPeRicms": {
   "file": "SEFAZ-PE_RICMS_Decreto_44650-2017_2026-10-18.htm.gz",
   "title": "RICMS/PE (Decreto 44.650/2017), texto consolidado: Anexo 37 (substituição tributária por segmento e MVA) e Anexos 37-A a 37-C (MVA por item do Convênio ICMS 142/2018)",

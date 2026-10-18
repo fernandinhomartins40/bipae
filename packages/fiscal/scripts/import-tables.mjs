@@ -36,6 +36,7 @@ import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
 import { baStReferences, parseBaAnexo1 } from './st-ba.mjs';
 import { goStReferences, parseGoApendiceII } from './st-go.mjs';
 import { parsePeAnexo37, peStReferences } from './st-pe.mjs';
+import { parsePbSheet, pbStReferences } from './st-pb.mjs';
 import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
 import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
@@ -633,6 +634,26 @@ async function importStReferences(cest) {
       segmentName: (code) => roNames.get(code) ?? `Segmento ${code} do CEST`,
     },
   );
+  // Paraíba (F3-26.d.PB): planilhas do Anexo 5 do RICMS/PB, uma por segmento.
+  const pbKeys = Object.keys(manifest).filter((k) => k.startsWith('stPbAnexo5_'));
+  const pbSheets = pbKeys.map((key) => ({
+    ...parsePbSheet(readXlsx(join(sourcesDir, manifest[key].file))[0].rows, {
+      known,
+      date: manifest[key].downloadedAt,
+      name: manifest[key].title.replace(/^.*planilha da SEFAZ-PB: (.*) \(CEST.*$/, '$1'),
+    }),
+    source: key,
+    url: manifest[key].page,
+  }));
+  const pbUnknown = pbSheets.flatMap((s) => s.unknown);
+  if (pbUnknown.length > 10) {
+    throw new Error(`Anexo 5 do RICMS/PB: ${pbUnknown.length} CEST fora do Convênio ICMS 142/2018`);
+  }
+  const pbNames = new Map(cest.segments.map((s) => [s.code, s.name]));
+  const pb = pbStReferences(pbSheets, {
+    url: 'https://www.sefaz.pb.gov.br/legislacao/99-regulamentos/anexos-icms/11601-substituicao-tributaria-anexo-v-atualizado-pela-gostex-em-27-01-2022',
+    segmentName: (code) => pbNames.get(code) ?? `Segmento ${code} do CEST`,
+  });
   // Pernambuco (F3-26.d.PE): Anexo 37 e Anexos 37-A a 37-C do RICMS/PE consolidado.
   const pe = peStReferences(
     parsePeAnexo37(
@@ -670,6 +691,7 @@ async function importStReferences(cest) {
       al.segment,
       ro.segment,
       pe.segment,
+      pb.segment,
     ],
     references: [
       {
@@ -695,6 +717,7 @@ async function importStReferences(cest) {
       ...al.references,
       ...ro.references,
       ...pe.references,
+      ...pb.references,
     ],
   };
 }

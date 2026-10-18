@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-26.d.PB Substituição tributária na Paraíba] — 18/10/2026
+
+### Adicionado
+- **ST na Paraíba** a partir das planilhas oficiais do Anexo 5 do RICMS/PB, uma por segmento (SEFAZ-PB, 10/04/2025): 542 linhas com CEST, NCM e a MVA original.
+  - Vale a linha em vigor na data da planilha. As que já venceram (como a água de 500 ml, que saiu em 2021) ficam de fora.
+  - Autopeças trazem as duas MVAs: a das demais operações e a do fabricante com índice de fidelidade de compra.
+  - Onde a SEFAZ-PB usa pauta fiscal (cervejas, refrigerantes, águas, cigarros e sorvetes), a nota avisa que a base é a pauta quando houver.
+  - Combustíveis (PMPF) e energia elétrica ficam de fora.
+- O monitor semanal das fontes passa a conferir as planilhas da Paraíba.
+
 ## [F3-26.d.PE Substituição tributária em Pernambuco] — 18/10/2026
 
 ### Adicionado

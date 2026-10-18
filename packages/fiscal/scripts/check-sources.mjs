@@ -34,6 +34,7 @@ import { parseScAnexo1A } from './st-sc.mjs';
 import { parseBaAnexo1 } from './st-ba.mjs';
 import { parseGoApendiceII } from './st-go.mjs';
 import { parsePeAnexo37 } from './st-pe.mjs';
+import { parsePbSheet } from './st-pb.mjs';
 import { parseRjAnexoI } from './st-rj.mjs';
 import { parseEsPortaria16R } from './st-es.mjs';
 import { parseAlDecreto90309 } from './st-al.mjs';
@@ -544,6 +545,54 @@ async function checkPe() {
   };
 }
 
+/**
+ * Paraíba: cada planilha do Anexo 5 de hoje, lida como na geração. A data da leitura é hoje, então
+ * linhas que venceram ou começaram desde o download também aparecem como mudança.
+ */
+async function checkPb() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const today = new Date().toISOString().slice(0, 10);
+  const rowsOf = (path, key) =>
+    parsePbSheet(readXlsx(path)[0].rows, { known, date: today, name: key }).items.map((i) => [
+      key,
+      i.cest,
+      i.mva,
+      i.ncms.join(' '),
+    ]);
+  const keys = Object.keys(manifest).filter((k) => k.startsWith('stPbAnexo5_'));
+  const old = keys.flatMap((k) => rowsOf(join(sourcesDir, manifest[k].file), k));
+  const title = 'ST na Paraíba (RICMS/PB, Anexo 5, planilhas da SEFAZ-PB)';
+  const page = manifest[keys[0]].page;
+  let now;
+  try {
+    const dir = mkdtempSync(join(tmpdir(), 'bipae-st-pb-'));
+    now = [];
+    for (const k of keys) {
+      const tmp = join(dir, `${k}.xlsx`);
+      writeFileSync(tmp, (await download(manifest[k].page)).body);
+      now.push(...rowsOf(tmp, k));
+    }
+  } catch (error) {
+    return {
+      title,
+      page,
+      status: 'mudou',
+      details: [`uma planilha nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Rio de Janeiro: o .doc do Anexo I de hoje, lido como na geração. */
 async function checkRj() {
   const known = new Set(
@@ -986,6 +1035,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST na Bahia', manifest.stBaAnexo1.page, checkBa),
     await safe('ST em Goiás', manifest.stGoAnexoVIII.page, checkGo),
     await safe('ST em Pernambuco', manifest.stPeRicms.page, checkPe),
+    await safe('ST na Paraíba', manifest.stPbAnexo5_01.page, checkPb),
     await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),
