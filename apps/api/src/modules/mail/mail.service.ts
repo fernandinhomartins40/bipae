@@ -11,6 +11,8 @@ export interface MailMessage {
   subject: string;
   text: string;
   html: string;
+  /** Cabeçalhos extras (ex.: List-Unsubscribe das campanhas). */
+  headers?: Record<string, string>;
 }
 
 /** Quem entrega o e-mail: o SMTP do provedor (E11) ou, nos testes, a memória. */

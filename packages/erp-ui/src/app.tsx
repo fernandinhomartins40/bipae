@@ -12,6 +12,7 @@ import {
   SignupPage,
   ForgotPasswordPage,
   ResetPasswordPage,
+  UnsubscribePage,
   VerifyEmailPage,
 } from './pages/auth';
 import { HomePage } from './pages/home';
@@ -163,6 +164,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
             />
             <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
             <Route path="/confirmar-email" element={<VerifyEmailPage />} />
+            <Route path="/descadastro" element={<UnsubscribePage />} />
             <Route
               path="/criar-conta"
               element={

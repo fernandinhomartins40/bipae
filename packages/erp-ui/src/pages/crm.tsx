@@ -1,4 +1,6 @@
 import {
+  CAMPAIGN_BODY_MAX,
+  CAMPAIGN_SUBJECT_MAX,
   CRM_SEGMENT_LABELS,
   CRM_SEGMENTS,
   formatBRL,
@@ -6,6 +8,7 @@ import {
   type CrmCustomerRow,
   type CrmSegment,
   type CustomerSummary,
+  type EmailCampaignView,
   type LoyaltyProgram,
   type LoyaltyStatement,
 } from '@bipae/domain';
@@ -16,6 +19,7 @@ import {
   Checkbox,
   DataTable,
   EmptyState,
+  Field,
   MoneyField,
   PageHeader,
   TextField,
@@ -169,6 +173,7 @@ export function CrmPage() {
       />
       {error && <Alert>{error}</Alert>}
       <LoyaltyProgramCard />
+      {canExport && <CampaignsCard segment={segment} />}
       <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Segmentos">
         <Button variant={segment === null ? 'primary' : 'ghost'} onClick={() => setSegment(null)}>
           Todos
@@ -358,6 +363,120 @@ export function LoyaltyProgramCard() {
         <Button className="mt-3" loading={busy} onClick={() => void save()}>
           Salvar programa
         </Button>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Campanhas por e-mail (F6-08.c): o e-mail vai só para quem aceitou ofertas e tem e-mail, do
+ * segmento escolhido acima. Cada um leva um link para não receber mais.
+ */
+export function CampaignsCard({ segment }: { segment: CrmSegment | null }) {
+  const { api } = useApp();
+  const queryClient = useQueryClient();
+  const campaigns = useQuery({
+    queryKey: ['crm', 'campaigns'],
+    queryFn: () => api.get<{ emailEnabled: boolean; items: EmailCampaignView[] }>('/crm/campaigns'),
+  });
+  const [form, setForm] = useState({ name: '', subject: '', body: '' });
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const audience = segment ? CRM_SEGMENT_LABELS[segment].label.toLowerCase() : 'todos os clientes';
+
+  const send = async () => {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const r = await api.post<{ recipients: number }>('/crm/campaigns', { ...form, segment });
+      await queryClient.invalidateQueries({ queryKey: ['crm', 'campaigns'] });
+      setForm({ name: '', subject: '', body: '' });
+      setMessage({
+        ok: true,
+        text: `Campanha enviada para ${r.recipients} ${r.recipients === 1 ? 'pessoa' : 'pessoas'}.`,
+      });
+    } catch (e) {
+      setMessage({ ok: false, text: (e as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (!campaigns.data) return null;
+  const items = campaigns.data.items;
+  return (
+    <section className="mb-6 rounded-ui border border-border p-4" aria-labelledby="campanhas">
+      <h2 id="campanhas" className="mb-1 text-lg font-bold">
+        Campanhas por e-mail
+      </h2>
+      {!campaigns.data.emailEnabled ? (
+        <Alert tone="warning" title="Falta configurar">
+          O envio de e-mails ainda não está ligado no Bipaê. Assim que estiver, você manda ofertas
+          daqui para quem aceitou receber.
+        </Alert>
+      ) : (
+        <>
+          <p className="mb-3 text-sm text-muted">
+            Vai para {audience} que aceitaram receber ofertas e têm e-mail. Cada e-mail leva um link
+            para a pessoa não receber mais, e o envio fica na auditoria (LGPD).
+          </p>
+          {message && (
+            <div className="mb-3">
+              <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>
+            </div>
+          )}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <TextField
+              label="Nome da campanha"
+              hint="Só para você reconhecer depois."
+              value={form.name}
+              maxLength={80}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+            <TextField
+              label="Assunto do e-mail"
+              value={form.subject}
+              maxLength={CAMPAIGN_SUBJECT_MAX}
+              onChange={(e) => setForm({ ...form, subject: e.target.value })}
+            />
+          </div>
+          <div className="mt-3">
+            <Field label="Texto do e-mail" hint="Deixe uma linha em branco entre os parágrafos.">
+              {(a11y) => (
+                <textarea
+                  {...a11y}
+                  rows={6}
+                  maxLength={CAMPAIGN_BODY_MAX}
+                  className="w-full rounded-ui border border-border bg-surface p-3 text-base text-text"
+                  value={form.body}
+                  onChange={(e) => setForm({ ...form, body: e.target.value })}
+                />
+              )}
+            </Field>
+          </div>
+          <Button className="mt-3" loading={busy} onClick={() => void send()}>
+            {`Enviar para ${audience}`}
+          </Button>
+        </>
+      )}
+      {items.length > 0 && (
+        <div className="mt-4">
+          <DataTable
+            caption="Campanhas enviadas"
+            rows={items}
+            columns={[
+              { header: 'Campanha', cell: (c) => c.name },
+              { header: 'Assunto', cell: (c) => c.subject },
+              {
+                header: 'Segmento',
+                cell: (c) => (c.segment ? CRM_SEGMENT_LABELS[c.segment].label : 'Todos'),
+              },
+              { header: 'Enviados', align: 'right', cell: (c) => String(c.recipients) },
+              { header: 'Descadastros', align: 'right', cell: (c) => String(c.unsubscribed) },
+              { header: 'Data', cell: (c) => day(c.createdAt) },
+            ]}
+          />
+        </div>
       )}
     </section>
   );

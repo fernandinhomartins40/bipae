@@ -370,3 +370,50 @@ export function VerifyEmailPage() {
     </AuthLayout>
   );
 }
+
+/**
+ * Não receber mais ofertas (F6-08.c). Pede um clique: programas que abrem os links do e-mail
+ * sozinhos (antivírus, prévia) não descadastram ninguém.
+ */
+export function UnsubscribePage() {
+  const { api } = useApp();
+  const [params] = useSearchParams();
+  const token = params.get('codigo') ?? '';
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
+  const confirm = async () => {
+    setBusy(true);
+    try {
+      const r = await api.post<{ message: string }>('/crm/campaigns/unsubscribe', { token });
+      setResult({ ok: true, text: r.message });
+    } catch (e) {
+      setResult({ ok: false, text: (e as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <AuthLayout
+      title="Não receber mais ofertas"
+      subtitle="Você para de receber as ofertas desta loja por e-mail."
+    >
+      <div className="flex flex-col gap-4">
+        {token.length < 20 && <Alert>Este link está incompleto. Use o link do e-mail.</Alert>}
+        {result ? (
+          <Alert tone={result.ok ? 'success' : 'danger'} title={result.ok ? 'Pronto' : undefined}>
+            {result.text}
+          </Alert>
+        ) : (
+          <Button
+            size="lg"
+            loading={busy}
+            disabled={token.length < 20}
+            onClick={() => void confirm()}
+          >
+            Não quero mais receber
+          </Button>
+        )}
+      </div>
+    </AuthLayout>
+  );
+}

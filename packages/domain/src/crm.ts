@@ -42,3 +42,18 @@ export function averageIntervalDays(first: Date, last: Date, purchases: number):
   if (purchases < 2) return null;
   return Math.round((last.getTime() - first.getTime()) / DAY / (purchases - 1));
 }
+
+/** Campanha por e-mail (F6-08.c): vai só para quem aceitou ofertas e tem e-mail. */
+export interface EmailCampaignView {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  segment: CrmSegment | null;
+  recipients: number;
+  unsubscribed: number;
+  createdAt: string;
+}
+
+export const CAMPAIGN_SUBJECT_MAX = 120;
+export const CAMPAIGN_BODY_MAX = 5000;

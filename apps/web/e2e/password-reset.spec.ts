@@ -26,3 +26,12 @@ test('link de confirmação do e-mail vencido explica o que fazer (P-04.c)', asy
   await expect(page.getByRole('heading', { name: 'Confirmar e-mail' })).toBeVisible();
   await expect(page.getByText(/expirou ou já foi usado/)).toBeVisible();
 });
+
+test('link de descadastro inválido explica; a página pede um clique (F6-08.c)', async ({
+  page,
+}) => {
+  await page.goto('/descadastro?codigo=link-que-nao-existe-mais-0123456789');
+  await expect(page.getByRole('heading', { name: 'Não receber mais ofertas' })).toBeVisible();
+  await page.getByRole('button', { name: 'Não quero mais receber' }).click();
+  await expect(page.getByText('Este link de descadastro não vale.')).toBeVisible();
+});

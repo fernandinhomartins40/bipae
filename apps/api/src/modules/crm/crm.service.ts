@@ -213,6 +213,11 @@ export class CrmService {
       .filter((r) => !filter.segment || r.segment === filter.segment);
   }
 
+  /** Quem aceitou receber ofertas, de um segmento ou de todos (campanhas, F6-08.c). */
+  consentingRows(tx: Tx, ctx: RequestContext, segment: CrmSegment | undefined, now: Date) {
+    return this.rows(tx, ctx, { segment, consent: true }, now);
+  }
+
   list(ctx: RequestContext, query: unknown, now = new Date()) {
     const filter = parse(segmentQuery, query);
     return withTenant(this.db, ctx, async (tx) => {

@@ -1434,3 +1434,28 @@ export const nfseDocuments = pgTable('nfse_documents', {
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
+
+/** Campanhas por e-mail (F6-08.c), só para quem aceitou ofertas. */
+export const emailCampaigns = pgTable('email_campaigns', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  name: text('name').notNull(),
+  subject: text('subject').notNull(),
+  body: text('body').notNull(),
+  segment: text('segment'),
+  recipients: integer('recipients').notNull().default(0),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+/** Quem recebeu cada campanha; o código do descadastro fica só como hash. */
+export const emailCampaignRecipients = pgTable('email_campaign_recipients', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  campaignId: uuid('campaign_id').notNull(),
+  customerId: uuid('customer_id').notNull(),
+  email: text('email').notNull(),
+  unsubscribeTokenHash: text('unsubscribe_token_hash').notNull(),
+  unsubscribedAt: ts('unsubscribed_at'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});

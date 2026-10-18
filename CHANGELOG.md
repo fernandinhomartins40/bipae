@@ -1,5 +1,16 @@
 # Changelog
 
+## [F6-08.c Campanhas por e-mail] — 18/10/2026
+
+### Adicionado
+- **Campanhas por e-mail** no Relacionamento: nome, assunto e texto, para um segmento (novos, frequentes, ativos, sumidos) ou para todos.
+  - Vão só para quem aceitou receber ofertas e tem e-mail (LGPD).
+  - Cada e-mail leva um link próprio para não receber mais. A página pede um clique, então programas que abrem links sozinhos não descadastram ninguém.
+  - Descadastrar tira o consentimento do cliente na hora, sem login.
+  - Cada envio fica na auditoria; a lista mostra quantos receberam e quantos saíram.
+  - Só quem pode exportar a lista de ofertas manda campanha.
+- Sem o provedor de e-mail (item E11), o cartão mostra "Falta configurar".
+
 ## [P-04.c/d Confirmação do e-mail e avisos da conta] — 18/10/2026
 
 ### Adicionado

@@ -366,10 +366,10 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [ ] F6-05 · iFood — depende: F5-07 · externo: E14
 - [ ] F6-06 · Marketplaces — depende: F6-01 · externo: E14
 - [ ] F6-07 · Assistente de IA com confirmação humana (ADR-0011) — externo: E13
-- [~] F6-08 · CRM, fidelidade e campanhas com consentimento (LGPD)
+- [x] F6-08 · CRM, fidelidade e campanhas com consentimento (LGPD)
   - [x] F6-08.a · CRM: ficha do cliente com o histórico de compras pelo CPF (total, ticket médio, frequência, última compra, mais comprados), segmentos (novos, frequentes, sumidos) e lista de quem aceitou ofertas, exportada com auditoria
   - [x] F6-08.b · Fidelidade: programa de pontos (R$ por ponto e validade), pontos das vendas com CPF, saldo e extrato na ficha; resgate no caixa como desconto, com o saldo sincronizado e sem depender de internet — depende: F6-08.a
-  - [ ] F6-08.c · Campanhas por e-mail para um segmento, só para quem consentiu, com link de descadastro — depende: F6-08.a · externo: E11
+  - [x] F6-08.c · Campanhas por e-mail para um segmento, só para quem consentiu, com link de descadastro — depende: F6-08.a · externo: E11
 
 ## Fase 7 — Endurecimento
 

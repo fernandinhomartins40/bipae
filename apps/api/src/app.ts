@@ -105,6 +105,7 @@ import {
 import { ApiKeysController, ApiKeysService } from './modules/public-api/api-keys.service';
 import { WebhooksController, WebhooksService } from './modules/public-api/webhooks.service';
 import { CrmController, CrmService } from './modules/crm/crm.service';
+import { CampaignsController, CampaignsService } from './modules/crm/campaigns.service';
 import { LoyaltyController, LoyaltyService } from './modules/crm/loyalty.service';
 import { PublicApiController, PublicDataService } from './modules/public-api/public-api.controller';
 import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
@@ -180,6 +181,7 @@ class AppModule {
         ApiKeysController,
         WebhooksController,
         CrmController,
+        CampaignsController,
         LoyaltyController,
         PublicApiController,
         DeliveryController,
@@ -240,6 +242,7 @@ class AppModule {
         ApiKeysService,
         WebhooksService,
         CrmService,
+        CampaignsService,
         LoyaltyService,
         PublicDataService,
         DeliveryService,

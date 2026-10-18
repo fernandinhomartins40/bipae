@@ -74,6 +74,10 @@ test('venda com CPF aparece na ficha e no Relacionamento', async ({ page }) => {
   await expect(page.getByText('Já compraram, mas não nos últimos 60 dias.')).toBeVisible();
   await expect(page.getByText('Ninguém por aqui ainda')).toBeVisible();
 
+  // Campanhas por e-mail (F6-08.c): sem o provedor, a tela diz que falta configurar.
+  const campanhas = page.getByRole('region', { name: 'Campanhas por e-mail' });
+  await expect(campanhas.getByText('Falta configurar')).toBeVisible();
+
   // A lista para ofertas sai em CSV, só com quem aceitou.
   await page.getByRole('button', { name: 'Todos' }).click();
   const [arquivo] = await Promise.all([
