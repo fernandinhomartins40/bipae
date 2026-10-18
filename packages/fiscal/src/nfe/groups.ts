@@ -105,9 +105,8 @@ const pct4 = (value: string) => Number(value).toFixed(4);
 const pct2 = (value: string) => Number(value).toFixed(2);
 const qty = (milli: number) => (milli / 1000).toFixed(4);
 
-/** Base pelo valor da operação (modBC 3) e ST pela margem de valor agregado (modBCST 4). */
+/** Base pelo valor da operação (modBC 3); a ST vai pela MVA (modBCST 4) ou pela pauta (5). */
 const MOD_BC_VALOR_OPERACAO = '3';
-const MOD_BC_ST_MVA = '4';
 
 function icmsGroup(item: NfeItem, model: '55' | '65'): string {
   const r = item.icms;
@@ -130,8 +129,8 @@ function icmsGroup(item: NfeItem, model: '55' | '65'): string {
       : [];
   const st = r.st
     ? [
-        req('modBCST', MOD_BC_ST_MVA),
-        req('pMVAST', pct2(r.st.mva)),
+        req('modBCST', r.st.modBc),
+        r.st.mva !== null ? req('pMVAST', pct2(r.st.mva)) : '',
         r.st.baseReduction ? req('pRedBCST', pct2(r.st.baseReduction)) : '',
         req('vBCST', money(r.st.baseCents)),
         req('pICMSST', pct2(r.st.rate)),

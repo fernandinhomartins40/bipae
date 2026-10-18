@@ -34,7 +34,12 @@ describe('ICMS no regime normal (CST)', () => {
   it('20: com redução da base de cálculo', () => {
     const r = calculateIcms({ cst: '20', rate: '18', baseReduction: '33.33' }, CEM_REAIS);
     // 100,00 × (1 − 33,33%) = 66,67; 66,67 × 18% = 12,0006
-    expect(r).toMatchObject({ group: 'ICMS20', baseCents: 6667, amountCents: 1200, baseReduction: '33.33' });
+    expect(r).toMatchObject({
+      group: 'ICMS20',
+      baseCents: 6667,
+      amountCents: 1200,
+      baseReduction: '33.33',
+    });
   });
 
   it('40, 41, 50 e 60: nada a destacar', () => {
@@ -50,7 +55,11 @@ describe('ICMS no regime normal (CST)', () => {
   it('51: diferimento parcial e total', () => {
     const parcial = calculateIcms({ cst: '51', rate: '18', deferral: '33.33' }, CEM_REAIS);
     // 18,00 × 33,33% = 5,9994 → 6,00 diferido; 12,00 devido
-    expect(parcial.deferral).toEqual({ rate: '33.33', operationAmountCents: 1800, deferredAmountCents: 600 });
+    expect(parcial.deferral).toEqual({
+      rate: '33.33',
+      operationAmountCents: 1800,
+      deferredAmountCents: 600,
+    });
     expect(parcial.amountCents).toBe(1200);
     const total = calculateIcms({ cst: '51', rate: '18', deferral: '100' }, CEM_REAIS);
     expect(total.amountCents).toBe(0);
@@ -61,7 +70,14 @@ describe('ICMS no regime normal (CST)', () => {
     const r = calculateIcms({ cst: '10', rate: '18', st: { mva: '40', rate: '18' } }, CEM_REAIS);
     // Base da ST: 100,00 × 1,40 = 140,00; 140,00 × 18% = 25,20; menos 18,00 de ICMS próprio = 7,20
     expect(r.amountCents).toBe(1800);
-    expect(r.st).toEqual({ mva: '40.00', baseReduction: null, baseCents: 14_000, rate: '18.00', amountCents: 720 });
+    expect(r.st).toEqual({
+      mva: '40.00',
+      modBc: '4',
+      baseReduction: null,
+      baseCents: 14_000,
+      rate: '18.00',
+      amountCents: 720,
+    });
     expect(r.trace.at(-1)).toMatchObject({
       label: 'ICMS-ST a 18.00%',
       formula: '140.00 × 18.00% − 18.00 de ICMS próprio',
@@ -89,7 +105,12 @@ describe('ICMS no regime normal (CST)', () => {
 
   it('70: redução da base própria e da base da ST', () => {
     const r = calculateIcms(
-      { cst: '70', rate: '18', baseReduction: '10', st: { mva: '40', rate: '18', baseReduction: '10' } },
+      {
+        cst: '70',
+        rate: '18',
+        baseReduction: '10',
+        st: { mva: '40', rate: '18', baseReduction: '10' },
+      },
       CEM_REAIS,
     );
     // Próprio: 90,00 × 18% = 16,20. ST: 140,00 × 0,90 = 126,00; 22,68 − 16,20 = 6,48
@@ -105,14 +126,22 @@ describe('ICMS no regime normal (CST)', () => {
   it('respeita o arredondamento da regra', () => {
     // 2,50 × 1% = 0,025: meio centavo exato.
     expect(calculateIcms({ cst: '00', rate: '1' }, { baseCents: 250 }).amountCents).toBe(3);
-    expect(calculateIcms({ cst: '00', rate: '1', rounding: 'truncate' }, { baseCents: 250 }).amountCents).toBe(2);
+    expect(
+      calculateIcms({ cst: '00', rate: '1', rounding: 'truncate' }, { baseCents: 250 }).amountCents,
+    ).toBe(2);
   });
 });
 
 describe('ICMS no Simples Nacional (CSOSN)', () => {
   it('101: sem destaque, com crédito para o comprador', () => {
     const r = calculateIcms({ csosn: '101', creditRate: '2.5' }, CEM_REAIS);
-    expect(r).toMatchObject({ cst: null, csosn: '101', group: 'ICMSSN101', baseCents: 0, amountCents: 0 });
+    expect(r).toMatchObject({
+      cst: null,
+      csosn: '101',
+      group: 'ICMSSN101',
+      baseCents: 0,
+      amountCents: 0,
+    });
     expect(r.credit).toEqual({ rate: '2.50', amountCents: 250 });
   });
 
@@ -127,8 +156,21 @@ describe('ICMS no Simples Nacional (CSOSN)', () => {
 
   it('202: ST com o ICMS próprio só abatido, sem destaque', () => {
     const r = calculateIcms({ csosn: '202', rate: '18', st: { mva: '40', rate: '18' } }, CEM_REAIS);
-    expect(r).toMatchObject({ group: 'ICMSSN202', baseCents: 0, amountCents: 0, rate: '18.00', credit: null });
-    expect(r.st).toEqual({ mva: '40.00', baseReduction: null, baseCents: 14_000, rate: '18.00', amountCents: 720 });
+    expect(r).toMatchObject({
+      group: 'ICMSSN202',
+      baseCents: 0,
+      amountCents: 0,
+      rate: '18.00',
+      credit: null,
+    });
+    expect(r.st).toEqual({
+      mva: '40.00',
+      modBc: '4',
+      baseReduction: null,
+      baseCents: 14_000,
+      rate: '18.00',
+      amountCents: 720,
+    });
     expect(r.trace.map((s) => s.label)).toContain('ICMS próprio a abater (18.00%, não destacado)');
   });
 
@@ -146,9 +188,13 @@ describe('ICMS no Simples Nacional (CSOSN)', () => {
 describe('ICMS: o que o motor recusa', () => {
   it('situação ainda não calculada vira aviso claro, nunca conta aproximada', () => {
     for (const cst of ['30', '90', '02', '61']) {
-      expect(() => calculateIcms({ cst, rate: '18' }, CEM_REAIS), cst).toThrow(UnsupportedTaxSituationError);
+      expect(() => calculateIcms({ cst, rate: '18' }, CEM_REAIS), cst).toThrow(
+        UnsupportedTaxSituationError,
+      );
     }
-    expect(() => calculateIcms({ csosn: '900' }, CEM_REAIS)).toThrow('ainda não está disponível no Bipaê');
+    expect(() => calculateIcms({ csosn: '900' }, CEM_REAIS)).toThrow(
+      'ainda não está disponível no Bipaê',
+    );
   });
 
   it('regra com dado faltando ou incoerente', () => {
@@ -174,10 +220,46 @@ describe('ICMS: o que o motor recusa', () => {
   });
 
   it('valores de entrada inválidos', () => {
-    expect(() => calculateIcms({ cst: '00', rate: '18' }, { baseCents: -1 })).toThrow('Base de cálculo inválida');
-    expect(() => calculateIcms({ cst: '00', rate: '18' }, { baseCents: 10.5 })).toThrow('Base de cálculo inválida');
-    expect(() => calculateIcms({ cst: '00', rate: '18' }, { baseCents: 100, ipiCents: -1 })).toThrow(
-      'Valor do IPI inválida',
+    expect(() => calculateIcms({ cst: '00', rate: '18' }, { baseCents: -1 })).toThrow(
+      'Base de cálculo inválida',
     );
+    expect(() => calculateIcms({ cst: '00', rate: '18' }, { baseCents: 10.5 })).toThrow(
+      'Base de cálculo inválida',
+    );
+    expect(() =>
+      calculateIcms({ cst: '00', rate: '18' }, { baseCents: 100, ipiCents: -1 }),
+    ).toThrow('Valor do IPI inválida');
+  });
+});
+
+describe('ST pela pauta (F3-26.f)', () => {
+  it('a base é o valor da pauta × quantidade, sem MVA (modBCST 5)', () => {
+    // 12 latas a R$ 6,00 de pauta = 72,00; 72,00 × 18% = 12,96; menos 18,00 do próprio = 0.
+    // Com venda de 60,00: próprio 10,80; ST 12,96 − 10,80 = 2,16.
+    const r = calculateIcms(
+      { cst: '10', rate: '18', st: { rate: '18' } },
+      { baseCents: 6000, stPautaCents: 7200 },
+    );
+    expect(r.st).toEqual({
+      mva: null,
+      modBc: '5',
+      baseReduction: null,
+      baseCents: 7200,
+      rate: '18.00',
+      amountCents: 216,
+    });
+    expect(r.trace.find((t) => t.label === 'Base da ST pela pauta da UF')).toBeDefined();
+  });
+
+  it('sem pauta, a MVA continua obrigatória; pauta precisa ser em centavos', () => {
+    expect(() => calculateIcms({ cst: '10', rate: '18', st: { rate: '18' } }, CEM_REAIS)).toThrow(
+      TaxRuleDataError,
+    );
+    expect(() =>
+      calculateIcms(
+        { cst: '10', rate: '18', st: { rate: '18' } },
+        { baseCents: 6000, stPautaCents: 1.5 },
+      ),
+    ).toThrow(TaxRuleDataError);
   });
 });

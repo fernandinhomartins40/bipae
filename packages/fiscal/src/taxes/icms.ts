@@ -1,7 +1,14 @@
 import { dec, fromCents, percent, round, toCents, type Dec, type RoundingMode } from '../decimal';
 import type { TraceStep } from '../engine';
 import { findTaxSituation } from '../tables/tax-situations';
-import { assertBase, money, pct, step, TaxRuleDataError, UnsupportedTaxSituationError } from './shared';
+import {
+  assertBase,
+  money,
+  pct,
+  step,
+  TaxRuleDataError,
+  UnsupportedTaxSituationError,
+} from './shared';
 
 /**
  * ICMS dos regimes atuais: regime normal (CST) e Simples Nacional (CSOSN), com substituição
@@ -25,8 +32,11 @@ export interface IcmsEffect {
   fcpRate?: string;
   /** O IPI entra na base do ICMS próprio? Depende da operação; vem da regra, nunca suposto. */
   includeIpiInBase?: boolean;
-  /** Substituição tributária: margem de valor agregado e alíquota interna do destino. */
-  st?: { mva: string; rate: string; baseReduction?: string };
+  /**
+   * Substituição tributária: margem de valor agregado e alíquota interna do destino. Com a base
+   * pela pauta (`IcmsInput.stPautaCents`), a MVA não é usada e pode faltar.
+   */
+  st?: { mva?: string; rate: string; baseReduction?: string };
   /** Alíquota de crédito do Simples Nacional (pCredSN), CSOSN 101 e 201. */
   creditRate?: string;
   rounding?: RoundingMode;
@@ -37,6 +47,11 @@ export interface IcmsInput {
   baseCents: number;
   /** Valor do IPI do item, quando houver: entra na base da ST. */
   ipiCents?: number;
+  /**
+   * Base da ST pela pauta (F3-26.f): o valor em reais publicado pela UF para a marca e a
+   * embalagem, já multiplicado pela quantidade. Quando vem, substitui valor × (1 + MVA).
+   */
+  stPautaCents?: number;
 }
 
 export interface IcmsResult {
@@ -54,7 +69,10 @@ export interface IcmsResult {
   deferral: { rate: string; operationAmountCents: number; deferredAmountCents: number } | null;
   fcp: { rate: string; amountCents: number } | null;
   st: {
-    mva: string;
+    /** MVA usada; null quando a base é a pauta. */
+    mva: string | null;
+    /** Modalidade da base da ST na nota (modBCST): 4 = MVA, 5 = pauta. */
+    modBc: '4' | '5';
     /** Redução da base da ST, quando a regra traz uma (pRedBCST). */
     baseReduction: string | null;
     baseCents: number;
@@ -135,14 +153,28 @@ export function calculateIcms(effect: IcmsEffect, input: IcmsInput): IcmsResult 
   let ownBase = fromCents(input.baseCents);
   if (effect.includeIpiInBase && ipiCents > 0) {
     ownBase = ownBase.plus(fromCents(ipiCents));
-    trace.push(step('IPI somado à base', money(toCents(ownBase)), `${money(input.baseCents)} + ${money(ipiCents)}`));
+    trace.push(
+      step(
+        'IPI somado à base',
+        money(toCents(ownBase)),
+        `${money(input.baseCents)} + ${money(ipiCents)}`,
+      ),
+    );
   }
   let baseReduction: Dec | null = null;
   if (parts.reduction) {
-    baseReduction = percentage(need(effect.baseReduction, 'a redução da base de cálculo'), 'redução', code);
+    baseReduction = percentage(
+      need(effect.baseReduction, 'a redução da base de cálculo'),
+      'redução',
+      code,
+    );
     const reduced = round(ownBase.mul(dec(1).minus(percent(baseReduction))), 2);
     trace.push(
-      step(`Redução de ${pct(baseReduction)} na base`, money(toCents(reduced)), `${money(toCents(ownBase))} × (1 − ${pct(baseReduction)})`),
+      step(
+        `Redução de ${pct(baseReduction)} na base`,
+        money(toCents(reduced)),
+        `${money(toCents(ownBase))} × (1 − ${pct(baseReduction)})`,
+      ),
     );
     ownBase = reduced;
   }
@@ -156,20 +188,44 @@ export function calculateIcms(effect: IcmsEffect, input: IcmsInput): IcmsResult 
     rate = percentage(need(effect.rate, 'a alíquota'), 'alíquota', code);
     baseCents = toCents(ownBase);
     amountCents = toCents(ownBase.mul(percent(rate)), mode);
-    trace.push(step(`ICMS a ${pct(rate)}`, money(amountCents), `${money(baseCents)} × ${pct(rate)}`));
+    trace.push(
+      step(`ICMS a ${pct(rate)}`, money(amountCents), `${money(baseCents)} × ${pct(rate)}`),
+    );
     if (parts.deferral) {
-      const share = percentage(need(effect.deferral, 'o percentual do diferimento'), 'diferimento', code);
+      const share = percentage(
+        need(effect.deferral, 'o percentual do diferimento'),
+        'diferimento',
+        code,
+      );
       const deferred = toCents(fromCents(amountCents).mul(percent(share)), mode);
-      deferral = { rate: share.toFixed(2), operationAmountCents: amountCents, deferredAmountCents: deferred };
-      trace.push(step(`Diferimento de ${pct(share)}`, money(deferred), `${money(amountCents)} × ${pct(share)}`));
+      deferral = {
+        rate: share.toFixed(2),
+        operationAmountCents: amountCents,
+        deferredAmountCents: deferred,
+      };
+      trace.push(
+        step(
+          `Diferimento de ${pct(share)}`,
+          money(deferred),
+          `${money(amountCents)} × ${pct(share)}`,
+        ),
+      );
       amountCents -= deferred;
-      trace.push(step('ICMS devido', money(amountCents), `${money(deferral.operationAmountCents)} − ${money(deferred)}`));
+      trace.push(
+        step(
+          'ICMS devido',
+          money(amountCents),
+          `${money(deferral.operationAmountCents)} − ${money(deferred)}`,
+        ),
+      );
     }
     if (effect.fcpRate !== undefined) {
       const fcpRate = percentage(effect.fcpRate, 'FCP', code);
       const fcpAmount = toCents(ownBase.mul(percent(fcpRate)), mode);
       fcp = { rate: fcpRate.toFixed(2), amountCents: fcpAmount };
-      trace.push(step(`FCP a ${pct(fcpRate)}`, money(fcpAmount), `${money(baseCents)} × ${pct(fcpRate)}`));
+      trace.push(
+        step(`FCP a ${pct(fcpRate)}`, money(fcpAmount), `${money(baseCents)} × ${pct(fcpRate)}`),
+      );
     }
   } else if (!parts.st && !parts.credit) {
     trace.push(step('Sem ICMS a destacar nesta situação', money(0)));
@@ -179,61 +235,102 @@ export function calculateIcms(effect: IcmsEffect, input: IcmsInput): IcmsResult 
   let st: IcmsResult['st'] = null;
   if (parts.st) {
     const rule = effect.st;
-    if (!rule) throw new TaxRuleDataError('ICMS', code, 'faltam os dados da substituição tributária (MVA e alíquota)');
-    const mva = percentage(rule.mva, 'MVA', code, 1000);
+    if (!rule)
+      throw new TaxRuleDataError(
+        'ICMS',
+        code,
+        'faltam os dados da substituição tributária (MVA e alíquota)',
+      );
+    const pauta = input.stPautaCents;
+    if (pauta !== undefined && (!Number.isInteger(pauta) || pauta < 0)) {
+      throw new TaxRuleDataError('ICMS', code, 'o valor da pauta da ST precisa ser em centavos');
+    }
+    const mva =
+      pauta === undefined ? percentage(need(rule.mva, 'a MVA da ST'), 'MVA', code, 1000) : null;
     const stRate = percentage(rule.rate, 'alíquota da ST', code);
     // No Simples o ICMS próprio não é destacado, mas é abatido como se fosse devido.
     let ownForSt = amountCents;
     if (!parts.own) {
-      const ownRate = percentage(need(effect.rate, 'a alíquota para abater do ICMS-ST'), 'alíquota', code);
+      const ownRate = percentage(
+        need(effect.rate, 'a alíquota para abater do ICMS-ST'),
+        'alíquota',
+        code,
+      );
       rate = ownRate;
       ownForSt = toCents(ownBase.mul(percent(ownRate)), mode);
       trace.push(
-        step(`ICMS próprio a abater (${pct(ownRate)}, não destacado)`, money(ownForSt), `${money(toCents(ownBase))} × ${pct(ownRate)}`),
+        step(
+          `ICMS próprio a abater (${pct(ownRate)}, não destacado)`,
+          money(ownForSt),
+          `${money(toCents(ownBase))} × ${pct(ownRate)}`,
+        ),
       );
     }
     const withIpi = fromCents(input.baseCents).plus(fromCents(ipiCents));
-    let stBase = round(withIpi.mul(dec(1).plus(percent(mva))), 2);
-    trace.push(
-      step(
-        `Base da ST com MVA de ${pct(mva)}`,
-        money(toCents(stBase)),
-        ipiCents > 0
-          ? `(${money(input.baseCents)} + ${money(ipiCents)} de IPI) × (1 + ${pct(mva)})`
-          : `${money(input.baseCents)} × (1 + ${pct(mva)})`,
-      ),
-    );
+    let stBase: Dec;
+    if (mva === null) {
+      stBase = fromCents(pauta!);
+      trace.push(step('Base da ST pela pauta da UF', money(pauta!), 'valor da pauta × quantidade'));
+    } else {
+      stBase = round(withIpi.mul(dec(1).plus(percent(mva))), 2);
+      trace.push(
+        step(
+          `Base da ST com MVA de ${pct(mva)}`,
+          money(toCents(stBase)),
+          ipiCents > 0
+            ? `(${money(input.baseCents)} + ${money(ipiCents)} de IPI) × (1 + ${pct(mva)})`
+            : `${money(input.baseCents)} × (1 + ${pct(mva)})`,
+        ),
+      );
+    }
     let stReduction: Dec | null = null;
     if (rule.baseReduction !== undefined) {
       stReduction = percentage(rule.baseReduction, 'redução da base da ST', code);
       const reduced = round(stBase.mul(dec(1).minus(percent(stReduction))), 2);
       trace.push(
-        step(`Redução de ${pct(stReduction)} na base da ST`, money(toCents(reduced)), `${money(toCents(stBase))} × (1 − ${pct(stReduction)})`),
+        step(
+          `Redução de ${pct(stReduction)} na base da ST`,
+          money(toCents(reduced)),
+          `${money(toCents(stBase))} × (1 − ${pct(stReduction)})`,
+        ),
       );
       stBase = reduced;
     }
     const gross = toCents(stBase.mul(percent(stRate)), mode);
     const stAmount = Math.max(0, gross - ownForSt);
     st = {
-      mva: mva.toFixed(2),
+      mva: mva === null ? null : mva.toFixed(2),
+      modBc: mva === null ? '5' : '4',
       baseReduction: stReduction ? stReduction.toFixed(2) : null,
       baseCents: toCents(stBase),
       rate: stRate.toFixed(2),
       amountCents: stAmount,
     };
     trace.push(
-      step(`ICMS-ST a ${pct(stRate)}`, money(stAmount), `${money(st.baseCents)} × ${pct(stRate)} − ${money(ownForSt)} de ICMS próprio`),
+      step(
+        `ICMS-ST a ${pct(stRate)}`,
+        money(stAmount),
+        `${money(st.baseCents)} × ${pct(stRate)} − ${money(ownForSt)} de ICMS próprio`,
+      ),
     );
   }
 
   // ---------------------------------------------------------------- crédito do Simples Nacional
   let credit: IcmsResult['credit'] = null;
   if (parts.credit) {
-    const creditRate = percentage(need(effect.creditRate, 'a alíquota de crédito do Simples Nacional'), 'crédito', code);
+    const creditRate = percentage(
+      need(effect.creditRate, 'a alíquota de crédito do Simples Nacional'),
+      'crédito',
+      code,
+    );
     const creditAmount = toCents(fromCents(input.baseCents).mul(percent(creditRate)), mode);
     credit = { rate: creditRate.toFixed(2), amountCents: creditAmount };
     trace.push(
-      step(`Crédito de ICMS permitido ao comprador (${pct(creditRate)})`, money(creditAmount), `${money(input.baseCents)} × ${pct(creditRate)}`),
+      step(
+        `Crédito de ICMS permitido ao comprador (${pct(creditRate)})`,
+        money(creditAmount),
+        `${money(input.baseCents)} × ${pct(creditRate)}`,
+      ),
     );
   }
 

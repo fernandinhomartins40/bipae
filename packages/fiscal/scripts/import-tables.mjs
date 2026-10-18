@@ -20,6 +20,7 @@ import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { markStale, parseDifal } from './difal.mjs';
 import { parseSpAlimenticios } from './st-sp.mjs';
 import { parseSpBebidasBase, parseSpCat68 } from './st-sp-cat68.mjs';
+import { parseSpPauta } from './st-sp-pauta.mjs';
 import { anexoIXLines, parsePrAnexoIX, parsePrRes571, prStReferences } from './st-pr.mjs';
 import { pdfItems, pdfLines } from './pdf-text.mjs';
 import { parseCbenefPr, parseCbenefRj } from './cbenef-pr.mjs';
@@ -761,6 +762,34 @@ async function importStReferences(cest) {
 // Depende do FCP (para o código de cada UF).
 tables['icms-products.json'] = importIcmsProducts(tables['fcp.json']);
 tables['st-references.json'] = await importStReferences(tables['cest.json']);
+// Pauta da ST (F3-26.f): o preço final em reais por marca e embalagem e o IVA-ST que vale sem
+// a pauta, da Portaria SRE 27/2026 (SP), no período do artigo 1º.
+{
+  const html = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpBebidas.file))).toString(
+    'utf8',
+  );
+  const known = new Set(tables['cest.json'].items.map((c) => c.cest));
+  const { from, to } = parseSpBebidasBase(html);
+  const pauta = parseSpPauta(html, known);
+  if (pauta.unknown.length > 0) {
+    throw new Error(`Portaria SRE 27/2026: CEST fora do Convênio: ${pauta.unknown.join(', ')}`);
+  }
+  tables['st-pautas.json'] = {
+    pautas: [
+      {
+        uf: 'SP',
+        act: 'Portaria SRE 27/2026 (alterada pelas Portarias SRE 42/2026 e 45/2026)',
+        source: 'stSpBebidas',
+        url: manifest.stSpBebidas.page,
+        validFrom: from,
+        validTo: to,
+        annexNames: pauta.annexNames,
+        items: pauta.items,
+        iva: pauta.iva,
+      },
+    ],
+  };
+}
 // Códigos de benefício fiscal por UF (F3-27.b), da tabela oficial de cada SEFAZ.
 // Venda condicional (F5-12.c): as notas da demonstração, do texto do Ajuste SINIEF 02/18.
 tables['demonstration.json'] = {

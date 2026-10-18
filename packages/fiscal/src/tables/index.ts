@@ -23,3 +23,4 @@ export * from './st-references';
 export * from './cbenef';
 export * from './demonstration';
 export * from './nfse-services';
+export * from './st-pautas';

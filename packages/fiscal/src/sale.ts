@@ -45,6 +45,8 @@ export interface SaleItem {
   ufDestino?: string;
   /** Mercadoria importada ou com conteúdo de importação acima de 40% (muda a alíquota interestadual). */
   imported?: boolean;
+  /** Base da ST pela pauta da UF (F3-26.f): valor da pauta × quantidade, em centavos. */
+  stPautaCents?: number;
 }
 
 export interface SaleTaxSettings {
@@ -185,7 +187,12 @@ export function calculateSaleItemTaxes(input: {
       }
     }
     Object.assign(effect, settings.icms);
-    icms = outcome(() => calculateIcms(effect, { baseCents: item.operationCents }));
+    icms = outcome(() =>
+      calculateIcms(effect, {
+        baseCents: item.operationCents,
+        ...(item.stPautaCents !== undefined && { stPautaCents: item.stPautaCents }),
+      }),
+    );
     // Sem alíquota, a regra fica "incompleta"; a mensagem útil é a da UF, não a genérica.
     if (icms.status === 'falta-configurar' && rateProblem && effect.rate === undefined)
       icms = missing(rateProblem);

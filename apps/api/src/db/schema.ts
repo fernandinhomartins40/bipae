@@ -238,6 +238,8 @@ export const products = pgTable('products', {
   attributes: jsonb('attributes').$type<Record<string, string>>(),
   /** Marca, fabricante, departamento, categoria e conteúdo (catálogo, MF-02). */
   catalog: jsonb('catalog').$type<Record<string, unknown>>(),
+  /** Item da pauta da ST (F3-26.f): UF, anexo e número na portaria. */
+  stPauta: jsonb('st_pauta').$type<{ uf: string; annex: string; item: string }>(),
   version: integer('version').notNull().default(1),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),

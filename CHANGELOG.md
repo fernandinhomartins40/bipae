@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-26.f ST pela pauta] — 18/10/2026
+
+### Adicionado
+- **ST pela pauta** de refrigerantes, energéticos, cerveja e chope em SP (Portaria SRE 27/2026, de 01/07 a 31/12/2026): 1.824 itens com o preço final em reais por marca, embalagem e tamanho, gerados do texto oficial.
+- **Motor:** com o item da pauta, a base da ST é o valor da pauta × quantidade, e a NF-e sai com `modBCST` 5. Sem o item, vale a MVA (IVA-ST) da regra.
+- **Produto:** quando o CEST tem itens na pauta da UF da empresa, o cadastro mostra a busca e grava o item escolhido, conferido na tabela e no CEST.
+- **Rascunho da NF-e:** usa a pauta quando a UF de destino é a da pauta e ela vale na data. Se o item saiu da pauta, o rascunho avisa para escolher o da pauta nova.
+- Serve a quem retém o imposto (indústria, importador ou distribuidor). A loja que compra com a ST retida continua vendendo sem esse cálculo.
+
 ## [F3-26.d.PA/PI/SE Substituição tributária pelo Portal Nacional da ST] — 18/10/2026
 
 ### Adicionado

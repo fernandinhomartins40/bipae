@@ -36,7 +36,12 @@ import {
   isCfopValidOn,
   type Cest,
 } from '@bipae/fiscal/tables';
-import { IBS_CBS_REGIME_RULES, searchNfseServices } from '@bipae/fiscal/tables';
+import {
+  IBS_CBS_REGIME_RULES,
+  searchNfseServices,
+  searchStPauta,
+  stPautaFor,
+} from '@bipae/fiscal/tables';
 import { findMunicipio, searchMunicipios } from '@bipae/fiscal/tables/municipios';
 import { findNcm, isNcmValidOn, ncmPath, searchNcm, type Ncm } from '@bipae/fiscal/tables/ncm';
 import { z } from 'zod';
@@ -180,6 +185,29 @@ export class FiscalController {
   @RequirePermission('catalog.read')
   nfseServices(@Query('q') q?: string) {
     return searchNfseServices(q ?? '', 20);
+  }
+
+  /**
+   * Pauta da ST da UF em vigor hoje (F3-26.f): ?uf=SP&q=skol lata&cest=0302103. Sem pauta na UF,
+   * a resposta diz e a lista vem vazia.
+   */
+  @Get('st-pauta')
+  @RequirePermission('catalog.read')
+  stPauta(@Query('uf') uf?: string, @Query('q') q?: string, @Query('cest') cest?: string) {
+    if (!uf || !/^[A-Z]{2}$/.test(uf)) throw new AppError(422, 'invalid_uf', 'Informe a UF.');
+    const date = new Date().toISOString().slice(0, 10);
+    const pauta = stPautaFor(uf, date);
+    return {
+      pauta: pauta
+        ? { uf, act: pauta.act, url: pauta.url, validFrom: pauta.validFrom, validTo: pauta.validTo }
+        : null,
+      items: pauta
+        ? searchStPauta(uf, date, q ?? '', {
+            ...(cest && /^\d{7}$/.test(cest) && { cest }),
+            limit: 30,
+          })
+        : [],
+    };
   }
 
   /** Municípios do IBGE da UF (F3-14): ?uf=SP&q=campinas. */

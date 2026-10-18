@@ -10,6 +10,7 @@ import {
 import { findCompanyRegime } from '../regimes';
 import { calculateSaleItemTaxes, type SaleFiscalProfile, type TaxOutcome } from '../sale';
 import { DEMONSTRATION, type DemonstrationNote } from '../tables/demonstration';
+import { findStPautaItem } from '../tables/st-pautas';
 import { findCfop } from '../tables/cfop';
 import { isImportedOrigin } from '../tables/icms-uf';
 import { meiItemProblem } from '../tables/mei';
@@ -57,6 +58,8 @@ export interface NfeDraftRecipient {
 export interface NfeDraftItem extends SaleNfceItem {
   /** CFOP escolhido na nota; sem ele, vale o do perfil fiscal do produto. */
   cfop?: string | null;
+  /** Item da pauta da ST ligado ao produto (F3-26.f): UF, anexo e número na portaria. */
+  stPauta?: { uf: string; annex: string; item: string } | null;
 }
 
 export interface NfeDraftInput {
@@ -267,10 +270,30 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
     const settings = suspended ? {} : companyIcmsSettings(input.rules ?? [], item.ncm, date);
     const imported = isImportedOrigin(item.profile?.origem);
     const operationCents = item.grossCents - item.discountCents + freight[index]!;
+    // Pauta da ST (F3-26.f): vale quando o imposto é devido à UF da pauta e na vigência dela.
+    let stPautaCents: number | undefined;
+    if (!suspended && item.stPauta && item.stPauta.uf === ufDestino) {
+      const found = findStPautaItem(item.stPauta.uf, date, item.stPauta.annex, item.stPauta.item);
+      if (found) {
+        stPautaCents = Math.round((found.priceCents * item.quantityMilli) / 1000);
+        notes.push(
+          `${label}: base da ST pela pauta de ${item.stPauta.uf} (item ${found.item} do Anexo ${found.annex}, ${found.description}, R$ ${(found.priceCents / 100).toFixed(2).replace('.', ',')} por unidade).`,
+        );
+      } else {
+        pending.push(
+          `${label}: o item ${item.stPauta.item} da pauta de ${item.stPauta.uf} não vale nesta data. Escolha o item da pauta nova no produto.`,
+        );
+      }
+    }
     const taxes = calculateSaleItemTaxes({
       company: { uf: c.uf, regime: regime?.id ?? null },
       profile,
-      item: { operationCents, ufDestino, imported },
+      item: {
+        operationCents,
+        ufDestino,
+        imported,
+        ...(stPautaCents !== undefined && { stPautaCents }),
+      },
       date,
       settings,
       model: '55',

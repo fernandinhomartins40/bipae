@@ -228,3 +228,65 @@ describe('CFOP de venda a não contribuinte, pela tabela oficial', () => {
     expect(nonContributorCfop('6403')).toBeNull();
   });
 });
+
+describe('ST pela pauta de SP no rascunho (F3-26.f)', () => {
+  const cerveja = (stPauta: { uf: string; annex: string; item: string } | null) =>
+    nota({
+      rules: [
+        {
+          id: 'st-cerveja',
+          name: 'Cerveja em SP',
+          ncm: ['2203'],
+          validity: { start: '2026-01-01' },
+          // MVA de 140% é o IVA-ST que vale quando não há pauta (artigo 2º).
+          effect: { rate: '18', st: { mva: '140', rate: '18' } },
+          source: 'Portaria SRE 27/2026',
+        },
+      ],
+      items: [
+        {
+          code: 'SKOL710',
+          barcodes: [],
+          description: 'Cerveja Skol lata 710 ml',
+          ncm: '22030000',
+          cest: '0302103',
+          unit: 'UN',
+          quantityMilli: 12_000,
+          unitPriceCents: 400,
+          grossCents: 4_800,
+          discountCents: 0,
+          profile: { ...PERFIL, cstIcms: '10', cfopInterna: '5401' },
+          stPauta,
+        },
+      ],
+      transport: { freight: 'semFrete' },
+      payments: [],
+    });
+
+  it('com o item da pauta, a base é R$ 6,00 × 12 latas e a nota sai com modBCST 5', () => {
+    // ST: 72,00 × 18% = 12,96 − 8,64 de ICMS próprio (48,00 × 18%) = 4,32; nota de 52,32.
+    const r = buildDraftNfe({
+      ...cerveja({ uf: 'SP', annex: 'III', item: '1.2' }),
+      payments: [{ code: '15', amountCents: 5_232 }],
+    });
+    expect(r.ok, r.ok ? '' : r.pending.join('\n')).toBe(true);
+    if (!r.ok) return;
+    expect(r.document.xml).toContain('<modBCST>5</modBCST>');
+    expect(r.document.xml).toContain('<vBCST>72.00</vBCST>');
+    expect(r.notes.join(' ')).toMatch(/pauta de SP \(item 1\.2 do Anexo III/);
+  });
+
+  it('sem o item da pauta, vale a MVA da regra (modBCST 4)', () => {
+    // ST: 48,00 × 2,40 = 115,20 × 18% = 20,74 − 8,64 = 12,10; nota de 60,10.
+    const r = buildDraftNfe({ ...cerveja(null), payments: [{ code: '15', amountCents: 6_010 }] });
+    expect(r.ok, r.ok ? '' : r.pending.join(' | ')).toBe(true);
+    expect(r.ok && r.document.xml).toContain('<modBCST>4</modBCST>');
+  });
+
+  it('item de pauta que não existe na data fica pendente', () => {
+    const r = buildDraftNfe(cerveja({ uf: 'SP', annex: 'III', item: '99.99' }));
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.pending.join(' ')).toMatch(/não vale nesta data/);
+  });
+});

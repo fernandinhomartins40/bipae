@@ -520,3 +520,23 @@ describe('contingência SVC da NF-e (F3-16)', () => {
     ).toThrow('não pode ser depois da emissão');
   });
 });
+
+describe('ST pela pauta na NF-e (F3-26.f)', () => {
+  it('modBCST 5, sem pMVAST, válida no schema', async () => {
+    const ipi = calculateIpi({ cst: '50', rate: '10' }, { baseCents: 10_500 });
+    const icms = calculateIcms(
+      { cst: '10', rate: '18', st: { rate: '18' } },
+      { baseCents: 10_500, ipiCents: ipi.amountCents, stPautaCents: 15_000 },
+    );
+    const item = itemComSt({ icms });
+    // Valor da nota: produto e frete + IPI + ICMS-ST.
+    const total = 10_500 + ipi.amountCents + icms.st!.amountCents;
+    const doc = buildNfe(
+      nota({ items: [item], billing: undefined, payments: [{ code: '15', amountCents: total }] }),
+    );
+    expect(doc.xml).toContain('<modBCST>5</modBCST>');
+    expect(doc.xml).not.toContain('<pMVAST>');
+    expect(doc.xml).toContain('<vBCST>150.00</vBCST>');
+    expect(await validate(doc.xml)).toEqual([]);
+  });
+});

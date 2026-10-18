@@ -9,6 +9,7 @@ import {
   isCfopValidOn,
 } from '@bipae/fiscal/tables';
 import { findNcm, isNcmValidOn } from '@bipae/fiscal/tables/ncm';
+import { findStPautaItem } from '@bipae/fiscal/tables';
 import { AppError } from '../../common/errors';
 
 /**
@@ -26,20 +27,48 @@ function fail(issues: Issue[]): void {
 }
 
 export function assertProductFiscal(
-  input: { ncm?: string | null | undefined; cest?: string | null | undefined },
+  input: {
+    ncm?: string | null | undefined;
+    cest?: string | null | undefined;
+    /** Item da pauta da ST escolhido (F3-26.f), conferido na tabela da UF. */
+    stPauta?: { uf: string; annex: string; item: string } | null | undefined;
+    /** CEST do produto, para conferir com o do item da pauta. */
+    cestForPauta?: string | null | undefined;
+  },
   date = today(),
 ): void {
   const issues: Issue[] = [];
+  if (input.stPauta) {
+    const p = input.stPauta;
+    const found = findStPautaItem(p.uf, date, p.annex, p.item);
+    if (!found) {
+      issues.push({
+        path: 'stPauta',
+        message: `O item ${p.item} do Anexo ${p.annex} não está na pauta de ${p.uf} em vigor.`,
+      });
+    } else if (input.cestForPauta && input.cestForPauta !== found.cest) {
+      issues.push({
+        path: 'stPauta',
+        message: `O item da pauta é do CEST ${found.cest}, e o produto está com o CEST ${input.cestForPauta}.`,
+      });
+    }
+  }
   if (input.ncm) {
     const ncm = findNcm(input.ncm);
     if (!ncm) {
-      issues.push({ path: 'ncm', message: `O NCM ${input.ncm} não existe na tabela vigente. Confira o código.` });
+      issues.push({
+        path: 'ncm',
+        message: `O NCM ${input.ncm} não existe na tabela vigente. Confira o código.`,
+      });
     } else if (!isNcmValidOn(ncm, date)) {
       issues.push({ path: 'ncm', message: `O NCM ${input.ncm} ainda não está em vigor.` });
     }
   }
   if (input.cest && !findCest(input.cest, date)) {
-    issues.push({ path: 'cest', message: `O CEST ${input.cest} não existe na tabela vigente. Confira o código.` });
+    issues.push({
+      path: 'cest',
+      message: `O CEST ${input.cest} não existe na tabela vigente. Confira o código.`,
+    });
   }
   fail(issues);
 }
@@ -60,7 +89,11 @@ export function assertFiscalProfile(input: FiscalProfileCodes, date = today()): 
     issues.push({ path: 'origem', message: 'Origem da mercadoria inválida.' });
   }
 
-  const cfop = (path: 'cfopInterna' | 'cfopInterestadual', scope: 'interna' | 'interestadual', label: string) => {
+  const cfop = (
+    path: 'cfopInterna' | 'cfopInterestadual',
+    scope: 'interna' | 'interestadual',
+    label: string,
+  ) => {
     const code = input[path];
     const found = findCfop(code);
     const group = cfopGroup(code);
@@ -69,7 +102,10 @@ export function assertFiscalProfile(input: FiscalProfileCodes, date = today()): 
     } else if (!found.nfe) {
       issues.push({ path, message: `O CFOP ${code} não pode ser usado em NF-e nem em NFC-e.` });
     } else if (group?.direction !== 'saida' || group.scope !== scope) {
-      issues.push({ path, message: `O CFOP ${code} não é de ${label}. Os CFOP de ${label} começam com ${scope === 'interna' ? '5' : '6'}.` });
+      issues.push({
+        path,
+        message: `O CFOP ${code} não é de ${label}. Os CFOP de ${label} começam com ${scope === 'interna' ? '5' : '6'}.`,
+      });
     }
   };
   cfop('cfopInterna', 'interna', 'venda dentro do estado');
@@ -82,14 +118,23 @@ export function assertFiscalProfile(input: FiscalProfileCodes, date = today()): 
     issues.push({ path: 'cstIcms', message: `O CST de ICMS ${input.cstIcms} não existe.` });
   }
   if (input.cstPisCofins && !findTaxSituation('pis', input.cstPisCofins)) {
-    issues.push({ path: 'cstPisCofins', message: `O CST de PIS/COFINS ${input.cstPisCofins} não existe.` });
+    issues.push({
+      path: 'cstPisCofins',
+      message: `O CST de PIS/COFINS ${input.cstPisCofins} não existe.`,
+    });
   }
   if (input.cClassTrib) {
     const item = findClassTrib(input.cClassTrib);
     if (!item) {
-      issues.push({ path: 'cClassTrib', message: `A classificação tributária ${input.cClassTrib} não existe na tabela oficial.` });
+      issues.push({
+        path: 'cClassTrib',
+        message: `A classificação tributária ${input.cClassTrib} não existe na tabela oficial.`,
+      });
     } else if (classTribStatus(item, date) !== 'vigente') {
-      issues.push({ path: 'cClassTrib', message: `A classificação tributária ${input.cClassTrib} não está em vigor.` });
+      issues.push({
+        path: 'cClassTrib',
+        message: `A classificação tributária ${input.cClassTrib} não está em vigor.`,
+      });
     }
   }
   fail(issues);

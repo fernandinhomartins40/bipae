@@ -27,7 +27,7 @@ import { useApp, useCan } from '../context';
 import { CatalogAssist, catalogSummary } from './catalog-assist';
 import { ApiError } from '../api-client';
 import { useForm } from '../forms';
-import { NcmCestHelp } from './fiscal-lookup';
+import { NcmCestHelp, StPautaPicker, type StPautaRef } from './fiscal-lookup';
 import { PricingHelper } from './pricing-helper';
 import { KitEditor, type KitComponent } from './product-kit';
 import { AiFiscalSuggestionPanel } from './assistant';
@@ -198,6 +198,11 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
 
   // Dados que vieram do catálogo: marca, fabricante, conteúdo e códigos de caixa.
   const [catalog, setCatalog] = useState(product?.catalog ?? null);
+  const [stPauta, setStPauta] = useState<StPautaRef | null>(product?.stPauta ?? null);
+  const companies = useQuery({
+    queryKey: ['companies'],
+    queryFn: () => api.get<{ uf: string | null }[]>('/companies'),
+  });
   const [packs, setPacks] = useState(product?.packs ?? []);
   const [fromCatalog, setFromCatalog] = useState(false);
   const applyCatalog = (found: CatalogProduct) => {
@@ -252,6 +257,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
         components: components.map(({ productId, quantity }) => ({ productId, quantity })),
         catalog,
         packs,
+        stPauta,
         barcodes: v.barcodes
           .split(/[\s,;]+/)
           .map((b) => b.trim())
@@ -382,6 +388,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           cest={form.values.cest}
           onPickNcm={(code) => form.set('ncm', code)}
           onPickCest={(code) => form.set('cest', code)}
+        />
+        <StPautaPicker
+          uf={companies.data?.[0]?.uf ?? null}
+          cest={form.values.cest}
+          value={stPauta}
+          onChange={setStPauta}
         />
         {product && (
           <AiFiscalSuggestionPanel

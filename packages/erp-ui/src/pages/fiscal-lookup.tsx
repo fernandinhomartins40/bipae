@@ -220,3 +220,96 @@ export function NcmCestHelp({
     </div>
   );
 }
+
+export interface StPautaRef {
+  uf: string;
+  annex: string;
+  item: string;
+}
+
+interface StPautaItemView {
+  annex: string;
+  tableName: string;
+  item: string;
+  cest: string;
+  description: string;
+  priceCents: number;
+}
+
+const brl = (cents: number) =>
+  (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+/**
+ * Item da pauta da ST (F3-26.f): quando a UF da empresa publica pauta para o CEST do produto, a
+ * base da ST na NF-e é o valor da pauta da marca e embalagem. Só aparece quando há pauta.
+ */
+export function StPautaPicker({
+  uf,
+  cest,
+  value,
+  onChange,
+}: {
+  uf: string | null;
+  cest: string;
+  value: StPautaRef | null;
+  onChange: (value: StPautaRef | null) => void;
+}) {
+  const { api } = useApp();
+  const [search, setSearch] = useState('');
+  const term = useDeferredValue(search.trim());
+  const enabled = Boolean(uf) && /^\d{7}$/.test(cest);
+  const found = useQuery({
+    queryKey: ['st-pauta', uf, cest, term],
+    queryFn: () =>
+      api.get<{ pauta: { act: string; validTo: string } | null; items: StPautaItemView[] }>(
+        `/fiscal/st-pauta?uf=${uf}&cest=${cest}&q=${encodeURIComponent(term)}`,
+      ),
+    enabled,
+  });
+  const pauta = found.data?.pauta;
+  if (!enabled || !pauta || (found.data!.items.length === 0 && !term && !value)) return null;
+  const until = pauta.validTo.split('-').reverse().join('/');
+  return (
+    <section className="rounded-ui border border-border p-3" aria-labelledby="st-pauta">
+      <h3 id="st-pauta" className="mb-1 font-bold">
+        Pauta da ST ({uf})
+      </h3>
+      <p className="mb-2 text-sm text-muted">
+        {pauta.act}, até {until}. Na NF-e, a base da ST passa a ser o valor da pauta da marca e
+        embalagem. Só vale para quem retém o imposto (indústria, importador ou distribuidor).
+      </p>
+      {value ? (
+        <p className="mb-2 text-sm">
+          Escolhido: item {value.item} do Anexo {value.annex}.{' '}
+          <button
+            type="button"
+            className="font-semibold text-primary underline"
+            onClick={() => onChange(null)}
+          >
+            Tirar
+          </button>
+        </p>
+      ) : null}
+      <TextField
+        label="Procurar na pauta"
+        hint="Marca, embalagem ou tamanho (ex.: lata 350)."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <ul className="mt-2 flex max-h-48 flex-col gap-1 overflow-auto" aria-label="Itens da pauta">
+        {found.data!.items.map((i) => (
+          <li key={`${i.annex}-${i.item}`}>
+            <button
+              type="button"
+              className="w-full rounded-ui px-2 py-1 text-left text-sm hover:bg-primary/10 aria-pressed:bg-primary/15"
+              aria-pressed={value?.annex === i.annex && value.item === i.item}
+              onClick={() => onChange({ uf: uf!, annex: i.annex, item: i.item })}
+            >
+              {i.item} · {i.tableName} · {i.description} · {brl(i.priceCents)}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}

@@ -221,6 +221,7 @@ export class NfeInvoicesService implements OnModuleInit {
           discountCents: i.discountCents,
           profile: profile ?? null,
           cfop: i.cfop ?? null,
+          stPauta: p?.stPauta ?? null,
         };
       }),
       transport: {

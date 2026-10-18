@@ -211,6 +211,14 @@ export const productInput = z.object({
     .default([]),
   catalog: productCatalogSchema.nullish(),
   packs: z.array(productPackSchema).max(20).default([]),
+  /** Item da pauta da ST da UF (F3-26.f): a base da ST na NF-e passa a ser o valor da pauta. */
+  stPauta: z
+    .object({
+      uf: z.string().length(2),
+      annex: z.string().regex(/^[IVX]{1,4}$/),
+      item: z.string().regex(/^\d{1,3}\.\d{1,4}$/),
+    })
+    .nullish(),
   /** Atacarejo (F5-03): a partir de tal quantidade, cada unidade sai por tal preço. */
   wholesale: z
     .object({
@@ -250,6 +258,8 @@ export interface Product {
   }[];
   /** Marca, fabricante, departamento e conteúdo (catálogo). */
   catalog?: ProductCatalog | null;
+  /** Item da pauta da ST da UF (F3-26.f). */
+  stPauta?: { uf: string; annex: string; item: string } | null;
   /** Códigos de caixa ou fardo, com as unidades de cada um. */
   packs?: ProductPack[];
   /** Atacarejo (F5-03): preço de atacado a partir de uma quantidade. */
