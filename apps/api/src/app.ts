@@ -106,6 +106,8 @@ import { ApiKeysController, ApiKeysService } from './modules/public-api/api-keys
 import { WebhooksController, WebhooksService } from './modules/public-api/webhooks.service';
 import { CrmController, CrmService } from './modules/crm/crm.service';
 import { CampaignsController, CampaignsService } from './modules/crm/campaigns.service';
+import { ClaudeProvider } from './modules/ai/ai.provider';
+import { AI_PROVIDER, AiController, AiService } from './modules/ai/ai.service';
 import { LoyaltyController, LoyaltyService } from './modules/crm/loyalty.service';
 import { PublicApiController, PublicDataService } from './modules/public-api/public-api.controller';
 import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
@@ -182,6 +184,7 @@ class AppModule {
         WebhooksController,
         CrmController,
         CampaignsController,
+        AiController,
         LoyaltyController,
         PublicApiController,
         DeliveryController,
@@ -243,6 +246,13 @@ class AppModule {
         WebhooksService,
         CrmService,
         CampaignsService,
+        AiService,
+        {
+          provide: AI_PROVIDER,
+          useValue: config.AI_API_KEY
+            ? new ClaudeProvider(config.AI_API_KEY, config.AI_MODEL)
+            : null,
+        },
         LoyaltyService,
         PublicDataService,
         DeliveryService,

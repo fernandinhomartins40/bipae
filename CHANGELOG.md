@@ -1,5 +1,17 @@
 # Changelog
 
+## [F6-07.a–d Assistente de IA] — 18/10/2026
+
+### Adicionado
+- **Assistente de IA**, opcional por conta. Desligado, nada muda no resto do Bipaê.
+- **Sugestão fiscal no produto:** "Sugerir com IA" traz NCM, CEST e cClassTrib, com justificativa e nível de confiança.
+  - Os códigos são conferidos nas tabelas oficiais; o que não existe ou não vale hoje sai da sugestão, com aviso.
+  - Nada grava sem aprovação. A aprovação fica na auditoria com quem aprovou, a sugestão original, o modelo e o antes e depois.
+- **Perguntas sobre o negócio** ("quanto vendi nesta semana?"). O assistente responde com os relatórios da conta: vendas, resultado do mês, contas e perdas.
+  - Nunca recebe SQL livre nem dado pessoal de cliente.
+- Limite de uso por dia e medição de cada chamada, para o custo caber no plano.
+- Sem a chave do provedor (item E13), a tela mostra "Falta configurar".
+
 ## [F6-08.c Campanhas por e-mail] — 18/10/2026
 
 ### Adicionado

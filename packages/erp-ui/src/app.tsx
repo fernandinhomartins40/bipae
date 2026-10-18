@@ -16,6 +16,7 @@ import {
   VerifyEmailPage,
 } from './pages/auth';
 import { HomePage } from './pages/home';
+import { AssistantPage } from './pages/assistant';
 import { PartiesPage } from './pages/parties';
 import { DevicesPage } from './pages/devices';
 import { PosPage } from './pages/pos';
@@ -202,6 +203,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="condicional" element={<ConditionalsPage />} />
               <Route path="integracoes" element={<IntegrationsPage />} />
               <Route path="relacionamento" element={<CrmPage />} />
+              <Route path="assistente" element={<AssistantPage />} />
               <Route path="ajuda" element={<HelpPage />} />
               <Route path="ajuda/:slug" element={<HelpPage />} />
               <Route path="pedidos-de-compra" element={<PurchaseOrdersPage />} />

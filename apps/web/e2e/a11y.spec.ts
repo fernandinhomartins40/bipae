@@ -65,6 +65,7 @@ test('telas sem violações de acessibilidade WCAG 2.2 AA', async ({ page }) => 
     ['/financeiro', 'Contas a pagar e receber'],
     ['/relatorios', 'Relatórios'],
     ['/relacionamento', 'Relacionamento'],
+    ['/assistente', 'Assistente'],
     ['/integracoes', 'Integrações (API)'],
     ['/condicional', 'Condicional'],
     ['/nfe', 'NF-e'],

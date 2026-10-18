@@ -13,7 +13,7 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import type { PromotionRule } from '@bipae/domain';
+import type { AiFiscalSuggestion, PromotionRule } from '@bipae/domain';
 
 /** Typed mirror of migrations/*.sql. The SQL files are the source of truth (RLS, triggers). */
 
@@ -1458,4 +1458,40 @@ export const emailCampaignRecipients = pgTable('email_campaign_recipients', {
   unsubscribeTokenHash: text('unsubscribe_token_hash').notNull(),
   unsubscribedAt: ts('unsubscribed_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+/** Assistente de IA ligado ou não na conta (F6-07). */
+export const aiSettings = pgTable('ai_settings', {
+  tenantId: uuid('tenant_id').primaryKey(),
+  enabled: boolean('enabled').notNull().default(false),
+  updatedBy: uuid('updated_by').notNull(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Cada chamada ao provedor de IA, para medir o uso (F6-07). */
+export const aiRequests = pgTable('ai_requests', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  userId: uuid('user_id').notNull(),
+  kind: text('kind', { enum: ['fiscal', 'question'] }).notNull(),
+  model: text('model').notNull(),
+  inputTokens: integer('input_tokens').notNull().default(0),
+  outputTokens: integer('output_tokens').notNull().default(0),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+/** Sugestão fiscal da IA para um produto; só grava com aprovação (F6-07). */
+export const aiSuggestions = pgTable('ai_suggestions', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  productId: uuid('product_id').notNull(),
+  status: text('status', { enum: ['pending', 'approved', 'rejected'] })
+    .notNull()
+    .default('pending'),
+  suggestion: jsonb('suggestion').$type<AiFiscalSuggestion>().notNull(),
+  model: text('model').notNull(),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  decidedBy: uuid('decided_by'),
+  decidedAt: ts('decided_at'),
 });

@@ -365,7 +365,12 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [ ] F6-04 · Cobrança automática dos planos e troca de plano pelo cliente — depende: F6-02, P-02
 - [ ] F6-05 · iFood — depende: F5-07 · externo: E14
 - [ ] F6-06 · Marketplaces — depende: F6-01 · externo: E14
-- [ ] F6-07 · Assistente de IA com confirmação humana (ADR-0011) — externo: E13
+- [~] F6-07 · Assistente de IA com confirmação humana (ADR-0011) — externo: E13
+  - [x] F6-07.a · Base: interface própria do provedor (modelos Claude pela API de mensagens, trocável), chave e modelo por variável (`AI_API_KEY`, `AI_MODEL`), liga e desliga por conta com auditoria, limite de uso por dia e medição de cada chamada (tokens) para o custo caber no plano
+  - [x] F6-07.b · Sugestão fiscal no cadastro do produto: NCM, CEST e cClassTrib com justificativa e confiança, a partir de candidatos da tabela oficial; o que não existe ou não vale hoje sai com aviso; só grava com aprovação, que registra quem aprovou, a sugestão original, o modelo e o antes e depois — depende: F6-07.a
+  - [x] F6-07.c · Perguntas sobre o negócio pelas ferramentas de relatório (vendas, DRE, contas, perdas), com o escopo da conta e sem dado pessoal de cliente; nunca SQL livre — depende: F6-07.a
+  - [x] F6-07.d · Tela Assistente (liga e desliga, exemplos, conversa) e "Sugerir com IA" no produto; sem a chave, "Falta configurar" — depende: F6-07.b, F6-07.c
+  - [ ] F6-07.e · Ligar a chave na VPS, conferir com o modelo de verdade e medir o custo por conta; aviso do envio ao provedor de IA no termo de uso (P-01) — depende: F6-07.d · externo: E13, E7
 - [x] F6-08 · CRM, fidelidade e campanhas com consentimento (LGPD)
   - [x] F6-08.a · CRM: ficha do cliente com o histórico de compras pelo CPF (total, ticket médio, frequência, última compra, mais comprados), segmentos (novos, frequentes, sumidos) e lista de quem aceitou ofertas, exportada com auditoria
   - [x] F6-08.b · Fidelidade: programa de pontos (R$ por ponto e validade), pontos das vendas com CPF, saldo e extrato na ficha; resgate no caixa como desconto, com o saldo sincronizado e sem depender de internet — depende: F6-08.a

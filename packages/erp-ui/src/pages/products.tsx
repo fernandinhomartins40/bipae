@@ -30,6 +30,7 @@ import { useForm } from '../forms';
 import { NcmCestHelp } from './fiscal-lookup';
 import { PricingHelper } from './pricing-helper';
 import { KitEditor, type KitComponent } from './product-kit';
+import { AiFiscalSuggestionPanel } from './assistant';
 import { VariantsEditor } from './product-variants';
 
 interface Unit {
@@ -382,6 +383,16 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           onPickNcm={(code) => form.set('ncm', code)}
           onPickCest={(code) => form.set('cest', code)}
         />
+        {product && (
+          <AiFiscalSuggestionPanel
+            productId={product.id}
+            onApplied={(v) => {
+              form.set('ncm', v.ncm ?? form.values.ncm);
+              if (v.ncm) form.set('cest', v.cest ?? '');
+              if (v.fiscalProfileId) form.set('fiscalProfileId', v.fiscalProfileId);
+            }}
+          />
+        )}
         <SelectField
           label="Perfil fiscal"
           hint="Como o produto é tributado. Os perfis ficam em Perfis fiscais."

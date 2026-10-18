@@ -14,3 +14,4 @@ export * from './pricing';
 export * from './ofx';
 export * from './crm';
 export * from './loyalty';
+export * from './ai';

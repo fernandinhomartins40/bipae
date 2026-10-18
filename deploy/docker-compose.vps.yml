@@ -76,6 +76,9 @@ services:
       # E-mail transacional (P-04): sem SMTP_URL no .env da VPS (item E11), o e-mail fica desligado.
       SMTP_URL: ${SMTP_URL:-}
       MAIL_FROM: ${MAIL_FROM:-Bipaê <nao-responda@bipae.com.br>}
+      # Assistente de IA (F6-07): sem AI_API_KEY no .env da VPS (item E13), "falta configurar".
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-claude-sonnet-5-5}
       APP_PUBLIC_URL: https://www.bipae.com.br/app
       MERCADOFLOW_TERMS_URL: ${MERCADOFLOW_TERMS_URL:-}
     depends_on:

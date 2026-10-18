@@ -56,6 +56,14 @@ const envSchema = z.object({
   MAIL_FROM: z.string().default('Bipaê <nao-responda@bipae.com.br>'),
   /** Endereço público do aplicativo, para os links dos e-mails. */
   APP_PUBLIC_URL: z.string().default('http://localhost:5173'),
+  /**
+   * Assistente de IA (F6-07, ADR-0011): chave da API dos modelos Claude (item E13). Sem ela, o
+   * assistente aparece como "falta configurar" e nada mais muda.
+   */
+  AI_API_KEY: z.string().optional(),
+  AI_MODEL: z.string().default('claude-sonnet-5-5'),
+  /** Chamadas ao provedor por conta por dia, para o custo caber no plano. */
+  AI_DAILY_LIMIT: z.coerce.number().int().min(0).default(200),
   /** GitHub "owner/repo" whose public Releases carry the desktop installers ('' disables). */
   DESKTOP_RELEASES_REPO: z.string().default('fernandinhomartins40/bipae'),
   /** Bipaê staff must enable 2FA before using the admin panel (always true in production). */
