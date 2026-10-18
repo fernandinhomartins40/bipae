@@ -36,7 +36,7 @@ import {
   isCfopValidOn,
   type Cest,
 } from '@bipae/fiscal/tables';
-import { IBS_CBS_REGIME_RULES } from '@bipae/fiscal/tables';
+import { IBS_CBS_REGIME_RULES, searchNfseServices } from '@bipae/fiscal/tables';
 import { findMunicipio, searchMunicipios } from '@bipae/fiscal/tables/municipios';
 import { findNcm, isNcmValidOn, ncmPath, searchNcm, type Ncm } from '@bipae/fiscal/tables/ncm';
 import { z } from 'zod';
@@ -173,6 +173,13 @@ export class FiscalController {
         .filter((ncm) => isNcmValidOn(ncm, date))
         .map(ncmView),
     };
+  }
+
+  /** Lista nacional de serviços da NFS-e (F5-13): ?q=14.01 ou ?q=troca de óleo. */
+  @Get('nfse-services')
+  @RequirePermission('catalog.read')
+  nfseServices(@Query('q') q?: string) {
+    return searchNfseServices(q ?? '', 20);
   }
 
   /** Municípios do IBGE da UF (F3-14): ?uf=SP&q=campinas. */

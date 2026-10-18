@@ -2222,3 +2222,118 @@ export const nfeContingencyInput = z.object({
     .min(15, 'Explique a contingência com pelo menos 15 caracteres')
     .max(256, 'A justificativa pode ter no máximo 256 caracteres'),
 });
+
+// ---------- Serviços e ordem de serviço (F5-13.c) ----------
+
+/** Alíquota do ISSQN como texto decimal ("2", "2,5"): até 5% (regra E0595 da NFS-e Nacional). */
+const issRate = z
+  .union([z.number(), z.string()])
+  .transform((v) => String(v).trim().replace(',', '.'))
+  .refine((v) => /^\d(\.\d{1,2})?$/.test(v) && Number(v) <= 5, {
+    message: 'Alíquota do ISSQN de 0 a 5%, com até 2 casas',
+  });
+
+export const serviceInput = z.object({
+  name: trimmed(1, 120, 'Nome do serviço'),
+  /** Código de tributação nacional (cTribNac) da lista nacional de serviços. */
+  code: z
+    .string()
+    .transform((v) => v.replace(/\D/g, '').padStart(6, '0'))
+    .pipe(z.string().regex(/^\d{6}$/, 'Escolha o serviço na lista nacional')),
+  nbs: z
+    .string()
+    .transform((v) => v.replace(/\D/g, ''))
+    .pipe(z.string().regex(/^\d{9}$/, 'NBS com 9 dígitos'))
+    .nullish()
+    .or(z.literal('').transform(() => null)),
+  issRate: issRate.nullish().or(z.literal('').transform(() => null)),
+  priceCents: centsSchema.default(0),
+  active: z.boolean().default(true),
+});
+export type ServiceInput = z.input<typeof serviceInput>;
+
+export interface ServiceView {
+  id: string;
+  name: string;
+  code: string;
+  /** Descrição do código na lista nacional. */
+  codeDescription: string | null;
+  nbs: string | null;
+  issRate: string | null;
+  priceCents: number;
+  active: boolean;
+}
+
+export const SERVICE_ORDER_STATUSES = [
+  'open',
+  'in_progress',
+  'ready',
+  'delivered',
+  'cancelled',
+] as const;
+
+export const serviceOrderInput = z.object({
+  storeId: z.string().uuid('Escolha a loja'),
+  customerId: z.string().uuid('Escolha o cliente'),
+  equipment: optionalText(200),
+  problem: optionalText(2000),
+  notes: optionalText(2000),
+  dueOn: isoDay.nullish(),
+  items: z
+    .array(
+      z
+        .object({
+          kind: z.enum(['service', 'product']),
+          serviceId: z.string().uuid().nullish(),
+          productId: z.string().uuid().nullish(),
+          description: optionalText(300),
+          quantityMilli: z.number().int().positive('Quantidade inválida').max(1_000_000_000),
+          unitPriceCents: centsSchema,
+        })
+        .refine((i) => (i.kind === 'service' ? Boolean(i.serviceId) : Boolean(i.productId)), {
+          message: 'Escolha o serviço ou a peça',
+        }),
+    )
+    .max(200)
+    .default([]),
+});
+export type ServiceOrderInput = z.input<typeof serviceOrderInput>;
+
+export const serviceOrderStatusInput = z.object({
+  status: z.enum(['open', 'in_progress', 'ready', 'cancelled'], {
+    message: 'Situação inválida',
+  }),
+});
+
+/** Entrega: o total vira conta a receber com este vencimento (sem data, hoje). */
+export const serviceOrderDeliverInput = z.object({ dueDate: isoDay.nullish() });
+
+export interface ServiceOrderView {
+  id: string;
+  number: number;
+  storeId: string;
+  storeName: string;
+  customerId: string;
+  customerName: string;
+  customerTaxId: string | null;
+  status: (typeof SERVICE_ORDER_STATUSES)[number];
+  equipment: string | null;
+  problem: string | null;
+  notes: string | null;
+  dueOn: string | null;
+  createdAt: string;
+  deliveredAt: string | null;
+  items: {
+    line: number;
+    kind: 'service' | 'product';
+    serviceId: string | null;
+    productId: string | null;
+    description: string;
+    quantityMilli: number;
+    unitPriceCents: number;
+    totalCents: number;
+  }[];
+  servicesCents: number;
+  productsCents: number;
+  totalCents: number;
+}

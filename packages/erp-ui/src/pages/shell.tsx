@@ -47,6 +47,7 @@ import {
   UtensilsCrossed,
   Wallet,
   FileOutput,
+  Wrench,
 } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
 import { useConfereNotices } from '../confere-notices';
@@ -84,6 +85,8 @@ const NAV = [
   { to: '/nfe', label: 'NF-e', icon: FileOutput, permission: 'catalog.read' },
   { to: '/comandas', label: 'Comandas abertas', icon: UtensilsCrossed, permission: 'pos.sell' },
   { to: '/condicional', label: 'Condicional', icon: Shirt, permission: 'pos.sell' },
+  { to: '/ordens-de-servico', label: 'Ordens de serviço', icon: Wrench, permission: 'pos.sell' },
+  { to: '/servicos', label: 'Serviços', icon: ClipboardList, permission: 'catalog.read' },
   { to: '/garcom', label: 'Garçom', icon: HandPlatter, permission: 'pos.sell' },
   { to: '/cozinha', label: 'Cozinha', icon: ChefHat, permission: 'pos.sell' },
   { to: '/delivery', label: 'Delivery', icon: Bike, permission: 'pos.sell' },

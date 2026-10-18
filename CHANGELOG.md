@@ -1,5 +1,14 @@
 # Changelog
 
+## [F5-13.c Ordem de serviço] — 18/10/2026
+
+### Adicionado
+- **Serviços:** cadastro com o código da lista nacional de serviços (busca por código ou palavra), o NBS, a alíquota do ISS no município e o preço.
+- **Ordens de serviço:** a OS registra o cliente, o equipamento, o defeito, os serviços e as peças.
+  - A situação segue aberta, em andamento, pronta para retirar e entregue (ou cancelada).
+  - Na entrega, as peças saem do estoque e o total vira conta a receber com o vencimento escolhido.
+  - Cada passo fica na auditoria.
+
 ## [F5-13.a/b Motor da NFS-e Nacional] — 18/10/2026
 
 ### Adicionado

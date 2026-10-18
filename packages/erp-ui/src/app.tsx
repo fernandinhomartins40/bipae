@@ -29,6 +29,8 @@ import { InventoryPage } from './pages/inventory';
 import { TransfersPage } from './pages/transfers';
 import { ConditionalsPage } from './pages/conditionals';
 import { NfePage } from './pages/nfe';
+import { ServiceOrdersPage } from './pages/service-orders';
+import { ServicesPage } from './pages/services';
 import { IntegrationsPage } from './pages/integrations';
 import { CrmPage } from './pages/crm';
 import { HelpPage } from './pages/help';
@@ -202,6 +204,8 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="recebiveis" element={<SettlementsPage />} />
               <Route path="notas-de-entrada" element={<ConferePage />} />
               <Route path="nfe" element={<NfePage />} />
+              <Route path="ordens-de-servico" element={<ServiceOrdersPage />} />
+              <Route path="servicos" element={<ServicesPage />} />
               <Route path="perfis-fiscais" element={<FiscalProfilesPage />} />
               <Route path="regras-icms" element={<IcmsRulesPage />} />
               <Route path="tabelas-de-preco" element={<PriceTablesPage />} />

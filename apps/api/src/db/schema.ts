@@ -118,6 +118,14 @@ export const companies = pgTable('companies', {
   /** Distribuição de DF-e (F3-20): último NSU recebido e quando perguntar de novo. */
   dfeLastNsu: char('dfe_last_nsu', { length: 15 }).notNull().default('000000000000000'),
   dfeNextQueryAt: ts('dfe_next_query_at'),
+  /** NFS-e Nacional (F5-13.d): série e número da DPS, inscrição municipal e tributos aproximados. */
+  nfseSeries: integer('nfse_series').notNull().default(1),
+  nfseNextNumber: bigint('nfse_next_number', { mode: 'number' }).notNull().default(1),
+  municipalRegistration: text('municipal_registration'),
+  nfseSimplesPercent: text('nfse_simples_percent'),
+  nfseTaxFederal: text('nfse_tax_federal'),
+  nfseTaxState: text('nfse_tax_state'),
+  nfseTaxMunicipal: text('nfse_tax_municipal'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
@@ -480,6 +488,7 @@ export const stockMovements = pgTable('stock_movements', {
       'conditional_out',
       'conditional_in',
       'nfe_out',
+      'service_order',
     ],
   }).notNull(),
   refId: uuid('ref_id'),
@@ -839,6 +848,8 @@ export const financialEntries = pgTable('financial_entries', {
   saleId: uuid('sale_id'),
   /** NF-e da retaguarda que gerou a parcela (F3-33.e). */
   invoiceId: uuid('invoice_id'),
+  /** Ordem de serviço entregue que gerou a conta (F5-13.c). */
+  serviceOrderId: uuid('service_order_id'),
   createdBy: uuid('created_by'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
@@ -1340,3 +1351,53 @@ export const loyaltyEntries = pgTable('loyalty_entries', {
   expiresAt: ts('expires_at'),
   createdAt: ts('created_at').notNull(),
 });
+
+/** Serviços que a empresa presta (F5-13.c): o código da lista nacional e a alíquota do ISSQN. */
+export const services = pgTable('services', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  name: text('name').notNull(),
+  code: char('code', { length: 6 }).notNull(),
+  nbs: text('nbs'),
+  issRate: text('iss_rate'),
+  priceCents: money('price_cents').notNull().default(0),
+  active: boolean('active').notNull().default(true),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Ordem de serviço (F5-13.c). */
+export const serviceOrders = pgTable('service_orders', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  number: integer('number').notNull(),
+  customerId: uuid('customer_id').notNull(),
+  status: text('status', { enum: ['open', 'in_progress', 'ready', 'delivered', 'cancelled'] })
+    .notNull()
+    .default('open'),
+  equipment: text('equipment'),
+  problem: text('problem'),
+  notes: text('notes'),
+  dueOn: date('due_on', { mode: 'string' }),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+  deliveredAt: ts('delivered_at'),
+});
+
+export const serviceOrderItems = pgTable(
+  'service_order_items',
+  {
+    tenantId: uuid('tenant_id').notNull(),
+    orderId: uuid('order_id').notNull(),
+    line: integer('line').notNull(),
+    kind: text('kind', { enum: ['service', 'product'] }).notNull(),
+    serviceId: uuid('service_id'),
+    productId: uuid('product_id'),
+    description: text('description').notNull(),
+    quantityMilli: bigint('quantity_milli', { mode: 'number' }).notNull(),
+    unitPriceCents: money('unit_price_cents').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.orderId, t.line] })],
+);

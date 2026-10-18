@@ -94,6 +94,11 @@ import { LossesController, LossesService } from './modules/reports/losses.servic
 import { TabsController } from './modules/sales/tabs.controller';
 import { KitchenController, KitchenService } from './modules/sales/kitchen.service';
 import { ConditionalsController, ConditionalsService } from './modules/sales/conditionals.service';
+import {
+  ServiceOrdersController,
+  ServiceOrdersService,
+  ServicesController,
+} from './modules/sales/service-orders.service';
 import { ApiKeysController, ApiKeysService } from './modules/public-api/api-keys.service';
 import { WebhooksController, WebhooksService } from './modules/public-api/webhooks.service';
 import { CrmController, CrmService } from './modules/crm/crm.service';
@@ -162,6 +167,8 @@ class AppModule {
         KitchenController,
         TabOrdersController,
         ConditionalsController,
+        ServicesController,
+        ServiceOrdersController,
         ApiKeysController,
         WebhooksController,
         CrmController,
@@ -220,6 +227,7 @@ class AppModule {
         KitchenService,
         TabOrdersService,
         ConditionalsService,
+        ServiceOrdersService,
         ApiKeysService,
         WebhooksService,
         CrmService,
