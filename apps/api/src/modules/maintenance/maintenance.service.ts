@@ -225,12 +225,13 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         });
         sent++;
       }
-      // Marca com a data da própria suspensão avisada, não com o relógio da API: se o relógio do
-      // banco estiver à frente, comparar com "agora" faria o aviso sair de novo a cada rodada.
+      // Marca com a data da própria suspensão avisada, copiada no banco: o relógio da API pode
+      // estar atrás, e a data lida no JavaScript perde os microssegundos do PostgreSQL. Nos dois
+      // casos a marca ficaria antes da suspensão, e o aviso sairia de novo a cada rodada.
       await asPlatform(this.db, (tx) =>
         tx
           .update(tenants)
-          .set({ suspensionNoticeSentAt: t.statusChangedAt ?? now })
+          .set({ suspensionNoticeSentAt: sql`coalesce(${tenants.statusChangedAt}, now())` })
           .where(eq(tenants.id, t.id)),
       );
     }

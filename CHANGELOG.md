@@ -10,7 +10,7 @@
 - **API:** as respostas não ficam em cache (`Cache-Control: no-store`), e o descadastro de campanha ganhou limite de tentativas.
 
 ### Corrigido
-- O aviso de conta suspensa saía de novo a cada 6 horas quando o relógio do banco estava à frente do da API.
+- O aviso de conta suspensa saía de novo a cada 6 horas: a data da suspensão, lida no JavaScript, perdia os microssegundos do PostgreSQL. Agora a marca é copiada no próprio banco.
 
 ## [F6-07.a–d Assistente de IA] — 18/10/2026
 
