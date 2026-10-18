@@ -33,6 +33,7 @@ import { parseRsApendiceII } from './st-rs.mjs';
 import { parseScAnexo1A } from './st-sc.mjs';
 import { parseBaAnexo1 } from './st-ba.mjs';
 import { parseGoApendiceII } from './st-go.mjs';
+import { parsePeAnexo37 } from './st-pe.mjs';
 import { parseRjAnexoI } from './st-rj.mjs';
 import { parseEsPortaria16R } from './st-es.mjs';
 import { parseAlDecreto90309 } from './st-al.mjs';
@@ -507,6 +508,42 @@ async function checkGo() {
   };
 }
 
+/** Pernambuco: o RICMS/PE consolidado de hoje, lido como na geração (Anexo 37 e 37-A a 37-C). */
+async function checkPe() {
+  const cest = JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8'));
+  const decode = (bytes) => new TextDecoder('windows-1252').decode(bytes);
+  const rowsOf = (html) => {
+    const r = parsePeAnexo37(html, { segments: cest.segments, cests: cest.items });
+    return [
+      ...r.chapters.flatMap((c) => c.items.map((i) => [c.chapter, i.cest, i.mva])),
+      ...r.tables.flatMap((t) => t.items.map((i) => [t.table, i.cest, i.mva])),
+      ...r.skipped.map((c) => [c.chapter, 'fora', c.name]),
+    ];
+  };
+  const old = rowsOf(decode(gunzipSync(readFileSync(join(sourcesDir, manifest.stPeRicms.file)))));
+  const title = 'ST em Pernambuco (RICMS/PE, Anexo 37)';
+  let now;
+  try {
+    now = rowsOf(decode((await download(manifest.stPeRicms.page)).body));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stPeRicms.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stPeRicms.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Rio de Janeiro: o .doc do Anexo I de hoje, lido como na geração. */
 async function checkRj() {
   const known = new Set(
@@ -791,14 +828,21 @@ async function checkDemonstration() {
   try {
     now = parseDemonstration((await download(page)).body.toString('utf8'));
   } catch (error) {
-    return { title, page, status: 'mudou', details: [`o texto não passa no leitor do Bipaê: ${error.message}`] };
+    return {
+      title,
+      page,
+      status: 'mudou',
+      details: [`o texto não passa no leitor do Bipaê: ${error.message}`],
+    };
   }
   const changed = JSON.stringify(old) !== JSON.stringify(now);
   return {
     title,
     page,
     status: changed ? 'mudou' : 'igual',
-    details: changed ? ['natureza, CFOP, textos ou prazo das notas mudaram no texto do Ajuste'] : [],
+    details: changed
+      ? ['natureza, CFOP, textos ou prazo das notas mudaram no texto do Ajuste']
+      : [],
   };
 }
 
@@ -941,6 +985,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Santa Catarina', manifest.stScAnexo1A.page, checkSc),
     await safe('ST na Bahia', manifest.stBaAnexo1.page, checkBa),
     await safe('ST em Goiás', manifest.stGoAnexoVIII.page, checkGo),
+    await safe('ST em Pernambuco', manifest.stPeRicms.page, checkPe),
     await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),
@@ -953,7 +998,11 @@ if (process.argv.includes('--save-listings')) {
     await safe('cBenef de São Paulo', manifest.cbenefSp.page, checkCbenefSp),
     await safe('cBenef do Rio de Janeiro', manifest.cbenefRj.page, checkCbenefRj),
     await safe('cBenef do Distrito Federal', manifest.cbenefDf.page, checkCbenefDf),
-    await safe('Venda condicional (Ajuste SINIEF 02/18)', manifest.ajusteSinief0218.page, checkDemonstration),
+    await safe(
+      'Venda condicional (Ajuste SINIEF 02/18)',
+      manifest.ajusteSinief0218.page,
+      checkDemonstration,
+    ),
     ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
       Array.isArray(r) ? r : [r],
     )),

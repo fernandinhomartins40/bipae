@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-26.d.PE Substituição tributária em Pernambuco] — 18/10/2026
+
+### Adicionado
+- **ST em Pernambuco** a partir do texto consolidado do RICMS/PE (Decreto 44.650/2017), Anexo 37: 334 CEST com a MVA oficial.
+  - Os capítulos com a MVA escrita no artigo (lâmpadas, pneus, eletrônicos, cimento, sorvete, tintas, ração, veículos e outros) e as tabelas dos Anexos 37-A (perfumaria), 37-B (materiais elétricos) e 37-C (material de construção).
+  - O item do Convênio ICMS 142/2018 citado no texto vira CEST pela tabela oficial do CEST. A redação anterior fica de fora.
+  - Ficam como "falta configurar" os segmentos em que a base não é uma MVA única: bebidas quentes, água e refrigerante (preço do ato da Sefaz), medicamentos (PMC da CMED), autopeças (MVA por tipo de remetente), venda porta a porta e veículo por faturamento direto.
+- O monitor semanal das fontes passa a conferir o RICMS/PE.
+
 ## [F7-02.a Revisão de segurança OWASP ASVS nível 2] — 18/10/2026
 
 ### Segurança

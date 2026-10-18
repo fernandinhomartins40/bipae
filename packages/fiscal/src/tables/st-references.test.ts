@@ -473,3 +473,40 @@ describe('Rondônia: Anexo VI do RICMS/RO (F3-26.d.RO)', () => {
     expect(cachaca.ncms).toEqual(['220720', '22084000']);
   });
 });
+
+describe('Pernambuco: Anexo 37 do RICMS/PE (F3-26.d.PE)', () => {
+  const pe = ST_REFERENCES.filter((r) => r.uf === 'PE');
+  const mvaOf = (cest: string) =>
+    pe.flatMap((r) => r.items).find((i) => i.cest === cest)?.mva ?? null;
+
+  it('capítulos com a MVA no artigo e as tabelas 37-A a 37-C, ligados ao CEST', () => {
+    expect(ST_REFERENCE_UFS).toContain('PE');
+    expect(ST_SEGMENT_UFS).toContain('PE');
+    expect(pe.flatMap((r) => r.items).length).toBeGreaterThan(300);
+    // Lâmina de barbear, item 64.0 do Anexo XIX do Convênio: 30% (art. 36).
+    expect(mvaOf('2006400')).toBe('30');
+    // Lâmpadas: uma MVA por item (art. 38): eletrônica 102,31%.
+    expect(mvaOf('0900200')).toBe('102,31');
+    // Smartphone 5%, os demais eletrônicos 20% (art. 76).
+    expect(mvaOf('2105300')).toBe('5');
+    expect(mvaOf('2100100')).toBe('20');
+    // Henna, item 1.0 do Anexo 37-A: 76,45%.
+    expect(mvaOf('2000100')).toBe('76,45');
+  });
+
+  it('pneus: bicicleta pelo art. 50 e veículo pelo art. 54; o item fora dos dois não entra', () => {
+    expect(mvaOf('1600500')).toBe('105');
+    expect(mvaOf('1600100')).toBe('42');
+    expect(mvaOf('1600600')).toBeNull();
+  });
+
+  it('vale a redação atual: andaime (48.0 do Anexo 37-C) com 39%, não os 65% de antes', () => {
+    expect(mvaOf('1004800')).toBe('39');
+  });
+
+  it('capítulos de pauta, PMC ou MVA por remetente ficam de fora (falta configurar)', () => {
+    // Medicamentos (PMC da CMED), água e refrigerante (preço do ato da Sefaz), autopeças.
+    expect(stReferencesFor('PE', '30049099', '2026-10-18')).toEqual([]);
+    expect(stReferencesFor('PE', '22021000', '2026-10-18')).toEqual([]);
+  });
+});

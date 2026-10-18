@@ -352,6 +352,15 @@
   "downloadedAt": "2026-10-17",
   "sha256": "46768ebfef042531bf7e25d5bed460e64c8001a901360edf7e6e6b9171ca65b3"
  },
+ "stPeRicms": {
+  "file": "SEFAZ-PE_RICMS_Decreto_44650-2017_2026-10-18.htm.gz",
+  "title": "RICMS/PE (Decreto 44.650/2017), texto consolidado: Anexo 37 (substituição tributária por segmento e MVA) e Anexos 37-A a 37-C (MVA por item do Convênio ICMS 142/2018)",
+  "publisher": "Secretaria da Fazenda de Pernambuco (SEFAZ-PE)",
+  "page": "https://www.sefaz.pe.gov.br/Legislacao/Tributaria/Documents/legislacao/44650/texto/Dec44650_2017.htm",
+  "publishedAt": "2026-09-22",
+  "downloadedAt": "2026-10-18",
+  "sha256": "d0e89ba53047b9886f78547091b5f2cb62beb339a3cb3d92f3eb4d3e7c3f11ee"
+ },
  "stGoAnexoVIII": {
   "file": "SEFAZ-GO_RCTE_Anexo_VIII_2026-10-17.html.gz",
   "title": "RCTE/GO (Decreto 4.852/1997), Anexo VIII, da substituição tributária: Apêndice II, mercadorias por inciso e alínea, com CEST, NCM e MVA",

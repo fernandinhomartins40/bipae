@@ -191,13 +191,15 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-26.c.BA · Bahia: Anexo 1 do RICMS/BA vigente em 2026 (282 linhas de MVA original, faixas de CEST expandidas); monitor semanal
   - [~] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
     - [ ] F3-26.d.DF · Distrito Federal: Caderno I do Anexo IV do RICMS/DF; achar o endereço direto do texto compilado no SINJ-DF
+      - Busca de 18/10/2026: o RICMS/DF é a norma 33077 do SINJ-DF, mas o arquivo "atualizado" de lá é só a republicação de 1998 (Anexo IV com as MVA de 1997). O texto compilado do Anexo IV não está no SINJ nem no portal da Secretaria de Economia; continua sem fonte oficial que dê para ler.
     - [ ] F3-26.d.CE · Ceará: Anexo IX do RICMS/CE (Decreto 33.327/2019); achar o texto consolidado oficial
+      - Busca de 18/10/2026: o portal oficial (sefazlegis.sefaz.ce.gov.br) abre os arquivos pelo id sem login, mas a busca exige captcha; o único PDF achado é o texto original de 2019, sem as alterações. Falta o id do texto consolidado do Anexo IX.
     - [ ] F3-26.d.MT · Mato Grosso: Anexo X do RICMS/MT e Portaria 195/2019 (Lotus Notes, sem endereço direto)
     - [ ] F3-26.d.MS · Mato Grosso do Sul: Anexo III do RICMS/MS (Lotus Notes, sem endereço direto)
     - [ ] F3-26.d.PB · Paraíba: Anexo 05 do RICMS/PB (sem o texto consolidado na navegação do portal)
     - [ ] F3-26.d.PI · Piauí: Anexo X do RICMS/PI (portal em JavaScript, sem o texto consolidado)
     - [ ] F3-26.d.AC · Acre e F3-26.d.AM, PA, SE, RN, MA, TO, AP, RR: achar a fonte oficial acessível (portais sem resposta ou sem o texto)
-    - [ ] F3-26.d.PE · Pernambuco: regime em transição (Decreto 42.563/2015 revogado pelo 61.284/2026 a partir de 01/01/2027); montar com o RICMS/PE consolidado novo
+    - [x] F3-26.d.PE · Pernambuco: Anexo 37 do RICMS/PE (Decreto 44.650/2017) consolidado, 13 capítulos com a MVA no artigo e as tabelas dos Anexos 37-A a 37-C (334 CEST, ligados pelo item do Convênio ICMS 142/2018); redação anterior descartada; capítulos de pauta, PMC, MVA por remetente, porta a porta e faturamento direto ficam como "falta configurar"; monitor semanal
     - [x] F3-26.d.RO · Rondônia: Anexo VI do RICMS/RO consolidado até o Decreto 31.963/2026 (403 linhas); monitor semanal pela API do portal
     - [x] F3-26.d.AL · Alagoas: Decreto 90.309/2023 com MVAs (795 linhas; revogados com data, inclusive faixas de itens); monitor semanal pela API do portal
     - [x] F3-26.d.ES · Espírito Santo: Portaria 16-R/2019 atualizada até a 81-R/2026 (352 linhas, redação verde de fora, revogados com data); monitor semanal

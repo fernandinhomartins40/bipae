@@ -35,6 +35,7 @@ import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
 import { baStReferences, parseBaAnexo1 } from './st-ba.mjs';
 import { goStReferences, parseGoApendiceII } from './st-go.mjs';
+import { parsePeAnexo37, peStReferences } from './st-pe.mjs';
 import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
 import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
@@ -632,6 +633,16 @@ async function importStReferences(cest) {
       segmentName: (code) => roNames.get(code) ?? `Segmento ${code} do CEST`,
     },
   );
+  // Pernambuco (F3-26.d.PE): Anexo 37 e Anexos 37-A a 37-C do RICMS/PE consolidado.
+  const pe = peStReferences(
+    parsePeAnexo37(
+      new TextDecoder('windows-1252').decode(
+        gunzipSync(readFileSync(join(sourcesDir, manifest.stPeRicms.file))),
+      ),
+      { segments: cest.segments, cests: cest.items },
+    ),
+    { url: manifest.stPeRicms.page },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -658,6 +669,7 @@ async function importStReferences(cest) {
       es.segment,
       al.segment,
       ro.segment,
+      pe.segment,
     ],
     references: [
       {
@@ -682,6 +694,7 @@ async function importStReferences(cest) {
       ...es.references,
       ...al.references,
       ...ro.references,
+      ...pe.references,
     ],
   };
 }
@@ -717,7 +730,9 @@ tables['demonstration.json'] = {
 // Endereços das APIs da NFS-e Nacional (F5-13.b), da página oficial do portal gov.br/nfse.
 tables['nfse-endpoints.json'] = {
   source: 'nfseApis',
-  ...parseNfseApis(gunzipSync(readFileSync(join(sourcesDir, manifest.nfseApis.file))).toString('utf8')),
+  ...parseNfseApis(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.nfseApis.file))).toString('utf8'),
+  ),
 };
 
 tables['cbenef.json'] = {
