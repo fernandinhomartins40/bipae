@@ -380,7 +380,9 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 
 - [x] F7-01 · Teste de carga: venda < 1 s (p95) e busca < 100 ms com 100 mil produtos locais
   - Feito em 16/10/2026: medições no Node e no navegador com 100 mil produtos, nas metas; a gravação do catálogo passou a ser em blocos (ver `docs/desempenho.md`).
-- [ ] F7-02 · Revisão de segurança OWASP ASVS nível 2 e correções — externo: E15
+- [~] F7-02 · Revisão de segurança OWASP ASVS nível 2 e correções — externo: E15
+  - [x] F7-02.a · Revisão interna capítulo a capítulo (`docs/seguranca.md`) e correções: senha comum ou igual ao e-mail ou nome recusada; limite de tentativas por e-mail no login; aviso por e-mail quando a senha ou a verificação em duas etapas mudam; respostas da API sem cache; limite no descadastro de campanha
+  - [ ] F7-02.b · Pentest externo, `pnpm audit` na CI, decisão sobre conferir senhas vazadas e limite de tentativas no Redis com mais de uma instância — depende: F7-02.a · externo: E15
 - [x] F7-03 · Auditoria de acessibilidade WCAG 2.2 AA e correções
   - Feito em 16/10/2026: axe-core nas telas principais (tema claro, escuro e celular) e teste de teclado na CI; corrigidos o link "Pular para o conteúdo" e a volta do foco ao fechar gavetas e janelas (ver `docs/acessibilidade.md`).
 - [x] F7-04 · Central de ajuda (documentação do usuário)

@@ -333,6 +333,15 @@ export async function createApp(config: Config, database: Database) {
     allowedHeaders: ['content-type', 'authorization', CLIENT_HEADER, TERMINAL_HEADER],
   });
   await app.register(rateLimit, { global: false, max: config.LOGIN_RATE_LIMIT_PER_MINUTE });
+  // Respostas da API trazem dados da conta: nada de guardar em cache do navegador ou de
+  // proxy (F7-02, OWASP ASVS 8.2.1). Quem quiser cache diz o seu próprio Cache-Control.
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .addHook('onSend', async (_request, reply, payload) => {
+      if (!reply.hasHeader('cache-control')) reply.header('cache-control', 'no-store');
+      return payload;
+    });
 
   // Minimum client version (ADR-0012 §6). Sync uploads are never refused.
   app

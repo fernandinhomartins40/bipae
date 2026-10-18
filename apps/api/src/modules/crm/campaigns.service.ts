@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Inject, Injectable, Post } from '@nestjs/common';
+import { RouteConfig } from '@nestjs/platform-fastify';
 import {
   CAMPAIGN_BODY_MAX,
   CAMPAIGN_SUBJECT_MAX,
@@ -192,6 +193,7 @@ export class CampaignsController {
 
   @Public()
   @Post('unsubscribe')
+  @RouteConfig({ rateLimit: { timeWindow: '1 minute' } })
   unsubscribe(@Body() body: unknown) {
     return this.campaigns.unsubscribe(body);
   }

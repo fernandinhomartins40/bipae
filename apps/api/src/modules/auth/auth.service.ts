@@ -40,8 +40,11 @@ import {
 } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
+import { assertPasswordAllowed } from '../../common/password';
 import { mailBody, MailService } from '../mail/mail.service';
 
+const LOGIN_MAX_FAILURES = 10;
+const LOGIN_WINDOW_MS = 15 * 60_000;
 const INVALID_LOGIN = 'E-mail ou senha incorretos.';
 const SESSION_EXPIRED = 'Sua sessão expirou. Entre novamente.';
 
@@ -91,6 +94,7 @@ export class AuthService {
     const tenantId = uuidv7();
     const userId = uuidv7();
     const companyId = uuidv7();
+    assertPasswordAllowed(input.password, { email: input.email, name: input.ownerName });
     const passwordHash = await this.hashPassword(input.password);
     const taxId = input.taxId ? parseTaxId(input.taxId) : null;
 
@@ -187,6 +191,7 @@ export class AuthService {
     const [user] = await withTenant(this.db, { tenantId, userId }, (tx) =>
       tx
         .select({
+          name: users.name,
           email: users.email,
           totpSecret: users.totpSecret,
           totpEnabled: users.totpEnabled,
@@ -242,6 +247,10 @@ export class AuthService {
         { action: 'auth.totp_enabled', entity: 'user', entityId: userId },
       );
     });
+    await this.notifySecurityChange(
+      user,
+      'Você ligou a verificação em duas etapas na sua conta do Bipaê.',
+    );
     return { enabled: true };
   }
 
@@ -267,6 +276,10 @@ export class AuthService {
         { action: 'auth.totp_disabled', entity: 'user', entityId: userId },
       );
     });
+    await this.notifySecurityChange(
+      user,
+      'Você desligou a verificação em duas etapas na sua conta do Bipaê.',
+    );
     return { enabled: false };
   }
 
@@ -413,11 +426,58 @@ export class AuthService {
     return ids;
   }
 
+  /**
+   * Tentativas erradas por e-mail (F7-02, OWASP ASVS 2.2.1), além do limite por IP: quem erra
+   * LOGIN_MAX_FAILURES vezes em 15 minutos espera 15 minutos. Vale também para e-mail sem conta,
+   * para a resposta não revelar quem é cliente. Fica na memória da API (uma instância).
+   */
+  private readonly failures = new Map<string, { count: number; first: number }>();
+
+  private checkFailures(email: string, now = Date.now()) {
+    const entry = this.failures.get(email.toLowerCase());
+    if (!entry) return;
+    if (now - entry.first > LOGIN_WINDOW_MS) {
+      this.failures.delete(email.toLowerCase());
+      return;
+    }
+    if (entry.count >= LOGIN_MAX_FAILURES) {
+      throw new AppError(
+        429,
+        'too_many_attempts',
+        'Muitas tentativas erradas para este e-mail. Espere 15 minutos ou crie uma senha nova em "Esqueci a senha".',
+      );
+    }
+  }
+
+  private recordFailure(email: string, now = Date.now()) {
+    const key = email.toLowerCase();
+    const entry = this.failures.get(key);
+    if (!entry || now - entry.first > LOGIN_WINDOW_MS)
+      this.failures.set(key, { count: 1, first: now });
+    else entry.count++;
+    // Não deixa o mapa crescer sem limite com e-mails inventados.
+    if (this.failures.size > 50_000) {
+      for (const [k, v] of this.failures)
+        if (now - v.first > LOGIN_WINDOW_MS) this.failures.delete(k);
+    }
+  }
+
   async login(input: LoginInput, userAgent?: string): Promise<AuthResult> {
+    this.checkFailures(input.email);
     const found = await this.findUserByEmail(input.email);
     const valid = await verify(found?.password_hash ?? (await this.dummyHash), input.password);
-    if (!found || !valid) throw new AppError(401, 'invalid_login', INVALID_LOGIN);
-    this.checkSecondFactor(found, input.totp);
+    if (!found || !valid) {
+      this.recordFailure(input.email);
+      throw new AppError(401, 'invalid_login', INVALID_LOGIN);
+    }
+    try {
+      this.checkSecondFactor(found, input.totp);
+    } catch (e) {
+      // Código errado conta; faltar o código (primeiro passo) não.
+      if (input.totp) this.recordFailure(input.email);
+      throw e;
+    }
+    this.failures.delete(input.email.toLowerCase());
 
     const available = await this.userTenants(found.id);
     if (available.length === 0) {
@@ -550,6 +610,27 @@ export class AuthService {
    * Recuperar senha (P-04.b): manda o link de uso único (1 hora) para o e-mail, se ele existir. A
    * resposta é sempre a mesma, para não revelar quais e-mails têm conta.
    */
+  /**
+   * Avisa a pessoa por e-mail quando muda o que protege a conta (F7-02, OWASP ASVS 2.2.3). Sem o
+   * e-mail ligado, não faz nada; falha no envio não desfaz a troca.
+   */
+  private async notifySecurityChange(person: { name: string; email: string }, what: string) {
+    await this.mail
+      .send({
+        to: person.email,
+        subject: 'Bipaê: a segurança da sua conta mudou',
+        ...mailBody({
+          greeting: `Olá, ${person.name.split(' ')[0]}!`,
+          paragraphs: [
+            what,
+            'Se não foi você, crie uma senha nova em "Esqueci a senha" agora e fale com o suporte do Bipaê.',
+          ],
+          action: { label: 'Entrar no Bipaê', url: this.mail.link('/entrar') },
+        }),
+      })
+      .catch(() => false);
+  }
+
   async forgotPassword(email: string) {
     if (!this.mail.enabled) {
       throw new AppError(
@@ -654,7 +735,7 @@ export class AuthService {
     const tokenHash = createHash('sha256').update(token).digest('hex');
     const passwordHash = await this.hashPassword(password);
     const [done] = await asApp(this.db, async (tx) =>
-      rowsOf<{ user_id: string }>(
+      rowsOf<{ user_id: string; name: string; email: string }>(
         await tx.execute(
           sql`select * from auth_password_reset_consume(${tokenHash}, ${passwordHash})`,
         ),
@@ -667,6 +748,10 @@ export class AuthService {
         'Este link expirou ou já foi usado. Peça outro em "Esqueci a senha".',
       );
     }
+    await this.notifySecurityChange(
+      done,
+      'A senha da sua conta no Bipaê foi trocada, e as sessões abertas foram encerradas.',
+    );
     return { message: 'Senha nova criada. Entre com ela.' };
   }
 

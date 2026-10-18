@@ -66,6 +66,9 @@ describe('recuperar senha (P-04.b)', () => {
       password: 'senha-nova-forte-1',
     });
     expect(trocada.statusCode).toBe(200);
+    // A pessoa recebe o aviso de que a senha mudou (F7-02, ASVS 2.2.3).
+    const aviso = await esperarEmail(email, 'Bipaê: a segurança da sua conta mudou');
+    expect(aviso.text).toContain('foi trocada');
     // A sessão antiga caiu; a senha antiga não entra mais; a nova entra.
     const refresh = await anon.post('/auth/refresh', { refreshToken: dono.refreshToken });
     expect(refresh.statusCode).toBe(401);

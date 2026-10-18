@@ -10,6 +10,7 @@ import { withTenant, type Db } from '../../db/client';
 import { invites, memberships, roles, stores, users } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
+import { assertPasswordAllowed } from '../../common/password';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable()
@@ -87,6 +88,7 @@ export class TeamService {
    * tem conta no Bipaê (ex.: o contador de várias empresas) só entra se aceitar um convite.
    */
   async addMember(ctx: RequestContext, input: z.output<typeof inviteUserInput>) {
+    assertPasswordAllowed(input.password, input);
     if (await this.auth.findUserByEmail(input.email)) {
       throw new AppError(
         409,

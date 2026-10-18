@@ -15,3 +15,4 @@ export * from './ofx';
 export * from './crm';
 export * from './loyalty';
 export * from './ai';
+export * from './password-policy';

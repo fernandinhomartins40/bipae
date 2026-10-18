@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { parseTaxId } from './documents';
 import { isValidGtin } from './gtin';
+import { passwordProblem } from './password-policy';
 import { ALL_PERMISSIONS } from './permissions';
 import { TERMINAL_PLATFORMS } from './terminals';
 
@@ -56,7 +57,10 @@ export const emailSchema = z.string().trim().toLowerCase().email('E-mail inváli
 export const passwordSchema = z
   .string()
   .min(8, 'A senha precisa ter pelo menos 8 caracteres')
-  .max(128, 'Senha muito longa');
+  .max(128, 'Senha muito longa')
+  .refine((p) => p.length < 8 || passwordProblem(p) === null, {
+    message: 'Essa senha é muito comum. Escolha outra, mais difícil de adivinhar.',
+  });
 
 export const taxIdSchema = z
   .string()
@@ -486,7 +490,12 @@ export const companyInput = z.object({
   nfcePaymentCodes: z.record(z.string(), z.string().regex(/^\d{2}$/)).optional(),
   /** NFS-e Nacional (F5-13.d): inscrição municipal e série da DPS (1 a 49999, aplicativo próprio). */
   municipalRegistration: optionalText(15),
-  nfseSeries: z.number().int().min(1, 'Série de 1 a 49999').max(49999, 'Série de 1 a 49999').optional(),
+  nfseSeries: z
+    .number()
+    .int()
+    .min(1, 'Série de 1 a 49999')
+    .max(49999, 'Série de 1 a 49999')
+    .optional(),
   /** Percentuais aproximados dos tributos na NFS-e (Lei 12.741/2012): o do Simples ou os três. */
   nfseSimplesPercent: approximatePercent,
   nfseTaxFederal: approximatePercent,
@@ -2194,7 +2203,12 @@ export interface NfeInvoiceView {
 
 // ---------- Notas contra o CNPJ da empresa (distribuição de DF-e, F3-20) ----------
 
-export const DFE_MANIFESTATIONS = ['ciencia', 'confirmacao', 'desconhecimento', 'naoRealizada'] as const;
+export const DFE_MANIFESTATIONS = [
+  'ciencia',
+  'confirmacao',
+  'desconhecimento',
+  'naoRealizada',
+] as const;
 
 export const dfeManifestInput = z
   .object({

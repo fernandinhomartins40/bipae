@@ -1,5 +1,17 @@
 # Changelog
 
+## [F7-02.a Revisão de segurança OWASP ASVS nível 2] — 18/10/2026
+
+### Segurança
+- **Revisão interna** capítulo a capítulo do OWASP ASVS 4.0.3, nível 2, em `docs/seguranca.md`: o que já atendia, o que foi corrigido e o que fica para o pentest externo.
+- **Senha:** o Bipaê recusa senhas muito comuns e as que repetem o e-mail ou o nome da pessoa. Continua sem regra de composição.
+- **Login:** 10 senhas erradas em 15 minutos travam o e-mail por 15 minutos, mesmo vindo de vários IPs.
+- **Avisos:** a pessoa recebe um e-mail quando a senha é trocada ou quando a verificação em duas etapas é ligada ou desligada.
+- **API:** as respostas não ficam em cache (`Cache-Control: no-store`), e o descadastro de campanha ganhou limite de tentativas.
+
+### Corrigido
+- O aviso de conta suspensa saía de novo a cada 6 horas quando o relógio do banco estava à frente do da API.
+
 ## [F6-07.a–d Assistente de IA] — 18/10/2026
 
 ### Adicionado
