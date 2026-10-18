@@ -112,3 +112,34 @@ export async function validatePackageXml(
   });
   return result.errors.map((e) => e.message);
 }
+
+/**
+ * Valida a DPS (ou outro documento) da NFS-e Nacional contra os esquemas v1.01 oficiais
+ * (pacote de 09/02/2026 guardado em sources, pasta Schemas/1.01), F5-13.
+ */
+export async function validateNfseXml(xml: string, schemaFile = 'DPS_v1.01.xsd'): Promise<string[]> {
+  const { unzip } = await import('../scripts/xlsx.mjs');
+  const zip = readFileSync(
+    fileURLToPath(new URL('../sources/NFSe_Esquemas_XSD_v1.01_2026-02-09.zip', import.meta.url)),
+  );
+  const all = [...unzip(zip)]
+    .filter(([name]) => name.startsWith('Schemas/1.01/') && name.endsWith('.xsd'))
+    // Os padrões dos esquemas da NFS-e trazem ^ e $ (ex.: série "^0{0,4}\d{1,5}$"). No XML Schema esses
+    // símbolos são literais, mas o validador da Sefin os trata como âncoras: aqui eles saem, para
+    // validar como a Sefin valida.
+    .map(([name, body]) => ({
+      fileName: name.split('/').pop()!,
+      contents: body
+        .toString('utf8')
+        .replace(/pattern value="\^/g, 'pattern value="')
+        .replace(/\$"\/>/g, '"/>'),
+    }));
+  const schema = all.find((s) => s.fileName === schemaFile);
+  if (!schema) throw new Error(`Schema não encontrado: ${schemaFile}`);
+  const result = await validateXML({
+    xml: [{ fileName: 'dps.xml', contents: xml }],
+    schema: [schema],
+    preload: all.filter((s) => s !== schema),
+  });
+  return result.errors.map((e) => e.message);
+}

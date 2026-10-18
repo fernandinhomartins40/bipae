@@ -39,6 +39,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-033 | ✅ resolvida | Venda condicional: notas da remessa, da volta e da venda |
 | D-034 | 🟡 parcial | Código de benefício fiscal (cBenef) por UF |
 | D-035 | 🟡 configurável | Natureza da operação da entrada simbólica do condicional passa de 60 caracteres |
+| D-036 | 🟡 a confirmar com o certificado | NFS-e Nacional: mensagem JSON da Sefin, assinatura, convênio do município e grupo do IBS/CBS |
 
 ---
 
@@ -635,3 +636,18 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - A forma abreviada é escrita pela empresa na natureza da nota.
   - O texto completo do Ajuste vai nas informações complementares ("Natureza da operação: ...").
 - **Pergunta em aberto:** a SEFAZ aceita a natureza abreviada com o texto completo nas informações complementares? Confirmar na primeira emissão em homologação (F3-33.d).
+
+### D-036 — NFS-e Nacional: o que só se confirma com o certificado
+
+- **Contexto (F5-13):** a NFS-e Nacional é obrigatória para ME e EPP do Simples desde 01/11/2026 (D-006). O Bipaê monta a DPS pelo leiaute v1.01 em produção e pelas regras do Anexo I, guardados em `packages/fiscal/sources`, e conversa com a Sefin Nacional pelos endereços da página oficial "APIs - Prod. Restrita e Produção".
+- **Confirmado em fonte oficial:**
+  - **Leiaute e regras:** esquemas v1.01 de 09/02/2026 e Anexo I.
+  - **Área de dados:** compactada e em base64 (regras E1225 e E1226).
+  - **Endereços das APIs:** página oficial do gov.br/nfse.
+  - **Grupo do IBS/CBS:** só obrigatório para o Simples a partir de 2027 (nota do Anexo I) e facultativo para os demais no leiaute em produção (regra E0850). O leiaute da NT 009 v1.01 (01/10/2026) entra conforme o cronograma que a Receita vai publicar.
+- **Ainda sem fonte oficial:** o Swagger da Sefin só abre com certificado, então estes pontos seguem o uso corrente e ficam isolados no código para trocar fácil:
+  - **Nomes no JSON:** `dpsXmlGZipB64`, `chaveAcesso`, `nfseXmlGZipB64`, `erros`.
+  - **Resposta do convênio municipal:** o formato de `/parametros_municipais/{município}/convenio`.
+  - **Assinatura:** RSA-SHA1, a mesma da NF-e. O leiaute diz só "padrão XML Digital Signature".
+- **Validação local:** os padrões dos esquemas trazem `^` e `$`. No XML Schema eles são literais; o validador da Sefin os trata como âncoras, e o teste do Bipaê valida do mesmo jeito.
+- **Próximo passo:** conferir tudo na primeira emissão em produção restrita, com o certificado da empresa (F5-13.f, item E1).

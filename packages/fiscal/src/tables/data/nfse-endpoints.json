@@ -1,0 +1,19 @@
+{
+ "source": "nfseApis",
+ "sefinNacional": {
+  "producaoRestrita": "https://sefin.producaorestrita.nfse.gov.br/API/SefinNacional",
+  "producao": "https://sefin.nfse.gov.br/SefinNacional"
+ },
+ "danfse": {
+  "producaoRestrita": "https://adn.producaorestrita.nfse.gov.br/danfse",
+  "producao": "https://adn.nfse.gov.br/danfse"
+ },
+ "parametrizacao": {
+  "producaoRestrita": "https://adn.producaorestrita.nfse.gov.br/parametrizacao",
+  "producao": "https://adn.nfse.gov.br/parametrizacao"
+ },
+ "contribuintes": {
+  "producaoRestrita": "https://adn.producaorestrita.nfse.gov.br/contribuintes",
+  "producao": "https://adn.nfse.gov.br/contribuintes"
+ }
+}

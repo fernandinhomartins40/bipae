@@ -1,5 +1,16 @@
 # Changelog
 
+## [F5-13.a/b Motor da NFS-e Nacional] — 18/10/2026
+
+### Adicionado
+- **Lista nacional de serviços:** os 338 códigos de tributação nacional do Anexo B oficial, com o município onde o ISS incide e os serviços que exigem dados de obra ou de evento.
+- **DPS da NFS-e Nacional:** o motor monta a declaração pelo leiaute v1.01 em produção, assinada e conferida nos esquemas oficiais. Segue as regras do Anexo I para:
+  - MEI, ME/EPP do Simples e acima do sublimite;
+  - alíquota do ISSQN conforme o convênio do município;
+  - retenção;
+  - total aproximado dos tributos.
+- **Sefin Nacional:** mensagens de emissão, de consulta e do convênio do município, com os endereços da página oficial. O que ainda precisa ser confirmado com o certificado está na dúvida D-036.
+
 ## [F3-16 Contingência SVC da NF-e] — 18/10/2026
 
 ### Adicionado

@@ -495,5 +495,50 @@
   "publishedAt": "2014-05-30",
   "downloadedAt": "2026-10-18",
   "sha256": "05877dd4a4a42ea7e1b251a2c2ecc365d3c73f3a1a9794760486db7cbe2a116e"
+ },
+ "nfseSchemas": {
+  "file": "NFSe_Esquemas_XSD_v1.01_2026-02-09.zip",
+  "title": "NFS-e Nacional: esquemas XSD v1.01 (DPS, NFS-e e eventos)",
+  "publisher": "Sistema Nacional NFS-e (Receita Federal e CGNFS-e), portal gov.br/nfse",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/nfse-esquemas_xsd-v1-01-20260209.zip",
+  "publishedAt": "2026-02-09",
+  "downloadedAt": "2026-10-18",
+  "sha256": "e7935cbd9470527c6cc32984c1b2263e614183bf0139ce2733eaaed2de9a8072"
+ },
+ "nfseAnexoI": {
+  "file": "NFSe_Anexo_I_Leiaute_RN_DPS_v1.01_2026-02-09.xlsx",
+  "title": "NFS-e Nacional: Anexo I, leiaute e regras de negócio da DPS e da NFS-e v1.01",
+  "publisher": "Sistema Nacional NFS-e (Receita Federal e CGNFS-e), portal gov.br/nfse",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/anexo_i-sefin_adn-dps_nfse-snnfse-v1-01-20260209.xlsx",
+  "publishedAt": "2026-02-09",
+  "downloadedAt": "2026-10-18",
+  "sha256": "de5bc492959eadc8bfa7540e16939995924f2188f743648eaf84d3b31e9eeb7c"
+ },
+ "nfseAnexoB": {
+  "file": "NFSe_Anexo_B_Lista_Servicos_NBS_v1.01_2026-01-22.xlsx",
+  "title": "NFS-e Nacional: Anexo B, lista nacional de serviços (código de tributação nacional) e NBS 2.0",
+  "publisher": "Sistema Nacional NFS-e (Receita Federal e CGNFS-e), portal gov.br/nfse",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/anexo_b-nbs2-lista_servico_nacional-snnfse-v1-01-20260122.xlsx",
+  "publishedAt": "2026-01-22",
+  "downloadedAt": "2026-10-18",
+  "sha256": "e74b0be8ad204e458932efb1716225a3fb5703a84e5475ce5c4c6789d1c61b1a"
+ },
+ "nfseManualApi": {
+  "file": "NFSe_Manual_API_Emissor_Publico_v1.2_2025-10.pdf",
+  "title": "NFS-e Nacional: manual dos contribuintes, APIs do Emissor Público Nacional (Sefin Nacional) v1.2",
+  "publisher": "Sistema Nacional NFS-e (Receita Federal e CGNFS-e), portal gov.br/nfse",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/manual-contribuintes-emissor-publico-api-sistema-nacional-nfs-e-v1-2-out2025.pdf",
+  "publishedAt": "2025-10-01",
+  "downloadedAt": "2026-10-18",
+  "sha256": "ac2f36e34ff565cc36d67c5d67415c33cc09f27b2dea006e8da9bcd2ddce5581"
+ },
+ "nfseApis": {
+  "file": "NFSe_APIs_Producao_Restrita_e_Producao_2026-10-18.html.gz",
+  "title": "NFS-e Nacional: endereços das APIs em produção restrita e produção (Sefin Nacional, ADN, DANFSE, parâmetros municipais)",
+  "publisher": "Sistema Nacional NFS-e (Receita Federal e CGNFS-e), portal gov.br/nfse",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/apis-prod-restrita-e-producao",
+  "publishedAt": "2026-08-20",
+  "downloadedAt": "2026-10-18",
+  "sha256": "086b03918b1cc57e274c6506ae60e64edea4d7c7e7a9bb0622862a5c28e54785"
  }
 }

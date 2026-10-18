@@ -8,6 +8,8 @@
  * declaração de namespace herdada, sem reinterpretar o documento.
  */
 const NFE_NS = 'http://www.portalfiscal.inf.br/nfe';
+/** Namespace da DPS e da NFS-e do Sistema Nacional NFS-e (F5-13). */
+const NFSE_NS = 'http://www.sped.fazenda.gov.br/nfse';
 const DSIG_NS = 'http://www.w3.org/2000/09/xmldsig#';
 const C14N = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
 
@@ -96,24 +98,26 @@ export async function signText(text: string, key: SigningKey | NfeSigner): Promi
  * Assina outro documento fiscal com o mesmo método da nota (F3-17): o elemento `inner` (com Id)
  * dentro da raiz `root`, que declara o namespace da NF-e. Usado no evento (infEvento dentro de
  * evento) e na inutilização (infInut dentro de inutNFe). O XML vem do montador do Bipaê, já na
- * forma canônica.
+ * forma canônica. A DPS da NFS-e Nacional (infDPS dentro de DPS, F5-13) usa o mesmo método, com o
+ * namespace da NFS-e.
  */
 export async function signFiscalXml(
   xml: string,
-  root: 'evento' | 'inutNFe',
-  inner: 'infEvento' | 'infInut',
+  root: 'evento' | 'inutNFe' | 'DPS',
+  inner: 'infEvento' | 'infInut' | 'infDPS',
   key: SigningKey | NfeSigner,
 ): Promise<string> {
+  const ns = root === 'DPS' ? NFSE_NS : NFE_NS;
   if (xml.includes('<Signature')) throw new Error('Este XML já está assinado');
   if (!/^[A-Za-z0-9+/=]+$/.test(key.certificate))
     throw new Error('Certificado precisa estar em base64, sem cabeçalhos');
-  if (!xml.startsWith(`<${root} xmlns="${NFE_NS}"`)) {
-    throw new Error(`XML sem o elemento ${root} com o namespace da NF-e`);
+  if (!xml.startsWith(`<${root} xmlns="${ns}"`)) {
+    throw new Error(`XML sem o elemento ${root} com o namespace esperado`);
   }
-  const match = new RegExp(`<${inner} Id="(ID[0-9A-Z]+)">[\\s\\S]*</${inner}>`).exec(xml);
+  const match = new RegExp(`<${inner} Id="((?:ID|DPS)[0-9A-Z]+)">[\\s\\S]*</${inner}>`).exec(xml);
   if (!match) throw new Error(`XML sem o elemento ${inner} no formato gerado pelo Bipaê`);
   const id = match[1]!;
-  const canonical = match[0].replace(`<${inner} `, `<${inner} xmlns="${NFE_NS}" `);
+  const canonical = match[0].replace(`<${inner} `, `<${inner} xmlns="${ns}" `);
   const digest = toBase64(await crypto.subtle.digest('SHA-1', encoder.encode(canonical)));
   const data = encoder.encode(signedInfo(id, digest, true));
   const signature =

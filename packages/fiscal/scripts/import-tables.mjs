@@ -29,6 +29,7 @@ import { parseCbenefGo } from './cbenef-go.mjs';
 import { parseCbenefDf, parseCbenefEs } from './cbenef-es.mjs';
 import { parseCbenefSp } from './cbenef-sp.mjs';
 import { parseDemonstration } from './demonstration.mjs';
+import { parseNfseApis, parseNfseIncidence, parseNfseServices } from './nfse-services.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
 import { parseRsApendiceII, rsStReferences } from './st-rs.mjs';
 import { parseScAnexo1A, scStReferences } from './st-sc.mjs';
@@ -695,6 +696,28 @@ tables['demonstration.json'] = {
   source: 'ajusteSinief0218',
   url: manifest.ajusteSinief0218.page,
   ...parseDemonstration(readFileSync(join(sourcesDir, manifest.ajusteSinief0218.file), 'utf8')),
+};
+
+// NFS-e Nacional (F5-13.a): lista nacional de serviços do Anexo B oficial.
+{
+  const list = parseNfseServices(readXlsx(join(sourcesDir, manifest.nfseAnexoB.file)));
+  const incidence = parseNfseIncidence(readXlsx(join(sourcesDir, manifest.nfseAnexoI.file)));
+  tables['nfse-services.json'] = {
+    source: 'nfseAnexoB',
+    incidenceSource: 'nfseAnexoI',
+    groups: list.groups,
+    codes: list.codes.map((c) => ({
+      ...c,
+      incidence: incidence.get(c.code)?.incidence ?? null,
+      requiredGroup: incidence.get(c.code)?.requiredGroup ?? null,
+    })),
+  };
+}
+
+// Endereços das APIs da NFS-e Nacional (F5-13.b), da página oficial do portal gov.br/nfse.
+tables['nfse-endpoints.json'] = {
+  source: 'nfseApis',
+  ...parseNfseApis(gunzipSync(readFileSync(join(sourcesDir, manifest.nfseApis.file))).toString('utf8')),
 };
 
 tables['cbenef.json'] = {

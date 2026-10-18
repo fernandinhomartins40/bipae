@@ -22,3 +22,4 @@ export * from './purchase-cost-credits';
 export * from './st-references';
 export * from './cbenef';
 export * from './demonstration';
+export * from './nfse-services';

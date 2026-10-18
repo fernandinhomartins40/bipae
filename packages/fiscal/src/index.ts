@@ -20,3 +20,4 @@ export * from './nfce/read';
 export * from './xml-reader';
 export * from './sefaz';
 export * from './purchase/read';
+export * from './nfse';
