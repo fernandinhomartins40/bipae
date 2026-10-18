@@ -140,7 +140,10 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [x] F3-15.c · E2E com a rede desligada: emite em contingência e transmite ao reconectar
   - Pronto quando: um E2E com rede desligada emite em contingência e transmite ao reconectar.
   - Antes de começar: ler a NT 2026.002 v1.10a (contingência com DANFE Simplificado Tipo 2) e resolver a dúvida D-013.
-- [ ] F3-16 · SVC para NF-e — depende: F3-11, F3-08
+- [~] F3-16 · SVC para NF-e — depende: F3-11, F3-08
+  - [x] F3-16.a · Motor: NF-e com tpEmis 6 (SVC-AN) ou 7 (SVC-RS) pela tabela da UF, na nota e na chave, com dhCont e xJust, válida no XSD; endereços da SVC da tabela oficial; NFC-e recusada antes da SEFAZ (rejeição 783); consulta pela chave vai à SVC quando o tipo de emissão é 6 ou 7 (MOC, regras B22-60 e B28) — depende: F3-08.b
+  - [x] F3-16.b · API e tela: "Emitir em contingência (SVC)" quando a SEFAZ da UF não responde, com o motivo e auditoria; a chave da tentativa normal fica guardada e, com a UF de volta, a manutenção confere se ela também foi autorizada (a nota avisa para cancelar uma das duas); testada contra a SEFAZ simulada com a UF fora e a SVC no ar — depende: F3-16.a, F3-33.b
+  - [ ] F3-16.c · Primeira NF-e autorizada na SVC de homologação com o certificado da empresa — depende: F3-16.b · externo: E1
 - [x] F3-17 · Eventos: cancelamento, carta de correção e inutilização — depende: F3-11
   - Regras (MOC 7.0, pesquisadas em 15/10/2026): cancelamento 110111 até 24 horas da autorização e cancelamento por substituição 110112 (só NFC-e) até 168 horas, rejeição 501 fora do prazo (com exceção por lei estadual); métodos nfeRecepcaoEvento e nfeInutilizacaoNF; schemas nos pacotes Evento_Canc e Evento_CancSubst (NT 2018.004) e no PL_009q. A carta de correção (110110) é só da NF-e: entra com a F3-33.
   - [x] F3-17.a · Motor: pedidos de cancelamento, cancelamento por substituição e inutilização, assinados e validados nos schemas oficiais, e leitura dos retornos

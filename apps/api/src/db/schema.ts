@@ -1032,6 +1032,12 @@ export const fiscalDocuments = pgTable('fiscal_documents', {
   /** A venda foi cancelada: a nota precisa ser cancelada ou deixada de emitir (F3-17). */
   cancelRequestedAt: ts('cancel_requested_at'),
   cancelReason: text('cancel_reason'),
+  /** Contingência SVC da NF-e (F3-16) e a chave anterior, para conferir quando a UF voltar. */
+  contingencyMode: text('contingency_mode', { enum: ['SVC-AN', 'SVC-RS'] }),
+  contingencyAt: ts('contingency_at'),
+  contingencyReason: text('contingency_reason'),
+  replacedAccessKey: char('replaced_access_key', { length: 44 }),
+  replacedCheckedAt: ts('replaced_checked_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });

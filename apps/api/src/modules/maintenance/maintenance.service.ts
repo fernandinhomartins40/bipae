@@ -200,6 +200,40 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .limit(200),
     );
     for (const doc of stuckNfe) await this.nfe.schedule(doc.tenantId, doc.userId, doc.id);
+    // Contingência SVC (F3-16): com a nota autorizada na SVC, confere se a tentativa normal não
+    // foi autorizada também, assim que a SEFAZ da UF responder.
+    const replaced = await asPlatform(this.db, (tx) =>
+      tx
+        .select({
+          id: fiscalDocuments.id,
+          tenantId: fiscalDocuments.tenantId,
+          userId: nfeInvoices.createdBy,
+        })
+        .from(fiscalDocuments)
+        .innerJoin(nfeInvoices, eq(nfeInvoices.id, fiscalDocuments.invoiceId))
+        .where(
+          and(
+            sql`${fiscalDocuments.replacedAccessKey} is not null`,
+            isNull(fiscalDocuments.replacedCheckedAt),
+            eq(fiscalDocuments.status, 'authorized'),
+          ),
+        )
+        .limit(100),
+    );
+    for (const doc of replaced) {
+      await this.nfe
+        .checkReplaced(
+          {
+            tenantId: doc.tenantId,
+            userId: doc.userId,
+            permissions: [],
+            terminalId: null,
+            storeIds: null,
+          },
+          doc.id,
+        )
+        .catch((error: Error) => this.logger.warn(`Chave anterior da SVC: ${error.message}`));
+    }
     // Cancelamentos parados (F3-17): venda cancelada cuja nota ainda não foi cancelada nem
     // deixada de emitir, sem resposta final da SEFAZ ao evento.
     const cancels = await asPlatform(this.db, (tx) =>

@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-16 Contingência SVC da NF-e] — 18/10/2026
+
+### Adicionado
+- **Contingência SVC:** quando a SEFAZ da UF não responde, a NF-e mostra "Emitir em contingência (SVC)".
+  - A nota vai para a SEFAZ Virtual de Contingência que a UF usa (SVC-AN ou SVC-RS, pela tabela oficial).
+  - Sai com o tipo de emissão 6 ou 7, a data da entrada em contingência e o motivo.
+- **Chave anterior:** a nota ganha uma chave nova, e a chave da tentativa normal fica guardada. Quando a SEFAZ da UF volta, o Bipaê confere se ela não foi autorizada também e avisa para cancelar uma das duas.
+- **NFC-e:** não vai para a SVC, porque a SEFAZ recusa (rejeição 783). Ela continua usando a contingência off-line.
+
 ## [F3-20 Notas emitidas para a sua empresa] — 18/10/2026
 
 ### Adicionado

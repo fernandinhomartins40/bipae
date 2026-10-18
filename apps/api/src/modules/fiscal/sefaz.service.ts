@@ -133,7 +133,14 @@ export class SefazService {
    */
   async authorize(
     ctx: RequestContext,
-    input: { companyId: string; model: NfeModel; batchId: string; signedXml: string },
+    input: {
+      companyId: string;
+      model: NfeModel;
+      batchId: string;
+      signedXml: string;
+      /** Contingência SVC da NF-e (F3-16). */
+      svc?: boolean;
+    },
   ): Promise<SefazBatchResult & { nfeProc?: string }> {
     const { uf, credentials } = await this.prepare(ctx, input.companyId);
     const response = await this.call(
@@ -143,6 +150,7 @@ export class SefazService {
           uf,
           batchId: input.batchId,
           signedXmls: [input.signedXml],
+          svc: input.svc ?? false,
         }),
       credentials,
     );

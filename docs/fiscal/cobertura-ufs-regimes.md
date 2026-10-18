@@ -96,7 +96,7 @@ Fonte: relação de serviços web do Portal Nacional da NF-e e do portal da NFC-
 | **NFC-e** | Próprio da UF | AM, GO, MS, MT, PR, RS, SP |
 | | SVRS | as demais, segundo o portal da SVRS. 🟡 MG precisa de confirmação (historicamente tem ambiente próprio de NFC-e) |
 
-Na prática o Bipaê precisa falar com **11 ambientes de NF-e** (10 próprios mais SVAN e SVRS) e **cerca de 8 de NFC-e**, cada um com endereço de produção e de homologação. A NFC-e não tem servidor de contingência: a contingência é off-line (dúvida D-013).
+Na prática o Bipaê precisa falar com **11 ambientes de NF-e** (10 próprios mais SVAN e SVRS) e **cerca de 8 de NFC-e**, cada um com endereço de produção e de homologação. A NFC-e não tem servidor de contingência: a contingência é off-line (dúvida D-013). A NF-e em contingência vai à SVC da tabela acima, com tpEmis 6 (SVC-AN) ou 7 (SVC-RS) (F3-16, testada contra a SEFAZ simulada).
 
 ### 2.4 O que mais muda de uma UF para outra
 

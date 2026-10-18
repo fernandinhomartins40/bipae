@@ -54,18 +54,27 @@ export function sefazUrl(
   uf: string,
   /** Serviços da UF; a distribuição é do Ambiente Nacional (distributionRequest). */
   service: Exclude<SefazEndpoint, 'NFeDistribuicaoDFe'>,
+  /** Contingência SVC (F3-16): só a NF-e; a NFC-e não é autorizada pela SVC (rejeição 783). */
+  svc = false,
 ): string {
-  const url =
-    model === '65'
+  if (svc && model === '65') {
+    throw new SefazMessageError('A NFC-e não é autorizada pela SVC (rejeição 783).');
+  }
+  const url = svc
+    ? nfeEndpoints(uf)?.contingencyWebservices.homologacao[service]
+    : model === '65'
       ? nfceEndpoints(uf)?.webservices.homologacao[service]
       : nfeEndpoints(uf)?.webservices.homologacao[service];
   if (!url) {
     throw new SefazMessageError(
-      `Sem endereço de ${service} da ${model === '65' ? 'NFC-e' : 'NF-e'} em homologação para a UF ${uf}.`,
+      `Sem endereço de ${service} da ${model === '65' ? 'NFC-e' : 'NF-e'}${svc ? ' em contingência (SVC)' : ''} em homologação para a UF ${uf}.`,
     );
   }
   return url;
 }
+
+/** O tipo de emissão da chave (posição 35) é 6 (SVC-AN) ou 7 (SVC-RS)? */
+export const isSvcKey = (accessKey: string) => /^[67]$/.test(accessKey.charAt(34));
 
 function envelope(service: SefazService, url: string, payload: string): SefazRequest {
   const { ns, method } = WSDL[service];
@@ -82,13 +91,13 @@ function envelope(service: SefazService, url: string, payload: string): SefazReq
 }
 
 /** Consulta o status do serviço (consStatServ). */
-export function statusRequest(model: '55' | '65', uf: string): SefazRequest {
+export function statusRequest(model: '55' | '65', uf: string, svc = false): SefazRequest {
   const payload = el(
     'consStatServ',
     [el('tpAmb', TP_AMB_HOMOLOGACAO), el('cUF', ufCode(uf)), el('xServ', 'STATUS')],
     { xmlns: NFE_NS, versao: '4.00' },
   );
-  return envelope('NFeStatusServico', sefazUrl(model, uf, 'NFeStatusServico'), payload);
+  return envelope('NFeStatusServico', sefazUrl(model, uf, 'NFeStatusServico', svc), payload);
 }
 
 /** Retira a declaração XML: a nota vai dentro do lote. */
@@ -104,6 +113,8 @@ export function authorizationRequest(input: {
   /** Identificador do lote, só dígitos (1 a 15), controlado por quem envia. */
   batchId: string;
   signedXmls: string[];
+  /** Contingência SVC (F3-16): as notas vão com tpEmis 6 ou 7. */
+  svc?: boolean;
 }): SefazRequest {
   if (!/^\d{1,15}$/.test(input.batchId))
     throw new SefazMessageError('Número do lote inválido (1 a 15 dígitos).');
@@ -124,7 +135,16 @@ export function authorizationRequest(input: {
   const payload =
     `<enviNFe xmlns="${NFE_NS}" versao="4.00">${el('idLote', input.batchId)}${el('indSinc', sync)}` +
     `${input.signedXmls.map(withoutDeclaration).join('')}</enviNFe>`;
-  return envelope('NFeAutorizacao', sefazUrl(input.model, input.uf, 'NFeAutorizacao'), payload);
+  if (input.svc && input.signedXmls.some((xml) => !/<tpEmis>[67]<\/tpEmis>/.test(xml))) {
+    throw new SefazMessageError(
+      'Na contingência SVC a nota vai com o tipo de emissão 6 ou 7 (rejeição 713).',
+    );
+  }
+  return envelope(
+    'NFeAutorizacao',
+    sefazUrl(input.model, input.uf, 'NFeAutorizacao', input.svc ?? false),
+    payload,
+  );
 }
 
 /** Consulta o resultado de um lote enviado sem processamento síncrono (consReciNFe). */
@@ -149,5 +169,10 @@ export function consultRequest(uf: string, accessKey: string): SefazRequest {
     [el('tpAmb', TP_AMB_HOMOLOGACAO), el('xServ', 'CONSULTAR'), el('chNFe', accessKey)],
     { xmlns: NFE_NS, versao: '4.00' },
   );
-  return envelope('NFeConsultaProtocolo', sefazUrl(model, uf, 'NFeConsultaProtocolo'), payload);
+  // A nota da contingência SVC é consultada na própria SVC.
+  return envelope(
+    'NFeConsultaProtocolo',
+    sefazUrl(model, uf, 'NFeConsultaProtocolo', isSvcKey(accessKey)),
+    payload,
+  );
 }

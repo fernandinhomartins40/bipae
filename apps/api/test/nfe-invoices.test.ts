@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { withTenant } from '../src/db/client';
 import { MaintenanceService } from '../src/modules/maintenance/maintenance.service';
+import { nfeEndpoints } from '@bipae/fiscal/tables';
 import { SefazService } from '../src/modules/fiscal/sefaz.service';
 import { api, createTestApp, signup, type TestApp } from './helpers';
 import { SefazSimulator, SENHA_A1, testPfx } from './support/sefaz-simulator';
@@ -310,5 +311,88 @@ describe('NF-e da retaguarda (F3-33.b)', () => {
     expect(ruim.statusCode).toBe(400);
     expect(ruim.body).toContain('CPF ou CNPJ inválido');
     expect(ruim.body).toContain('Escolha pelo menos um produto');
+  });
+});
+
+describe('contingência SVC da NF-e (F3-16)', () => {
+  const host = (url: string | undefined) => new URL(url!).host;
+  const sp = nfeEndpoints('SP')!;
+  const uf = host(sp.webservices.homologacao.NFeAutorizacao);
+  const svc = host(sp.contingencyWebservices.homologacao.NFeAutorizacao);
+
+  it('a SEFAZ de SP fora do ar: a nota vai à SVC-AN com tpEmis 6 e a chave anterior é conferida', async () => {
+    sefaz.mode = 'normal';
+    sefaz.down.add(uf);
+    try {
+      const { admin, rascunho, dono } = await retaguarda();
+      const view = (await admin.post('/fiscal/nfe', rascunho())).json();
+      await admin.post(`/fiscal/nfe/${view.id}/issue`);
+      const parada = await nota(admin, view.id, (s) => s === 'error');
+      const anterior = parada.document.accessKey as string;
+      // Sem motivo, não entra em contingência.
+      expect(
+        (await admin.post(`/fiscal/nfe/${view.id}/contingency`, { reason: 'curto' })).statusCode,
+      ).toBe(400);
+      const svcView = (
+        await admin.post(`/fiscal/nfe/${view.id}/contingency`, {
+          reason: 'SEFAZ de SP sem resposta para a autorização',
+        })
+      ).json();
+      expect(svcView.document).toMatchObject({
+        status: 'authorized',
+        contingency: true,
+        contingencyMode: 'SVC-AN',
+        replacedAccessKey: anterior,
+        number: parada.document.number,
+      });
+      const chave = svcView.document.accessKey as string;
+      expect(chave.charAt(34)).toBe('6');
+      expect(chave).not.toBe(anterior);
+      expect(sefaz.hosts).toContain(svc);
+      const xml = (await admin.get(`/fiscal/nfe/${view.id}/xml`)).body;
+      expect(xml).toContain('<tpEmis>6</tpEmis>');
+      expect(xml).toContain('<xJust>SEFAZ de SP sem resposta para a autorização</xJust>');
+      expect(
+        (
+          await admin.post(`/fiscal/nfe/${view.id}/contingency`, {
+            reason: 'De novo, a SEFAZ caiu outra vez',
+          })
+        ).statusCode,
+      ).toBe(409);
+
+      // A UF voltou e a tentativa normal não existe lá: tudo certo, sem aviso.
+      sefaz.down.delete(uf);
+      await t.app.get(MaintenanceService).sweepNfce();
+      const conferida = (await admin.get(`/fiscal/nfe/${view.id}`)).json();
+      expect(conferida.document.lastError).toBeNull();
+      expect(sefaz.calls.some((c) => c.service === 'consulta' && c.body.includes(anterior))).toBe(
+        true,
+      );
+      expect(dono).toBeTruthy();
+    } finally {
+      sefaz.down.delete(uf);
+    }
+  });
+
+  it('se a tentativa normal também foi autorizada, a nota avisa para cancelar uma das duas', async () => {
+    sefaz.mode = 'normal';
+    sefaz.down.add(uf);
+    try {
+      const { admin, rascunho } = await retaguarda();
+      const view = (await admin.post('/fiscal/nfe', rascunho())).json();
+      await admin.post(`/fiscal/nfe/${view.id}/issue`);
+      const parada = await nota(admin, view.id, (s) => s === 'error');
+      await admin.post(`/fiscal/nfe/${view.id}/contingency`, {
+        reason: 'SEFAZ de SP sem resposta para a autorização',
+      });
+      // A SEFAZ de SP tinha autorizado a tentativa normal, sem a resposta chegar.
+      sefaz.authorized.add(parada.document.accessKey);
+      sefaz.down.delete(uf);
+      await t.app.get(MaintenanceService).sweepNfce();
+      const conferida = (await admin.get(`/fiscal/nfe/${view.id}`)).json();
+      expect(conferida.document.lastError).toContain('cancele uma das duas notas');
+    } finally {
+      sefaz.down.delete(uf);
+    }
   });
 });

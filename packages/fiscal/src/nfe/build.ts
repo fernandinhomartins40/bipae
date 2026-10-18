@@ -127,6 +127,12 @@ export interface NfeInput {
   };
   payments: NfePayment[];
   changeCents?: number;
+  /**
+   * Contingência SVC (F3-16): a SEFAZ da UF fora do ar, a nota vai à SEFAZ Virtual de
+   * Contingência que a UF usa (SVC-AN, tpEmis 6, ou SVC-RS, tpEmis 7), com a data e hora da
+   * entrada em contingência e a justificativa (MOC, regras B22-60 e B28).
+   */
+  contingency?: { mode: 'SVC-AN' | 'SVC-RS'; enteredAt: string; reason: string };
   /** Informações de interesse do fisco (infAdFisco) e do contribuinte (infCpl). */
   fiscalInfo?: string;
   additionalInfo?: string;
@@ -219,6 +225,20 @@ export function buildNfe(input: NfeInput): NfeDocument {
     if (!/^\d{44}$|^[0-9A-Z]{44}$/.test(key))
       throw new NfeBuildError(`Chave referenciada inválida: ${key}.`);
   }
+  const contingency = input.contingency;
+  const emissionType = contingency ? (contingency.mode === 'SVC-AN' ? 6 : 7) : 1;
+  if (contingency) {
+    const reason = contingency.reason.trim();
+    if (reason.length < 15 || reason.length > 256) {
+      throw new NfeBuildError(
+        'A justificativa da contingência precisa ter de 15 a 256 caracteres.',
+      );
+    }
+    // A entrada em contingência não pode ser depois da emissão (regra B28-40).
+    if (new Date(contingency.enteredAt) > new Date(input.issuedAt)) {
+      throw new NfeBuildError('A entrada em contingência não pode ser depois da emissão da nota.');
+    }
+  }
   const accessKey = buildAccessKey({
     cUF: input.cUF,
     yearMonth: input.issuedAt.slice(2, 4) + input.issuedAt.slice(5, 7),
@@ -226,7 +246,7 @@ export function buildNfe(input: NfeInput): NfeDocument {
     model: '55',
     series: input.series,
     number: input.number,
-    emissionType: 1,
+    emissionType,
     numericCode: input.numericCode,
   });
   const totals = computeTotals(input.items);
@@ -257,7 +277,7 @@ export function buildNfe(input: NfeInput): NfeDocument {
       req('idDest', idDest),
       req('cMunFG', input.issuer.address.cityCode),
       req('tpImp', '1'),
-      req('tpEmis', '1'),
+      req('tpEmis', String(emissionType)),
       req('cDV', accessKey.slice(-1)),
       req('tpAmb', '2'),
       req('finNFe', NFE_PURPOSES[input.purpose]),
@@ -267,6 +287,8 @@ export function buildNfe(input: NfeInput): NfeDocument {
       ['2', '3', '4', '9'].includes(presence) ? req('indIntermed', '0') : '',
       req('procEmi', '0'),
       req('verProc', input.appVersion),
+      contingency ? req('dhCont', contingency.enteredAt) : '',
+      contingency ? req('xJust', contingency.reason.trim()) : '',
       references.map((key) => el('NFref', req('refNFe', key))),
     ]),
     emitGroup(input.issuer),

@@ -59,13 +59,7 @@ export type SefazMode = 'normal' | 'rejeita' | 'fora' | 'perde' | 'prazo';
 
 export interface SefazCall {
   service:
-    | 'status'
-    | 'autorizacao'
-    | 'consulta'
-    | 'evento'
-    | 'inutilizacao'
-    | 'distribuicao'
-    | 'outro';
+    'status' | 'autorizacao' | 'consulta' | 'evento' | 'inutilizacao' | 'distribuicao' | 'outro';
   body: string;
 }
 
@@ -84,6 +78,10 @@ export class SefazSimulator {
   /** Chaves canceladas (evento 110111 registrado). */
   readonly cancelled = new Set<string>();
   readonly calls: SefazCall[] = [];
+  /** Servidores (host) fora do ar: respondem 503 (F3-16, a UF fora e a SVC no ar). */
+  readonly down = new Set<string>();
+  /** Servidor de cada chamada, na ordem. */
+  readonly hosts: string[] = [];
   /**
    * Documentos que o Ambiente Nacional tem para distribuir (F3-20), em ordem de NSU. A distribuição
    * devolve os que vêm depois do último NSU pedido.
@@ -108,7 +106,11 @@ export class SefazSimulator {
         req.on('data', (c: Buffer) => chunks.push(c));
         req.on('end', () => {
           const body = Buffer.concat(chunks).toString('utf8');
-          const { status, text } = this.respond(body, String(req.headers['content-type'] ?? ''));
+          const host = (req.url ?? '').split('/')[1] ?? '';
+          const { status, text } = this.down.has(host)
+            ? { status: 503, text: '<html>Serviço indisponível</html>' }
+            : this.respond(body, String(req.headers['content-type'] ?? ''));
+          this.hosts.push(host);
           res
             .writeHead(status, { 'Content-Type': 'application/soap+xml; charset=utf-8' })
             .end(text);
@@ -124,7 +126,8 @@ export class SefazSimulator {
     return new HttpsSefazTransport({
       ca: [forge.pki.certificateToPem(this.ac.cert)],
       timeoutMs: 5000,
-      rewriteUrl: (url) => `https://127.0.0.1:${port}${new URL(url).pathname}`,
+      // O servidor oficial vai no caminho, para o teste saber a quem a chamada iria.
+      rewriteUrl: (url) => `https://127.0.0.1:${port}/${new URL(url).host}${new URL(url).pathname}`,
     });
   }
 

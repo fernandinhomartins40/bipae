@@ -484,3 +484,39 @@ describe('NF-e incoerente vira erro claro, antes da SEFAZ', () => {
     expect((await validate(semCnpj)).length).toBeGreaterThan(0);
   });
 });
+
+describe('contingência SVC da NF-e (F3-16)', () => {
+  const svc = {
+    mode: 'SVC-AN' as const,
+    enteredAt: '2026-06-15T10:00:00-03:00',
+    reason: 'SEFAZ de SP sem resposta para a autorização',
+  };
+
+  it('SVC-AN: tpEmis 6 na nota e na chave, dhCont e xJust, válida no schema', async () => {
+    const doc = buildNfe(nota({ contingency: svc }));
+    expect(await validate(doc.xml)).toEqual([]);
+    expect(doc.xml).toContain('<tpEmis>6</tpEmis>');
+    expect(doc.accessKey.charAt(34)).toBe('6');
+    expect(doc.xml).toContain(
+      '<verProc>Bipae 0.3.0</verProc><dhCont>2026-06-15T10:00:00-03:00</dhCont><xJust>SEFAZ de SP sem resposta para a autorização</xJust>',
+    );
+    const normal = buildNfe(nota());
+    expect(normal.accessKey).not.toBe(doc.accessKey);
+    expect(normal.xml).not.toContain('<dhCont>');
+  });
+
+  it('SVC-RS: tpEmis 7', () => {
+    const doc = buildNfe(nota({ contingency: { ...svc, mode: 'SVC-RS' } }));
+    expect(doc.xml).toContain('<tpEmis>7</tpEmis>');
+    expect(doc.accessKey.charAt(34)).toBe('7');
+  });
+
+  it('justificativa curta e entrada em contingência depois da emissão viram erro', () => {
+    expect(() => buildNfe(nota({ contingency: { ...svc, reason: 'curta' } }))).toThrow(
+      'de 15 a 256 caracteres',
+    );
+    expect(() =>
+      buildNfe(nota({ contingency: { ...svc, enteredAt: '2026-06-15T11:00:00-03:00' } })),
+    ).toThrow('não pode ser depois da emissão');
+  });
+});

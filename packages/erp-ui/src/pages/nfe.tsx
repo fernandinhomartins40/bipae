@@ -446,6 +446,7 @@ function IssuedView({
   const { api } = useApp();
   const queryClient = useQueryClient();
   const d = n.document!;
+  const [svcReason, setSvcReason] = useState('');
   const s = status(n);
   const final = ['authorized', 'denied', 'cancelled'].includes(d.status);
   return (
@@ -485,6 +486,41 @@ function IssuedView({
         <Alert tone="warning" title="A SEFAZ não respondeu">
           O Bipaê tenta de novo sozinho. {d.lastError}
         </Alert>
+      )}
+      {d.contingencyMode && (
+        <Alert tone="warning" title={`Emitida em contingência (${d.contingencyMode})`}>
+          A SEFAZ da UF não respondia e a nota foi para a SEFAZ Virtual de Contingência.
+          {d.replacedAccessKey &&
+            ` Ela substituiu a tentativa normal (chave ${d.replacedAccessKey}); quando a SEFAZ da UF voltar, o Bipaê confere se essa chave não foi autorizada também.`}
+        </Alert>
+      )}
+      {d.lastError && d.status === 'authorized' && <Alert>{d.lastError}</Alert>}
+      {canWrite && d.status === 'error' && !d.contingencyMode && (
+        <fieldset className="flex flex-col gap-2 rounded-ui border border-border p-3">
+          <legend className="px-1 font-semibold">Contingência (SVC)</legend>
+          <p className="text-sm text-muted">
+            Se a SEFAZ da UF continuar fora do ar, a nota pode ir para a SEFAZ Virtual de
+            Contingência. Ela ganha uma chave nova; a chave de agora fica guardada para conferência.
+          </p>
+          <TextField
+            label="Motivo da contingência"
+            hint="Vai na nota (de 15 a 256 caracteres)."
+            value={svcReason}
+            onChange={(e) => setSvcReason(e.target.value)}
+          />
+          <Button
+            variant="secondary"
+            loading={busy}
+            onClick={() =>
+              void run(async () => {
+                await api.post(`/fiscal/nfe/${n.id}/contingency`, { reason: svcReason });
+                await queryClient.invalidateQueries({ queryKey: ['nfe', n.id] });
+              })
+            }
+          >
+            Emitir em contingência (SVC)
+          </Button>
+        </fieldset>
       )}
       {(d.status === 'pending' || d.status === 'error') && (
         <p className="text-sm text-muted">Enviando à SEFAZ…</p>

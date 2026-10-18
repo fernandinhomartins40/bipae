@@ -16,8 +16,9 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 import { renderDanfeNfe } from '@bipae/danfe';
-import { nfeInvoiceInput, uuidv7, type NfeInvoiceView } from '@bipae/domain';
+import { nfeContingencyInput, nfeInvoiceInput, uuidv7, type NfeInvoiceView } from '@bipae/domain';
 import {
+  brasiliaDateTime,
   buildDraftNfe,
   buildNfeProc,
   signNfe,
@@ -25,7 +26,7 @@ import {
   type NfeDraftResult,
   type SaleFiscalProfile,
 } from '@bipae/fiscal';
-import { findPaymentMeans, PAYMENT_MEANS } from '@bipae/fiscal/tables';
+import { findPaymentMeans, nfeEndpoints, PAYMENT_MEANS } from '@bipae/fiscal/tables';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';
@@ -73,6 +74,8 @@ const documentView = (d: Document): NonNullable<NfeInvoiceView['document']> => (
   status: d.status,
   pendingItems: d.pendingItems,
   contingency: d.contingency,
+  contingencyMode: d.contingencyMode,
+  replacedAccessKey: d.replacedAccessKey,
   help: d.status === 'rejected' || d.status === 'denied' ? rejectionHelp(d.cStat, d.xMotivo) : null,
   cStat: d.cStat,
   xMotivo: d.xMotivo,
@@ -716,13 +719,24 @@ export class NfeInvoicesService implements OnModuleInit {
       if (doc.signedXml && doc.accessKey) {
         return { doc, signedXml: doc.signedXml, accessKey: doc.accessKey };
       }
-      const built = buildDraftNfe(
-        await this.draftInput(tx, invoice, {
+      // Contingência SVC (F3-16): emissão e entrada em contingência no mesmo momento, para a
+      // emissão nunca ficar antes do dhCont (regra B28-40).
+      const svc =
+        doc.contingencyMode && doc.contingencyAt && doc.contingencyReason
+          ? {
+              mode: doc.contingencyMode,
+              enteredAt: brasiliaDateTime(doc.contingencyAt.toISOString()),
+              reason: doc.contingencyReason,
+            }
+          : null;
+      const built = buildDraftNfe({
+        ...(await this.draftInput(tx, invoice, {
           series: doc.series!,
           number: doc.number!,
-          issuedAt: (invoice.issuedAt ?? new Date()).toISOString(),
-        }),
-      );
+          issuedAt: (svc ? doc.contingencyAt! : (invoice.issuedAt ?? new Date())).toISOString(),
+        })),
+        ...(svc && { contingency: svc }),
+      });
       if (!built.ok) return { doc, pending: built.pending };
       return {
         doc,
@@ -762,6 +776,7 @@ export class NfeInvoicesService implements OnModuleInit {
         model: '55',
         batchId: String(Date.now()).slice(-15),
         signedXml,
+        svc: Boolean(doc.contingencyMode),
       });
       const [protocol] = result.protocols;
       if (protocol) {
@@ -810,6 +825,84 @@ export class NfeInvoicesService implements OnModuleInit {
       xMotivo: protocol.xMotivo,
       signedXml: null,
       lastError: null,
+    });
+  }
+
+  /**
+   * Contingência SVC (F3-16): a SEFAZ da UF não responde e a nota vai à SEFAZ Virtual de
+   * Contingência que a UF usa (tabela oficial). A nota é refeita com tpEmis 6 ou 7, o que muda a
+   * chave; a chave da tentativa normal fica guardada para conferir quando a UF voltar.
+   */
+  async contingency(ctx: RequestContext, id: string, reason: string) {
+    const docId = await withTenant(this.db, ctx, async (tx) => {
+      const invoice = await this.load(tx, ctx, id);
+      const [doc] = await tx
+        .select()
+        .from(fiscalDocuments)
+        .where(eq(fiscalDocuments.invoiceId, invoice.id));
+      if (!doc) throw new AppError(409, 'not_issued', 'Esta NF-e ainda é um rascunho.');
+      if (doc.contingencyMode) {
+        throw new AppError(409, 'already_svc', 'Esta NF-e já está na contingência SVC.');
+      }
+      if (doc.status !== 'error') {
+        throw new AppError(
+          409,
+          'sefaz_answering',
+          'A contingência é só para quando a SEFAZ da UF não responde.',
+        );
+      }
+      const [company] = await tx
+        .select({ uf: companies.uf })
+        .from(companies)
+        .where(eq(companies.id, doc.companyId));
+      const mode = company?.uf ? nfeEndpoints(company.uf)?.contingency.homologacao : null;
+      if (!mode) throw new AppError(422, 'no_svc', 'Falta a UF da empresa para achar a SVC.');
+      await tx
+        .update(fiscalDocuments)
+        .set({
+          status: 'pending',
+          contingency: true,
+          contingencyMode: mode,
+          contingencyAt: new Date(),
+          contingencyReason: reason,
+          replacedAccessKey: doc.accessKey,
+          accessKey: null,
+          signedXml: null,
+          lastError: null,
+          updatedAt: new Date(),
+        })
+        .where(eq(fiscalDocuments.id, doc.id));
+      await this.audit.record(tx, ctx, {
+        action: 'nfe.contingency',
+        entity: 'nfe_invoice',
+        entityId: invoice.id,
+        data: { mode, reason, replacedAccessKey: doc.accessKey },
+      });
+      return doc.id;
+    });
+    await this.emit(ctx, docId).catch(() => undefined);
+    return this.get(ctx, id);
+  }
+
+  /**
+   * Com a UF de volta: a tentativa normal que a contingência substituiu chegou a ser autorizada?
+   * Se sim, as duas notas valem e uma tem de ser cancelada; a nota avisa.
+   */
+  async checkReplaced(ctx: RequestContext, documentId: string) {
+    const doc = await withTenant(this.db, ctx, async (tx) => {
+      const [row] = await tx
+        .select()
+        .from(fiscalDocuments)
+        .where(eq(fiscalDocuments.id, documentId));
+      return row ?? null;
+    });
+    if (!doc?.replacedAccessKey || doc.replacedCheckedAt) return;
+    const consult = await this.sefaz.consult(ctx, doc.companyId, doc.replacedAccessKey);
+    await this.patch(ctx, doc.id, {
+      replacedCheckedAt: new Date(),
+      ...(consult.outcome === 'authorized' && {
+        lastError: `A tentativa normal (chave ${doc.replacedAccessKey}) também foi autorizada pela SEFAZ: cancele uma das duas notas.`,
+      }),
     });
   }
 
@@ -950,6 +1043,17 @@ export class NfeInvoicesController {
   @RequirePermission('fiscal.profile.write')
   issue(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.invoices.issue(ctx, id);
+  }
+
+  @Post(':id/contingency')
+  @HttpCode(200)
+  @RequirePermission('fiscal.profile.write')
+  contingency(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.invoices.contingency(ctx, id, parse(nfeContingencyInput, body).reason);
   }
 
   @Post(':id/retry')

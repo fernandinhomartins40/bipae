@@ -1522,6 +1522,9 @@ export interface FiscalDocumentView {
   pendingItems: string[];
   /** Emitida em contingência off-line (F3-15). */
   contingency: boolean;
+  /** NF-e em contingência SVC (F3-16) e a chave da tentativa normal que ela substituiu. */
+  contingencyMode?: 'SVC-AN' | 'SVC-RS' | null;
+  replacedAccessKey?: string | null;
   /** Recusada ou denegada: a causa e o que fazer, em linguagem simples (F3-18). */
   help: RejectionHelpView | null;
   cStat: string | null;
@@ -2210,3 +2213,12 @@ export interface DfeSyncResult {
   nextQueryAt: string | null;
   message: string;
 }
+
+/** Emitir a NF-e na contingência SVC (F3-16): o motivo vai na nota (xJust, 15 a 256 caracteres). */
+export const nfeContingencyInput = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(15, 'Explique a contingência com pelo menos 15 caracteres')
+    .max(256, 'A justificativa pode ter no máximo 256 caracteres'),
+});

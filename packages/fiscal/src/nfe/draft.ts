@@ -93,6 +93,8 @@ export interface NfeDraftInput {
   difalBaseMode?: DifalBaseMode;
   additionalInfo?: string | null;
   appVersion: string;
+  /** Contingência SVC (F3-16): a SEFAZ da UF fora do ar; a nota vai à SVC com tpEmis 6 ou 7. */
+  contingency?: NfeInput['contingency'];
   /**
    * Nota da venda condicional (Ajuste SINIEF 02/18, F5-12.c): a natureza, o CFOP e os textos vêm
    * do ato. Na remessa, no retorno e na entrada simbólica o imposto fica suspenso, e os itens usam
@@ -421,6 +423,7 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
     payments,
     ...(additionalInfo && { additionalInfo }),
     appVersion: input.appVersion,
+    ...(input.contingency && { contingency: input.contingency }),
   };
   try {
     const document = buildNfe(nfe);

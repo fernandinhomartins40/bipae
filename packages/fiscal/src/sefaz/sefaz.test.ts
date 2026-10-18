@@ -3,10 +3,12 @@ import { validateServiceXml } from '../../test/schema';
 import { buildNfce, type NfceInput } from '../nfce/build';
 import { signNfe, type WebCryptoKey } from '../nfce/sign';
 import { calculateIcms } from '../taxes/icms';
+import { nfeEndpoints } from '../tables/nfe-endpoints';
 import {
   authorizationRequest,
   buildNfeProc,
   consultRequest,
+  isSvcKey,
   parseBatchResponse,
   parseConsultResponse,
   parseStatusResponse,
@@ -287,5 +289,44 @@ describe('retornos da SEFAZ', () => {
         soap('X', '<retEnviNFe><cStat>104</cStat><xMotivo>ok</xMotivo><protNFe/></retEnviNFe>'),
       ),
     ).toThrow(SefazResponseError);
+  });
+});
+
+describe('contingência SVC (F3-16)', () => {
+  it('a NF-e vai aos endereços da SVC da UF; a NFC-e não vai à SVC', () => {
+    // SP usa a SVC-AN; o endereço sai da tabela oficial (contingencyWebservices).
+    const status = statusRequest('55', 'SP', true);
+    expect(status.url).toBe(
+      nfeEndpoints('SP')!.contingencyWebservices.homologacao.NFeStatusServico,
+    );
+    expect(status.url).not.toBe(statusRequest('55', 'SP').url);
+    expect(() => statusRequest('65', 'SP', true)).toThrow('rejeição 783');
+    const chaveSvc = '35260611222333000181550010000010016876543210';
+    expect(isSvcKey(chaveSvc)).toBe(true);
+    expect(consultRequest('SP', chaveSvc).url).toBe(
+      nfeEndpoints('SP')!.contingencyWebservices.homologacao.NFeConsultaProtocolo,
+    );
+  });
+
+  it('a autorização na SVC só leva nota com tpEmis 6 ou 7', () => {
+    const assinada =
+      '<NFe><infNFe><ide><mod>55</mod><tpEmis>1</tpEmis><tpAmb>2</tpAmb></ide></infNFe><Signature></Signature></NFe>';
+    expect(() =>
+      authorizationRequest({
+        model: '55',
+        uf: 'SP',
+        batchId: '1',
+        signedXmls: [assinada],
+        svc: true,
+      }),
+    ).toThrow('rejeição 713');
+    const ok = authorizationRequest({
+      model: '55',
+      uf: 'SP',
+      batchId: '1',
+      signedXmls: [assinada.replace('<tpEmis>1</tpEmis>', '<tpEmis>6</tpEmis>')],
+      svc: true,
+    });
+    expect(ok.url).toBe(nfeEndpoints('SP')!.contingencyWebservices.homologacao.NFeAutorizacao);
   });
 });

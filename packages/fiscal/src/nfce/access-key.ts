@@ -13,8 +13,8 @@ export interface AccessKeyParts {
   model: '55' | '65';
   series: number;
   number: number;
-  /** Tipo de emissão: 1 normal, 9 contingência off-line da NFC-e. */
-  emissionType: 1 | 9;
+  /** Tipo de emissão: 1 normal, 6 SVC-AN e 7 SVC-RS (NF-e), 9 contingência off-line da NFC-e. */
+  emissionType: 1 | 6 | 7 | 9;
   /** Código numérico aleatório de 8 dígitos (cNF), que não pode repetir o número da nota. */
   numericCode: string;
 }
