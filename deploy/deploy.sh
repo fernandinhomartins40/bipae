@@ -71,6 +71,25 @@ if [ -n "$("${COMPOSE[@]}" ps -q postgres 2>/dev/null)" ]; then
   ls -1t "$BACKUPS"/bipae-*.sql.gz | tail -n +15 | xargs -r rm -f
 fi
 
+# ---------------------------------------------------------------- limpeza antes de baixar
+# Cada versão da API ocupa cerca de 870 MB; sem limpeza, o disco da VPS (compartilhado) enche e o
+# pull falha. Antes de baixar, ficam só as imagens do Bipaê da versão no ar (que também é a da
+# volta, se a nova não subir). Imagem de outra aplicação nunca é tocada; imagem em uso não sai.
+keep=" $(docker image inspect -f '{{.Id}}' ${PREVIOUS_API:+"$PREVIOUS_API"} \
+  ${PREVIOUS_WEB:+"$PREVIOUS_WEB"} 2>/dev/null | tr '\n' ' ') "
+removed=0
+if [ -n "$PREVIOUS_API" ] && [ -n "$PREVIOUS_WEB" ]; then
+  for repo in ghcr.io/fernandinhomartins40/bipae-api ghcr.io/fernandinhomartins40/bipae-web; do
+    for id in $(docker images --no-trunc --format '{{.ID}}' "$repo" | sort -u); do
+      case "$keep" in
+        *" $id "*) ;;
+        *) docker rmi "$id" >/dev/null 2>&1 && removed=$((removed + 1)) || true ;;
+      esac
+    done
+  done
+fi
+echo "==> Imagens antigas do Bipaê removidas: $removed"
+
 # ---------------------------------------------------------------- nova versão
 echo "==> Baixando imagens"
 set_image_vars "$BIPAE_API_IMAGE" "$BIPAE_WEB_IMAGE"
