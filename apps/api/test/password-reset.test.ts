@@ -172,7 +172,8 @@ describe('avisos da conta por e-mail (P-04.d)', () => {
     await set(
       sql`update tenants set status = 'suspended', status_reason = 'pagamento em atraso', status_changed_at = now() where id = ${ctx.tenantId}`,
     );
-    await maintenance.accountNotices();
+    // Relógio da API um minuto atrás do banco (como na CI): o aviso não pode sair duas vezes.
+    await maintenance.accountNotices(new Date(Date.now() - 60_000));
     const suspensa = await esperarEmail(email, 'Bipaê: a sua conta foi suspensa');
     expect(suspensa.text).toContain('pagamento em atraso');
     const depois = sent.filter(

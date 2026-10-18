@@ -225,8 +225,13 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         });
         sent++;
       }
+      // Marca com a data da própria suspensão avisada, não com o relógio da API: se o relógio do
+      // banco estiver à frente, comparar com "agora" faria o aviso sair de novo a cada rodada.
       await asPlatform(this.db, (tx) =>
-        tx.update(tenants).set({ suspensionNoticeSentAt: now }).where(eq(tenants.id, t.id)),
+        tx
+          .update(tenants)
+          .set({ suspensionNoticeSentAt: t.statusChangedAt ?? now })
+          .where(eq(tenants.id, t.id)),
       );
     }
     return sent;
