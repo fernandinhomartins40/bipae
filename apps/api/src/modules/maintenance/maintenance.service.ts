@@ -22,6 +22,7 @@ import {
 } from '../../db/schema';
 import { tenantTables } from '../account/data-export.service';
 import { PlatformAuditService } from '../admin/platform-audit.service';
+import { DfeService } from '../fiscal/dfe.service';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import { NfeInvoicesService } from '../fiscal/nfe-invoices.service';
@@ -31,9 +32,11 @@ export const SESSIONS_CLEANUP = 'manutencao.limpar-sessoes';
 export const ACCOUNT_PURGE = 'manutencao.excluir-contas-canceladas';
 export const NFCE_SWEEP = 'manutencao.reenviar-nfce';
 export const WEBHOOK_SWEEP = 'manutencao.reenviar-webhooks';
+export const DFE_SWEEP = 'manutencao.buscar-notas-recebidas';
 const UM_MINUTO = 60_000;
 const CINCO_MINUTOS = 5 * 60_000;
 const UM_DIA = 24 * 60 * 60_000;
+const UMA_HORA = 60 * 60_000;
 const SEIS_HORAS = 6 * 60 * 60_000;
 const DIAS_GUARDADOS = 30;
 
@@ -55,6 +58,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(NfeInvoicesService) private readonly nfe: NfeInvoicesService,
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
     @Inject(WebhooksService) private readonly webhooks: WebhooksService,
+    @Inject(DfeService) private readonly dfe: DfeService,
   ) {}
 
   async onModuleInit() {
@@ -70,6 +74,9 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
       });
       this.queue.process(WEBHOOK_SWEEP, async () => {
         await this.sweepWebhooks();
+      });
+      this.queue.process(DFE_SWEEP, async () => {
+        await this.sweepDfe();
       });
       this.queue.process(ACCOUNT_PURGE, async () => {
         const purged = await this.purgeCancelledAccounts();
@@ -99,6 +106,11 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
           this.logger.warn(`Não foi possível agendar os webhooks: ${error.message}`),
         );
       void this.queue
+        .add(DFE_SWEEP, {}, { repeatEveryMs: UMA_HORA })
+        .catch((error: Error) =>
+          this.logger.warn(`Não foi possível agendar a busca de notas: ${error.message}`),
+        );
+      void this.queue
         .add(ACCOUNT_PURGE, {}, { repeatEveryMs: UM_DIA })
         .catch((error: Error) =>
           this.logger.warn(`Não foi possível agendar a exclusão de contas: ${error.message}`),
@@ -108,6 +120,16 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     await this.queue.close().catch(() => undefined);
+  }
+
+  /**
+   * Notas emitidas contra o CNPJ das empresas (F3-20): de hora em hora, cada empresa com
+   * certificado pergunta ao Ambiente Nacional pelos documentos novos.
+   */
+  async sweepDfe(): Promise<number> {
+    const due = await asPlatform(this.db, (tx) => this.dfe.due(tx));
+    for (const c of due) await this.dfe.schedule(c.tenantId, c.id);
+    return due.length;
   }
 
   /**

@@ -2169,3 +2169,44 @@ export interface NfeInvoiceView {
   createdAt: string;
   updatedAt: string;
 }
+
+// ---------- Notas contra o CNPJ da empresa (distribuição de DF-e, F3-20) ----------
+
+export const DFE_MANIFESTATIONS = ['ciencia', 'confirmacao', 'desconhecimento', 'naoRealizada'] as const;
+
+export const dfeManifestInput = z
+  .object({
+    type: z.enum(DFE_MANIFESTATIONS, { message: 'Escolha a manifestação' }),
+    reason: optionalText(255),
+  })
+  .refine((v) => v.type !== 'naoRealizada' || (v.reason?.length ?? 0) >= 15, {
+    message: 'Diga por que a operação não foi realizada (pelo menos 15 caracteres)',
+    path: ['reason'],
+  });
+export type DfeManifestInput = z.input<typeof dfeManifestInput>;
+
+export interface DfeDocumentView {
+  id: string;
+  companyId: string;
+  accessKey: string;
+  issuerTaxId: string;
+  issuerName: string;
+  issuedAt: string | null;
+  totalCents: number;
+  situation: 'autorizada' | 'denegada' | 'cancelada' | null;
+  /** A nota completa já chegou (depois da ciência), pronta para dar entrada. */
+  hasXml: boolean;
+  manifestation: (typeof DFE_MANIFESTATIONS)[number] | null;
+  manifestationStatus: 'registered' | 'rejected' | 'error' | null;
+  manifestationMessage: string | null;
+  /** A compra já entrou pelo XML (F3-19). */
+  purchaseId: string | null;
+}
+
+export interface DfeSyncResult {
+  /** Documentos novos ou atualizados nesta busca. */
+  received: number;
+  /** Quando dá para perguntar de novo ao Ambiente Nacional (null: já). */
+  nextQueryAt: string | null;
+  message: string;
+}

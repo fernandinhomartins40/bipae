@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-20 Notas emitidas para a sua empresa] — 18/10/2026
+
+### Adicionado
+- **Compras:** a tela mostra as notas emitidas contra o CNPJ da empresa, vindas do Ambiente Nacional da NF-e (em homologação). O Bipaê busca de hora em hora e também pelo botão "Buscar notas agora".
+- **Manifestação:** "Registrar a ciência" libera a nota completa. Depois dá para confirmar, dizer que a operação não foi realizada ou desconhecer a nota.
+- **Entrada da compra:** "Dar entrada na compra" segue o mesmo caminho do "Importar XML", sem esperar o fornecedor mandar o arquivo.
+- **Cancelamento pelo emitente:** a nota aparece como cancelada.
+- **Espera da SEFAZ:** o Bipaê respeita a hora de espera que o Ambiente Nacional pede, para não ser bloqueado (656).
+
 ## [F5-12.c.3 Notas do condicional na tela] — 18/10/2026
 
 ### Adicionado

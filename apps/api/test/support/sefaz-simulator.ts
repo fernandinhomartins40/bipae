@@ -1,5 +1,6 @@
 import { createServer, type Server } from 'node:https';
 import type { AddressInfo } from 'node:net';
+import { gzipSync } from 'node:zlib';
 import forge from 'node-forge';
 import { HttpsSefazTransport } from '../../src/modules/fiscal/sefaz.transport';
 
@@ -57,7 +58,14 @@ export function testPfx(subject = 'MERCADINHO TESTE:11222333000181') {
 export type SefazMode = 'normal' | 'rejeita' | 'fora' | 'perde' | 'prazo';
 
 export interface SefazCall {
-  service: 'status' | 'autorizacao' | 'consulta' | 'evento' | 'inutilizacao' | 'outro';
+  service:
+    | 'status'
+    | 'autorizacao'
+    | 'consulta'
+    | 'evento'
+    | 'inutilizacao'
+    | 'distribuicao'
+    | 'outro';
   body: string;
 }
 
@@ -76,6 +84,13 @@ export class SefazSimulator {
   /** Chaves canceladas (evento 110111 registrado). */
   readonly cancelled = new Set<string>();
   readonly calls: SefazCall[] = [];
+  /**
+   * Documentos que o Ambiente Nacional tem para distribuir (F3-20), em ordem de NSU. A distribuição
+   * devolve os que vêm depois do último NSU pedido.
+   */
+  readonly distribution: { schema: string; xml: string }[] = [];
+  /** Manifestações registradas (tpEvento de cada chave). */
+  readonly manifestations: { key: string; type: string }[] = [];
   private server: Server | null = null;
   private readonly ac = certificate('AC SEFAZ SIMULADA', null, null);
   private readonly tls = certificate('127.0.0.1', this.ac.cert, this.ac.keys.privateKey);
@@ -130,7 +145,9 @@ export class SefazSimulator {
             ? 'evento'
             : contentType.includes('nfeInutilizacaoNF')
               ? 'inutilizacao'
-              : 'outro';
+              : contentType.includes('nfeDistDFeInteresse')
+                ? 'distribuicao'
+                : 'outro';
     this.calls.push({ service, body });
     if (this.mode === 'perde' && service === 'autorizacao') this.authorized.add(chave);
     if (this.mode === 'fora' || this.mode === 'perde') {
@@ -169,6 +186,48 @@ export class SefazSimulator {
           known
             ? `<retConsSitNFe versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><tpAmb>2</tpAmb><cStat>100</cStat><xMotivo>Autorizado o uso da NF-e</xMotivo><chNFe>${chave}</chNFe>${protNFe(chave)}</retConsSitNFe>`
             : `<retConsSitNFe versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe"><tpAmb>2</tpAmb><cStat>217</cStat><xMotivo>Rejeição: NF-e não consta na base de dados da SEFAZ</xMotivo><chNFe>${chave}</chNFe></retConsSitNFe>`,
+        ),
+      };
+    }
+    if (service === 'distribuicao') {
+      const ult = Number(/<ultNSU>(\d+)<\/ultNSU>/.exec(body)?.[1] ?? '0');
+      const pad = (n: number) => String(n).padStart(15, '0');
+      const docs = this.distribution
+        .map((d, i) => ({ ...d, nsu: i + 1 }))
+        .filter((d) => d.nsu > ult);
+      const max = this.distribution.length;
+      const lote = docs
+        .map(
+          (d) =>
+            `<docZip NSU="${pad(d.nsu)}" schema="${d.schema}">${gzipSync(Buffer.from(d.xml, 'utf8')).toString('base64')}</docZip>`,
+        )
+        .join('');
+      const [cStat, xMotivo] = docs.length
+        ? ['138', 'Documento localizado']
+        : ['137', 'Nenhum documento localizado'];
+      return {
+        status: 200,
+        text:
+          '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><soap:Body>' +
+          '<nfeDistDFeInteresseResponse xmlns="http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe"><nfeDistDFeInteresseResult>' +
+          `<retDistDFeInt versao="1.01" xmlns="http://www.portalfiscal.inf.br/nfe"><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic><cStat>${cStat}</cStat><xMotivo>${xMotivo}</xMotivo>` +
+          `<dhResp>2026-10-18T09:00:00-03:00</dhResp><ultNSU>${pad(docs.length ? max : ult)}</ultNSU><maxNSU>${pad(max)}</maxNSU>` +
+          (lote ? `<loteDistDFeInt>${lote}</loteDistDFeInt>` : '') +
+          '</retDistDFeInt></nfeDistDFeInteresseResult></nfeDistDFeInteresseResponse></soap:Body></soap:Envelope>',
+      };
+    }
+    // Manifestação do destinatário (2102xx), no Ambiente Nacional.
+    const manifest = /<tpEvento>(2102[0-4]0)<\/tpEvento>/.exec(body)?.[1];
+    if (service === 'evento' && manifest) {
+      this.manifestations.push({ key: chave, type: manifest });
+      return {
+        status: 200,
+        text: envelope(
+          'NFeRecepcaoEvento4',
+          '<retEnvEvento versao="1.00" xmlns="http://www.portalfiscal.inf.br/nfe"><idLote>1</idLote><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic><cOrgao>91</cOrgao><cStat>128</cStat><xMotivo>Lote de evento processado</xMotivo>' +
+            '<retEvento versao="1.00"><infEvento><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic><cOrgao>91</cOrgao><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo>' +
+            `<chNFe>${chave}</chNFe><tpEvento>${manifest}</tpEvento><nSeqEvento>1</nSeqEvento>` +
+            '<dhRegEvento>2026-10-18T09:05:00-03:00</dhRegEvento><nProt>891260000123456</nProt></infEvento></retEvento></retEnvEvento>',
         ),
       };
     }

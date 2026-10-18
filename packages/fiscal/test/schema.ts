@@ -87,11 +87,21 @@ export async function validatePackageXml(
   xml: string,
   zipFile: string,
   schemaFile: string,
+  /** Pacotes que o schema importa sem trazer junto (ex.: a assinatura, no de distribuição). */
+  extraZips: string[] = [],
 ): Promise<string[]> {
   const { unzip } = await import('../scripts/xlsx.mjs');
-  const zip = readFileSync(fileURLToPath(new URL(`../sources/${zipFile}`, import.meta.url)));
-  const all = [...unzip(zip)]
-    .filter(([name]) => name.endsWith('.xsd'))
+  const read = (file: string) =>
+    [...unzip(readFileSync(fileURLToPath(new URL(`../sources/${file}`, import.meta.url))))];
+  const seen = new Set<string>();
+  const all = [zipFile, ...extraZips]
+    .flatMap(read)
+    .filter(([name]) => {
+      const file = name.split('/').pop()!;
+      if (!name.endsWith('.xsd') || seen.has(file)) return false;
+      seen.add(file);
+      return true;
+    })
     .map(([name, body]) => ({ fileName: name.split('/').pop()!, contents: body.toString('utf8') }));
   const schema = all.find((s) => s.fileName === schemaFile);
   if (!schema) throw new Error(`Schema não encontrado: ${schemaFile}`);

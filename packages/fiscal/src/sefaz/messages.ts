@@ -12,7 +12,12 @@ export type SefazService =
   'NFeStatusServico' | 'NFeAutorizacao' | 'NFeRetAutorizacao' | 'NFeConsultaProtocolo';
 
 /** Serviços que só levam eventos e inutilização (F3-17), além dos de cima. */
-export type SefazEndpoint = SefazService | 'RecepcaoEvento' | 'NFeInutilizacao';
+export type SefazEndpoint =
+  | SefazService
+  | 'RecepcaoEvento'
+  | 'NFeInutilizacao'
+  // Ambiente Nacional: distribuição de DF-e (F3-20).
+  | 'NFeDistribuicaoDFe';
 
 const NFE_NS = 'http://www.portalfiscal.inf.br/nfe';
 const TP_AMB_HOMOLOGACAO = '2';
@@ -47,7 +52,8 @@ export function ufCode(uf: string): string {
 export function sefazUrl(
   model: '55' | '65',
   uf: string,
-  service: SefazEndpoint,
+  /** Serviços da UF; a distribuição é do Ambiente Nacional (distributionRequest). */
+  service: Exclude<SefazEndpoint, 'NFeDistribuicaoDFe'>,
 ): string {
   const url =
     model === '65'

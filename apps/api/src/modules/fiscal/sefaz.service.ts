@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
   authorizationRequest,
+  buildDistributionQuery,
   buildNfeProc,
+  distributionRequest,
+  parseDistributionResponse,
+  recipientEventRequest,
   consultRequest,
   eventRequest,
   inutilizationRequest,
@@ -17,6 +21,8 @@ import {
   type SefazBatchResult,
   type FiscalEventResult,
   type SefazConsultResult,
+  type DistributionQuery,
+  type DistributionResult,
   type SefazRequest,
 } from '@bipae/fiscal';
 import { eq } from 'drizzle-orm';
@@ -63,7 +69,11 @@ export class SefazService {
       const [company] = await tx.select().from(companies).where(eq(companies.id, companyId));
       if (!company) throw notFound('Empresa não encontrada.');
       if (!company.uf) throw new AppError(400, 'missing_uf', 'Falta configurar a UF da empresa.');
-      return { uf: company.uf, credentials: await this.certificates.tlsCredentials(tx, companyId) };
+      return {
+        uf: company.uf,
+        taxId: company.taxId,
+        credentials: await this.certificates.tlsCredentials(tx, companyId),
+      };
     });
   }
 
@@ -201,5 +211,43 @@ export class SefazService {
       credentials,
     );
     return this.read(() => parseInutilizationResponse(response));
+  }
+
+  /**
+   * Distribuição de DF-e (F3-20): pergunta ao Ambiente Nacional pelos documentos emitidos contra
+   * o CNPJ da empresa, a partir do último NSU (ou por um NSU ou uma chave).
+   */
+  async distribution(
+    ctx: RequestContext,
+    companyId: string,
+    query: DistributionQuery,
+  ): Promise<DistributionResult> {
+    const { uf, taxId, credentials } = await this.prepare(ctx, companyId);
+    if (!taxId) throw new AppError(400, 'missing_tax_id', 'Falta o CNPJ da empresa.');
+    const response = await this.call(
+      () => distributionRequest(buildDistributionQuery({ taxId, uf, query })),
+      credentials,
+    );
+    try {
+      return await parseDistributionResponse(response);
+    } catch (error) {
+      if (error instanceof SefazResponseError)
+        throw new AppError(502, 'sefaz_response', error.message);
+      throw error;
+    }
+  }
+
+  /** Manifestação do destinatário, já assinada, na recepção de eventos do Ambiente Nacional. */
+  async recipientEvent(
+    ctx: RequestContext,
+    companyId: string,
+    signedEvent: string,
+  ): Promise<FiscalEventResult> {
+    const { credentials } = await this.prepare(ctx, companyId);
+    const response = await this.call(
+      () => recipientEventRequest({ batchId: String(Date.now()).slice(-15), signedEvent }),
+      credentials,
+    );
+    return this.read(() => parseEventResponse(response));
   }
 }

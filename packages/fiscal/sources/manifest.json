@@ -424,5 +424,21 @@
   "page": "https://www.confaz.fazenda.gov.br/legislacao/ajustes/2018/AJ_002_18",
   "publishedAt": "2018-04-04",
   "downloadedAt": "2026-10-17"
+ },
+ "plDistDFe": {
+  "file": "PL_NFeDistDFe_104_2026-07-03.zip",
+  "title": "Esquemas XML NF-e: Pacote de Liberação Distribuição de DF-e v1.04",
+  "publisher": "Portal Nacional da NF-e",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2026-07-03",
+  "downloadedAt": "2026-10-18"
+ },
+ "plManifestaDest": {
+  "file": "Evento_ManifestaDest_PL_v1.01.zip",
+  "title": "Esquemas XML NF-e: Pacote de Liberação Evento Manifesta Destinatário v1.01",
+  "publisher": "Portal Nacional da NF-e",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2014-05-30",
+  "downloadedAt": "2026-10-18"
  }
 }

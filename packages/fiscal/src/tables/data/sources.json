@@ -477,5 +477,23 @@
   "publishedAt": "2018-04-04",
   "downloadedAt": "2026-10-17",
   "sha256": "d06f15d29d85d04520c8ccae839dae430472e19f322558d3a9048a0f1f3d28dd"
+ },
+ "plDistDFe": {
+  "file": "PL_NFeDistDFe_104_2026-07-03.zip",
+  "title": "Esquemas XML NF-e: Pacote de Liberação Distribuição de DF-e v1.04",
+  "publisher": "Portal Nacional da NF-e",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2026-07-03",
+  "downloadedAt": "2026-10-18",
+  "sha256": "9bd6d478dd04770016783a914111f3e2cc794c6a2f2b62ac7243fb101c138740"
+ },
+ "plManifestaDest": {
+  "file": "Evento_ManifestaDest_PL_v1.01.zip",
+  "title": "Esquemas XML NF-e: Pacote de Liberação Evento Manifesta Destinatário v1.01",
+  "publisher": "Portal Nacional da NF-e",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2014-05-30",
+  "downloadedAt": "2026-10-18",
+  "sha256": "05877dd4a4a42ea7e1b251a2c2ecc365d3c73f3a1a9794760486db7cbe2a116e"
  }
 }

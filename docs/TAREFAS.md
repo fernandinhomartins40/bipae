@@ -154,7 +154,11 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-19.b · API: prévia e entrada (assinatura conferida, nota da empresa certa, uma vez só, fornecedor e produtos criados, código do fornecedor lembrado, estoque e custo), com auditoria — depende: F3-19.a
 - [x] F3-19.c · Tela "Compras" na retaguarda, com E2E — depende: F3-19.b
   - Custo sem abater créditos até o contador decidir (dúvida D-024).
-- [ ] F3-20 · Distribuição DF-e e manifestação do destinatário — depende: F3-11, F3-19
+- [~] F3-20 · Distribuição DF-e e manifestação do destinatário — depende: F3-11, F3-19
+  - [x] F3-20.a · Motor: pedido de distribuição (último NSU, NSU e chave), leitura do retorno com os documentos descompactados (resumo, nota completa e eventos) e os quatro eventos de manifestação (210200, 210210, 210220, 210240), válidos nos pacotes oficiais Distribuição de DF-e v1.04 e Manifesta Destinatário v1.01
+  - [x] F3-20.b · API: busca de hora em hora pela manutenção e a pedido, respeitando a hora de espera do Ambiente Nacional (137 e 656); ciência que já baixa a nota completa; manifestação final com auditoria; cancelamento pelo emitente marcado; testada na SEFAZ simulada — depende: F3-20.a
+  - [x] F3-20.c · Tela Compras: "Notas emitidas para a sua empresa", busca, ciência, manifestação final e "Dar entrada" pelo mesmo caminho do XML (F3-19); E2E — depende: F3-20.b
+  - [ ] F3-20.d · Primeira busca real no Ambiente Nacional de homologação com o certificado da empresa — depende: F3-20.c · externo: E1
 - [ ] F3-21 · Desktop: assinatura A1 local e A3 pelo Conector — depende: F3-09
 - [x] F3-21.a · Certificado A1 instalado no aparelho (web e desktop): chave não exportável no armazenamento local, assinatura da nota sem internet e tela em Periféricos, com E2E nas duas cascas — depende: F3-09
 - [ ] F3-21.b · Certificado A3 (token ou cartão) pelo desktop e pelo Conector, via PKCS#11 — depende: F3-21.a · externo: E18

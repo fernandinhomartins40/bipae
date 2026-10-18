@@ -24,6 +24,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { FileUp } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useApp, useCan } from '../context';
+import { ReceivedNotes } from './received-notes';
 
 interface StoreRow {
   id: string;
@@ -66,14 +67,18 @@ export function PurchasesPage() {
     }
   };
 
+  /** Prévia da entrada a partir do XML (do arquivo ou das notas recebidas, F3-20). */
+  const openXml = async (xml: string) => {
+    const data = await api.post<PurchasePreview>('/purchases/preview', { xml });
+    setPreview({ xml, data });
+  };
+
   const open = async (file: File | undefined) => {
     if (!file) return;
     setError(null);
     setDone(null);
     try {
-      const xml = await file.text();
-      const data = await api.post<PurchasePreview>('/purchases/preview', { xml });
-      setPreview({ xml, data });
+      await openXml(await file.text());
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -113,6 +118,12 @@ export function PurchasesPage() {
           {done}
         </Alert>
       )}
+      <ReceivedNotes
+        onImport={async (xml) => {
+          setDone(null);
+          await openXml(xml);
+        }}
+      />
       {purchases.error && <Alert>{(purchases.error as Error).message}</Alert>}
       {purchases.data && purchases.data.length === 0 ? (
         <EmptyState title="Nenhuma compra importada ainda">

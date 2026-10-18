@@ -115,6 +115,9 @@ export const companies = pgTable('companies', {
   nfeNextNumber: integer('nfe_next_number').notNull().default(1),
   /** Perfil fiscal das notas da venda condicional com imposto suspenso (F5-12.c.2). */
   demonstrationProfileId: uuid('demonstration_profile_id'),
+  /** Distribuição de DF-e (F3-20): último NSU recebido e quando perguntar de novo. */
+  dfeLastNsu: char('dfe_last_nsu', { length: 15 }).notNull().default('000000000000000'),
+  dfeNextQueryAt: ts('dfe_next_query_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
@@ -1063,6 +1066,31 @@ export const nfeInvoices = pgTable('nfe_invoices', {
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
   issuedAt: ts('issued_at'),
+});
+
+/** Notas emitidas contra o CNPJ da empresa, vindas do Ambiente Nacional (F3-20). */
+export const dfeDocuments = pgTable('dfe_documents', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  accessKey: char('access_key', { length: 44 }).notNull(),
+  nsu: char('nsu', { length: 15 }).notNull(),
+  issuerTaxId: text('issuer_tax_id').notNull(),
+  issuerName: text('issuer_name').notNull(),
+  issuedAt: ts('issued_at'),
+  totalCents: money('total_cents').notNull().default(0),
+  situation: text('situation'),
+  summaryXml: text('summary_xml'),
+  procXml: text('proc_xml'),
+  manifestation: text('manifestation', {
+    enum: ['ciencia', 'confirmacao', 'desconhecimento', 'naoRealizada'],
+  }),
+  manifestationStatus: text('manifestation_status', { enum: ['registered', 'rejected', 'error'] }),
+  manifestationReason: text('manifestation_reason'),
+  manifestationProtocol: text('manifestation_protocol'),
+  manifestationMessage: text('manifestation_message'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
 });
 
 /** Eventos da nota enviados à SEFAZ: o cancelamento (F3-17). */

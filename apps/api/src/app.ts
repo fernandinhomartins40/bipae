@@ -70,6 +70,7 @@ import {
   NfceEmissionService,
 } from './modules/fiscal/nfce-emission.service';
 import { NfeInvoicesController, NfeInvoicesService } from './modules/fiscal/nfe-invoices.service';
+import { DfeController, DfeService } from './modules/fiscal/dfe.service';
 import {
   AccountantExportController,
   AccountantExportService,
@@ -171,6 +172,7 @@ class AppModule {
         TransferController,
         NfceEmissionController,
         NfeInvoicesController,
+        DfeController,
         FiscalEventsController,
         AccountantExportController,
         LotsController,
@@ -236,6 +238,7 @@ class AppModule {
         SefazService,
         NfceEmissionService,
         NfeInvoicesService,
+        DfeService,
         FiscalEventsService,
         AccountantExportService,
         PurchasesService,
