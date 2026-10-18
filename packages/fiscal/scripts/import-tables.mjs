@@ -37,6 +37,7 @@ import { baStReferences, parseBaAnexo1 } from './st-ba.mjs';
 import { goStReferences, parseGoApendiceII } from './st-go.mjs';
 import { parsePeAnexo37, peStReferences } from './st-pe.mjs';
 import { parsePbSheet, pbStReferences } from './st-pb.mjs';
+import { mtStReferences, parseMtPortaria195 } from './st-mt.mjs';
 import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
 import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
@@ -654,6 +655,19 @@ async function importStReferences(cest) {
     url: 'https://www.sefaz.pb.gov.br/legislacao/99-regulamentos/anexos-icms/11601-substituicao-tributaria-anexo-v-atualizado-pela-gostex-em-27-01-2022',
     segmentName: (code) => pbNames.get(code) ?? `Segmento ${code} do CEST`,
   });
+  // Mato Grosso (F3-26.d.MT): Portaria 195/2019-SEFAZ/MT consolidada.
+  const mtNames = new Map(cest.segments.map((s) => [s.code, s.name]));
+  const mtParsed = parseMtPortaria195(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stMtPortaria195.file))).toString('latin1'),
+    known,
+  );
+  if (mtParsed.unknown.length > 10) {
+    throw new Error(`Portaria 195/2019 (MT): ${mtParsed.unknown.length} CEST fora do Convênio`);
+  }
+  const mt = mtStReferences(mtParsed, {
+    url: manifest.stMtPortaria195.page,
+    segmentName: (code) => mtNames.get(code) ?? `Segmento ${code} do CEST`,
+  });
   // Pernambuco (F3-26.d.PE): Anexo 37 e Anexos 37-A a 37-C do RICMS/PE consolidado.
   const pe = peStReferences(
     parsePeAnexo37(
@@ -692,6 +706,7 @@ async function importStReferences(cest) {
       ro.segment,
       pe.segment,
       pb.segment,
+      mt.segment,
     ],
     references: [
       {
@@ -718,6 +733,7 @@ async function importStReferences(cest) {
       ...ro.references,
       ...pe.references,
       ...pb.references,
+      ...mt.references,
     ],
   };
 }

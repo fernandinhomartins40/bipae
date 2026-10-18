@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-26.d.MT Substituição tributária em Mato Grosso] — 18/10/2026
+
+### Adicionado
+- **ST em Mato Grosso** a partir da Portaria 195/2019-SEFAZ/MT, no texto consolidado da SEFAZ-MT: 21 segmentos, cada CEST com duas MVAs.
+  - A do Anexo Único vale para o destinatário optante pelo crédito outorgado do Anexo XVII do RICMS/MT.
+  - A do art. 2º-B vale para os demais.
+  - A descrição diz qual é qual.
+  - Ficam de fora as linhas de redação anterior ou original e as de vigência encerrada, além da tabela de porta a porta de antes da renumeração.
+- O monitor semanal das fontes passa a conferir a portaria de Mato Grosso.
+
 ## [F3-26.d.PB Substituição tributária na Paraíba] — 18/10/2026
 
 ### Adicionado

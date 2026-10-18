@@ -35,6 +35,7 @@ import { parseBaAnexo1 } from './st-ba.mjs';
 import { parseGoApendiceII } from './st-go.mjs';
 import { parsePeAnexo37 } from './st-pe.mjs';
 import { parsePbSheet } from './st-pb.mjs';
+import { parseMtPortaria195 } from './st-mt.mjs';
 import { parseRjAnexoI } from './st-rj.mjs';
 import { parseEsPortaria16R } from './st-es.mjs';
 import { parseAlDecreto90309 } from './st-al.mjs';
@@ -593,6 +594,44 @@ async function checkPb() {
   };
 }
 
+/** Mato Grosso: a Portaria 195/2019 consolidada de hoje, lida como na geração. */
+async function checkMt() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (html) => {
+    const r = parseMtPortaria195(html, known);
+    return [
+      ...r.rows.map((i) => [i.item, i.cest, i.mva, i.ncms.join(' ')]),
+      ...r.ranges.map((x) => [x.inciso, x.spans.flat().join(' '), x.mva]),
+    ];
+  };
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stMtPortaria195.file))).toString('latin1'),
+  );
+  const title = 'ST em Mato Grosso (Portaria 195/2019-SEFAZ/MT)';
+  let now;
+  try {
+    now = rowsOf((await download(manifest.stMtPortaria195.page)).body.toString('latin1'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stMtPortaria195.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stMtPortaria195.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Rio de Janeiro: o .doc do Anexo I de hoje, lido como na geração. */
 async function checkRj() {
   const known = new Set(
@@ -1036,6 +1075,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Goiás', manifest.stGoAnexoVIII.page, checkGo),
     await safe('ST em Pernambuco', manifest.stPeRicms.page, checkPe),
     await safe('ST na Paraíba', manifest.stPbAnexo5_01.page, checkPb),
+    await safe('ST em Mato Grosso', manifest.stMtPortaria195.page, checkMt),
     await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),

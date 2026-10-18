@@ -194,7 +194,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
       - Busca de 18/10/2026: o RICMS/DF é a norma 33077 do SINJ-DF, mas o arquivo "atualizado" de lá é só a republicação de 1998 (Anexo IV com as MVA de 1997). O texto compilado do Anexo IV não está no SINJ nem no portal da Secretaria de Economia; continua sem fonte oficial que dê para ler.
     - [ ] F3-26.d.CE · Ceará: Anexo IX do RICMS/CE (Decreto 33.327/2019); achar o texto consolidado oficial
       - Busca de 18/10/2026: o portal oficial (sefazlegis.sefaz.ce.gov.br) abre os arquivos pelo id sem login, mas a busca exige captcha; o único PDF achado é o texto original de 2019, sem as alterações. Falta o id do texto consolidado do Anexo IX.
-    - [ ] F3-26.d.MT · Mato Grosso: Anexo X do RICMS/MT e Portaria 195/2019 (Lotus Notes, sem endereço direto)
+    - [x] F3-26.d.MT · Mato Grosso: Portaria 195/2019-SEFAZ/MT consolidada até a 212/2022 (endereço direto do Lotus Notes, só por HTTP); 21 segmentos com a MVA do Anexo Único (optante pelo crédito outorgado) e a do art. 2º-B (demais), redações antigas e a tabela de antes da renumeração fora; monitor semanal
     - [ ] F3-26.d.MS · Mato Grosso do Sul: Anexo III do RICMS/MS (Lotus Notes, sem endereço direto)
     - [x] F3-26.d.PB · Paraíba: planilhas oficiais do Anexo 5 do RICMS/PB por segmento (SEFAZ-PB, 10/04/2025; 17 planilhas, 542 linhas), com a vigência de cada linha, MVA original e as duas MVAs das autopeças (com e sem índice de fidelidade); pauta fiscal indicada na nota; combustíveis (PMPF) e energia fora; monitor semanal
     - [ ] F3-26.d.PI · Piauí: Anexo X do RICMS/PI (portal em JavaScript, sem o texto consolidado)

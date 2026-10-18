@@ -510,3 +510,26 @@ describe('Pernambuco: Anexo 37 do RICMS/PE (F3-26.d.PE)', () => {
     expect(stReferencesFor('PE', '22021000', '2026-10-18')).toEqual([]);
   });
 });
+
+describe('Mato Grosso: Portaria 195/2019-SEFAZ/MT (F3-26.d.MT)', () => {
+  const mt = ST_REFERENCES.filter((r) => r.uf === 'MT');
+  const linesOf = (cest: string) => mt.flatMap((r) => r.items).filter((i) => i.cest === cest);
+
+  it('duas MVAs por CEST: a do Anexo Único (crédito outorgado) e a do art. 2º-B (demais)', () => {
+    expect(ST_REFERENCE_UFS).toContain('MT');
+    const catalisador = linesOf('0100100');
+    expect(catalisador.map((i) => i.mva)).toEqual(['50,39', '65,29']);
+    expect(catalisador[0]!.description).toMatch(/crédito outorgado/);
+    expect(catalisador[1]!.description).toMatch(/art\. 2º-B/);
+  });
+
+  it('vale a redação atual: água sanitária com 38,14% (Portaria 161/2022), não os 59,64%', () => {
+    expect(linesOf('1100100')[0]!.mva).toBe('38,14');
+    // Massas instantâneas: 33,69% (Portaria 143/2022); a redação original de 45,52% fica de fora.
+    expect(linesOf('1704701')[0]!.mva).toBe('33,69');
+  });
+
+  it('porta a porta só da tabela XX (a XIX antiga, de antes da renumeração, fica de fora)', () => {
+    expect(linesOf('2800100').filter((i) => i.item.endsWith('/1'))).toHaveLength(1);
+  });
+});
