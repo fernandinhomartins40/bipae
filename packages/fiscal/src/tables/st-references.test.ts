@@ -533,3 +533,36 @@ describe('Mato Grosso: Portaria 195/2019-SEFAZ/MT (F3-26.d.MT)', () => {
     expect(linesOf('2800100').filter((i) => i.item.endsWith('/1'))).toHaveLength(1);
   });
 });
+
+describe('Pará, Piauí e Sergipe: Portal Nacional da ST do CONFAZ (F3-26.d)', () => {
+  const linesOf = (uf: string, cest: string) =>
+    ST_REFERENCES.filter((r) => r.uf === uf)
+      .flatMap((r) => r.items)
+      .filter((i) => i.cest === cest);
+
+  it('a MVA das operações internas declarada pela UF, sem as ajustadas', () => {
+    for (const uf of ['PA', 'PI', 'SE']) expect(ST_REFERENCE_UFS).toContain(uf);
+    expect(linesOf('PA', '0900200').map((i) => i.mva)).toEqual(['102,31']);
+    expect(linesOf('SE', '1600100').map((i) => i.mva)).toEqual(['42']);
+    // Piauí tem MVA própria nas autopeças: 40% e 26,5% com índice de fidelidade.
+    expect(linesOf('PI', '0100100').map((i) => i.mva)).toEqual(['40', '26,5']);
+  });
+
+  it('duas MVAs viram duas linhas, com o rótulo da planilha', () => {
+    const catalisador = linesOf('PA', '0100100');
+    expect(catalisador.map((i) => i.description)).toEqual([
+      expect.stringMatching(/Regra Geral$/),
+      expect.stringMatching(/Índice Fidelização$/),
+    ]);
+  });
+
+  it('aba repetida por engano (a "Farinha de trigo" do PI copia as lâmpadas) entra uma vez', () => {
+    expect(linesOf('PI', '0900200')).toHaveLength(1);
+  });
+
+  it('aba só com preço (pauta/PFC) ou sem a MVA interna fica de fora', () => {
+    // Sergipe: águas e bebidas frias vão por preço (PFC); alimentícios não têm a coluna interna.
+    expect(linesOf('SE', '0300100')).toEqual([]);
+    expect(linesOf('SE', '1704400')).toEqual([]);
+  });
+});

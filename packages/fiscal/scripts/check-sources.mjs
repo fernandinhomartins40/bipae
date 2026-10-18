@@ -36,6 +36,7 @@ import { parseGoApendiceII } from './st-go.mjs';
 import { parsePeAnexo37 } from './st-pe.mjs';
 import { parsePbSheet } from './st-pb.mjs';
 import { parseMtPortaria195 } from './st-mt.mjs';
+import { parseConfazSt } from './st-confaz.mjs';
 import { parseRjAnexoI } from './st-rj.mjs';
 import { parseEsPortaria16R } from './st-es.mjs';
 import { parseAlDecreto90309 } from './st-al.mjs';
@@ -632,6 +633,53 @@ async function checkMt() {
   };
 }
 
+/**
+ * PA, PI e SE no Portal Nacional da ST: a planilha guardada contra a mesma de hoje e contra a
+ * página da UF no portal, que ganha uma versão nova quando a UF manda outra planilha.
+ */
+async function checkConfazSt(key) {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (path) =>
+    parseConfazSt(readXlsx(path), { known }).flatMap((s) =>
+      s.items.map((i) => [s.name, i.cest, i.mva, i.label ?? '']),
+    );
+  const page = manifest[key].page;
+  const title = `ST no Portal Nacional do CONFAZ (${key.slice(-2).toUpperCase()})`;
+  const old = rowsOf(join(sourcesDir, manifest[key].file));
+  let now;
+  let newer;
+  try {
+    const tmp = join(mkdtempSync(join(tmpdir(), 'bipae-st-confaz-')), 'planilha.xlsx');
+    writeFileSync(tmp, (await download(page)).body);
+    now = rowsOf(tmp);
+    // A página da UF lista as versões; uma planilha nova aparece com outro endereço.
+    const folder = page.slice(0, page.lastIndexOf('/'));
+    const html = (await download(folder)).body.toString('utf8');
+    newer = [...html.matchAll(/href="([^"]+\.xlsx)"/g)]
+      .map((m) => m[1])
+      .filter((u, i, all) => all.indexOf(u) === i)
+      .slice(0, 1)
+      .filter((u) => u !== page);
+  } catch (error) {
+    return {
+      title,
+      page,
+      status: 'mudou',
+      details: [`não deu para ler a planilha: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  const details = [
+    ...(newer.length > 0 ? [`versão nova no portal: ${newer[0]}`] : []),
+    ...(diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : []),
+  ];
+  return { title, page, status: details.length > 0 ? 'mudou' : 'igual', details };
+}
+
 /** Rio de Janeiro: o .doc do Anexo I de hoje, lido como na geração. */
 async function checkRj() {
   const known = new Set(
@@ -1076,6 +1124,15 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Pernambuco', manifest.stPeRicms.page, checkPe),
     await safe('ST na Paraíba', manifest.stPbAnexo5_01.page, checkPb),
     await safe('ST em Mato Grosso', manifest.stMtPortaria195.page, checkMt),
+    await safe('ST do Pará (Portal do CONFAZ)', manifest.stConfazPa.page, () =>
+      checkConfazSt('stConfazPa'),
+    ),
+    await safe('ST do Piauí (Portal do CONFAZ)', manifest.stConfazPi.page, () =>
+      checkConfazSt('stConfazPi'),
+    ),
+    await safe('ST de Sergipe (Portal do CONFAZ)', manifest.stConfazSe.page, () =>
+      checkConfazSt('stConfazSe'),
+    ),
     await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),

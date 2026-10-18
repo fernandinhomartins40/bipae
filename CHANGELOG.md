@@ -1,5 +1,16 @@
 # Changelog
 
+## [F3-26.d.PA/PI/SE Substituição tributária pelo Portal Nacional da ST] — 18/10/2026
+
+### Adicionado
+- **ST no Pará, no Piauí e em Sergipe** a partir das planilhas que cada UF declara no Portal Nacional da Substituição Tributária do CONFAZ (Convênio ICMS 18/2017, leiaute do Ato COTEPE/ICMS 12/2018): 1.443 linhas com CEST, NCM e a MVA das operações internas.
+  - As MVAs ajustadas para as entradas interestaduais ficam de fora.
+  - Onde a UF declara mais de uma MVA (por tipo de remetente ou índice de fidelidade), cada uma vira uma linha com o rótulo da planilha.
+  - Linha marcada para não ter ST nas operações internas não entra.
+  - Abas só com preço (pauta/PFC) ou sem a MVA interna ficam de fora.
+- Um leitor só serve para as planilhas de qualquer UF do portal.
+- O monitor semanal confere as três planilhas e avisa quando a UF publica uma versão nova.
+
 ## [F3-26.d.MT Substituição tributária em Mato Grosso] — 18/10/2026
 
 ### Adicionado

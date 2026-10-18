@@ -523,6 +523,33 @@
   "downloadedAt": "2026-10-18",
   "sha256": "82dd27d118085a2a4c4f14491f49db0d449d751deeed6f47bf6abdd2f3f08d75"
  },
+ "stConfazPa": {
+  "file": "CONFAZ_Portal_ST_PA_versao_0006_2024-07-01.xlsx",
+  "title": "Portal Nacional da Substituição Tributária (CONFAZ, Convênio ICMS 18/2017): planilha de Pará (PA), versão 0006, efeitos a partir de 01/07/2024; CEST em ST e MVA das operações internas por segmento",
+  "publisher": "Conselho Nacional de Política Fazendária (CONFAZ), com a planilha declarada pela UF",
+  "page": "https://www.confaz.fazenda.gov.br/legislacao/portal-nacional-da-substituicao-tributaria/para/planilhas-portal-confaz-para-conv-18-17-efeitos-a-partir-de-01-julho-2024.xlsx",
+  "publishedAt": "2024-07-01",
+  "downloadedAt": "2026-10-18",
+  "sha256": "218ad699afbd4e05d8644e7b07703c32491a3a743f16c2b23b8f2545f481c9da"
+ },
+ "stConfazPi": {
+  "file": "CONFAZ_Portal_ST_PI_versao_001_2023-03-08.xlsx",
+  "title": "Portal Nacional da Substituição Tributária (CONFAZ, Convênio ICMS 18/2017): planilha de Piauí (PI), versão 001, efeitos a partir de 08/03/2023; CEST em ST e MVA das operações internas por segmento",
+  "publisher": "Conselho Nacional de Política Fazendária (CONFAZ), com a planilha declarada pela UF",
+  "page": "https://www.confaz.fazenda.gov.br/legislacao/portal-nacional-da-substituicao-tributaria/piaui/portal-st-planilha-confaz.xlsx",
+  "publishedAt": "2023-03-08",
+  "downloadedAt": "2026-10-18",
+  "sha256": "1449485fc6bf239a97b937af6b107f251146bf3fa6f57376367056330c684602"
+ },
+ "stConfazSe": {
+  "file": "CONFAZ_Portal_ST_SE_versao_0019_2023-07-01.xlsx",
+  "title": "Portal Nacional da Substituição Tributária (CONFAZ, Convênio ICMS 18/2017): planilha de Sergipe (SE), versão 0019, efeitos a partir de 01/07/2023; CEST em ST e MVA das operações internas por segmento",
+  "publisher": "Conselho Nacional de Política Fazendária (CONFAZ), com a planilha declarada pela UF",
+  "page": "https://www.confaz.fazenda.gov.br/legislacao/portal-nacional-da-substituicao-tributaria/sergipe-1/portal-st-se-v0019-1.xlsx",
+  "publishedAt": "2023-07-01",
+  "downloadedAt": "2026-10-18",
+  "sha256": "328fb6d36808b94421a0777e982e85706fcfd9b79c62f07ca3464500b23e088e"
+ },
  "stPeRicms": {
   "file": "SEFAZ-PE_RICMS_Decreto_44650-2017_2026-10-18.htm.gz",
   "title": "RICMS/PE (Decreto 44.650/2017), texto consolidado: Anexo 37 (substituição tributária por segmento e MVA) e Anexos 37-A a 37-C (MVA por item do Convênio ICMS 142/2018)",

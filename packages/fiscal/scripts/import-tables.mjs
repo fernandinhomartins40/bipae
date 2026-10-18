@@ -38,6 +38,7 @@ import { goStReferences, parseGoApendiceII } from './st-go.mjs';
 import { parsePeAnexo37, peStReferences } from './st-pe.mjs';
 import { parsePbSheet, pbStReferences } from './st-pb.mjs';
 import { mtStReferences, parseMtPortaria195 } from './st-mt.mjs';
+import { confazStReferences, parseConfazSt } from './st-confaz.mjs';
 import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
 import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
@@ -655,6 +656,23 @@ async function importStReferences(cest) {
     url: 'https://www.sefaz.pb.gov.br/legislacao/99-regulamentos/anexos-icms/11601-substituicao-tributaria-anexo-v-atualizado-pela-gostex-em-27-01-2022',
     segmentName: (code) => pbNames.get(code) ?? `Segmento ${code} do CEST`,
   });
+  // PA, PI e SE (F3-26.d): planilhas que a UF declara no Portal Nacional da ST do CONFAZ.
+  const confazNames = new Map(cest.segments.map((s) => [s.code, s.name]));
+  const confaz = ['Pa', 'Pi', 'Se'].map((k) => {
+    const key = `stConfaz${k}`;
+    const uf = k.toUpperCase();
+    const parsed = parseConfazSt(readXlsx(join(sourcesDir, manifest[key].file)), { known });
+    const unknownCount = parsed.reduce((n, s) => n + s.unknown.length, 0);
+    if (unknownCount > 10)
+      throw new Error(`Portal da ST (${uf}): ${unknownCount} CEST fora do Convênio`);
+    return confazStReferences(parsed, {
+      uf,
+      url: manifest[key].page,
+      source: key,
+      act: `Portal Nacional da Substituição Tributária (CONFAZ), planilha de ${uf}`,
+      segmentName: (code) => confazNames.get(code) ?? `Segmento ${code} do CEST`,
+    });
+  });
   // Mato Grosso (F3-26.d.MT): Portaria 195/2019-SEFAZ/MT consolidada.
   const mtNames = new Map(cest.segments.map((s) => [s.code, s.name]));
   const mtParsed = parseMtPortaria195(
@@ -707,6 +725,7 @@ async function importStReferences(cest) {
       pe.segment,
       pb.segment,
       mt.segment,
+      ...confaz.map((c) => c.segment),
     ],
     references: [
       {
@@ -734,6 +753,7 @@ async function importStReferences(cest) {
       ...pe.references,
       ...pb.references,
       ...mt.references,
+      ...confaz.flatMap((c) => c.references),
     ],
   };
 }
