@@ -24,9 +24,12 @@ import { AppError, notFound, parse } from '../../common/errors';
 import { assertStore, canUseStore, storeCondition } from '../../common/stores';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import {
+  companies,
   conditionalItems,
   conditionals,
   customers,
+  fiscalDocuments,
+  nfeInvoices,
   products,
   stockMovements,
   stores,
@@ -34,6 +37,7 @@ import {
   users,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { NfeInvoicesService } from '../fiscal/nfe-invoices.service';
 
 /** Hoje no fuso de Brasília, como AAAA-MM-DD. */
 export function localToday(now = new Date()): string {
@@ -58,11 +62,13 @@ export class ConditionalsService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(NfeInvoicesService) private readonly nfe: NfeInvoicesService,
   ) {}
 
   private async views(tx: Tx, rows: (typeof conditionals.$inferSelect)[]) {
     if (rows.length === 0) return [];
     const ids = rows.map((r) => r.id);
+    const invoices = await this.nfe.forConditionals(tx, ids);
     const [storeRows, customerRows, items] = await Promise.all([
       tx
         .select({ id: stores.id, name: stores.name })
@@ -98,6 +104,9 @@ export class ConditionalsService {
         createdAt: r.createdAt.toISOString(),
         closedAt: r.closedAt?.toISOString() ?? null,
         tabOrderId: r.tabOrderId,
+        invoices: invoices
+          .filter((n) => n.conditionalId === r.id)
+          .map(({ conditionalId: _c, accessKey: _k, ...n }) => n),
         items: mine.map(({ i, name, unit }) => ({
           productId: i.productId,
           productName: name,
@@ -145,6 +154,36 @@ export class ConditionalsService {
       ctx,
       async (tx) => (await this.views(tx, [await this.load(tx, ctx, id)]))[0]!,
     );
+  }
+
+  /**
+   * As notas do Ajuste SINIEF 02/18 saem pelo Bipaê quando a empresa da loja escolheu o perfil
+   * fiscal da venda condicional (F5-12.c.2); sem ele, vale o aviso para emitir no emissor de
+   * sempre.
+   */
+  private async fiscalCompany(tx: Tx, storeId: string) {
+    const [row] = await tx
+      .select({ id: companies.id, profile: companies.demonstrationProfileId })
+      .from(stores)
+      .innerJoin(companies, eq(companies.id, stores.companyId))
+      .where(eq(stores.id, storeId));
+    return row?.profile ? row.id : null;
+  }
+
+  /** A chave da remessa autorizada do condicional; null quando ela não saiu pelo Bipaê. */
+  private async remessaKey(tx: Tx, conditionalId: string) {
+    const [row] = await tx
+      .select({ key: fiscalDocuments.accessKey })
+      .from(nfeInvoices)
+      .innerJoin(fiscalDocuments, eq(fiscalDocuments.invoiceId, nfeInvoices.id))
+      .where(
+        and(
+          eq(nfeInvoices.conditionalId, conditionalId),
+          eq(nfeInvoices.demonstration, 'remessa'),
+          eq(fiscalDocuments.status, 'authorized'),
+        ),
+      );
+    return row?.key ?? null;
   }
 
   private move(
@@ -197,12 +236,13 @@ export class ConditionalsService {
         'A mesma peça aparece duas vezes: some as quantidades.',
       );
     }
-    return withTenant(this.db, ctx, async (tx) => {
-      const [customer] = await tx
-        .select({ id: customers.id, name: customers.name })
+    const created = await withTenant(this.db, ctx, async (tx) => {
+      const [fullCustomer] = await tx
+        .select()
         .from(customers)
         .where(eq(customers.id, input.customerId));
-      if (!customer) throw notFound('Cliente');
+      if (!fullCustomer) throw notFound('Cliente');
+      const customer = { id: fullCustomer.id, name: fullCustomer.name };
       const found = await tx
         .select({
           id: products.id,
@@ -267,8 +307,28 @@ export class ConditionalsService {
         entityId: id,
         data: { number, customer: customer.name, dueOn, items: input.items },
       });
-      return (await this.views(tx, [row!]))[0]!;
+      // F5-12.c.2: a remessa para demonstração (CFOP 5.912) sai junto com as peças.
+      const companyId = await this.fiscalCompany(tx, input.storeId);
+      const remessa = companyId
+        ? await this.nfe.createForConditional(tx, ctx, {
+            conditionalId: id,
+            companyId,
+            storeId: input.storeId,
+            customer: fullCustomer!,
+            note: 'remessa',
+            items: input.items.map((i) => ({
+              productId: i.productId,
+              quantityMilli: i.quantityMilli,
+              unitPriceCents: found.find((p) => p.id === i.productId)!.priceCents,
+            })),
+            references: [],
+          })
+        : null;
+      return { id: row!.id, remessa };
     });
+    // A nota nunca impede o condicional: se faltar algo, ela fica no rascunho com o que falta.
+    if (created.remessa) await this.nfe.tryIssue(ctx, created.remessa);
+    return this.get(ctx, created.id);
   }
 
   /**
@@ -276,7 +336,8 @@ export class ConditionalsService {
    * como pedido da comanda, e a venda baixa o estoque de novo quando for feita.
    */
   async close(ctx: RequestContext, id: string, input: z.output<typeof conditionalCloseInput>) {
-    return withTenant(this.db, ctx, async (tx) => {
+    const toIssue: string[] = [];
+    await withTenant(this.db, ctx, async (tx) => {
       const row = await this.load(tx, ctx, id);
       if (row.status !== 'open') {
         throw new AppError(
@@ -307,7 +368,12 @@ export class ConditionalsService {
         if (!weighable && keptMilli % 1000 !== 0) {
           throw new AppError(422, 'invalid_quantity', `${name} vai por unidade inteira.`);
         }
-        return { productId: i.productId, quantityMilli: i.quantityMilli, keptMilli };
+        return {
+          productId: i.productId,
+          quantityMilli: i.quantityMilli,
+          keptMilli,
+          unitPriceCents: i.unitPriceCents,
+        };
       });
       const now = new Date();
       const [customer] = await tx
@@ -336,7 +402,48 @@ export class ConditionalsService {
       }
       let tabOrderId: string | null = null;
       const sold = kept.filter((k) => k.keptMilli > 0);
-      if (sold.length > 0) {
+      // F5-12.c.2: a remessa saiu por NF-e. A volta tem nota de retorno; o que o cliente ficou tem a
+      // entrada simbólica e a venda por NF-e com a chave da remessa (a NFC-e não pode referenciar
+      // outra nota, regra BA01-10 do MOC; dúvida D-033). A venda fica em rascunho para a pessoa
+      // escolher a forma de pagamento.
+      const remessa = await this.remessaKey(tx, id);
+      if (remessa) {
+        const companyId = (await this.fiscalCompany(tx, row.storeId)) ?? null;
+        const [fullCustomer] = await tx
+          .select()
+          .from(customers)
+          .where(eq(customers.id, row.customerId));
+        const note = (
+          name: 'retorno' | 'entradaSimbolica' | 'venda',
+          lines: { productId: string; quantityMilli: number; unitPriceCents: number }[],
+        ) =>
+          this.nfe.createForConditional(tx, ctx, {
+            conditionalId: id,
+            companyId: companyId ?? '',
+            storeId: row.storeId,
+            customer: fullCustomer!,
+            note: name,
+            items: lines,
+            references: [remessa],
+          });
+        const returned = kept
+          .filter((k) => k.keptMilli < k.quantityMilli)
+          .map((k) => ({
+            productId: k.productId,
+            quantityMilli: k.quantityMilli - k.keptMilli,
+            unitPriceCents: k.unitPriceCents,
+          }));
+        const keptLines = sold.map((k) => ({
+          productId: k.productId,
+          quantityMilli: k.keptMilli,
+          unitPriceCents: k.unitPriceCents,
+        }));
+        if (companyId && returned.length > 0) toIssue.push(await note('retorno', returned));
+        if (companyId && keptLines.length > 0) {
+          toIssue.push(await note('entradaSimbolica', keptLines));
+          await note('venda', keptLines);
+        }
+      } else if (sold.length > 0) {
         const [seller] = await tx
           .select({ name: users.name })
           .from(users)
@@ -364,19 +471,22 @@ export class ConditionalsService {
         data: {
           number: row.number,
           customer: customer?.name ?? null,
-          kept: sold,
+          kept: sold.map((k) => ({ productId: k.productId, quantityMilli: k.keptMilli })),
           returned: kept
             .filter((k) => k.keptMilli < k.quantityMilli)
             .map((k) => ({ productId: k.productId, quantityMilli: k.quantityMilli - k.keptMilli })),
         },
       });
-      return (await this.views(tx, [updated!]))[0]!;
+      return updated!;
     });
+    for (const invoice of toIssue) await this.nfe.tryIssue(ctx, invoice);
+    return this.get(ctx, id);
   }
 
   /** Cancelar (o cliente não levou ou devolveu tudo): as peças voltam ao estoque. */
   async cancel(ctx: RequestContext, id: string) {
-    return withTenant(this.db, ctx, async (tx) => {
+    let retorno: string | null = null;
+    await withTenant(this.db, ctx, async (tx) => {
       const row = await this.load(tx, ctx, id);
       if (row.status !== 'open') {
         throw new AppError(
@@ -412,8 +522,32 @@ export class ConditionalsService {
         entityId: id,
         data: { number: row.number },
       });
-      return (await this.views(tx, [updated!]))[0]!;
+      // F5-12.c.2: com a remessa por NF-e, a volta de tudo tem a nota de retorno.
+      const remessa = await this.remessaKey(tx, id);
+      const companyId = remessa ? await this.fiscalCompany(tx, row.storeId) : null;
+      if (remessa && companyId) {
+        const [fullCustomer] = await tx
+          .select()
+          .from(customers)
+          .where(eq(customers.id, row.customerId));
+        retorno = await this.nfe.createForConditional(tx, ctx, {
+          conditionalId: id,
+          companyId,
+          storeId: row.storeId,
+          customer: fullCustomer!,
+          note: 'retorno',
+          items: items.map((i) => ({
+            productId: i.productId,
+            quantityMilli: i.quantityMilli,
+            unitPriceCents: i.unitPriceCents,
+          })),
+          references: [remessa],
+        });
+      }
+      return updated!;
     });
+    if (retorno) await this.nfe.tryIssue(ctx, retorno);
+    return this.get(ctx, id);
   }
 }
 

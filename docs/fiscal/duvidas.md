@@ -36,7 +36,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-030 | ✅ resolvida | Descrição do primeiro item da NFC-e em homologação |
 | D-031 | 🟡 aguarda o dono | SPED EFD ICMS/IPI: gerar no Bipaê ou deixar com o contador (E21) |
 | D-032 | ✅ resolvida | NFC-e de entrega a domicílio (delivery) |
-| D-033 | 🟡 parcial | Venda condicional: notas da remessa, da volta e da venda |
+| D-033 | ✅ resolvida | Venda condicional: notas da remessa, da volta e da venda |
 | D-034 | 🟡 parcial | Código de benefício fiscal (cBenef) por UF |
 | D-035 | 🟡 configurável | Natureza da operação da entrada simbólica do condicional passa de 60 caracteres |
 
@@ -574,7 +574,13 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Imposto suspenso:** remessa, retorno e entrada simbólica vão sem destaque. No regime normal, o perfil precisa do CST 50 (suspensão, Tabela B do CST).
   - **O que o Ajuste não diz:** o CSOSN do Simples (400 ou 900), o CST do PIS/COFINS e o cClassTrib dessas notas não estão no Ajuste, e não foi achada resposta oficial. Por isso vêm de um perfil fiscal que a empresa escolhe para a venda condicional; sem ele, a nota fica em "falta resolver".
   - **Outro estado:** a nota para cliente de outro estado (CFOP 6.912) ainda não é emitida. A partilha também fica suspensa (cláusula quarta, § 1º), e isso pede regra própria.
-- **Pergunta em aberto:** quando a remessa foi feita por NF-e, a venda do que ficou pode sair em NFC-e, ou tem de ser NF-e para referenciar a chave da remessa, como pede a cláusula oitava, II, "c"? Quando a F5-12.c chegar, a venda do condicional passa a ser feita por NF-e com a referência, a menos que uma fonte oficial permita a NFC-e.
+- **Resposta (17/10/2026, MOC 7.0, Anexo I, guardado em `packages/fiscal/sources`):** a regra **BA01-10** diz que a NFC-e não pode referenciar outros documentos (obrigatória, rejeição 708). Como a cláusula oitava, II, "c", pede a chave da remessa na venda, a venda do que o cliente ficou sai por **NF-e** quando a remessa saiu por NF-e.
+- **Implementação de 17/10/2026 (F5-12.c.2):** as notas saem pelo Bipaê só quando a empresa escolhe o perfil fiscal da venda condicional. Sem ele, continua o fluxo antigo, com o aviso para emitir no emissor de sempre.
+  - **Saída:** a remessa sai com as peças.
+  - **Volta:** o retorno do que voltou e a entrada simbólica saem sozinhos quando completos.
+  - **Venda:** a venda do que ficou vira rascunho de NF-e com a chave da remessa, para a pessoa escolher a forma de pagamento, no lugar da comanda.
+  - **Estoque:** remessa, retorno e entrada simbólica não mexem no estoque, porque o condicional já mexe; a venda baixa ao ser emitida.
+- **Pergunta original (respondida acima):** quando a remessa foi feita por NF-e, a venda do que ficou pode sair em NFC-e, ou tem de ser NF-e para referenciar a chave da remessa, como pede a cláusula oitava, II, "c"? Quando a F5-12.c chegar, a venda do condicional passa a ser feita por NF-e com a referência, a menos que uma fonte oficial permita a NFC-e.
 
 ### D-034 — Código de benefício fiscal (cBenef) por UF
 

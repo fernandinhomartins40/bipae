@@ -113,6 +113,8 @@ export const companies = pgTable('companies', {
   /** Série da NF-e da retaguarda e o próximo número (F3-33.b). */
   nfeSeries: integer('nfe_series').notNull().default(1),
   nfeNextNumber: integer('nfe_next_number').notNull().default(1),
+  /** Perfil fiscal das notas da venda condicional com imposto suspenso (F5-12.c.2). */
+  demonstrationProfileId: uuid('demonstration_profile_id'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
@@ -1052,6 +1054,11 @@ export const nfeInvoices = pgTable('nfe_invoices', {
   installments: jsonb('installments').notNull().default([]),
   payments: jsonb('payments').notNull(),
   additionalInfo: text('additional_info'),
+  /** Venda condicional (F5-12.c.2): o condicional e a nota do Ajuste SINIEF 02/18. */
+  conditionalId: uuid('conditional_id'),
+  demonstration: text('demonstration', {
+    enum: ['remessa', 'retorno', 'entradaSimbolica', 'venda'],
+  }),
   createdBy: uuid('created_by').notNull(),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),

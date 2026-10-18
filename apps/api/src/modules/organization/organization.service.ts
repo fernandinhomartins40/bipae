@@ -17,8 +17,8 @@ import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { assertStore, storeCondition } from '../../common/stores';
 import { AppError, notFound } from '../../common/errors';
-import { withTenant, type Db } from '../../db/client';
-import { companies, priceTables, sales, stores, terminals } from '../../db/schema';
+import { withTenant, type Db, type Tx } from '../../db/client';
+import { companies, fiscalProfiles, priceTables, sales, stores, terminals } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
 
@@ -44,6 +44,16 @@ function assertCompanyFiscal(input: CompanyInput, uf: string | null | undefined)
       throw new AppError(422, 'invalid_payment_code', `Código ${code} não vale para ${method}.`);
     }
   }
+}
+
+/** O perfil fiscal da venda condicional é desta empresa (D-033). */
+async function assertDemonstrationProfile(tx: Tx, input: CompanyInput) {
+  if (!input.demonstrationProfileId) return;
+  const [profile] = await tx
+    .select({ id: fiscalProfiles.id })
+    .from(fiscalProfiles)
+    .where(eq(fiscalProfiles.id, input.demonstrationProfileId));
+  if (!profile) throw notFound('Perfil fiscal');
 }
 
 function toTerminal(row: typeof terminals.$inferSelect): Terminal {
@@ -115,6 +125,7 @@ export class OrganizationService {
         .from(companies)
         .where(eq(companies.id, id));
       assertCompanyFiscal(input, input.uf ?? current?.uf);
+      await assertDemonstrationProfile(tx, input);
       const [row] = await tx
         .update(companies)
         .set({ ...input, updatedAt: new Date() })
@@ -135,6 +146,7 @@ export class OrganizationService {
     assertCompanyFiscal(input, input.uf);
     return withTenant(this.db, ctx, async (tx) => {
       await this.limits.assertCanAdd(tx, 'companies');
+      await assertDemonstrationProfile(tx, input);
       const [row] = await tx
         .insert(companies)
         .values({ id: uuidv7(), tenantId: ctx.tenantId, ...input })

@@ -39,6 +39,7 @@ import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   companies,
   companyIcmsRules,
+  customers,
   financialEntries,
   fiscalDocuments,
   fiscalProfiles,
@@ -254,6 +255,19 @@ export class NfeInvoicesService implements OnModuleInit {
       rules,
       additionalInfo: invoice.additionalInfo,
       appVersion: APP_VERSION,
+      ...(invoice.demonstration && {
+        demonstration: {
+          note: invoice.demonstration,
+          profile: company.demonstrationProfileId
+            ? (((
+                await tx
+                  .select({ data: fiscalProfiles.data })
+                  .from(fiscalProfiles)
+                  .where(eq(fiscalProfiles.id, company.demonstrationProfileId))
+              )[0]?.data as SaleFiscalProfile | undefined) ?? null)
+            : null,
+        },
+      }),
     };
   }
 
@@ -292,6 +306,8 @@ export class NfeInvoicesService implements OnModuleInit {
     );
     return {
       id: invoice.id,
+      conditionalId: invoice.conditionalId,
+      demonstration: invoice.demonstration,
       companyId: invoice.companyId,
       storeId: invoice.storeId,
       status: invoice.status,
@@ -331,6 +347,121 @@ export class NfeInvoicesService implements OnModuleInit {
       createdAt: invoice.createdAt.toISOString(),
       updatedAt: invoice.updatedAt.toISOString(),
     };
+  }
+
+  // ---------------------------------------------------------------- venda condicional
+
+  /**
+   * Rascunho de uma nota do condicional (F5-12.c.2): destinatário copiado do cliente, as peças
+   * com o preço do condicional e, depois da remessa, a chave dela. Quem completa e emite a venda
+   * do que o cliente ficou é a pessoa (forma de pagamento); as outras saem sozinhas quando
+   * estão completas.
+   */
+  async createForConditional(
+    tx: Tx,
+    ctx: RequestContext,
+    input: {
+      conditionalId: string;
+      companyId: string;
+      storeId: string;
+      customer: typeof customers.$inferSelect;
+      note: 'remessa' | 'retorno' | 'entradaSimbolica' | 'venda';
+      items: { productId: string; quantityMilli: number; unitPriceCents: number }[];
+      references: string[];
+    },
+  ) {
+    const c = input.customer;
+    const address = (c.address ?? {}) as Partial<Input['recipient']['address']>;
+    const taxId = c.taxId ?? '';
+    const total = input.items.reduce(
+      (t, i) => t + Math.round((i.unitPriceCents * i.quantityMilli) / 1000),
+      0,
+    );
+    const [row] = await tx
+      .insert(nfeInvoices)
+      .values({
+        id: uuidv7(),
+        tenantId: ctx.tenantId,
+        companyId: input.companyId,
+        storeId: input.storeId,
+        nature: 'Venda de mercadoria',
+        purpose: 'normal',
+        presence: 'presencial',
+        finalConsumer: true,
+        refs: input.references,
+        customerId: c.id,
+        recipient: {
+          customerId: c.id,
+          taxId,
+          name: c.name,
+          // Pessoa física (ou empresa sem a inscrição no cadastro): não contribuinte.
+          ieIndicator: 9,
+          ie: null,
+          email: c.email,
+          phone: c.phone,
+          address: {
+            cep: address.cep ?? '',
+            street: address.street ?? '',
+            number: address.number ?? '',
+            complement: address.complement ?? null,
+            district: address.district ?? '',
+            city: address.city ?? '',
+            uf: address.uf ?? '',
+            ibgeCode: address.ibgeCode ?? null,
+          },
+        },
+        items: input.items.map((i) => ({ ...i, discountCents: 0, cfop: null })),
+        transport: { freight: 'semFrete', freightCents: 0 },
+        installments: [],
+        payments: [{ code: '01', amountCents: total }],
+        conditionalId: input.conditionalId,
+        demonstration: input.note,
+        createdBy: ctx.userId,
+      })
+      .returning({ id: nfeInvoices.id });
+    return row!.id;
+  }
+
+  /** Emite a nota se o motor disser que está completa; senão, fica no rascunho com o que falta. */
+  async tryIssue(ctx: RequestContext, id: string) {
+    try {
+      await this.issue(ctx, id);
+      return true;
+    } catch (error) {
+      if (error instanceof AppError) return false;
+      throw error;
+    }
+  }
+
+  /** As notas de cada condicional, com o que falta nos rascunhos. */
+  async forConditionals(tx: Tx, conditionalIds: string[]) {
+    if (conditionalIds.length === 0) return [];
+    const rows = await tx
+      .select({ i: nfeInvoices, d: fiscalDocuments })
+      .from(nfeInvoices)
+      .leftJoin(fiscalDocuments, eq(fiscalDocuments.invoiceId, nfeInvoices.id))
+      .where(
+        and(
+          inArray(nfeInvoices.conditionalId, conditionalIds),
+          sql`${nfeInvoices.status} <> 'discarded'`,
+        ),
+      )
+      .orderBy(nfeInvoices.createdAt);
+    const result = [];
+    for (const { i, d } of rows) {
+      const check = i.status === 'draft' ? await this.check(tx, i) : null;
+      result.push({
+        conditionalId: i.conditionalId!,
+        id: i.id,
+        demonstration: i.demonstration!,
+        status: i.status,
+        documentStatus: d?.status ?? null,
+        number: d?.number ?? null,
+        accessKey: d?.accessKey ?? null,
+        pending: check && !check.ok ? check.pending : [],
+      });
+    }
+    return result;
   }
 
   private async load(tx: Tx, ctx: RequestContext, id: string) {
@@ -485,7 +616,10 @@ export class NfeInvoicesService implements OnModuleInit {
       // a mercadoria do estoque da loja.
       const isReturn = invoice.purpose === 'devolucao';
       const now = new Date();
-      for (const item of invoice.items as StoredItem[]) {
+      // Remessa, retorno e entrada simbólica do condicional não mexem no estoque: o condicional
+      // já tirou as peças na saída e pôs de volta na volta (F5-12.c.2).
+      const moves = !invoice.demonstration || invoice.demonstration === 'venda';
+      for (const item of moves ? (invoice.items as StoredItem[]) : []) {
         await tx.insert(stockMovements).values({
           id: uuidv7(),
           tenantId: ctx.tenantId,
@@ -501,7 +635,7 @@ export class NfeInvoicesService implements OnModuleInit {
       }
       // Cada parcela da venda a prazo vira uma conta a receber (a soma é o total da nota).
       const installments = invoice.installments as Input['installments'];
-      if (!isReturn && installments.length > 0) {
+      if (!isReturn && moves && installments.length > 0) {
         const groupId = uuidv7();
         await tx.insert(financialEntries).values(
           installments.map((p, index) => ({

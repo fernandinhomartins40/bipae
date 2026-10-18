@@ -473,6 +473,12 @@ export const companyInput = z.object({
   phone: optionalText(20),
   /** Código tPag do Pix e do vale na NFC-e (dúvida D-029), entre as opções da tabela. */
   nfcePaymentCodes: z.record(z.string(), z.string().regex(/^\d{2}$/)).optional(),
+  /** Perfil fiscal das notas da venda condicional com imposto suspenso (F5-12.c.2, D-033). */
+  demonstrationProfileId: z
+    .string()
+    .uuid('Escolha o perfil fiscal')
+    .nullish()
+    .or(z.literal('').transform(() => null)),
 });
 
 export const terminalInput = z.object({
@@ -1820,6 +1826,16 @@ export interface ConditionalView {
   closedAt: string | null;
   /** Pedido enviado ao caixa com o que o cliente ficou (F5-08). */
   tabOrderId: string | null;
+  /** NF-e do condicional (F5-12.c): remessa, retorno, entrada simbólica e venda. */
+  invoices: {
+    id: string;
+    demonstration: 'remessa' | 'retorno' | 'entradaSimbolica' | 'venda';
+    status: 'draft' | 'issued' | 'discarded';
+    documentStatus: FiscalDocumentStatus | null;
+    number: number | null;
+    /** O que falta resolver para emitir (rascunho). */
+    pending: string[];
+  }[];
   items: {
     productId: string;
     productName: string;
@@ -2119,6 +2135,9 @@ export type NfeInvoiceInput = z.input<typeof nfeInvoiceInput>;
 
 export interface NfeInvoiceView {
   id: string;
+  /** Nota da venda condicional (Ajuste SINIEF 02/18, F5-12.c): de qual condicional e qual nota. */
+  conditionalId: string | null;
+  demonstration: 'remessa' | 'retorno' | 'entradaSimbolica' | 'venda' | null;
   companyId: string;
   storeId: string;
   status: 'draft' | 'issued' | 'discarded';

@@ -1,5 +1,22 @@
 # Changelog
 
+## [Deploy: limpeza das imagens antigas] — 17/10/2026
+
+### Corrigido
+- **Disco da VPS cheio:** o disco encheu com cópias antigas das imagens do Bipaê, cerca de 870 MB por versão da API, e o deploy falhou.
+  - Antes de baixar a versão nova, o deploy agora apaga as imagens antigas do Bipaê e mantém só a versão no ar, que é também a da volta.
+  - Imagens de outras aplicações da VPS não são tocadas.
+
+## [F5-12.c.2 Notas do condicional pela NF-e] — 17/10/2026
+
+### Adicionado
+- **Condicional com NF-e:** quando a empresa escolhe o perfil fiscal da venda condicional, a remessa para demonstração sai junto com as peças.
+  - **Volta:** saem o retorno do que voltou e a entrada simbólica do que o cliente ficou.
+  - **Venda:** o que o cliente ficou vira um rascunho de NF-e de venda com a chave da remessa, para escolher a forma de pagamento. A NFC-e não pode referenciar outra nota (regra BA01-10 do MOC).
+  - **Cancelamento:** quando o cliente devolve tudo, sai a nota de retorno.
+- **Estoque:** as notas do condicional não mexem de novo no estoque. A venda baixa a peça ao ser emitida.
+- **Sem o perfil escolhido:** nada muda, e o que o cliente ficou vai ao caixa como comanda.
+
 ## [F5-12.c.1 Motor das notas do condicional] — 17/10/2026
 
 ### Adicionado
