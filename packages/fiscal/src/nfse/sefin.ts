@@ -85,6 +85,15 @@ export function municipalAgreementRequest(cityCode: string): NfseRequest {
   return { method: 'GET', url: `${SEFIN}/parametros_municipais/${cityCode}/convenio` };
 }
 
+/**
+ * GET {ADN DANFSE}/{chave}: o PDF do DANFSE gerado pelo Ambiente de Dados Nacional (NT 008). O
+ * caminho segue o Swagger do ADN, que só abre com certificado (dúvida D-036).
+ */
+export function danfseRequest(accessKey: string): NfseRequest {
+  if (!/^\d{50}$/.test(accessKey)) throw new NfseMessageError('Chave de acesso da NFS-e inválida.');
+  return { method: 'GET', url: `${NFSE_ENDPOINTS.danfse.producaoRestrita}/${accessKey}` };
+}
+
 export type NfseResult =
   | { outcome: 'authorized'; accessKey: string; nfseXml: string; alerts: string[] }
   | { outcome: 'rejected'; errors: { code: string; message: string }[] };

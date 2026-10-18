@@ -649,5 +649,6 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Nomes no JSON:** `dpsXmlGZipB64`, `chaveAcesso`, `nfseXmlGZipB64`, `erros`.
   - **Resposta do convênio municipal:** o formato de `/parametros_municipais/{município}/convenio`.
   - **Assinatura:** RSA-SHA1, a mesma da NF-e. O leiaute diz só "padrão XML Digital Signature".
+  - **DANFSE:** o caminho `{ADN DANFSE}/{chave}`, que devolve o PDF (NT 008).
 - **Validação local:** os padrões dos esquemas trazem `^` e `$`. No XML Schema eles são literais; o validador da Sefin os trata como âncoras, e o teste do Bipaê valida do mesmo jeito.
 - **Próximo passo:** conferir tudo na primeira emissão em produção restrita, com o certificado da empresa (F5-13.f, item E1).

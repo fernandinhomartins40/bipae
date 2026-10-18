@@ -1,5 +1,14 @@
 # Changelog
 
+## [F5-13.e NFS-e na tela da ordem de serviço] — 18/10/2026
+
+### Adicionado
+- **OS:** a tela ganhou a seção "NFS-e Nacional dos serviços".
+  - Mostra o valor dos serviços e o botão "Emitir NFS-e".
+  - Depois de emitir, mostra a situação na Sefin, o que falta configurar, os motivos de recusa e "Tentar de novo".
+  - Com a nota gerada, baixa o DANFSE (PDF do Ambiente Nacional) e o XML.
+- **Empresas e lojas:** novos campos de inscrição municipal, série da NFS-e e percentuais aproximados dos tributos.
+
 ## [F5-13.d NFS-e Nacional da ordem de serviço] — 18/10/2026
 
 ### Adicionado

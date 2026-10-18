@@ -8,11 +8,19 @@ import type { SefazCredentials } from './sefaz.transport';
  * Leva as mensagens JSON até a Sefin Nacional da NFS-e por HTTPS com o certificado A1 da empresa
  * (autenticação mútua), F5-13.d. A chave e o certificado nunca vão para log.
  */
+export interface NfseResponse {
+  status: number;
+  body: string;
+  /** O corpo como veio (o DANFSE é PDF). */
+  bytes: Buffer;
+  contentType: string;
+}
+
 export interface NfseTransport {
   send(
     request: NfseRequest,
     credentials: SefazCredentials,
-  ): Promise<{ status: number; body: string }>;
+  ): Promise<NfseResponse>;
 }
 
 /** A Sefin não respondeu (rede, tempo esgotado, servidor fora): vale tentar de novo depois. */
@@ -33,7 +41,7 @@ export class HttpsNfseTransport implements NfseTransport {
   send(nfse: NfseRequest, credentials: SefazCredentials) {
     const url = this.options.rewriteUrl?.(nfse.url) ?? nfse.url;
     const body = nfse.body ? Buffer.from(nfse.body, 'utf8') : null;
-    return new Promise<{ status: number; body: string }>((resolve, reject) => {
+    return new Promise<NfseResponse>((resolve, reject) => {
       const req = request(
         url,
         {
@@ -60,7 +68,13 @@ export class HttpsNfseTransport implements NfseTransport {
               );
               return;
             }
-            resolve({ status, body: Buffer.concat(chunks).toString('utf8') });
+            const bytes = Buffer.concat(chunks);
+            resolve({
+              status,
+              body: bytes.toString('utf8'),
+              bytes,
+              contentType: String(res.headers['content-type'] ?? ''),
+            });
           });
           res.on('error', (error) =>
             reject(new NfseUnavailableError(`Conexão com a Sefin interrompida: ${error.message}`)),

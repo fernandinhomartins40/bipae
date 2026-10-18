@@ -1,6 +1,7 @@
 import {
   formatBRL,
   type Cents,
+  type NfseDocumentView,
   type Page,
   type Party,
   type Product,
@@ -476,10 +477,175 @@ function OrderDrawer({
         {order?.status === 'delivered' && (
           <Alert tone="success" title="Entregue">
             As peças saíram do estoque e o total de {money(order.totalCents)} foi para as contas a
-            receber. A NFS-e dos serviços chega com a próxima etapa.
+            receber.
           </Alert>
         )}
+        {order && <NfseSection order={order} />}
       </div>
     </Drawer>
+  );
+}
+
+const NFSE_STATUS: Record<
+  NfseDocumentView['status'],
+  { label: string; tone: 'warning' | 'success' | 'neutral' | 'danger' }
+> = {
+  pending: { label: 'Enviando à Sefin Nacional', tone: 'warning' },
+  error: { label: 'A Sefin não respondeu', tone: 'warning' },
+  not_configured: { label: 'Falta configurar', tone: 'warning' },
+  authorized: { label: 'NFS-e gerada', tone: 'success' },
+  rejected: { label: 'Recusada pela Sefin', tone: 'danger' },
+};
+
+async function saveFile(
+  api: { download: (path: string) => Promise<Blob> },
+  path: string,
+  name: string,
+) {
+  const url = URL.createObjectURL(await api.download(path));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
+/** NFS-e Nacional dos serviços da OS (F5-13.e), emitida em produção restrita. */
+export function NfseSection({ order }: { order: ServiceOrderView }) {
+  const { api } = useApp();
+  const canIssue = useCan('fiscal.profile.write');
+  const queryClient = useQueryClient();
+  const doc = useQuery({
+    queryKey: ['service-orders', order.id, 'nfse'],
+    queryFn: () => api.get<NfseDocumentView | null>(`/service-orders/${order.id}/nfse`),
+    refetchInterval: (q) =>
+      q.state.data && ['pending', 'error'].includes(q.state.data.status) ? 1500 : false,
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const run = async (fn: () => Promise<void>) => {
+    setError(null);
+    setBusy(true);
+    try {
+      await fn();
+      await queryClient.invalidateQueries({ queryKey: ['service-orders', order.id, 'nfse'] });
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const d = doc.data ?? null;
+  const hasService = order.items.some((i) => i.kind === 'service');
+  if (order.status === 'cancelled' || !hasService) return null;
+  return (
+    <section
+      aria-labelledby={`nfse-${order.id}`}
+      className="flex flex-col gap-2 rounded-ui border border-border p-3"
+    >
+      <h3 id={`nfse-${order.id}`} className="font-semibold">
+        NFS-e Nacional dos serviços
+      </h3>
+      {error && <Alert>{error}</Alert>}
+      {!d ? (
+        <>
+          <p className="text-sm text-muted">
+            A nota leva só os serviços ({money(order.servicesCents)}); as peças são mercadoria e vão
+            em NF-e ou NFC-e. Emitida em produção restrita, sem valor fiscal, até o Bipaê ser
+            liberado para produção.
+          </p>
+          {canIssue && (
+            <Button
+              loading={busy}
+              onClick={() =>
+                void run(async () => void (await api.post(`/service-orders/${order.id}/nfse`, {})))
+              }
+            >
+              Emitir NFS-e
+            </Button>
+          )}
+        </>
+      ) : (
+        <>
+          <p>
+            <Badge tone={NFSE_STATUS[d.status].tone}>{NFSE_STATUS[d.status].label}</Badge>
+            <span className="ml-2 text-sm text-muted">
+              DPS série {d.series} · nº {d.number}
+            </span>
+          </p>
+          {d.accessKey && (
+            <p className="break-all font-mono text-sm" aria-label="Chave de acesso da NFS-e">
+              {d.accessKey}
+            </p>
+          )}
+          {d.pendingItems.length > 0 && (
+            <ul className="list-disc pl-5 text-sm" aria-label="O que falta para a NFS-e">
+              {d.pendingItems.map((p) => (
+                <li key={p}>{p}</li>
+              ))}
+            </ul>
+          )}
+          {d.errors.length > 0 && (
+            <ul className="list-disc pl-5 text-sm" aria-label="Motivos da recusa">
+              {d.errors.map((e) => (
+                <li key={e.code + e.message}>
+                  {e.code} · {e.message}
+                </li>
+              ))}
+            </ul>
+          )}
+          {d.lastError && <p className="text-sm text-muted">{d.lastError}</p>}
+          <div className="flex flex-wrap gap-2">
+            {d.status === 'authorized' ? (
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    void run(() =>
+                      saveFile(
+                        api,
+                        `/service-orders/${order.id}/nfse/danfse`,
+                        `DANFSE-${d.accessKey}.pdf`,
+                      ),
+                    )
+                  }
+                >
+                  Baixar o DANFSE
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    void run(() =>
+                      saveFile(
+                        api,
+                        `/service-orders/${order.id}/nfse/xml`,
+                        `NFSe${d.accessKey}.xml`,
+                      ),
+                    )
+                  }
+                >
+                  Baixar o XML
+                </Button>
+              </>
+            ) : (
+              canIssue &&
+              d.status !== 'pending' && (
+                <Button
+                  loading={busy}
+                  onClick={() =>
+                    void run(
+                      async () =>
+                        void (await api.post(`/service-orders/${order.id}/nfse/retry`, {})),
+                    )
+                  }
+                >
+                  Tentar de novo
+                </Button>
+              )
+            )}
+          </div>
+        </>
+      )}
+    </section>
   );
 }

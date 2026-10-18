@@ -35,6 +35,12 @@ interface Company {
   phone?: string | null;
   nfcePaymentCodes?: Record<string, string>;
   demonstrationProfileId?: string | null;
+  municipalRegistration?: string | null;
+  nfseSeries?: number;
+  nfseSimplesPercent?: string | null;
+  nfseTaxFederal?: string | null;
+  nfseTaxState?: string | null;
+  nfseTaxMunicipal?: string | null;
 }
 interface StoreRow {
   id: string;
@@ -211,6 +217,12 @@ function CompanyForm({
     phone: company?.phone ?? '',
     voucher: company?.nfcePaymentCodes?.voucher ?? '10',
     demonstrationProfileId: company?.demonstrationProfileId ?? '',
+    municipalRegistration: company?.municipalRegistration ?? '',
+    nfseSeries: String(company?.nfseSeries ?? 1),
+    nfseSimplesPercent: company?.nfseSimplesPercent?.replace('.', ',') ?? '',
+    nfseTaxFederal: company?.nfseTaxFederal?.replace('.', ',') ?? '',
+    nfseTaxState: company?.nfseTaxState?.replace('.', ',') ?? '',
+    nfseTaxMunicipal: company?.nfseTaxMunicipal?.replace('.', ',') ?? '',
   });
   const profiles = useQuery({
     queryKey: ['fiscal-profiles'],
@@ -240,6 +252,12 @@ function CompanyForm({
       phone: v.phone || null,
       nfcePaymentCodes: { voucher: v.voucher },
       demonstrationProfileId: v.demonstrationProfileId || null,
+      municipalRegistration: v.municipalRegistration || null,
+      nfseSeries: Number(v.nfseSeries) || 1,
+      nfseSimplesPercent: v.nfseSimplesPercent || null,
+      nfseTaxFederal: v.nfseTaxFederal || null,
+      nfseTaxState: v.nfseTaxState || null,
+      nfseTaxMunicipal: v.nfseTaxMunicipal || null,
     };
     try {
       if (company) await api.patch(`/companies/${company.id}`, body);
@@ -392,6 +410,52 @@ function CompanyForm({
               ...(profiles.data ?? []).map((f) => ({ value: f.id, label: f.name })),
             ]}
           />
+        </fieldset>
+        <fieldset className="flex flex-col gap-3">
+          <legend className="font-semibold">NFS-e Nacional (serviços)</legend>
+          <p className="text-sm text-muted">
+            Para a nota dos serviços das ordens de serviço. O total aproximado dos tributos (Lei
+            12.741/2012) é exigido na nota: no Simples, o percentual do Simples; nos demais regimes,
+            os percentuais federal, estadual e municipal. O MEI não informa.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField
+              label="Inscrição municipal"
+              value={v.municipalRegistration}
+              onChange={(e) => setV({ ...v, municipalRegistration: e.target.value })}
+            />
+            <TextField
+              label="Série da NFS-e"
+              hint="De 1 a 49999 (emissão pelo Bipaê)."
+              inputMode="numeric"
+              value={v.nfseSeries}
+              onChange={(e) => setV({ ...v, nfseSeries: e.target.value.replace(/\D/g, '') })}
+            />
+            <TextField
+              label="Percentual aproximado do Simples (%)"
+              inputMode="decimal"
+              value={v.nfseSimplesPercent}
+              onChange={(e) => setV({ ...v, nfseSimplesPercent: e.target.value })}
+            />
+            <TextField
+              label="Tributos federais aproximados (%)"
+              inputMode="decimal"
+              value={v.nfseTaxFederal}
+              onChange={(e) => setV({ ...v, nfseTaxFederal: e.target.value })}
+            />
+            <TextField
+              label="Tributos estaduais aproximados (%)"
+              inputMode="decimal"
+              value={v.nfseTaxState}
+              onChange={(e) => setV({ ...v, nfseTaxState: e.target.value })}
+            />
+            <TextField
+              label="Tributos municipais aproximados (%)"
+              inputMode="decimal"
+              value={v.nfseTaxMunicipal}
+              onChange={(e) => setV({ ...v, nfseTaxMunicipal: e.target.value })}
+            />
+          </div>
         </fieldset>
         <Button type="submit">Salvar empresa</Button>
       </form>

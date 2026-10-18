@@ -15,6 +15,7 @@ import {
 import { uuidv7, type NfseDocumentView } from '@bipae/domain';
 import {
   buildDps,
+  danfseRequest,
   dpsId,
   dpsQueryRequest,
   municipalAgreementRequest,
@@ -422,6 +423,30 @@ export class NfseService implements OnModuleInit {
     return this.forOrder(ctx, orderId);
   }
 
+  /** DANFSE em PDF, do ADN (a API busca com o certificado da empresa e repassa). */
+  async danfse(ctx: RequestContext, orderId: string) {
+    const { doc, credentials } = await withTenant(this.db, ctx, async (tx) => {
+      await this.loadOrder(tx, ctx, orderId);
+      const [row] = await tx
+        .select()
+        .from(nfseDocuments)
+        .where(eq(nfseDocuments.serviceOrderId, orderId));
+      if (!row?.accessKey || row.status !== 'authorized') {
+        throw new AppError(409, 'not_authorized', 'A NFS-e ainda não foi gerada pela Sefin.');
+      }
+      return { doc: row, credentials: await this.certificates.tlsCredentials(tx, row.companyId) };
+    });
+    const res = await this.call(danfseRequest(doc.accessKey!), credentials).catch(() => null);
+    if (!res || res.status !== 200 || !res.bytes.subarray(0, 5).toString().startsWith('%PDF')) {
+      throw new AppError(
+        502,
+        'danfse_unavailable',
+        'O Ambiente Nacional não devolveu o DANFSE agora. Tente de novo em instantes.',
+      );
+    }
+    return { accessKey: doc.accessKey!, pdf: res.bytes };
+  }
+
   xml(ctx: RequestContext, orderId: string) {
     return withTenant(this.db, ctx, async (tx) => {
       await this.loadOrder(tx, ctx, orderId);
@@ -458,6 +483,19 @@ export class NfseController {
   @RequirePermission('fiscal.profile.write')
   retry(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.nfse.retry(ctx, id);
+  }
+
+  @Get(':id/nfse/danfse')
+  @RequirePermission('pos.sell')
+  async danfse(
+    @Ctx() ctx: RequestContext,
+    @Res({ passthrough: true }) reply: FastifyReply,
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ) {
+    const { accessKey, pdf } = await this.nfse.danfse(ctx, id);
+    reply.header('content-type', 'application/pdf');
+    reply.header('content-disposition', `inline; filename="DANFSE-${accessKey}.pdf"`);
+    return new StreamableFile(pdf);
   }
 
   @Get(':id/nfse/xml')

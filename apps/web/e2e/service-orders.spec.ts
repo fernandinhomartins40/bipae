@@ -69,6 +69,15 @@ test('cadastra o serviço pela lista nacional, abre a OS e entrega', async ({ pa
   await expect(os.getByText('Pronta para retirar').first()).toBeVisible();
   await os.getByRole('button', { name: 'Entregar ao cliente' }).click();
   await expect(os.getByText(/foi para as contas a receber/)).toBeVisible();
+  // NFS-e dos serviços: sem o certificado A1, a nota explica o que falta (F5-13.e).
+  const nfse = os.getByRole('region', { name: 'NFS-e Nacional dos serviços' });
+  await expect(nfse).toContainText('R$ 80,00');
+  await nfse.getByRole('button', { name: 'Emitir NFS-e' }).click();
+  await expect(nfse.getByText('Falta configurar')).toBeVisible();
+  await expect(
+    nfse.getByText('A empresa ainda não tem certificado digital A1 cadastrado.'),
+  ).toBeVisible();
+  await expect(nfse.getByText(/DPS série 1 · nº 1/)).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('row', { name: /Joana Prado/ })).toContainText('Entregue');
 

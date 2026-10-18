@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  danfseRequest,
   dpsQueryRequest,
   gunzipBase64,
   gzipBase64,
@@ -42,6 +43,10 @@ describe('Sefin Nacional (F5-13.b)', () => {
       /\/parametros_municipais\/3550308\/convenio$/,
     );
     expect(() => municipalAgreementRequest('35')).toThrow('município');
+    expect(danfseRequest(CHAVE).url).toBe(
+      `https://adn.producaorestrita.nfse.gov.br/danfse/${CHAVE}`,
+    );
+    expect(() => danfseRequest('1')).toThrow('Chave');
   });
 
   it('lê a NFS-e gerada e a lista de erros', async () => {

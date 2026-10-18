@@ -170,14 +170,19 @@ jobs:
           EOF
 
       - name: Primeiro contato com a VPS
-        timeout-minutes: 3
+        timeout-minutes: 6
         run: |
-          if ! ssh vps "mkdir -p ${VPS_APP_DIR}"; then
-            echo "Este runner não alcança a porta 22 da VPS (filtro da Hostinger por IP)."
-            echo "IP de saída: $(curl -s --max-time 10 ifconfig.me || echo indisponível)"
-            echo "Solução: 'Re-run all jobs' (outro runner, outro IP)."
-            exit 1
-          fi
+          # O filtro da Hostinger às vezes recusa a conexão por alguns segundos (muitos deploys
+          # seguidos): tenta de novo com espera crescente antes de desistir.
+          for attempt in 1 2 3 4; do
+            if ssh -o ConnectTimeout=25 vps "mkdir -p ${VPS_APP_DIR}"; then exit 0; fi
+            echo "Tentativa ${attempt} sem resposta da porta 22 da VPS; esperando $((attempt * 20)) s."
+            sleep $((attempt * 20))
+          done
+          echo "Este runner não alcança a porta 22 da VPS (filtro da Hostinger por IP)."
+          echo "IP de saída: $(curl -s --max-time 10 ifconfig.me || echo indisponível)"
+          echo "Solução: 'Re-run all jobs' (outro runner, outro IP)."
+          exit 1
 
       - name: Enviar arquivos de deploy
         run: |

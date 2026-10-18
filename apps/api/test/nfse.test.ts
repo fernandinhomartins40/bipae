@@ -120,6 +120,10 @@ describe('NFS-e Nacional da OS (F5-13.d)', () => {
     const xml = await admin.get(`/service-orders/${ordem.id}/nfse/xml`);
     expect(xml.headers['content-disposition']).toContain(`NFSe${doc.accessKey}.xml`);
     expect(xml.body).toContain('<NFSe');
+    const danfse = await admin.get(`/service-orders/${ordem.id}/nfse/danfse`);
+    expect(danfse.statusCode).toBe(200);
+    expect(danfse.headers['content-type']).toBe('application/pdf');
+    expect(danfse.rawPayload.subarray(0, 5).toString()).toBe('%PDF-');
     expect((await admin.post(`/service-orders/${ordem.id}/nfse`)).statusCode).toBe(409);
     expect((await admin.post(`/service-orders/${ordem.id}/nfse/retry`)).statusCode).toBe(409);
     const outra = await os();

@@ -36,6 +36,17 @@ export class SefinSimulator {
         const chunks: Buffer[] = [];
         req.on('data', (c: Buffer) => chunks.push(c));
         req.on('end', () => {
+          const path = (req.url ?? '/').replace(/^\/API\/SefinNacional/, '');
+          // DANFSE do ADN: o PDF da NFS-e gerada.
+          const danfse = /^\/danfse\/(\d{50})$/.exec(path);
+          if (req.method === 'GET' && danfse) {
+            this.calls.push({ method: 'GET', path });
+            const known = [...this.generated.values()].some((g) => g.key === danfse[1]);
+            if (!known) return void res.writeHead(404).end();
+            return void res
+              .writeHead(200, { 'Content-Type': 'application/pdf' })
+              .end(Buffer.from('%PDF-1.4\n% DANFSE simulado\n%%EOF\n'));
+          }
           const { status, json } = this.respond(
             req.method ?? 'GET',
             req.url ?? '/',

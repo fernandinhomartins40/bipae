@@ -346,7 +346,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F5-13.b · Motor da DPS (leiaute v1.01 em produção): situação no Simples e regime de apuração, regras da alíquota do ISSQN pelo convênio do município (E0617 a E0640), retenção, total aproximado dos tributos por regime, tomador; assinada e válida nos esquemas oficiais; mensagens para a Sefin Nacional (emissão, consulta pela DPS e pela chave, convênio do município) com os endereços da página oficial (dúvida D-036) — depende: F5-13.a
   - [x] F5-13.c · Ordem de serviço: cadastro de serviços (código nacional, NBS, alíquota do ISSQN, preço), OS com cliente, equipamento ou descrição, serviços e peças, situação (aberta, em andamento, pronta, entregue); peças baixam o estoque e o total vira conta a receber; tela e E2E — depende: F5-13.a
   - [x] F5-13.d · NFS-e pela fila: numeração da DPS por série da empresa, consulta do convênio do município, assinatura, envio e consulta pela DPS antes de reenviar; XML; percentuais aproximados na empresa; testada contra a Sefin simulada — depende: F5-13.b, F5-13.c
-  - [ ] F5-13.e · Tela da NFS-e na OS: emitir, o que falta, situação, XML e DANFSE pelo ADN; E2E — depende: F5-13.d
+  - [x] F5-13.e · Tela da NFS-e na OS: emitir, o que falta, situação, XML e DANFSE pelo ADN; E2E — depende: F5-13.d
   - [ ] F5-13.f · Primeira NFS-e autorizada na produção restrita com o certificado da empresa; confirmar os pontos da dúvida D-036 — depende: F5-13.e · externo: E1
 
 ## Fase 6 — Integrações e IA
