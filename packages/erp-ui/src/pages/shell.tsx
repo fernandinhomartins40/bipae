@@ -1,4 +1,5 @@
 import { accountAccess, type AccountView, type AnnouncementView } from '@bipae/domain';
+import { EmailVerificationBanner } from './auth';
 import { Alert, Button, cx, Logo } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -318,6 +319,7 @@ export function Shell() {
               ))}
             </div>
           )}
+          <EmailVerificationBanner />
           {access.allowed ? (
             <Outlet />
           ) : (

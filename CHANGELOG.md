@@ -1,5 +1,15 @@
 # Changelog
 
+## [P-04.c/d Confirmação do e-mail e avisos da conta] — 18/10/2026
+
+### Adicionado
+- **Confirmação do e-mail:** o cadastro manda um link que vale 7 dias. Enquanto o e-mail não for confirmado, a retaguarda mostra um aviso com "Reenviar o link".
+- **Avisos para os donos da conta:**
+  - o teste grátis termina em até 3 dias;
+  - a conta foi suspensa, com o motivo.
+  - Cada aviso vai uma vez; o de suspensão, uma vez por suspensão.
+- Tudo isso só funciona com o provedor de e-mail ligado (item E11). Até lá, nada aparece nem é marcado como enviado.
+
 ## [P-04.a/b E-mail e recuperar senha] — 18/10/2026
 
 ### Adicionado

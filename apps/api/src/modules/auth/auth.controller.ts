@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, Headers, Inject, Param, Post } from '@
 import { RouteConfig } from '@nestjs/platform-fastify';
 import {
   inviteAcceptInput,
+  emailVerifyInput,
   loginInput,
   passwordForgotInput,
   passwordResetInput,
@@ -34,6 +35,21 @@ export class AuthController {
   @RouteConfig(LOGIN_RATE_LIMIT)
   login(@Body() body: unknown, @Headers('user-agent') userAgent?: string) {
     return this.auth.login(parse(loginInput, body), userAgent);
+  }
+
+  @Public()
+  @Post('email/verify')
+  @HttpCode(200)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  verifyEmail(@Body() body: unknown) {
+    return this.auth.verifyEmail(parse(emailVerifyInput, body).token);
+  }
+
+  @Post('email/resend')
+  @HttpCode(202)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  resendEmail(@Ctx() ctx: RequestContext) {
+    return this.auth.resendEmailVerification(ctx.tenantId, ctx.userId);
   }
 
   @Public()

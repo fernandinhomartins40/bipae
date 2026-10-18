@@ -31,6 +31,9 @@ export const tenants = pgTable('tenants', {
   trialEndsAt: ts('trial_ends_at'),
   statusReason: text('status_reason'),
   statusChangedAt: ts('status_changed_at'),
+  /** Avisos por e-mail já enviados (P-04.d): teste terminando e a suspensão atual. */
+  trialNoticeSentAt: ts('trial_notice_sent_at'),
+  suspensionNoticeSentAt: ts('suspension_notice_sent_at'),
   /** Exclusão definitiva dos dados (P-03); a linha fica anonimizada para a auditoria. */
   purgedAt: ts('purged_at'),
   limitOverrides: jsonb('limit_overrides').$type<Partial<PlanLimits>>(),
@@ -45,6 +48,8 @@ export const users = pgTable('users', {
   /** TOTP seed sealed with SecretBox (F1-01); null until the user starts the setup. */
   totpSecret: text('totp_secret'),
   totpEnabled: boolean('totp_enabled').notNull().default(false),
+  /** E-mail confirmado pelo link (P-04.c). */
+  emailVerifiedAt: ts('email_verified_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });

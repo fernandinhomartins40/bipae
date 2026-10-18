@@ -13,6 +13,9 @@ import { asPlatform, type Db, type Tx } from '../../db/client';
 import { rowsOf } from '../../db/migrate';
 import {
   adminSessions,
+  memberships,
+  roles,
+  users,
   fiscalDocuments,
   nfeInvoices,
   nfseDocuments,
@@ -28,6 +31,7 @@ import { NfseService } from '../fiscal/nfse.service';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import { NfeInvoicesService } from '../fiscal/nfe-invoices.service';
+import { mailBody, MailService } from '../mail/mail.service';
 import { WebhooksService } from '../public-api/webhooks.service';
 
 export const SESSIONS_CLEANUP = 'manutencao.limpar-sessoes';
@@ -35,6 +39,7 @@ export const ACCOUNT_PURGE = 'manutencao.excluir-contas-canceladas';
 export const NFCE_SWEEP = 'manutencao.reenviar-nfce';
 export const WEBHOOK_SWEEP = 'manutencao.reenviar-webhooks';
 export const DFE_SWEEP = 'manutencao.buscar-notas-recebidas';
+export const ACCOUNT_NOTICES = 'manutencao.avisos-da-conta';
 const UM_MINUTO = 60_000;
 const CINCO_MINUTOS = 5 * 60_000;
 const UM_DIA = 24 * 60 * 60_000;
@@ -62,6 +67,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(WebhooksService) private readonly webhooks: WebhooksService,
     @Inject(DfeService) private readonly dfe: DfeService,
     @Inject(NfseService) private readonly nfse: NfseService,
+    @Inject(MailService) private readonly mail: MailService,
   ) {}
 
   async onModuleInit() {
@@ -80,6 +86,9 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
       });
       this.queue.process(DFE_SWEEP, async () => {
         await this.sweepDfe();
+      });
+      this.queue.process(ACCOUNT_NOTICES, async () => {
+        await this.accountNotices();
       });
       this.queue.process(ACCOUNT_PURGE, async () => {
         const purged = await this.purgeCancelledAccounts();
@@ -109,6 +118,11 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
           this.logger.warn(`Não foi possível agendar os webhooks: ${error.message}`),
         );
       void this.queue
+        .add(ACCOUNT_NOTICES, {}, { repeatEveryMs: SEIS_HORAS })
+        .catch((error: Error) =>
+          this.logger.warn(`Não foi possível agendar os avisos da conta: ${error.message}`),
+        );
+      void this.queue
         .add(DFE_SWEEP, {}, { repeatEveryMs: UMA_HORA })
         .catch((error: Error) =>
           this.logger.warn(`Não foi possível agendar a busca de notas: ${error.message}`),
@@ -123,6 +137,99 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     await this.queue.close().catch(() => undefined);
+  }
+
+  /**
+   * Avisos por e-mail da conta (P-04.d), para os donos: o teste termina em até 3 dias e a conta
+   * foi suspensa. Cada aviso vai uma vez (a suspensão, uma vez por suspensão). Sem o e-mail
+   * ligado, nada é marcado como enviado: o aviso sai quando o provedor for configurado.
+   */
+  async accountNotices(now: Date = new Date()): Promise<number> {
+    if (!this.mail.enabled) return 0;
+    const owners = (tenantId: string) =>
+      asPlatform(this.db, (tx) =>
+        tx
+          .select({ name: users.name, email: users.email })
+          .from(memberships)
+          .innerJoin(roles, eq(roles.id, memberships.roleId))
+          .innerJoin(users, eq(users.id, memberships.userId))
+          .where(
+            and(
+              eq(memberships.tenantId, tenantId),
+              eq(memberships.active, true),
+              eq(roles.systemKey, 'owner'),
+            ),
+          ),
+      );
+    const date = (d: Date) =>
+      new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo' }).format(d);
+    let sent = 0;
+    const ending = await asPlatform(this.db, (tx) =>
+      tx
+        .select()
+        .from(tenants)
+        .where(
+          and(
+            eq(tenants.status, 'trial'),
+            isNull(tenants.trialNoticeSentAt),
+            sql`${tenants.trialEndsAt} > ${now}`,
+            sql`${tenants.trialEndsAt} < ${new Date(now.getTime() + 3 * UM_DIA)}`,
+          ),
+        )
+        .limit(500),
+    );
+    for (const t of ending) {
+      for (const o of await owners(t.id)) {
+        await this.mail.send({
+          to: o.email,
+          subject: 'Bipaê: o seu teste termina em breve',
+          ...mailBody({
+            greeting: `Olá, ${o.name.split(' ')[0]}!`,
+            paragraphs: [
+              `O teste grátis de ${t.name} no Bipaê termina em ${date(t.trialEndsAt!)}.`,
+              'Para continuar vendendo sem interrupção, escolha um plano na retaguarda, em Assinatura.',
+            ],
+            action: { label: 'Ver os planos', url: this.mail.link('/assinatura') },
+          }),
+        });
+        sent++;
+      }
+      await asPlatform(this.db, (tx) =>
+        tx.update(tenants).set({ trialNoticeSentAt: now }).where(eq(tenants.id, t.id)),
+      );
+    }
+    const suspended = await asPlatform(this.db, (tx) =>
+      tx
+        .select()
+        .from(tenants)
+        .where(
+          and(
+            eq(tenants.status, 'suspended'),
+            sql`(${tenants.suspensionNoticeSentAt} is null or ${tenants.suspensionNoticeSentAt} < ${tenants.statusChangedAt})`,
+          ),
+        )
+        .limit(500),
+    );
+    for (const t of suspended) {
+      for (const o of await owners(t.id)) {
+        await this.mail.send({
+          to: o.email,
+          subject: 'Bipaê: a sua conta foi suspensa',
+          ...mailBody({
+            greeting: `Olá, ${o.name.split(' ')[0]}!`,
+            paragraphs: [
+              `A conta de ${t.name} no Bipaê foi suspensa${t.statusReason ? `: ${t.statusReason}` : '.'}`,
+              'Os seus dados continuam guardados. Fale com o suporte do Bipaê para reativar.',
+            ],
+          }),
+        });
+        sent++;
+      }
+      await asPlatform(this.db, (tx) =>
+        tx.update(tenants).set({ suspensionNoticeSentAt: now }).where(eq(tenants.id, t.id)),
+      );
+    }
+    return sent;
   }
 
   /**

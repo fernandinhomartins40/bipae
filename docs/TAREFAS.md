@@ -254,8 +254,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [~] P-04 · E-mails transacionais: confirmação de conta, recuperar senha, teste terminando, conta suspensa — externo: E11
   - [x] P-04.a · Porta de e-mail: envio pela fila com nova tentativa, SMTP do provedor por SMTP_URL, modelo pt-BR com botão e link por extenso; sem o provedor, o e-mail fica desligado e /health diz isso às telas
   - [x] P-04.b · Recuperar senha: link de uso único que vale 1 hora (só o hash no banco), resposta igual para e-mail sem conta, a senha nova encerra todas as sessões; telas "Esqueci a senha" (só com e-mail ligado) e "Senha nova"; testes e E2E — depende: P-04.a
-  - [ ] P-04.c · Confirmação do e-mail da conta: link depois do cadastro e aviso na retaguarda até confirmar — depende: P-04.a
-  - [ ] P-04.d · Avisos por e-mail: teste terminando e conta suspensa, uma vez cada, pela manutenção — depende: P-04.a
+  - [x] P-04.c · Confirmação do e-mail da conta: link depois do cadastro e aviso na retaguarda até confirmar — depende: P-04.a
+  - [x] P-04.d · Avisos por e-mail: teste terminando e conta suspensa, uma vez cada, pela manutenção — depende: P-04.a
   - [ ] P-04.e · Ligar o provedor de e-mail na VPS (SMTP_URL e domínio com SPF e DKIM) e conferir a entrega — depende: P-04.b · externo: E11
 - [x] P-05 · PDV Embed: autorização de gerente para desconto acima do limite (contrato v1 compatível)
 - [x] P-06 · PDV Embed: publicar o `bipae-pdv.js` em endereço fixo versionado no site

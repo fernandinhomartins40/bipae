@@ -20,3 +20,9 @@ test('sem e-mail ligado, não há "Esqueci a senha"; link vencido explica o que 
   await page.getByRole('button', { name: 'Criar senha nova' }).click();
   await expect(page.getByText('As duas senhas precisam ser iguais.')).toBeVisible();
 });
+
+test('link de confirmação do e-mail vencido explica o que fazer (P-04.c)', async ({ page }) => {
+  await page.goto('/confirmar-email?codigo=link-que-nao-existe-mais-0123456789');
+  await expect(page.getByRole('heading', { name: 'Confirmar e-mail' })).toBeVisible();
+  await expect(page.getByText(/expirou ou já foi usado/)).toBeVisible();
+});

@@ -306,3 +306,67 @@ export function ResetPasswordPage() {
     </AuthLayout>
   );
 }
+
+/** Aviso na retaguarda para confirmar o e-mail da conta (P-04.c), só com o e-mail ligado. */
+export function EmailVerificationBanner() {
+  const { api, me } = useApp();
+  const enabled = useEmailEnabled();
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  if (!enabled || !me || me.user.emailVerified !== false || me.support) return null;
+  const resend = async () => {
+    setError(null);
+    try {
+      setMessage((await api.post<{ message: string }>('/auth/email/resend', {})).message);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  };
+  return (
+    <div className="mb-4">
+      <Alert tone="warning" title="Confirme o seu e-mail">
+        Mandamos um link para {me.user.email}. É por ele que chegam os avisos da conta e o link de
+        senha nova.{' '}
+        {message ? (
+          message
+        ) : (
+          <button type="button" className="font-semibold underline" onClick={() => void resend()}>
+            Reenviar o link
+          </button>
+        )}
+        {error && ` ${error}`}
+      </Alert>
+    </div>
+  );
+}
+
+/** Confirmar o e-mail pelo link (P-04.c). */
+export function VerifyEmailPage() {
+  const { api } = useApp();
+  const [params] = useSearchParams();
+  const token = params.get('codigo') ?? '';
+  const result = useQuery({
+    queryKey: ['verify-email', token],
+    queryFn: () => api.post<{ message: string }>('/auth/email/verify', { token }),
+    enabled: token.length >= 20,
+    retry: false,
+    staleTime: Infinity,
+  });
+  return (
+    <AuthLayout title="Confirmar e-mail" subtitle="Só um instante.">
+      <div className="flex flex-col gap-4">
+        {token.length < 20 && <Alert>Este link está incompleto. Peça outro na retaguarda.</Alert>}
+        {result.isPending && token.length >= 20 && <p className="text-muted">Confirmando…</p>}
+        {result.data && (
+          <Alert tone="success" title="Pronto">
+            {result.data.message}
+          </Alert>
+        )}
+        {result.error && <Alert>{(result.error as Error).message}</Alert>}
+        <Link to="/" className="text-center font-semibold text-primary underline">
+          Ir para o Bipaê
+        </Link>
+      </div>
+    </AuthLayout>
+  );
+}

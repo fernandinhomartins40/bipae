@@ -134,6 +134,12 @@ export class AuthService {
     });
 
     await this.bootstrapPlatformOwner(userId, input.email);
+    // O link de confirmação nunca impede o cadastro: sem e-mail ligado, simplesmente não vai.
+    await this.sendEmailVerification({
+      id: userId,
+      name: input.ownerName,
+      email: input.email,
+    }).catch(() => false);
     return this.issueSession(tenantId, userId, userAgent);
   }
 
@@ -476,14 +482,25 @@ export class AuthService {
   async me(tenantId: string, userId: string, permissions: string[]): Promise<Me> {
     const [user, tenant] = await withTenant(this.db, { tenantId, userId }, async (tx) => {
       const [u] = await tx
-        .select({ id: users.id, name: users.name, email: users.email })
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          verifiedAt: users.emailVerifiedAt,
+        })
         .from(users)
         .where(eq(users.id, userId));
       const [t] = await tx.select({ id: tenants.id, name: tenants.name }).from(tenants);
       return [u, t] as const;
     });
     if (!user || !tenant) throw new AppError(401, 'unauthenticated', SESSION_EXPIRED);
-    return { user, tenant, permissions, tenants: await this.userTenants(userId) };
+    const { verifiedAt, ...who } = user;
+    return {
+      user: { ...who, emailVerified: verifiedAt !== null },
+      tenant,
+      permissions,
+      tenants: await this.userTenants(userId),
+    };
   }
 
   /**
@@ -572,6 +589,64 @@ export class AuthService {
       message:
         'Se o e-mail tiver conta no Bipaê, o link chega em instantes. Confira também a caixa de spam.',
     };
+  }
+
+  /** Manda o link de confirmação do e-mail (P-04.c), válido por 7 dias. Sem e-mail ligado, nada. */
+  async sendEmailVerification(person: { id: string; name: string; email: string }) {
+    if (!this.mail.enabled) return false;
+    const token = randomBytes(32).toString('base64url');
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60_000);
+    await asApp(this.db, (tx) =>
+      tx.execute(sql`select auth_email_verification_issue(${person.id}, ${tokenHash}, ${expires})`),
+    );
+    return this.mail.send({
+      to: person.email,
+      subject: 'Bipaê: confirme o seu e-mail',
+      ...mailBody({
+        greeting: `Olá, ${person.name.split(' ')[0]}!`,
+        paragraphs: [
+          'Que bom ter você no Bipaê. Confirme que este e-mail é seu: é por ele que mandamos os avisos da conta e o link para criar uma senha nova, se precisar.',
+          'O link vale por 7 dias.',
+        ],
+        action: {
+          label: 'Confirmar o e-mail',
+          url: this.mail.link(`/confirmar-email?codigo=${token}`),
+        },
+      }),
+    });
+  }
+
+  /** Reenviar o link para quem está logado e ainda não confirmou. */
+  async resendEmailVerification(tenantId: string, userId: string) {
+    if (!this.mail.enabled) {
+      throw new AppError(
+        503,
+        'email_disabled',
+        'O envio de e-mail ainda não está ligado. Fale com o suporte do Bipaê.',
+      );
+    }
+    const me = await this.me(tenantId, userId, []);
+    if (me.user.emailVerified) return { message: 'Este e-mail já está confirmado.' };
+    await this.sendEmailVerification(me.user);
+    return { message: `Mandamos o link para ${me.user.email}. Confira também a caixa de spam.` };
+  }
+
+  async verifyEmail(token: string) {
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+    const [done] = await asApp(this.db, async (tx) =>
+      rowsOf<{ user_id: string }>(
+        await tx.execute(sql`select * from auth_email_verification_consume(${tokenHash})`),
+      ),
+    );
+    if (!done) {
+      throw new AppError(
+        400,
+        'invalid_verification',
+        'Este link expirou ou já foi usado. Peça outro na retaguarda.',
+      );
+    }
+    return { message: 'E-mail confirmado. Obrigado!' };
   }
 
   /** Usa o link: troca a senha e encerra as sessões abertas em todos os aparelhos. */

@@ -123,7 +123,8 @@ export interface SessionTokens {
 }
 
 export interface Me {
-  user: { id: string; name: string; email: string };
+  /** emailVerified: confirmado pelo link do e-mail (P-04.c). */
+  user: { id: string; name: string; email: string; emailVerified?: boolean };
   tenant: { id: string; name: string };
   permissions: string[];
   tenants: { id: string; name: string }[];
@@ -2377,4 +2378,9 @@ export const passwordForgotInput = z.object({ email: emailSchema });
 export const passwordResetInput = z.object({
   token: z.string().trim().min(20, 'Link inválido').max(200, 'Link inválido'),
   password: passwordSchema,
+});
+
+/** Confirmar o e-mail da conta pelo link (P-04.c). */
+export const emailVerifyInput = z.object({
+  token: z.string().trim().min(20, 'Link inválido').max(200, 'Link inválido'),
 });
