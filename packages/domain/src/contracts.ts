@@ -440,6 +440,16 @@ export const COMPANY_TAX_REGIMES = [
 ] as const;
 export type CompanyTaxRegime = (typeof COMPANY_TAX_REGIMES)[number];
 
+/** Percentual aproximado ("6", "13,45"), de 0 a 99,99. */
+const approximatePercent = z
+  .union([z.number(), z.string()])
+  .transform((v) => String(v).trim().replace(',', '.'))
+  .refine((v) => /^\d{1,2}(\.\d{1,2})?$/.test(v), {
+    message: 'Percentual de 0 a 99,99, com até 2 casas',
+  })
+  .nullish()
+  .or(z.literal('').transform(() => null));
+
 export const companyInput = z.object({
   legalName: trimmed(2, 120, 'Razão social'),
   tradeName: optionalText(120),
@@ -473,6 +483,14 @@ export const companyInput = z.object({
   phone: optionalText(20),
   /** Código tPag do Pix e do vale na NFC-e (dúvida D-029), entre as opções da tabela. */
   nfcePaymentCodes: z.record(z.string(), z.string().regex(/^\d{2}$/)).optional(),
+  /** NFS-e Nacional (F5-13.d): inscrição municipal e série da DPS (1 a 49999, aplicativo próprio). */
+  municipalRegistration: optionalText(15),
+  nfseSeries: z.number().int().min(1, 'Série de 1 a 49999').max(49999, 'Série de 1 a 49999').optional(),
+  /** Percentuais aproximados dos tributos na NFS-e (Lei 12.741/2012): o do Simples ou os três. */
+  nfseSimplesPercent: approximatePercent,
+  nfseTaxFederal: approximatePercent,
+  nfseTaxState: approximatePercent,
+  nfseTaxMunicipal: approximatePercent,
   /** Perfil fiscal das notas da venda condicional com imposto suspenso (F5-12.c.2, D-033). */
   demonstrationProfileId: z
     .string()
@@ -2336,4 +2354,19 @@ export interface ServiceOrderView {
   servicesCents: number;
   productsCents: number;
   totalCents: number;
+}
+
+/** NFS-e Nacional da ordem de serviço (F5-13.d). */
+export interface NfseDocumentView {
+  id: string;
+  serviceOrderId: string;
+  series: number;
+  number: number;
+  status: 'pending' | 'error' | 'not_configured' | 'authorized' | 'rejected';
+  pendingItems: string[];
+  /** Recusa da Sefin: o código da regra e a mensagem. */
+  errors: { code: string; message: string }[];
+  accessKey: string | null;
+  lastError: string | null;
+  authorizedAt: string | null;
 }

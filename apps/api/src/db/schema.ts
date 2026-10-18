@@ -1401,3 +1401,31 @@ export const serviceOrderItems = pgTable(
   },
   (t) => [primaryKey({ columns: [t.orderId, t.line] })],
 );
+
+/** NFS-e Nacional da ordem de serviço (F5-13.d). */
+export const nfseDocuments = pgTable('nfse_documents', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  serviceOrderId: uuid('service_order_id').notNull(),
+  series: integer('series').notNull(),
+  number: bigint('number', { mode: 'number' }).notNull(),
+  dpsId: char('dps_id', { length: 45 }).notNull(),
+  status: text('status', {
+    enum: ['pending', 'error', 'not_configured', 'authorized', 'rejected'],
+  })
+    .notNull()
+    .default('pending'),
+  pendingItems: jsonb('pending_items').$type<string[]>().notNull().default([]),
+  errors: jsonb('errors').$type<{ code: string; message: string }[]>().notNull().default([]),
+  signedDps: text('signed_dps'),
+  accessKey: char('access_key', { length: 50 }),
+  nfseXml: text('nfse_xml'),
+  attempts: integer('attempts').notNull().default(0),
+  lastError: text('last_error'),
+  issuedAt: ts('issued_at').notNull().defaultNow(),
+  authorizedAt: ts('authorized_at'),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});

@@ -1,5 +1,17 @@
 # Changelog
 
+## [F5-13.d NFS-e Nacional da ordem de serviço] — 18/10/2026
+
+### Adicionado
+- **NFS-e da OS:** os serviços da OS viram a DPS, com o próximo número da série da empresa. As peças ficam fora, porque mercadoria vai em NF-e ou NFC-e.
+- **Envio pela fila:** antes de montar a nota, o Bipaê consulta o convênio do município na Sefin Nacional (que decide a alíquota). Depois assina com o certificado e envia em produção restrita.
+  - Antes de reenviar, pergunta pela DPS, para nunca gerar duas notas.
+  - A recusa mostra o código da regra e a mensagem da Sefin.
+  - Sem certificado ou sem os percentuais aproximados, a nota fica em "falta configurar" com o motivo.
+  - A varredura da manutenção põe de volta na fila a nota parada.
+- **Empresa:** inscrição municipal, série da DPS e percentuais aproximados dos tributos (Lei 12.741/2012).
+- **XML da NFS-e** para baixar. Tudo testado contra uma Sefin Nacional simulada.
+
 ## [F5-13.c Ordem de serviço] — 18/10/2026
 
 ### Adicionado

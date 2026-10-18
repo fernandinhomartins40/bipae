@@ -11,7 +11,7 @@ import { HttpsSefazTransport } from '../../src/modules/fiscal/sefaz.transport';
 const DIA = 86_400_000;
 export const SENHA_A1 = 'senha-de-teste-forte';
 
-function certificate(
+export function certificate(
   subject: string,
   issuer: forge.pki.Certificate | null,
   issuerKey: forge.pki.rsa.PrivateKey | null,

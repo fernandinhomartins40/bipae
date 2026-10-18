@@ -15,6 +15,7 @@ import {
   adminSessions,
   fiscalDocuments,
   nfeInvoices,
+  nfseDocuments,
   sales,
   sessions,
   tenants,
@@ -23,6 +24,7 @@ import {
 import { tenantTables } from '../account/data-export.service';
 import { PlatformAuditService } from '../admin/platform-audit.service';
 import { DfeService } from '../fiscal/dfe.service';
+import { NfseService } from '../fiscal/nfse.service';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import { NfeInvoicesService } from '../fiscal/nfe-invoices.service';
@@ -59,6 +61,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
     @Inject(WebhooksService) private readonly webhooks: WebhooksService,
     @Inject(DfeService) private readonly dfe: DfeService,
+    @Inject(NfseService) private readonly nfse: NfseService,
   ) {}
 
   async onModuleInit() {
@@ -200,6 +203,26 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .limit(200),
     );
     for (const doc of stuckNfe) await this.nfe.schedule(doc.tenantId, doc.userId, doc.id);
+    // NFS-e da ordem de serviço (F5-13.d) paradas do mesmo jeito.
+    const stuckNfse = await asPlatform(this.db, (tx) =>
+      tx
+        .select({
+          id: nfseDocuments.id,
+          tenantId: nfseDocuments.tenantId,
+          userId: nfseDocuments.createdBy,
+        })
+        .from(nfseDocuments)
+        .where(
+          and(
+            sql`${nfseDocuments.status} in ('pending', 'error')`,
+            lt(nfseDocuments.updatedAt, new Date(now.getTime() - 60_000)),
+            sql`${nfseDocuments.createdAt} > ${new Date(now.getTime() - UM_DIA)}`,
+            lt(nfseDocuments.attempts, 10),
+          ),
+        )
+        .limit(200),
+    );
+    for (const doc of stuckNfse) await this.nfse.schedule(doc.tenantId, doc.userId, doc.id);
     // Contingência SVC (F3-16): com a nota autorizada na SVC, confere se a tentativa normal não
     // foi autorizada também, assim que a SEFAZ da UF responder.
     const replaced = await asPlatform(this.db, (tx) =>
@@ -260,7 +283,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     for (const doc of cancels) {
       await this.fiscalEvents.schedule(doc.tenantId, doc.operatorId, doc.id);
     }
-    return stuck.length + stuckNfe.length + cancels.length;
+    return stuck.length + stuckNfe.length + stuckNfse.length + cancels.length;
   }
 
   /** Apaga logins vencidos ou encerrados há mais de 30 dias, de todas as empresas. */

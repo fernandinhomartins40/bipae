@@ -29,10 +29,7 @@ describe('serviço e ordem de serviço', () => {
     const ruim = serviceInput.safeParse({ name: 'X', code: '1', nbs: '12', issRate: 6 });
     expect(ruim.success).toBe(false);
     expect(ruim.error!.issues.map((i) => i.message)).toEqual(
-      expect.arrayContaining([
-        'NBS com 9 dígitos',
-        'Alíquota do ISSQN de 0 a 5%, com até 2 casas',
-      ]),
+      expect.arrayContaining(['NBS com 9 dígitos', 'Alíquota do ISSQN de 0 a 5%, com até 2 casas']),
     );
   });
 
@@ -54,5 +51,26 @@ describe('serviço e ordem de serviço', () => {
     });
     expect(ruim.error!.issues[0]!.message).toBe('Escolha o serviço ou a peça');
     expect(serviceOrderDeliverInput.parse({})).toEqual({});
+  });
+});
+
+describe('NFS-e na empresa (F5-13.d)', () => {
+  it('percentuais aproximados com vírgula; em branco vira nulo; acima de 99,99 é recusado', async () => {
+    const { companyInput } = await import('./contracts');
+    const r = companyInput.parse({
+      legalName: 'Oficina',
+      nfseSimplesPercent: '6,5',
+      nfseTaxFederal: 13.45,
+      nfseTaxState: '',
+      nfseSeries: 2,
+    });
+    expect(r).toMatchObject({
+      nfseSimplesPercent: '6.5',
+      nfseTaxFederal: '13.45',
+      nfseTaxState: null,
+      nfseSeries: 2,
+    });
+    expect(companyInput.safeParse({ legalName: 'X', nfseTaxMunicipal: '100' }).success).toBe(false);
+    expect(companyInput.safeParse({ legalName: 'X', nfseSeries: 50000 }).success).toBe(false);
   });
 });

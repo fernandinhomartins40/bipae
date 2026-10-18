@@ -71,6 +71,8 @@ import {
 } from './modules/fiscal/nfce-emission.service';
 import { NfeInvoicesController, NfeInvoicesService } from './modules/fiscal/nfe-invoices.service';
 import { DfeController, DfeService } from './modules/fiscal/dfe.service';
+import { NFSE_TRANSPORT, NfseController, NfseService } from './modules/fiscal/nfse.service';
+import { HttpsNfseTransport } from './modules/fiscal/nfse.transport';
 import {
   AccountantExportController,
   AccountantExportService,
@@ -180,6 +182,7 @@ class AppModule {
         NfceEmissionController,
         NfeInvoicesController,
         DfeController,
+        NfseController,
         FiscalEventsController,
         AccountantExportController,
         LotsController,
@@ -243,10 +246,12 @@ class AppModule {
         IcmsRulesService,
         CertificatesService,
         { provide: SEFAZ_TRANSPORT, useValue: new HttpsSefazTransport() },
+        { provide: NFSE_TRANSPORT, useValue: new HttpsNfseTransport() },
         SefazService,
         NfceEmissionService,
         NfeInvoicesService,
         DfeService,
+        NfseService,
         FiscalEventsService,
         AccountantExportService,
         PurchasesService,
