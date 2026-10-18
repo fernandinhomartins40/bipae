@@ -1,4 +1,4 @@
-import { formatTaxId, UFS, type PriceTable } from '@bipae/domain';
+import { formatTaxId, UFS, type FiscalProfile, type PriceTable } from '@bipae/domain';
 import {
   Alert,
   Button,
@@ -34,6 +34,7 @@ interface Company {
   cep?: string | null;
   phone?: string | null;
   nfcePaymentCodes?: Record<string, string>;
+  demonstrationProfileId?: string | null;
 }
 interface StoreRow {
   id: string;
@@ -209,6 +210,11 @@ function CompanyForm({
     cep: company?.cep ?? '',
     phone: company?.phone ?? '',
     voucher: company?.nfcePaymentCodes?.voucher ?? '10',
+    demonstrationProfileId: company?.demonstrationProfileId ?? '',
+  });
+  const profiles = useQuery({
+    queryKey: ['fiscal-profiles'],
+    queryFn: () => api.get<FiscalProfile[]>('/fiscal-profiles'),
   });
   const fiscal = useFiscalOptions().data;
   const regime = fiscal?.regimes.find((r) => r.id === v.taxRegime);
@@ -233,6 +239,7 @@ function CompanyForm({
       cep: v.cep || null,
       phone: v.phone || null,
       nfcePaymentCodes: { voucher: v.voucher },
+      demonstrationProfileId: v.demonstrationProfileId || null,
     };
     try {
       if (company) await api.patch(`/companies/${company.id}`, body);
@@ -366,6 +373,25 @@ function CompanyForm({
               ]}
             />
           </div>
+        </fieldset>
+        <fieldset className="flex flex-col gap-3">
+          <legend className="font-semibold">Venda condicional pela NF-e</legend>
+          <p className="text-sm text-muted">
+            Com um perfil escolhido, as notas do Ajuste SINIEF 02/18 saem pelo Bipaê: a remessa para
+            demonstração junto com as peças e, na volta, o retorno e a entrada simbólica. O imposto
+            fica suspenso. O Ajuste não diz o CSOSN, o CST do PIS/COFINS nem a classificação do
+            IBS/CBS dessas notas, por isso o perfil é escolhido pela empresa, com o contador. No
+            regime normal, o perfil precisa do CST 50 (suspensão).
+          </p>
+          <SelectField
+            label="Perfil fiscal da venda condicional"
+            value={v.demonstrationProfileId}
+            onChange={(e) => setV({ ...v, demonstrationProfileId: e.target.value })}
+            options={[
+              { value: '', label: 'Não emitir as notas pelo Bipaê' },
+              ...(profiles.data ?? []).map((f) => ({ value: f.id, label: f.name })),
+            ]}
+          />
         </fieldset>
         <Button type="submit">Salvar empresa</Button>
       </form>

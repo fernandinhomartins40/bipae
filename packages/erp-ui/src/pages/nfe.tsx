@@ -25,6 +25,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, X } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useApp, useCan } from '../context';
 import { CityPicker } from './companies';
 import { parseQuantity } from './purchase-orders';
@@ -109,7 +110,9 @@ export function NfePage() {
         ? 2000
         : false,
   });
-  const [open, setOpen] = useState<string | 'new' | null>(null);
+  // Vindo de outra tela (ex.: o condicional), abre a nota do link.
+  const [params] = useSearchParams();
+  const [open, setOpen] = useState<string | 'new' | null>(params.get('abrir'));
   const rows = list.data ?? [];
   return (
     <>

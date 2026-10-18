@@ -21,6 +21,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, X } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
+import { Link } from 'react-router';
 import { useApp, useCan } from '../context';
 import { parseQuantity } from './purchase-orders';
 
@@ -39,14 +40,83 @@ function status(c: ConditionalView): {
     : { label: 'Com o cliente', tone: 'warning' };
 }
 
+const NOTE_LABEL: Record<ConditionalView['invoices'][number]['demonstration'], string> = {
+  remessa: 'Remessa para demonstração (CFOP 5.912)',
+  retorno: 'Retorno do que voltou (CFOP 1.913)',
+  entradaSimbolica: 'Entrada simbólica do que ficou (CFOP 1.949)',
+  venda: 'Venda do que o cliente ficou',
+};
+
+function noteStatus(n: ConditionalView['invoices'][number]) {
+  if (n.status === 'draft') {
+    return n.pending.length > 0
+      ? { label: 'Falta resolver', tone: 'warning' as const }
+      : { label: 'Rascunho: falta emitir', tone: 'neutral' as const };
+  }
+  switch (n.documentStatus) {
+    case 'authorized':
+      return { label: `Autorizada · nº ${n.number}`, tone: 'success' as const };
+    case 'rejected':
+    case 'denied':
+      return { label: 'Recusada pela SEFAZ', tone: 'danger' as const };
+    case 'not_configured':
+      return { label: 'Falta configurar', tone: 'warning' as const };
+    default:
+      return { label: 'Enviando à SEFAZ', tone: 'warning' as const };
+  }
+}
+
+/** As NF-e do condicional (F5-12.c): cada nota do Ajuste SINIEF 02/18, com o que falta. */
+function ConditionalNotes({ notes }: { notes: ConditionalView['invoices'] }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="font-semibold">Notas fiscais (Ajuste SINIEF 02/18)</p>
+      <ul className="flex flex-col gap-2" aria-label="Notas do condicional">
+        {notes.map((n) => (
+          <li key={n.id} className="flex flex-col gap-1 rounded-ui border border-border p-3">
+            <span className="flex flex-wrap items-center justify-between gap-2">
+              <span>{NOTE_LABEL[n.demonstration]}</span>
+              <Badge tone={noteStatus(n).tone}>{noteStatus(n).label}</Badge>
+            </span>
+            {n.pending.length > 0 && (
+              <ul className="list-disc pl-5 text-sm text-muted">
+                {n.pending.map((p) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ul>
+            )}
+            {n.demonstration === 'venda' && n.status === 'draft' && (
+              <span className="text-sm text-muted">
+                Escolha a forma de pagamento e emita a venda na tela da NF-e.
+              </span>
+            )}
+            <Link className="text-sm underline" to={`/nfe?abrir=${n.id}`}>
+              Abrir na NF-e
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 /** O aviso honesto sobre a nota: o Ajuste SINIEF 02/18 pede NF-e na saída e na volta. */
-function FiscalNotice() {
+function FiscalNotice({ viaBipae = false }: { viaBipae?: boolean }) {
+  if (viaBipae) {
+    return (
+      <Alert tone="success" title="Notas pelo Bipaê">
+        A remessa para demonstração (CFOP 5.912) sai junto com as peças, e o retorno e a entrada
+        simbólica saem na volta. O que o cliente ficar vira uma NF-e de venda com a chave da
+        remessa, para você escolher a forma de pagamento.
+      </Alert>
+    );
+  }
   return (
     <Alert tone="warning" title="Nota de remessa">
       Pelo Ajuste SINIEF 02/18, a peça que sai para o cliente provar vai com NF-e de remessa para
       demonstração (CFOP 5.912), e a volta, com NF-e de retorno (CFOP 1.913). A emissão dessas notas
-      pelo Bipaê chega com a NF-e da retaguarda. Por enquanto, emita no emissor de sempre. O que o
-      cliente ficar é vendido no caixa.
+      pelo Bipaê depende de escolher o perfil fiscal da venda condicional em Empresas e lojas. Sem
+      ele, emita no emissor de sempre; o que o cliente ficar é vendido no caixa.
     </Alert>
   );
 }
@@ -61,6 +131,15 @@ export function ConditionalsPage() {
   const list = useQuery({
     queryKey: ['conditionals'],
     queryFn: () => api.get<ConditionalView[]>('/conditionals'),
+    // Enquanto alguma nota do condicional está indo para a SEFAZ, a lista se atualiza sozinha.
+    refetchInterval: (q) =>
+      (q.state.data ?? []).some((c) =>
+        c.invoices.some(
+          (n) => n.status === 'issued' && ['pending', 'error', null].includes(n.documentStatus),
+        ),
+      )
+        ? 2000
+        : false,
   });
   const [open, setOpen] = useState<ConditionalView | 'new' | null>(null);
   const [done, setDone] = useState<string | null>(null);
@@ -112,7 +191,7 @@ export function ConditionalsPage() {
       )}
       {open && (
         <ConditionalDrawer
-          conditional={open === 'new' ? null : open}
+          conditional={open === 'new' ? null : (rows.find((r) => r.id === open.id) ?? open)}
           onClose={() => setOpen(null)}
           onClosed={(message) => {
             setOpen(null);
@@ -236,9 +315,10 @@ function ConditionalDrawer({
               <Button variant="secondary" loading={busy} onClick={() => void cancel()}>
                 Cancelar (devolveu tudo)
               </Button>
-              <FiscalNotice />
+              {c.invoices.length === 0 && <FiscalNotice />}
             </>
           )}
+          {c.invoices.length > 0 && <ConditionalNotes notes={c.invoices} />}
         </div>
       </Drawer>
     );
@@ -282,6 +362,16 @@ function NewConditional({
     enabled: q.length >= 2,
   });
   const store = storeId || stores.data?.[0]?.id || '';
+  const companies = useQuery({
+    queryKey: ['companies'],
+    queryFn: () => api.get<{ id: string; demonstrationProfileId?: string | null }[]>('/companies'),
+  });
+  const storeCompany = (stores.data as { id: string; companyId?: string }[] | undefined)?.find(
+    (s) => s.id === store,
+  )?.companyId;
+  const viaBipae = Boolean(
+    companies.data?.find((c) => c.id === storeCompany)?.demonstrationProfileId,
+  );
 
   const send = () =>
     run(async () => {
@@ -430,7 +520,7 @@ function NewConditional({
         >
           Registrar a saída
         </Button>
-        <FiscalNotice />
+        <FiscalNotice viaBipae={viaBipae} />
       </div>
     </Drawer>
   );

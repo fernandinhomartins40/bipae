@@ -1,5 +1,13 @@
 # Changelog
 
+## [F5-12.c.3 Notas do condicional na tela] — 18/10/2026
+
+### Adicionado
+- **Empresas e lojas:** novo campo "Perfil fiscal da venda condicional", que liga as notas do Ajuste SINIEF 02/18 pelo Bipaê. A tela explica por que a escolha é da empresa.
+- **Condicional:** cada condicional mostra as notas, com a situação na SEFAZ, o que falta resolver e o link "Abrir na NF-e".
+  - O aviso muda quando as notas saem pelo Bipaê.
+  - A tela se atualiza sozinha enquanto uma nota vai para a SEFAZ.
+
 ## [Deploy: limpeza das imagens antigas] — 17/10/2026
 
 ### Corrigido
