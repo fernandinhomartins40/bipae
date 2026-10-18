@@ -73,6 +73,10 @@ services:
       MERCADOFLOW_CLIENT_ID: ${MERCADOFLOW_CLIENT_ID:-}
       MERCADOFLOW_CLIENT_SECRET: ${MERCADOFLOW_CLIENT_SECRET:-}
       MERCADOFLOW_WEBHOOK_SECRET: ${MERCADOFLOW_WEBHOOK_SECRET:-}
+      # E-mail transacional (P-04): sem SMTP_URL no .env da VPS (item E11), o e-mail fica desligado.
+      SMTP_URL: ${SMTP_URL:-}
+      MAIL_FROM: ${MAIL_FROM:-Bipaê <nao-responda@bipae.com.br>}
+      APP_PUBLIC_URL: https://www.bipae.com.br/app
       MERCADOFLOW_TERMS_URL: ${MERCADOFLOW_TERMS_URL:-}
     depends_on:
       postgres:

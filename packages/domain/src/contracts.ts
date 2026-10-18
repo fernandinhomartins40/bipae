@@ -2370,3 +2370,11 @@ export interface NfseDocumentView {
   lastError: string | null;
   authorizedAt: string | null;
 }
+
+// ---------- Recuperar senha por e-mail (P-04.b) ----------
+
+export const passwordForgotInput = z.object({ email: emailSchema });
+export const passwordResetInput = z.object({
+  token: z.string().trim().min(20, 'Link inválido').max(200, 'Link inválido'),
+  password: passwordSchema,
+});

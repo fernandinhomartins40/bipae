@@ -3,6 +3,8 @@ import { RouteConfig } from '@nestjs/platform-fastify';
 import {
   inviteAcceptInput,
   loginInput,
+  passwordForgotInput,
+  passwordResetInput,
   refreshInput,
   signupInput,
   totpCodeInput,
@@ -32,6 +34,23 @@ export class AuthController {
   @RouteConfig(LOGIN_RATE_LIMIT)
   login(@Body() body: unknown, @Headers('user-agent') userAgent?: string) {
     return this.auth.login(parse(loginInput, body), userAgent);
+  }
+
+  @Public()
+  @Post('password/forgot')
+  @HttpCode(202)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  forgot(@Body() body: unknown) {
+    return this.auth.forgotPassword(parse(passwordForgotInput, body).email);
+  }
+
+  @Public()
+  @Post('password/reset')
+  @HttpCode(200)
+  @RouteConfig(LOGIN_RATE_LIMIT)
+  reset(@Body() body: unknown) {
+    const input = parse(passwordResetInput, body);
+    return this.auth.resetPassword(input.token, input.password);
   }
 
   @Public()

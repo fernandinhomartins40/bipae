@@ -7,7 +7,7 @@ import { BrowserRouter, HashRouter, Navigate, Route, Routes, useLocation } from 
 import { ApiClient } from './api-client';
 import { AppContextProvider, useApp } from './context';
 import { AuditPage, TeamPage, TerminalsPage } from './pages/admin';
-import { LoginPage, SignupPage } from './pages/auth';
+import { LoginPage, SignupPage, ForgotPasswordPage, ResetPasswordPage } from './pages/auth';
 import { HomePage } from './pages/home';
 import { PartiesPage } from './pages/parties';
 import { DevicesPage } from './pages/devices';
@@ -147,6 +147,15 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               }
             />
             <Route path="/convite/:token" element={<InvitePage />} />
+            <Route
+              path="/esqueci-a-senha"
+              element={
+                <PublicOnly>
+                  <ForgotPasswordPage />
+                </PublicOnly>
+              }
+            />
+            <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
             <Route
               path="/criar-conta"
               element={

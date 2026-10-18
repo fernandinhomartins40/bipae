@@ -1,6 +1,7 @@
 import { Alert, Button, Card, Logo, TaxIdField, TextField } from '@bipae/ui';
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { ApiError } from '../api-client';
 import { useApp } from '../context';
 import { useForm } from '../forms';
@@ -96,6 +97,7 @@ export function LoginPage() {
         <Button type="submit" size="lg" loading={form.submitting}>
           {needsCode ? 'Confirmar e entrar' : 'Entrar'}
         </Button>
+        <ForgotPasswordLink />
         <p className="text-center text-sm">
           Ainda não tem conta?{' '}
           <Link to="/criar-conta" className="font-semibold text-primary underline">
@@ -174,6 +176,133 @@ export function SignupPage() {
           </Link>
         </p>
       </form>
+    </AuthLayout>
+  );
+}
+
+/** O e-mail transacional está ligado no servidor? (P-04): sem ele, não há "Esqueci a senha". */
+function useEmailEnabled() {
+  const { api } = useApp();
+  const health = useQuery({
+    queryKey: ['health'],
+    queryFn: () => api.get<{ features?: { email?: boolean } }>('/health'),
+    staleTime: 5 * 60_000,
+  });
+  return health.data?.features?.email === true;
+}
+
+export function ForgotPasswordLink() {
+  const enabled = useEmailEnabled();
+  if (!enabled) return null;
+  return (
+    <p className="text-center text-sm">
+      <Link to="/esqueci-a-senha" className="font-semibold text-primary underline">
+        Esqueci a senha
+      </Link>
+    </p>
+  );
+}
+
+/** Pedir o link de senha nova por e-mail (P-04.b). */
+export function ForgotPasswordPage() {
+  const { api } = useApp();
+  const form = useForm({ email: '' });
+  const [done, setDone] = useState<string | null>(null);
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    void form.submit(async (values) => {
+      const r = await api.post<{ message: string }>('/auth/password/forgot', values);
+      setDone(r.message);
+    });
+  };
+  return (
+    <AuthLayout title="Esqueci a senha" subtitle="Mandamos um link para você criar uma senha nova.">
+      {done ? (
+        <div className="flex flex-col gap-4">
+          <Alert tone="success" title="Confira o seu e-mail">
+            {done}
+          </Alert>
+          <Link to="/entrar" className="text-center font-semibold text-primary underline">
+            Voltar para entrar
+          </Link>
+        </div>
+      ) : (
+        <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+          {form.formError && <Alert>{form.formError}</Alert>}
+          <TextField
+            label="E-mail da conta"
+            type="email"
+            autoComplete="username"
+            value={form.values.email}
+            onChange={(e) => form.set('email', e.target.value)}
+            error={form.errors.email}
+            required
+          />
+          <Button type="submit" size="lg" loading={form.submitting}>
+            Mandar o link
+          </Button>
+          <Link to="/entrar" className="text-center text-sm font-semibold text-primary underline">
+            Lembrei a senha
+          </Link>
+        </form>
+      )}
+    </AuthLayout>
+  );
+}
+
+/** Criar a senha nova pelo link do e-mail (P-04.b). */
+export function ResetPasswordPage() {
+  const { api } = useApp();
+  const [params] = useSearchParams();
+  const token = params.get('codigo') ?? '';
+  const form = useForm({ password: '', confirm: '' });
+  const [done, setDone] = useState<string | null>(null);
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    void form.submit(async ({ password, confirm }) => {
+      if (password !== confirm)
+        throw new ApiError(400, 'validation', 'As duas senhas precisam ser iguais.');
+      const r = await api.post<{ message: string }>('/auth/password/reset', { token, password });
+      setDone(r.message);
+    });
+  };
+  return (
+    <AuthLayout title="Senha nova" subtitle="Escolha uma senha com pelo menos 8 caracteres.">
+      {done ? (
+        <div className="flex flex-col gap-4">
+          <Alert tone="success" title="Pronto">
+            {done}
+          </Alert>
+          <Link to="/entrar" className="text-center font-semibold text-primary underline">
+            Entrar
+          </Link>
+        </div>
+      ) : (
+        <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+          {!token && <Alert>Este link está incompleto. Peça outro em "Esqueci a senha".</Alert>}
+          {form.formError && <Alert>{form.formError}</Alert>}
+          <TextField
+            label="Senha nova"
+            type="password"
+            autoComplete="new-password"
+            value={form.values.password}
+            onChange={(e) => form.set('password', e.target.value)}
+            error={form.errors.password}
+            required
+          />
+          <TextField
+            label="Repita a senha nova"
+            type="password"
+            autoComplete="new-password"
+            value={form.values.confirm}
+            onChange={(e) => form.set('confirm', e.target.value)}
+            required
+          />
+          <Button type="submit" size="lg" loading={form.submitting} disabled={!token}>
+            Criar senha nova
+          </Button>
+        </form>
+      )}
     </AuthLayout>
   );
 }

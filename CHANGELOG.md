@@ -1,5 +1,13 @@
 # Changelog
 
+## [P-04.a/b E-mail e recuperar senha] — 18/10/2026
+
+### Adicionado
+- **E-mail transacional:** o envio vai pela fila, com nova tentativa, pelo SMTP do provedor. Sem o provedor configurado (item E11), o e-mail fica desligado, e as telas não oferecem o que depende dele.
+- **Recuperar senha:** "Esqueci a senha" manda um link de uso único que vale 1 hora.
+  - A senha nova encerra as sessões abertas em todos os aparelhos.
+  - A resposta é a mesma para e-mail sem conta, para não revelar quem é cliente.
+
 ## [F5-13.e NFS-e na tela da ordem de serviço] — 18/10/2026
 
 ### Adicionado

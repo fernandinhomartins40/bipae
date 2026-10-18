@@ -48,6 +48,14 @@ const envSchema = z.object({
   MERCADOFLOW_CLIENT_SECRET: z.string().optional(),
   MERCADOFLOW_WEBHOOK_SECRET: z.string().optional(),
   MERCADOFLOW_TERMS_URL: z.string().optional(),
+  /**
+   * E-mail transacional (P-04): servidor SMTP do provedor (smtps://usuario:senha@servidor:465).
+   * Sem ele, o e-mail fica desligado e as telas não oferecem o que precisa dele.
+   */
+  SMTP_URL: z.string().optional(),
+  MAIL_FROM: z.string().default('Bipaê <nao-responda@bipae.com.br>'),
+  /** Endereço público do aplicativo, para os links dos e-mails. */
+  APP_PUBLIC_URL: z.string().default('http://localhost:5173'),
   /** GitHub "owner/repo" whose public Releases carry the desktop installers ('' disables). */
   DESKTOP_RELEASES_REPO: z.string().default('fernandinhomartins40/bipae'),
   /** Bipaê staff must enable 2FA before using the admin panel (always true in production). */

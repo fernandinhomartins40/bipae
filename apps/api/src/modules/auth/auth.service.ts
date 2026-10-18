@@ -13,7 +13,7 @@ import {
   type signupInput,
   type SystemRoleKey,
 } from '@bipae/domain';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { and, count, eq, isNull, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { Config } from '../../config';
@@ -40,6 +40,7 @@ import {
 } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { AuditService } from '../audit/audit.service';
+import { mailBody, MailService } from '../mail/mail.service';
 
 const INVALID_LOGIN = 'E-mail ou senha incorretos.';
 const SESSION_EXPIRED = 'Sua sessão expirou. Entre novamente.';
@@ -68,6 +69,7 @@ export class AuthService {
     @Inject(TokenService) private readonly tokens: TokenService,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(LimitsService) private readonly limits: LimitsService,
+    @Inject(MailService) private readonly mail: MailService,
   ) {
     this.box = new SecretBox(config.SECRETS_KEY ?? config.JWT_SECRET);
   }
@@ -525,6 +527,72 @@ export class AuthService {
       throw new AppError(403, 'forbidden', 'Esta pessoa não pode vender no caixa desta empresa.');
     }
     return { userId: found.id, name: found.name, permissions };
+  }
+
+  /**
+   * Recuperar senha (P-04.b): manda o link de uso único (1 hora) para o e-mail, se ele existir. A
+   * resposta é sempre a mesma, para não revelar quais e-mails têm conta.
+   */
+  async forgotPassword(email: string) {
+    if (!this.mail.enabled) {
+      throw new AppError(
+        503,
+        'email_disabled',
+        'O envio de e-mail ainda não está ligado. Fale com o suporte do Bipaê.',
+      );
+    }
+    const token = randomBytes(32).toString('base64url');
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+    const expires = new Date(Date.now() + 60 * 60_000);
+    const [person] = await asApp(this.db, async (tx) =>
+      rowsOf<{ user_id: string; name: string; email: string }>(
+        await tx.execute(
+          sql`select * from auth_password_reset_issue(${email}, ${tokenHash}, ${expires})`,
+        ),
+      ),
+    );
+    if (person) {
+      await this.mail.send({
+        to: person.email,
+        subject: 'Bipaê: crie uma senha nova',
+        ...mailBody({
+          greeting: `Olá, ${person.name.split(' ')[0]}!`,
+          paragraphs: [
+            'Recebemos um pedido para criar uma senha nova para a sua conta no Bipaê.',
+            'O link vale por 1 hora e só pode ser usado uma vez. Se não foi você, ignore este e-mail: a sua senha continua a mesma.',
+          ],
+          action: {
+            label: 'Criar senha nova',
+            url: this.mail.link(`/redefinir-senha?codigo=${token}`),
+          },
+        }),
+      });
+    }
+    return {
+      message:
+        'Se o e-mail tiver conta no Bipaê, o link chega em instantes. Confira também a caixa de spam.',
+    };
+  }
+
+  /** Usa o link: troca a senha e encerra as sessões abertas em todos os aparelhos. */
+  async resetPassword(token: string, password: string) {
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+    const passwordHash = await this.hashPassword(password);
+    const [done] = await asApp(this.db, async (tx) =>
+      rowsOf<{ user_id: string }>(
+        await tx.execute(
+          sql`select * from auth_password_reset_consume(${tokenHash}, ${passwordHash})`,
+        ),
+      ),
+    );
+    if (!done) {
+      throw new AppError(
+        400,
+        'invalid_reset',
+        'Este link expirou ou já foi usado. Peça outro em "Esqueci a senha".',
+      );
+    }
+    return { message: 'Senha nova criada. Entre com ela.' };
   }
 
   async findUserByEmail(email: string) {

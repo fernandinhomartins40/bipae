@@ -73,6 +73,7 @@ import { NfeInvoicesController, NfeInvoicesService } from './modules/fiscal/nfe-
 import { DfeController, DfeService } from './modules/fiscal/dfe.service';
 import { NFSE_TRANSPORT, NfseController, NfseService } from './modules/fiscal/nfse.service';
 import { HttpsNfseTransport } from './modules/fiscal/nfse.transport';
+import { MailService } from './modules/mail/mail.service';
 import {
   AccountantExportController,
   AccountantExportService,
@@ -135,7 +136,10 @@ import { API_VERSION } from './version';
 
 @Controller('health')
 class HealthController {
-  constructor(@Inject(CONFIG) private readonly config: Config) {}
+  constructor(
+    @Inject(CONFIG) private readonly config: Config,
+    @Inject(MailService) private readonly mail: MailService,
+  ) {}
 
   @Public()
   @Get()
@@ -144,6 +148,8 @@ class HealthController {
       status: 'ok',
       version: API_VERSION,
       minimumClientVersions: this.config.minimumClientVersions,
+      /** O que depende de configuração externa (P-04): as telas só oferecem o que está ligado. */
+      features: { email: this.mail.enabled },
     };
   }
 }
@@ -252,6 +258,7 @@ class AppModule {
         NfeInvoicesService,
         DfeService,
         NfseService,
+        MailService,
         FiscalEventsService,
         AccountantExportService,
         PurchasesService,
