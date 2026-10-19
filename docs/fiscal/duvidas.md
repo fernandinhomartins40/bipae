@@ -40,6 +40,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-034 | 🟡 parcial | Código de benefício fiscal (cBenef) por UF |
 | D-035 | 🟡 configurável | Natureza da operação da entrada simbólica do condicional passa de 60 caracteres |
 | D-036 | 🟡 a confirmar com o certificado | NFS-e Nacional: mensagem JSON da Sefin, assinatura, convênio do município e grupo do IBS/CBS |
+| D-037 | 🔴 aberta | NF-e de devolução de venda (entrada do cliente): referência item a item e imposto por regime |
 
 ---
 
@@ -652,3 +653,16 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **DANFSE:** o caminho `{ADN DANFSE}/{chave}`, que devolve o PDF (NT 008).
 - **Validação local:** os padrões dos esquemas trazem `^` e `$`. No XML Schema eles são literais; o validador da Sefin os trata como âncoras, e o teste do Bipaê valida do mesmo jeito.
 - **Próximo passo:** conferir tudo na primeira emissão em produção restrita, com o certificado da empresa (F5-13.f, item E1).
+
+### D-037 — NF-e de devolução de venda: referência e imposto
+
+- **Contexto (F3-33.h):** quando o cliente devolve o que comprou por NF-e, a loja emite uma NF-e de entrada (tpNF 0, finNFe 4) com CFOP 1.202 (dentro do estado) ou 2.202 (de fora). Hoje a retaguarda do Bipaê só emite NF-e de saída; a devolução de compra ao fornecedor já existe.
+- **Confirmado em fonte oficial:**
+  - **CFOP:** com finNFe 4, o CFOP precisa ser de devolução (rejeição 327).
+  - **Simples Nacional:** para o MEI (CRT 4), o 1.202 cobre qualquer devolução, exceto 1.503 a 1.506 (NT 2024.001).
+  - **Documento referenciado:** a regra 321 do MOC pede a referência ao documento devolvido, mas dispensa os CFOP 1.201, 1.202, 1.410, 1.411, 5.921 e 6.921 (NT 2013.005).
+- **Ainda sem fonte oficial:**
+  - **Referência item a item:** um blog de fornecedor diz que a devolução passa a referenciar o documento item a item, pelo grupo `DFeReferenciado`, e que a referência só no cabeçalho será recusada. É preciso achar a nota técnica e a data.
+  - **Imposto da devolução por regime:** CST ou CSOSN, destaque e crédito do ICMS; IBS e CBS na devolução (estorno do débito da venda, LC 214/2025).
+- **Por enquanto:** a devolução do cliente continua fora do Bipaê; a tela não oferece o que não está construído.
+- **Próximo passo:** achar a nota técnica oficial sobre o `DFeReferenciado` e as regras de imposto da devolução no MOC 7.0 e na NT 2025.002; com elas, construir a F3-33.h.
