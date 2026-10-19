@@ -646,6 +646,7 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Área de dados:** compactada e em base64 (regras E1225 e E1226).
   - **Endereços das APIs:** página oficial do gov.br/nfse.
   - **Grupo do IBS/CBS:** só obrigatório para o Simples a partir de 2027 (nota do Anexo I) e facultativo para os demais no leiaute em produção (regra E0850). O leiaute da NT 009 v1.01 (01/10/2026) entra conforme o cronograma que a Receita vai publicar.
+  - **Leiaute do grupo `DFeReferenciado` (19/10/2026):** o XSD oficial `leiauteNFe_v4.00.xsd` do PL_010f v1.04 (já em `packages/fiscal/sources`) traz o grupo dentro de cada item (`det`), opcional, com `chaveAcesso` do documento referenciado e `nItem` opcional (1 a 990), o número do item na nota original.
 - **Ainda sem fonte oficial:** o Swagger da Sefin só abre com certificado, então estes pontos seguem o uso corrente e ficam isolados no código para trocar fácil:
   - **Nomes no JSON:** `dpsXmlGZipB64`, `chaveAcesso`, `nfseXmlGZipB64`, `erros`; no cancelamento (F5-13.g), `pedidoRegistroEventoXmlGZipB64` e `eventoXmlGZipB64`. O leiaute do pedido e as regras do cancelamento vêm do Anexo II oficial (19/10/2026): Id "PRE" + chave + código do evento; prazo e valor-limite são parâmetros do município (E0822, E0823).
   - **Resposta do convênio municipal:** o formato de `/parametros_municipais/{município}/convenio`.
@@ -662,7 +663,7 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Simples Nacional:** para o MEI (CRT 4), o 1.202 cobre qualquer devolução, exceto 1.503 a 1.506 (NT 2024.001).
   - **Documento referenciado:** a regra 321 do MOC pede a referência ao documento devolvido, mas dispensa os CFOP 1.201, 1.202, 1.410, 1.411, 5.921 e 6.921 (NT 2013.005).
 - **Ainda sem fonte oficial:**
-  - **Referência item a item:** um blog de fornecedor diz que a devolução passa a referenciar o documento item a item, pelo grupo `DFeReferenciado`, e que a referência só no cabeçalho será recusada. É preciso achar a nota técnica e a data.
+  - **Obrigatoriedade da referência item a item:** um blog de fornecedor diz que a referência só no cabeçalho será recusada na devolução. Falta a regra de validação oficial e a data.
   - **Imposto da devolução por regime:** CST ou CSOSN, destaque e crédito do ICMS; IBS e CBS na devolução (estorno do débito da venda, LC 214/2025).
 - **Por enquanto:** a devolução do cliente continua fora do Bipaê; a tela não oferece o que não está construído.
 - **Próximo passo:** achar a nota técnica oficial sobre o `DFeReferenciado` e as regras de imposto da devolução no MOC 7.0 e na NT 2025.002; com elas, construir a F3-33.h.
