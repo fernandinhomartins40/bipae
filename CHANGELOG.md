@@ -1,5 +1,18 @@
 # Changelog
 
+## [F7-04.b Ajuda das telas novas] — 19/10/2026
+
+### Adicionado
+- **Central de ajuda:** artigos novos, em passos e com os nomes dos botões, sobre:
+  - NF-e na retaguarda e contingência (SVC);
+  - notas emitidas para a sua empresa e manifestação;
+  - ordem de serviço e NFS-e;
+  - assistente de IA;
+  - campanhas por e-mail;
+  - senha e segurança da conta;
+  - pauta da ST.
+- **Guia de implantação:** a lista do que ainda não está disponível agora separa o que está pronto mas depende de configuração (emissão real, e-mail, IA).
+
 ## [F3-26.f ST pela pauta] — 18/10/2026
 
 ### Adicionado

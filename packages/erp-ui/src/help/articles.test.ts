@@ -38,6 +38,13 @@ describe('central de ajuda (F7-04)', () => {
     expect(searchHelp('fiado').map((a) => a.slug)).toEqual(['crediario']);
     expect(searchHelp('nota recusada').map((a) => a.slug)).toContain('nfce');
     expect(searchHelp('  ')).toHaveLength(HELP_ARTICLES.length);
+    // Artigos das telas novas (NF-e, OS e NFS-e, assistente, campanhas, segurança, pauta).
+    expect(searchHelp('nfse').map((a) => a.slug)).toContain('ordem-de-servico');
+    expect(searchHelp('esqueci a senha').map((a) => a.slug)).toContain('seguranca-da-conta');
+    expect(searchHelp('contingencia svc').map((a) => a.slug)).toEqual(['nfe']);
+    expect(searchHelp('manifestacao').map((a) => a.slug)).toContain('notas-recebidas');
+    expect(searchHelp('pauta cerveja').map((a) => a.slug)).toEqual(['pauta-da-st']);
+    expect(searchHelp('descadastro').map((a) => a.slug)).toContain('campanhas');
     expect(searchHelp('palavra-que-nao-existe')).toEqual([]);
   });
 });

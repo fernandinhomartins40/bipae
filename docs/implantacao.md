@@ -103,13 +103,12 @@ Peça ao lojista, por escrito:
 
 Não ofereça ao lojista como pronto:
 
-- emissão de NFC-e em produção;
-- NF-e na retaguarda (modelo 55);
-- NFS-e de serviços;
+- emissão em produção da NFC-e, da NF-e (modelo 55) e da NFS-e. As telas e o cálculo estão prontos e testados contra os serviços simulados; falta a primeira emissão real em homologação com o certificado de uma empresa;
+- e-mails (recuperar senha, confirmação da conta, avisos e campanhas): estão prontos, mas só funcionam depois que o provedor de e-mail do Bipaê for ligado;
+- assistente de IA: aparece como "Falta configurar" até a chave do provedor de IA ser ligada;
 - certificado A3;
 - Pix e cartão integrados (TEF): por enquanto, o Pix e o cartão são registrados à mão no caixa;
 - iFood e marketplaces;
-- envio de e-mail de campanhas;
 - assinatura da Apple no macOS: o app funciona, mas na primeira vez abra com Control + clique → Abrir.
 
 A lista atualizada está no backlog do projeto (`docs/TAREFAS.md`). O que o Bipaê ainda não faz aparece na tela como "chega em breve" ou "falta configurar".

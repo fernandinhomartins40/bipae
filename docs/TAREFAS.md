@@ -222,6 +222,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-27.b.RJ · Rio de Janeiro: Tabela de códigos de benefício X CST de 02/10/2026 (653 códigos; mesmo leitor do PR, com o cabeçalho só na primeira página); monitor semanal
     - [x] F3-27.b.DF · Distrito Federal: planilha consolidada do Anexo Único do Ato Declaratório (252 códigos; arquivo de 15/05/2023, o único que a Receita-DF publica); monitor semanal
   - [ ] F3-27.c · Demais UFs: confirmar em fonte oficial se exigem o cBenef e, se exigirem, gerar a tabela do arquivo da SEFAZ (a planilha de regras de validação por UF do portal da NFC-e saiu do ar; nenhuma outra UF publica tabela própria que tenha sido achada) — depende: F3-27.b
+    - Busca de 19/10/2026: as regras do cBenef no MOC 7.0 (I05f, N12-84 a N12-98) são facultativas, cada UF decide e publica a própria tabela; o MOC não lista quais UFs adotam. As tabelas oficiais achadas são as das 8 UFs já cobertas (PR, SC, RS, GO, ES, SP, RJ e DF). Nas demais, o código continua possível pela regra de ICMS da empresa.
 - [x] F3-28 · Endereços de autorização e de QR Code das 27 UFs (NFC-e e NF-e, produção e homologação) — depende: F3-07
   - Feito para a NFC-e (13/10/2026), extraído das páginas oficiais da SVRS e do ENCAT. Os da NF-e entraram com a F3-08.b (Portal Nacional da NF-e).
 - [x] F3-29 · CRT 2 e sublimite do Simples Nacional por UF — depende: F3-06.c
@@ -394,6 +395,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - Feito em 16/10/2026: axe-core nas telas principais (tema claro, escuro e celular) e teste de teclado na CI; corrigidos o link "Pular para o conteúdo" e a volta do foco ao fechar gavetas e janelas (ver `docs/acessibilidade.md`).
 - [x] F7-04 · Central de ajuda (documentação do usuário)
   - Feito em 16/10/2026: tela "Ajuda" dentro do aplicativo (funciona sem internet), com busca e 16 artigos em passos; teste que confere os links para as telas (`packages/erp-ui/src/help/articles.ts`).
+  - [x] F7-04.b · Artigos das telas novas (19/10/2026): NF-e e contingência, notas recebidas e manifestação, ordem de serviço e NFS-e, assistente de IA, campanhas por e-mail, senha e segurança da conta, pauta da ST; guia de implantação atualizado com o que depende de configuração
 - [x] F7-05 · Guia de implantação para revendas e técnicos
   - Feito em 16/10/2026: `docs/implantacao.md` (levantamento, equipamentos, instalação, configuração, treinamento, checklist, problemas comuns e o que ainda não está disponível).
 - [x] F7-06 · Bipaê Desktop para macOS

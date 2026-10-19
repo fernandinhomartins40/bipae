@@ -407,6 +407,206 @@ export const HELP_ARTICLES: HelpArticle[] = [
       },
     ],
   },
+  {
+    slug: 'nfe',
+    title: 'Emitir NF-e (modelo 55) pela retaguarda',
+    category: 'Fiscal',
+    summary: 'Venda para empresa, para outro estado, devolução e contingência.',
+    keywords: [
+      'nota fiscal eletronica',
+      'modelo 55',
+      'danfe',
+      'atacado',
+      'svc',
+      'contingencia',
+      'devolucao',
+    ],
+    screen: { label: 'NF-e', to: '/nfe' },
+    body: [
+      {
+        kind: 'p',
+        text: 'A NF-e é a nota de venda para empresas, para outro estado ou com transporte. No balcão, para o consumidor, continua valendo a NFC-e do caixa.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Em "NF-e", clique em "Nova NF-e" e escolha a "Empresa emitente".',
+          'Informe o destinatário: busque no cadastro de clientes ou digite o CPF ou CNPJ, o endereço e a inscrição estadual.',
+          'Adicione os produtos, o frete e a forma de pagamento. A prazo, use "Adicionar parcela" para cada vencimento.',
+          'Clique em "Salvar rascunho e conferir". O Bipaê calcula os impostos e mostra o que falta, item por item.',
+          'Quando não faltar nada, clique em "Emitir NF-e". Depois de autorizada, use "Baixar o DANFE (PDF)" e "Baixar o XML".',
+        ],
+      },
+      {
+        kind: 'tip',
+        text: 'Antes de emitir, "Baixar a prévia do DANFE" mostra como a nota vai ficar (a prévia não tem valor fiscal).',
+      },
+      {
+        kind: 'warning',
+        text: 'Se a SEFAZ do seu estado estiver fora do ar, a tela oferece "Emitir em contingência (SVC)". Depois que ela voltar, o Bipaê confere se a tentativa normal também foi autorizada e avisa para cancelar uma das duas.',
+      },
+    ],
+  },
+  {
+    slug: 'notas-recebidas',
+    title: 'Notas emitidas para a sua empresa',
+    category: 'Fiscal',
+    summary: 'Ver as notas que fornecedores emitiram para o seu CNPJ e responder à SEFAZ.',
+    keywords: [
+      'manifestacao',
+      'ciencia',
+      'dfe',
+      'nota de fornecedor',
+      'desconhecimento',
+      'entrada',
+    ],
+    screen: { label: 'Compras', to: '/compras' },
+    body: [
+      {
+        kind: 'p',
+        text: 'Com o certificado da empresa enviado, o Bipaê busca de hora em hora as notas emitidas para o seu CNPJ.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Em "Compras", veja "Notas emitidas para a sua empresa". Para não esperar, clique em "Buscar notas agora".',
+          'Abra a nota e clique em "Registrar a ciência" para baixar o XML completo.',
+          'Com o XML, clique em "Dar entrada na compra": o estoque e a conta a pagar entram sozinhos.',
+          'Se a compra não aconteceu, escolha em "O que aconteceu com esta compra", explique o motivo e clique em "Enviar a manifestação".',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'ordem-de-servico',
+    title: 'Ordem de serviço e NFS-e',
+    category: 'Fiscal',
+    summary: 'Abrir a OS, entregar ao cliente e emitir a NFS-e Nacional.',
+    keywords: ['os', 'assistencia tecnica', 'oficina', 'nfse', 'nota de servico', 'iss', 'danfse'],
+    screen: { label: 'Ordens de serviço', to: '/ordens-de-servico' },
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'Primeiro cadastre os serviços em "Serviços", com o "Código na lista nacional de serviços" e a "Alíquota do ISS no município (%)".',
+          'Em "Ordens de serviço", clique em "Nova ordem de serviço", escolha o cliente, descreva o equipamento e o defeito e adicione serviços e peças.',
+          'Clique em "Salvar a OS". Quando terminar o trabalho, use "Entregar ao cliente": as peças saem do estoque e a conta a receber é criada.',
+          'Na OS entregue, clique em "Emitir NFS-e". Depois de autorizada, use "Baixar o DANFSE" e "Baixar o XML".',
+        ],
+      },
+      {
+        kind: 'tip',
+        text: 'Se faltar algo para a NFS-e (inscrição municipal, código do serviço, alíquota), a tela lista em "O que falta para a NFS-e".',
+      },
+    ],
+  },
+  {
+    slug: 'assistente',
+    title: 'Assistente de IA',
+    category: 'Começar',
+    summary: 'Perguntar sobre as vendas e receber sugestão de NCM e CEST.',
+    keywords: ['ia', 'inteligencia artificial', 'pergunta', 'sugestao fiscal', 'ncm automatico'],
+    screen: { label: 'Assistente', to: '/assistente' },
+    body: [
+      {
+        kind: 'p',
+        text: 'O assistente é opcional. Desligado, nada muda no Bipaê. Ele nunca altera nada sozinho.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Em "Assistente", quem cuida da conta marca "Assistente ligado".',
+          'Escreva em "Sua pergunta", por exemplo "Quanto vendi nesta semana?", e clique em "Perguntar". A resposta mostra quais relatórios foram consultados.',
+          'No cadastro de um produto, use "Sugerir com IA" para receber NCM, CEST e cClassTrib conferidos nas tabelas oficiais. Confira e clique em "Aprovar e gravar", ou em "Recusar".',
+        ],
+      },
+      {
+        kind: 'tip',
+        text: 'Nome, CPF e contato de clientes não saem do Bipaê: o assistente só recebe números dos relatórios e o cadastro dos produtos.',
+      },
+    ],
+  },
+  {
+    slug: 'campanhas',
+    title: 'Campanhas por e-mail',
+    category: 'Clientes',
+    summary: 'Mandar ofertas para quem aceitou receber, por segmento.',
+    keywords: ['email marketing', 'ofertas', 'promocao por email', 'descadastro', 'lgpd'],
+    screen: { label: 'Relacionamento', to: '/relacionamento' },
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'Em "Relacionamento", escolha o segmento (novos, frequentes, ativos, sumidos) ou "Todos".',
+          'Em "Campanhas por e-mail", preencha o nome, o assunto e o texto. Deixe uma linha em branco entre os parágrafos.',
+          'Clique em "Enviar para". Vai só para quem aceitou receber ofertas e tem e-mail.',
+        ],
+      },
+      {
+        kind: 'tip',
+        text: 'Cada e-mail leva um link para a pessoa não receber mais. A lista de campanhas mostra quantos receberam e quantos saíram.',
+      },
+    ],
+  },
+  {
+    slug: 'seguranca-da-conta',
+    title: 'Senha e segurança da conta',
+    category: 'Começar',
+    summary: 'Esqueci a senha, verificação em duas etapas e avisos de segurança.',
+    keywords: ['senha', 'esqueci', 'login', 'duas etapas', '2fa', 'autenticador', 'bloqueado'],
+    screen: { label: 'Configurações', to: '/configuracoes' },
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'Esqueceu a senha? Na tela de entrar, clique em "Esqueci a senha". O link chega por e-mail, vale 1 hora e encerra as sessões abertas.',
+          'Para proteger a conta, em "Configurações" clique em "Ativar verificação em duas etapas" e leia o código com o aplicativo autenticador do celular.',
+        ],
+      },
+      {
+        kind: 'warning',
+        text: 'Depois de 10 senhas erradas em 15 minutos, o e-mail fica bloqueado por 15 minutos. Senhas muito comuns, ou iguais ao seu e-mail ou nome, não são aceitas.',
+      },
+      {
+        kind: 'tip',
+        text: 'Você recebe um e-mail sempre que a senha é trocada ou a verificação em duas etapas muda. Se não foi você, troque a senha na hora.',
+      },
+    ],
+  },
+  {
+    slug: 'pauta-da-st',
+    title: 'Pauta da substituição tributária',
+    category: 'Fiscal',
+    summary: 'Para distribuidores: a base da ST pelo valor da pauta da marca e embalagem.',
+    keywords: [
+      'pauta',
+      'st',
+      'substituicao tributaria',
+      'cerveja',
+      'refrigerante',
+      'mva',
+      'iva-st',
+    ],
+    screen: { label: 'Produtos', to: '/produtos' },
+    body: [
+      {
+        kind: 'p',
+        text: 'Em algumas bebidas, a UF publica o preço em reais de cada marca e embalagem (em SP, a Portaria SRE 27/2026). Isso só interessa a quem retém a ST: indústria, importador ou distribuidor.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'No cadastro do produto, preencha o CEST. Se ele estiver na pauta da UF da empresa, aparece "Pauta da ST".',
+          'Em "Procurar na pauta", digite a marca e a embalagem (ex.: "lata 350") e escolha o item certo.',
+          'Salve o produto. Na NF-e para essa UF, a base da ST passa a ser o valor da pauta vezes a quantidade.',
+        ],
+      },
+      {
+        kind: 'warning',
+        text: 'A pauta tem prazo. Quando sair a nova portaria, o rascunho da NF-e avisa para escolher o item da pauta nova.',
+      },
+    ],
+  },
 ];
 
 /** Busca sem acento e sem diferença de maiúsculas, no título, no resumo e nas palavras. */
