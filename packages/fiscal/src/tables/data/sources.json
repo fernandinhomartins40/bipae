@@ -188,6 +188,15 @@
   "downloadedAt": "2026-10-15",
   "sha256": "71ccd5fcc48f9604a2a8965146df45e3b73e96e87942ab3391be0d55cc0df718"
  },
+ "eventCce": {
+  "file": "Evento_CCe_PL_v1.01.zip",
+  "title": "Esquemas XML NF-e - Pacote de Liberação Evento CCe (carta de correção, tpEvento 110110) v1.01",
+  "publisher": "Portal Nacional da NF-e (ENCAT)",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2014-05-30",
+  "downloadedAt": "2026-10-19",
+  "sha256": "c300695ae3344dcb0c000ec806559e7392c54f7be99599274965050112771f77"
+ },
  "eventCancelSubst": {
   "file": "Evento_CancSubst_v1.01_NT_2018_004.zip",
   "title": "Esquemas XML NFC-e - Evento Cancelamento por Substituição (tpEvento 110112), v1.01 (NT 2018.004)",

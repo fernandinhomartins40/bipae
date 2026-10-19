@@ -3,7 +3,9 @@ import { validatePackageXml, validateServiceXml } from '../../test/schema';
 import { signFiscalXml, type WebCryptoKey } from '../nfce/sign';
 import {
   buildCancelEvent,
+  buildCorrectionEvent,
   buildInutilization,
+  CCE_CONDITIONS,
   eventRequest,
   inutilizationRequest,
   parseEventResponse,
@@ -221,5 +223,52 @@ describe('eventos e inutilização (F3-17.a)', () => {
         '<soap:Envelope xmlns:soap="x"><soap:Body><soap:Fault><soap:Reason><soap:Text>Erro</soap:Text></soap:Reason></soap:Fault></soap:Body></soap:Envelope>',
       ),
     ).toThrow('SOAP Fault');
+  });
+});
+
+describe('carta de correção (F3-33.g)', () => {
+  const NFE = '35261011222333000181550010000000011123456785';
+
+  it('110110 assinada e válida no schema oficial do pacote Evento CCe, dentro do lote', async () => {
+    const evento = await signFiscalXml(
+      buildCorrectionEvent({
+        accessKey: NFE,
+        cnpj: '11222333000181',
+        correction: 'Endereço de entrega: Avenida Brasil, 2000, galpão 3.',
+        sequence: 2,
+        at: '2026-10-19T10:00:00-03:00',
+      }),
+      'evento',
+      'infEvento',
+      await chave(),
+    );
+    expect(evento).toContain(`<infEvento Id="ID110110${NFE}02">`);
+    expect(evento).toContain('<nSeqEvento>2</nSeqEvento>');
+    expect(
+      await validatePackageXml(lote('7', evento), 'Evento_CCe_PL_v1.01.zip', 'envCCe_v1.00.xsd'),
+    ).toEqual([]);
+  });
+
+  it('o texto das condições de uso é o do schema oficial', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const { unzip } = await import('../../scripts/xlsx.mjs');
+    const files = unzip(readFileSync(join(__dirname, '../../sources/Evento_CCe_PL_v1.01.zip')));
+    const name = [...files.keys()].find((n) => n.endsWith('e110110_v1.00.xsd'))!;
+    const xsd = files.get(name)!.toString('utf8');
+    expect(xsd).toContain(`<xs:enumeration value="${CCE_CONDITIONS}"/>`);
+  });
+
+  it('só NF-e, de 1 a 20 cartas, correção de 15 a 1.000 caracteres', () => {
+    const base = {
+      accessKey: NFE,
+      cnpj: '11222333000181',
+      correction: 'Endereço de entrega corrigido.',
+      sequence: 1,
+      at: '2026-10-19T10:00:00-03:00',
+    };
+    expect(() => buildCorrectionEvent({ ...base, accessKey: CHAVE })).toThrow(/só da NF-e/);
+    expect(() => buildCorrectionEvent({ ...base, sequence: 21 })).toThrow(/até 20/);
+    expect(() => buildCorrectionEvent({ ...base, correction: 'curta' })).toThrow(/15 a 1.000/);
   });
 });

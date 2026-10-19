@@ -2207,8 +2207,21 @@ export interface NfeInvoiceView {
   check: { ok: boolean; pending: string[]; notes: string[]; totalCents: number | null };
   /** A nota na SEFAZ, depois de emitida. */
   document: FiscalDocumentView | null;
+  /** Cartas de correção da NF-e (F3-33.g), da mais nova para a mais antiga. */
+  corrections: NfeCorrectionView[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface NfeCorrectionView {
+  sequence: number;
+  text: string;
+  status: 'pending' | 'error' | 'registered' | 'rejected';
+  cStat: string | null;
+  xMotivo: string | null;
+  protocol: string | null;
+  lastError: string | null;
+  registeredAt: string | null;
 }
 
 // ---------- Notas contra o CNPJ da empresa (distribuição de DF-e, F3-20) ----------
@@ -2258,6 +2271,28 @@ export interface DfeSyncResult {
 }
 
 /** Emitir a NF-e na contingência SVC (F3-16): o motivo vai na nota (xJust, 15 a 256 caracteres). */
+/**
+ * Carta de correção da NF-e (F3-33.g): o texto substitui o das cartas anteriores, então traz tudo
+ * o que está sendo corrigido. Não corrige valores, impostos, quantidade, remetente, destinatário
+ * nem datas (Convênio S/N de 1970, art. 7º, § 1º-A).
+ */
+export const nfeCorrectionInput = z.object({
+  text: z
+    .string()
+    .trim()
+    .min(15, 'Escreva a correção com pelo menos 15 caracteres')
+    .max(1000, 'A correção pode ter no máximo 1.000 caracteres'),
+});
+
+/** Cancelamento da NF-e autorizada (F3-33.f): a justificativa vai à SEFAZ (15 a 255). */
+export const nfeCancelInput = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(15, 'Explique o motivo do cancelamento com pelo menos 15 caracteres')
+    .max(255, 'O motivo pode ter no máximo 255 caracteres'),
+});
+
 export const nfeContingencyInput = z.object({
   reason: z
     .string()

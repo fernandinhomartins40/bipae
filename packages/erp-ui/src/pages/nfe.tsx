@@ -16,6 +16,7 @@ import {
   DataTable,
   Drawer,
   EmptyState,
+  Field,
   MoneyField,
   PageHeader,
   SelectField,
@@ -356,10 +357,13 @@ function NfeDrawer({
     queryKey: ['nfe', id],
     queryFn: () => api.get<NfeInvoiceView>(`/fiscal/nfe/${id}`),
     enabled: Boolean(id),
-    refetchInterval: (q) =>
-      q.state.data?.document && ['pending', 'error'].includes(q.state.data.document.status)
-        ? 1500
-        : false,
+    refetchInterval: (q) => {
+      const doc = q.state.data?.document;
+      const cancelling =
+        (doc?.cancellation && ['pending', 'error'].includes(doc.cancellation.status)) ||
+        q.state.data?.corrections.some((c) => ['pending', 'error'].includes(c.status));
+      return doc && (['pending', 'error'].includes(doc.status) || cancelling) ? 1500 : false;
+    },
   });
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -447,7 +451,10 @@ function IssuedView({
   const queryClient = useQueryClient();
   const d = n.document!;
   const [svcReason, setSvcReason] = useState('');
+  const [cancelReason, setCancelReason] = useState('');
+  const [correction, setCorrection] = useState(n.corrections[0]?.text ?? '');
   const s = status(n);
+  const c = d.cancellation;
   const final = ['authorized', 'denied', 'cancelled'].includes(d.status);
   return (
     <div className="flex flex-col gap-4">
@@ -549,6 +556,111 @@ function IssuedView({
           </>
         )}
       </div>
+      {c && (c.status === 'pending' || c.status === 'error') && (
+        <Alert tone="warning" title="Cancelamento enviado à SEFAZ">
+          Aguardando a resposta. {c.lastError}
+        </Alert>
+      )}
+      {c?.status === 'registered' && (
+        <Alert tone="success" title="NF-e cancelada pela SEFAZ">
+          Protocolo {c.protocol}. A mercadoria voltou ao estoque e as parcelas abertas foram
+          canceladas.
+        </Alert>
+      )}
+      {c?.status === 'rejected' && (
+        <Alert
+          tone="danger"
+          title={`A SEFAZ recusou o cancelamento: ${c.cStat} ${c.xMotivo ?? ''}`}
+        >
+          {c.help ? `${c.help.cause} ${c.help.fix}` : 'A nota continua autorizada.'}
+        </Alert>
+      )}
+      {n.corrections.length > 0 && (
+        <section aria-labelledby="cartas" className="flex flex-col gap-2">
+          <h3 id="cartas" className="font-semibold">
+            Cartas de correção
+          </h3>
+          <ul className="flex flex-col gap-2">
+            {n.corrections.map((k) => (
+              <li key={k.sequence} className="rounded-ui border border-border p-2 text-sm">
+                <p className="font-semibold">
+                  Carta {k.sequence}:{' '}
+                  {k.status === 'registered'
+                    ? `registrada (protocolo ${k.protocol})`
+                    : k.status === 'rejected'
+                      ? `recusada (${k.cStat} ${k.xMotivo ?? ''})`
+                      : 'enviando à SEFAZ…'}
+                </p>
+                <p className="whitespace-pre-line">{k.text}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {canWrite && d.status === 'authorized' && !c && (
+        <fieldset className="flex flex-col gap-2 rounded-ui border border-border p-3">
+          <legend className="px-1 font-semibold">Carta de correção</legend>
+          <p className="text-sm text-muted">
+            Corrige dados que não mudam o imposto, como endereço de entrega, transportadora ou
+            observações. Não corrige valores, impostos, quantidade, remetente, destinatário nem
+            datas. Cada carta substitui a anterior: escreva tudo o que está sendo corrigido.
+          </p>
+          <Field
+            label="O que está sendo corrigido"
+            hint="De 15 a 1.000 caracteres. Até 20 cartas por nota."
+          >
+            {(a11y) => (
+              <textarea
+                {...a11y}
+                rows={3}
+                maxLength={1000}
+                className="w-full rounded-ui border border-border bg-surface p-3 text-base text-text"
+                value={correction}
+                onChange={(e) => setCorrection(e.target.value)}
+              />
+            )}
+          </Field>
+          <Button
+            variant="secondary"
+            loading={busy}
+            onClick={() =>
+              void run(async () => {
+                await api.post(`/fiscal/nfe/${n.id}/correction`, { text: correction });
+                await queryClient.invalidateQueries({ queryKey: ['nfe', n.id] });
+              })
+            }
+          >
+            Enviar carta de correção
+          </Button>
+        </fieldset>
+      )}
+      {canWrite && d.status === 'authorized' && !c && (
+        <fieldset className="flex flex-col gap-2 rounded-ui border border-border p-3">
+          <legend className="px-1 font-semibold">Cancelar a NF-e</legend>
+          <p className="text-sm text-muted">
+            Dá para cancelar em até 24 horas da autorização. Depois disso, emita uma NF-e de
+            devolução. A mercadoria volta ao estoque quando a SEFAZ registrar o cancelamento.
+          </p>
+          <TextField
+            label="Motivo do cancelamento"
+            hint="Vai para a SEFAZ (de 15 a 255 caracteres)."
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+          />
+          <Button
+            variant="secondary"
+            loading={busy}
+            onClick={() =>
+              void run(async () => {
+                await api.post(`/fiscal/nfe/${n.id}/cancel`, { reason: cancelReason });
+                await queryClient.invalidateQueries({ queryKey: ['nfe', n.id] });
+              })
+            }
+          >
+            Cancelar a NF-e
+          </Button>
+        </fieldset>
+      )}
       {canWrite && !final && d.status !== 'pending' && (
         <Button
           loading={busy}

@@ -18,7 +18,9 @@ import {
 import {
   brasiliaDateTime,
   buildCancelEvent,
+  buildCorrectionEvent,
   buildInutilization,
+  CCE_MAX_SEQUENCE,
   signFiscalXml,
   type FiscalEventResult,
 } from '@bipae/fiscal';
@@ -30,10 +32,13 @@ import type { JobQueue } from '../../common/queue';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   companies,
+  financialEntries,
   fiscalDocuments,
   fiscalEvents,
   fiscalInutilizations,
+  nfeInvoices,
   sales,
+  stockMovements,
   terminals,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
@@ -43,6 +48,8 @@ import { NfceEmissionService, rejectionHelp } from './nfce-emission.service';
 import { SefazService } from './sefaz.service';
 
 export const NFCE_CANCEL_JOB = 'nfce.cancel';
+export const NFE_CORRECTION_JOB = 'nfe.correction';
+const CORRECTION = '110110';
 const NFE_NS = 'http://www.portalfiscal.inf.br/nfe';
 const CANCEL = '110111';
 /** 573: o evento já estava registrado; 218: a nota já estava cancelada. Nos dois, está feito. */
@@ -116,6 +123,127 @@ export class FiscalEventsService implements OnModuleInit {
         userId: string;
       };
       await this.cancel(jobContext(tenantId, userId), documentId);
+    });
+    this.queue.process(NFE_CORRECTION_JOB, async (data) => {
+      const { tenantId, eventId, userId } = data as {
+        tenantId: string;
+        eventId: string;
+        userId: string;
+      };
+      await this.sendCorrection(jobContext(tenantId, userId), eventId);
+    });
+  }
+
+  /**
+   * Carta de correção da NF-e (F3-33.g): só da nota autorizada e não cancelada, uma por vez, até
+   * 20. A nova carta substitui as anteriores, então o número é o seguinte ao da última registrada.
+   */
+  async requestCorrection(ctx: RequestContext, documentId: string, text: string) {
+    const eventId = await withTenant(this.db, ctx, async (tx) => {
+      const [doc] = await tx
+        .select()
+        .from(fiscalDocuments)
+        .where(eq(fiscalDocuments.id, documentId));
+      if (!doc || doc.model !== '55' || doc.status !== 'authorized') {
+        throw new AppError(409, 'not_authorized', 'A carta de correção é só da NF-e autorizada.');
+      }
+      if (doc.cancelRequestedAt) {
+        throw new AppError(409, 'cancel_requested', 'Esta NF-e está sendo cancelada.');
+      }
+      const previous = await tx
+        .select()
+        .from(fiscalEvents)
+        .where(and(eq(fiscalEvents.documentId, doc.id), eq(fiscalEvents.type, CORRECTION)));
+      if (previous.some((e) => e.status === 'pending' || e.status === 'error')) {
+        throw new AppError(
+          409,
+          'correction_pending',
+          'Espere a SEFAZ responder a carta de correção anterior.',
+        );
+      }
+      const sequence = Math.max(0, ...previous.map((e) => e.sequence)) + 1;
+      if (sequence > CCE_MAX_SEQUENCE) {
+        throw new AppError(
+          409,
+          'correction_limit',
+          `A NF-e aceita até ${CCE_MAX_SEQUENCE} cartas de correção.`,
+        );
+      }
+      const id = uuidv7();
+      await tx.insert(fiscalEvents).values({
+        id,
+        tenantId: ctx.tenantId,
+        documentId: doc.id,
+        type: CORRECTION,
+        sequence,
+        reason: text,
+      });
+      await this.audit.record(tx, ctx, {
+        action: 'nfe.correction_requested',
+        entity: 'nfe_invoice',
+        entityId: doc.invoiceId,
+        data: { accessKey: doc.accessKey, sequence, text },
+      });
+      return id;
+    });
+    await this.queue.add(
+      NFE_CORRECTION_JOB,
+      { tenantId: ctx.tenantId, eventId, userId: ctx.userId },
+      { attempts: 6, backoffMs: 2000 },
+    );
+  }
+
+  private async sendCorrection(ctx: RequestContext, eventId: string) {
+    const prepared = await withTenant(this.db, ctx, async (tx) => {
+      const [event] = await tx.select().from(fiscalEvents).where(eq(fiscalEvents.id, eventId));
+      if (!event || event.status === 'registered' || event.status === 'rejected') return null;
+      const [doc] = await tx
+        .select()
+        .from(fiscalDocuments)
+        .where(eq(fiscalDocuments.id, event.documentId));
+      const [company] = await tx.select().from(companies).where(eq(companies.id, doc!.companyId));
+      if (!company?.taxId) throw notFound('Empresa');
+      const key = await this.certificates.signingKey(tx, doc!.companyId);
+      const signed = await signFiscalXml(
+        buildCorrectionEvent({
+          accessKey: doc!.accessKey!,
+          cnpj: company.taxId,
+          correction: event.reason,
+          sequence: event.sequence,
+          at: brasiliaDateTime(new Date().toISOString()),
+        }),
+        'evento',
+        'infEvento',
+        key,
+      );
+      await tx
+        .update(fiscalEvents)
+        .set({ signedXml: signed, attempts: event.attempts + 1, updatedAt: new Date() })
+        .where(eq(fiscalEvents.id, event.id));
+      return { event, doc: doc!, signed };
+    });
+    if (!prepared) return;
+    const { event, doc, signed } = prepared;
+    let result: FiscalEventResult;
+    try {
+      result = await this.sefaz.event(ctx, doc.companyId, '55', signed);
+    } catch (error) {
+      await this.updateEvent(ctx, event.id, {
+        status: 'error',
+        lastError: (error as Error).message,
+      });
+      throw error;
+    }
+    await this.updateEvent(ctx, event.id, {
+      status: result.registered ? 'registered' : 'rejected',
+      cStat: result.cStat,
+      xMotivo: result.xMotivo,
+      protocol: result.protocol ?? null,
+      procXml: result.xml
+        ? `<procEventoNFe versao="1.00" xmlns="${NFE_NS}">${signed}${result.xml}</procEventoNFe>`
+        : null,
+      registeredAt: result.registered ? new Date() : null,
+      lastError: null,
     });
   }
 
@@ -204,7 +332,11 @@ export class FiscalEventsService implements OnModuleInit {
       if (existing && (existing.status === 'registered' || existing.status === 'rejected')) {
         return null;
       }
-      const reason = cancelJustification(doc.cancelReason ?? 'cancelamento');
+      // Na NF-e da retaguarda, a justificativa é a que a pessoa escreveu (15 a 255 caracteres).
+      const reason =
+        doc.model === '55'
+          ? (doc.cancelReason ?? 'Cancelamento da NF-e').slice(0, 255)
+          : cancelJustification(doc.cancelReason ?? 'cancelamento');
       const event =
         existing ??
         (
@@ -244,8 +376,10 @@ export class FiscalEventsService implements OnModuleInit {
     const { event, signed } = prepared;
 
     let result: FiscalEventResult;
+    // A NF-e da retaguarda (F3-33.f) usa o mesmo evento, no serviço do modelo 55.
+    const model = doc.model === '55' ? '55' : '65';
     try {
-      result = await this.sefaz.event(ctx, doc.companyId, '65', signed);
+      result = await this.sefaz.event(ctx, doc.companyId, model, signed);
     } catch (error) {
       await this.updateEvent(ctx, event.id, {
         status: 'error',
@@ -276,6 +410,7 @@ export class FiscalEventsService implements OnModuleInit {
           .update(fiscalDocuments)
           .set({ status: 'cancelled', updatedAt: new Date() })
           .where(eq(fiscalDocuments.id, doc.id));
+        if (doc.invoiceId) await this.undoInvoice(tx, ctx, doc.invoiceId, result.protocol ?? null);
         // MF-08: o cancelamento vai ao MercadoFlow depois da venda.
         const [sale] = doc.saleId
           ? await tx.select({ storeId: sales.storeId }).from(sales).where(eq(sales.id, doc.saleId))
@@ -290,6 +425,51 @@ export class FiscalEventsService implements OnModuleInit {
           );
         }
       }
+    });
+  }
+
+  /**
+   * NF-e cancelada na SEFAZ (F3-33.f): a mercadoria que a nota tirou volta ao estoque da loja e as
+   * contas a receber da nota que ainda estão abertas são canceladas. Só depois do registro: se a
+   * SEFAZ recusar o cancelamento, nada muda.
+   */
+  private async undoInvoice(
+    tx: Tx,
+    ctx: RequestContext,
+    invoiceId: string,
+    protocol: string | null,
+  ) {
+    const [invoice] = await tx.select().from(nfeInvoices).where(eq(nfeInvoices.id, invoiceId));
+    if (!invoice) return;
+    const out = await tx
+      .select()
+      .from(stockMovements)
+      .where(and(eq(stockMovements.refId, invoiceId), eq(stockMovements.reason, 'nfe_out')));
+    const now = new Date();
+    for (const m of out) {
+      await tx.insert(stockMovements).values({
+        id: uuidv7(),
+        tenantId: ctx.tenantId,
+        storeId: m.storeId,
+        productId: m.productId,
+        deltaMilli: -m.deltaMilli,
+        reason: 'nfe_cancelled',
+        refId: invoiceId,
+        note: `Cancelamento da ${m.note ?? 'NF-e'}`,
+        actorId: ctx.userId,
+        occurredAt: now,
+      });
+    }
+    const cancelled = await tx
+      .update(financialEntries)
+      .set({ status: 'cancelled', updatedAt: now })
+      .where(and(eq(financialEntries.invoiceId, invoiceId), eq(financialEntries.status, 'open')))
+      .returning({ id: financialEntries.id });
+    await this.audit.record(tx, ctx, {
+      action: 'nfe.cancelled',
+      entity: 'nfe_invoice',
+      entityId: invoiceId,
+      data: { protocol, stockLines: out.length, receivablesCancelled: cancelled.length },
     });
   }
 

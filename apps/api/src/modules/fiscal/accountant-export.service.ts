@@ -159,9 +159,18 @@ export class AccountantExportService {
             ? { name: `NFe/${d.accessKey}-procNFe.xml`, data: d.nfeProc }
             : { name: `NFCe/${d.accessKey}-procNFCe.xml`, data: d.nfeProc },
         );
-        const cancel = events.find((e) => e.documentId === d.id);
+        const cancel = events.find((e) => e.documentId === d.id && e.type !== '110110');
         if (cancel?.procXml) {
           files.push({ name: `Eventos/${d.accessKey}-cancelamento.xml`, data: cancel.procXml });
+        }
+        // Cartas de correção da NF-e (F3-33.g), uma por sequência.
+        for (const cce of events.filter((e) => e.documentId === d.id && e.type === '110110')) {
+          if (cce.procXml) {
+            files.push({
+              name: `Eventos/${d.accessKey}-carta-de-correcao-${cce.sequence}.xml`,
+              data: cce.procXml,
+            });
+          }
         }
         let issuedAt = '';
         let value = 0;

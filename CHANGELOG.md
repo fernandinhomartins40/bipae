@@ -1,5 +1,19 @@
 # Changelog
 
+## [F3-33.f/g Cancelar a NF-e e carta de correção] — 19/10/2026
+
+### Adicionado
+- **Cancelar a NF-e** autorizada em até 24 horas, com o motivo escrito pela pessoa.
+  - O pedido vai à SEFAZ pela fila.
+  - Quando a SEFAZ registra, a mercadoria volta ao estoque e as parcelas ainda abertas são canceladas.
+  - Se a SEFAZ recusar, nada muda.
+  - Fora do prazo, a tela orienta a emitir uma NF-e de devolução.
+- **Carta de correção** da NF-e, de 1 a 20 por nota.
+  - Cada carta substitui a anterior.
+  - Leva o texto fixo das condições de uso do schema oficial e é validada no XSD do pacote Evento CCe.
+  - As cartas entram no pacote do mês do contador.
+- O pacote do contador agora procura o cancelamento pelo tipo do evento, para não confundir com uma carta de correção.
+
 ## [F4-14.c e F3-31.b Pacote do contador com NFS-e e monitor das fontes] — 19/10/2026
 
 ### Adicionado

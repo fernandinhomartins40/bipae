@@ -117,6 +117,74 @@ export function buildCancelEvent(input: {
   );
 }
 
+/**
+ * Condições de uso da carta de correção: texto fixo exigido pelo schema e110110_v1.00 (pacote
+ * Evento CCe v1.01), na forma sem acentos que o próprio schema aceita. O teste confere com o XSD.
+ */
+export const CCE_CONDITIONS =
+  'A Carta de Correcao e disciplinada pelo paragrafo 1o-A do art. 7o do Convenio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularizacao de erro ocorrido na emissao de documento fiscal, desde que o erro nao esteja relacionado com: I - as variaveis que determinam o valor do imposto tais como: base de calculo, aliquota, diferenca de preco, quantidade, valor da operacao ou da prestacao; II - a correcao de dados cadastrais que implique mudanca do remetente ou do destinatario; III - a data de emissao ou de saida.';
+
+/** A NF-e aceita até 20 cartas de correção; cada nova substitui as anteriores (MOC 7.0). */
+export const CCE_MAX_SEQUENCE = 20;
+
+/**
+ * Carta de correção (110110), só da NF-e (modelo 55), sem assinatura. `sequence` é o número da
+ * carta (1 a 20); a correção vale por inteiro e substitui a anterior, então precisa trazer tudo
+ * o que está sendo corrigido.
+ */
+export function buildCorrectionEvent(input: {
+  accessKey: string;
+  cnpj: string;
+  correction: string;
+  sequence: number;
+  /** dhEvento com fuso (AAAA-MM-DDThh:mm:ss-03:00). */
+  at: string;
+}): string {
+  assertKey(input.accessKey);
+  if (input.accessKey.slice(20, 22) !== '55') {
+    throw new SefazMessageError('A carta de correção é só da NF-e (modelo 55).');
+  }
+  if (
+    !Number.isInteger(input.sequence) ||
+    input.sequence < 1 ||
+    input.sequence > CCE_MAX_SEQUENCE
+  ) {
+    throw new SefazMessageError(`A NF-e aceita até ${CCE_MAX_SEQUENCE} cartas de correção.`);
+  }
+  const text = input.correction.replace(/\s+/g, ' ').trim();
+  if (text.length < 15 || text.length > 1000) {
+    throw new SefazMessageError('A correção precisa ter de 15 a 1.000 caracteres.');
+  }
+  const seq = String(input.sequence);
+  return el(
+    'evento',
+    el(
+      'infEvento',
+      [
+        el('cOrgao', input.accessKey.slice(0, 2)),
+        el('tpAmb', TP_AMB),
+        el('CNPJ', input.cnpj),
+        el('chNFe', input.accessKey),
+        el('dhEvento', input.at),
+        el('tpEvento', '110110'),
+        el('nSeqEvento', seq),
+        el('verEvento', '1.00'),
+        el(
+          'detEvento',
+          [
+            el('descEvento', 'Carta de Correcao'),
+            el('xCorrecao', text),
+            el('xCondUso', CCE_CONDITIONS),
+          ],
+          { versao: '1.00' },
+        ),
+      ],
+      { Id: `ID110110${input.accessKey}${seq.padStart(2, '0')}` },
+    ),
+    { xmlns: NFE_NS, versao: '1.00' },
+  );
+}
+
 /** Lote de eventos (envEvento) para o serviço de recepção de eventos da UF. */
 export function eventRequest(input: {
   model: '55' | '65';

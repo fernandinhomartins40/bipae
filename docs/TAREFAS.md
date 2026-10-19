@@ -232,6 +232,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [x] F3-33.b · API: rascunho da NF-e, numeração por série da empresa, tarefa na fila que assina e envia (consulta antes de reenviar), XML e DANFE em PDF, testada contra a SEFAZ simulada; auditoria — depende: F3-33.a, F3-11.a, F3-13.c
   - [x] F3-33.c · Tela da NF-e na retaguarda: destinatário pelo cadastro de clientes, itens pelos produtos, transporte, parcelas e pagamento; o que falta, status da SEFAZ, XML e DANFE; E2E — depende: F3-33.b
   - [x] F3-33.e · A NF-e (sempre de saída) baixa o estoque da loja ao emitir, na venda e na devolução de compra; as parcelas da venda viram contas a receber ligadas à nota — depende: F3-33.b
+  - [x] F3-33.f · Cancelamento da NF-e autorizada (110111) em até 24 horas, com a justificativa da pessoa; pela fila; quando a SEFAZ registra, o estoque volta (motivo nfe_cancelled) e as parcelas abertas são canceladas; recusa (501) não muda nada; auditoria; tela — depende: F3-33.e, F3-17.a
+  - [x] F3-33.g · Carta de correção da NF-e (110110), de 1 a 20 por nota, uma por vez, com o texto fixo das condições de uso do schema oficial (pacote Evento CCe v1.01, validado no XSD); cartas no pacote do contador; tela com a lista — depende: F3-33.f
   - [ ] F3-33.d · Primeira NF-e autorizada na SEFAZ de homologação com o certificado da empresa — depende: F3-33.c · externo: E1
 - [x] F3-32 · Partilha do ICMS (DIFAL, grupo ICMSUFDest) na venda interestadual para consumidor final não contribuinte — depende: F3-08.a
 - [x] F3-31 · Rotina que baixa de novo as fontes oficiais, compara com o que está guardado e avisa quando uma tabela ou alíquota mudou — depende: F3-25

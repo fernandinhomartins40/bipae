@@ -396,3 +396,158 @@ describe('contingência SVC da NF-e (F3-16)', () => {
     }
   });
 });
+
+describe('cancelamento da NF-e (F3-33.f)', () => {
+  it('cancela a autorizada: evento registrado, estoque e contas voltam; auditoria', async () => {
+    sefaz.mode = 'normal';
+    const { admin, rascunho, produto } = await retaguarda();
+    const view = (await admin.post('/fiscal/nfe', rascunho())).json();
+    // Rascunho não se cancela: só a nota autorizada.
+    const cedo = await admin.post(`/fiscal/nfe/${view.id}/cancel`, {
+      reason: 'Cliente desistiu da compra antes da entrega',
+    });
+    expect(cedo.statusCode).toBe(409);
+    await admin.post(`/fiscal/nfe/${view.id}/issue`);
+    await nota(admin, view.id, (s) => s === 'authorized');
+
+    const curta = await admin.post(`/fiscal/nfe/${view.id}/cancel`, { reason: 'desistiu' });
+    expect(curta.statusCode).toBe(400);
+    const pedido = await admin.post(`/fiscal/nfe/${view.id}/cancel`, {
+      reason: 'Cliente desistiu da compra antes da entrega',
+    });
+    expect(pedido.statusCode).toBe(200);
+    const cancelada = await nota(admin, view.id, (s) => s === 'cancelled');
+    expect(cancelada.document.cancellation).toMatchObject({
+      status: 'registered',
+      cStat: '135',
+      reason: 'Cliente desistiu da compra antes da entrega',
+    });
+    expect(
+      (
+        await admin.post(`/fiscal/nfe/${view.id}/cancel`, {
+          reason: 'Cliente desistiu da compra antes da entrega',
+        })
+      ).statusCode,
+    ).toBe(409);
+
+    // A mercadoria voltou ao estoque e as parcelas abertas foram canceladas.
+    let saldo = 0;
+    for (let i = 0; i < 50; i++) {
+      saldo = (await admin.get(`/stock?productId=${produto.id}`))
+        .json()
+        .reduce((t: number, r: { quantityMilli: number }) => t + r.quantityMilli, 0);
+      if (saldo === 0) break;
+      await new Promise((ok) => setTimeout(ok, 100));
+    }
+    expect(saldo).toBe(0);
+    const contas = (await admin.get('/finance/entries?kind=receivable')).json() as {
+      description: string;
+      status: string;
+    }[];
+    expect(
+      contas.filter((c) => c.description.startsWith('NF-e nº 1 ')).map((c) => c.status),
+    ).toEqual(['cancelled', 'cancelled']);
+    const audit = JSON.stringify((await admin.get('/audit?action=nfe.cancelled')).json());
+    expect(audit).toContain('"receivablesCancelled":2');
+    expect(
+      JSON.stringify((await admin.get('/audit?action=nfe.cancel_requested')).json()),
+    ).toContain('Cliente desistiu');
+  });
+
+  it('fora do prazo de 24 horas explica o que fazer; SEFAZ recusando, nada volta', async () => {
+    sefaz.mode = 'normal';
+    const { admin, rascunho, produto } = await retaguarda();
+    const view = (await admin.post('/fiscal/nfe', rascunho())).json();
+    await admin.post(`/fiscal/nfe/${view.id}/issue`);
+    const pronta = await nota(admin, view.id, (s) => s === 'authorized');
+    await t.database.db.execute(
+      sql`update fiscal_documents set authorized_at = now() - interval '25 hours' where id = ${pronta.document.id}`,
+    );
+    const tarde = await admin.post(`/fiscal/nfe/${view.id}/cancel`, {
+      reason: 'Cliente desistiu da compra antes da entrega',
+    });
+    expect(tarde.statusCode).toBe(409);
+    expect(tarde.json().message).toContain('NF-e de devolução');
+
+    // Dentro do prazo, mas a SEFAZ recusa (501): a nota continua autorizada e nada volta.
+    await t.database.db.execute(
+      sql`update fiscal_documents set authorized_at = now() where id = ${pronta.document.id}`,
+    );
+    sefaz.mode = 'prazo';
+    await admin.post(`/fiscal/nfe/${view.id}/cancel`, {
+      reason: 'Cliente desistiu da compra antes da entrega',
+    });
+    const recusada = await nota(admin, view.id, (s) => s === 'authorized' && true);
+    let cancellation = recusada.document.cancellation;
+    for (let i = 0; i < 50 && cancellation?.status !== 'rejected'; i++) {
+      await new Promise((ok) => setTimeout(ok, 100));
+      cancellation = (await admin.get(`/fiscal/nfe/${view.id}`)).json().document.cancellation;
+    }
+    expect(cancellation).toMatchObject({ status: 'rejected', cStat: '501' });
+    const saldo = (await admin.get(`/stock?productId=${produto.id}`))
+      .json()
+      .reduce((t: number, r: { quantityMilli: number }) => t + r.quantityMilli, 0);
+    expect(saldo).toBe(-10_000);
+    sefaz.mode = 'normal';
+  });
+});
+
+describe('carta de correção da NF-e (F3-33.g)', () => {
+  it('registra cartas em sequência; a nova não sai antes da anterior; cancelada não corrige', async () => {
+    sefaz.mode = 'normal';
+    const { admin, rascunho } = await retaguarda();
+    const view = (await admin.post('/fiscal/nfe', rascunho())).json();
+    await admin.post(`/fiscal/nfe/${view.id}/issue`);
+    const pronta = await nota(admin, view.id, (s) => s === 'authorized');
+    expect(pronta.corrections).toEqual([]);
+
+    const curta = await admin.post(`/fiscal/nfe/${view.id}/correction`, { text: 'curta' });
+    expect(curta.statusCode).toBe(400);
+    const primeira = await admin.post(`/fiscal/nfe/${view.id}/correction`, {
+      text: 'Endereço de entrega: Avenida Brasil, 2000, galpão 3.',
+    });
+    expect(primeira.statusCode).toBe(200);
+    const esperar = async (n: number) => {
+      for (let i = 0; i < 100; i++) {
+        const v = (await admin.get(`/fiscal/nfe/${view.id}`)).json();
+        if (v.corrections.length === n && v.corrections[0].status === 'registered') return v;
+        await new Promise((ok) => setTimeout(ok, 100));
+      }
+      throw new Error('A carta não saiu do lugar.');
+    };
+    const uma = await esperar(1);
+    expect(uma.corrections[0]).toMatchObject({ sequence: 1, cStat: '135' });
+    await admin.post(`/fiscal/nfe/${view.id}/correction`, {
+      text: 'Endereço de entrega: Avenida Brasil, 2000, galpão 3. Contato: Ana.',
+    });
+    const duas = await esperar(2);
+    expect(duas.corrections.map((c: { sequence: number }) => c.sequence)).toEqual([2, 1]);
+    const chave = pronta.document.accessKey as string;
+    expect(sefaz.corrections.filter((c) => c.key === chave).map((c) => c.sequence)).toEqual([1, 2]);
+    expect(
+      JSON.stringify((await admin.get('/audit?action=nfe.correction_requested')).json()),
+    ).toContain('"sequence":2');
+
+    // O pacote do contador leva as cartas como eventos próprios.
+    const mes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' })
+      .format(new Date())
+      .slice(0, 7);
+    const [empresa] = (await admin.get('/companies')).json();
+    const pacote = (
+      await admin.get(`/fiscal/accountant-export?companyId=${empresa.id}&month=${mes}`)
+    ).rawPayload.toString('latin1');
+    expect(pacote).toContain(`Eventos/${chave}-carta-de-correcao-1.xml`);
+    expect(pacote).toContain(`Eventos/${chave}-carta-de-correcao-2.xml`);
+    expect(pacote).not.toContain(`Eventos/${chave}-cancelamento.xml`);
+
+    // Depois do cancelamento, não corrige mais.
+    await admin.post(`/fiscal/nfe/${view.id}/cancel`, {
+      reason: 'Cliente desistiu da compra antes da entrega',
+    });
+    await nota(admin, view.id, (s) => s === 'cancelled');
+    const depois = await admin.post(`/fiscal/nfe/${view.id}/correction`, {
+      text: 'Endereço de entrega: Rua Nova, 10, conjunto 2.',
+    });
+    expect(depois.statusCode).toBe(409);
+  });
+});

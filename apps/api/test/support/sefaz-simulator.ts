@@ -89,6 +89,8 @@ export class SefazSimulator {
   readonly distribution: { schema: string; xml: string }[] = [];
   /** Manifestações registradas (tpEvento de cada chave). */
   readonly manifestations: { key: string; type: string }[] = [];
+  /** Cartas de correção registradas (110110), com a sequência. */
+  readonly corrections: { key: string; sequence: number }[] = [];
   private server: Server | null = null;
   private readonly ac = certificate('AC SEFAZ SIMULADA', null, null);
   private readonly tls = certificate('127.0.0.1', this.ac.cert, this.ac.keys.privateKey);
@@ -231,6 +233,30 @@ export class SefazSimulator {
             '<retEvento versao="1.00"><infEvento><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic><cOrgao>91</cOrgao><cStat>135</cStat><xMotivo>Evento registrado e vinculado a NF-e</xMotivo>' +
             `<chNFe>${chave}</chNFe><tpEvento>${manifest}</tpEvento><nSeqEvento>1</nSeqEvento>` +
             '<dhRegEvento>2026-10-18T09:05:00-03:00</dhRegEvento><nProt>891260000123456</nProt></infEvento></retEvento></retEnvEvento>',
+        ),
+      };
+    }
+    // Carta de correção (110110): só da NF-e autorizada e não cancelada; volta com a sequência.
+    const correction = /<tpEvento>110110<\/tpEvento>/.test(body);
+    if (service === 'evento' && correction) {
+      const seq = /<nSeqEvento>(\d+)<\/nSeqEvento>/.exec(body)?.[1] ?? '1';
+      const [cStat, xMotivo] = this.cancelled.has(chave)
+        ? ['577', 'Rejeição: NF-e cancelada']
+        : !this.authorized.has(chave)
+          ? ['580', 'Rejeição: O evento exige uma NF-e autorizada']
+          : ['135', 'Evento registrado e vinculado a NF-e'];
+      if (cStat === '135') this.corrections.push({ key: chave, sequence: Number(seq) });
+      return {
+        status: 200,
+        text: envelope(
+          'NFeRecepcaoEvento4',
+          '<retEnvEvento versao="1.00" xmlns="http://www.portalfiscal.inf.br/nfe"><idLote>1</idLote><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic><cOrgao>35</cOrgao><cStat>128</cStat><xMotivo>Lote de evento processado</xMotivo>' +
+            `<retEvento versao="1.00"><infEvento><tpAmb>2</tpAmb><verAplic>SIMULADA</verAplic><cOrgao>35</cOrgao><cStat>${cStat}</cStat><xMotivo>${xMotivo}</xMotivo>` +
+            `<chNFe>${chave}</chNFe><tpEvento>110110</tpEvento><nSeqEvento>${seq}</nSeqEvento>` +
+            (cStat === '135'
+              ? '<dhRegEvento>2026-10-19T10:05:00-03:00</dhRegEvento><nProt>135260000777777</nProt>'
+              : '') +
+            '</infEvento></retEvento></retEnvEvento>',
         ),
       };
     }

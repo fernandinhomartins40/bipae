@@ -435,6 +435,8 @@ export const HELP_ARTICLES: HelpArticle[] = [
           'Adicione os produtos, o frete e a forma de pagamento. A prazo, use "Adicionar parcela" para cada vencimento.',
           'Clique em "Salvar rascunho e conferir". O Bipaê calcula os impostos e mostra o que falta, item por item.',
           'Quando não faltar nada, clique em "Emitir NF-e". Depois de autorizada, use "Baixar o DANFE (PDF)" e "Baixar o XML".',
+          'Para corrigir um dado que não muda o imposto (endereço de entrega, transportadora, observações), use "Carta de correção": escreva tudo o que está sendo corrigido e clique em "Enviar carta de correção". Cada carta substitui a anterior, até 20 por nota.',
+          'Para cancelar uma nota autorizada, em até 24 horas, escreva o "Motivo do cancelamento" e clique em "Cancelar a NF-e". Quando a SEFAZ registrar, a mercadoria volta ao estoque e as parcelas abertas são canceladas.',
         ],
       },
       {

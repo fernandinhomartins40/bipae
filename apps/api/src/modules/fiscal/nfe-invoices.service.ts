@@ -16,7 +16,14 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 import { renderDanfeNfe } from '@bipae/danfe';
-import { nfeContingencyInput, nfeInvoiceInput, uuidv7, type NfeInvoiceView } from '@bipae/domain';
+import {
+  nfeCancelInput,
+  nfeContingencyInput,
+  nfeCorrectionInput,
+  nfeInvoiceInput,
+  uuidv7,
+  type NfeInvoiceView,
+} from '@bipae/domain';
 import {
   brasiliaDateTime,
   buildDraftNfe,
@@ -25,6 +32,7 @@ import {
   type NfeDraftInput,
   type NfeDraftResult,
   type SaleFiscalProfile,
+  CANCEL_WINDOW_HOURS,
 } from '@bipae/fiscal';
 import { findPaymentMeans, nfeEndpoints, PAYMENT_MEANS } from '@bipae/fiscal/tables';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
@@ -43,6 +51,7 @@ import {
   customers,
   financialEntries,
   fiscalDocuments,
+  fiscalEvents,
   fiscalProfiles,
   nfeInvoices,
   productBarcodes,
@@ -53,6 +62,7 @@ import { AuditService } from '../audit/audit.service';
 import { CertificatesService } from './certificates.service';
 import { toMotorRule } from './icms-rules.service';
 import { cancellationView, rejectionHelp } from './nfce-emission.service';
+import { FiscalEventsService } from './fiscal-events.service';
 import { SefazService } from './sefaz.service';
 
 export const NFE_EMIT_JOB = 'nfe.emit';
@@ -63,7 +73,10 @@ type Invoice = typeof nfeInvoices.$inferSelect;
 type StoredItem = Input['items'][number];
 type Document = typeof fiscalDocuments.$inferSelect;
 
-const documentView = (d: Document): NonNullable<NfeInvoiceView['document']> => ({
+const documentView = (
+  d: Document,
+  cancel: typeof fiscalEvents.$inferSelect | null = null,
+): NonNullable<NfeInvoiceView['document']> => ({
   id: d.id,
   saleId: d.saleId,
   invoiceId: d.invoiceId,
@@ -84,7 +97,7 @@ const documentView = (d: Document): NonNullable<NfeInvoiceView['document']> => (
   lastError: d.lastError,
   authorizedAt: d.authorizedAt?.toISOString() ?? null,
   updatedAt: d.updatedAt.toISOString(),
-  cancellation: cancellationView(null),
+  cancellation: cancellationView(cancel),
 });
 
 /** Contexto da tarefa em segundo plano: o tenant da nota, em nome de quem a emitiu. */
@@ -114,6 +127,7 @@ export class NfeInvoicesService implements OnModuleInit {
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(CertificatesService) private readonly certificates: CertificatesService,
     @Inject(SefazService) private readonly sefaz: SefazService,
+    @Inject(FiscalEventsService) private readonly events: FiscalEventsService,
   ) {}
 
   onModuleInit() {
@@ -347,7 +361,35 @@ export class NfeInvoicesService implements OnModuleInit {
           ? { ok: true, pending: [], notes: check.notes, totalCents: check.document.totalCents }
           : { ok: false, pending: check.pending, notes: [], totalCents: null }
         : { ok: true, pending: [], notes: [], totalCents: null },
-      document: doc ? documentView(doc) : null,
+      document: doc
+        ? documentView(
+            doc,
+            (
+              await tx
+                .select()
+                .from(fiscalEvents)
+                .where(and(eq(fiscalEvents.documentId, doc.id), eq(fiscalEvents.type, '110111')))
+            )[0] ?? null,
+          )
+        : null,
+      corrections: doc
+        ? (
+            await tx
+              .select()
+              .from(fiscalEvents)
+              .where(and(eq(fiscalEvents.documentId, doc.id), eq(fiscalEvents.type, '110110')))
+              .orderBy(desc(fiscalEvents.sequence))
+          ).map((e) => ({
+            sequence: e.sequence,
+            text: e.reason,
+            status: e.status,
+            cStat: e.cStat,
+            xMotivo: e.xMotivo,
+            protocol: e.protocol,
+            lastError: e.lastError,
+            registeredAt: e.registeredAt?.toISOString() ?? null,
+          }))
+        : [],
       createdAt: invoice.createdAt.toISOString(),
       updatedAt: invoice.updatedAt.toISOString(),
     };
@@ -675,6 +717,76 @@ export class NfeInvoicesService implements OnModuleInit {
       return docId;
     });
     await this.schedule(ctx.tenantId, ctx.userId, documentId);
+    return this.get(ctx, id);
+  }
+
+  /**
+   * Cancelamento da NF-e (F3-33.f): só da nota autorizada, em até 24 horas da autorização (MOC,
+   * rejeição 501), com a justificativa de 15 a 255 caracteres. O pedido fica na nota e vai à SEFAZ
+   * pela fila; o estoque e as contas a receber só voltam quando a SEFAZ registra o cancelamento.
+   */
+  async cancel(ctx: RequestContext, id: string, reason: string): Promise<NfeInvoiceView> {
+    const text = reason.trim();
+    if (text.length < 15 || text.length > 255) {
+      throw new AppError(
+        400,
+        'validation',
+        'Explique o motivo do cancelamento em 15 a 255 caracteres.',
+      );
+    }
+    const docId = await withTenant(this.db, ctx, async (tx) => {
+      const invoice = await this.load(tx, ctx, id);
+      const [doc] = await tx
+        .select()
+        .from(fiscalDocuments)
+        .where(eq(fiscalDocuments.invoiceId, invoice.id));
+      if (!doc || doc.status !== 'authorized' || !doc.authorizedAt) {
+        throw new AppError(
+          409,
+          'not_authorized',
+          'Só dá para cancelar a NF-e autorizada pela SEFAZ.',
+        );
+      }
+      if (doc.cancelRequestedAt) {
+        throw new AppError(409, 'cancel_requested', 'O cancelamento desta NF-e já foi pedido.');
+      }
+      const hours = (Date.now() - doc.authorizedAt.getTime()) / 3_600_000;
+      if (hours > CANCEL_WINDOW_HOURS) {
+        throw new AppError(
+          409,
+          'cancel_window',
+          `O prazo de cancelamento (${CANCEL_WINDOW_HOURS} horas da autorização) acabou. Para desfazer a venda, emita uma NF-e de devolução ou peça à SEFAZ o cancelamento fora do prazo.`,
+        );
+      }
+      await tx
+        .update(fiscalDocuments)
+        .set({ cancelRequestedAt: new Date(), cancelReason: text, updatedAt: new Date() })
+        .where(eq(fiscalDocuments.id, doc.id));
+      await this.audit.record(tx, ctx, {
+        action: 'nfe.cancel_requested',
+        entity: 'nfe_invoice',
+        entityId: invoice.id,
+        data: { accessKey: doc.accessKey, reason: text },
+      });
+      return doc.id;
+    });
+    await this.events.schedule(ctx.tenantId, ctx.userId, docId);
+    return this.get(ctx, id);
+  }
+
+  /** Carta de correção da NF-e autorizada (F3-33.g), pela fila. */
+  async correct(ctx: RequestContext, id: string, text: string): Promise<NfeInvoiceView> {
+    const docId = await withTenant(this.db, ctx, async (tx) => {
+      const invoice = await this.load(tx, ctx, id);
+      const [doc] = await tx
+        .select({ id: fiscalDocuments.id })
+        .from(fiscalDocuments)
+        .where(eq(fiscalDocuments.invoiceId, invoice.id));
+      if (!doc)
+        throw new AppError(409, 'not_authorized', 'A carta de correção é só da NF-e autorizada.');
+      return doc.id;
+    });
+    await this.events.requestCorrection(ctx, docId, text);
     return this.get(ctx, id);
   }
 
@@ -1055,6 +1167,28 @@ export class NfeInvoicesController {
     @Body() body: unknown,
   ) {
     return this.invoices.contingency(ctx, id, parse(nfeContingencyInput, body).reason);
+  }
+
+  @Post(':id/cancel')
+  @HttpCode(200)
+  @RequirePermission('fiscal.profile.write')
+  cancel(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.invoices.cancel(ctx, id, parse(nfeCancelInput, body).reason);
+  }
+
+  @Post(':id/correction')
+  @HttpCode(200)
+  @RequirePermission('fiscal.profile.write')
+  correct(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.invoices.correct(ctx, id, parse(nfeCorrectionInput, body).text);
   }
 
   @Post(':id/retry')

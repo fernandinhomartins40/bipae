@@ -496,6 +496,7 @@ export const stockMovements = pgTable('stock_movements', {
       'conditional_in',
       'nfe_out',
       'service_order',
+      'nfe_cancelled',
     ],
   }).notNull(),
   refId: uuid('ref_id'),
@@ -1122,7 +1123,9 @@ export const fiscalEvents = pgTable('fiscal_events', {
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),
   documentId: uuid('document_id').notNull(),
-  type: text('type', { enum: ['110111', '110112'] }).notNull(),
+  type: text('type', { enum: ['110110', '110111', '110112'] }).notNull(),
+  /** Número do evento na nota (nSeqEvento): a carta de correção vai de 1 a 20 (F3-33.g). */
+  sequence: integer('sequence').notNull().default(1),
   status: text('status', { enum: ['pending', 'error', 'registered', 'rejected'] })
     .notNull()
     .default('pending'),
