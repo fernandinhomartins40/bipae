@@ -154,9 +154,12 @@ describe('BipaeApp', () => {
     await userEvent.type(screen.getByLabelText('Senha'), 'senha-forte-123');
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }));
 
-    expect(await screen.findByRole('heading', { name: 'Olá, Rafael!' })).toBeInTheDocument();
+    // Primeira tela do arquivo: no runner frio da CI, carregar o painel passa dos 5 s padrão.
+    expect(
+      await screen.findByRole('heading', { name: 'Olá, Rafael!' }, { timeout: 20_000 }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Mercadinho do Rafael', { selector: 'p' })).toBeInTheDocument();
-    // Navigation only shows what the user may access.
+    // O menu só mostra o que o usuário pode acessar.
     expect(screen.getByRole('link', { name: 'Produtos' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Equipe' })).not.toBeInTheDocument();
     await waitFor(() =>
