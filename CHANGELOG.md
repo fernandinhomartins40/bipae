@@ -1,5 +1,18 @@
 # Changelog
 
+## [F4-14.c e F3-31.b Pacote do contador com NFS-e e monitor das fontes] — 19/10/2026
+
+### Adicionado
+- **Pacote do mês para o contador:** agora leva o XML de cada NFS-e autorizada (pasta `NFSe`) e a linha dela no resumo, com o valor dos serviços.
+
+### Corrigido
+- **Monitor semanal das fontes oficiais:** acusava 8 mudanças que não existiam. Os motivos eram:
+  - a cadeia de certificados de alguns portais da SEFAZ (PE, AL, RS e ES);
+  - o endereço só HTTP da SEFAZ-MT;
+  - o bloqueio da SEFAZ-RJ ao download feito pelo Node (agora vai pelo curl);
+  - a lista dos manuais do Portal da NF-e, que não tinha referência gravada.
+- Conferência de 19/10/2026: nenhuma fonte oficial mudou.
+
 ## [F7-04.b Ajuda das telas novas] — 19/10/2026
 
 ### Adicionado

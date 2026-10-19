@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-10-14",
+  "savedAt": "2026-10-19",
   "listings": {
     "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=": [
       "Tabela de Código de Crédito Presumido do IBS e CBS - Publicada em 01/10/2026",
@@ -558,6 +558,20 @@
       "Nota Técnica 2013.005 - v.1.03 - Publicada em 02/04/2014",
       "Nota Técnica 2013.007 - SVC - v1.02 - Publicada em 13/12/2013",
       "Nota Técnica 2013.005 - v.1.02 - Publicada em 12/12/2013"
+    ],
+    "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=ndIjl+iEFdE=": [
+      "Manual de Orientação ao Contribuinte - MOC - versão 7.0 - NF-e e NFC-e",
+      "------&gt; Anexo I - Leiaute e Regra de Validação - NF-e e NFC-e",
+      "------&gt; Anexo II - Manual Especificações Técnicas - Danfe-Código-Barras",
+      "------&gt; Anexo III - Manual de Contingência - NF-e",
+      "------&gt; Anexo IV - Manual de Contingência - NFC-e",
+      "Manual de especificações técnicas do DANFE_NFC-e e Qr_Code Versão 6.0",
+      "Manual de Especificações da Contingência Offline para NFC-e - versão 2.0",
+      "Manual de Boas Práticas no desenvolvimento de emissor de NFC-e - BP 2018.001 - versão 1.0",
+      "Manual de Utilização da Sefaz Virtual do Ambiente Nacional(ZIP)",
+      "Manual de Usuários da Sefaz Virtual - RS.",
+      "Manual do Emissor de NF-e",
+      "Manual de Contingência da NF-e - Versão 1.01"
     ]
   }
 }

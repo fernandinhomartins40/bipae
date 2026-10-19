@@ -235,6 +235,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [ ] F3-33.d · Primeira NF-e autorizada na SEFAZ de homologação com o certificado da empresa — depende: F3-33.c · externo: E1
 - [x] F3-32 · Partilha do ICMS (DIFAL, grupo ICMSUFDest) na venda interestadual para consumidor final não contribuinte — depende: F3-08.a
 - [x] F3-31 · Rotina que baixa de novo as fontes oficiais, compara com o que está guardado e avisa quando uma tabela ou alíquota mudou — depende: F3-25
+  - [x] F3-31.b · Conferência de 19/10/2026: o monitor acusava 8 mudanças falsas. Corrigido: cadeia de certificados (primeiro sem os do sistema, que levavam a uma cadeia que não fecha), endereço só HTTP da SEFAZ-MT, download da SEFAZ-RJ pelo curl (o portal bloqueia o Node) e a lista dos manuais do Portal da NF-e gravada como referência. Resultado: nenhuma fonte mudou
 
 ## Fase 2 — pendências
 
@@ -313,6 +314,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] F4-13 · Apuração de IBS/CBS (débitos e créditos) — depende: F3-05, F3-19
 - [~] F4-14 · Exportação SPED/EFD e pacote de XMLs para o contador — depende: F3-14, F4-13
   - [x] F4-14.a · Pacote do mês para o contador: ZIP com os XML autorizados das NFC-e, dos cancelamentos e das inutilizações, e resumo em CSV
+  - [x] F4-14.c · O pacote leva também o XML de cada NFS-e autorizada no mês (pasta NFSe) e a linha dela no resumo, com o valor dos serviços — depende: F4-14.a, F5-13.d
   - [ ] F4-14.b · Arquivo SPED EFD ICMS/IPI do mês (registros das NFC-e), conforme o Guia Prático oficial, validado no PVA — depende: F4-14.a · externo: E21
   - Pesquisa feita em 16/10/2026 (dúvida D-031): o arquivo completo exige entradas, apuração e inventário; espera a decisão do dono.
 - [ ] F4-15 · Boletos via PSP — depende: F4-04 · externo: E9

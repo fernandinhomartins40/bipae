@@ -11,8 +11,14 @@ Um código, dois alvos: **Bipaê Online** (navegador, `app.bipae.com.br`) e **Bi
 | 0 — Pesquisa e benchmark | ✅ concluída |
 | Adendo 01 — Web + desktop | ✅ análise aprovada, incorporado às Fases 1 e 2 |
 | 1 — Fundação | ✅ entregue |
-| **2 — PDV offline-first** | ✅ **entregue** (ver [CHANGELOG](CHANGELOG.md) e pendências em [docs/TAREFAS.md](docs/TAREFAS.md)) |
-| 3 — Fiscal (NFC-e/NF-e, IBS/CBS) | próxima |
+| 2 — PDV offline-first | ✅ entregue; faltam o atualizador, o instalador assinado e o teste com hardware real (itens externos) |
+| 3 — Fiscal (NFC-e, NF-e, NFS-e, IBS/CBS) | 🟡 construída e testada contra os serviços simulados: NFC-e, NF-e com SVC, DF-e e manifestação, NFS-e Nacional, ST oficial em 17 UFs e pauta de SP, cBenef em 8 UFs. Falta a primeira emissão real em homologação com o certificado de uma empresa |
+| 4 — ERP | ✅ entregue; faltam boletos por PSP, SPED EFD e o crédito pelo split payment (itens externos) |
+| 5 — Verticais | ✅ entregue (food service, atacarejo, condicional, OS); falta a primeira NFS-e real |
+| 6 — Integrações e IA | 🟡 API pública, webhooks, CRM, fidelidade, campanhas por e-mail e assistente de IA prontos; Pix, TEF, iFood e marketplaces dependem de contas dos parceiros |
+| 7 — Endurecimento | 🟡 carga, acessibilidade, central de ajuda, guia de implantação e revisão OWASP ASVS L2 feitos; faltam o pentest externo e o teste de usabilidade |
+
+O que falta, e do que cada item depende, está em [docs/TAREFAS.md](docs/TAREFAS.md) (comando `pnpm tarefas bloqueadas`). O histórico está no [CHANGELOG](CHANGELOG.md).
 
 ## Produção
 

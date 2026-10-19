@@ -6,6 +6,8 @@
 //   node scripts/check-sources.mjs --save-listings guarda os títulos atuais das listas do Portal
 //
 // Nada é atualizado sozinho: quem atualiza troca o arquivo oficial e regera as tabelas.
+import { execFile } from 'node:child_process';
+import http from 'node:http';
 import https from 'node:https';
 import tls from 'node:tls';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -55,9 +57,19 @@ const listingsPath = join(sourcesDir, 'listings.json');
 // Alguns portais da SEFAZ usam a cadeia da ICP-Brasil, que não vem na lista padrão do Node.
 const icp = JSON.parse(readFileSync(join(dataDir, 'icp-brasil.json'), 'utf8')).map((c) => c.pem);
 // Os certificados do sistema cobrem servidores que não mandam o intermediário (o Windows e o
-// Ubuntu completam a cadeia).
+// Ubuntu completam a cadeia). Mas misturados aos do Node eles às vezes levam a uma cadeia que não
+// fecha: a primeira tentativa vai sem eles, e só um erro de cadeia tenta de novo com eles.
 const system = typeof tls.getCACertificates === 'function' ? tls.getCACertificates('system') : [];
-const ca = [...new Set([...tls.rootCertificates, ...system, ...icp])];
+const CA_LISTS = [
+  [...new Set([...tls.rootCertificates, ...icp])],
+  [...new Set([...tls.rootCertificates, ...system, ...icp])],
+];
+const CHAIN_ERRORS = new Set([
+  'UNABLE_TO_GET_ISSUER_CERT',
+  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+  'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+  'SELF_SIGNED_CERT_IN_CHAIN',
+]);
 
 /** GET com redirecionamentos e cookies (o Portal da NF-e exige os dois). */
 // A SEFAZ-RJ recusa pedidos sem os cabeçalhos de um navegador comum (mostra uma página de bloqueio).
@@ -69,14 +81,60 @@ const BROWSER = {
   'upgrade-insecure-requests': '1',
 };
 
-function download(url, jar = new Map(), hops = 0) {
+/**
+ * A SEFAZ-RJ responde ao Node com uma página de bloqueio (mesmo com os cabeçalhos de um
+ * navegador), mas entrega o arquivo ao curl. Para esse portal o download vai pelo curl.
+ */
+function downloadWithCurl(url) {
+  return new Promise((resolve, reject) => {
+    execFile(
+      'curl',
+      [
+        '-sSL',
+        '--max-time',
+        '120',
+        '-A',
+        BROWSER['user-agent'],
+        // Sem este cabeçalho, exatamente assim, o portal devolve a página de bloqueio.
+        '-H',
+        'Accept-Language: pt-BR',
+        '-w',
+        '\n%{content_type}',
+        url,
+      ],
+      { encoding: 'buffer', maxBuffer: 200 * 1024 * 1024 },
+      (error, stdout) => {
+        if (error) return reject(new Error(`curl: ${error.message}`));
+        const cut = stdout.lastIndexOf(0x0a);
+        resolve({
+          body: stdout.subarray(0, cut),
+          type: stdout.subarray(cut + 1).toString('utf8'),
+        });
+      },
+    );
+  });
+}
+
+async function download(url, jar = new Map(), hops = 0) {
+  if (/fazenda\.rj\.gov\.br/.test(url)) return downloadWithCurl(url);
+  try {
+    return await fetchOnce(url, jar, hops, CA_LISTS[0]);
+  } catch (error) {
+    if (!CHAIN_ERRORS.has(error.code)) throw error;
+    return fetchOnce(url, jar, hops, CA_LISTS[1]);
+  }
+}
+
+function fetchOnce(url, jar, hops, ca) {
   return new Promise((resolve, reject) => {
     if (hops > 10) return reject(new Error('redirecionamentos demais'));
     const cookie = [...jar].map(([k, v]) => `${k}=${v}`).join('; ');
-    const req = https.get(
+    // A SEFAZ-MT só publica a legislação por HTTP (o mesmo endereço não abre por HTTPS).
+    const client = url.startsWith('http://') ? http : https;
+    const req = client.get(
       url,
       {
-        ca,
+        ...(client === https && { ca }),
         timeout: 60_000,
         headers: {
           ...(/fazenda\.rj\.gov\.br/.test(url)

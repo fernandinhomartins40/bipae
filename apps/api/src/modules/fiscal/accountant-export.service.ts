@@ -14,6 +14,7 @@ import {
   fiscalEvents,
   fiscalInutilizations,
   nfeInvoices,
+  nfseDocuments,
   sales,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
@@ -29,6 +30,12 @@ function readNfeSummary(xml: string): { issuedAt: string; totalCents: number } {
   const total = /<ICMSTot>[\s\S]*?<vNF>(\d+)\.(\d{2})<\/vNF>/.exec(xml);
   if (!issuedAt || !total) throw new Error('XML da NF-e sem data ou valor.');
   return { issuedAt, totalCents: Number(total[1]) * 100 + Number(total[2]) };
+}
+
+/** Valor dos serviços da NFS-e (vServ, da DPS dentro da nota), em centavos; 0 se não achar. */
+function readNfseValue(xml: string): number {
+  const m = /<vServ>(\d+)\.(\d{2})<\/vServ>/.exec(xml);
+  return m ? Number(m[1]) * 100 + Number(m[2]) : 0;
 }
 
 const STATUS: Record<string, string> = {
@@ -54,7 +61,7 @@ function monthRange(month: string) {
 /**
  * Pacote do mês para o contador (F4-14.a): um ZIP com o XML autorizado de cada NFC-e emitida no
  * mês (inclusive as que depois foram canceladas), o XML de cada cancelamento, o de cada
- * inutilização de números e um resumo em CSV. É o que o escritório de contabilidade importa no
+ * inutilização de números, o XML de cada NFS-e autorizada e um resumo em CSV. É o que o escritório de contabilidade importa no
  * sistema dele. Só documentos com resposta da SEFAZ entram: nota que nunca saiu não tem XML
  * válido para o fisco.
  */
@@ -126,6 +133,20 @@ export class AccountantExportService {
           ),
         );
 
+      // NFS-e Nacional das ordens de serviço (F5-13): pelo mês da emissão da DPS.
+      const nfses = await tx
+        .select()
+        .from(nfseDocuments)
+        .where(
+          and(
+            eq(nfseDocuments.companyId, companyId),
+            eq(nfseDocuments.status, 'authorized'),
+            gte(nfseDocuments.issuedAt, start),
+            lt(nfseDocuments.issuedAt, end),
+          ),
+        )
+        .orderBy(asc(nfseDocuments.series), asc(nfseDocuments.number));
+
       const files: { name: string; data: string }[] = [];
       const csv = [
         'chave;modelo;serie;numero;emissao;situacao;valor;protocolo;protocolo_cancelamento',
@@ -166,6 +187,25 @@ export class AccountantExportService {
           ].join(';'),
         );
       }
+      for (const n of nfses) {
+        if (!n.nfseXml || !n.accessKey) continue;
+        files.push({ name: `NFSe/${n.accessKey}-NFSe.xml`, data: n.nfseXml });
+        const value = readNfseValue(n.nfseXml);
+        totalCents += value;
+        csv.push(
+          [
+            n.accessKey,
+            'NFS-e',
+            n.series,
+            n.number,
+            n.issuedAt.toISOString(),
+            'Autorizada',
+            money(value),
+            '',
+            '',
+          ].join(';'),
+        );
+      }
       for (const i of inutilizations) {
         if (!i.procXml) continue;
         files.push({
@@ -179,7 +219,12 @@ export class AccountantExportService {
         action: 'fiscal.accountant_export',
         entity: 'company',
         entityId: companyId,
-        data: { month, documents: docs.length, inutilizations: inutilizations.length },
+        data: {
+          month,
+          documents: docs.length,
+          nfse: nfses.length,
+          inutilizations: inutilizations.length,
+        },
       });
       const cnpj = company.taxId ?? 'empresa';
       return {

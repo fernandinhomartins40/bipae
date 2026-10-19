@@ -1,3 +1,4 @@
+import { inflateRawSync } from 'node:zlib';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { withTenant } from '../src/db/client';
@@ -126,6 +127,29 @@ describe('NFS-e Nacional da OS (F5-13.d)', () => {
     expect(danfse.rawPayload.subarray(0, 5).toString()).toBe('%PDF-');
     expect((await admin.post(`/service-orders/${ordem.id}/nfse`)).statusCode).toBe(409);
     expect((await admin.post(`/service-orders/${ordem.id}/nfse/retry`)).statusCode).toBe(409);
+    // Pacote do mês para o contador: o XML da NFS-e e a linha no resumo.
+    const mes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' })
+      .format(new Date())
+      .slice(0, 7);
+    const [empresa] = (await admin.get('/companies')).json();
+    const pacote = await admin.get(
+      `/fiscal/accountant-export?companyId=${empresa.id}&month=${mes}`,
+    );
+    expect(pacote.statusCode).toBe(200);
+    const files: Record<string, string> = {};
+    const zip = pacote.rawPayload;
+    let at = 0;
+    while (zip.readUInt32LE(at) === 0x04034b50) {
+      const size = zip.readUInt32LE(at + 18);
+      const nameLength = zip.readUInt16LE(at + 26);
+      const name = zip.subarray(at + 30, at + 30 + nameLength).toString('utf8');
+      const start = at + 30 + nameLength;
+      files[name] = inflateRawSync(zip.subarray(start, start + size)).toString('utf8');
+      at = start + size;
+    }
+    expect(files[`NFSe/${doc.accessKey}-NFSe.xml`]).toContain('<NFSe');
+    const linha = files['resumo.csv']!.split('\r\n').find((l) => l.startsWith(doc.accessKey));
+    expect(linha).toMatch(/;NFS-e;1;1;[^;]+;Autorizada;80,00;/);
     const outra = await os();
     await admin.post(`/service-orders/${outra.id}/nfse`);
     expect((await nota(admin, outra.id, (s) => s === 'authorized')).number).toBe(2);
