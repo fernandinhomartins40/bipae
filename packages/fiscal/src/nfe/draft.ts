@@ -60,6 +60,8 @@ export interface NfeDraftItem extends SaleNfceItem {
   cfop?: string | null;
   /** Item da pauta da ST ligado ao produto (F3-26.f): UF, anexo e número na portaria. */
   stPauta?: { uf: string; annex: string; item: string } | null;
+  /** Na devolução (NT 2025.002, regra VC02-14): a chave da nota devolvida e o número do item nela. */
+  reference?: { key: string; item: number } | null;
 }
 
 export interface NfeDraftInput {
@@ -76,7 +78,7 @@ export interface NfeDraftInput {
   presence: keyof typeof NFE_PRESENCE;
   /** Consumidor final? Sem a escolha, é quem não é contribuinte do ICMS (indicador 9). */
   finalConsumer?: boolean;
-  /** Chaves das notas referenciadas (obrigatória na devolução). */
+  /** Chaves das notas referenciadas no cabeçalho; na devolução a referência vai em cada item. */
   references?: string[];
   recipient: NfeDraftRecipient;
   items: NfeDraftItem[];
@@ -260,6 +262,9 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
   const items = input.items.map((item, index): NfeItem | null => {
     const label = `Item ${index + 1} (${item.description})`;
     if (!item.ncm) pending.push(`${label}: o produto não tem NCM.`);
+    if (input.purpose === 'devolucao' && !item.reference) {
+      pending.push(`${label}: falta dizer de qual nota e de qual item ele é devolvido.`);
+    }
     // Remessa, retorno e entrada simbólica: o perfil da demonstração, com a origem do produto.
     const profile =
       suspended && demoProfile
@@ -357,6 +362,7 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
       cofins,
       ibsCbs,
       ...(difal && { difal }),
+      ...(input.purpose === 'devolucao' && item.reference && { reference: item.reference }),
     };
   });
 
@@ -435,7 +441,8 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
     purpose: input.purpose,
     presence: input.presence,
     finalConsumer,
-    ...(input.references?.length && { references: input.references }),
+    ...(input.purpose !== 'devolucao' &&
+      input.references?.length && { references: input.references }),
     recipient,
     items: items.filter((i): i is NfeItem => i !== null),
     transport: {

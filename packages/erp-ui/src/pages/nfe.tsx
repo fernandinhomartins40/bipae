@@ -180,6 +180,9 @@ interface Line {
   unitPriceCents: number;
   discountCents: number;
   cfop: string;
+  /** Na devolução: de qual nota (chave) e de qual item dela este produto volta. */
+  refKey: string;
+  refItem: string;
 }
 
 interface Draft {
@@ -272,6 +275,8 @@ function fromView(n: NfeInvoiceView): Draft {
       unitPriceCents: i.unitPriceCents,
       discountCents: i.discountCents,
       cfop: i.cfop ?? '',
+      refKey: i.reference?.key ?? '',
+      refItem: i.reference ? String(i.reference.item) : '',
     })),
     freight: n.transport.freight,
     freightCents: n.transport.freightCents,
@@ -291,17 +296,33 @@ function draftTotal(d: Draft) {
   );
 }
 
+/** As chaves digitadas no campo "Chave da nota devolvida", só com os números. */
+function referenceKeys(text: string) {
+  return text
+    .split(/\s+/)
+    .map((k) => k.replace(/\D/g, ''))
+    .filter(Boolean);
+}
+
 function toInput(d: Draft, fallbackStore: string, fallbackCompany: string): NfeInvoiceInput {
   const total = draftTotal(d);
+  const keys = referenceKeys(d.references);
   const items = d.lines.map((l) => {
     const quantityMilli = parseQuantity(l.quantity);
     if (!quantityMilli) throw new Error(`Quantidade inválida em ${l.name}.`);
+    // Devolução (NT 2025.002, regra VC02-14): cada item leva a nota e o número do item nela.
+    const key = keys.includes(l.refKey) ? l.refKey : keys[0];
+    const refItem = Number(l.refItem);
     return {
       productId: l.productId,
       quantityMilli,
       unitPriceCents: l.unitPriceCents,
       discountCents: l.discountCents,
       ...(l.cfop.trim() && { cfop: l.cfop.trim() }),
+      ...(d.purpose === 'devolucao' &&
+        key &&
+        Number.isInteger(refItem) &&
+        refItem > 0 && { reference: { key, item: refItem } }),
     };
   });
   return {
@@ -310,10 +331,7 @@ function toInput(d: Draft, fallbackStore: string, fallbackCompany: string): NfeI
     nature: d.nature,
     presence: d.presence as NfeInvoiceInput['presence'],
     purpose: d.purpose,
-    references: d.references
-      .split(/\s+/)
-      .map((k) => k.replace(/\D/g, ''))
-      .filter(Boolean),
+    references: d.purpose === 'devolucao' ? [] : keys,
     recipient: {
       customerId: d.customerId,
       taxId: d.taxId,
@@ -753,6 +771,7 @@ function DraftForm({
     queryFn: () => api.get<Page<Product>>(`/products?q=${encodeURIComponent(q)}&limit=8`),
     enabled: q.length >= 2,
   });
+  const returnKeys = referenceKeys(d.references);
   const setLine = (index: number, patch: Partial<Line>) =>
     setD((x) => ({ ...x, lines: x.lines.map((l, i) => (i === index ? { ...l, ...patch } : l)) }));
 
@@ -806,7 +825,7 @@ function DraftForm({
       {d.purpose === 'devolucao' && (
         <TextField
           label="Chave da nota devolvida"
-          hint="44 números; mais de uma, separe com espaço."
+          hint="44 números; mais de uma (do mesmo fornecedor), separe com espaço. Em cada produto, diga o item na nota."
           value={d.references}
           onChange={(e) => set('references', e.target.value)}
         />
@@ -939,6 +958,8 @@ function DraftForm({
                           unitPriceCents: p.priceCents,
                           discountCents: 0,
                           cfop: '',
+                          refKey: '',
+                          refItem: '',
                         },
                       ]);
                     }
@@ -997,6 +1018,25 @@ function DraftForm({
                     setLine(index, { cfop: e.target.value.replace(/\D/g, '').slice(0, 4) })
                   }
                 />
+                {d.purpose === 'devolucao' && returnKeys.length > 1 && (
+                  <SelectField
+                    label={`Nota devolvida de ${line.name}`}
+                    value={returnKeys.includes(line.refKey) ? line.refKey : returnKeys[0]!}
+                    onChange={(e) => setLine(index, { refKey: e.target.value })}
+                    options={returnKeys.map((k) => ({ value: k, label: `…${k.slice(-12)}` }))}
+                  />
+                )}
+                {d.purpose === 'devolucao' && (
+                  <TextField
+                    label={`Item de ${line.name} na nota devolvida`}
+                    hint="O número da linha do produto na nota do fornecedor (1, 2, 3…)."
+                    inputMode="numeric"
+                    value={line.refItem}
+                    onChange={(e) =>
+                      setLine(index, { refItem: e.target.value.replace(/\D/g, '').slice(0, 3) })
+                    }
+                  />
+                )}
               </li>
             ))}
           </ul>

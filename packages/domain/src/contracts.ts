@@ -2124,6 +2124,20 @@ export const nfeInvoiceInput = z
             .string()
             .regex(/^\d{4}$/, 'CFOP com 4 dígitos')
             .nullish(),
+          /**
+           * Só na devolução (NT 2025.002-RTC, regra VC02-14): a chave da nota devolvida e o número
+           * do item nela (nItem).
+           */
+          reference: z
+            .object({
+              key: z.string().regex(/^[0-9A-Z]{44}$/, 'Chave de acesso com 44 caracteres'),
+              item: z
+                .number()
+                .int()
+                .min(1, 'O item da nota devolvida vai de 1 a 990')
+                .max(990, 'O item da nota devolvida vai de 1 a 990'),
+            })
+            .nullish(),
         }),
       )
       .min(1, 'Escolha pelo menos um produto')
@@ -2168,9 +2182,17 @@ export const nfeInvoiceInput = z
       .max(100),
     additionalInfo: optionalText(2000),
   })
-  .refine((v) => v.purpose !== 'devolucao' || v.references.length > 0, {
-    message: 'A devolução precisa da chave da nota devolvida',
-    path: ['references'],
+  .superRefine((v, ctx) => {
+    if (v.purpose !== 'devolucao') return;
+    v.items.forEach((item, index) => {
+      if (!item.reference) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Item ${index + 1}: informe de qual nota e de qual item ele é devolvido`,
+          path: ['items', index, 'reference'],
+        });
+      }
+    });
   });
 export type NfeInvoiceInput = z.input<typeof nfeInvoiceInput>;
 
@@ -2196,6 +2218,8 @@ export interface NfeInvoiceView {
     unitPriceCents: number;
     discountCents: number;
     cfop: string | null;
+    /** Na devolução: a nota devolvida e o número do item nela. */
+    reference: { key: string; item: number } | null;
   }[];
   transport: z.output<typeof nfeInvoiceInput>['transport'];
   installments: { dueDate: string; amountCents: number }[];

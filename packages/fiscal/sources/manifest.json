@@ -135,6 +135,14 @@
   "publishedAt": "2026-10-13",
   "downloadedAt": "2026-10-13"
  },
+ "ntRtc": {
+  "file": "NT_2025.002_v1.52_RTC.pdf",
+  "title": "Nota Técnica 2025.002-RTC v1.52: leiaute e regras da Reforma Tributária na NF-e e na NFC-e (inclui o grupo VC, referência por item na devolução, regra VC02-14)",
+  "publisher": "Portal Nacional da NF-e",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=04BIflQt1aY=",
+  "publishedAt": "2026-10-01",
+  "downloadedAt": "2026-10-19"
+ },
  "ntMei": {
   "file": "NT_2024.001_v1.20_CRT4_MEI.pdf",
   "title": "Nota Técnica 2024.001 v1.20: CRT 4 (MEI) e denegação",

@@ -67,6 +67,11 @@ export interface NfeItem {
   difal?: DifalResult | null;
   /** Pedido de compra do cliente (xPed) e o item dele (nItemPed). */
   order?: { number: string; item?: string };
+  /**
+   * Item da nota devolvida (grupo DFeReferenciado, NT 2025.002-RTC v1.52): a chave de acesso e o
+   * número do item (nItem) na nota original. Na devolução ele substitui o NFref (regra VC02-14).
+   */
+  reference?: { key: string; item: number };
 }
 
 export interface NfePayment {
@@ -296,6 +301,12 @@ export function detGroup(item: NfeItem, index: number, model: '55' | '65'): stri
         difalGroup(item.difal),
         ibsCbsGroup(item.ibsCbs),
       ]),
+      item.reference
+        ? el('DFeReferenciado', [
+            req('chaveAcesso', item.reference.key),
+            req('nItem', String(item.reference.item)),
+          ])
+        : '',
     ],
     { nItem: String(index + 1) },
   );

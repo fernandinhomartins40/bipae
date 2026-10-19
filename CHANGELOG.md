@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-33.i Devolução referenciada por item] — 19/10/2026
+
+### Alterado
+- **A NF-e de devolução de compra referencia cada item da nota do fornecedor**, como pede a NT 2025.002-RTC v1.52 (regra VC02-14), que vale em produção a partir de 03/11/2026.
+  - A nota devolvida sai do cabeçalho (`refNFe`) e vai em cada item, no grupo `DFeReferenciado`, com a chave e o número do item.
+  - Na tela, cada produto da devolução pede o "Item na nota devolvida".
+  - Antes da SEFAZ, o Bipaê confere as regras do grupo: item repetido, notas de emitentes diferentes e nota que não é do destinatário.
+- A NT 2025.002-RTC v1.52 oficial entrou nas fontes fiscais. A dúvida D-037 foi atualizada: falta só o imposto da devolução de venda por regime.
+
 ## [F5-13.g Cancelar a NFS-e] — 19/10/2026
 
 ### Adicionado

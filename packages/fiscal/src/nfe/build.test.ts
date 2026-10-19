@@ -44,6 +44,8 @@ const CLIENTE: NfeInput['recipient'] = {
     cep: '13010000',
   },
 };
+/** NF-e de compra do Mercado do Bairro (o fornecedor), que a loja devolve em parte. */
+const CHAVE_DEVOLVIDA = '35260611444777000161550010000012341123456780';
 
 /** Item do Lucro Real com frete rateado, IPI e ICMS com substituição tributária. */
 function itemComSt(over: Partial<NfeItem> = {}): NfeItem {
@@ -186,14 +188,13 @@ describe('XML da NF-e contra o schema oficial', () => {
     expect(doc.xml).toContain('<pCredSN>2.50</pCredSN>');
   });
 
-  it('devolução referencia a nota de origem e vai sem pagamento', async () => {
+  it('devolução referencia o item da nota de origem (DFeReferenciado) e vai sem pagamento', async () => {
     const icms = calculateIcms({ cst: '00', rate: '18' }, { baseCents: 5000 });
     const doc = buildNfe(
       nota({
         nature: 'Devolução de compra para comercialização',
         purpose: 'devolucao',
         presence: 'naoSeAplica',
-        references: ['35260611444777000161550010000012341123456780'],
         items: [
           itemComSt({
             cfop: '5202',
@@ -203,6 +204,7 @@ describe('XML da NF-e contra o schema oficial', () => {
             icms,
             ipi: null,
             order: undefined,
+            reference: { key: CHAVE_DEVOLVIDA, item: 3 },
           }),
         ],
         transport: { freight: 'semFrete' },
@@ -214,8 +216,10 @@ describe('XML da NF-e contra o schema oficial', () => {
     );
     expect(await validate(doc.xml)).toEqual([]);
     expect(doc.xml).toContain('<finNFe>4</finNFe>');
+    // Regra VC02-14 (NT 2025.002-RTC v1.52): na devolução, nada de refNFe no cabeçalho.
+    expect(doc.xml).not.toContain('<NFref>');
     expect(doc.xml).toContain(
-      '<NFref><refNFe>35260611444777000161550010000012341123456780</refNFe></NFref>',
+      `</imposto><DFeReferenciado><chaveAcesso>${CHAVE_DEVOLVIDA}</chaveAcesso><nItem>3</nItem></DFeReferenciado></det>`,
     );
     expect(doc.xml).toContain('<indPres>0</indPres><procEmi>');
     expect(doc.xml).toContain('<detPag><tPag>90</tPag><vPag>0.00</vPag></detPag>');
@@ -434,14 +438,43 @@ describe('NF-e incoerente vira erro claro, antes da SEFAZ', () => {
     expect(NfeBuildError).toBeDefined();
   });
 
-  it('confere destinatário, referências, fatura, itens e IPI', () => {
+  it('confere destinatário e referências do cabeçalho', () => {
     expect(erro({ recipient: { ...CLIENTE, cpf: '52998224725' } })).toThrow('só um');
     expect(erro({ recipient: { ...CLIENTE, ie: undefined } })).toThrow('inscrição estadual');
     expect(erro({ recipient: { ...CLIENTE, ieIndicator: 9 } })).toThrow(
       'Só o destinatário contribuinte',
     );
-    expect(erro({ purpose: 'devolucao' })).toThrow('chave da nota devolvida');
     expect(erro({ references: ['123'] })).toThrow('Chave referenciada inválida');
+    expect(erro({ items: [itemComSt({ reference: { key: CHAVE_DEVOLVIDA, item: 1 } })] })).toThrow(
+      'só vale na devolução',
+    );
+  });
+
+  it('devolução: confere a referência de cada item pelas regras do grupo VC', () => {
+    const devolucao = (items: NfeInput['items'], extra: Partial<NfeInput> = {}) =>
+      erro({ purpose: 'devolucao', items, ...extra });
+    const ref = (item: number, key = CHAVE_DEVOLVIDA) => itemComSt({ reference: { key, item } });
+    expect(devolucao([itemComSt()])).toThrow('Item 1: diga de qual nota e de qual item');
+    expect(devolucao([ref(1)], { references: [CHAVE_DEVOLVIDA] })).toThrow(
+      'não no cabeçalho (NT 2025.002, regra VC02-14)',
+    );
+    expect(devolucao([ref(1, '123')])).toThrow('chave da nota devolvida inválida');
+    expect(devolucao([ref(0)])).toThrow('vai de 1 a 990');
+    expect(devolucao([ref(991)])).toThrow('vai de 1 a 990');
+    expect(devolucao([ref(2), ref(2)])).toThrow('Item 2: o item 2 da nota devolvida já está');
+    // Outra nota do mesmo fornecedor pode entrar (VC02-40 não vale na devolução).
+    const outraDoMesmo = CHAVE_DEVOLVIDA.replace('0000012341', '0000012342');
+    // Com dois itens o pagamento do teste não fecha: o que importa é não recusar a referência.
+    expect(devolucao([ref(1), ref(1, outraDoMesmo)])).not.toThrow(/devolvid|emitente/);
+    const deOutroEmitente = CHAVE_DEVOLVIDA.replace('11444777000161', '22333444000102');
+    expect(devolucao([ref(1), ref(1, deOutroEmitente)])).toThrow('mesmo emitente (regra VC02-50)');
+    expect(devolucao([ref(1, deOutroEmitente)])).toThrow('emitida pelo destinatário');
+    // Nota de entrada própria da loja (o emitente é ela mesma) também pode ser devolvida.
+    const propria = CHAVE_DEVOLVIDA.replace('11444777000161', EMITENTE.cnpj);
+    expect(devolucao([ref(1, propria)])).not.toThrow();
+  });
+
+  it('confere fatura, itens e IPI', () => {
     expect(
       erro({
         billing: {

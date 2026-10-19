@@ -58,16 +58,26 @@ describe('rascunho da NF-e', () => {
     expect(r.recipient).toMatchObject({ ie: null, email: null, phone: null, ieIndicator: 9 });
   });
 
-  it('devolução sem a chave da nota devolvida é recusada, com mensagem em português', () => {
+  it('devolução: cada item diz de qual nota e de qual item volta (NT 2025.002, VC02-14)', () => {
     const r = nfeInvoiceInput.safeParse(rascunho({ purpose: 'devolucao' }));
     expect(r.success).toBe(false);
     expect(r.error!.issues.map((i) => i.message)).toContain(
-      'A devolução precisa da chave da nota devolvida',
+      'Item 1: informe de qual nota e de qual item ele é devolvido',
     );
-    const ok = nfeInvoiceInput.safeParse(
-      rascunho({ purpose: 'devolucao', references: ['3'.repeat(44)] }),
+    const item = (reference: unknown) =>
+      rascunho({
+        purpose: 'devolucao',
+        items: [{ productId: ID, quantityMilli: 1000, unitPriceCents: 100, reference }],
+      });
+    expect(nfeInvoiceInput.safeParse(item({ key: '3'.repeat(44), item: 2 })).success).toBe(true);
+    const fora = nfeInvoiceInput.safeParse(item({ key: '3'.repeat(44), item: 991 }));
+    expect(fora.error!.issues.map((i) => i.message)).toContain(
+      'O item da nota devolvida vai de 1 a 990',
     );
-    expect(ok.success).toBe(true);
+    const curta = nfeInvoiceInput.safeParse(item({ key: '123', item: 1 }));
+    expect(curta.error!.issues.map((i) => i.message)).toContain(
+      'Chave de acesso com 44 caracteres',
+    );
   });
 
   it('confere o contribuinte, a inscrição, o CFOP e os itens', () => {

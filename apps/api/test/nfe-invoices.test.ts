@@ -222,6 +222,46 @@ describe('NF-e da retaguarda (F3-33.b)', () => {
     expect(pronta.document.number).toBe(1);
   });
 
+  it('devolução de compra referencia cada item da nota do fornecedor (NT 2025.002, VC02-14)', async () => {
+    sefaz.mode = 'normal';
+    const { admin, rascunho, produto } = await retaguarda();
+    const chave = '35261011444777000161550010000043211123456789';
+    const devolucao = (reference: unknown) =>
+      rascunho({
+        nature: 'Devolução de compra para comercialização',
+        purpose: 'devolucao',
+        presence: 'outros',
+        items: [
+          {
+            productId: produto.id,
+            quantityMilli: 2000,
+            unitPriceCents: 2500,
+            cfop: '5202',
+            reference,
+          },
+        ],
+        transport: { freight: 'semFrete' },
+        installments: [],
+        payments: [{ code: '90', amountCents: 0 }],
+      });
+    const sem = await admin.post('/fiscal/nfe', devolucao(null));
+    expect(sem.statusCode).toBe(400);
+    expect(sem.json().message).toContain('informe de qual nota e de qual item ele é devolvido');
+
+    const criada = (await admin.post('/fiscal/nfe', devolucao({ key: chave, item: 3 }))).json();
+    expect(criada.check.pending).toEqual([]);
+    expect(criada.references).toEqual([chave]);
+    expect(criada.items[0].reference).toEqual({ key: chave, item: 3 });
+    await admin.post(`/fiscal/nfe/${criada.id}/issue`);
+    await nota(admin, criada.id, (s) => s === 'authorized');
+    const xml = (await admin.get(`/fiscal/nfe/${criada.id}/xml`)).body;
+    expect(xml).toContain('<finNFe>4</finNFe>');
+    expect(xml).not.toContain('<NFref>');
+    expect(xml).toContain(
+      `<DFeReferenciado><chaveAcesso>${chave}</chaveAcesso><nItem>3</nItem></DFeReferenciado>`,
+    );
+  });
+
   it('sem certificado fica em "falta configurar"; com ele, a nova tentativa autoriza', async () => {
     sefaz.mode = 'normal';
     const { admin, empresa, rascunho } = await retaguarda(false);

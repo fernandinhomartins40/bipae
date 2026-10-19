@@ -79,6 +79,64 @@ export const NFE_FREIGHT = {
   semFrete: '9',
 } as const;
 
+const ACCESS_KEY = /^\d{44}$|^[0-9A-Z]{44}$/;
+
+/**
+ * Referência item a item da devolução (NT 2025.002-RTC v1.52, grupo VC): cada item diz de qual
+ * nota e de qual item veio (VC02-14, VC03-20), sem repetir o mesmo item (VC02-30), todas as notas
+ * do mesmo emitente (VC02-50) e, quando a nota devolvida é de outra empresa, emitida pelo
+ * destinatário desta (rejeição 1194). Fora da devolução, o Bipaê não referencia por item.
+ */
+function checkItemReferences(input: NfeInput, isReturn: boolean) {
+  const seen = new Set<string>();
+  const issuers = new Set<string>();
+  input.items.forEach((item, index) => {
+    const label = `Item ${index + 1}`;
+    const ref = item.reference;
+    if (!isReturn) {
+      if (ref) throw new NfeBuildError(`${label}: a referência por item só vale na devolução.`);
+      return;
+    }
+    if (!ref) {
+      throw new NfeBuildError(
+        `${label}: diga de qual nota e de qual item ele é devolvido (NT 2025.002, regra VC02-14).`,
+      );
+    }
+    if (!ACCESS_KEY.test(ref.key)) {
+      throw new NfeBuildError(`${label}: chave da nota devolvida inválida (${ref.key}).`);
+    }
+    if (!Number.isInteger(ref.item) || ref.item < 1 || ref.item > 990) {
+      throw new NfeBuildError(`${label}: o número do item na nota devolvida vai de 1 a 990.`);
+    }
+    const id = `${ref.key}#${ref.item}`;
+    if (seen.has(id)) {
+      throw new NfeBuildError(
+        `${label}: o item ${ref.item} da nota devolvida já está em outro item desta nota.`,
+      );
+    }
+    seen.add(id);
+    // O CNPJ do emitente ocupa as posições 7 a 20 da chave de acesso.
+    issuers.add(ref.key.slice(6, 20));
+  });
+  if (issuers.size > 1) {
+    throw new NfeBuildError(
+      'Na devolução, todas as notas devolvidas precisam ser do mesmo emitente (regra VC02-50).',
+    );
+  }
+  const [issuer] = [...issuers];
+  const recipient = input.recipient.cnpj ?? input.recipient.cpf?.padStart(14, '0');
+  if (
+    issuer &&
+    input.direction === 'saida' &&
+    issuer !== input.issuer.cnpj &&
+    issuer !== recipient
+  ) {
+    throw new NfeBuildError(
+      'A nota devolvida precisa ter sido emitida pelo destinatário desta devolução (rejeição 1194).',
+    );
+  }
+}
+
 export interface NfeInput {
   issuer: NfeIssuer;
   /** Código IBGE da UF do emitente (2 dígitos). */
@@ -97,7 +155,10 @@ export interface NfeInput {
   presence: keyof typeof NFE_PRESENCE;
   /** Venda a consumidor final (indFinal)? */
   finalConsumer: boolean;
-  /** Chaves das notas referenciadas (obrigatória na devolução). */
+  /**
+   * Chaves das notas referenciadas no cabeçalho (NFref), como a remessa no retorno da venda
+   * condicional. Na devolução não vale: a referência vai em cada item (NfeItem.reference).
+   */
   references?: string[];
   recipient: NfeRecipient;
   items: NfeItem[];
@@ -217,14 +278,17 @@ export function buildNfe(input: NfeInput): NfeDocument {
       );
     }
   });
+  const isReturn = input.purpose === 'devolucao';
   const references = input.references ?? [];
-  if (input.purpose === 'devolucao' && references.length === 0) {
-    throw new NfeBuildError('A nota de devolução precisa da chave da nota devolvida.');
+  if (isReturn && references.length > 0) {
+    throw new NfeBuildError(
+      'Na devolução, a nota devolvida vai em cada item, não no cabeçalho (NT 2025.002, regra VC02-14).',
+    );
   }
   for (const key of references) {
-    if (!/^\d{44}$|^[0-9A-Z]{44}$/.test(key))
-      throw new NfeBuildError(`Chave referenciada inválida: ${key}.`);
+    if (!ACCESS_KEY.test(key)) throw new NfeBuildError(`Chave referenciada inválida: ${key}.`);
   }
+  checkItemReferences(input, isReturn);
   const contingency = input.contingency;
   const emissionType = contingency ? (contingency.mode === 'SVC-AN' ? 6 : 7) : 1;
   if (contingency) {

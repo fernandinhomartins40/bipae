@@ -40,7 +40,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-034 | 🟡 parcial | Código de benefício fiscal (cBenef) por UF |
 | D-035 | 🟡 configurável | Natureza da operação da entrada simbólica do condicional passa de 60 caracteres |
 | D-036 | 🟡 a confirmar com o certificado | NFS-e Nacional: mensagem JSON da Sefin, assinatura, convênio do município e grupo do IBS/CBS |
-| D-037 | 🔴 aberta | NF-e de devolução de venda (entrada do cliente): referência item a item e imposto por regime |
+| D-037 | 🟡 parcial | NF-e de devolução de venda (entrada do cliente): a referência item a item está confirmada (NT 2025.002 v1.52); falta o imposto por regime |
 
 ---
 
@@ -647,6 +647,14 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Endereços das APIs:** página oficial do gov.br/nfse.
   - **Grupo do IBS/CBS:** só obrigatório para o Simples a partir de 2027 (nota do Anexo I) e facultativo para os demais no leiaute em produção (regra E0850). O leiaute da NT 009 v1.01 (01/10/2026) entra conforme o cronograma que a Receita vai publicar.
   - **Leiaute do grupo `DFeReferenciado` (19/10/2026):** o XSD oficial `leiauteNFe_v4.00.xsd` do PL_010f v1.04 (já em `packages/fiscal/sources`) traz o grupo dentro de cada item (`det`), opcional, com `chaveAcesso` do documento referenciado e `nItem` opcional (1 a 990), o número do item na nota original.
+  - **Referência item a item obrigatória (19/10/2026):** a NT 2025.002-RTC v1.52 (Portal Nacional da NF-e, 01/10/2026, em `packages/fiscal/sources`) traz a regra VC02-14. Toda NF-e de devolução (finNFe 4) referencia, em cada item, a nota e o item devolvidos pelo grupo `DFeReferenciado`; fica proibido o `refNFe` no cabeçalho, sob pena da rejeição 321. Em produção vale a partir de 03/11/2026. Regras do grupo:
+    - VC02-10: não pode haver referência no cabeçalho e no item ao mesmo tempo;
+    - VC02-30: o mesmo item não pode ser referenciado duas vezes;
+    - VC02-40: a regra de uma só nota referenciada não vale na devolução;
+    - VC02-50: todas as notas referenciadas precisam ser do mesmo emitente;
+    - rejeição 1194: quando a nota devolvida é de saída, o emitente dela é o destinatário da devolução;
+    - VC03-20: o `nItem` é obrigatório.
+  - **Feito (F3-33.i):** a devolução de compra do Bipaê já segue essa regra.
 - **Ainda sem fonte oficial:** o Swagger da Sefin só abre com certificado, então estes pontos seguem o uso corrente e ficam isolados no código para trocar fácil:
   - **Nomes no JSON:** `dpsXmlGZipB64`, `chaveAcesso`, `nfseXmlGZipB64`, `erros`; no cancelamento (F5-13.g), `pedidoRegistroEventoXmlGZipB64` e `eventoXmlGZipB64`. O leiaute do pedido e as regras do cancelamento vêm do Anexo II oficial (19/10/2026): Id "PRE" + chave + código do evento; prazo e valor-limite são parâmetros do município (E0822, E0823).
   - **Resposta do convênio municipal:** o formato de `/parametros_municipais/{município}/convenio`.
@@ -663,7 +671,6 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Simples Nacional:** para o MEI (CRT 4), o 1.202 cobre qualquer devolução, exceto 1.503 a 1.506 (NT 2024.001).
   - **Documento referenciado:** a regra 321 do MOC pede a referência ao documento devolvido, mas dispensa os CFOP 1.201, 1.202, 1.410, 1.411, 5.921 e 6.921 (NT 2013.005).
 - **Ainda sem fonte oficial:**
-  - **Obrigatoriedade da referência item a item:** um blog de fornecedor diz que a referência só no cabeçalho será recusada na devolução. Falta a regra de validação oficial e a data.
   - **Imposto da devolução por regime:** CST ou CSOSN, destaque e crédito do ICMS; IBS e CBS na devolução (estorno do débito da venda, LC 214/2025).
 - **Por enquanto:** a devolução do cliente continua fora do Bipaê; a tela não oferece o que não está construído.
-- **Próximo passo:** achar a nota técnica oficial sobre o `DFeReferenciado` e as regras de imposto da devolução no MOC 7.0 e na NT 2025.002; com elas, construir a F3-33.h.
+- **Próximo passo:** achar as regras de imposto da devolução de venda por regime no MOC 7.0 e na regulamentação do IBS e da CBS (nota de crédito); com elas, construir a F3-33.h.

@@ -236,6 +236,7 @@ export class NfeInvoicesService implements OnModuleInit {
           profile: profile ?? null,
           cfop: i.cfop ?? null,
           stPauta: p?.stPauta ?? null,
+          reference: i.reference ?? null,
         };
       }),
       transport: {
@@ -345,6 +346,7 @@ export class NfeInvoicesService implements OnModuleInit {
           unitPriceCents: i.unitPriceCents,
           discountCents: i.discountCents,
           cfop: i.cfop ?? null,
+          reference: i.reference ?? null,
         };
       }),
       transport,
@@ -533,6 +535,15 @@ export class NfeInvoicesService implements OnModuleInit {
   }
 
   private columns(input: Input) {
+    // Na devolução a nota devolvida vai em cada item (VC02-14) e as chaves ficam guardadas para a
+    // lista. Fora dela, nenhum item leva referência.
+    const isReturn = input.purpose === 'devolucao';
+    const items = input.items.map(({ reference, ...item }) =>
+      isReturn && reference ? { ...item, reference } : item,
+    );
+    const refs = isReturn
+      ? [...new Set(input.items.flatMap((i) => (i.reference ? [i.reference.key] : [])))]
+      : input.references;
     return {
       companyId: input.companyId,
       storeId: input.storeId,
@@ -540,10 +551,10 @@ export class NfeInvoicesService implements OnModuleInit {
       purpose: input.purpose,
       presence: input.presence,
       finalConsumer: input.finalConsumer ?? null,
-      refs: input.references,
+      refs,
       customerId: input.recipient.customerId ?? null,
       recipient: input.recipient,
-      items: input.items,
+      items,
       transport: input.transport,
       installments: input.installments,
       payments: input.payments,

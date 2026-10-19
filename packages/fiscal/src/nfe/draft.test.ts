@@ -109,6 +109,37 @@ describe('NF-e da retaguarda (F3-33.a)', () => {
     expect(again.ok && again.document.accessKey).toBe(r.document.accessKey);
   });
 
+  it('devolução de compra: cada item referencia o item da nota do fornecedor (VC02-14)', async () => {
+    const chave = '35261011444777000161550010000043211123456789';
+    const devolucao = (reference: { key: string; item: number } | null) =>
+      buildDraftNfe(
+        nota({
+          ...ALIQUOTA_SP,
+          nature: 'Devolução de compra para comercialização',
+          purpose: 'devolucao',
+          presence: 'naoSeAplica',
+          // A chave também no cabeçalho é ignorada: na devolução ela vai no item.
+          references: [chave],
+          items: [{ ...nota().items[0]!, cfop: '5202', reference }],
+          transport: { freight: 'semFrete' },
+          payments: [{ code: '90', amountCents: 0 }],
+        }),
+      );
+    const r = devolucao({ key: chave, item: 2 });
+    expect(r.ok, r.ok ? '' : r.pending.join('\n')).toBe(true);
+    if (!r.ok) return;
+    expect(await validate(r.document.xml)).toEqual([]);
+    expect(r.document.xml).toContain('<finNFe>4</finNFe>');
+    expect(r.document.xml).not.toContain('<NFref>');
+    expect(r.document.xml).toContain(
+      `<DFeReferenciado><chaveAcesso>${chave}</chaveAcesso><nItem>2</nItem></DFeReferenciado>`,
+    );
+    const semItem = devolucao(null);
+    expect(!semItem.ok && semItem.pending).toContain(
+      'Item 1 (Arroz tipo 1 5kg): falta dizer de qual nota e de qual item ele é devolvido.',
+    );
+  });
+
   it('venda a prazo: fatura com o número da nota e duplicatas 001, 002', async () => {
     const r = buildDraftNfe(
       nota({
