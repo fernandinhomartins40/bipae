@@ -364,6 +364,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F5-13.c · Ordem de serviço: cadastro de serviços (código nacional, NBS, alíquota do ISSQN, preço), OS com cliente, equipamento ou descrição, serviços e peças, situação (aberta, em andamento, pronta, entregue); peças baixam o estoque e o total vira conta a receber; tela e E2E — depende: F5-13.a
   - [x] F5-13.d · NFS-e pela fila: numeração da DPS por série da empresa, consulta do convênio do município, assinatura, envio e consulta pela DPS antes de reenviar; XML; percentuais aproximados na empresa; testada contra a Sefin simulada — depende: F5-13.b, F5-13.c
   - [x] F5-13.e · Tela da NFS-e na OS: emitir, o que falta, situação, XML e DANFSE pelo ADN; E2E — depende: F5-13.d
+  - [x] F5-13.g · Cancelamento da NFS-e Nacional (evento 101101) pelo leiaute e as regras do Anexo II oficial: pedido assinado, válido no pedRegEvento_v1.01, pela fila; recusa do município (prazo E0822, valor E0823) mostrada como veio; evento no pacote do contador; tela na OS — depende: F5-13.e
   - [ ] F5-13.f · Primeira NFS-e autorizada na produção restrita com o certificado da empresa; confirmar os pontos da dúvida D-036 — depende: F5-13.e · externo: E1
 
 ## Fase 6 — Integrações e IA

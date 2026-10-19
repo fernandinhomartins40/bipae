@@ -233,3 +233,85 @@ describe('NFS-e Nacional da OS (F5-13.d)', () => {
     expect(semServico.json().message).toContain('peças vão em NF-e ou NFC-e');
   });
 });
+
+describe('cancelamento da NFS-e (F5-13.g)', () => {
+  it('cancela a gerada: pedido assinado à Sefin, nota cancelada, evento no pacote do contador', async () => {
+    sefin.mode = 'normal';
+    sefin.cancelExpired = false;
+    const { admin, os } = await oficina();
+    const ordem = await os();
+    // Sem NFS-e gerada não há o que cancelar.
+    const cedo = await admin.post(`/service-orders/${ordem.id}/nfse/cancel`, {
+      code: '2',
+      reason: 'O serviço não foi prestado: cliente desistiu.',
+    });
+    expect(cedo.statusCode).toBe(409);
+    await admin.post(`/service-orders/${ordem.id}/nfse`);
+    const doc = await nota(admin, ordem.id, (s) => s === 'authorized');
+
+    expect(
+      (await admin.post(`/service-orders/${ordem.id}/nfse/cancel`, { code: '4', reason: 'x' }))
+        .statusCode,
+    ).toBe(400);
+    const pedido = await admin.post(`/service-orders/${ordem.id}/nfse/cancel`, {
+      code: '2',
+      reason: 'O serviço não foi prestado: cliente desistiu.',
+    });
+    expect(pedido.statusCode).toBe(200);
+    const cancelada = await nota(admin, ordem.id, (s) => s === 'cancelled');
+    expect(cancelada.cancellation).toMatchObject({ status: 'registered', code: '2' });
+    const enviado = sefin.cancelled.get(doc.accessKey)!;
+    expect(enviado).toContain(`<infPedReg Id="PRE${doc.accessKey}101101">`);
+    expect(enviado).toContain('<CNPJAutor>11222333000181</CNPJAutor>');
+    expect(enviado).toContain('<Signature');
+    expect(JSON.stringify((await admin.get('/audit?action=nfse.cancelled')).json())).toContain(
+      doc.accessKey,
+    );
+    // De novo não pede: já foi cancelada.
+    expect(
+      (
+        await admin.post(`/service-orders/${ordem.id}/nfse/cancel`, {
+          code: '2',
+          reason: 'O serviço não foi prestado: cliente desistiu.',
+        })
+      ).statusCode,
+    ).toBe(409);
+
+    const mes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' })
+      .format(new Date())
+      .slice(0, 7);
+    const [empresa] = (await admin.get('/companies')).json();
+    const pacote = (
+      await admin.get(`/fiscal/accountant-export?companyId=${empresa.id}&month=${mes}`)
+    ).rawPayload.toString('latin1');
+    expect(pacote).toContain(`Eventos/${doc.accessKey}-cancelamento-NFSe.xml`);
+  });
+
+  it('o município recusa (prazo, E0822): a nota continua gerada e dá para pedir de novo', async () => {
+    sefin.mode = 'normal';
+    const { admin, os } = await oficina();
+    const ordem = await os();
+    await admin.post(`/service-orders/${ordem.id}/nfse`);
+    await nota(admin, ordem.id, (s) => s === 'authorized');
+    sefin.cancelExpired = true;
+    await admin.post(`/service-orders/${ordem.id}/nfse/cancel`, {
+      code: '1',
+      reason: 'Erro no valor do serviço na emissão da nota.',
+    });
+    let view = (await admin.get(`/service-orders/${ordem.id}/nfse`)).json();
+    for (let i = 0; i < 100 && view.cancellation?.status !== 'rejected'; i++) {
+      await new Promise((ok) => setTimeout(ok, 100));
+      view = (await admin.get(`/service-orders/${ordem.id}/nfse`)).json();
+    }
+    expect(view).toMatchObject({
+      status: 'authorized',
+      cancellation: { status: 'rejected', errors: [{ code: 'E0822' }] },
+    });
+    sefin.cancelExpired = false;
+    const outra = await admin.post(`/service-orders/${ordem.id}/nfse/cancel`, {
+      code: '1',
+      reason: 'Erro no valor do serviço na emissão da nota.',
+    });
+    expect(outra.statusCode).toBe(200);
+  });
+});

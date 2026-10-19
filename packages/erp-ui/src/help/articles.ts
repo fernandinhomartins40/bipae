@@ -494,6 +494,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
           'Em "Ordens de serviço", clique em "Nova ordem de serviço", escolha o cliente, descreva o equipamento e o defeito e adicione serviços e peças.',
           'Clique em "Salvar a OS". Quando terminar o trabalho, use "Entregar ao cliente": as peças saem do estoque e a conta a receber é criada.',
           'Na OS entregue, clique em "Emitir NFS-e". Depois de autorizada, use "Baixar o DANFSE" e "Baixar o XML".',
+          'Para cancelar a NFS-e, escolha o "Motivo do cancelamento", explique e clique em "Cancelar a NFS-e". O prazo e o valor-limite são definidos pelo município; se ele recusar, a tela mostra o motivo.',
         ],
       },
       {

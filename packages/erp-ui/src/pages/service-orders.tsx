@@ -495,7 +495,14 @@ const NFSE_STATUS: Record<
   not_configured: { label: 'Falta configurar', tone: 'warning' },
   authorized: { label: 'NFS-e gerada', tone: 'success' },
   rejected: { label: 'Recusada pela Sefin', tone: 'danger' },
+  cancelled: { label: 'NFS-e cancelada', tone: 'neutral' },
 };
+
+const NFSE_CANCEL_CODES: { value: '1' | '2' | '9'; label: string }[] = [
+  { value: '1', label: 'Erro na emissão' },
+  { value: '2', label: 'Serviço não prestado' },
+  { value: '9', label: 'Outros' },
+];
 
 async function saveFile(
   api: { download: (path: string) => Promise<Blob> },
@@ -519,8 +526,14 @@ export function NfseSection({ order }: { order: ServiceOrderView }) {
     queryKey: ['service-orders', order.id, 'nfse'],
     queryFn: () => api.get<NfseDocumentView | null>(`/service-orders/${order.id}/nfse`),
     refetchInterval: (q) =>
-      q.state.data && ['pending', 'error'].includes(q.state.data.status) ? 1500 : false,
+      q.state.data &&
+      (['pending', 'error'].includes(q.state.data.status) ||
+        ['pending', 'error'].includes(q.state.data.cancellation?.status ?? ''))
+        ? 1500
+        : false,
   });
+  const [cancelCode, setCancelCode] = useState<'1' | '2' | '9'>('1');
+  const [cancelReason, setCancelReason] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const run = async (fn: () => Promise<void>) => {
@@ -629,7 +642,8 @@ export function NfseSection({ order }: { order: ServiceOrderView }) {
               </>
             ) : (
               canIssue &&
-              d.status !== 'pending' && (
+              d.status !== 'pending' &&
+              d.status !== 'cancelled' && (
                 <Button
                   loading={busy}
                   onClick={() =>
@@ -644,6 +658,56 @@ export function NfseSection({ order }: { order: ServiceOrderView }) {
               )
             )}
           </div>
+          {d.cancellation && ['pending', 'error'].includes(d.cancellation.status) && (
+            <Alert tone="warning" title="Cancelamento enviado à Sefin Nacional">
+              Aguardando a resposta. {d.cancellation.lastError}
+            </Alert>
+          )}
+          {d.cancellation?.status === 'registered' && (
+            <Alert tone="success" title="NFS-e cancelada">
+              A OS e a conta a receber continuam: se o serviço não foi prestado, cancele-as também.
+            </Alert>
+          )}
+          {d.cancellation?.status === 'rejected' && (
+            <Alert tone="danger" title="A Sefin recusou o cancelamento">
+              {d.cancellation.errors.map((e) => `${e.code} · ${e.message}`).join(' ')} O prazo e o
+              valor-limite do cancelamento são definidos pelo município.
+            </Alert>
+          )}
+          {canIssue &&
+            d.status === 'authorized' &&
+            (!d.cancellation || d.cancellation.status === 'rejected') && (
+              <fieldset className="flex flex-col gap-2 rounded-ui border border-border p-3">
+                <legend className="px-1 font-semibold">Cancelar a NFS-e</legend>
+                <SelectField
+                  label="Motivo do cancelamento"
+                  value={cancelCode}
+                  onChange={(e) => setCancelCode(e.target.value as '1' | '2' | '9')}
+                  options={NFSE_CANCEL_CODES}
+                />
+                <TextField
+                  label="Explique o cancelamento"
+                  hint="Vai para a Sefin (de 15 a 255 caracteres)."
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                />
+                <Button
+                  variant="secondary"
+                  loading={busy}
+                  onClick={() =>
+                    void run(
+                      async () =>
+                        void (await api.post(`/service-orders/${order.id}/nfse/cancel`, {
+                          code: cancelCode,
+                          reason: cancelReason,
+                        })),
+                    )
+                  }
+                >
+                  Cancelar a NFS-e
+                </Button>
+              </fieldset>
+            )}
         </>
       )}
     </section>

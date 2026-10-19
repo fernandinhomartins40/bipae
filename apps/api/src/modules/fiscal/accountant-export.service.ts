@@ -140,7 +140,7 @@ export class AccountantExportService {
         .where(
           and(
             eq(nfseDocuments.companyId, companyId),
-            eq(nfseDocuments.status, 'authorized'),
+            inArray(nfseDocuments.status, ['authorized', 'cancelled']),
             gte(nfseDocuments.issuedAt, start),
             lt(nfseDocuments.issuedAt, end),
           ),
@@ -200,7 +200,14 @@ export class AccountantExportService {
         if (!n.nfseXml || !n.accessKey) continue;
         files.push({ name: `NFSe/${n.accessKey}-NFSe.xml`, data: n.nfseXml });
         const value = readNfseValue(n.nfseXml);
-        totalCents += value;
+        if (n.status === 'authorized') totalCents += value;
+        // Cancelamento da NFS-e (F5-13.g): o XML do evento registrado na Sefin.
+        if (n.cancelEventXml) {
+          files.push({
+            name: `Eventos/${n.accessKey}-cancelamento-NFSe.xml`,
+            data: n.cancelEventXml,
+          });
+        }
         csv.push(
           [
             n.accessKey,
@@ -208,7 +215,7 @@ export class AccountantExportService {
             n.series,
             n.number,
             n.issuedAt.toISOString(),
-            'Autorizada',
+            n.status === 'cancelled' ? 'Cancelada' : 'Autorizada',
             money(value),
             '',
             '',

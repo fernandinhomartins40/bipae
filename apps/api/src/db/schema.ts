@@ -1422,7 +1422,7 @@ export const nfseDocuments = pgTable('nfse_documents', {
   number: bigint('number', { mode: 'number' }).notNull(),
   dpsId: char('dps_id', { length: 45 }).notNull(),
   status: text('status', {
-    enum: ['pending', 'error', 'not_configured', 'authorized', 'rejected'],
+    enum: ['pending', 'error', 'not_configured', 'authorized', 'rejected', 'cancelled'],
   })
     .notNull()
     .default('pending'),
@@ -1435,6 +1435,20 @@ export const nfseDocuments = pgTable('nfse_documents', {
   lastError: text('last_error'),
   issuedAt: ts('issued_at').notNull().defaultNow(),
   authorizedAt: ts('authorized_at'),
+  /** Cancelamento (F5-13.g): o pedido do evento 101101 e a resposta da Sefin. */
+  cancelStatus: text('cancel_status', { enum: ['pending', 'error', 'registered', 'rejected'] }),
+  cancelCode: text('cancel_code', { enum: ['1', '2', '9'] }),
+  cancelReason: text('cancel_reason'),
+  cancelErrors: jsonb('cancel_errors')
+    .$type<{ code: string; message: string }[]>()
+    .notNull()
+    .default([]),
+  cancelSigned: text('cancel_signed'),
+  cancelEventXml: text('cancel_event_xml'),
+  cancelAttempts: integer('cancel_attempts').notNull().default(0),
+  cancelLastError: text('cancel_last_error'),
+  cancelRequestedAt: ts('cancel_requested_at'),
+  cancelledAt: ts('cancelled_at'),
   createdBy: uuid('created_by').notNull(),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),

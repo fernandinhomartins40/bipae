@@ -1,5 +1,14 @@
 # Changelog
 
+## [F5-13.g Cancelar a NFS-e] — 19/10/2026
+
+### Adicionado
+- **Cancelar a NFS-e Nacional** na ordem de serviço, com o motivo (erro na emissão, serviço não prestado ou outros) e a explicação.
+  - O pedido segue o leiaute e as regras do Anexo II oficial e é validado no schema `pedRegEvento_v1.01`.
+  - Vai assinado à Sefin pela fila.
+  - O prazo e o valor-limite são do município: se ele recusar, a tela mostra o motivo, e dá para pedir de novo.
+- A NFS-e cancelada entra no pacote do contador como "Cancelada", com o XML do evento.
+
 ## [F3-33.f/g Cancelar a NF-e e carta de correção] — 19/10/2026
 
 ### Adicionado

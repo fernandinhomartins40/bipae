@@ -19,6 +19,10 @@ export class SefinSimulator {
   readonly calls: { method: string; path: string; dps?: string }[] = [];
   /** NFS-e geradas, pelo Id da DPS. */
   readonly generated = new Map<string, { key: string; xml: string }>();
+  /** Cancelamentos registrados (F5-13.g): chave e o pedido de evento recebido. */
+  readonly cancelled = new Map<string, string>();
+  /** O município recusa o cancelamento por prazo (E0822)? */
+  cancelExpired = false;
   private server: Server | null = null;
   private seq = 0;
   private readonly ac = certificate('AC SEFIN SIMULADA', null, null);
@@ -111,6 +115,44 @@ export class SefinSimulator {
       return {
         status: 201,
         json: { chaveAcesso: key, nfseXmlGZipB64: gzipSync(Buffer.from(xml)).toString('base64') },
+      };
+    }
+    // Pedido de registro de evento (cancelamento 101101).
+    const eventMatch = /^\/nfse\/(\d{50})\/eventos$/.exec(path);
+    if (method === 'POST' && eventMatch) {
+      const key = eventMatch[1]!;
+      const request = gunzipSync(
+        Buffer.from(
+          (JSON.parse(body) as { pedidoRegistroEventoXmlGZipB64: string })
+            .pedidoRegistroEventoXmlGZipB64,
+          'base64',
+        ),
+      ).toString('utf8');
+      this.calls.push({ method, path, dps: request });
+      const exists = [...this.generated.values()].some((g) => g.key === key);
+      const erro = (Codigo: string, Descricao: string) => ({
+        status: 400,
+        json: { erros: [{ Codigo, Descricao }] },
+      });
+      if (!exists) return erro('E0840', 'NFS-e não encontrada para o evento.');
+      if (this.cancelled.has(key)) return erro('E0802', 'Já existe um evento de cancelamento.');
+      if (this.cancelExpired) {
+        return erro(
+          'E0822',
+          'O prazo para o cancelamento da NFS-e expirou, conforme parametrização do município emissor da NFS-e.',
+        );
+      }
+      this.cancelled.set(key, request);
+      const evento =
+        '<evento xmlns="http://www.sped.fazenda.gov.br/nfse" versao="1.01"><infEvento Id="EVT' +
+        key +
+        '101101001"><verAplic>SIMULADA</verAplic><ambGer>2</ambGer><nSeqEvento>1</nSeqEvento>' +
+        '<dhProc>2026-10-19T10:05:00-03:00</dhProc><nDFSe>1</nDFSe>' +
+        request.replace(/^<\?xml[^>]*>/, '') +
+        '</infEvento></evento>';
+      return {
+        status: 201,
+        json: { eventoXmlGZipB64: gzipSync(Buffer.from(evento)).toString('base64') },
       };
     }
     this.calls.push({ method, path });

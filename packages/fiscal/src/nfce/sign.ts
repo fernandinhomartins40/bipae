@@ -103,18 +103,21 @@ export async function signText(text: string, key: SigningKey | NfeSigner): Promi
  */
 export async function signFiscalXml(
   xml: string,
-  root: 'evento' | 'inutNFe' | 'DPS',
-  inner: 'infEvento' | 'infInut' | 'infDPS',
+  root: 'evento' | 'inutNFe' | 'DPS' | 'pedRegEvento',
+  inner: 'infEvento' | 'infInut' | 'infDPS' | 'infPedReg',
   key: SigningKey | NfeSigner,
 ): Promise<string> {
-  const ns = root === 'DPS' ? NFSE_NS : NFE_NS;
+  // DPS e pedido de evento da NFS-e Nacional (F5-13) usam o namespace da NFS-e.
+  const ns = root === 'DPS' || root === 'pedRegEvento' ? NFSE_NS : NFE_NS;
   if (xml.includes('<Signature')) throw new Error('Este XML já está assinado');
   if (!/^[A-Za-z0-9+/=]+$/.test(key.certificate))
     throw new Error('Certificado precisa estar em base64, sem cabeçalhos');
   if (!xml.startsWith(`<${root} xmlns="${ns}"`)) {
     throw new Error(`XML sem o elemento ${root} com o namespace esperado`);
   }
-  const match = new RegExp(`<${inner} Id="((?:ID|DPS)[0-9A-Z]+)">[\\s\\S]*</${inner}>`).exec(xml);
+  const match = new RegExp(`<${inner} Id="((?:ID|DPS|PRE)[0-9A-Z]+)">[\\s\\S]*</${inner}>`).exec(
+    xml,
+  );
   if (!match) throw new Error(`XML sem o elemento ${inner} no formato gerado pelo Bipaê`);
   const id = match[1]!;
   const canonical = match[0].replace(`<${inner} `, `<${inner} xmlns="${ns}" `);

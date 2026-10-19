@@ -2422,14 +2422,36 @@ export interface NfseDocumentView {
   serviceOrderId: string;
   series: number;
   number: number;
-  status: 'pending' | 'error' | 'not_configured' | 'authorized' | 'rejected';
+  status: 'pending' | 'error' | 'not_configured' | 'authorized' | 'rejected' | 'cancelled';
   pendingItems: string[];
   /** Recusa da Sefin: o código da regra e a mensagem. */
   errors: { code: string; message: string }[];
   accessKey: string | null;
   lastError: string | null;
   authorizedAt: string | null;
+  /** Pedido de cancelamento (F5-13.g) e a resposta da Sefin. */
+  cancellation: {
+    status: 'pending' | 'error' | 'registered' | 'rejected';
+    code: '1' | '2' | '9';
+    reason: string;
+    errors: { code: string; message: string }[];
+    lastError: string | null;
+    cancelledAt: string | null;
+  } | null;
 }
+
+/**
+ * Cancelamento da NFS-e Nacional (F5-13.g): o código da justificativa (1 erro na emissão, 2
+ * serviço não prestado, 9 outros) e o texto, de 15 a 255 caracteres.
+ */
+export const nfseCancelInput = z.object({
+  code: z.enum(['1', '2', '9'], { message: 'Escolha o motivo do cancelamento' }),
+  reason: z
+    .string()
+    .trim()
+    .min(15, 'Explique o motivo com pelo menos 15 caracteres')
+    .max(255, 'O motivo pode ter no máximo 255 caracteres'),
+});
 
 // ---------- Recuperar senha por e-mail (P-04.b) ----------
 

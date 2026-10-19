@@ -646,7 +646,7 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Endereços das APIs:** página oficial do gov.br/nfse.
   - **Grupo do IBS/CBS:** só obrigatório para o Simples a partir de 2027 (nota do Anexo I) e facultativo para os demais no leiaute em produção (regra E0850). O leiaute da NT 009 v1.01 (01/10/2026) entra conforme o cronograma que a Receita vai publicar.
 - **Ainda sem fonte oficial:** o Swagger da Sefin só abre com certificado, então estes pontos seguem o uso corrente e ficam isolados no código para trocar fácil:
-  - **Nomes no JSON:** `dpsXmlGZipB64`, `chaveAcesso`, `nfseXmlGZipB64`, `erros`.
+  - **Nomes no JSON:** `dpsXmlGZipB64`, `chaveAcesso`, `nfseXmlGZipB64`, `erros`; no cancelamento (F5-13.g), `pedidoRegistroEventoXmlGZipB64` e `eventoXmlGZipB64`. O leiaute do pedido e as regras do cancelamento vêm do Anexo II oficial (19/10/2026): Id "PRE" + chave + código do evento; prazo e valor-limite são parâmetros do município (E0822, E0823).
   - **Resposta do convênio municipal:** o formato de `/parametros_municipais/{município}/convenio`.
   - **Assinatura:** RSA-SHA1, a mesma da NF-e. O leiaute diz só "padrão XML Digital Signature".
   - **DANFSE:** o caminho `{ADN DANFSE}/{chave}`, que devolve o PDF (NT 008).

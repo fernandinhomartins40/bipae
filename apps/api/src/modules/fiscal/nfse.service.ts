@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -12,9 +13,13 @@ import {
   StreamableFile,
   type OnModuleInit,
 } from '@nestjs/common';
-import { uuidv7, type NfseDocumentView } from '@bipae/domain';
+import { nfseCancelInput, uuidv7, type NfseDocumentView } from '@bipae/domain';
 import {
+  brasiliaDateTime,
   buildDps,
+  buildNfseCancelRequest,
+  nfseEventRequest,
+  parseNfseEventResponse,
   danfseRequest,
   dpsId,
   dpsQueryRequest,
@@ -32,7 +37,7 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB, QUEUE } from '../../common/di';
-import { AppError, notFound } from '../../common/errors';
+import { AppError, notFound, parse } from '../../common/errors';
 import type { JobQueue } from '../../common/queue';
 import { canUseStore } from '../../common/stores';
 import { withTenant, type Db, type Tx } from '../../db/client';
@@ -51,6 +56,7 @@ import type { NfseTransport } from './nfse.transport';
 
 export const NFSE_TRANSPORT = Symbol('NFSE_TRANSPORT');
 export const NFSE_EMIT_JOB = 'nfse.emit';
+export const NFSE_CANCEL_JOB = 'nfse.cancel';
 const APP_VERSION = 'Bipaê 1.0';
 const lineTotal = (priceCents: number, milli: number) => Math.round((priceCents * milli) / 1000);
 
@@ -66,6 +72,17 @@ const view = (d: Doc): NfseDocumentView => ({
   accessKey: d.accessKey,
   lastError: d.lastError,
   authorizedAt: d.authorizedAt?.toISOString() ?? null,
+  cancellation:
+    d.cancelStatus && d.cancelCode
+      ? {
+          status: d.cancelStatus,
+          code: d.cancelCode,
+          reason: d.cancelReason ?? '',
+          errors: d.cancelErrors,
+          lastError: d.cancelLastError,
+          cancelledAt: d.cancelledAt?.toISOString() ?? null,
+        }
+      : null,
 });
 
 const jobContext = (tenantId: string, userId: string): RequestContext => ({
@@ -104,6 +121,143 @@ export class NfseService implements OnModuleInit {
       };
       await this.emit(jobContext(tenantId, userId), documentId);
     });
+    this.queue.process(NFSE_CANCEL_JOB, async (data) => {
+      const { tenantId, documentId, userId } = data as {
+        tenantId: string;
+        documentId: string;
+        userId: string;
+      };
+      await this.sendCancel(jobContext(tenantId, userId), documentId);
+    });
+  }
+
+  /**
+   * Cancelamento da NFS-e (F5-13.g): só da nota gerada pela Sefin, um pedido por nota. O prazo e o
+   * valor-limite são do município (E0822, E0823): a recusa volta com a explicação da Sefin. A OS e
+   * a conta a receber continuam; se o serviço não foi prestado, cancele-as também.
+   */
+  async cancel(ctx: RequestContext, orderId: string, body: unknown): Promise<NfseDocumentView> {
+    const input = parse(nfseCancelInput, body);
+    const id = await withTenant(this.db, ctx, async (tx) => {
+      await this.loadOrder(tx, ctx, orderId);
+      const [doc] = await tx
+        .select()
+        .from(nfseDocuments)
+        .where(eq(nfseDocuments.serviceOrderId, orderId));
+      if (!doc || doc.status !== 'authorized' || !doc.accessKey) {
+        throw new AppError(409, 'not_authorized', 'Só dá para cancelar a NFS-e gerada pela Sefin.');
+      }
+      if (doc.cancelStatus && doc.cancelStatus !== 'rejected') {
+        throw new AppError(409, 'cancel_requested', 'O cancelamento desta NFS-e já foi pedido.');
+      }
+      await tx
+        .update(nfseDocuments)
+        .set({
+          cancelStatus: 'pending',
+          cancelCode: input.code,
+          cancelReason: input.reason,
+          cancelErrors: [],
+          cancelLastError: null,
+          cancelSigned: null,
+          cancelRequestedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(nfseDocuments.id, doc.id));
+      await this.audit.record(tx, ctx, {
+        action: 'nfse.cancel_requested',
+        entity: 'service_order',
+        entityId: orderId,
+        data: { accessKey: doc.accessKey, code: input.code, reason: input.reason },
+      });
+      return doc.id;
+    });
+    await this.queue.add(
+      NFSE_CANCEL_JOB,
+      { tenantId: ctx.tenantId, documentId: id, userId: ctx.userId },
+      { attempts: 6, backoffMs: 2000 },
+    );
+    return (await this.forOrder(ctx, orderId))!;
+  }
+
+  private async sendCancel(ctx: RequestContext, documentId: string) {
+    const prepared = await withTenant(this.db, ctx, async (tx) => {
+      const [doc] = await tx.select().from(nfseDocuments).where(eq(nfseDocuments.id, documentId));
+      if (!doc || !doc.accessKey || !['pending', 'error'].includes(doc.cancelStatus ?? '')) {
+        return null;
+      }
+      const [company] = await tx.select().from(companies).where(eq(companies.id, doc.companyId));
+      if (!company?.taxId) throw notFound('Empresa');
+      // Assinado uma vez: as novas tentativas mandam o mesmo pedido.
+      const signed =
+        doc.cancelSigned ??
+        (await signFiscalXml(
+          buildNfseCancelRequest({
+            accessKey: doc.accessKey,
+            cnpj: company.taxId,
+            code: doc.cancelCode!,
+            reason: doc.cancelReason!,
+            at: brasiliaDateTime(new Date().toISOString()),
+          }),
+          'pedRegEvento',
+          'infPedReg',
+          await this.certificates.signingKey(tx, doc.companyId),
+        ));
+      await tx
+        .update(nfseDocuments)
+        .set({
+          cancelSigned: signed,
+          cancelAttempts: doc.cancelAttempts + 1,
+          updatedAt: new Date(),
+        })
+        .where(eq(nfseDocuments.id, doc.id));
+      return {
+        doc,
+        signed,
+        credentials: await this.certificates.tlsCredentials(tx, doc.companyId),
+      };
+    });
+    if (!prepared) return;
+    const { doc, signed, credentials } = prepared;
+    try {
+      const res = await this.call(await nfseEventRequest(doc.accessKey!, signed), credentials);
+      const result = await parseNfseEventResponse(res.status, res.body);
+      if (result.outcome === 'registered') {
+        await withTenant(this.db, ctx, async (tx) => {
+          await tx
+            .update(nfseDocuments)
+            .set({
+              status: 'cancelled',
+              cancelStatus: 'registered',
+              cancelEventXml: result.eventXml,
+              cancelledAt: new Date(),
+              cancelLastError: null,
+              cancelErrors: [],
+              updatedAt: new Date(),
+            })
+            .where(eq(nfseDocuments.id, doc.id));
+          await this.audit.record(tx, ctx, {
+            action: 'nfse.cancelled',
+            entity: 'service_order',
+            entityId: doc.serviceOrderId,
+            data: { accessKey: doc.accessKey },
+          });
+        });
+        return;
+      }
+      await this.patch(ctx, doc.id, {
+        cancelStatus: 'rejected',
+        cancelErrors: result.errors,
+        cancelLastError: null,
+      });
+    } catch (error) {
+      // Sefin fora ou resposta fora do formato: a fila tenta de novo com o mesmo pedido.
+      await this.patch(ctx, doc.id, {
+        cancelStatus: 'error',
+        cancelLastError: (error as Error).message,
+      });
+      this.logger.warn(`Cancelamento da NFS-e ${doc.accessKey}: ${(error as Error).message}`);
+      throw error;
+    }
   }
 
   private async loadOrder(tx: Tx, ctx: RequestContext, orderId: string) {
@@ -476,6 +630,17 @@ export class NfseController {
   @RequirePermission('pos.sell')
   get(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.nfse.forOrder(ctx, id);
+  }
+
+  @Post(':id/nfse/cancel')
+  @HttpCode(200)
+  @RequirePermission('fiscal.profile.write')
+  cancel(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.nfse.cancel(ctx, id, body);
   }
 
   @Post(':id/nfse/retry')

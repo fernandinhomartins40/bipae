@@ -167,6 +167,14 @@
   "publishedAt": "2018-12-21",
   "downloadedAt": "2026-10-15"
  },
+ "nfseAnexoII": {
+  "file": "NFSe_Anexo_II_PedRegEvt_Eventos_v1.01_2026-01-22.xlsx",
+  "title": "NFS-e Nacional: ANEXO_II-SEFIN_ADN-PEDREGEVT_EVT-SNNFSe-v1.01-20260122 (leiaute e regras do pedido de registro de evento: cancelamento 101101 e demais)",
+  "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual",
+  "publishedAt": "2026-01-22",
+  "downloadedAt": "2026-10-19"
+ },
  "eventCce": {
   "file": "Evento_CCe_PL_v1.01.zip",
   "title": "Esquemas XML NF-e - Pacote de Liberação Evento CCe (carta de correção, tpEvento 110110) v1.01",
