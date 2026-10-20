@@ -1,5 +1,15 @@
 # Changelog
 
+## [Primeiras conversas reais com a SEFAZ] — 20/10/2026
+
+### Adicionado
+- Primeiros testes com o certificado A1 de uma empresa real (FUSE AGENCIA LTDA), nos ambientes de homologação:
+  - status do serviço da SEFAZ-PR: 107, Serviço em Operação;
+  - busca no Ambiente Nacional das notas emitidas contra o CNPJ: sem documentos novos.
+
+### Corrigido
+- A tela "Notas de entrada", sem o MercadoFlow ligado, agora aponta para Compras → "Buscar notas agora". As notas contra o CNPJ chegam por lá, pelo certificado da empresa.
+
 ## [F5-13.h Percentuais da NFS-e com ajuda] — 20/10/2026
 
 ### Corrigido

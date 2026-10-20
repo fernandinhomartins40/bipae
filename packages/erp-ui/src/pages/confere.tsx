@@ -163,6 +163,13 @@ function StoreConfere({ storeId }: { storeId: string }) {
         <Link className="mt-3 inline-block text-primary underline" to="/mercadoflow">
           Ir para MercadoFlow
         </Link>
+        <p className="mt-4 text-sm">
+          Sem o MercadoFlow, as notas emitidas contra o seu CNPJ chegam pelo certificado digital da
+          empresa: em Compras, use &quot;Buscar notas agora&quot;.
+        </p>
+        <Link className="mt-1 inline-block text-primary underline" to="/compras">
+          Ir para Compras
+        </Link>
       </Card>
     );
   }
