@@ -38,6 +38,14 @@ const fromBase64 = (text: string) => {
 };
 
 /** GZip + base64, como a Sefin pede a área de dados. */
+/**
+ * A Sefin recusa o XML sem a declaração de codificação (regra E1229 do Anexo I, conferida na
+ * produção restrita em 20/10/2026). A declaração fica fora da assinatura, que vale do mesmo jeito.
+ */
+export function withXmlDeclaration(xml: string): string {
+  return xml.startsWith('<?xml') ? xml : `<?xml version="1.0" encoding="UTF-8"?>${xml}`;
+}
+
 export async function gzipBase64(xml: string): Promise<string> {
   const stream = new Blob([new TextEncoder().encode(xml)])
     .stream()
@@ -63,7 +71,7 @@ export async function nfseEmitRequest(signedDps: string): Promise<NfseRequest> {
   return {
     method: 'POST',
     url: `${SEFIN}/nfse`,
-    body: JSON.stringify({ dpsXmlGZipB64: await gzipBase64(signedDps) }),
+    body: JSON.stringify({ dpsXmlGZipB64: await gzipBase64(withXmlDeclaration(signedDps)) }),
   };
 }
 
@@ -79,10 +87,17 @@ export function nfseQueryRequest(accessKey: string): NfseRequest {
   return { method: 'GET', url: `${SEFIN}/nfse/${accessKey}` };
 }
 
-/** GET /parametros_municipais/{município}/convenio: o convênio do município no Sistema Nacional. */
+/**
+ * GET {ADN parametrização}/{município}/convenio: o convênio do município no Sistema Nacional. O
+ * caminho é o da especificação oficial "API NFS-e - ADN Parâmetros Municipais", conferida com o
+ * certificado em 20/10/2026 (dúvida D-036); a Sefin não responde por ele.
+ */
 export function municipalAgreementRequest(cityCode: string): NfseRequest {
   if (!/^\d{7}$/.test(cityCode)) throw new NfseMessageError('Código do município inválido.');
-  return { method: 'GET', url: `${SEFIN}/parametros_municipais/${cityCode}/convenio` };
+  return {
+    method: 'GET',
+    url: `${NFSE_ENDPOINTS.parametrizacao.producaoRestrita}/${cityCode}/convenio`,
+  };
 }
 
 /**
@@ -167,6 +182,9 @@ export function parseMunicipalAgreementResponse(status: number, body: string): b
     return null;
   }
   const node = (json.parametrosConvenio ?? json) as Json;
+  // Resposta oficial: aderenteAmbienteNacional 1 (sim), 0 (não) ou -1 (sem informação).
+  const national = node.aderenteAmbienteNacional;
+  if (typeof national === 'number') return national === 1 ? true : national === 0 ? false : null;
   const situation = pickStr(node, 'situacaoConvenio', 'situacao');
   if (situation) return /ativ/i.test(situation) && !/inativ/i.test(situation);
   const flag = Object.entries(node).find(([k]) => /aderente|ativo/i.test(k))?.[1];

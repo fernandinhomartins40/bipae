@@ -41,7 +41,9 @@ describe('cancelamento da NFS-e Nacional (F5-13.g)', () => {
     const req = await nfseEventRequest(CHAVE, xml);
     expect(req.url).toMatch(new RegExp(`/nfse/${CHAVE}/eventos$`));
     const body = JSON.parse(req.body!) as { pedidoRegistroEventoXmlGZipB64: string };
-    expect(await gunzipBase64(body.pedidoRegistroEventoXmlGZipB64)).toBe(xml);
+    expect(await gunzipBase64(body.pedidoRegistroEventoXmlGZipB64)).toBe(
+      `<?xml version="1.0" encoding="UTF-8"?>${xml}`,
+    );
   });
 
   it('confere chave, motivo e texto antes de assinar; sem assinatura não envia', async () => {

@@ -176,10 +176,14 @@ export class SefinSimulator {
           }
         : { status: 404, json: null };
     }
-    if (method === 'GET' && /^\/parametros_municipais\/\d{7}\/convenio$/.test(path)) {
+    // ADN Parâmetros Municipais, no formato da especificação oficial.
+    if (method === 'GET' && /^\/parametrizacao\/\d{7}\/convenio$/.test(path)) {
       return {
         status: 200,
-        json: { situacaoConvenio: this.agreementActive ? 'Ativo' : 'Inativo' },
+        json: {
+          parametrosConvenio: { aderenteAmbienteNacional: this.agreementActive ? 1 : 0 },
+          mensagem: 'Parâmetros do convênio recuperados com sucesso.',
+        },
       };
     }
     return { status: 404, json: null };

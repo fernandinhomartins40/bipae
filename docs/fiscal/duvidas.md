@@ -641,6 +641,12 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
 ### D-036 — NFS-e Nacional: o que só se confirma com o certificado
 
 - **Contexto (F5-13):** a NFS-e Nacional é obrigatória para ME e EPP do Simples desde 01/11/2026 (D-006). O Bipaê monta a DPS pelo leiaute v1.01 em produção e pelas regras do Anexo I, guardados em `packages/fiscal/sources`, e conversa com a Sefin Nacional pelos endereços da página oficial "APIs - Prod. Restrita e Produção".
+- **Conferido com o certificado A1 real na produção restrita (20/10/2026):**
+  - Especificações oficiais lidas com o certificado: "API NFS-e - Sefin Nacional" (versão do aplicativo SefinNacional_1.6.0) e "API NFS-e - ADN Parâmetros Municipais". A Sefin responde tanto em `/API/SefinNacional` quanto em `/SefinNacional`.
+  - O convênio do município fica no ADN: `GET {parametrização}/{município}/convenio`. A resposta traz `parametrosConvenio.aderenteAmbienteNacional` (1, 0 ou -1); Guarapuava (PR) respondeu 1. O caminho antigo na Sefin dava 404.
+  - O XML enviado precisa da declaração `<?xml version="1.0" encoding="UTF-8"?>` (rejeição E1229).
+  - A produção restrita já valida a DPS pelo leiaute da NT 009 v1.01 (Anexo VI v1.04.01): ela recusou o `cLocEmi` logo depois do `tpEmit`, pedindo `cMotivoEmisTI` ou `finNFSe`, o que o esquema publicado de julho/2026 ainda não traz. A tarefa F5-13.i adapta a DPS a esse leiaute.
+  - A consulta oficial da alíquota do ISS existe: `GET {parametrização}/{município}/{código do serviço com 9 dígitos}/{competência}/aliquota`.
 - **Confirmado em fonte oficial:**
   - **Leiaute e regras:** esquemas v1.01 de 09/02/2026 e Anexo I.
   - **Área de dados:** compactada e em base64 (regras E1225 e E1226).

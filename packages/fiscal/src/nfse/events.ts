@@ -3,6 +3,7 @@ import { NFSE_NS } from './dps';
 import {
   gunzipBase64,
   gzipBase64,
+  withXmlDeclaration,
   NFSE_ENDPOINTS,
   NfseMessageError,
   type NfseRequest,
@@ -86,7 +87,9 @@ export async function nfseEventRequest(
   return {
     method: 'POST',
     url: `${NFSE_ENDPOINTS.sefinNacional.producaoRestrita}/nfse/${accessKey}/eventos`,
-    body: JSON.stringify({ pedidoRegistroEventoXmlGZipB64: await gzipBase64(signedRequest) }),
+    body: JSON.stringify({
+      pedidoRegistroEventoXmlGZipB64: await gzipBase64(withXmlDeclaration(signedRequest)),
+    }),
   };
 }
 

@@ -115,9 +115,7 @@ describe('NFS-e Nacional da OS (F5-13.d)', () => {
     expect(enviada).toContain('<IM>12345</IM>');
     expect(enviada).toContain('<Signature');
     expect(enviada).not.toContain('<pAliq>');
-    expect(sefin.calls.some((c) => c.path === '/parametros_municipais/3550308/convenio')).toBe(
-      true,
-    );
+    expect(sefin.calls.some((c) => c.path === '/parametrizacao/3550308/convenio')).toBe(true);
     const xml = await admin.get(`/service-orders/${ordem.id}/nfse/xml`);
     expect(xml.headers['content-disposition']).toContain(`NFSe${doc.accessKey}.xml`);
     expect(xml.body).toContain('<NFSe');

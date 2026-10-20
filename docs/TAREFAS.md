@@ -119,6 +119,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Feito em 13/10/2026: `packages/fiscal/src/sefaz` e `apps/api/src/modules/fiscal/sefaz.*`.
 - [ ] F3-11.b · Primeira conversa real com a SEFAZ de homologação (status e uma NFC-e autorizada) com o certificado da empresa — depende: F3-11.a · externo: E1
   - [x] F3-11.b.1 · Status do serviço na SEFAZ-PR de homologação com o certificado A1 real da empresa: respondeu 107 (Serviço em Operação) em 20/10/2026, pela tela "Testar conexão com a SEFAZ"
+  - [x] F3-11.b.3 · Status do serviço nas SEFAZ de homologação das 27 UFs, NFC-e e NF-e, com o certificado A1 real: 54 de 54 responderam 107 em 20/10/2026 (MG leva cerca de 11 s)
   - [ ] F3-11.b.2 · Primeira NFC-e autorizada em homologação — depende: F3-11.b.1; a empresa precisa da inscrição estadual (emitente de NFC-e)
 - [x] F3-12 · Numeração `nNF` a partir de `terminalSeq` na série do caixa — depende: F3-07
 - [x] F3-13 · QR Code e DANFE da NFC-e (80 mm) e DANFE da NF-e (PDF) — depende: F3-07
@@ -371,6 +372,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F5-13.e · Tela da NFS-e na OS: emitir, o que falta, situação, XML e DANFSE pelo ADN; E2E — depende: F5-13.d
   - [x] F5-13.g · Cancelamento da NFS-e Nacional (evento 101101) pelo leiaute e as regras do Anexo II oficial: pedido assinado, válido no pedRegEvento_v1.01, pela fila; recusa do município (prazo E0822, valor E0823) mostrada como veio; evento no pacote do contador; tela na OS — depende: F5-13.e
   - [x] F5-13.h · Percentuais da NFS-e na empresa sem erro e com ajuda: só os campos do regime (Simples: pTotTribSN; Presumido e Real: os três; MEI: nenhum, regras E0710, E0712 e E0713 do Anexo I), campo que aceita vírgula ou ponto e recusa o preenchimento automático, mensagem com o nome do campo e calculadora da alíquota efetiva do Simples pelos Anexos I a V da LC 123/2006 (gerados do texto do Planalto) — depende: F5-13.d
+  - [ ] F5-13.i · DPS no leiaute da NT 009 v1.01 (Anexo VI v1.04.01), que a produção restrita já exige: finNFSe em infDPS, grupos reestruturados e as regras novas; testada contra a Sefin de verdade com o certificado — depende: F5-13.d
   - [ ] F5-13.f · Primeira NFS-e autorizada na produção restrita com o certificado da empresa; confirmar os pontos da dúvida D-036 — depende: F5-13.e · externo: E1
 
 ## Fase 6 — Integrações e IA

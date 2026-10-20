@@ -1,5 +1,15 @@
 # Changelog
 
+## [NFS-e na produção restrita e SEFAZ dos 27 estados] — 20/10/2026
+
+### Corrigido
+- **NFS-e Nacional:** primeiros envios reais à produção restrita, com o certificado A1 de uma empresa.
+  - O convênio do município é consultado no endereço oficial do ADN; o antigo, na Sefin, dava 404.
+  - O XML vai com a declaração UTF-8, que a Sefin exige (E1229).
+
+### Conferido
+- As SEFAZ de homologação das 27 UFs responderam ao teste de conexão do Bipaê, na NFC-e e na NF-e (107, Serviço em Operação).
+
 ## [Primeiras conversas reais com a SEFAZ] — 20/10/2026
 
 ### Adicionado
