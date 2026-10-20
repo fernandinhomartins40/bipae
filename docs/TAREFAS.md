@@ -118,6 +118,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F3-11.a · Cliente dos webservices: mensagens validadas nos schemas oficiais, SOAP 1.2 com o certificado A1 (mTLS) e a cadeia ICP-Brasil, leitura dos retornos, XML autorizado (nfeProc) e "Testar conexão com a SEFAZ" na tela da empresa, tudo testado contra uma SEFAZ simulada — depende: F3-10
   - Feito em 13/10/2026: `packages/fiscal/src/sefaz` e `apps/api/src/modules/fiscal/sefaz.*`.
 - [ ] F3-11.b · Primeira conversa real com a SEFAZ de homologação (status e uma NFC-e autorizada) com o certificado da empresa — depende: F3-11.a · externo: E1
+  - [x] F3-11.b.1 · Status do serviço na SEFAZ-PR de homologação com o certificado A1 real da empresa: respondeu 107 (Serviço em Operação) em 20/10/2026, pela tela "Testar conexão com a SEFAZ"
+  - [ ] F3-11.b.2 · Primeira NFC-e autorizada em homologação — depende: F3-11.b.1; a empresa precisa da inscrição estadual (emitente de NFC-e)
 - [x] F3-12 · Numeração `nNF` a partir de `terminalSeq` na série do caixa — depende: F3-07
 - [x] F3-13 · QR Code e DANFE da NFC-e (80 mm) e DANFE da NF-e (PDF) — depende: F3-07
 - [x] F3-13.a · QR Code versão 3 (sem CSC) e grupo infNFeSupl no XML, validado contra o schema — depende: F3-28
