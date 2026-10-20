@@ -732,12 +732,16 @@ export interface CertificateStatus {
 /** Teste de conexão com a SEFAZ de homologação (F3-11): NF-e (55) ou NFC-e (65). */
 export const sefazStatusInput = z.object({
   model: z.enum(['55', '65'], { message: 'Escolha NF-e (55) ou NFC-e (65)' }).default('65'),
+  /** Testar a contingência SVC da UF (só NF-e): SVC-AN ou SVC-RS, pela tabela oficial. */
+  svc: z.boolean().default(false),
 });
 
 /** Resposta do status do serviço da SEFAZ, como a tela mostra. */
 export interface SefazStatus {
   model: '55' | '65';
   uf: string;
+  /** Resposta da contingência SVC da UF, quando o teste foi dela. */
+  svc?: boolean;
   environment: 'homologacao';
   cStat: string;
   xMotivo: string;

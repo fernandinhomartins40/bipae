@@ -647,7 +647,7 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - O XML enviado precisa da declaração `<?xml version="1.0" encoding="UTF-8"?>` (rejeição E1229).
   - A produção restrita já valida a DPS pelo leiaute da NT 009 v1.01 (Anexo VI v1.04.01): ela recusou o `cLocEmi` logo depois do `tpEmit`, pedindo `cMotivoEmisTI` ou `finNFSe`, o que o esquema publicado de julho/2026 ainda não traz. A tarefa F5-13.i adapta a DPS a esse leiaute.
   - Regra E0084: o município da nota precisa bater com o cadastro CNPJ, se a prefeitura deixa emitir por ele (`situacaoEmissaoPadraoContribuintesRFB` = 1), ou com o cadastro do município (CNC NFS-e), com CNPJ e inscrição municipal. Guarapuava respondeu 0: exige a inscrição municipal.
-  - A consulta oficial da alíquota do ISS existe: `GET {parametrização}/{município}/{código do serviço com 9 dígitos}/{competência}/aliquota`.
+  - A consulta oficial da alíquota do ISS (feita, F5-13.k) pede o código com pontos, `17.06.01.000`; só números ela recusa como "mal formada". Ela existe em `GET {parametrização}/{município}/{código do serviço com 9 dígitos}/{competência}/aliquota`.
 - **Confirmado em fonte oficial:**
   - **Leiaute e regras:** esquemas v1.01 de 09/02/2026 e Anexo I.
   - **Área de dados:** compactada e em base64 (regras E1225 e E1226).

@@ -64,33 +64,44 @@ export function CertificateLine({
 function SefazCheck({ companyId }: { companyId: string }) {
   const { api } = useApp();
   const [checking, setChecking] = useState(false);
-  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
+  const [results, setResults] = useState<{ ok: boolean; text: string }[]>([]);
+  // A NFC-e, a NF-e e a contingência da NF-e (SVC da UF), cada uma com a sua resposta.
+  const tests = [
+    { label: 'NFC-e', body: { model: '65' } },
+    { label: 'NF-e', body: { model: '55' } },
+    { label: 'Contingência da NF-e (SVC)', body: { model: '55', svc: true } },
+  ];
   const check = async () => {
     setChecking(true);
-    setResult(null);
-    try {
-      const status = await api.post<SefazStatus>(`/fiscal/sefaz/status/${companyId}`, {
-        model: '65',
-      });
-      setResult({
-        ok: status.online,
-        text: `SEFAZ de homologação (${status.uf}) respondeu: ${status.cStat} - ${status.xMotivo}`,
-      });
-    } catch (err) {
-      setResult({ ok: false, text: (err as Error).message });
-    } finally {
-      setChecking(false);
+    setResults([]);
+    const lines: { ok: boolean; text: string }[] = [];
+    for (const test of tests) {
+      try {
+        const status = await api.post<SefazStatus>(`/fiscal/sefaz/status/${companyId}`, test.body);
+        lines.push({
+          ok: status.online,
+          text: `${test.label}: SEFAZ de homologação (${status.uf}) respondeu: ${status.cStat} - ${status.xMotivo}`,
+        });
+      } catch (err) {
+        lines.push({ ok: false, text: `${test.label}: ${(err as Error).message}` });
+      }
+      setResults([...lines]);
     }
+    setChecking(false);
   };
   return (
     <>
       <Button variant="ghost" onClick={check} disabled={checking}>
         {checking ? 'Testando...' : 'Testar conexão com a SEFAZ'}
       </Button>
-      {result && (
-        <p role="status" className={`w-full text-sm ${result.ok ? 'text-success' : 'text-danger'}`}>
-          {result.text}
-        </p>
+      {results.length > 0 && (
+        <div role="status" className="flex w-full flex-col gap-1">
+          {results.map((r) => (
+            <p key={r.text} className={`text-sm ${r.ok ? 'text-success' : 'text-danger'}`}>
+              {r.text}
+            </p>
+          ))}
+        </div>
       )}
     </>
   );

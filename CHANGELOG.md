@@ -1,5 +1,12 @@
 # Changelog
 
+## [F5-13.k Alíquota do ISS pela prefeitura e teste da contingência] — 20/10/2026
+
+### Adicionado
+- **"Buscar a alíquota na prefeitura"** no cadastro do serviço. O Bipaê pergunta ao Sistema Nacional NFS-e, com o certificado da empresa, a alíquota do ISS que a prefeitura cadastrou para o código do serviço, e preenche o campo.
+- O **teste de conexão com a SEFAZ** testa a NFC-e, a NF-e e a contingência da NF-e (SVC), uma linha para cada.
+  - Com o certificado A1 real, a SVC respondeu 107 para as 27 UFs.
+
 ## [F5-13.i NFS-e no leiaute da NT 009] — 20/10/2026
 
 ### Alterado

@@ -10,6 +10,8 @@ import {
   NfseMessageError,
   nfseQueryRequest,
   parseDpsQueryResponse,
+  issRateRequest,
+  parseIssRateResponse,
   parseMunicipalAgreementResponse,
   parseMunicipalRfbDefault,
   parseNfseEmitResponse,
@@ -114,6 +116,39 @@ describe('Sefin Nacional (F5-13.b)', () => {
       mensagem: 'Parâmetros do convênio recuperados com sucesso.',
     };
     expect(parseMunicipalAgreementResponse(200, JSON.stringify(guarapuava))).toBe(true);
+    // Alíquota do ISS do serviço: o código vai com pontos, como a API exige.
+    expect(issRateRequest('4109401', '170601', '2026-10-20').url).toBe(
+      'https://adn.producaorestrita.nfse.gov.br/parametrizacao/4109401/17.06.01.000/2026-10-20/aliquota',
+    );
+    expect(issRateRequest('4109401', '17.06.01.002', '2026-10-20').url).toContain(
+      '/17.06.01.002/2026-10-20/aliquota',
+    );
+    expect(() => issRateRequest('4109401', '1706', '2026-10-20')).toThrow('Código do serviço');
+    const aliquotas = {
+      aliquotas: {
+        '17.06.01.000': [
+          {
+            Incidencia: 'Local',
+            Aliq: 3,
+            DtIni: '2020-01-01T00:00:00',
+            DtFim: '2025-12-31T00:00:00',
+          },
+          { Incidencia: 'Local', Aliq: 5, DtIni: '2026-01-01T00:00:00', DtFim: null },
+        ],
+      },
+      mensagem: 'Alíquotas recuperadas com sucesso.',
+    };
+    expect(parseIssRateResponse(200, JSON.stringify(aliquotas), '2026-10-20')).toEqual({
+      rate: '5.00',
+      message: 'Alíquotas recuperadas com sucesso.',
+    });
+    expect(parseIssRateResponse(200, JSON.stringify(aliquotas), '2024-06-01').rate).toBe('3.00');
+    const mal = { aliquotas: null, mensagem: 'Chamada mal formada.' };
+    expect(parseIssRateResponse(200, JSON.stringify(mal), '2026-10-20')).toEqual({
+      rate: null,
+      message: 'Chamada mal formada.',
+    });
+    expect(parseIssRateResponse(502, 'x', '2026-10-20').rate).toBeNull();
     // Guarapuava não deixa emitir só com o cadastro da Receita: a inscrição municipal é exigida.
     expect(parseMunicipalRfbDefault(200, JSON.stringify(guarapuava))).toBe(false);
     const rfb = { parametrosConvenio: { situacaoEmissaoPadraoContribuintesRFB: 1 } };

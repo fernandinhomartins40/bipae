@@ -134,7 +134,8 @@ export class FiscalController {
     @Param('companyId', new ParseUUIDPipe()) companyId: string,
     @Body() body: unknown,
   ) {
-    return this.sefaz.status(ctx, companyId, parse(sefazStatusInput, body ?? {}).model);
+    const input = parse(sefazStatusInput, body ?? {});
+    return this.sefaz.status(ctx, companyId, input.model, input.svc);
   }
 
   // ---------------------------------------------------------------- regras de ICMS da empresa

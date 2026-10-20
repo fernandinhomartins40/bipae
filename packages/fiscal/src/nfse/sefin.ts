@@ -192,6 +192,72 @@ export function parseMunicipalAgreementResponse(status: number, body: string): b
 }
 
 /**
+ * GET {parametrização}/{município}/{código}/{competência}/aliquota: a alíquota do ISSQN que a
+ * prefeitura cadastrou no Sistema Nacional para o serviço (API oficial "ADN Parâmetros
+ * Municipais"). O código vai com 9 dígitos: o cTribNac e mais 3 do desdobramento municipal
+ * ("000" quando não há).
+ */
+export function issRateRequest(
+  cityCode: string,
+  serviceCode: string,
+  competence: string,
+): NfseRequest {
+  if (!/^\d{7}$/.test(cityCode)) throw new NfseMessageError('Código do município inválido.');
+  const code = serviceCode.replace(/\D/g, '');
+  if (!/^\d{6}(\d{3})?$/.test(code)) throw new NfseMessageError('Código do serviço inválido.');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(competence)) throw new NfseMessageError('Competência inválida.');
+  // Os 9 dígitos vão com pontos (item.subitem.desdobramento.municipal, "17.06.01.000"); só
+  // números a API recusa como "mal formada" (conferido com o certificado em 20/10/2026).
+  const nine = code.length === 6 ? `${code}000` : code;
+  const dotted = `${nine.slice(0, 2)}.${nine.slice(2, 4)}.${nine.slice(4, 6)}.${nine.slice(6)}`;
+  return {
+    method: 'GET',
+    url: `${NFSE_ENDPOINTS.parametrizacao.producaoRestrita}/${cityCode}/${dotted}/${competence}/aliquota`,
+  };
+}
+
+export interface IssRateAnswer {
+  /** Alíquota em %, como "5.00"; null quando a prefeitura não cadastrou. */
+  rate: string | null;
+  /** O que a API respondeu, para mostrar quando não há alíquota. */
+  message: string | null;
+}
+
+/**
+ * A alíquota vigente na competência, da resposta `{ aliquotas: { [código]: [{ Aliq, DtIni,
+ * DtFim }] }, mensagem }`. Sem alíquota cadastrada, rate null e a mensagem da API.
+ */
+export function parseIssRateResponse(
+  status: number,
+  body: string,
+  competence: string,
+): IssRateAnswer {
+  let json: Json;
+  try {
+    json = JSON.parse(body) as Json;
+  } catch {
+    return { rate: null, message: status >= 400 ? `A consulta respondeu ${status}.` : null };
+  }
+  const message = typeof json.mensagem === 'string' ? json.mensagem : null;
+  const groups = json.aliquotas;
+  if (!groups || typeof groups !== 'object') return { rate: null, message };
+  const day = `${competence}T00:00:00`;
+  for (const list of Object.values(groups as Record<string, unknown>)) {
+    if (!Array.isArray(list)) continue;
+    for (const item of list as Json[]) {
+      const value = item.Aliq;
+      const start = typeof item.DtIni === 'string' ? item.DtIni : '';
+      const end = typeof item.DtFim === 'string' ? item.DtFim : null;
+      if (typeof value !== 'number' || !(value >= 0 && value <= 100)) continue;
+      if (start && start.slice(0, 19) > day) continue;
+      if (end && end.slice(0, 19) < day) continue;
+      return { rate: value.toFixed(2), message };
+    }
+  }
+  return { rate: null, message };
+}
+
+/**
  * O município deixa emitir só com o cadastro CNPJ da Receita? É o campo
  * `situacaoEmissaoPadraoContribuintesRFB` do convênio (1 sim, 0 não, -1 sem informação). Quando
  * não deixa, a regra E0084 exige que CNPJ e inscrição municipal estejam no cadastro do município

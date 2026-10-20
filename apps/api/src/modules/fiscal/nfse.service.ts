@@ -9,6 +9,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   Res,
   StreamableFile,
   type OnModuleInit,
@@ -23,7 +24,9 @@ import {
   danfseRequest,
   dpsId,
   dpsQueryRequest,
+  issRateRequest,
   municipalAgreementRequest,
+  parseIssRateResponse,
   nfseEmitRequest,
   nfseQueryRequest,
   parseDpsQueryResponse,
@@ -34,6 +37,7 @@ import {
   type DpsInput,
   type NfseRequest,
 } from '@bipae/fiscal';
+import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
@@ -44,6 +48,7 @@ import { canUseStore } from '../../common/stores';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   companies,
+  companyCertificates,
   customers,
   nfseDocuments,
   serviceOrderItems,
@@ -611,6 +616,60 @@ export class NfseService implements OnModuleInit {
     return { accessKey: doc.accessKey!, pdf: res.bytes };
   }
 
+  /**
+   * A alíquota do ISSQN que a prefeitura cadastrou no Sistema Nacional para o serviço, na
+   * competência de hoje, com o certificado da empresa (ADN Parâmetros Municipais). Para o cadastro
+   * do serviço não depender de o dono saber o número.
+   */
+  async issRate(ctx: RequestContext, code: string, companyId?: string) {
+    const { company, credentials } = await withTenant(this.db, ctx, async (tx) => {
+      const rows = await tx
+        .select({ id: companies.id, cityCode: companies.cityCode })
+        .from(companies)
+        .innerJoin(companyCertificates, eq(companyCertificates.companyId, companies.id))
+        .where(companyId ? eq(companies.id, companyId) : sql`true`);
+      const found = rows.find((r) => r.cityCode);
+      if (!found) {
+        throw new AppError(
+          400,
+          'iss_rate_unavailable',
+          'Para buscar a alíquota, a empresa precisa do município e do certificado digital A1.',
+        );
+      }
+      return {
+        company: found,
+        credentials: await this.certificates.tlsCredentials(tx, found.id),
+      };
+    });
+    // A competência é o dia de hoje em Brasília (AAAA-MM-DD).
+    const competence = brasiliaDateTime(new Date().toISOString()).slice(0, 10);
+    let request: NfseRequest;
+    try {
+      request = issRateRequest(company.cityCode!, code, competence);
+    } catch (error) {
+      throw new AppError(422, 'invalid_service_code', (error as Error).message);
+    }
+    const res = await this.call(request, credentials).catch(() => null);
+    if (!res) {
+      throw new AppError(
+        502,
+        'iss_rate_unavailable',
+        'O Sistema Nacional NFS-e não respondeu agora. Tente de novo em instantes.',
+      );
+    }
+    const answer = parseIssRateResponse(res.status, res.body, competence);
+    return {
+      cityCode: company.cityCode,
+      city: findMunicipio(company.cityCode!)?.name ?? null,
+      competence,
+      rate: answer.rate,
+      message: answer.rate
+        ? null
+        : 'A prefeitura não cadastrou a alíquota deste serviço no Sistema Nacional. Confira com ela e informe no campo.',
+      apiMessage: answer.message,
+    };
+  }
+
   xml(ctx: RequestContext, orderId: string) {
     return withTenant(this.db, ctx, async (tx) => {
       await this.loadOrder(tx, ctx, orderId);
@@ -622,6 +681,24 @@ export class NfseService implements OnModuleInit {
         throw new AppError(409, 'not_authorized', 'A NFS-e ainda não foi gerada pela Sefin.');
       return { accessKey: doc.accessKey!, xml: doc.nfseXml };
     });
+  }
+}
+
+@Controller('fiscal/nfse')
+export class NfseParamsController {
+  constructor(@Inject(NfseService) private readonly nfse: NfseService) {}
+
+  /** Alíquota do ISSQN do serviço na prefeitura: ?code=170601 (e, se houver, &companyId=). */
+  @Get('iss-rate')
+  @RequirePermission('catalog.read')
+  issRate(
+    @Ctx() ctx: RequestContext,
+    @Query('code') code?: string,
+    @Query('companyId') companyId?: string,
+  ) {
+    if (!code) throw new AppError(422, 'invalid_service_code', 'Informe o código do serviço.');
+    if (companyId && !/^[0-9a-f-]{36}$/i.test(companyId)) throw notFound('Empresa');
+    return this.nfse.issRate(ctx, code, companyId);
   }
 }
 

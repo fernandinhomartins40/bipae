@@ -97,6 +97,26 @@ async function nota(admin: ReturnType<typeof api>, osId: string, until: (s: stri
 }
 
 describe('NFS-e Nacional da OS (F5-13.d)', () => {
+  it('a alíquota do ISS do serviço vem da prefeitura, pelo Sistema Nacional (F5-13.k)', async () => {
+    const { admin } = await oficina();
+    const r = await admin.get('/fiscal/nfse/iss-rate?code=140101');
+    expect(r.statusCode).toBe(200);
+    expect(r.json()).toMatchObject({ cityCode: '3550308', city: 'São Paulo', rate: '5.00' });
+    expect(
+      sefin.calls.some((c) =>
+        c.path.endsWith('/14.01.01.000/' + r.json().competence + '/aliquota'),
+      ),
+    ).toBe(true);
+    const ruim = await admin.get('/fiscal/nfse/iss-rate?code=14');
+    expect(ruim.statusCode).toBe(422);
+    expect(ruim.json().message).toBe('Código do serviço inválido.');
+    // Sem certificado não há como perguntar: a mensagem diz o que falta.
+    const outra = api(t.app, (await signup(t.app)).auth);
+    const sem = await outra.get('/fiscal/nfse/iss-rate?code=140101');
+    expect(sem.statusCode).toBe(400);
+    expect(sem.json().message).toContain('certificado digital A1');
+  });
+
   it('só os serviços vão na DPS; a Sefin gera a NFS-e; número pela série da empresa', async () => {
     sefin.mode = 'normal';
     sefin.agreementActive = true;

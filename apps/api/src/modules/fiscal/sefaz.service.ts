@@ -110,13 +110,19 @@ export class SefazService {
     }
   }
 
-  async status(ctx: RequestContext, companyId: string, model: NfeModel): Promise<SefazStatusView> {
+  async status(
+    ctx: RequestContext,
+    companyId: string,
+    model: NfeModel,
+    svc = false,
+  ): Promise<SefazStatusView> {
     const { uf, credentials } = await this.prepare(ctx, companyId);
-    const response = await this.call(() => statusRequest(model, uf), credentials);
+    const response = await this.call(() => statusRequest(model, uf, svc), credentials);
     const result = this.read(() => parseStatusResponse(response));
     return {
       model,
       uf,
+      ...(svc && { svc: true }),
       environment: 'homologacao',
       cStat: result.cStat,
       xMotivo: result.xMotivo,

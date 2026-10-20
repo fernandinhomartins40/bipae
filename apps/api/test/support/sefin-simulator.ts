@@ -176,6 +176,23 @@ export class SefinSimulator {
           }
         : { status: 404, json: null };
     }
+    // Alíquota do ISS do serviço (ADN Parâmetros Municipais): 5% para qualquer serviço.
+    const rateMatch = /^\/parametrizacao\/\d{7}\/(\d\d\.\d\d\.\d\d\.\d{3})\/[\d-]+\/aliquota$/.exec(
+      path,
+    );
+    if (method === 'GET' && rateMatch) {
+      return {
+        status: 200,
+        json: {
+          aliquotas: {
+            [rateMatch[1]!]: [
+              { Incidencia: 'Local', Aliq: 5, DtIni: '2026-01-01T00:00:00', DtFim: null },
+            ],
+          },
+          mensagem: 'Alíquotas recuperadas com sucesso.',
+        },
+      };
+    }
     // ADN Parâmetros Municipais, no formato da especificação oficial.
     if (method === 'GET' && /^\/parametrizacao\/\d{7}\/convenio$/.test(path)) {
       return {

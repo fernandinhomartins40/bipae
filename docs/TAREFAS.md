@@ -146,6 +146,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [~] F3-16 · SVC para NF-e — depende: F3-11, F3-08
   - [x] F3-16.a · Motor: NF-e com tpEmis 6 (SVC-AN) ou 7 (SVC-RS) pela tabela da UF, na nota e na chave, com dhCont e xJust, válida no XSD; endereços da SVC da tabela oficial; NFC-e recusada antes da SEFAZ (rejeição 783); consulta pela chave vai à SVC quando o tipo de emissão é 6 ou 7 (MOC, regras B22-60 e B28) — depende: F3-08.b
   - [x] F3-16.b · API e tela: "Emitir em contingência (SVC)" quando a SEFAZ da UF não responde, com o motivo e auditoria; a chave da tentativa normal fica guardada e, com a UF de volta, a manutenção confere se ela também foi autorizada (a nota avisa para cancelar uma das duas); testada contra a SEFAZ simulada com a UF fora e a SVC no ar — depende: F3-16.a, F3-33.b
+  - [x] F3-16.c.1 · Status da contingência SVC (SVC-AN e SVC-RS) para as 27 UFs com o certificado A1 real: todas responderam 107 em 20/10/2026; o teste de conexão da tela mostra NFC-e, NF-e e a contingência
   - [ ] F3-16.c · Primeira NF-e autorizada na SVC de homologação com o certificado da empresa — depende: F3-16.b · externo: E1
 - [x] F3-17 · Eventos: cancelamento, carta de correção e inutilização — depende: F3-11
   - Regras (MOC 7.0, pesquisadas em 15/10/2026): cancelamento 110111 até 24 horas da autorização e cancelamento por substituição 110112 (só NFC-e) até 168 horas, rejeição 501 fora do prazo (com exceção por lei estadual); métodos nfeRecepcaoEvento e nfeInutilizacaoNF; schemas nos pacotes Evento_Canc e Evento_CancSubst (NT 2018.004) e no PL_009q. A carta de correção (110110) é só da NF-e: entra com a F3-33.
@@ -376,6 +377,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
     - Feito em 20/10/2026, conferido com o certificado na Sefin: entra o finNFSe (0, nota regular) depois do tpEmit, e a Sefin aceitou a estrutura. O indDest no infDPS (item 2.11) a Sefin ainda recusa e fica de fora até entrar em vigor. Os testes validam pelo esquema da produção restrita de 27/07/2026, com o finNFSe no lugar que a Sefin exige.
     - O convênio do município diz se a prefeitura deixa emitir só com o cadastro da Receita (situacaoEmissaoPadraoContribuintesRFB). Quando não deixa, como em Guarapuava, o Bipaê pede a inscrição municipal antes de enviar (regra E0084).
   - [ ] F5-13.j · Acompanhar o cronograma da NT 009 (indDest e dest no infDPS, vAjusteBC, CST e cClassTrib reposicionados e grupos de IBS/CBS) e adaptar a DPS quando a Sefin passar a exigir; o monitor das fontes avisa quando sair esquema novo da produção restrita — depende: F5-13.i
+  - [x] F5-13.k · Alíquota do ISS do serviço buscada na prefeitura pelo Sistema Nacional (ADN Parâmetros Municipais, com o certificado da empresa): botão "Buscar a alíquota na prefeitura" no cadastro do serviço; código com pontos ("17.06.01.000"), conferido em Guarapuava (5%) em 20/10/2026 — depende: F5-13.c
   - [ ] F5-13.f · Primeira NFS-e autorizada na produção restrita com o certificado da empresa; confirmar os pontos da dúvida D-036 — depende: F5-13.e · externo: E1
 
 ## Fase 6 — Integrações e IA

@@ -71,7 +71,12 @@ test('enviar o certificado A1 da empresa e ver a validade', async ({ page }) => 
     }),
   );
   await page.getByRole('button', { name: 'Testar conexão com a SEFAZ' }).click();
-  await expect(
-    page.getByText('SEFAZ de homologação (SP) respondeu: 107 - Serviço em Operação'),
-  ).toBeVisible();
+  // NFC-e, NF-e e a contingência da NF-e (SVC), uma linha para cada.
+  for (const linha of ['NFC-e', 'NF-e', 'Contingência da NF-e (SVC)']) {
+    await expect(
+      page.getByText(`${linha}: SEFAZ de homologação (SP) respondeu: 107 - Serviço em Operação`, {
+        exact: true,
+      }),
+    ).toBeVisible();
+  }
 });

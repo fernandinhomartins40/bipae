@@ -229,6 +229,14 @@ describe('SEFAZ em homologação (F3-11.a)', () => {
     );
     expect(chamada.body).toContain('<tpAmb>2</tpAmb><cUF>35</cUF>');
     expect(chamada.clientFingerprint).toBe(empresaFingerprint);
+
+    // A contingência da UF (SP usa a SVC-AN) também pode ser testada, só na NF-e.
+    const svc = await admin.post(`/fiscal/sefaz/status/${empresa.id}`, { model: '55', svc: true });
+    expect(svc.json()).toMatchObject({ model: '55', uf: 'SP', svc: true, cStat: '107' });
+    expect(chamadas.at(-1)!.path).toContain(new URL(statusRequest('55', 'SP', true).url).pathname);
+    const nfce = await admin.post(`/fiscal/sefaz/status/${empresa.id}`, { model: '65', svc: true });
+    expect(nfce.statusCode).toBe(400);
+    expect(nfce.json().message).toBe('A NFC-e não é autorizada pela SVC (rejeição 783).');
   });
 
   it('envia uma NFC-e assinada, recebe o protocolo e monta o XML autorizado; consulta pela chave', async () => {

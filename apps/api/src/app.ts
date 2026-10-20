@@ -71,7 +71,12 @@ import {
 } from './modules/fiscal/nfce-emission.service';
 import { NfeInvoicesController, NfeInvoicesService } from './modules/fiscal/nfe-invoices.service';
 import { DfeController, DfeService } from './modules/fiscal/dfe.service';
-import { NFSE_TRANSPORT, NfseController, NfseService } from './modules/fiscal/nfse.service';
+import {
+  NFSE_TRANSPORT,
+  NfseController,
+  NfseParamsController,
+  NfseService,
+} from './modules/fiscal/nfse.service';
 import { HttpsNfseTransport } from './modules/fiscal/nfse.transport';
 import { MailService } from './modules/mail/mail.service';
 import {
@@ -194,6 +199,7 @@ class AppModule {
         NfeInvoicesController,
         DfeController,
         NfseController,
+        NfseParamsController,
         FiscalEventsController,
         AccountantExportController,
         LotsController,

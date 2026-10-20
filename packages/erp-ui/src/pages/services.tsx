@@ -24,6 +24,50 @@ interface NationalService {
   description: string;
 }
 
+interface IssRateAnswer {
+  city: string | null;
+  rate: string | null;
+  message: string | null;
+}
+
+/**
+ * Busca a alíquota do ISS que a prefeitura cadastrou no Sistema Nacional NFS-e para o serviço,
+ * com o certificado da empresa: o dono não precisa saber o número.
+ */
+function IssRateLookup({ code, onFound }: { code: string; onFound: (rate: string) => void }) {
+  const { api } = useApp();
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
+  const lookup = async () => {
+    setBusy(true);
+    setNote(null);
+    try {
+      const r = await api.get<IssRateAnswer>(`/fiscal/nfse/iss-rate?code=${code}`);
+      if (r.rate) {
+        onFound(r.rate);
+        setNote({
+          ok: true,
+          text: `${r.city ?? 'A prefeitura'} cadastrou ${r.rate.replace('.', ',')}% para este serviço no Sistema Nacional NFS-e.`,
+        });
+      } else {
+        setNote({ ok: false, text: r.message ?? 'A prefeitura não informou a alíquota.' });
+      }
+    } catch (e) {
+      setNote({ ok: false, text: (e as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="flex flex-col gap-2">
+      <Button variant="ghost" disabled={busy} onClick={() => void lookup()}>
+        {busy ? 'Buscando...' : 'Buscar a alíquota na prefeitura'}
+      </Button>
+      {note && <Alert tone={note.ok ? 'success' : 'warning'}>{note.text}</Alert>}
+    </div>
+  );
+}
+
 /**
  * Serviços que a empresa presta (F5-13.c): cada um com o código da lista nacional de serviços
  * (vai na NFS-e), a alíquota do ISSQN do município e o preço.
@@ -180,11 +224,14 @@ function ServiceDrawer({ service, onClose }: { service: ServiceView | null; onCl
         />
         <TextField
           label="Alíquota do ISS no município (%)"
-          hint="De 0 a 5%. Peça ao município ou ao contador; no Simples ela só vai na nota quando há retenção."
+          hint="De 0 a 5%. No Simples ela só vai na nota quando há retenção."
           inputMode="decimal"
           value={rate}
           onChange={(e) => setRate(e.target.value)}
         />
+        {code && (
+          <IssRateLookup code={code.code} onFound={(found) => setRate(found.replace('.', ','))} />
+        )}
         <MoneyField label="Preço" value={price} onChange={(c) => setPrice(c ?? 0)} />
         <Checkbox label="Serviço ativo" checked={active} onChange={setActive} />
         <Button disabled={!name.trim() || !code} onClick={() => void save()}>
