@@ -83,7 +83,10 @@ Nenhuma dependência nova. Grupos fechados não montam os links. As consultas do
   - **ibs-cbs** e **2 do pos (desktop-ui)**: falharam por recargas do Vite causadas por edições minhas durante a execução.
 - Depois da correção, reexecutei confere, ibs-cbs, pos, a11y, help e inventory nos dois projetos: 25 passaram e 0 falharam.
 - A auditoria axe (tema claro, escuro e celular) e o teste de teclado passaram de novo depois do último ajuste visual.
-- Desde a correção do confere, a suíte E2E completa não foi reexecutada por inteiro. A CI roda a suíte inteira no push.
+- CI no GitHub (commit `44cfb20`):
+  - E2E completo, lint, testes, build e deploy passaram.
+  - Os jobs "Desktop no WebView real" (Windows e Linux) falharam por uma regressão minha: o roteiro `apps/desktop/e2e-webview/sale.mjs` clicava no primeiro link "Abrir o caixa", que agora é o da barra do celular, escondido no computador.
+  - Corrigido em `f527739`, que clica no link visível. A CI ficou toda verde.
 
 ## Itens bloqueados
 
