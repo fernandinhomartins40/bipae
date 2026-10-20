@@ -88,10 +88,15 @@ try {
   await text('Olá, Duda!');
   console.log('· entrou na conta');
 
-  const caixa = await driver.wait(
-    until.elementLocated(By.xpath("//a[normalize-space(.)='Abrir o caixa']")),
-    TIMEOUT,
-  );
+  // Há um "Abrir o caixa" no menu lateral e outro na barra do celular: vale o que está visível.
+  const caixa = await driver.wait(async () => {
+    for (const link of await driver.findElements(
+      By.xpath("//a[normalize-space(.)='Abrir o caixa']"),
+    )) {
+      if (await link.isDisplayed()) return link;
+    }
+    return null;
+  }, TIMEOUT);
   await caixa.click();
   await (await field('Novo caixa')).sendKeys('Caixa WebView');
   await (await button('Criar e usar este caixa')).click();
