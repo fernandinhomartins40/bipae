@@ -1,5 +1,12 @@
 # Changelog
 
+## [F5-13.i NFS-e no leiaute da NT 009] — 20/10/2026
+
+### Alterado
+- A DPS da NFS-e Nacional segue o leiaute da Nota Técnica 009, que a produção restrita já exige: entra o campo `finNFSe` (nota regular). A Sefin aceitou a estrutura da nota no teste com o certificado.
+- O Bipaê lê no convênio do município se a prefeitura deixa emitir só com o cadastro da Receita. Quando não deixa, avisa antes de enviar que falta a inscrição municipal (regra E0084).
+- A NT 009, o Anexo VI e os esquemas da produção restrita entraram nas fontes fiscais.
+
 ## [NFS-e na produção restrita e SEFAZ dos 27 estados] — 20/10/2026
 
 ### Corrigido

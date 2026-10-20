@@ -83,6 +83,39 @@ describe('DPS da NFS-e Nacional (F5-13.b)', () => {
     expect(await validateNfseXml(assinada)).toEqual([]);
   });
 
+  it('leiaute da NT 009: finNFSe 0 logo depois do tpEmit (exigido pela produção restrita)', () => {
+    expect(ok(dps()).xml).toContain(
+      '<tpEmit>1</tpEmit><finNFSe>0</finNFSe><cLocEmi>3550308</cLocEmi>',
+    );
+  });
+
+  it('município que não emite pelo cadastro da Receita exige a inscrição municipal (E0084)', () => {
+    const semIm = (over: Partial<DpsInput['issuer']> = {}) =>
+      buildDps(
+        dps({
+          issuer: { ...dps().issuer, municipalRegistration: null, ...over },
+          iss: { municipalAgreementActive: true, municipalRfbDefault: false },
+        }),
+      );
+    const r = semIm();
+    expect(!r.ok && r.pending).toContain(
+      'Este município exige a inscrição municipal na NFS-e: a empresa precisa estar no cadastro de contribuintes da prefeitura (regra E0084). Informe-a em Empresas e lojas.',
+    );
+    // O MEI fica fora da regra; com a inscrição, a DPS sai com o IM do prestador.
+    expect(semIm({ regime: 'mei' }).ok).toBe(true);
+    const comIm = semIm({ municipalRegistration: '0012345' });
+    expect(comIm.ok && comIm.xml).toContain('<IM>0012345</IM>');
+    // Município que emite pelo cadastro da Receita não pede a inscrição.
+    expect(
+      buildDps(
+        dps({
+          issuer: { ...dps().issuer, municipalRegistration: null },
+          iss: { municipalAgreementActive: true, municipalRfbDefault: true },
+        }),
+      ).ok,
+    ).toBe(true);
+  });
+
   it('ME/EPP com retenção pelo tomador: a alíquota vai na DPS (E0622)', async () => {
     const r = ok(dps({ iss: { municipalAgreementActive: true, retention: 'tomador', rate: '2' } }));
     expect(r.xml).toContain('<tpRetISSQN>2</tpRetISSQN><pAliq>2.00</pAliq>');

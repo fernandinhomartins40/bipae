@@ -152,6 +152,33 @@
   "downloadedAt": "2026-10-13",
   "sha256": "5cc3d3c03745c9d1a75cb7f6e02126a4c479a524d90104be85052e4efe72303a"
  },
+ "nfseXsdProdRest": {
+  "file": "NFSe_Esquemas_XSD_PRODREST_v1.01_2026-07-27.zip",
+  "title": "NFS-e Nacional: NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20260727 (esquemas da produção restrita)",
+  "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita",
+  "publishedAt": "2026-07-27",
+  "downloadedAt": "2026-10-20",
+  "sha256": "6c7e0510d3ecff4454f291f4e10b742d27a4818f23aab181494f96d0ea79f3dc"
+ },
+ "nfseNt009": {
+  "file": "NFSe_NT_009_v1.01_RTC_2026-09-11.pdf",
+  "title": "NFS-e Nacional: Nota Técnica SE/CGNFS-e nº 009 versão 1.01 (adequações da Reforma Tributária; finNFSe no infDPS e demais mudanças do leiaute)",
+  "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
+  "publishedAt": "2026-09-11",
+  "downloadedAt": "2026-10-20",
+  "sha256": "cc86c9402e317e84eb3a9f48bbd5e0b8e3dcd84f2645700190c84d45bf1ea58e"
+ },
+ "nfseAnexoVINt009": {
+  "file": "NFSe_Anexo_VI_Leiaute_RTC_v1.04.01_NT009.xlsx",
+  "title": "NFS-e Nacional: AnexoVI-LeiautesRN_RTC_IBSCBS-v1.04.01 - NT009 v1.01 (leiaute e regras da DPS da Reforma Tributária)",
+  "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc",
+  "publishedAt": "2026-10-01",
+  "downloadedAt": "2026-10-20",
+  "sha256": "103a150dd6f56ec8edcaa3a453b59a1b0e096d7cd5025d7bd06a387f141ddf39"
+ },
  "lc123": {
   "file": "Planalto_LC_123-2006_compilada_2026-10-20.htm.gz",
   "title": "Lei Complementar 123/2006 (Simples Nacional), texto compilado: Anexos I a V com as faixas, as alíquotas e os valores a deduzir (redação da LC 155/2016)",

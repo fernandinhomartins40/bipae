@@ -11,6 +11,7 @@ import {
   nfseQueryRequest,
   parseDpsQueryResponse,
   parseMunicipalAgreementResponse,
+  parseMunicipalRfbDefault,
   parseNfseEmitResponse,
 } from './sefin';
 
@@ -113,6 +114,12 @@ describe('Sefin Nacional (F5-13.b)', () => {
       mensagem: 'Parâmetros do convênio recuperados com sucesso.',
     };
     expect(parseMunicipalAgreementResponse(200, JSON.stringify(guarapuava))).toBe(true);
+    // Guarapuava não deixa emitir só com o cadastro da Receita: a inscrição municipal é exigida.
+    expect(parseMunicipalRfbDefault(200, JSON.stringify(guarapuava))).toBe(false);
+    const rfb = { parametrosConvenio: { situacaoEmissaoPadraoContribuintesRFB: 1 } };
+    expect(parseMunicipalRfbDefault(200, JSON.stringify(rfb))).toBe(true);
+    expect(parseMunicipalRfbDefault(404, '')).toBeNull();
+    expect(parseMunicipalRfbDefault(200, 'x')).toBeNull();
     const fora = { parametrosConvenio: { aderenteAmbienteNacional: 0, aderenteMAN: 1 } };
     expect(parseMunicipalAgreementResponse(200, JSON.stringify(fora))).toBe(false);
     const semInfo = { parametrosConvenio: { aderenteAmbienteNacional: -1 } };

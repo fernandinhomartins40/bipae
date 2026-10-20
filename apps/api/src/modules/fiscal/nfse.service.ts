@@ -28,6 +28,7 @@ import {
   nfseQueryRequest,
   parseDpsQueryResponse,
   parseMunicipalAgreementResponse,
+  parseMunicipalRfbDefault,
   parseNfseEmitResponse,
   signFiscalXml,
   type DpsInput,
@@ -355,7 +356,12 @@ export class NfseService implements OnModuleInit {
   }
 
   /** Os dados da DPS a partir da OS, da empresa e do cliente. */
-  private async dpsInput(tx: Tx, doc: Doc, agreement: boolean | null): Promise<DpsInput> {
+  private async dpsInput(
+    tx: Tx,
+    doc: Doc,
+    agreement: boolean | null,
+    rfbDefault: boolean | null = null,
+  ): Promise<DpsInput> {
     const [order] = await tx
       .select()
       .from(serviceOrders)
@@ -430,6 +436,7 @@ export class NfseService implements OnModuleInit {
       iss: {
         rate: rates.length === 1 ? rates[0] || null : null,
         municipalAgreementActive: agreement,
+        municipalRfbDefault: rfbDefault,
       },
       approximateTaxes: {
         simplesPercent: company!.nfseSimplesPercent,
@@ -493,14 +500,17 @@ export class NfseService implements OnModuleInit {
           }
         }
       }
-      // O convênio do município decide se a alíquota vai na DPS.
+      // O convênio do município decide se a alíquota vai na DPS e se a inscrição municipal é
+      // obrigatória (regra E0084).
       let agreement: boolean | null = null;
+      let rfbDefault: boolean | null = null;
       if (prepared.cityCode) {
         const res = await this.call(municipalAgreementRequest(prepared.cityCode), credentials);
         agreement = parseMunicipalAgreementResponse(res.status, res.body);
+        rfbDefault = parseMunicipalRfbDefault(res.status, res.body);
       }
       const built = await withTenant(this.db, ctx, async (tx) => {
-        const input = await this.dpsInput(tx, doc, agreement);
+        const input = await this.dpsInput(tx, doc, agreement, rfbDefault);
         const result = buildDps(input);
         if (!result.ok && !input.service.code) {
           return {

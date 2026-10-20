@@ -190,3 +190,21 @@ export function parseMunicipalAgreementResponse(status: number, body: string): b
   const flag = Object.entries(node).find(([k]) => /aderente|ativo/i.test(k))?.[1];
   return typeof flag === 'boolean' ? flag : typeof flag === 'number' ? flag === 1 : null;
 }
+
+/**
+ * O município deixa emitir só com o cadastro CNPJ da Receita? É o campo
+ * `situacaoEmissaoPadraoContribuintesRFB` do convênio (1 sim, 0 não, -1 sem informação). Quando
+ * não deixa, a regra E0084 exige que CNPJ e inscrição municipal estejam no cadastro do município
+ * (CNC NFS-e), e a DPS precisa da inscrição municipal. Conferido em Guarapuava (PR), 20/10/2026.
+ */
+export function parseMunicipalRfbDefault(status: number, body: string): boolean | null {
+  if (status >= 400) return null;
+  try {
+    const json = JSON.parse(body) as Json;
+    const node = (json.parametrosConvenio ?? json) as Json;
+    const value = node.situacaoEmissaoPadraoContribuintesRFB;
+    return value === 1 ? true : value === 0 ? false : null;
+  } catch {
+    return null;
+  }
+}

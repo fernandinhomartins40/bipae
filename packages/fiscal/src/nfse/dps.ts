@@ -95,6 +95,11 @@ export interface DpsInput {
      * Null quando não foi possível saber.
      */
     municipalAgreementActive: boolean | null;
+    /**
+     * O município emissor deixa emitir só com o cadastro CNPJ da Receita? Quando não (false), a
+     * regra E0084 pede o CNPJ e a inscrição municipal no cadastro do município (CNC NFS-e).
+     */
+    municipalRfbDefault?: boolean | null;
   };
   /**
    * Total aproximado dos tributos (Lei 12.741/2012): o percentual do Simples (pTotTribSN) para
@@ -222,6 +227,15 @@ export function buildDps(input: DpsInput): DpsResult {
     );
   }
   // A alíquota vai ou não pela situação no Simples, pela retenção e pelo convênio do município.
+  if (
+    input.iss.municipalRfbDefault === false &&
+    !isMei &&
+    !onlyDigits(input.issuer.municipalRegistration)
+  ) {
+    pending.push(
+      'Este município exige a inscrição municipal na NFS-e: a empresa precisa estar no cadastro de contribuintes da prefeitura (regra E0084). Informe-a em Empresas e lojas.',
+    );
+  }
   const agreement = input.iss.municipalAgreementActive;
   let needsRate: boolean | null;
   if (!situation || isMei || taxation !== '1') needsRate = false;
@@ -291,6 +305,8 @@ export function buildDps(input: DpsInput): DpsResult {
         el('nDPS', String(input.number)),
         el('dCompet', input.competence),
         el('tpEmit', '1'),
+        // NT 009: a finalidade passa para o infDPS; o Bipaê emite só a NFS-e regular.
+        el('finNFSe', '0'),
         el('cLocEmi', i.cityCode!),
         // O prestador que emite não informa o próprio nome nem o endereço (E0121, E0129).
         el('prest', [

@@ -91,8 +91,9 @@ export async function validatePackageXml(
   extraZips: string[] = [],
 ): Promise<string[]> {
   const { unzip } = await import('../scripts/xlsx.mjs');
-  const read = (file: string) =>
-    [...unzip(readFileSync(fileURLToPath(new URL(`../sources/${file}`, import.meta.url))))];
+  const read = (file: string) => [
+    ...unzip(readFileSync(fileURLToPath(new URL(`../sources/${file}`, import.meta.url)))),
+  ];
   const seen = new Set<string>();
   const all = [zipFile, ...extraZips]
     .flatMap(read)
@@ -114,16 +115,21 @@ export async function validatePackageXml(
 }
 
 /**
- * Valida a DPS (ou outro documento) da NFS-e Nacional contra os esquemas v1.01 oficiais
- * (pacote de 09/02/2026 guardado em sources, pasta Schemas/1.01), F5-13.
+ * Valida a DPS (ou outro documento) da NFS-e Nacional contra os esquemas da produção restrita
+ * (NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20260727, guardado em sources), F5-13.
  */
-export async function validateNfseXml(xml: string, schemaFile = 'DPS_v1.01.xsd'): Promise<string[]> {
+export async function validateNfseXml(
+  xml: string,
+  schemaFile = 'DPS_v1.01.xsd',
+): Promise<string[]> {
   const { unzip } = await import('../scripts/xlsx.mjs');
   const zip = readFileSync(
-    fileURLToPath(new URL('../sources/NFSe_Esquemas_XSD_v1.01_2026-02-09.zip', import.meta.url)),
+    fileURLToPath(
+      new URL('../sources/NFSe_Esquemas_XSD_PRODREST_v1.01_2026-07-27.zip', import.meta.url),
+    ),
   );
   const all = [...unzip(zip)]
-    .filter(([name]) => name.startsWith('Schemas/1.01/') && name.endsWith('.xsd'))
+    .filter(([name]) => name.endsWith('.xsd'))
     // Os padrões dos esquemas da NFS-e trazem ^ e $ (ex.: série "^0{0,4}\d{1,5}$"). No XML Schema esses
     // símbolos são literais, mas o validador da Sefin os trata como âncoras: aqui eles saem, para
     // validar como a Sefin valida.
@@ -132,7 +138,14 @@ export async function validateNfseXml(xml: string, schemaFile = 'DPS_v1.01.xsd')
       contents: body
         .toString('utf8')
         .replace(/pattern value="\^/g, 'pattern value="')
-        .replace(/\$"\/>/g, '"/>'),
+        .replace(/\$"\/>/g, '"/>')
+        // A Sefin da produção restrita já exige o finNFSe no infDPS, logo depois do cMotivoEmisTI
+        // (NT 009 v1.01, item 2.2; conferido com o certificado em 20/10/2026), mas o esquema
+        // publicado ainda não traz: aqui ele entra no mesmo lugar, para validar como a Sefin valida.
+        .replace(
+          '<xs:element minOccurs="0" name="chNFSeRej" type="TSChaveNFSe">',
+          '<xs:element name="finNFSe" type="TSRTCFinNFSe"/><xs:element minOccurs="0" name="chNFSeRej" type="TSChaveNFSe">',
+        ),
     }));
   const schema = all.find((s) => s.fileName === schemaFile);
   if (!schema) throw new Error(`Schema não encontrado: ${schemaFile}`);
