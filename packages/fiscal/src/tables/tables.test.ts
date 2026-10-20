@@ -38,14 +38,14 @@ describe('origem das tabelas', () => {
       expect(hash, fonte.file).toBe(fonte.sha256);
       // Só fontes oficiais: Portal Nacional da NF-e, Siscomex, SEFAZ Virtual do RS, CONFAZ e o
       // Portal Nacional da NFC-e, mantido pelo ENCAT (os coordenadores tributários das SEFAZ), e os
-      // sites de legislação das SEFAZ estaduais (ST por UF, F3-26).
+      // sites de legislação das SEFAZ estaduais (ST por UF, F3-26) e o Planalto (texto oficial das leis).
       // A SEFAZ-MT só publica a legislação por HTTP (o mesmo endereço não abre por HTTPS).
       const page = fonte.page.replace(
         /^http:\/\/app1\.sefaz\.mt\.gov\.br\//,
         'https://app1.sefaz.mt.gov.br/',
       );
       expect(page).toMatch(
-        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda|servicodados\.ibge|legislacao\.fazenda\.sp|portal\.fazenda\.sp|www\.sefanet\.pr|www\.fazenda\.mg|www\.legislacao\.sefaz\.rs|legislacao\.sef\.sc)\.gov\.br|mbusca\.sefaz\.ba\.gov\.br|appasp\.economia\.go\.gov\.br|legislacao\.fazenda\.rj\.gov\.br|portal\.fazenda\.rj\.gov\.br|www3\.sefaz\.es\.gov\.br|gcs\.sefaz\.al\.gov\.br|legislacao\.sefin\.ro\.gov\.br|sped\.fazenda\.pr\.gov\.br|www\.sef\.sc\.gov\.br|atendimento\.receita\.rs\.gov\.br|sefaz\.es\.gov\.br|static\.fazenda\.df\.gov\.br|www\.sefaz\.pe\.gov\.br|www\.sefaz\.pb\.gov\.br|app1\.sefaz\.mt\.gov\.br|app1\.sefaz\.mt\.gov\.br|nfce\.encat\.org|www\.gov\.br\/iti|www\.gov\.br\/nfse)\//,
+        /^https:\/\/(((www|hom)\.nfe\.fazenda|portalunico\.siscomex|dfe-portal\.svrs\.rs|www\.confaz\.fazenda|servicodados\.ibge|legislacao\.fazenda\.sp|portal\.fazenda\.sp|www\.sefanet\.pr|www\.fazenda\.mg|www\.legislacao\.sefaz\.rs|legislacao\.sef\.sc)\.gov\.br|mbusca\.sefaz\.ba\.gov\.br|appasp\.economia\.go\.gov\.br|legislacao\.fazenda\.rj\.gov\.br|portal\.fazenda\.rj\.gov\.br|www3\.sefaz\.es\.gov\.br|gcs\.sefaz\.al\.gov\.br|legislacao\.sefin\.ro\.gov\.br|sped\.fazenda\.pr\.gov\.br|www\.sef\.sc\.gov\.br|atendimento\.receita\.rs\.gov\.br|sefaz\.es\.gov\.br|static\.fazenda\.df\.gov\.br|www\.sefaz\.pe\.gov\.br|www\.sefaz\.pb\.gov\.br|app1\.sefaz\.mt\.gov\.br|app1\.sefaz\.mt\.gov\.br|nfce\.encat\.org|www\.planalto\.gov\.br|www\.gov\.br\/iti|www\.gov\.br\/nfse)\//,
       );
       assertDate(fonte.publishedAt);
       assertDate(fonte.downloadedAt);

@@ -1,5 +1,22 @@
 # Changelog
 
+## [F5-13.h Percentuais da NFS-e com ajuda] — 20/10/2026
+
+### Corrigido
+- Os percentuais dos tributos da NFS-e, em "Empresas e lojas", davam erro com qualquer número.
+  - Causa: o navegador preenchia "Brasil" num dos campos e a mensagem não dizia qual.
+  - Agora o campo aceita vírgula ou ponto e ignora letras e o preenchimento automático.
+  - O erro diz o nome do campo.
+
+### Adicionado
+- A tela mostra só os percentuais do regime da empresa:
+  - Simples: o percentual do Simples;
+  - Presumido e Real: federal, estadual e municipal;
+  - MEI: nenhum.
+- **"Não sei o percentual: calcular para mim"**: com o anexo do Simples e o faturamento dos últimos 12 meses, o Bipaê calcula a alíquota efetiva e preenche o campo.
+  - O cálculo usa as faixas dos Anexos I a V da LC 123/2006, lidas do texto oficial do Planalto.
+  - O monitor semanal das fontes passa a conferir esses anexos.
+
 ## [F3-33.i Devolução referenciada por item] — 19/10/2026
 
 ### Alterado

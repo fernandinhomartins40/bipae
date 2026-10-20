@@ -5,6 +5,7 @@ import {
   Card,
   Checkbox,
   Drawer,
+  MoneyField,
   PageHeader,
   SelectField,
   TaxIdField,
@@ -190,6 +191,126 @@ export function CompaniesPage() {
   );
 }
 
+/**
+ * Percentual com vírgula ("6,54"): aceita ponto ou vírgula, guarda só números, uma vírgula e até
+ * duas casas. Sem preenchimento automático, que o navegador usava para pôr "Brasil" no campo.
+ */
+export function cleanPercent(text: string) {
+  const [whole = '', ...rest] = text
+    .replace(/\./g, ',')
+    .replace(/[^\d,]/g, '')
+    .split(',');
+  const integer = whole.slice(0, 2);
+  return rest.length ? `${integer},${rest.join('').slice(0, 2)}` : integer;
+}
+
+function PercentField({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <TextField
+      label={label}
+      hint={hint}
+      inputMode="decimal"
+      autoComplete="off"
+      value={value}
+      onChange={(e) => onChange(cleanPercent(e.target.value))}
+    />
+  );
+}
+
+interface SimplesRateAnswer {
+  annexes: { annex: string; title: string }[];
+  result: { rate: string; bracket: number; nominal: string } | null;
+}
+
+/**
+ * Para quem não sabe o percentual do Simples: o anexo e o faturamento dos últimos 12 meses dão a
+ * alíquota efetiva, pela tabela da LC 123/2006 que o servidor guarda.
+ */
+function SimplesRateHelper({ onUse }: { onUse: (percent: string) => void }) {
+  const { api } = useApp();
+  const [open, setOpen] = useState(false);
+  const [annex, setAnnex] = useState('III');
+  const [revenue, setRevenue] = useState<number | null>(0);
+  const [answer, setAnswer] = useState<SimplesRateAnswer['result']>(null);
+  const [error, setError] = useState<string | null>(null);
+  const list = useQuery({
+    queryKey: ['fiscal', 'simples-rate'],
+    queryFn: () => api.get<SimplesRateAnswer>('/fiscal/simples-rate'),
+    enabled: open,
+    staleTime: Infinity,
+  });
+  if (!open) {
+    return (
+      <Button variant="ghost" onClick={() => setOpen(true)}>
+        Não sei o percentual: calcular para mim
+      </Button>
+    );
+  }
+  const calculate = async () => {
+    setError(null);
+    setAnswer(null);
+    try {
+      const r = await api.get<SimplesRateAnswer>(
+        `/fiscal/simples-rate?annex=${annex}&rbt12Cents=${revenue ?? 0}`,
+      );
+      setAnswer(r.result);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  };
+  const percent = answer?.rate.replace('.', ',');
+  return (
+    <div className="flex flex-col gap-3 rounded-ui border border-border p-3 sm:col-span-2">
+      <p className="font-semibold">Calcular o percentual do Simples</p>
+      <SelectField
+        label="Anexo do Simples do seu serviço"
+        hint="Aparece no extrato mensal do Simples (PGDAS-D), na linha da atividade. Atividade do Anexo V com folha de salários de 28% ou mais do faturamento usa o Anexo III (fator R)."
+        value={annex}
+        onChange={(e) => setAnnex(e.target.value)}
+        options={(list.data?.annexes ?? [{ annex: 'III', title: '' }]).map((a) => ({
+          value: a.annex,
+          label: `Anexo ${a.annex}${a.title ? ` · ${a.title}` : ''}`,
+        }))}
+      />
+      <MoneyField label="Faturamento dos últimos 12 meses" value={revenue} onChange={setRevenue} />
+      <p className="text-sm text-muted">
+        A receita bruta dos 12 meses anteriores (no extrato do DAS aparece como RBT12). Empresa
+        começando agora: deixe zero.
+      </p>
+      <Button variant="secondary" onClick={() => void calculate()}>
+        Calcular
+      </Button>
+      {error && <Alert>{error}</Alert>}
+      {answer && percent && (
+        <div className="flex flex-col gap-2">
+          <p>
+            Alíquota efetiva: <strong>{percent}%</strong> (faixa {answer.bracket}, alíquota nominal{' '}
+            {answer.nominal.replace('.', ',')}%), pela LC 123/2006.
+          </p>
+          <Button
+            onClick={() => {
+              onUse(percent);
+              setOpen(false);
+            }}
+          >
+            Usar {percent}%
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CompanyForm({
   company,
   onClose,
@@ -232,6 +353,8 @@ function CompanyForm({
   const regime = fiscal?.regimes.find((r) => r.id === v.taxRegime);
   const ufRate = fiscal?.ufRates.find((r) => r.uf === v.uf);
   const [error, setError] = useState<string | null>(null);
+  const simplesRegime = v.taxRegime === 'simples' || v.taxRegime === 'simples-excesso';
+  const otherRegime = v.taxRegime === 'presumido' || v.taxRegime === 'real';
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -254,10 +377,11 @@ function CompanyForm({
       demonstrationProfileId: v.demonstrationProfileId || null,
       municipalRegistration: v.municipalRegistration || null,
       nfseSeries: Number(v.nfseSeries) || 1,
-      nfseSimplesPercent: v.nfseSimplesPercent || null,
-      nfseTaxFederal: v.nfseTaxFederal || null,
-      nfseTaxState: v.nfseTaxState || null,
-      nfseTaxMunicipal: v.nfseTaxMunicipal || null,
+      // Só vão os percentuais do regime escolhido (os outros campos nem aparecem).
+      nfseSimplesPercent: (simplesRegime && v.nfseSimplesPercent) || null,
+      nfseTaxFederal: (otherRegime && v.nfseTaxFederal) || null,
+      nfseTaxState: (otherRegime && v.nfseTaxState) || null,
+      nfseTaxMunicipal: (otherRegime && v.nfseTaxMunicipal) || null,
     };
     try {
       if (company) await api.patch(`/companies/${company.id}`, body);
@@ -414,9 +538,8 @@ function CompanyForm({
         <fieldset className="flex flex-col gap-3">
           <legend className="font-semibold">NFS-e Nacional (serviços)</legend>
           <p className="text-sm text-muted">
-            Para a nota dos serviços das ordens de serviço. O total aproximado dos tributos (Lei
-            12.741/2012) é exigido na nota: no Simples, o percentual do Simples; nos demais regimes,
-            os percentuais federal, estadual e municipal. O MEI não informa.
+            Para a nota dos serviços das ordens de serviço. A nota mostra quanto de imposto há no
+            preço (Lei 12.741/2012); os campos abaixo mudam conforme o regime escolhido acima.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <TextField
@@ -431,31 +554,48 @@ function CompanyForm({
               value={v.nfseSeries}
               onChange={(e) => setV({ ...v, nfseSeries: e.target.value.replace(/\D/g, '') })}
             />
-            <TextField
-              label="Percentual aproximado do Simples (%)"
-              inputMode="decimal"
-              value={v.nfseSimplesPercent}
-              onChange={(e) => setV({ ...v, nfseSimplesPercent: e.target.value })}
-            />
-            <TextField
-              label="Tributos federais aproximados (%)"
-              inputMode="decimal"
-              value={v.nfseTaxFederal}
-              onChange={(e) => setV({ ...v, nfseTaxFederal: e.target.value })}
-            />
-            <TextField
-              label="Tributos estaduais aproximados (%)"
-              inputMode="decimal"
-              value={v.nfseTaxState}
-              onChange={(e) => setV({ ...v, nfseTaxState: e.target.value })}
-            />
-            <TextField
-              label="Tributos municipais aproximados (%)"
-              inputMode="decimal"
-              value={v.nfseTaxMunicipal}
-              onChange={(e) => setV({ ...v, nfseTaxMunicipal: e.target.value })}
-            />
+            {simplesRegime && (
+              <>
+                <PercentField
+                  label="Percentual aproximado do Simples (%)"
+                  hint="A alíquota efetiva do seu Simples. Ex.: 6 ou 6,54."
+                  value={v.nfseSimplesPercent}
+                  onChange={(p) => setV({ ...v, nfseSimplesPercent: p })}
+                />
+                <SimplesRateHelper onUse={(p) => setV({ ...v, nfseSimplesPercent: p })} />
+              </>
+            )}
+            {otherRegime && (
+              <>
+                <PercentField
+                  label="Tributos federais aproximados (%)"
+                  hint="PIS, COFINS, IRPJ e CSLL sobre o serviço. Ex.: 11,33."
+                  value={v.nfseTaxFederal}
+                  onChange={(p) => setV({ ...v, nfseTaxFederal: p })}
+                />
+                <PercentField
+                  label="Tributos estaduais aproximados (%)"
+                  hint="Em serviço, quase sempre 0."
+                  value={v.nfseTaxState}
+                  onChange={(p) => setV({ ...v, nfseTaxState: p })}
+                />
+                <PercentField
+                  label="Tributos municipais aproximados (%)"
+                  hint="O ISS do seu município. Ex.: 5."
+                  value={v.nfseTaxMunicipal}
+                  onChange={(p) => setV({ ...v, nfseTaxMunicipal: p })}
+                />
+              </>
+            )}
           </div>
+          {v.taxRegime === 'mei' && (
+            <p className="text-sm text-muted">O MEI não informa o percentual dos tributos.</p>
+          )}
+          {!v.taxRegime && (
+            <p className="text-sm text-muted">
+              Escolha o regime tributário acima para ver os percentuais pedidos.
+            </p>
+          )}
         </fieldset>
         <Button type="submit">Salvar empresa</Button>
       </form>

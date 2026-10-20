@@ -34,7 +34,11 @@ import {
   classTribStatus,
   findCestSegment,
   isCfopValidOn,
+  SIMPLES_ANNEXES,
+  SIMPLES_ANNEXES_SOURCE,
+  simplesEffectiveRate,
   type Cest,
+  type SimplesAnnexId,
 } from '@bipae/fiscal/tables';
 import {
   IBS_CBS_REGIME_RULES,
@@ -191,6 +195,34 @@ export class FiscalController {
    * Pauta da ST da UF em vigor hoje (F3-26.f): ?uf=SP&q=skol lata&cest=0302103. Sem pauta na UF,
    * a resposta diz e a lista vem vazia.
    */
+  /**
+   * Alíquota efetiva do Simples (LC 123/2006, art. 18, § 1º-A) pelo anexo e pela receita bruta
+   * dos últimos 12 meses: ?annex=III&rbt12Cents=50000000. Sem os dois, só a lista dos anexos,
+   * para a tela ajudar quem não sabe o percentual que vai na NFS-e.
+   */
+  @Get('simples-rate')
+  @RequirePermission('catalog.read')
+  simplesRate(@Query('annex') annex?: string, @Query('rbt12Cents') rbt12?: string) {
+    const annexes = SIMPLES_ANNEXES.map((a) => ({ annex: a.annex, title: a.title }));
+    if (!annex) return { source: SIMPLES_ANNEXES_SOURCE, annexes, result: null };
+    if (!annexes.some((a) => a.annex === annex)) {
+      throw new AppError(422, 'invalid_annex', 'Escolha o anexo do Simples (I a V).');
+    }
+    const cents = Number(rbt12 ?? '0');
+    if (!Number.isSafeInteger(cents) || cents < 0) {
+      throw new AppError(422, 'invalid_revenue', 'Informe o faturamento dos últimos 12 meses.');
+    }
+    const result = simplesEffectiveRate(annex as SimplesAnnexId, cents);
+    if (!result) {
+      throw new AppError(
+        422,
+        'above_simples',
+        'Esse faturamento passa do teto do Simples Nacional (R$ 4,8 milhões em 12 meses).',
+      );
+    }
+    return { source: SIMPLES_ANNEXES_SOURCE, annexes, result };
+  }
+
   @Get('st-pauta')
   @RequirePermission('catalog.read')
   stPauta(@Query('uf') uf?: string, @Query('q') q?: string, @Query('cest') cest?: string) {

@@ -46,6 +46,7 @@ import { parseRoAnexoVI } from './st-ro.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
+import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -653,6 +654,37 @@ async function checkPb() {
   };
 }
 
+/** Simples Nacional: os Anexos I a V da LC 123/2006 compilada de hoje, lidos como na geração. */
+async function checkSimples() {
+  const rowsOf = (html) =>
+    parseSimplesAnnexes(html).flatMap((a) =>
+      a.brackets.map((b) => [a.annex, b.bracket, b.upToCents, b.rate, b.deductionCents]),
+    );
+  const decode = (buffer) => new TextDecoder('windows-1252').decode(buffer);
+  const old = rowsOf(decode(gunzipSync(readFileSync(join(sourcesDir, manifest.lc123.file)))));
+  const title = 'Anexos do Simples Nacional (LC 123/2006)';
+  let now;
+  try {
+    now = rowsOf(decode((await download(manifest.lc123.page)).body));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.lc123.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.lc123.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} faixa(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Mato Grosso: a Portaria 195/2019 consolidada de hoje, lida como na geração. */
 async function checkMt() {
   const known = new Set(
@@ -1182,6 +1214,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Pernambuco', manifest.stPeRicms.page, checkPe),
     await safe('ST na Paraíba', manifest.stPbAnexo5_01.page, checkPb),
     await safe('ST em Mato Grosso', manifest.stMtPortaria195.page, checkMt),
+    await safe('Anexos do Simples Nacional', manifest.lc123.page, checkSimples),
     await safe('ST do Pará (Portal do CONFAZ)', manifest.stConfazPa.page, () =>
       checkConfazSt('stConfazPa'),
     ),

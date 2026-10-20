@@ -45,6 +45,7 @@ import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI, roStReferences } from './st-ro.mjs';
 import { docText } from './doc-text.mjs';
+import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -790,6 +791,19 @@ tables['st-references.json'] = await importStReferences(tables['cest.json']);
     ],
   };
 }
+// Anexos I a V do Simples Nacional (LC 123/2006, redação da LC 155/2016): a alíquota efetiva
+// que vai na NFS-e (pTotTribSN) e que o dono não precisa saber de cabeça.
+tables['simples-annexes.json'] = {
+  act: 'LC 123/2006, Anexos I a V (redação da LC 155/2016)',
+  source: 'lc123',
+  url: manifest.lc123.page,
+  validFrom: '2018-01-01',
+  annexes: parseSimplesAnnexes(
+    new TextDecoder('windows-1252').decode(
+      gunzipSync(readFileSync(join(sourcesDir, manifest.lc123.file))),
+    ),
+  ),
+};
 // Códigos de benefício fiscal por UF (F3-27.b), da tabela oficial de cada SEFAZ.
 // Venda condicional (F5-12.c): as notas da demonstração, do texto do Ajuste SINIEF 02/18.
 tables['demonstration.json'] = {

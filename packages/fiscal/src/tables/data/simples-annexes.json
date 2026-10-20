@@ -1,0 +1,218 @@
+{
+ "act": "LC 123/2006, Anexos I a V (redação da LC 155/2016)",
+ "source": "lc123",
+ "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp123.htm",
+ "validFrom": "2018-01-01",
+ "annexes": [
+  {
+   "annex": "I",
+   "title": "Comércio",
+   "brackets": [
+    {
+     "bracket": 1,
+     "upToCents": 18000000,
+     "rate": "4.00",
+     "deductionCents": 0
+    },
+    {
+     "bracket": 2,
+     "upToCents": 36000000,
+     "rate": "7.30",
+     "deductionCents": 594000
+    },
+    {
+     "bracket": 3,
+     "upToCents": 72000000,
+     "rate": "9.50",
+     "deductionCents": 1386000
+    },
+    {
+     "bracket": 4,
+     "upToCents": 180000000,
+     "rate": "10.70",
+     "deductionCents": 2250000
+    },
+    {
+     "bracket": 5,
+     "upToCents": 360000000,
+     "rate": "14.30",
+     "deductionCents": 8730000
+    },
+    {
+     "bracket": 6,
+     "upToCents": 480000000,
+     "rate": "19.00",
+     "deductionCents": 37800000
+    }
+   ]
+  },
+  {
+   "annex": "II",
+   "title": "Indústria",
+   "brackets": [
+    {
+     "bracket": 1,
+     "upToCents": 18000000,
+     "rate": "4.50",
+     "deductionCents": 0
+    },
+    {
+     "bracket": 2,
+     "upToCents": 36000000,
+     "rate": "7.80",
+     "deductionCents": 594000
+    },
+    {
+     "bracket": 3,
+     "upToCents": 72000000,
+     "rate": "10.00",
+     "deductionCents": 1386000
+    },
+    {
+     "bracket": 4,
+     "upToCents": 180000000,
+     "rate": "11.20",
+     "deductionCents": 2250000
+    },
+    {
+     "bracket": 5,
+     "upToCents": 360000000,
+     "rate": "14.70",
+     "deductionCents": 8550000
+    },
+    {
+     "bracket": 6,
+     "upToCents": 480000000,
+     "rate": "30.00",
+     "deductionCents": 72000000
+    }
+   ]
+  },
+  {
+   "annex": "III",
+   "title": "Receitas de locação de bens móveis e de prestação de serviços não relacionados no § 5º-C do art. 18 desta Lei Complementar",
+   "brackets": [
+    {
+     "bracket": 1,
+     "upToCents": 18000000,
+     "rate": "6.00",
+     "deductionCents": 0
+    },
+    {
+     "bracket": 2,
+     "upToCents": 36000000,
+     "rate": "11.20",
+     "deductionCents": 936000
+    },
+    {
+     "bracket": 3,
+     "upToCents": 72000000,
+     "rate": "13.50",
+     "deductionCents": 1764000
+    },
+    {
+     "bracket": 4,
+     "upToCents": 180000000,
+     "rate": "16.00",
+     "deductionCents": 3564000
+    },
+    {
+     "bracket": 5,
+     "upToCents": 360000000,
+     "rate": "21.00",
+     "deductionCents": 12564000
+    },
+    {
+     "bracket": 6,
+     "upToCents": 480000000,
+     "rate": "33.00",
+     "deductionCents": 64800000
+    }
+   ]
+  },
+  {
+   "annex": "IV",
+   "title": "Receitas decorrentes da prestação de serviços relacionados no § 5º-C do art. 18 desta Lei Complementar",
+   "brackets": [
+    {
+     "bracket": 1,
+     "upToCents": 18000000,
+     "rate": "4.50",
+     "deductionCents": 0
+    },
+    {
+     "bracket": 2,
+     "upToCents": 36000000,
+     "rate": "9.00",
+     "deductionCents": 810000
+    },
+    {
+     "bracket": 3,
+     "upToCents": 72000000,
+     "rate": "10.20",
+     "deductionCents": 1242000
+    },
+    {
+     "bracket": 4,
+     "upToCents": 180000000,
+     "rate": "14.00",
+     "deductionCents": 3978000
+    },
+    {
+     "bracket": 5,
+     "upToCents": 360000000,
+     "rate": "22.00",
+     "deductionCents": 18378000
+    },
+    {
+     "bracket": 6,
+     "upToCents": 480000000,
+     "rate": "33.00",
+     "deductionCents": 82800000
+    }
+   ]
+  },
+  {
+   "annex": "V",
+   "title": "Receitas decorrentes da prestação de serviços relacionados no § 5º-I do art. 18 desta Lei Complementar",
+   "brackets": [
+    {
+     "bracket": 1,
+     "upToCents": 18000000,
+     "rate": "15.50",
+     "deductionCents": 0
+    },
+    {
+     "bracket": 2,
+     "upToCents": 36000000,
+     "rate": "18.00",
+     "deductionCents": 450000
+    },
+    {
+     "bracket": 3,
+     "upToCents": 72000000,
+     "rate": "19.50",
+     "deductionCents": 990000
+    },
+    {
+     "bracket": 4,
+     "upToCents": 180000000,
+     "rate": "20.50",
+     "deductionCents": 1710000
+    },
+    {
+     "bracket": 5,
+     "upToCents": 360000000,
+     "rate": "23.00",
+     "deductionCents": 6210000
+    },
+    {
+     "bracket": 6,
+     "upToCents": 480000000,
+     "rate": "30.50",
+     "deductionCents": 54000000
+    }
+   ]
+  }
+ ]
+}

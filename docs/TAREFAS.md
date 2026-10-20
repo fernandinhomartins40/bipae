@@ -367,6 +367,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F5-13.d · NFS-e pela fila: numeração da DPS por série da empresa, consulta do convênio do município, assinatura, envio e consulta pela DPS antes de reenviar; XML; percentuais aproximados na empresa; testada contra a Sefin simulada — depende: F5-13.b, F5-13.c
   - [x] F5-13.e · Tela da NFS-e na OS: emitir, o que falta, situação, XML e DANFSE pelo ADN; E2E — depende: F5-13.d
   - [x] F5-13.g · Cancelamento da NFS-e Nacional (evento 101101) pelo leiaute e as regras do Anexo II oficial: pedido assinado, válido no pedRegEvento_v1.01, pela fila; recusa do município (prazo E0822, valor E0823) mostrada como veio; evento no pacote do contador; tela na OS — depende: F5-13.e
+  - [x] F5-13.h · Percentuais da NFS-e na empresa sem erro e com ajuda: só os campos do regime (Simples: pTotTribSN; Presumido e Real: os três; MEI: nenhum, regras E0710, E0712 e E0713 do Anexo I), campo que aceita vírgula ou ponto e recusa o preenchimento automático, mensagem com o nome do campo e calculadora da alíquota efetiva do Simples pelos Anexos I a V da LC 123/2006 (gerados do texto do Planalto) — depende: F5-13.d
   - [ ] F5-13.f · Primeira NFS-e autorizada na produção restrita com o certificado da empresa; confirmar os pontos da dúvida D-036 — depende: F5-13.e · externo: E1
 
 ## Fase 6 — Integrações e IA

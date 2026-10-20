@@ -13,6 +13,7 @@ export * from './nfce-endpoints';
 export * from './nfe-endpoints';
 export * from './icms-products';
 export * from './simples-limits';
+export * from './simples-annexes';
 export * from './mei';
 export * from './ibs-cbs-settlement';
 export * from './pdv-payments';

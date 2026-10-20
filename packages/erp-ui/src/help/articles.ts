@@ -491,7 +491,8 @@ export const HELP_ARTICLES: HelpArticle[] = [
       {
         kind: 'steps',
         items: [
-          'Primeiro cadastre os serviços em "Serviços", com o "Código na lista nacional de serviços" e a "Alíquota do ISS no município (%)".',
+          'Em "Empresas e lojas", na parte "NFS-e Nacional", informe a inscrição municipal e o percentual dos tributos do seu regime. No Simples, se não souber o número, use "Não sei o percentual: calcular para mim": escolha o anexo e o faturamento dos últimos 12 meses e clique em "Usar".',
+          'Depois cadastre os serviços em "Serviços", com o "Código na lista nacional de serviços" e a "Alíquota do ISS no município (%)".',
           'Em "Ordens de serviço", clique em "Nova ordem de serviço", escolha o cliente, descreva o equipamento e o defeito e adicione serviços e peças.',
           'Clique em "Salvar a OS". Quando terminar o trabalho, use "Entregar ao cliente": as peças saem do estoque e a conta a receber é criada.',
           'Na OS entregue, clique em "Emitir NFS-e". Depois de autorizada, use "Baixar o DANFSE" e "Baixar o XML".',

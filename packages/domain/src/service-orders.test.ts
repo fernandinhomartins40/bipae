@@ -71,6 +71,11 @@ describe('NFS-e na empresa (F5-13.d)', () => {
       nfseSeries: 2,
     });
     expect(companyInput.safeParse({ legalName: 'X', nfseTaxMunicipal: '100' }).success).toBe(false);
+    // O navegador chegou a preencher "Brasil" no campo: a mensagem diz qual campo corrigir.
+    const brasil = companyInput.safeParse({ legalName: 'Oficina', nfseTaxMunicipal: 'Brasil' });
+    expect(brasil.error!.issues[0]!.message).toBe(
+      'Tributos municipais aproximados: use só números, de 0 a 99,99 (ex.: 6 ou 6,54)',
+    );
     expect(companyInput.safeParse({ legalName: 'X', nfseSeries: 50000 }).success).toBe(false);
   });
 });

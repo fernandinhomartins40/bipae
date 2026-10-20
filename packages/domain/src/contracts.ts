@@ -455,15 +455,16 @@ export const COMPANY_TAX_REGIMES = [
 ] as const;
 export type CompanyTaxRegime = (typeof COMPANY_TAX_REGIMES)[number];
 
-/** Percentual aproximado ("6", "13,45"), de 0 a 99,99. */
-const approximatePercent = z
-  .union([z.number(), z.string()])
-  .transform((v) => String(v).trim().replace(',', '.'))
-  .refine((v) => /^\d{1,2}(\.\d{1,2})?$/.test(v), {
-    message: 'Percentual de 0 a 99,99, com até 2 casas',
-  })
-  .nullish()
-  .or(z.literal('').transform(() => null));
+/** Percentual aproximado ("6", "13,45"), de 0 a 99,99; a mensagem diz qual campo está errado. */
+const approximatePercent = (label: string) =>
+  z
+    .union([z.number(), z.string()])
+    .transform((v) => String(v).trim().replace(',', '.'))
+    .refine((v) => /^\d{1,2}(\.\d{1,2})?$/.test(v), {
+      message: `${label}: use só números, de 0 a 99,99 (ex.: 6 ou 6,54)`,
+    })
+    .nullish()
+    .or(z.literal('').transform(() => null));
 
 export const companyInput = z.object({
   legalName: trimmed(2, 120, 'Razão social'),
@@ -507,10 +508,10 @@ export const companyInput = z.object({
     .max(49999, 'Série de 1 a 49999')
     .optional(),
   /** Percentuais aproximados dos tributos na NFS-e (Lei 12.741/2012): o do Simples ou os três. */
-  nfseSimplesPercent: approximatePercent,
-  nfseTaxFederal: approximatePercent,
-  nfseTaxState: approximatePercent,
-  nfseTaxMunicipal: approximatePercent,
+  nfseSimplesPercent: approximatePercent('Percentual aproximado do Simples'),
+  nfseTaxFederal: approximatePercent('Tributos federais aproximados'),
+  nfseTaxState: approximatePercent('Tributos estaduais aproximados'),
+  nfseTaxMunicipal: approximatePercent('Tributos municipais aproximados'),
   /** Perfil fiscal das notas da venda condicional com imposto suspenso (F5-12.c.2, D-033). */
   demonstrationProfileId: z
     .string()
