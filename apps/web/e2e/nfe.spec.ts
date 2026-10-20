@@ -226,3 +226,66 @@ test('devolução de compra: cada produto diz o item da nota do fornecedor (VC02
   expect(nota.references).toEqual([chave]);
   expect(nota.items[0].reference).toEqual({ key: chave, item: 3 });
 });
+
+test('busca a inscrição estadual do destinatário na SEFAZ e preenche o endereço', async ({
+  page,
+}) => {
+  const email = `loja-cadastro-${Date.now()}@exemplo.com.br`;
+  const api = await request.newContext({ baseURL: 'http://localhost:3334/v1/' });
+  await api.post('auth/signup', {
+    data: {
+      ownerName: 'Paulo Dono',
+      businessName: `Distribuidora ${Date.now()}`,
+      email,
+      password: 'senha-forte-123',
+    },
+  });
+  // A resposta da SEFAZ é simulada aqui; a conversa real é testada na API.
+  let consulta = '';
+  await page.route('**/fiscal/sefaz/cadastro**', (route) => {
+    consulta = route.request().url();
+    return route.fulfill({
+      json: {
+        uf: 'PR',
+        cStat: '111',
+        xMotivo: 'Consulta cadastro com uma ocorrencia',
+        found: true,
+        entries: [
+          {
+            ie: '1018008064',
+            active: true,
+            name: 'COMPANHIA DE SANEAMENTO DO PARANA - SANEPAR',
+            address: {
+              street: 'RUA ENGENHEIROS REBOUCAS',
+              number: '1376',
+              complement: null,
+              district: 'REBOUCAS',
+              cityCode: '4106902',
+              city: 'CURITIBA',
+              cep: '80210040',
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  await page.goto('/entrar');
+  await page.getByLabel('E-mail').fill(email);
+  await page.getByLabel('Senha').fill('senha-forte-123');
+  await page.getByRole('button', { name: 'Entrar' }).click();
+  await menu(page, 'NF-e');
+  await page.getByRole('button', { name: 'Nova NF-e' }).click();
+  const gaveta = page.getByRole('dialog');
+  await gaveta.getByLabel('CPF ou CNPJ do destinatário').fill('76.484.013/0001-45');
+  await gaveta.getByLabel('UF do destinatário').selectOption('PR');
+  await gaveta.getByRole('button', { name: 'Buscar a inscrição estadual na SEFAZ' }).click();
+  await expect(gaveta.getByText(/Inscrição estadual 1018008064 \(COMPANHIA/)).toBeVisible();
+  expect(consulta).toContain('uf=PR&taxId=76484013000145');
+  await expect(gaveta.getByLabel('Número da inscrição estadual')).toHaveValue('1018008064');
+  await expect(gaveta.getByLabel('Nome ou razão social')).toHaveValue(
+    'COMPANHIA DE SANEAMENTO DO PARANA - SANEPAR',
+  );
+  await expect(gaveta.getByLabel('Rua')).toHaveValue('RUA ENGENHEIROS REBOUCAS');
+  await expect(gaveta.getByLabel('CEP')).toHaveValue('80210040');
+});

@@ -431,7 +431,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
         kind: 'steps',
         items: [
           'Em "NF-e", clique em "Nova NF-e" e escolha a "Empresa emitente".',
-          'Informe o destinatário: busque no cadastro de clientes ou digite o CPF ou CNPJ, o endereço e a inscrição estadual.',
+          'Informe o destinatário: busque no cadastro de clientes ou digite o CPF ou CNPJ, o endereço e a inscrição estadual. Com o CNPJ e a UF, "Buscar a inscrição estadual na SEFAZ" preenche a inscrição e o endereço pelo cadastro oficial.',
           'Adicione os produtos, o frete e a forma de pagamento. A prazo, use "Adicionar parcela" para cada vencimento.',
           'Clique em "Salvar rascunho e conferir". O Bipaê calcula os impostos e mostra o que falta, item por item.',
           'Na devolução de compra ao fornecedor, escolha a finalidade "Devolução de compra", cole a "Chave da nota devolvida" e, em cada produto, diga o "Item na nota devolvida" (o número da linha dele na nota do fornecedor). A SEFAZ exige essa referência item a item.',

@@ -138,6 +138,25 @@ export class FiscalController {
     return this.sefaz.status(ctx, companyId, input.model, input.svc);
   }
 
+  /**
+   * Cadastro de contribuintes do ICMS na SEFAZ da UF: ?uf=SP&taxId=11.222.333/0001-81 (ou &ie=).
+   * Devolve a inscrição estadual, a situação, o nome e o endereço, como a SEFAZ informa.
+   */
+  @Get('sefaz/cadastro')
+  @RequirePermission('catalog.read')
+  sefazCadastro(
+    @Ctx() ctx: RequestContext,
+    @Query('uf') uf?: string,
+    @Query('taxId') taxId?: string,
+    @Query('ie') ie?: string,
+  ) {
+    if (!uf || !/^[A-Z]{2}$/.test(uf)) throw new AppError(422, 'invalid_uf', 'Informe a UF.');
+    if (!taxId && !ie) {
+      throw new AppError(422, 'invalid_query', 'Informe o CNPJ, o CPF ou a inscrição estadual.');
+    }
+    return this.sefaz.cadastro(ctx, { uf, ...(taxId && { taxId }), ...(ie && { ie }) });
+  }
+
   // ---------------------------------------------------------------- regras de ICMS da empresa
 
   @Get('icms-rules')

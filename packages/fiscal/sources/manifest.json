@@ -135,6 +135,14 @@
   "publishedAt": "2026-10-13",
   "downloadedAt": "2026-10-13"
  },
+ "nfeCadastro": {
+  "file": "NFe_CadConsultaCadastro_NT2026.004_2026-06-08.zip",
+  "title": "Esquemas XML da consulta de cadastro de contribuintes (CadConsultaCadastro4, ConsCad 2.00), do pacote \"Schemas XML NF-e 010d_v1.01 - CNPJ Alfanumérico - NT 2026.004 v1.01, Eventos e ws de Consulta CCC\"",
+  "publisher": "Portal Nacional da NF-e",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=BMPFMBoln3w=",
+  "publishedAt": "2026-06-08",
+  "downloadedAt": "2026-10-20"
+ },
  "nfseXsdProdRest": {
   "file": "NFSe_Esquemas_XSD_PRODREST_v1.01_2026-07-27.zip",
   "title": "NFS-e Nacional: NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20260727 (esquemas da produção restrita)",

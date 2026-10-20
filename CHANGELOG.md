@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-33.j Inscrição estadual do destinatário pela SEFAZ] — 20/10/2026
+
+### Adicionado
+- **"Buscar a inscrição estadual na SEFAZ"** no destinatário da NF-e: com o CNPJ e a UF, o Bipaê consulta o cadastro oficial de contribuintes do ICMS e preenche a inscrição, o nome e o endereço.
+  - Quem não é contribuinte vira "Não contribuinte".
+  - Quando a SEFAZ só responde a emissores de NF-e, a tela explica.
+- O esquema oficial da consulta (ConsCad 2.00, NT 2026.004) entrou nas fontes fiscais.
+
 ## [F5-13.k Alíquota do ISS pela prefeitura e teste da contingência] — 20/10/2026
 
 ### Adicionado

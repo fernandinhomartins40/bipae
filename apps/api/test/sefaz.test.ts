@@ -9,6 +9,7 @@ import { CertificatesService } from '../src/modules/fiscal/certificates.service'
 import { SefazService } from '../src/modules/fiscal/sefaz.service';
 import { HttpsSefazTransport, SefazUnavailableError } from '../src/modules/fiscal/sefaz.transport';
 import { api, createTestApp, signup, type TestApp } from './helpers';
+import { cadastroResponse } from './support/sefaz-simulator';
 
 /**
  * F3-11.a: conversa com a SEFAZ. Os testes usam uma SEFAZ simulada (HTTPS que exige o
@@ -134,6 +135,9 @@ function responder(body: string, contentType: string): { status: number; text: s
       ),
     };
   }
+  if (contentType.includes('CadConsultaCadastro4')) {
+    return { status: 200, text: cadastroResponse(body) };
+  }
   return { status: 404, text: 'serviço desconhecido' };
 }
 
@@ -237,6 +241,24 @@ describe('SEFAZ em homologação (F3-11.a)', () => {
     const nfce = await admin.post(`/fiscal/sefaz/status/${empresa.id}`, { model: '65', svc: true });
     expect(nfce.statusCode).toBe(400);
     expect(nfce.json().message).toBe('A NFC-e não é autorizada pela SVC (rejeição 783).');
+  });
+
+  it('consulta o cadastro do destinatário na SEFAZ da UF dele, com o certificado da empresa', async () => {
+    modo = 'normal';
+    const { admin } = await empresaPronta();
+    const achou = (await admin.get('/fiscal/sefaz/cadastro?uf=PR&taxId=76.484.013/0001-45')).json();
+    expect(achou).toMatchObject({ uf: 'PR', cStat: '111', found: true });
+    expect(achou.entries[0]).toMatchObject({ ie: '1018008064', active: true });
+    expect(chamadas.at(-1)!.path).toContain('/CadConsultaCadastro4');
+    expect(chamadas.at(-1)!.body).toContain(
+      '<xServ>CONS-CAD</xServ><UF>PR</UF><CNPJ>76484013000145</CNPJ>',
+    );
+    const nao = (await admin.get('/fiscal/sefaz/cadastro?uf=PR&taxId=42761086000115')).json();
+    expect(nao).toMatchObject({ cStat: '259', found: false, entries: [] });
+    const semWs = await admin.get('/fiscal/sefaz/cadastro?uf=PA&taxId=76484013000145');
+    expect(semWs.statusCode).toBe(400);
+    expect(semWs.json().message).toContain('A SEFAZ de PA não oferece a consulta de cadastro');
+    expect((await admin.get('/fiscal/sefaz/cadastro?uf=PR')).statusCode).toBe(422);
   });
 
   it('envia uma NFC-e assinada, recebe o protocolo e monta o XML autorizado; consulta pela chave', async () => {

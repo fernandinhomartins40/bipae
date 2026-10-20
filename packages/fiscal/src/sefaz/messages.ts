@@ -17,7 +17,9 @@ export type SefazEndpoint =
   | 'RecepcaoEvento'
   | 'NFeInutilizacao'
   // Ambiente Nacional: distribuição de DF-e (F3-20).
-  | 'NFeDistribuicaoDFe';
+  | 'NFeDistribuicaoDFe'
+  // Cadastro de contribuintes do ICMS na UF (consulta CCC).
+  | 'NFeConsultaCadastro';
 
 const NFE_NS = 'http://www.portalfiscal.inf.br/nfe';
 const TP_AMB_HOMOLOGACAO = '2';
@@ -53,7 +55,7 @@ export function sefazUrl(
   model: '55' | '65',
   uf: string,
   /** Serviços da UF; a distribuição é do Ambiente Nacional (distributionRequest). */
-  service: Exclude<SefazEndpoint, 'NFeDistribuicaoDFe'>,
+  service: Exclude<SefazEndpoint, 'NFeDistribuicaoDFe' | 'NFeConsultaCadastro'>,
   /** Contingência SVC (F3-16): só a NF-e; a NFC-e não é autorizada pela SVC (rejeição 783). */
   svc = false,
 ): string {

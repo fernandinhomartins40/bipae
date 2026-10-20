@@ -59,7 +59,14 @@ export type SefazMode = 'normal' | 'rejeita' | 'fora' | 'perde' | 'prazo';
 
 export interface SefazCall {
   service:
-    'status' | 'autorizacao' | 'consulta' | 'evento' | 'inutilizacao' | 'distribuicao' | 'outro';
+    | 'status'
+    | 'autorizacao'
+    | 'consulta'
+    | 'evento'
+    | 'inutilizacao'
+    | 'distribuicao'
+    | 'cadastro'
+    | 'outro';
   body: string;
 }
 
@@ -152,7 +159,9 @@ export class SefazSimulator {
               ? 'inutilizacao'
               : contentType.includes('nfeDistDFeInteresse')
                 ? 'distribuicao'
-                : 'outro';
+                : contentType.includes('CadConsultaCadastro4')
+                  ? 'cadastro'
+                  : 'outro';
     this.calls.push({ service, body });
     if (this.mode === 'perde' && service === 'autorizacao') this.authorized.add(chave);
     if (this.mode === 'fora' || this.mode === 'perde') {
@@ -168,6 +177,7 @@ export class SefazSimulator {
         ),
       };
     }
+    if (service === 'cadastro') return { status: 200, text: cadastroResponse(body) };
     if (service === 'autorizacao') {
       const prot =
         this.mode === 'rejeita'
@@ -298,4 +308,25 @@ export class SefazSimulator {
     }
     return { status: 404, text: 'serviço desconhecido' };
   }
+}
+
+/**
+ * Resposta simulada da consulta de cadastro (CadConsultaCadastro4): o CNPJ 76484013000145 tem
+ * inscrição ativa no PR; os outros não são contribuintes (259).
+ */
+export function cadastroResponse(body: string): string {
+  const cnpj = /<CNPJ>([0-9A-Z]{14})<\/CNPJ>/.exec(body)?.[1] ?? '';
+  const cad =
+    cnpj === '76484013000145'
+      ? '<cStat>111</cStat><xMotivo>Consulta cadastro com uma ocorrencia</xMotivo><UF>PR</UF>' +
+        `<CNPJ>${cnpj}</CNPJ><dhCons>2026-10-20T12:00:00-03:00</dhCons><cUF>41</cUF><infCad><IE>1018008064</IE>` +
+        `<CNPJ>${cnpj}</CNPJ><UF>PR</UF><cSit>1</cSit><indCredNFe>1</indCredNFe><indCredCTe>4</indCredCTe>` +
+        '<xNome>COMPANHIA DE SANEAMENTO DO PARANA - SANEPAR</xNome><ender><xLgr>RUA ENGENHEIROS REBOUCAS</xLgr>' +
+        '<nro>1376</nro><xBairro>REBOUCAS</xBairro><cMun>4106902</cMun><xMun>CURITIBA</xMun><CEP>80210040</CEP></ender></infCad>'
+      : '<cStat>259</cStat><xMotivo>CNPJ da consulta nao cadastrado como contribuinte na UF</xMotivo><UF>PR</UF>' +
+        `<CNPJ>${cnpj}</CNPJ><dhCons>2026-10-20T12:00:00-03:00</dhCons><cUF>41</cUF>`;
+  return envelope(
+    'CadConsultaCadastro4',
+    `<retConsCad versao="2.00" xmlns="http://www.portalfiscal.inf.br/nfe"><infCons><verAplic>SIMULADA</verAplic>${cad}</infCons></retConsCad>`,
+  );
 }

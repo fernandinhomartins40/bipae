@@ -74,6 +74,101 @@ const IE_INDICATOR = [
   { value: '9', label: 'Não contribuinte (pessoa física, por exemplo)' },
 ];
 
+interface CadastroEntry {
+  ie: string;
+  active: boolean;
+  name: string;
+  address: {
+    street: string | null;
+    number: string | null;
+    complement: string | null;
+    district: string | null;
+    cityCode: string | null;
+    city: string | null;
+    cep: string | null;
+  } | null;
+}
+
+/** O que cada resposta da consulta de cadastro quer dizer para quem está preenchendo a nota. */
+function cadastroText(r: { cStat: string; xMotivo: string; uf: string }) {
+  if (r.cStat === '259') {
+    return `Este CPF ou CNPJ não é contribuinte do ICMS em ${r.uf}: marquei "Não contribuinte". Se o cliente for contribuinte isento, troque para "Contribuinte isento de inscrição".`;
+  }
+  if (r.cStat === '257') {
+    return `A SEFAZ de ${r.uf} só responde a consulta para empresas que emitem NF-e (com inscrição estadual). Confira a inscrição com o cliente.`;
+  }
+  return `A SEFAZ de ${r.uf} respondeu: ${r.cStat} - ${r.xMotivo}`;
+}
+
+/**
+ * Busca a inscrição estadual, o nome e o endereço do destinatário no cadastro de contribuintes
+ * da SEFAZ da UF dele (consulta CCC), com o certificado da empresa.
+ */
+function CadastroLookup({
+  taxId,
+  uf,
+  onFound,
+  onNotContributor,
+}: {
+  taxId: string;
+  uf: string;
+  onFound: (entry: CadastroEntry) => void;
+  onNotContributor: () => void;
+}) {
+  const { api } = useApp();
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
+  const digits = taxId.replace(/[^0-9A-Za-z]/g, '');
+  const lookup = async () => {
+    setBusy(true);
+    setNote(null);
+    try {
+      const r = await api.get<{
+        uf: string;
+        cStat: string;
+        xMotivo: string;
+        found: boolean;
+        entries: CadastroEntry[];
+      }>(`/fiscal/sefaz/cadastro?uf=${uf}&taxId=${digits}`);
+      const active = r.entries.find((e) => e.active) ?? null;
+      if (active) {
+        onFound(active);
+        setNote({
+          ok: true,
+          text: `Inscrição estadual ${active.ie} (${active.name}), ativa na SEFAZ de ${uf}. Preenchi a inscrição e o endereço.`,
+        });
+      } else if (r.found) {
+        setNote({
+          ok: false,
+          text: `A SEFAZ de ${uf} achou o cadastro, mas a inscrição não está habilitada: confira com o cliente.`,
+        });
+      } else {
+        if (r.cStat === '259') onNotContributor();
+        setNote({ ok: false, text: cadastroText(r) });
+      }
+    } catch (e) {
+      setNote({ ok: false, text: (e as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="flex flex-col gap-2">
+      <Button
+        variant="ghost"
+        disabled={busy || digits.length < 11 || !uf}
+        onClick={() => void lookup()}
+      >
+        {busy ? 'Consultando...' : 'Buscar a inscrição estadual na SEFAZ'}
+      </Button>
+      {!uf && digits.length >= 11 && (
+        <p className="text-sm text-muted">Escolha a UF do destinatário para consultar a SEFAZ.</p>
+      )}
+      {note && <Alert tone={note.ok ? 'success' : 'warning'}>{note.text}</Alert>}
+    </div>
+  );
+}
+
 /** A situação da nota em uma palavra, com a cor do aviso. */
 function status(n: NfeInvoiceView): {
   label: string;
@@ -887,6 +982,28 @@ function DraftForm({
             onChange={(e) => set('ie', e.target.value)}
           />
         )}
+        <CadastroLookup
+          taxId={d.taxId}
+          uf={d.uf}
+          onFound={(c) =>
+            setD((x) => ({
+              ...x,
+              ieIndicator: '1',
+              ie: c.ie,
+              name: x.name || c.name,
+              ...(c.address && {
+                street: c.address.street ?? x.street,
+                number: c.address.number ?? x.number,
+                complement: c.address.complement ?? x.complement,
+                district: c.address.district ?? x.district,
+                cep: c.address.cep ?? x.cep,
+                ibgeCode: c.address.cityCode ?? x.ibgeCode,
+                city: c.address.city ?? x.city,
+              }),
+            }))
+          }
+          onNotContributor={() => setD((x) => ({ ...x, ieIndicator: '9', ie: '' }))}
+        />
         <TextField
           label="E-mail para o XML"
           type="email"

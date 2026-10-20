@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   authorizationRequest,
   buildDistributionQuery,
+  cadastroRequest,
+  parseCadastroResponse,
   buildNfeProc,
   distributionRequest,
   parseDistributionResponse,
@@ -25,12 +27,12 @@ import {
   type DistributionResult,
   type SefazRequest,
 } from '@bipae/fiscal';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db } from '../../db/client';
-import { companies } from '../../db/schema';
+import { companies, companyCertificates } from '../../db/schema';
 import { CertificatesService } from './certificates.service';
 import { SefazUnavailableError, type SefazTransport } from './sefaz.transport';
 
@@ -181,6 +183,47 @@ export class SefazService {
   }
 
   /** Situação de uma nota pela chave: usada antes de reenviar, para nunca autorizar duas vezes. */
+  /**
+   * Consulta do cadastro de contribuintes do ICMS na SEFAZ da UF (CadConsultaCadastro4), pelo
+   * CNPJ, CPF ou inscrição estadual, com o certificado de uma empresa da conta: para a NF-e sair
+   * com a inscrição estadual certa do destinatário.
+   */
+  async cadastro(
+    ctx: RequestContext,
+    query: { uf: string; taxId?: string; ie?: string; companyId?: string },
+  ) {
+    const credentials = await withTenant(this.db, ctx, async (tx) => {
+      const [row] = await tx
+        .select({ id: companies.id })
+        .from(companies)
+        .innerJoin(companyCertificates, eq(companyCertificates.companyId, companies.id))
+        .where(query.companyId ? eq(companies.id, query.companyId) : sql`true`)
+        .limit(1);
+      if (!row) {
+        throw new AppError(
+          400,
+          'no_certificate',
+          'Para consultar a SEFAZ, a empresa precisa do certificado digital A1.',
+        );
+      }
+      return this.certificates.tlsCredentials(tx, row.id);
+    });
+    const digits = (query.taxId ?? '').replace(/[^0-9A-Z]/gi, '');
+    const response = await this.call(
+      () =>
+        cadastroRequest({
+          uf: query.uf,
+          ...(query.ie
+            ? { ie: query.ie }
+            : digits.length === 11
+              ? { cpf: digits }
+              : { cnpj: digits }),
+        }),
+      credentials,
+    );
+    return { uf: query.uf, ...this.read(() => parseCadastroResponse(response)) };
+  }
+
   async consult(
     ctx: RequestContext,
     companyId: string,
