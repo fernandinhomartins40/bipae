@@ -25,6 +25,7 @@ import { FileUp } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useApp, useCan } from '../context';
 import { ReceivedNotes } from './received-notes';
+import { ReceivedServices } from './received-services';
 
 interface StoreRow {
   id: string;
@@ -124,6 +125,7 @@ export function PurchasesPage() {
           await openXml(xml);
         }}
       />
+      <ReceivedServices />
       {purchases.error && <Alert>{(purchases.error as Error).message}</Alert>}
       {purchases.data && purchases.data.length === 0 ? (
         <EmptyState title="Nenhuma compra importada ainda">

@@ -23,6 +23,14 @@ export class SefinSimulator {
   readonly cancelled = new Map<string, string>();
   /** O município recusa o cancelamento por prazo (E0822)? */
   cancelExpired = false;
+  /** NFS-e e eventos que o ADN Contribuinte distribui (F5-13.l), em ordem de NSU. */
+  readonly distributed: {
+    nsu: number;
+    key: string;
+    type: 'NFSE' | 'EVENTO';
+    event?: string;
+    xml: string;
+  }[] = [];
   private server: Server | null = null;
   private seq = 0;
   private readonly ac = certificate('AC SEFIN SIMULADA', null, null);
@@ -70,7 +78,8 @@ export class SefinSimulator {
     return new HttpsNfseTransport({
       ca: [forge.pki.certificateToPem(this.ac.cert)],
       timeoutMs: 5000,
-      rewriteUrl: (url) => `https://127.0.0.1:${port}${new URL(url).pathname}`,
+      rewriteUrl: (url) =>
+        `https://127.0.0.1:${port}${new URL(url).pathname}${new URL(url).search}`,
     });
   }
 
@@ -175,6 +184,36 @@ export class SefinSimulator {
             },
           }
         : { status: 404, json: null };
+    }
+    // Distribuição do ADN Contribuinte: os documentos a partir do NSU pedido, ou E2220.
+    const distMatch = /^\/contribuintes\/DFe\/(\d+)\?lote=true$/.exec(path);
+    if (method === 'GET' && distMatch) {
+      const from = Number(distMatch[1]);
+      const lote = this.distributed.filter((d) => d.nsu >= from);
+      if (lote.length === 0) {
+        return {
+          status: 404,
+          json: {
+            StatusProcessamento: 'NENHUM_DOCUMENTO_LOCALIZADO',
+            LoteDFe: [],
+            Erros: [{ Codigo: 'E2220', Descricao: 'Nenhum documento localizado.' }],
+          },
+        };
+      }
+      return {
+        status: 200,
+        json: {
+          StatusProcessamento: 'DOCUMENTOS_LOCALIZADOS',
+          LoteDFe: lote.map((d) => ({
+            NSU: d.nsu,
+            ChaveAcesso: d.key,
+            TipoDocumento: d.type,
+            ...(d.event && { TipoEvento: d.event }),
+            ArquivoXml: gzipSync(Buffer.from(d.xml)).toString('base64'),
+          })),
+          Erros: [],
+        },
+      };
     }
     // Alíquota do ISS do serviço (ADN Parâmetros Municipais): 5% para qualquer serviço.
     const rateMatch = /^\/parametrizacao\/\d{7}\/(\d\d\.\d\d\.\d\d\.\d{3})\/[\d-]+\/aliquota$/.exec(

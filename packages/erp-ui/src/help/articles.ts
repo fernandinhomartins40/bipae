@@ -476,6 +476,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
           'Abra a nota e clique em "Registrar a ciência" para baixar o XML completo.',
           'Com o XML, clique em "Dar entrada na compra": o estoque e a conta a pagar entram sozinhos.',
           'Se a compra não aconteceu, escolha em "O que aconteceu com esta compra", explique o motivo e clique em "Enviar a manifestação".',
+          'As notas de serviço (NFS-e) em que o seu CNPJ aparece ficam em Compras, em "Notas de serviço (NFS-e) da sua empresa": use "Buscar NFS-e agora" e "Baixar" para o XML de cada uma.',
         ],
       },
     ],

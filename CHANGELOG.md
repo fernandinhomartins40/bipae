@@ -1,5 +1,13 @@
 # Changelog
 
+## [F5-13.l NFS-e da empresa pelo Ambiente Nacional] — 20/10/2026
+
+### Adicionado
+- Em **Compras**, a seção **"Notas de serviço (NFS-e) da sua empresa"**: o Bipaê busca no Ambiente de Dados Nacional da NFS-e, de hora em hora ou pelo botão "Buscar NFS-e agora", as notas em que o CNPJ aparece.
+  - Entram as notas dos serviços contratados, prestados ou intermediados, com o valor e o XML de cada uma.
+  - O cancelamento pelo emitente aparece na nota.
+- A tela "Notas de entrada" sem o MercadoFlow aponta para Compras.
+
 ## [F3-33.j Inscrição estadual do destinatário pela SEFAZ] — 20/10/2026
 
 ### Adicionado

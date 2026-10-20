@@ -27,6 +27,7 @@ import {
 import { tenantTables } from '../account/data-export.service';
 import { PlatformAuditService } from '../admin/platform-audit.service';
 import { DfeService } from '../fiscal/dfe.service';
+import { NfseReceivedService } from '../fiscal/nfse-received.service';
 import { NfseService } from '../fiscal/nfse.service';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
@@ -66,6 +67,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
     @Inject(WebhooksService) private readonly webhooks: WebhooksService,
     @Inject(DfeService) private readonly dfe: DfeService,
+    @Inject(NfseReceivedService) private readonly nfseReceived: NfseReceivedService,
     @Inject(NfseService) private readonly nfse: NfseService,
     @Inject(MailService) private readonly mail: MailService,
   ) {}
@@ -240,12 +242,15 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Notas emitidas contra o CNPJ das empresas (F3-20): de hora em hora, cada empresa com
-   * certificado pergunta ao Ambiente Nacional pelos documentos novos.
+   * certificado pergunta ao Ambiente Nacional pelos documentos novos. Junto, as NFS-e em que a
+   * empresa aparece, pelo ADN Contribuinte (F5-13.l).
    */
   async sweepDfe(): Promise<number> {
     const due = await asPlatform(this.db, (tx) => this.dfe.due(tx));
     for (const c of due) await this.dfe.schedule(c.tenantId, c.id);
-    return due.length;
+    const services = await asPlatform(this.db, (tx) => this.nfseReceived.due(tx));
+    for (const c of services) await this.nfseReceived.schedule(c.tenantId, c.id);
+    return due.length + services.length;
   }
 
   /**

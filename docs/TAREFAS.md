@@ -379,6 +379,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
     - O convênio do município diz se a prefeitura deixa emitir só com o cadastro da Receita (situacaoEmissaoPadraoContribuintesRFB). Quando não deixa, como em Guarapuava, o Bipaê pede a inscrição municipal antes de enviar (regra E0084).
   - [ ] F5-13.j · Acompanhar o cronograma da NT 009 (indDest e dest no infDPS, vAjusteBC, CST e cClassTrib reposicionados e grupos de IBS/CBS) e adaptar a DPS quando a Sefin passar a exigir; o monitor das fontes avisa quando sair esquema novo da produção restrita — depende: F5-13.i
   - [x] F5-13.k · Alíquota do ISS do serviço buscada na prefeitura pelo Sistema Nacional (ADN Parâmetros Municipais, com o certificado da empresa): botão "Buscar a alíquota na prefeitura" no cadastro do serviço; código com pontos ("17.06.01.000"), conferido em Guarapuava (5%) em 20/10/2026 — depende: F5-13.c
+  - [x] F5-13.l · NFS-e em que a empresa aparece (prestadora, tomadora ou intermediária) pelo ADN Contribuinte (`GET /contribuintes/DFe/{NSU}?lote=true`, com o certificado): busca de hora em hora e a pedido, cancelamento do emitente marcado, XML para baixar, seção em Compras; conferida com o certificado real em 20/10/2026 (E2220, sem documentos) — depende: F5-13.d
   - [ ] F5-13.f · Primeira NFS-e autorizada na produção restrita com o certificado da empresa; confirmar os pontos da dúvida D-036 — depende: F5-13.e · externo: E1
 
 ## Fase 6 — Integrações e IA

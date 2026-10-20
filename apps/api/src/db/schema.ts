@@ -123,6 +123,9 @@ export const companies = pgTable('companies', {
   /** Distribuição de DF-e (F3-20): último NSU recebido e quando perguntar de novo. */
   dfeLastNsu: char('dfe_last_nsu', { length: 15 }).notNull().default('000000000000000'),
   dfeNextQueryAt: ts('dfe_next_query_at'),
+  /** NFS-e recebidas pelo ADN Contribuinte (F5-13.l): último NSU e quando perguntar de novo. */
+  nfseDistLastNsu: bigint('nfse_dist_last_nsu', { mode: 'number' }).notNull().default(0),
+  nfseDistNextQueryAt: ts('nfse_dist_next_query_at'),
   /** NFS-e Nacional (F5-13.d): série e número da DPS, inscrição municipal e tributos aproximados. */
   nfseSeries: integer('nfse_series').notNull().default(1),
   nfseNextNumber: bigint('nfse_next_number', { mode: 'number' }).notNull().default(1),
@@ -1091,6 +1094,29 @@ export const nfeInvoices = pgTable('nfe_invoices', {
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
   issuedAt: ts('issued_at'),
+});
+
+/** NFS-e em que a empresa aparece, vindas do ADN Contribuinte (F5-13.l). */
+export const nfseReceived = pgTable('nfse_received', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  accessKey: char('access_key', { length: 50 }).notNull(),
+  nsu: bigint('nsu', { mode: 'number' }).notNull(),
+  role: text('role', { enum: ['prestador', 'tomador', 'intermediario'] }).notNull(),
+  number: text('number'),
+  issuerTaxId: text('issuer_tax_id').notNull(),
+  issuerName: text('issuer_name').notNull(),
+  takerTaxId: text('taker_tax_id'),
+  takerName: text('taker_name'),
+  issuedAt: ts('issued_at'),
+  valueCents: money('value_cents').notNull().default(0),
+  netCents: money('net_cents').notNull().default(0),
+  serviceCode: text('service_code'),
+  cancelled: boolean('cancelled').notNull().default(false),
+  nfseXml: text('nfse_xml').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
 });
 
 /** Notas emitidas contra o CNPJ da empresa, vindas do Ambiente Nacional (F3-20). */

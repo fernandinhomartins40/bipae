@@ -2299,6 +2299,25 @@ export interface DfeSyncResult {
   message: string;
 }
 
+/** NFS-e em que a empresa aparece, recebida pelo ADN Contribuinte (F5-13.l). */
+export interface NfseReceivedView {
+  id: string;
+  companyId: string;
+  accessKey: string;
+  /** O papel da empresa na nota. */
+  role: 'prestador' | 'tomador' | 'intermediario';
+  number: string | null;
+  issuerTaxId: string;
+  issuerName: string;
+  takerTaxId: string | null;
+  takerName: string | null;
+  issuedAt: string | null;
+  valueCents: number;
+  netCents: number;
+  serviceCode: string | null;
+  cancelled: boolean;
+}
+
 /** Emitir a NF-e na contingência SVC (F3-16): o motivo vai na nota (xJust, 15 a 256 caracteres). */
 /**
  * Carta de correção da NF-e (F3-33.g): o texto substitui o das cartas anteriores, então traz tudo
