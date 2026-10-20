@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F5-13.l: as NFS-e em que a empresa aparece, em Compras. As respostas do Ambiente Nacional são
@@ -53,10 +54,7 @@ test('busca as NFS-e da empresa e mostra prestador, papel, valor e situação', 
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page
-    .getByRole('navigation', { name: 'Menu principal' })
-    .getByRole('link', { name: 'Compras' })
-    .click();
+  await abrirNoMenu(page, 'Compras');
   await expect(
     page.getByRole('heading', { name: 'Notas de serviço (NFS-e) da sua empresa' }),
   ).toBeVisible();

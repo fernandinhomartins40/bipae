@@ -68,6 +68,32 @@ export const HELP_ARTICLES: HelpArticle[] = [
     ],
   },
   {
+    slug: 'achar-uma-tela',
+    title: 'Achar qualquer tela pelo menu',
+    category: 'Começar',
+    summary:
+      'O menu é separado pelo que você quer fazer, e a busca acha a tela pela palavra do dia a dia.',
+    keywords: ['menu', 'onde fica', 'procurar tela', 'achar', 'celular'],
+    body: [
+      {
+        kind: 'p',
+        text: 'O menu começa com "Início" e "Abrir o caixa". Abaixo vêm os grupos: Vendas e atendimento, Produtos e estoque, Compras e fornecedores, Clientes e fidelidade, Financeiro, Notas e impostos e Minha empresa.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Toque no nome do grupo para abrir ou fechar. O grupo da tela em que você está abre sozinho, e o Bipaê lembra os que você deixou abertos.',
+          'Não sabe em que grupo está? Escreva no campo "O que você procura?", no alto do menu, do seu jeito: "boleto", "etiqueta", "impressora", "validade". Enter abre o primeiro resultado.',
+          'No celular, o menu fica no botão de três tracinhos, no alto da tela, ao lado de "Abrir o caixa".',
+        ],
+      },
+      {
+        kind: 'tip',
+        text: 'O "Início" junta o que precisa da sua atenção (contas vencidas, lotes vencendo, certificado digital vencendo, notas para conferir) e atalhos para as tarefas do dia a dia.',
+      },
+    ],
+  },
+  {
     slug: 'abrir-o-caixa',
     title: 'Abrir o caixa e fazer a primeira venda',
     category: 'Caixa',

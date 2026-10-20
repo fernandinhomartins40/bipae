@@ -1,10 +1,10 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F3-20.c: notas emitidas contra o CNPJ da empresa, na tela Compras. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
-const menu = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'Menu principal' }).getByRole('link', { name }).click();
+const menu = (page: Page, name: string) => abrirNoMenu(page, name);
 
 test('a busca das notas recebidas explica o que falta sem o certificado', async ({ page }) => {
   const email = `loja-dfe-${Date.now()}@exemplo.com.br`;

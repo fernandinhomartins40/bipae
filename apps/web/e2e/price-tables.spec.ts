@@ -1,10 +1,10 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F1-03: tabelas de preço nas telas e no caixa. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
-const menu = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'Menu principal' }).getByRole('link', { name }).click();
+const menu = (page: Page, name: string) => abrirNoMenu(page, name);
 
 async function newShop(page: Page) {
   await page.goto('/criar-conta');

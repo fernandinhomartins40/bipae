@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F3-06.e: regras de ICMS da empresa, com conferência de conflito e exclusão. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -12,7 +13,7 @@ test('cadastrar, conferir conflito, editar e excluir uma regra de ICMS', async (
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Lia!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Regras de ICMS' }).click();
+  await abrirNoMenu(page, 'Regras de ICMS');
   await expect(page.getByText('Nenhuma regra de ICMS ainda')).toBeVisible();
 
   // Valores de exemplo, como o contador cadastraria.
@@ -71,13 +72,13 @@ test('ver a referência do Portal da DIFAL com as linhas defasadas (F3-25)', asy
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Ana!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   await page.getByLabel('UF').selectOption('MA');
   await page.getByRole('button', { name: 'Salvar empresa' }).click();
   await expect(page.getByText(/ · MA/)).toBeVisible();
 
-  await page.getByRole('link', { name: 'Regras de ICMS' }).click();
+  await abrirNoMenu(page, 'Regras de ICMS');
   await expect(
     page.getByRole('heading', {
       name: 'Referência: alíquotas por produto de MA no Portal da DIFAL',
@@ -102,13 +103,13 @@ test('MVA oficial de SP sugerida pelo NCM e usada com um clique (F3-26)', async 
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Rita!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   await page.getByLabel('UF').selectOption('SP');
   await page.getByRole('button', { name: 'Salvar empresa' }).click();
   await expect(page.getByText(/ · SP/)).toBeVisible();
 
-  await page.getByRole('link', { name: 'Regras de ICMS' }).click();
+  await abrirNoMenu(page, 'Regras de ICMS');
   await page.getByRole('button', { name: 'Nova regra' }).click();
   await page.getByLabel('Nome da regra').fill('Leite UHT');
   await page.getByLabel('Vale a partir de').fill('2026-10-16');
@@ -153,13 +154,13 @@ test('Paraná: MVA da Resolução SEFA 571/2019 e eletrônicos fora da ST (F3-26
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Davi!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   await page.getByLabel('UF').selectOption('PR');
   await page.getByRole('button', { name: 'Salvar empresa' }).click();
   await expect(page.getByText(/ · PR/)).toBeVisible();
 
-  await page.getByRole('link', { name: 'Regras de ICMS' }).click();
+  await abrirNoMenu(page, 'Regras de ICMS');
   await page.getByRole('button', { name: 'Nova regra' }).click();
   await page.getByLabel('Nome da regra').fill('Chocolate branco');
   await page.getByLabel('Vale a partir de').fill('2026-10-17');
@@ -198,13 +199,13 @@ test('Minas Gerais: MVA do leite UHT pelo Anexo XV do RICMS/MG (F3-26.c.MG)', as
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Bia!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   await page.getByLabel('UF').selectOption('MG');
   await page.getByRole('button', { name: 'Salvar empresa' }).click();
   await expect(page.getByText(/ · MG/)).toBeVisible();
 
-  await page.getByRole('link', { name: 'Regras de ICMS' }).click();
+  await abrirNoMenu(page, 'Regras de ICMS');
   await page.getByRole('button', { name: 'Nova regra' }).click();
   await page.getByLabel('Nome da regra').fill('Leite UHT');
   await page.getByLabel('Vale a partir de').fill('2026-10-17');

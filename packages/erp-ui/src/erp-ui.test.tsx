@@ -144,7 +144,8 @@ describe('BipaeApp', () => {
       const url = String(input);
       if (url.endsWith('/auth/login')) return json(200, authResult(1));
       if (url.includes('/products')) return json(200, { items: [], total: 0 });
-      return json(401, { message: 'x' });
+      // 401 encerraria a sessão no meio do teste; as outras rotas só não têm dados.
+      return json(404, { message: 'x' });
     });
     vi.stubGlobal('fetch', fetchMock);
     window.history.pushState({}, '', '/');
@@ -159,9 +160,24 @@ describe('BipaeApp', () => {
       await screen.findByRole('heading', { name: 'Olá, Rafael!' }, { timeout: 20_000 }),
     ).toBeInTheDocument();
     expect(screen.getByText('Mercadinho do Rafael', { selector: 'p' })).toBeInTheDocument();
-    // O menu só mostra o que o usuário pode acessar.
-    expect(screen.getByRole('link', { name: 'Produtos' })).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: 'Equipe' })).not.toBeInTheDocument();
+    // Fora da tela do grupo, o grupo começa fechado e abre com um toque.
+    const estoque = screen.getByRole('button', { name: 'Produtos e estoque' });
+    expect(estoque).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('link', { name: 'Produtos' })).not.toBeInTheDocument();
+    await userEvent.click(estoque);
+    expect(screen.getByRole('link', { name: 'Produtos' })).toBeVisible();
+    // A busca do menu acha pela palavra do dia a dia...
+    const busca = screen.getByRole('searchbox', { name: 'Procurar no menu' });
+    await userEvent.type(busca, 'etiqueta');
+    expect(screen.getByRole('list', { name: 'Resultados da busca' })).toHaveTextContent(
+      'Etiquetas',
+    );
+    // ...e só mostra o que o usuário pode acessar.
+    await userEvent.clear(busca);
+    await userEvent.type(busca, 'equipe');
+    expect(screen.getByText(/Nada encontrado para “equipe”/)).toBeInTheDocument();
+    await userEvent.clear(busca);
+    expect(screen.getByRole('button', { name: 'Minha empresa' })).toBeInTheDocument();
     await waitFor(() =>
       expect(screen.getByText('O que funciona neste navegador')).toBeInTheDocument(),
     );

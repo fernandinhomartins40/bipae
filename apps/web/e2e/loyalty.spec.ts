@@ -1,4 +1,5 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F6-08.b: pontos ganhos numa venda com CPF e usados como desconto na seguinte. */
 test.skip(() => test.info().project.name !== 'web', 'O caixa é o mesmo nas duas cascas.');
@@ -48,7 +49,7 @@ test('ganha pontos numa venda e usa na seguinte', async ({ page }) => {
   await page.getByRole('button', { name: 'Entrar' }).click();
 
   // O programa: 1 ponto a cada R$ 1,00, cada ponto vale R$ 0,05, mínimo de 10 pontos.
-  await page.getByRole('link', { name: 'Relacionamento' }).click();
+  await abrirNoMenu(page, 'Relacionamento');
   const programa = page.getByRole('region', { name: 'Programa de fidelidade' });
   await programa.getByLabel('Cada ponto vale no caixa (R$)').fill('0,05');
   await programa.getByLabel('Mínimo de pontos para usar').fill('10');

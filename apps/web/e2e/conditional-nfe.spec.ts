@@ -1,10 +1,10 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F5-12.c.3: as notas do Ajuste SINIEF 02/18 aparecem no condicional e abrem na tela da NF-e. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
-const menu = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'Menu principal' }).getByRole('link', { name }).click();
+const menu = (page: Page, name: string) => abrirNoMenu(page, name);
 
 test('com o perfil da venda condicional, a remessa sai com as peças', async ({ page }) => {
   const email = `loja-cond-nfe-${Date.now()}@exemplo.com.br`;

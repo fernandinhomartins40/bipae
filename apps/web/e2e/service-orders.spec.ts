@@ -1,10 +1,10 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F5-13.c: cadastro de serviço e ordem de serviço, da abertura à entrega. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
-const menu = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'Menu principal' }).getByRole('link', { name }).click();
+const menu = (page: Page, name: string) => abrirNoMenu(page, name);
 
 test('cadastra o serviço pela lista nacional, abre a OS e entrega', async ({ page }) => {
   const email = `oficina-${Date.now()}@exemplo.com.br`;

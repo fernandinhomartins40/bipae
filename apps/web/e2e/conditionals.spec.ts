@@ -1,10 +1,10 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F5-12.b: venda condicional na retaguarda; o que o cliente fica vai ao caixa como comanda. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
-const menu = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'Menu principal' }).getByRole('link', { name }).click();
+const menu = (page: Page, name: string) => abrirNoMenu(page, name);
 
 test('o cliente leva peças, devolve uma e o que ficou vai ao caixa', async ({ page }) => {
   const email = `loja-cond-${Date.now()}@exemplo.com.br`;

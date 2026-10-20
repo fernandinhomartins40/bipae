@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import forge from 'node-forge';
+import { abrirNoMenu } from './menu';
 
 /**
  * F3-10: enviar o certificado A1 pela tela. O certificado de teste é gerado na hora, nunca
@@ -31,7 +32,7 @@ test('enviar o certificado A1 da empresa e ver a validade', async ({ page }) => 
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Bia!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   await page.getByLabel('CNPJ').fill('11.222.333/0001-81');
   await page.getByRole('button', { name: 'Salvar empresa' }).click();

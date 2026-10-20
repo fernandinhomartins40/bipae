@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F4-11: inventário pelo celular, bipando e digitando o total. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -35,7 +36,7 @@ test('conta pelo celular, mostra a diferença e ajusta o estoque ao fechar', asy
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
   // No celular o menu rola na horizontal, acima do conteúdo.
-  await page.getByRole('link', { name: 'Inventário' }).click();
+  await abrirNoMenu(page, 'Inventário');
   await page.getByLabel('Nome da contagem').fill('Corredor 3');
   await page.getByRole('button', { name: 'Começar contagem' }).click();
 

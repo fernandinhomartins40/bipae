@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F3-19: entrada de compra pelo XML. A nota do fornecedor é montada e assinada aqui, com um
@@ -22,13 +23,13 @@ test('importar o XML de compra: fornecedor, produtos e estoque de uma vez', asyn
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Rita!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   await page.getByLabel('CNPJ').fill('11.222.333/0001-81');
   await page.getByRole('button', { name: 'Salvar empresa' }).click();
   await expect(page.getByText('11.222.333/0001-81')).toBeVisible();
 
-  await page.getByRole('link', { name: 'Compras' }).click();
+  await abrirNoMenu(page, 'Compras');
   await expect(page.getByText('Nenhuma compra importada ainda')).toBeVisible();
   await page.getByLabel('Arquivo XML da nota de compra').setInputFiles({
     name: 'nfe-3001.xml',
@@ -65,7 +66,7 @@ test('importar o XML de compra: fornecedor, produtos e estoque de uma vez', asyn
   await page.getByLabel('Uso pessoal (nota nº 3001)').click();
   await expect(page.getByLabel('Uso pessoal (nota nº 3001)')).not.toBeChecked();
 
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   const linha = page.getByRole('row', { name: /Refrigerante guaraná 2 L caixa com 6/ });
   await expect(linha).toContainText('R$ 8,99');
   await expect(linha).toContainText('30');

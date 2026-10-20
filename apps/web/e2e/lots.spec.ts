@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F5-04.c: lote e validade na retaguarda. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -25,13 +26,13 @@ test('informa lotes, vê o vencido no aviso e descarta', async ({ page }) => {
   await page.getByRole('button', { name: 'Entrar' }).click();
 
   // Liga o controle de lote no cadastro do produto.
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('row', { name: /Dipirona 500mg/ }).click();
   await page.getByLabel('Controla lote e validade').check();
   await page.getByRole('button', { name: 'Salvar', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Salvar', exact: true })).toHaveCount(0);
 
-  await page.getByRole('link', { name: 'Lote e validade' }).click();
+  await abrirNoMenu(page, 'Lote e validade');
   await expect(page.getByText('Nada vencendo')).toBeVisible();
 
   const informar = async (lote: string, validade: string, quantidade: string) => {

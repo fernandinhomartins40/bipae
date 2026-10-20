@@ -1,4 +1,5 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F1-05: escolha das lojas de cada pessoa na tela da equipe. O bloqueio de outra loja (caixas,
@@ -8,8 +9,7 @@ import { expect, request, test, type Page } from '@playwright/test';
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
 const SENHA = 'senha-forte-123';
-const menu = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'Menu principal' }).getByRole('link', { name }).click();
+const menu = (page: Page, name: string) => abrirNoMenu(page, name);
 
 async function entrar(page: Page, email: string) {
   await page.goto('/entrar');

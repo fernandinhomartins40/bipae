@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F5-13.h: percentuais da NFS-e na empresa. Só aparecem os campos do regime, o preenchimento
@@ -25,7 +26,7 @@ test('calcula o percentual do Simples pelo anexo e pelo faturamento e salva', as
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
 
   // Sem regime, nenhum percentual; no Simples, só o do Simples.

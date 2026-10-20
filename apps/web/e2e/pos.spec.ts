@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * The register end to end, in both shells (ADR-0012): sell online, lose the internet and keep
@@ -18,7 +19,7 @@ async function signupWithProducts(page: Page) {
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Rafael!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   for (const p of [
     { name: 'Água Mineral 1,5L', price: '2,99', barcode: '78912342', weighable: false },
     { name: 'Banana Prata', price: '6,99', barcode: '', weighable: true },
@@ -111,10 +112,10 @@ test('sell online, keep selling offline, sync on reconnect, close blind', async 
 
   // The back office sees both sales, with stock moved by the ledger.
   await page.getByRole('button', { name: 'Voltar' }).click();
-  await page.getByRole('link', { name: 'Vendas' }).click();
+  await abrirNoMenu(page, 'Vendas');
   await expect(page.getByRole('row', { name: /Caixa 1 · nº 1/ })).toContainText('R$ 17,71');
   await expect(page.getByRole('row', { name: /Caixa 1 · nº 2/ })).toContainText('123.456.789-09');
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await expect(page.getByRole('row', { name: /Água Mineral/ })).toContainText('-4');
 });
 
@@ -123,7 +124,7 @@ test('discount above the limit needs a manager, who approves on the cashier scre
 }) => {
   const ownerEmail = await signupWithProducts(page);
   // The owner may give any discount, so create a cashier and sell as them.
-  await page.getByRole('link', { name: 'Equipe' }).click();
+  await abrirNoMenu(page, 'Equipe');
   await page.getByRole('button', { name: 'Adicionar pessoa' }).click();
   const email = `caixa-${unique()}@exemplo.com.br`;
   await page.getByLabel('Nome').fill('Juliana');
@@ -133,7 +134,7 @@ test('discount above the limit needs a manager, who approves on the cashier scre
   await expect(page.getByRole('row', { name: /Juliana/ })).toBeVisible();
 
   // A register must exist for the cashier to pick.
-  await page.getByRole('link', { name: 'Caixas' }).click();
+  await abrirNoMenu(page, 'Caixas');
   await page.getByRole('button', { name: 'Novo caixa' }).click();
   await page.getByLabel('Nome do caixa').fill('Caixa da Ju');
   await page.getByRole('button', { name: 'Criar caixa' }).click();
@@ -209,7 +210,7 @@ test('crediário: limite no cadastro do cliente e venda no caixa com o CPF (F2-0
   page,
 }) => {
   await signupWithProducts(page);
-  await page.getByRole('link', { name: 'Clientes', exact: true }).click();
+  await abrirNoMenu(page, 'Clientes');
   await page.getByRole('button', { name: 'Novo cliente' }).click();
   await page.getByLabel('Nome').first().fill('Dona Cida');
   await page.getByLabel('CPF ou CNPJ').fill('52998224725');
@@ -252,7 +253,7 @@ test('crediário: limite no cadastro do cliente e venda no caixa com o CPF (F2-0
 
 test('troca de operador no mesmo caixa, sem fechar a sessão (F2-03)', async ({ page }) => {
   await signupWithProducts(page);
-  await page.getByRole('link', { name: 'Equipe' }).click();
+  await abrirNoMenu(page, 'Equipe');
   await page.getByRole('button', { name: 'Adicionar pessoa' }).click();
   const email = `ju-${unique()}@exemplo.com.br`;
   await page.getByLabel('Nome').fill('Juliana');
@@ -310,7 +311,7 @@ test('caixa desativado: envia o que falta, apaga os dados do aparelho e pede out
   await page.getByRole('button', { name: 'Sair do caixa' }).click();
 
   // O dono desativa o caixa na retaguarda.
-  await page.getByRole('link', { name: 'Caixas' }).click();
+  await abrirNoMenu(page, 'Caixas');
   page.once('dialog', (d) => void d.accept());
   await page
     .getByRole('row', { name: /Caixa velho/ })
@@ -324,7 +325,7 @@ test('caixa desativado: envia o que falta, apaga os dados do aparelho e pede out
     timeout: 15_000,
   });
   await page.getByRole('button', { name: 'Voltar' }).click();
-  await page.getByRole('link', { name: 'Vendas' }).click();
+  await abrirNoMenu(page, 'Vendas');
   await expect(page.getByRole('row', { name: /R\$ 2,99/ })).toBeVisible();
 });
 

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F4-14.a: o pacote do mês para o contador sai da retaguarda como ZIP. O conteúdo (XML das
@@ -16,7 +17,7 @@ test('baixa o pacote do mês para o contador', async ({ page }) => {
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Célia!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Arquivos para o contador' }).click();
+  await abrirNoMenu(page, 'Arquivos para o contador');
   await expect(page.getByRole('heading', { name: 'Arquivos para o contador' })).toBeVisible();
   await page.getByLabel('Mês').fill('2026-09');
   const [arquivo] = await Promise.all([

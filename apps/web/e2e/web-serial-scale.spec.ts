@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F2-06: balança direto no navegador pela Web Serial. O navegador de teste não tem porta serial
@@ -50,7 +51,7 @@ test('escolher a porta da balança e ler o peso sem o Conector', async ({ page }
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Beto!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Periféricos' }).click();
+  await abrirNoMenu(page, 'Periféricos');
   await expect(page.getByRole('heading', { name: 'Balança neste navegador' })).toBeVisible();
   await page.getByLabel('Velocidade (baud)').selectOption('4800');
   await page.getByRole('button', { name: 'Escolher a porta da balança' }).click();

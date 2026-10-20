@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** Desktop download page: public (linked from the landing page) and inside the back office. */
 test.skip(() => test.info().project.name !== 'web', 'A página de download é da casca web.');
@@ -46,7 +47,7 @@ test('back office menu leads to the download page, honest when nothing is publis
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Bruno!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Baixar o desktop' }).click();
+  await abrirNoMenu(page, 'Baixar o desktop');
   await expect(page.getByRole('heading', { name: 'Bipaê Desktop' })).toBeVisible();
   // The test API has no releases repository configured.
   await expect(page.getByRole('heading', { name: 'O instalador está quase pronto' })).toBeVisible();

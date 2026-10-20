@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * Adendo 01 §8: the web register uses peripherals through the Bipaê Conector, here the
@@ -22,7 +23,7 @@ test('pair with the Conector, print, read the scale and open the drawer after a 
   // Before pairing, the home screen explains how to get the drawer working.
   await expect(page.getByText('Para usar a gaveta de dinheiro no navegador, instale o Bipaê Conector')).toBeVisible();
 
-  await page.getByRole('link', { name: 'Periféricos' }).click();
+  await abrirNoMenu(page, 'Periféricos');
   await page.getByLabel('Código mostrado no Bipaê Conector').fill('000000');
   await page.getByRole('button', { name: 'Parear este navegador' }).click();
   await expect(page.getByText('Código incorreto')).toBeVisible();
@@ -38,7 +39,7 @@ test('pair with the Conector, print, read the scale and open the drawer after a 
   expect((await state()).prints).toBe(before.prints + 1);
 
   // A cash sale on the register opens the drawer through the Conector.
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('button', { name: 'Novo produto' }).click();
   await page.getByLabel('Nome', { exact: true }).fill('Pão de queijo');
   await page.getByLabel('Preço de venda').fill('5,00');

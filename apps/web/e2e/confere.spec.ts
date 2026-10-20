@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * MF-09: Notas de entrada (Confere). As respostas da API do Bipaê são simuladas aqui; a entrada no
@@ -107,7 +108,7 @@ test('ler pela chave, conferir bipando e dar entrada no estoque', async ({ page 
     }),
   );
 
-  await page.getByRole('link', { name: 'Notas de entrada' }).click();
+  await abrirNoMenu(page, 'Notas de entrada');
   await expect(page.getByText('Termos do Confere: leia com atenção.')).toBeVisible();
   await page.getByRole('button', { name: 'Aceito' }).click();
   await expect(page.getByText(/Saldo: 10 leitura/)).toBeVisible();
@@ -203,7 +204,7 @@ test('nota chegando: contador no menu some quando a tela de notas abre (MF-14)',
 
   const menu = page.getByRole('navigation', { name: 'Menu principal' });
   await expect(menu.getByLabel('2 notas novas para conferir')).toBeVisible();
-  await menu.getByRole('link', { name: /Notas de entrada/ }).click();
+  await abrirNoMenu(page, /Notas de entrada/);
   await expect(menu.getByLabel('2 notas novas para conferir')).toHaveCount(0);
   expect(visto).toBe(true);
 });

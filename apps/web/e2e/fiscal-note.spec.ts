@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F3-14.c: dados da nota na empresa, situação da NFC-e na venda e aviso na reimpressão. Sem
@@ -46,7 +47,7 @@ test('a venda mostra a NFC-e em "falta configurar" com o motivo, e o caixa avisa
   await page.getByRole('button', { name: 'Entrar' }).click();
 
   // Dados da nota na empresa, com o município da tabela do IBGE.
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   await page.getByLabel('CNPJ').fill('11.222.333/0001-81');
   await page.getByLabel('UF').selectOption('SP');

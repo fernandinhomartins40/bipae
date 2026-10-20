@@ -1,4 +1,5 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F5-03: atacarejo, do cadastro do produto ao caixa. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -26,7 +27,7 @@ test('preço de atacado a partir de 6 unidades vale no caixa', async ({ page }) 
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
 
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('button', { name: 'Novo produto' }).click();
   await page.getByLabel('Nome', { exact: true }).fill('Óleo de soja 900ml');
   await page.getByLabel('Preço de venda').fill('7,99');

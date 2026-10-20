@@ -1,5 +1,24 @@
 # Changelog
 
+## [F7-08 Retaguarda mais simples para quem nunca usou um sistema] — 20/10/2026
+
+### Mudou
+- **Menu agrupado pelo que você quer fazer.** Os 49 itens soltos viraram 7 grupos que abrem e fecham: Vendas e atendimento, Produtos e estoque, Compras e fornecedores, Clientes e fidelidade, Financeiro, Notas e impostos e Minha empresa.
+  - O grupo da tela aberta abre sozinho, e o Bipaê lembra os grupos que você deixou abertos.
+  - "Abrir o caixa" ganhou destaque no alto do menu.
+  - Nenhum endereço mudou: links salvos continuam funcionando.
+- **No celular, o menu virou uma gaveta** (botão de três tracinhos), com "Abrir o caixa" sempre à vista na barra do alto. A troca de empresa e o "Sair" passaram a aparecer no celular também.
+- **Início novo:**
+  - "O que você quer fazer?": atalhos para vender, cadastrar produto, dar entrada em mercadoria e pagar ou receber conta.
+  - "Precisa da sua atenção": contas a pagar vencidas ou da semana, valores a receber em atraso, lotes vencidos ou vencendo, certificado digital vencendo e notas de fornecedor para conferir.
+  - "Hoje na loja": vendas, faturamento e ticket médio do dia.
+  - Os primeiros passos se marcam sozinhos (inclusive a venda de teste) e somem quando tudo está feito.
+
+### Adicionado
+- **Busca no menu** ("O que você procura?"): acha a tela sem acento e pela palavra do dia a dia ("boleto", "etiqueta", "impressora", "validade"). Enter abre o primeiro resultado.
+- "Cadastrar produto" no Início já abre o formulário de produto novo; a lista vazia de produtos ganhou o botão "Cadastrar o primeiro produto".
+- Artigo de ajuda "Achar qualquer tela pelo menu".
+
 ## [F5-13.l NFS-e da empresa pelo Ambiente Nacional] — 20/10/2026
 
 ### Adicionado

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * MF-04: tela "MercadoFlow". As respostas da API do Bipaê são simuladas aqui; a conversa com o
@@ -62,7 +63,7 @@ test('criar a conta MercadoFlow pela loja e ver o desconto', async ({ page }) =>
     return route.fulfill({ status: 201, json: { status: 'CRIADA', email } });
   });
 
-  await page.getByRole('link', { name: 'MercadoFlow' }).click();
+  await abrirNoMenu(page, 'MercadoFlow');
   await expect(
     page.getByText('Clientes Bipaê têm desconto no plano do MercadoFlow.'),
   ).toBeVisible();

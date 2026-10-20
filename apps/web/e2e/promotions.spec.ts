@@ -1,4 +1,5 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F5-02: promoção cadastrada na retaguarda e aplicada pelo caixa. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -33,7 +34,7 @@ test('leve 3 pague 2 cadastrado na retaguarda vale no caixa', async ({ page }) =
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
 
-  await page.getByRole('link', { name: 'Promoções' }).click();
+  await abrirNoMenu(page, 'Promoções');
   await expect(page.getByText('Nenhuma promoção ainda')).toBeVisible();
   await page.getByRole('button', { name: 'Nova promoção' }).click();
   await page.getByLabel('Nome da promoção').fill('Suco: leve 3 pague 2');

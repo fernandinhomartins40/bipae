@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import forge from 'node-forge';
+import { abrirNoMenu } from './menu';
 
 /**
  * F3-21.a: certificado A1 instalado no aparelho, para assinar sem internet. O certificado de
@@ -33,7 +34,7 @@ test('instalar o certificado A1 neste aparelho e remover', async ({ page }) => {
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Lia!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Periféricos' }).click();
+  await abrirNoMenu(page, 'Periféricos');
   const quadro = page
     .locator('section, div')
     .filter({ has: page.getByRole('heading', { name: 'Certificado digital neste aparelho' }) })

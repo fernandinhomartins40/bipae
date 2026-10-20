@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F5-05: painel de prevenção de perdas. A conta nova mostra "nada fora do padrão"; o cenário com
@@ -17,7 +18,7 @@ test('painel de prevenção de perdas mostra alertas, operadores, perdas e venci
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Tereza!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Prevenção de perdas' }).click();
+  await abrirNoMenu(page, 'Prevenção de perdas');
   await expect(page.getByText('Nada fora do padrão no período')).toBeVisible();
 
   await page.route('**/v1/reports/losses*', (route) =>

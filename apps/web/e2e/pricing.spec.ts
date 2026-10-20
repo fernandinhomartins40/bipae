@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F4-03: formar o preço no cadastro do produto. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -28,7 +29,7 @@ test('margem, impostos e despesas viram o preço sugerido, e o preço vai para o
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('row', { name: /Café 500g/ }).click();
 
   const quadro = page.getByRole('region', { name: 'Formar preço' });

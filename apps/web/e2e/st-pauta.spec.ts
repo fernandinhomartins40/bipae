@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F3-26.f: no cadastro do produto, a cerveja escolhe o item da pauta da ST de SP. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -34,10 +35,7 @@ test('cerveja com o CEST da pauta: escolhe o item e grava no produto', async ({ 
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page
-    .getByRole('navigation', { name: 'Menu principal' })
-    .getByRole('link', { name: 'Produtos' })
-    .click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('row', { name: /Cerveja Skol/ }).click();
   const pauta = page.getByRole('region', { name: 'Pauta da ST (SP)' });
   await expect(pauta).toBeVisible();

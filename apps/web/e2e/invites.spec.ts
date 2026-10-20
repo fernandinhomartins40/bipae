@@ -1,11 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F1-06: convite de equipe por link, do envio ao aceite. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
 const SENHA = 'senha-forte-123';
-const menu = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'Menu principal' }).getByRole('link', { name }).click();
+const menu = (page: Page, name: string) => abrirNoMenu(page, name);
 
 test('o dono convida por link e a pessoa entra como operadora de caixa', async ({
   page,

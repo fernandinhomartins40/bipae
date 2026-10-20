@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F5-01: etiquetas de gôndola e de balança em PDF. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -30,7 +31,7 @@ test('gera o PDF das etiquetas de gôndola e de balança', async ({ page }) => {
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page.getByRole('link', { name: 'Etiquetas' }).click();
+  await abrirNoMenu(page, 'Etiquetas');
 
   await page.getByLabel('Adicionar produto').fill('feijão');
   await page.getByRole('button', { name: 'Feijão preto 1kg' }).click();

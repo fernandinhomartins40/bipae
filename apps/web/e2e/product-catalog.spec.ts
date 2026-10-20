@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * MF-02: cadastro de produto preenchido pelo catálogo. As respostas do catálogo são simuladas
@@ -44,7 +45,7 @@ test('buscar no catálogo pelo nome preenche o cadastro; o usuário confere e sa
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Rosa!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('button', { name: 'Novo produto' }).click();
   await page.getByLabel('Buscar no catálogo').fill('acucar uniao');
   await page.getByRole('button', { name: /Açúcar União Refinado 1kg/ }).click();

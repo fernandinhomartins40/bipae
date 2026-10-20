@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { Secret, TOTP } from 'otpauth';
+import { abrirNoMenu } from './menu';
 
 /**
  * Super admin panel end to end (web only): 2FA activation, overview, finding a client,
@@ -110,12 +111,12 @@ test('client: companies and stores, plan usage and limits', async ({ page }) => 
     `Loja da Rita ${Date.now()}`,
     `rita-${Date.now()}@exemplo.com.br`,
   );
-  await page.getByRole('link', { name: 'Minha assinatura' }).click();
+  await abrirNoMenu(page, 'Minha assinatura');
   await expect(page.getByRole('heading', { name: 'Plano Grátis' })).toBeVisible();
   await expect(page.getByRole('main').getByText('Caixas', { exact: true })).toBeVisible();
   await expect(page.getByRole('main').getByText('0 de 2', { exact: true })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await expect(page.getByRole('heading', { name: 'Empresas e lojas' })).toBeVisible();
   // The free plan allows one company: the second is refused with a clear message.
   await page.getByRole('button', { name: 'Nova empresa' }).click();

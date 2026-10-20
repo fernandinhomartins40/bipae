@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** P-03: o dono baixa os dados da conta (LGPD) em Minha assinatura. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -12,7 +13,7 @@ test('baixar meus dados num ZIP', async ({ page }) => {
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Nina!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Minha assinatura' }).click();
+  await abrirNoMenu(page, 'Minha assinatura');
   await expect(page.getByRole('heading', { name: 'Seus dados' })).toBeVisible();
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Baixar meus dados (ZIP)' }).click();

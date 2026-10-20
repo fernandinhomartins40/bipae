@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F5-10: bairro com taxa na retaguarda, venda para entrega no caixa e a entrega até o fim. */
 test.skip(() => test.info().project.name !== 'web', 'O caixa é o mesmo nas duas cascas.');
@@ -28,7 +29,7 @@ test('delivery: taxa do bairro somada no caixa e a entrega acompanhada', async (
   await page.getByRole('button', { name: 'Entrar' }).click();
 
   // Bairro com a taxa, na retaguarda.
-  await page.getByRole('link', { name: 'Delivery' }).click();
+  await abrirNoMenu(page, 'Delivery');
   const bairros = page.getByRole('region', { name: 'Bairros atendidos' });
   await bairros.getByLabel('Bairro').fill('Centro');
   await bairros.getByLabel('Taxa (R$)').fill('6,50');

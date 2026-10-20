@@ -1,5 +1,6 @@
 import { expect, request, test } from '@playwright/test';
 import forge from 'node-forge';
+import { abrirNoMenu } from './menu';
 
 /**
  * F3-15.c: venda sem internet com o certificado A1 no aparelho sai com a NFC-e em contingência
@@ -79,7 +80,7 @@ test('sem internet, o caixa emite a NFC-e em contingência e ela sobe ao reconec
   await page.getByRole('button', { name: 'Entrar' }).click();
 
   // Certificado A1 neste aparelho (F3-21.a).
-  await page.getByRole('link', { name: 'Periféricos' }).click();
+  await abrirNoMenu(page, 'Periféricos');
   const quadro = page
     .locator('section, div')
     .filter({ has: page.getByRole('heading', { name: 'Certificado digital neste aparelho' }) })

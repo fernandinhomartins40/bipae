@@ -421,4 +421,6 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - Feito em 16/10/2026: `docs/implantacao.md` (levantamento, equipamentos, instalação, configuração, treinamento, checklist, problemas comuns e o que ainda não está disponível).
 - [x] F7-06 · Bipaê Desktop para macOS
   - Feito em 16/10/2026: app universal (Intel e Apple Silicon) e .dmg na CI e na release, com download reconhecido pela página. Assinatura e notarização da Apple dependem do E23.
+- [x] F7-08 · Retaguarda mais simples para leigos: menu agrupado pelo que a pessoa quer fazer e Início que antecipa pendências
+  - Feito em 20/10/2026 (`docs/IMPLEMENTATION_PLAN.md`): 7 grupos em sanfona no lugar de 49 itens soltos, busca "O que você procura?" sem acento e pela palavra do dia a dia, gaveta no celular com "Abrir o caixa" sempre à vista; Início com atalhos de tarefa, "Precisa da sua atenção" (contas vencidas, lotes vencendo, certificado, notas para conferir), "Hoje na loja" e primeiros passos que se marcam sozinhos.
 - [ ] F7-07 · Teste de usabilidade com 10 pessoas (meta: 9 de 10 vendem e emitem sem ajuda) — depende: F3-14 · externo: E15

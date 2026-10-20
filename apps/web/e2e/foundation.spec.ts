@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * The same scenarios run against both shells (ADR-0012): "web" (browser routing) and
@@ -45,7 +46,7 @@ test('signup, register a product, find it by barcode, add a terminal, log out an
   }
 
   // Product with price in BRL notation and a barcode.
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await expect(page.getByText('Nenhum produto ainda')).toBeVisible();
   await page.getByRole('button', { name: 'Novo produto' }).click();
   await page.getByLabel('Nome', { exact: true }).fill('Caderno Universitário 10 matérias');
@@ -71,7 +72,7 @@ test('signup, register a product, find it by barcode, add a terminal, log out an
   await expect(page.getByText('Nada encontrado')).toBeVisible();
 
   // Each terminal gets its own NFC-e series.
-  await page.getByRole('link', { name: 'Caixas', exact: true }).click();
+  await abrirNoMenu(page, 'Caixas');
   await page.getByRole('button', { name: 'Novo caixa' }).click();
   await page.getByLabel('Nome do caixa').fill('Caixa 1');
   await page.getByRole('button', { name: 'Criar caixa' }).click();
@@ -81,7 +82,7 @@ test('signup, register a product, find it by barcode, add a terminal, log out an
   await expect(page.getByRole('row', { name: /Caixa 1/ })).toContainText('1');
 
   // Audit trail recorded everything and is intact.
-  await page.getByRole('link', { name: 'Auditoria', exact: true }).click();
+  await abrirNoMenu(page, 'Auditoria');
   await expect(page.getByText('Trilha íntegra')).toBeVisible();
   await expect(page.getByRole('cell', { name: 'Produto cadastrado' })).toBeVisible();
 
@@ -106,7 +107,7 @@ test('accessibility preferences: high contrast and large font persist', async ({
   await page.getByLabel('E-mail').fill(`ju-${unique()}@exemplo.com.br`);
   await page.getByLabel('Senha').fill(password);
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
-  await page.getByRole('link', { name: 'Configurações', exact: true }).click();
+  await abrirNoMenu(page, 'Configurações');
   await page.getByLabel('Alto contraste').check();
   await page.getByLabel('Letras maiores').check();
   await expect(page.locator('html')).toHaveAttribute('data-contrast', 'high');

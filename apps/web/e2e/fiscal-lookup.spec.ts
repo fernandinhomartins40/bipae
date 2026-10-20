@@ -1,9 +1,12 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F3-06.b: busca de NCM pelo nome, sugestão de CEST e significado dos códigos do perfil fiscal. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
-test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código significa', async ({ page }) => {
+test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código significa', async ({
+  page,
+}) => {
   await page.goto('/criar-conta');
   await page.getByLabel('Seu nome').fill('Rita Dona');
   await page.getByLabel('Nome do negócio').fill(`Empório ${Date.now()}`);
@@ -13,7 +16,7 @@ test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código
   await expect(page.getByRole('heading', { name: 'Olá, Rita!' })).toBeVisible();
 
   // ---------------------------------------------------------------- produto
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('button', { name: 'Novo produto' }).click();
   await page.getByLabel('Nome', { exact: true }).fill('Cerveja Garrafa 600 ml');
   await page.getByLabel('Preço de venda').fill('9,90');
@@ -24,7 +27,10 @@ test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código
 
   // Busca pelo nome da mercadoria e escolhe na lista.
   await page.getByLabel('Não sabe o NCM? Busque pelo nome da mercadoria').fill('cervejas malte');
-  await page.getByRole('list', { name: 'NCM encontrados' }).getByRole('button', { name: /2203\.00\.00/ }).click();
+  await page
+    .getByRole('list', { name: 'NCM encontrados' })
+    .getByRole('button', { name: /2203\.00\.00/ })
+    .click();
   await expect(page.getByLabel('NCM', { exact: true })).toHaveValue('22030000');
   await expect(page.getByText('NCM 2203.00.00:')).toBeVisible();
 
@@ -43,18 +49,24 @@ test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código
   await page.getByRole('button', { name: 'Cancelar' }).click();
 
   // ---------------------------------------------------------------- perfil fiscal
-  await page.getByRole('link', { name: 'Perfis fiscais' }).click();
+  await abrirNoMenu(page, 'Perfis fiscais');
   await page.getByRole('button', { name: 'Novo perfil' }).click();
   await page.getByLabel('Nome do perfil').fill('Teste de códigos');
   // O campo explica o código digitado.
-  await expect(page.getByText(/^Venda de mercadoria adquirida ou recebida de terceiros/).first()).toBeVisible();
+  await expect(
+    page.getByText(/^Venda de mercadoria adquirida ou recebida de terceiros/).first(),
+  ).toBeVisible();
   await page.getByLabel('CSOSN').fill('500');
   // O mesmo texto existe nas sugestões escondidas do campo; vale o que está visível.
   await expect(
-    page.getByText(/ICMS cobrado anteriormente por substituição tributária/).filter({ visible: true }),
+    page
+      .getByText(/ICMS cobrado anteriormente por substituição tributária/)
+      .filter({ visible: true }),
   ).toBeVisible();
   await page.getByLabel('CSOSN').fill('999');
-  await expect(page.getByText('Este código não está na tabela oficial. Confira antes de salvar.')).toBeVisible();
+  await expect(
+    page.getByText('Este código não está na tabela oficial. Confira antes de salvar.'),
+  ).toBeVisible();
 
   // O servidor confere também: CFOP de outro estado no campo de dentro do estado.
   await page.getByLabel('CSOSN').fill('102');
@@ -83,7 +95,7 @@ test('achar o NCM pelo nome do produto, escolher o CEST e ver o que cada código
       },
     }),
   );
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await expect(page.getByText(/Falta configurar: UF e regime tributário/)).toBeVisible();
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   // UF com alíquota confirmada mostra o número e a lei (as 27 confirmadas desde 16/10/2026, D-021).

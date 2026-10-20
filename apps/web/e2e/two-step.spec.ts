@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { Secret, TOTP } from 'otpauth';
+import { abrirNoMenu } from './menu';
 
 /** F1-01: verificação em duas etapas opcional, ativada pelo próprio usuário nas Configurações. */
 test.skip(() => test.info().project.name !== 'web', 'O fluxo de login é o mesmo nas duas cascas.');
@@ -22,7 +23,7 @@ test('ativar a verificação em duas etapas e entrar com o código do app', asyn
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Marta!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Configurações' }).click();
+  await abrirNoMenu(page, 'Configurações');
   await expect(page.getByText('Recomendado para quem é dono ou gerente.')).toBeVisible();
   await page.getByRole('button', { name: 'Ativar verificação em duas etapas' }).click();
   await expect(page.getByAltText('Código QR para o aplicativo autenticador')).toBeVisible();

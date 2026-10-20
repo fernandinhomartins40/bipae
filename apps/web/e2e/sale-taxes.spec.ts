@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F3-06.d3 e d4: do cadastro ao imposto na venda. A empresa informa UF e regime, o produto ganha
@@ -19,7 +20,7 @@ test('configurar a empresa, vender sem internet e ver os impostos da venda na re
   await expect(page.getByRole('heading', { name: 'Olá, Carla!' })).toBeVisible();
 
   // Empresa: São Paulo, Lucro Real.
-  await page.getByRole('link', { name: 'Empresas e lojas' }).click();
+  await abrirNoMenu(page, 'Empresas e lojas');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   await page.getByLabel('UF').selectOption('SP');
   await page.getByLabel('Regime tributário').selectOption({ label: 'Lucro Real' });
@@ -27,7 +28,7 @@ test('configurar a empresa, vender sem internet e ver os impostos da venda na re
   await expect(page.getByText(/· SP · Lucro Real/)).toBeVisible();
 
   // Perfil fiscal do regime normal.
-  await page.getByRole('link', { name: 'Perfis fiscais' }).click();
+  await abrirNoMenu(page, 'Perfis fiscais');
   await page.getByRole('button', { name: 'Novo perfil' }).click();
   await page.getByLabel('Nome do perfil').fill('Revenda Lucro Real');
   await page.getByLabel('Regime da empresa').selectOption('normal');
@@ -38,7 +39,7 @@ test('configurar a empresa, vender sem internet e ver os impostos da venda na re
   await expect(page.getByRole('row', { name: /Revenda Lucro Real/ })).toContainText('CST 00');
 
   // Um produto com o perfil e outro sem.
-  await page.getByRole('link', { name: 'Produtos', exact: true }).click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('button', { name: 'Novo produto' }).click();
   await page.getByLabel('Nome', { exact: true }).fill('Arroz 5 kg');
   await page.getByLabel('Preço de venda').fill('100,00');
@@ -57,7 +58,9 @@ test('configurar a empresa, vender sem internet e ver os impostos da venda na re
   await page.getByRole('link', { name: 'Abrir o caixa' }).click();
   await page.getByLabel('Novo caixa').fill('Caixa 1');
   await page.getByRole('button', { name: 'Criar e usar este caixa' }).click();
-  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('heading', { name: 'Abrir o caixa' })).toBeVisible({
+    timeout: 15_000,
+  });
   await page.getByLabel('Dinheiro na gaveta para troco (R$)').fill('0,00');
   await page.getByRole('button', { name: 'Abrir caixa' }).click();
   await expect(page.getByText('Caixa livre')).toBeVisible();
@@ -79,7 +82,9 @@ test('configurar a empresa, vender sem internet e ver os impostos da venda na re
   await expect(page.getByText('Bipaê! Venda nº 1 concluída.')).toBeVisible();
 
   await context.setOffline(false);
-  await expect(page.getByTestId('sync-status')).toContainText('sincronizado agora', { timeout: 15_000 });
+  await expect(page.getByTestId('sync-status')).toContainText('sincronizado agora', {
+    timeout: 15_000,
+  });
   await expect(page.getByTestId('sync-status')).not.toContainText('para enviar');
 
   // Retaguarda: o detalhe da venda mostra os impostos de cada item e o que falta configurar.
@@ -93,5 +98,7 @@ test('configurar a empresa, vender sem internet e ver os impostos da venda na re
   await expect(impostos).toContainText('R$ 18,00');
   await expect(impostos).toContainText('Valores para conferência com o contador.');
   // A sacola não tem perfil fiscal: aparece como pendência, sem valor suposto.
-  await expect(impostos).toContainText('O produto não tem perfil fiscal. Escolha um no cadastro do produto.');
+  await expect(impostos).toContainText(
+    'O produto não tem perfil fiscal. Escolha um no cadastro do produto.',
+  );
 });

@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /**
  * F4-12: a tela de transferência entre lojas, do envio ao recebimento com diferença.
@@ -97,7 +98,7 @@ test('envia mercadoria para a filial e confirma o recebimento', async ({ page })
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page.getByRole('link', { name: 'Transferências' }).click();
+  await abrirNoMenu(page, 'Transferências');
   await expect(page.getByText('Nenhuma transferência ainda')).toBeVisible();
 
   await page.getByRole('button', { name: 'Nova transferência' }).click();

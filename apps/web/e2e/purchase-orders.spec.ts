@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F4-01: montar, salvar, enviar e cancelar um pedido de compra. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -30,7 +31,7 @@ test('pedido de compra do rascunho ao envio e ao cancelamento', async ({ page })
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page.getByRole('link', { name: 'Pedidos de compra' }).click();
+  await abrirNoMenu(page, 'Pedidos de compra');
   await expect(page.getByText('Nenhum pedido ainda')).toBeVisible();
 
   await page.getByRole('button', { name: 'Novo pedido' }).click();
@@ -100,7 +101,7 @@ test('entrada da mercadoria conferida por bipagem (F4-02)', async ({ page }) => 
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page.getByRole('link', { name: 'Pedidos de compra' }).click();
+  await abrirNoMenu(page, 'Pedidos de compra');
   await page.getByRole('row', { name: /Laticínios Sul/ }).click();
 
   const bipe = page.getByLabel('Bipe o produto que chegou');

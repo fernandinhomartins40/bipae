@@ -21,7 +21,8 @@ import {
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search } from 'lucide-react';
-import { useDeferredValue, useState, type FormEvent } from 'react';
+import { useDeferredValue, useEffect, useState, type FormEvent } from 'react';
+import { useSearchParams } from 'react-router';
 import { parseQuantity } from './purchase-orders';
 import { useApp, useCan } from '../context';
 import { CatalogAssist, catalogSummary } from './catalog-assist';
@@ -43,7 +44,14 @@ export function ProductsPage() {
   const canWrite = useCan('catalog.write');
   const [query, setQuery] = useState('');
   const deferred = useDeferredValue(query.trim());
-  const [editing, setEditing] = useState<Product | 'new' | null>(null);
+  const [params, setParams] = useSearchParams();
+  // "Cadastrar produto" no Início chega com ?novo=1 e já abre o formulário.
+  const [editing, setEditing] = useState<Product | 'new' | null>(() =>
+    canWrite && params.has('novo') ? 'new' : null,
+  );
+  useEffect(() => {
+    if (params.has('novo')) setParams({}, { replace: true });
+  }, [params, setParams]);
 
   const products = useQuery({
     queryKey: ['products', deferred],
@@ -97,6 +105,16 @@ export function ProductsPage() {
           {deferred
             ? 'Confira o que foi digitado ou cadastre um produto novo.'
             : 'Cadastre seu primeiro produto. Depois dá para importar tudo pelo XML das notas de compra.'}
+          {canWrite && !deferred && (
+            <div className="mt-4">
+              <Button
+                icon={<Plus className="size-5" aria-hidden />}
+                onClick={() => setEditing('new')}
+              >
+                Cadastrar o primeiro produto
+              </Button>
+            </div>
+          )}
         </EmptyState>
       ) : (
         products.data && (

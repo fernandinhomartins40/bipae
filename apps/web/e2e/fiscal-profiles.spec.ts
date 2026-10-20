@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F1-02: perfis fiscais (lista, criar, editar) e vínculo com o produto. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -12,7 +13,7 @@ test('criar um perfil fiscal e escolher no cadastro do produto', async ({ page }
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Paulo!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Perfis fiscais' }).click();
+  await abrirNoMenu(page, 'Perfis fiscais');
   await expect(page.getByText('A emissão de NFC-e chega em breve')).toBeVisible();
   // The signup already creates a default profile.
   await expect(page.getByRole('cell', { name: 'Revenda — Simples Nacional' })).toBeVisible();
@@ -37,7 +38,9 @@ test('criar um perfil fiscal e escolher no cadastro do produto', async ({ page }
   await page.getByLabel('CST do ICMS').fill('60');
   // No regime normal o perfil também guarda o CST do PIS e da COFINS (F3-06.d2).
   await page.getByLabel('CST do PIS e da COFINS').fill('04');
-  await expect(page.getByText(/Operação tributável monofásica/).filter({ visible: true })).toBeVisible();
+  await expect(
+    page.getByText(/Operação tributável monofásica/).filter({ visible: true }),
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Salvar perfil' }).click();
   await expect(page.getByRole('row', { name: /Bebidas com ST/ })).toContainText('CST 60');
   await page.getByRole('row', { name: /Bebidas com ST/ }).click();
@@ -45,7 +48,7 @@ test('criar um perfil fiscal e escolher no cadastro do produto', async ({ page }
   await page.getByRole('button', { name: 'Cancelar' }).click();
 
   // Link it to a product.
-  await page.getByRole('link', { name: 'Produtos' }).click();
+  await abrirNoMenu(page, 'Produtos');
   await page.getByRole('button', { name: 'Novo produto' }).click();
   await page.getByLabel('Nome', { exact: true }).fill('Cerveja Lata 350 ml');
   await page.getByLabel('Preço de venda').fill('4,99');

@@ -1,10 +1,10 @@
 import { expect, request, test, type Page } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F3-33.c: NF-e da retaguarda, do rascunho conferido à emissão. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
 
-const menu = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'Menu principal' }).getByRole('link', { name }).click();
+const menu = (page: Page, name: string) => abrirNoMenu(page, name);
 
 test('preenche a NF-e para uma empresa, vê o que falta, confere e emite', async ({ page }) => {
   const email = `loja-nfe-${Date.now()}@exemplo.com.br`;

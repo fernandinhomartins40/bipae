@@ -1,4 +1,5 @@
 import { expect, request, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F6-07: sem a chave do provedor de IA (E13), o assistente diz que falta configurar. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -27,7 +28,7 @@ test('assistente sem provedor: "Falta configurar" e nada de IA no cadastro do pr
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Entrar' }).click();
-  await page.getByRole('link', { name: 'Assistente' }).click();
+  await abrirNoMenu(page, 'Assistente');
   await expect(page.getByRole('heading', { name: 'Assistente', level: 1 })).toBeVisible();
   await expect(page.getByText('Falta configurar')).toBeVisible();
   await expect(page.getByLabel('Sua pergunta')).toHaveCount(0);

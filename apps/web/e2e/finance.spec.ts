@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { abrirNoMenu } from './menu';
 
 /** F4-04: lançar uma conta parcelada e dar baixa. */
 test.skip(() => test.info().project.name !== 'web', 'A retaguarda é a mesma nas duas cascas.');
@@ -12,7 +13,7 @@ test('conta a pagar em 3 parcelas, baixa da primeira e resumo atualizado', async
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Leo!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Contas a pagar e receber' }).click();
+  await abrirNoMenu(page, 'Contas a pagar e receber');
   await page.getByRole('button', { name: 'Nova conta' }).click();
   await page.getByLabel('Descrição').fill('Forno novo');
   await page.getByLabel('Valor total').fill('300,00');
@@ -40,7 +41,7 @@ test('fluxo de caixa mostra a conta paga hoje (F4-05)', async ({ page }) => {
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Ana!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Contas a pagar e receber' }).click();
+  await abrirNoMenu(page, 'Contas a pagar e receber');
   await page.getByRole('button', { name: 'Nova conta' }).click();
   await page.getByLabel('Descrição').fill('Energia');
   await page.getByLabel('Valor total').fill('150,00');
@@ -50,7 +51,7 @@ test('fluxo de caixa mostra a conta paga hoje (F4-05)', async ({ page }) => {
   await page.getByRole('button', { name: 'Confirmar pagamento' }).click();
   await expect(page.getByRole('row', { name: /Energia/ })).toHaveCount(0);
 
-  await page.getByRole('link', { name: 'Fluxo de caixa' }).click();
+  await abrirNoMenu(page, 'Fluxo de caixa');
   await expect(page.getByTestId('cash-flow-net')).toHaveText('-R$ 150,00');
 });
 
@@ -63,7 +64,7 @@ test('DRE gerencial mostra a despesa do mês por categoria (F4-06)', async ({ pa
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Edu!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Contas a pagar e receber' }).click();
+  await abrirNoMenu(page, 'Contas a pagar e receber');
   await page.getByRole('button', { name: 'Nova conta' }).click();
   await page.getByLabel('Descrição').fill('Aluguel da loja');
   await page.getByLabel('Categoria').fill('Aluguel');
@@ -72,7 +73,7 @@ test('DRE gerencial mostra a despesa do mês por categoria (F4-06)', async ({ pa
   await page.getByRole('button', { name: 'Lançar conta' }).click();
   await expect(page.getByRole('row', { name: /Aluguel da loja/ })).toBeVisible();
 
-  await page.getByRole('link', { name: 'DRE gerencial' }).click();
+  await abrirNoMenu(page, 'DRE gerencial');
   await expect(page.getByRole('row', { name: /^Aluguel/ })).toContainText('R$ 2.000,00');
   await expect(page.getByRole('row', { name: /Resultado/ })).toContainText('-R$ 2.000,00');
 });
@@ -86,7 +87,7 @@ test('importa o extrato OFX e concilia com a conta sugerida (F4-07)', async ({ p
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Rita!' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Contas a pagar e receber' }).click();
+  await abrirNoMenu(page, 'Contas a pagar e receber');
   await page.getByRole('button', { name: 'Nova conta' }).click();
   await page.getByLabel('Descrição').fill('Internet');
   await page.getByLabel('Valor total').fill('99,90');
@@ -95,7 +96,7 @@ test('importa o extrato OFX e concilia com a conta sugerida (F4-07)', async ({ p
   await page.getByRole('button', { name: 'Lançar conta' }).click();
   await expect(page.getByRole('row', { name: /Internet/ })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Conciliação bancária' }).click();
+  await abrirNoMenu(page, 'Conciliação bancária');
   const extrato = `OFXHEADER:100\nDATA:OFXSGML\nCHARSET:1252\n<OFX><BANKMSGSRSV1><STMTTRNRS><STMTRS><CURDEF>BRL
 <BANKACCTFROM><BANKID>0001<ACCTID>777-0</BANKACCTFROM><BANKTRANLIST>
 <STMTTRN><TRNTYPE>DEBIT<DTPOSTED>20261006<TRNAMT>-99.90<FITID>Z1<MEMO>DÉBITO PROVEDOR</STMTTRN>
@@ -120,7 +121,7 @@ test('inadimplência sem atrasos mostra que está tudo em dia (F4-09)', async ({
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Gil!' })).toBeVisible();
-  await page.getByRole('link', { name: 'Inadimplência' }).click();
+  await abrirNoMenu(page, 'Inadimplência');
   await expect(page.getByText('Ninguém em atraso')).toBeVisible();
 });
 
@@ -132,7 +133,7 @@ test('relatórios de vendas abrem e exportam em CSV (F4-10)', async ({ page }) =
   await page.getByLabel('Senha').fill('senha-forte-123');
   await page.getByRole('button', { name: 'Criar conta grátis' }).click();
   await expect(page.getByRole('heading', { name: 'Olá, Ivo!' })).toBeVisible();
-  await page.getByRole('link', { name: 'Relatórios' }).click();
+  await abrirNoMenu(page, 'Relatórios');
   await expect(page.getByTestId('report-revenue')).toHaveText('R$ 0,00');
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'CSV' }).click();
