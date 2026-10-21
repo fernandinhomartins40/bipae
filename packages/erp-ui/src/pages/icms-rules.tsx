@@ -539,6 +539,8 @@ function StSuggestion({
 interface CbenefAnswer {
   uf: string;
   covered: boolean;
+  /** A fonte oficial diz que a UF não usa a tabela cBenef (F3-27.c). */
+  notUsed: { act: string; url: string } | null;
   valid: boolean;
   entry: {
     code: string;
@@ -565,7 +567,14 @@ function CbenefInfo({ uf, code, date }: { uf: string; code: string; date: string
     enabled: wanted.length >= 8,
   });
   if (!found.data) return null;
-  const { covered, entry, valid } = found.data;
+  const { covered, notUsed, entry, valid } = found.data;
+  if (!covered && notUsed) {
+    return (
+      <Alert tone="warning" title={`${uf} não usa a tabela cBenef`}>
+        {`Segundo a fonte oficial (${notUsed.act}), ${uf} não usa códigos de benefício. Confira com o contador antes de enviar o código na nota.`}
+      </Alert>
+    );
+  }
   if (!covered) {
     return (
       <p className="text-sm text-muted">

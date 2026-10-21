@@ -37,7 +37,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-031 | 🟡 aguarda o dono | SPED EFD ICMS/IPI: gerar no Bipaê ou deixar com o contador (E21) |
 | D-032 | ✅ resolvida | NFC-e de entrega a domicílio (delivery) |
 | D-033 | ✅ resolvida | Venda condicional: notas da remessa, da volta e da venda |
-| D-034 | 🟡 parcial | Código de benefício fiscal (cBenef) por UF |
+| D-034 | ✅ resolvida | Código de benefício fiscal (cBenef) por UF |
 | D-035 | 🟡 configurável | Natureza da operação da entrada simbólica do condicional passa de 60 caracteres |
 | D-036 | 🟡 a confirmar com o certificado | NFS-e Nacional: mensagem JSON da Sefin, assinatura, convênio do município e grupo do IBS/CBS |
 | D-037 | ✅ resolvida | NF-e de devolução de venda (entrada do cliente): referência item a item e imposto espelhado da venda, na proporção devolvida |
@@ -626,7 +626,10 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Data do arquivo:** a página da Receita-DF cita o Ato Declaratório 02/2025, mas o único arquivo oferecido é a planilha consolidada de 15/05/2023. O Bipaê usa esse arquivo e mostra a data dele; o monitor semanal avisa quando a planilha mudar.
   - **Códigos:** 252, com o tipo do benefício, a descrição e a base legal. Doze terminaram em 31/05/2023 e só valem até essa data.
   - **Sem CST:** 8 códigos não marcam CST na planilha (a tela mostra o código, mas não confere o CST).
-- **Em aberto (F3-27.b, demais UFs):** as tabelas das outras UFs que exigem o código.
+- **Atualização de 21/10/2026 (F3-27.c, demais UFs):** o Portal Nacional da NF-e (Documentos > Diversos, item "Tabela cBenef x CST - Relacionada à Nota Técnica 2019.001", atualizado em 31/10/2025, https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=) lista as tabelas de DF, GO, ES, PR, RS, RJ, SC e SP e encerra com: "Obs: Os demais Estados não utilizam a tabela cBenef."
+  - **Resultado:** as 8 UFs listadas já têm a tabela no Bipaê. As outras 19 (AC, AL, AM, AP, BA, CE, MA, MG, MS, MT, PA, PB, PE, PI, RN, RO, RR, SE, TO) ficam marcadas como "não usa a tabela cBenef", com essa citação, e a tela da regra de ICMS avisa ao digitar um código delas.
+  - **O que o sistema continua sem fazer:** não apaga nem recusa o código que a empresa cadastrar nessas UFs; só avisa e pede conferência com o contador.
+  - **Ponto de atenção:** blogs de terceiros citam uma obrigação do Mato Grosso a partir de 01/01/2020; nenhuma fonte oficial da SEFAZ-MT foi achada e o portal nacional (2025) não lista o MT. Vale a fonte oficial; o monitor semanal avisa se a lista do portal mudar.
 
 ### D-035 — Natureza da operação da entrada simbólica do condicional passa de 60 caracteres
 

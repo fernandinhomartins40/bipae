@@ -30,15 +30,34 @@ export interface CbenefTable {
   codes: CbenefCode[];
 }
 
-export const CBENEF_TABLES: readonly CbenefTable[] = (data as { tables: CbenefTable[] }).tables;
+/**
+ * UFs que, pela fonte oficial, não usam a tabela cBenef (F3-27.c). Hoje a fonte é a observação do
+ * Portal Nacional da NF-e: "Os demais Estados não utilizam a tabela cBenef".
+ */
+export interface CbenefNotUsed {
+  ufs: string[];
+  act: string;
+  source: string;
+  url: string;
+  /** Data da atualização da lista no portal (AAAA-MM-DD). */
+  updatedAt: string;
+}
+
+const generated = data as { tables: CbenefTable[]; notUsed: CbenefNotUsed };
+
+export const CBENEF_TABLES: readonly CbenefTable[] = generated.tables;
 
 /** UFs com a tabela oficial de cBenef no Bipaê. */
 export const CBENEF_UFS: readonly string[] = CBENEF_TABLES.map((t) => t.uf);
+
+export const CBENEF_NOT_USED: CbenefNotUsed = generated.notUsed;
 
 export interface CbenefLookup {
   uf: string;
   /** A UF tem a tabela no Bipaê? */
   covered: boolean;
+  /** Quando a fonte oficial diz que a UF não usa a tabela cBenef: de onde vem essa informação. */
+  notUsed: { act: string; url: string } | null;
   /** O código na tabela (ou nada, se não existe). */
   entry: (CbenefCode & { act: string; url: string }) | null;
   /** Vale na data? */
@@ -56,6 +75,9 @@ export function cbenefLookup(uf: string, code: string, date: string, cst?: strin
   return {
     uf: uf.toUpperCase(),
     covered: !!table,
+    notUsed: CBENEF_NOT_USED.ufs.includes(uf.toUpperCase())
+      ? { act: CBENEF_NOT_USED.act, url: CBENEF_NOT_USED.url }
+      : null,
     entry: found && table ? { ...found, act: table.act, url: table.url } : null,
     valid,
     cstOk: found && cst ? found.csts.includes(cst) : null,

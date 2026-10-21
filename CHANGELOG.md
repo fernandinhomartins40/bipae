@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-27.c cBenef nas demais UFs] — 21/10/2026
+
+### Adicionado
+- **cBenef nas 27 UFs:** o Portal Nacional da NF-e (Tabela cBenef x CST da NT 2019.001, atualizada em 31/10/2025) lista só DF, GO, ES, PR, RS, RJ, SC e SP, que já têm a tabela no Bipaê, e diz que "os demais Estados não utilizam a tabela cBenef". As outras 19 UFs ficam marcadas assim, com a citação, e a tela da regra de ICMS avisa quando a empresa digita um código numa delas.
+- A página do portal fica guardada em `packages/fiscal/sources` e é lida pelo gerador; se o portal passar a listar uma UF nova, a geração para e o monitor semanal avisa.
+
 ## [F3-26.c.PR3 ST do Paraná: medicamentos e venda porta a porta] — 21/10/2026
 
 ### Adicionado

@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
+  CBENEF_NOT_USED,
   CBENEF_TABLES,
   CBENEF_UFS,
   cbenefLookup,
   cbenefSuggestions,
   isPresumedCredit,
 } from './cbenef';
+import { ALL_UFS, parseCbenefPortal } from '../../scripts/cbenef-portal.mjs';
 
 /** F3-27.b: códigos de benefício fiscal da tabela oficial da UF. */
 
@@ -176,5 +178,75 @@ describe('cBenef do Rio de Janeiro (Tabela de códigos de benefício X CST)', ()
       cstOk: true,
     });
     expect(cbenefLookup('RJ', 'RJ823024', '2026-10-17').entry!.csts).toEqual([]);
+  });
+});
+
+describe('UFs que não usam o cBenef (Portal Nacional da NF-e, F3-27.c)', () => {
+  it('as 19 UFs fora da lista oficial, com a citação do portal', () => {
+    expect(CBENEF_NOT_USED.ufs).toEqual([
+      'AC',
+      'AL',
+      'AM',
+      'AP',
+      'BA',
+      'CE',
+      'MA',
+      'MG',
+      'MS',
+      'MT',
+      'PA',
+      'PB',
+      'PE',
+      'PI',
+      'RN',
+      'RO',
+      'RR',
+      'SE',
+      'TO',
+    ]);
+    expect(CBENEF_NOT_USED.updatedAt).toBe('2025-10-31');
+    expect(CBENEF_NOT_USED.act).toContain('Os demais Estados não utilizam a tabela cBenef');
+    expect(CBENEF_NOT_USED.url).toContain('nfe.fazenda.gov.br');
+  });
+
+  it('as 27 UFs ficam cobertas: ou com tabela, ou marcadas como sem cBenef', () => {
+    const all = [...CBENEF_UFS, ...CBENEF_NOT_USED.ufs].sort();
+    expect(all).toHaveLength(27);
+    expect(new Set(all).size).toBe(27);
+  });
+
+  it('a consulta avisa que a UF não usa o cBenef', () => {
+    expect(cbenefLookup('ma', 'MA000001', '2026-10-17')).toMatchObject({
+      uf: 'MA',
+      covered: false,
+      entry: null,
+      notUsed: { url: CBENEF_NOT_USED.url },
+    });
+    expect(cbenefLookup('PR', 'PR810205', '2026-10-17').notUsed).toBeNull();
+  });
+});
+
+describe('leitor da lista do Portal da NF-e (F3-27.c)', () => {
+  const pagina = (obs: string) =>
+    '<span class="tituloConteudo">Tabela cBenef x CST - Relacionada à Nota Técnica 2019.001</span>' +
+    '<p>Distrito Federal (Atualizada em 31/10/2025)</p><p><a href="x">https://df.exemplo</a></p>' +
+    '<p>Estado do Paraná</p><p><a href="y">https://pr.exemplo</a></p>' +
+    `<p>${obs}</p>`;
+
+  it('lê as UFs listadas e marca as demais como sem cBenef', () => {
+    const r = parseCbenefPortal(pagina('Obs: Os demais Estados não utilizam a tabela cBenef.'));
+    expect(r.updatedAt).toBe('2025-10-31');
+    expect(r.listed).toEqual([
+      { uf: 'DF', url: 'https://df.exemplo' },
+      { uf: 'PR', url: 'https://pr.exemplo' },
+    ]);
+    expect(r.notUsed).toHaveLength(25);
+    expect(ALL_UFS).toHaveLength(27);
+  });
+
+  it('para a geração se a observação oficial sumir', () => {
+    expect(() => parseCbenefPortal(pagina('Outras UFs: consulte a SEFAZ.'))).toThrow(
+      /não achei a observação/,
+    );
   });
 });

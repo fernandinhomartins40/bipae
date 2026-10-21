@@ -665,6 +665,14 @@
   "publishedAt": "2023-05-15",
   "downloadedAt": "2026-10-17"
  },
+ "cbenefPortalNfe": {
+  "file": "PortalNFe_Diversos_Tabela_cBenef_x_CST_2026-10-21.html.gz",
+  "title": "Tabela cBenef x CST relacionada à NT 2019.001 (lista de UFs que usam o cBenef, atualizada em 31/10/2025): \"Os demais Estados não utilizam a tabela cBenef\"",
+  "publisher": "Portal Nacional da NF-e (Documentos > Diversos)",
+  "page": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=",
+  "publishedAt": "2025-10-31",
+  "downloadedAt": "2026-10-21"
+ },
  "ajusteSinief0218": {
   "file": "CONFAZ_Ajuste_SINIEF_02-18_2026-10-17.htm",
   "title": "Ajuste SINIEF 02/18: operações com mercadorias destinadas a demonstração e mostruário (texto com as alterações)",

@@ -29,6 +29,7 @@ import { parseCbenefRs } from './cbenef-rs.mjs';
 import { parseCbenefGo } from './cbenef-go.mjs';
 import { parseCbenefDf, parseCbenefEs } from './cbenef-es.mjs';
 import { parseCbenefSp } from './cbenef-sp.mjs';
+import { parseCbenefPortal } from './cbenef-portal.mjs';
 import { parseDemonstration } from './demonstration.mjs';
 import { parseNfseApis, parseNfseIncidence, parseNfseServices } from './nfse-services.mjs';
 import { mgStReferences, parseMgNotes, parseMgParte2 } from './st-mg.mjs';
@@ -904,6 +905,28 @@ tables['cbenef.json'] = {
     },
   ],
 };
+
+// UFs que não usam o cBenef (F3-27.c), pela observação do Portal Nacional da NF-e. Se o portal
+// listar uma UF cuja tabela ainda não está no Bipaê (ou deixar de listar uma que está), a geração
+// para: a lista oficial e as tabelas precisam andar juntas.
+{
+  const portal = parseCbenefPortal(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.cbenefPortalNfe.file))).toString('utf8'),
+  );
+  const withTable = tables['cbenef.json'].tables.map((t) => t.uf).sort();
+  const listed = portal.listed.map((l) => l.uf).sort();
+  if (withTable.join() !== listed.join())
+    throw new Error(
+      `cBenef: o Portal da NF-e lista ${listed.join(', ')}, mas o Bipaê tem tabela de ${withTable.join(', ')}`,
+    );
+  tables['cbenef.json'].notUsed = {
+    ufs: portal.notUsed,
+    act: `Portal Nacional da NF-e, Tabela cBenef x CST da NT 2019.001 (atualizada em ${portal.updatedAt.split('-').reverse().join('/')}): "${portal.note}"`,
+    source: 'cbenefPortalNfe',
+    url: manifest.cbenefPortalNfe.page,
+    updatedAt: portal.updatedAt,
+  };
+}
 
 // De onde veio cada tabela, com o hash do arquivo: o teste confere que ninguém trocou a planilha
 // sem regerar os dados.

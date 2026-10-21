@@ -27,6 +27,7 @@ import { parseCbenefGo } from './cbenef-go.mjs';
 import { parseCbenefDf, parseCbenefEs } from './cbenef-es.mjs';
 import { parseDemonstration } from './demonstration.mjs';
 import { parseCbenefSp } from './cbenef-sp.mjs';
+import { parseCbenefPortal } from './cbenef-portal.mjs';
 import { readXlsx } from './xlsx.mjs';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -230,6 +231,19 @@ const PARSED = [
         qrHtml: p.nfceQrCode,
         chaveHtml: p.nfceUrlChave,
       }),
+  },
+  {
+    // Se uma UF nova passar a usar o cBenef (ou sair da lista), o aviso semanal mostra (F3-27.c).
+    title: 'UFs que usam o cBenef (Portal Nacional da NF-e, NT 2019.001)',
+    keys: ['cbenefPortalNfe'],
+    parse: (p) => {
+      const portal = parseCbenefPortal(p.cbenefPortalNfe);
+      return [
+        ['atualizada em', portal.updatedAt],
+        ...portal.listed.map((l) => [l.uf, l.url]),
+        ['não usam', portal.notUsed.join(' ')],
+      ];
+    },
   },
   {
     title: 'Endereços da NF-e (Portal Nacional da NF-e)',

@@ -34707,5 +34707,32 @@
     }
    ]
   }
- ]
+ ],
+ "notUsed": {
+  "ufs": [
+   "AC",
+   "AL",
+   "AM",
+   "AP",
+   "BA",
+   "CE",
+   "MA",
+   "MG",
+   "MS",
+   "MT",
+   "PA",
+   "PB",
+   "PE",
+   "PI",
+   "RN",
+   "RO",
+   "RR",
+   "SE",
+   "TO"
+  ],
+  "act": "Portal Nacional da NF-e, Tabela cBenef x CST da NT 2019.001 (atualizada em 31/10/2025): \"Os demais Estados não utilizam a tabela cBenef.\"",
+  "source": "cbenefPortalNfe",
+  "url": "https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus=",
+  "updatedAt": "2025-10-31"
+ }
 }
