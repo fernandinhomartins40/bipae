@@ -23,6 +23,8 @@ export interface CartLine {
   /** Item discount in cents (already validated against the line gross). */
   discountCents: number;
   isWeighable: boolean;
+  /** Quem lançou o item (F8-03), quando veio do pedido de um vendedor ou garçom. */
+  sellerId?: string | null;
 }
 
 export interface Cart {
@@ -100,6 +102,7 @@ export function addItem(
   item: CatalogItem,
   quantityMilli = 1000,
   priceCents?: number,
+  sellerId: string | null = null,
 ): Cart {
   if (!Number.isInteger(quantityMilli) || quantityMilli <= 0) {
     throw new CartError('Quantidade inválida.');
@@ -111,7 +114,9 @@ export function addItem(
       l.productId === item.id &&
       !l.isWeighable &&
       l.unitPriceCents === unitPriceCents &&
-      l.discountCents === 0,
+      l.discountCents === 0 &&
+      // Itens de vendedores diferentes ficam separados, para a comissão de cada um.
+      (l.sellerId ?? null) === sellerId,
   );
   if (existing && !item.isWeighable) {
     return setQuantity(cart, existing.line, existing.quantityMilli + quantityMilli);
@@ -130,6 +135,7 @@ export function addItem(
         quantityMilli,
         discountCents: 0,
         isWeighable: item.isWeighable,
+        ...(sellerId && { sellerId }),
       },
     ],
   };
@@ -263,6 +269,7 @@ export function totals(cart: Cart): Totals {
       grossCents: grosses[i]!,
       discountCents,
       totalCents: grosses[i]! - discountCents,
+      ...(l.sellerId && { sellerId: l.sellerId }),
     };
   });
   const discountCents = itemDiscountCents + saleDiscountCents + loyaltyDiscountCents;

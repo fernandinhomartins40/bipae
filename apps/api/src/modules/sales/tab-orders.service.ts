@@ -6,7 +6,7 @@ import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { assertStore, storeCondition } from '../../common/stores';
 import { withTenant, type Db, type Tx } from '../../db/client';
-import { products, stores, tabOrders, terminals, users } from '../../db/schema';
+import { products, sellers, stores, tabOrders, terminals, users } from '../../db/schema';
 
 /** Pedido pego por um caixa que não respondeu nesse tempo volta para a fila. */
 const CLAIM_TIMEOUT_MS = 2 * 60_000;
@@ -41,6 +41,11 @@ export class TabOrdersService {
         .select({ name: users.name })
         .from(users)
         .where(eq(users.id, ctx.userId));
+      // Quem lança e é vendedor (F8-03) leva a comissão dos itens do pedido.
+      const [seller] = await tx
+        .select({ id: sellers.id })
+        .from(sellers)
+        .where(and(eq(sellers.userId, ctx.userId), eq(sellers.active, true)));
       const [row] = await tx
         .insert(tabOrders)
         .values({
@@ -51,6 +56,7 @@ export class TabOrdersService {
           items: input.items,
           waiterId: ctx.userId,
           waiterName: waiter?.name ?? 'Garçom',
+          sellerId: seller?.id ?? null,
         })
         .returning();
       return this.view(row!, new Map(found.map((p) => [p.id, p.name])));
@@ -139,6 +145,7 @@ export class TabOrdersService {
       label: o.label,
       items: o.items,
       waiterName: o.waiterName,
+      sellerId: o.sellerId,
     }));
   }
 

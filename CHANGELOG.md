@@ -1,5 +1,14 @@
 # Changelog
 
+## [F8-03 Pedido do vendedor pelo celular] — 20/10/2026
+
+### Mudou
+- A tela **Garçom** virou **Pedidos e comandas** (menu "Pedidos pelo celular") e serve também à loja: escreva a mesa, a comanda ou o nome do cliente, escolha os itens e mande ao caixa. O cliente paga no caixa.
+
+### Adicionado
+- Quem está ligado a um vendedor vê "Você lança como …" e os itens do pedido contam na comissão dele.
+- No caixa, cada item vindo do celular mostra o vendedor. O mesmo produto lançado por vendedores diferentes fica em linhas separadas, para a comissão de cada um.
+
 ## [F8-02 Comissão por vendedor] — 20/10/2026
 
 ### Adicionado

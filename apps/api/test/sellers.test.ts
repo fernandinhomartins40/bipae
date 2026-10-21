@@ -1,4 +1,10 @@
-import type { SalesReport, SellerView, SyncPullResult, TerminalEvent } from '@bipae/domain';
+import type {
+  CommissionReport,
+  SalesReport,
+  SellerView,
+  SyncPullResult,
+  TerminalEvent,
+} from '@bipae/domain';
 import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { addItem, EMPTY_CART, PdvService } from '@bipae/pdv-core';
@@ -117,5 +123,70 @@ describe('vendedores (F8-01)', () => {
     const byLabel = Object.fromEntries(report.rows.map((r) => [r.label, r.revenueCents]));
     expect(byLabel).toEqual({ Ana: 10_000, 'Sem vendedor': 5000 });
     expect(report.rows.find((r) => r.label === 'Ana')?.key).toBe(ana.id);
+  });
+
+  it('pedido pelo celular de quem é vendedor chega ao caixa e a comissão é dele (F8-03)', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    expect((await admin.get('/sellers/me')).json()).toEqual({ seller: null });
+    const eu = (
+      await admin.post('/sellers', {
+        name: 'Dono Vendedor',
+        code: '3',
+        userId: dono.me.user.id,
+        commissionBp: 1000,
+      })
+    ).json() as SellerView;
+    expect((await admin.get('/sellers/me')).json().seller.id).toBe(eu.id);
+    const bolsa = (
+      await admin.post('/products', { name: 'Bolsa', priceCents: 8000, barcodes: ['78900011'] })
+    ).json();
+    const store = (await admin.get('/stores')).json()[0];
+    const terminal = (
+      await admin.post('/terminals', { storeId: store.id, name: 'Balcão', platform: 'web' })
+    ).json();
+    // O vendedor manda o pedido do cliente pelo celular.
+    expect(
+      (
+        await admin.post('/tabs/orders', {
+          storeId: store.id,
+          label: 'Cliente Joana',
+          items: [{ productId: bolsa.id, quantityMilli: 1000 }],
+        })
+      ).statusCode,
+    ).toBe(201);
+
+    const storage = createStorage(nodeSqliteDriver());
+    await migrateLocal(storage);
+    const pdv = new PdvService(storage, { terminalId: terminal.id, operatorId: dono.me.user.id });
+    const client = api(t.app, { ...dono.auth, 'x-bipae-terminal': terminal.id });
+    const transport: SyncTransport = {
+      async push(id, events: TerminalEvent[]) {
+        return (await client.post('/sync/events', { terminalId: id, events })).json();
+      },
+      async pull(cursor, _limit, pricingVersion, fiscalVersion) {
+        const q = new URLSearchParams({ limit: '50' });
+        if (cursor) q.set('cursor', cursor);
+        if (pricingVersion) q.set('pricingVersion', pricingVersion);
+        if (fiscalVersion) q.set('fiscalVersion', fiscalVersion);
+        return (await client.get(`/sync/pull?${q}`)).json() as SyncPullResult;
+      },
+    };
+    const sync = new SyncClient(storage, pdv, transport, terminal.id);
+    expect((await sync.sync()).lastError).toBeNull();
+    const [tab] = await pdv.listTabs();
+    expect(tab?.label).toBe('Cliente Joana');
+    const cart = await pdv.loadTab(tab!.id);
+    expect(cart.lines[0]?.sellerId).toBe(eu.id);
+    await pdv.openSession(0);
+    await pdv.completeSale(cart, [{ method: 'pix', receivedCents: 8000 }], {
+      discountLimitPercent: 10,
+    });
+    expect((await sync.sync()).lastError).toBeNull();
+
+    const r = (
+      await admin.get(`/commissions?from=${today()}&to=${today()}`)
+    ).json() as CommissionReport;
+    expect(r.rows).toMatchObject([{ sellerId: eu.id, baseCents: 8000, commissionCents: 800 }]);
   });
 });

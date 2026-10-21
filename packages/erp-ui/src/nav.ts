@@ -101,10 +101,10 @@ export const NAV_GROUPS: NavGroup[] = [
       },
       {
         to: '/garcom',
-        label: 'Garçom',
+        label: 'Pedidos pelo celular',
         icon: HandPlatter,
         permission: 'pos.sell',
-        keywords: 'mesa pedido celular restaurante',
+        keywords: 'garçom vendedor mesa pedido pré-venda cliente paga no caixa',
       },
       {
         to: '/cozinha',

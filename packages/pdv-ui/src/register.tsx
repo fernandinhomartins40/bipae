@@ -857,8 +857,17 @@ export function Register({
                           const own =
                             cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0;
                           const promo = priced.promotionDiscounts?.[item.line] ?? 0;
+                          // Item lançado pelo celular (F8-03): mostra quem vendeu.
+                          const sellerName = item.sellerId
+                            ? (sellers.find((v) => v.id === item.sellerId)?.name ?? null)
+                            : null;
                           return (
                             <>
+                              {sellerName && (
+                                <span className="block text-sm font-normal text-muted">
+                                  Vendedor: {sellerName}
+                                </span>
+                              )}
                               {own > 0 && (
                                 <span className="block text-sm font-normal text-muted">
                                   Desconto no item: {brl(own)}

@@ -3,6 +3,7 @@ import {
   formatBRL,
   type Page,
   type Product,
+  type SellerView,
   type TabOrderView,
   type TabView,
 } from '@bipae/domain';
@@ -23,9 +24,10 @@ const STATUS: Record<
 };
 
 /**
- * App do garçom (F5-08), feito para o celular: escolhe a mesa (uma comanda aberta ou uma nova),
- * busca os produtos e manda o pedido. O caixa junta à comanda na sincronização seguinte e os
- * pratos vão para a cozinha. O celular precisa de internet para mandar; o caixa, não.
+ * Pedidos e comandas pelo celular (F5-08 e F8-03): o garçom escolhe a mesa, o vendedor da loja
+ * escreve o nome do cliente; busca os produtos e manda o pedido. O caixa junta à comanda na
+ * sincronização seguinte e o cliente paga lá. Quem está ligado a um vendedor leva a comissão
+ * dos itens. O celular precisa de internet para mandar; o caixa, não.
  */
 export function WaiterPage() {
   const { api } = useApp();
@@ -47,6 +49,11 @@ export function WaiterPage() {
     queryFn: () => api.get<TabOrderView[]>(`/tabs/orders?storeId=${store}`),
     enabled: Boolean(store),
     refetchInterval: 5000,
+  });
+  const me = useQuery({
+    queryKey: ['sellers', 'me'],
+    queryFn: () => api.get<{ seller: SellerView | null }>('/sellers/me'),
+    staleTime: 5 * 60_000,
   });
   const [label, setLabel] = useState('');
   const [search, setSearch] = useState('');
@@ -92,7 +99,7 @@ export function WaiterPage() {
         label,
         items: cart.map((i) => ({ productId: i.product.id, quantityMilli: i.quantity * 1000 })),
       });
-      setMessage({ ok: true, text: `Pedido da ${label} enviado. O caixa recebe em instantes.` });
+      setMessage({ ok: true, text: `${label}: pedido enviado. O caixa recebe em instantes.` });
       setCart([]);
       await queryClient.invalidateQueries({ queryKey: ['tab-orders'] });
     } catch (e) {
@@ -105,9 +112,15 @@ export function WaiterPage() {
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-4">
       <PageHeader
-        title="Garçom"
-        description="Escolha a mesa, os itens e mande o pedido ao caixa."
+        title="Pedidos e comandas"
+        description="Escolha a mesa ou escreva o nome do cliente, os itens e mande ao caixa. O cliente paga lá."
       />
+      {me.data?.seller && (
+        <p className="text-sm" data-testid="waiter-seller">
+          Você lança como <strong>{me.data.seller.name}</strong> ({me.data.seller.code}): os itens
+          contam na sua comissão.
+        </p>
+      )}
       {(stores.data?.length ?? 0) > 1 && (
         <SelectField
           label="Loja"
@@ -118,10 +131,10 @@ export function WaiterPage() {
       )}
       <Card className="flex flex-col gap-3">
         <TextField
-          label="Mesa ou comanda"
+          label="Mesa, comanda ou nome do cliente"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          placeholder="Mesa 5"
+          placeholder="Mesa 5 ou Maria"
         />
         {(tabs.data?.length ?? 0) > 0 && (
           <div className="flex flex-wrap gap-2" aria-label="Comandas abertas">

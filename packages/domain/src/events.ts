@@ -336,6 +336,8 @@ export interface TabOrderForTerminal {
   label: string;
   items: { productId: string; quantityMilli: number }[];
   waiterName: string;
+  /** Vendedor ligado a quem lançou (F8-03): cada item entra no caixa com ele. */
+  sellerId?: string | null;
 }
 
 /**

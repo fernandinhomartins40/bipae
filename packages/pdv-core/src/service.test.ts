@@ -707,3 +707,52 @@ describe('vendedor na venda (F8-01)', () => {
     expect(payloads[1]).not.toHaveProperty('sellerId');
   });
 });
+
+describe('pedido do vendedor pelo celular (F8-03)', () => {
+  const ANA = uuidv7();
+  const BETO = uuidv7();
+
+  it('o mesmo produto de vendedores diferentes fica em linhas separadas', () => {
+    const p = product();
+    let cart = addItem(EMPTY_CART, p, 1000, undefined, ANA);
+    cart = addItem(cart, p, 1000, undefined, ANA);
+    cart = addItem(cart, p, 1000, undefined, BETO);
+    expect(cart.lines.map((l) => [l.sellerId, l.quantityMilli])).toEqual([
+      [ANA, 2000],
+      [BETO, 1000],
+    ]);
+  });
+
+  it('o pedido entra na comanda com o vendedor em cada item e a venda leva isso', async () => {
+    const camisa = product({ name: 'Camisa', priceCents: 5000 });
+    await pdv.applyCatalog([camisa]);
+    await pdv.applyTabOrders([
+      {
+        id: uuidv7(),
+        label: 'Maria',
+        items: [{ productId: camisa.id, quantityMilli: 1000 }],
+        waiterName: 'Ana',
+        sellerId: ANA,
+      },
+      {
+        id: uuidv7(),
+        label: 'maria',
+        items: [{ productId: camisa.id, quantityMilli: 1000 }],
+        waiterName: 'Beto',
+        sellerId: BETO,
+      },
+    ]);
+    const [tab] = await pdv.listTabs();
+    const cart = await pdv.loadTab(tab!.id);
+    expect(cart.lines.map((l) => l.sellerId)).toEqual([ANA, BETO]);
+
+    await pdv.openSession(0);
+    await pdv.completeSale(cart, [{ method: 'cash', receivedCents: 10_000 }], {
+      discountLimitPercent: 10,
+    });
+    const sale = (await pdv.pendingEvents()).find((e) => e.type === 'sale.completed')!;
+    expect(terminalEvent.safeParse(sale).success).toBe(true);
+    const items = (sale.payload as { items: { sellerId?: string }[] }).items;
+    expect(items.map((i) => i.sellerId)).toEqual([ANA, BETO]);
+  });
+});

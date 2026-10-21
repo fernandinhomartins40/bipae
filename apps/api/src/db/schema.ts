@@ -1259,6 +1259,8 @@ export const tabOrders = pgTable('tab_orders', {
   items: jsonb('items').$type<{ productId: string; quantityMilli: number }[]>().notNull(),
   waiterId: uuid('waiter_id').notNull(),
   waiterName: text('waiter_name').notNull(),
+  /** Vendedor ligado a quem lançou (F8-03). */
+  sellerId: uuid('seller_id'),
   status: text('status', { enum: ['pending', 'received', 'rejected'] })
     .notNull()
     .default('pending'),

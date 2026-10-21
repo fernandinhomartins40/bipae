@@ -1162,7 +1162,9 @@ export class PdvService {
           );
           await this.enqueue(tx, 'tab.opened', { tabId: id, label, openedAt: at });
         }
-        for (const line of lines) cart = addItem(cart, line.product, line.quantityMilli);
+        for (const line of lines) {
+          cart = addItem(cart, line.product, line.quantityMilli, undefined, order.sellerId ?? null);
+        }
         const tabLabel = (open?.label as string | undefined) ?? label;
         await tx.execute('UPDATE tabs SET data = ?, updated_at = ? WHERE id = ?', [
           JSON.stringify({ ...cart, tabLabel }),

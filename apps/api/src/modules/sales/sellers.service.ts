@@ -54,6 +54,17 @@ export class SellersService {
     }));
   }
 
+  /** O vendedor ligado a quem está usando o Bipaê, para o celular mostrar "você lança como". */
+  me(ctx: RequestContext): Promise<{ seller: SellerView | null }> {
+    return withTenant(this.db, ctx, async (tx) => {
+      const [row] = await tx
+        .select({ id: sellers.id })
+        .from(sellers)
+        .where(and(eq(sellers.userId, ctx.userId), eq(sellers.active, true)));
+      return { seller: row ? ((await this.rows(tx, row.id))[0] ?? null) : null };
+    });
+  }
+
   async save(ctx: RequestContext, id: string | null, body: unknown): Promise<SellerView> {
     const input = parse(sellerInput, body);
     const userId = input.userId ?? null;
@@ -136,6 +147,12 @@ export class SellersController {
   @RequirePermission('catalog.read')
   list(@Ctx() ctx: RequestContext) {
     return this.sellers.list(ctx);
+  }
+
+  @Get('me')
+  @RequirePermission('pos.sell')
+  me(@Ctx() ctx: RequestContext) {
+    return this.sellers.me(ctx);
   }
 
   @Post()

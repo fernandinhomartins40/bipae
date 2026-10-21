@@ -200,7 +200,7 @@ test('garçom: o pedido do celular entra na comanda do caixa (F5-08)', async ({ 
   const celular = await context.newPage();
   await celular.setViewportSize({ width: 390, height: 844 });
   await celular.goto('/garcom');
-  await celular.getByLabel('Mesa ou comanda').fill('Mesa 3');
+  await celular.getByLabel('Mesa, comanda ou nome do cliente').fill('Mesa 3');
   await celular.getByLabel('Buscar produto').fill('suco');
   await celular
     .getByRole('list', { name: 'Produtos encontrados' })
@@ -208,7 +208,7 @@ test('garçom: o pedido do celular entra na comanda do caixa (F5-08)', async ({ 
     .click();
   await celular.getByRole('button', { name: 'Mais Suco de laranja' }).click();
   await celular.getByRole('button', { name: /Mandar pedido · R\$ 18,00/ }).click();
-  await expect(celular.getByText('Pedido da Mesa 3 enviado.')).toBeVisible();
+  await expect(celular.getByText('Mesa 3: pedido enviado.')).toBeVisible();
   const hoje = celular.getByRole('region', { name: 'Pedidos de hoje' });
   await expect(hoje).toContainText('Esperando o caixa');
 
