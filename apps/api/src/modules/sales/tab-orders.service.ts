@@ -24,6 +24,11 @@ export class TabOrdersService {
     const input = parse(tabOrderInput, body);
     assertStore(ctx, input.storeId);
     return withTenant(this.db, ctx, async (tx) => {
+      // Mandado de novo pelo aparelho (F8-04): devolve o que já entrou, sem duplicar.
+      if (input.id) {
+        const [again] = await tx.select().from(tabOrders).where(eq(tabOrders.id, input.id));
+        if (again) return this.withNames(tx, again);
+      }
       const [store] = await tx
         .select({ id: stores.id })
         .from(stores)
@@ -49,7 +54,7 @@ export class TabOrdersService {
       const [row] = await tx
         .insert(tabOrders)
         .values({
-          id: uuidv7(),
+          id: input.id ?? uuidv7(),
           tenantId: ctx.tenantId,
           storeId: input.storeId,
           label: input.label.trim(),
@@ -58,9 +63,25 @@ export class TabOrdersService {
           waiterName: waiter?.name ?? 'Garçom',
           sellerId: seller?.id ?? null,
         })
+        .onConflictDoNothing()
         .returning();
-      return this.view(row!, new Map(found.map((p) => [p.id, p.name])));
+      if (!row) {
+        // Dois envios do mesmo pedido ao mesmo tempo: o outro já gravou.
+        const [same] = await tx.select().from(tabOrders).where(eq(tabOrders.id, input.id!));
+        if (!same) throw new AppError(409, 'duplicate_order', 'Esse pedido já foi enviado.');
+        return this.withNames(tx, same);
+      }
+      return this.view(row, new Map(found.map((p) => [p.id, p.name])));
     });
+  }
+
+  private async withNames(tx: Tx, row: typeof tabOrders.$inferSelect): Promise<TabOrderView> {
+    const ids = [...new Set(row.items.map((i) => i.productId))];
+    const names = await tx
+      .select({ id: products.id, name: products.name })
+      .from(products)
+      .where(inArray(products.id, ids));
+    return this.view(row, new Map(names.map((p) => [p.id, p.name])));
   }
 
   private view(

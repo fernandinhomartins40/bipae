@@ -11,8 +11,12 @@ import { Alert, Badge, Button, Card, PageHeader, SelectField, TextField } from '
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApp } from '../context';
+import { useOrderDevice } from '../use-order-device';
 
 const brl = (value: number) => formatBRL(cents(value));
+
+/** O que o pedido precisa de um produto (vem do aparelho ou da API). */
+type OrderProduct = Pick<Product, 'id' | 'name' | 'priceCents'>;
 
 const STATUS: Record<
   TabOrderView['status'],
@@ -55,18 +59,27 @@ export function WaiterPage() {
     queryFn: () => api.get<{ seller: SellerView | null }>('/sellers/me'),
     staleTime: 5 * 60_000,
   });
+  const od = useOrderDevice();
   const [label, setLabel] = useState('');
   const [search, setSearch] = useState('');
+  // Com o aparelho pronto, a busca é local e funciona sem internet (F8-04).
   const found = useQuery({
-    queryKey: ['waiter-products', search],
-    queryFn: () => api.get<Page<Product>>(`/products?q=${encodeURIComponent(search)}&limit=10`),
+    queryKey: ['waiter-products', search, Boolean(od.device), od.catalogAt],
+    queryFn: async (): Promise<OrderProduct[]> =>
+      od.device && od.catalogAt
+        ? od.device.search(search)
+        : (
+            await api.get<Page<Product>>(`/products?q=${encodeURIComponent(search)}&limit=10`)
+          ).items.filter((p) => p.active),
     enabled: search.trim().length >= 2,
+    // A busca no aparelho não depende de rede: não pode pausar quando a internet cai.
+    networkMode: od.device && od.catalogAt ? 'always' : 'online',
   });
-  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
+  const [cart, setCart] = useState<{ product: OrderProduct; quantity: number }[]>([]);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const add = (product: Product) => {
+  const add = (product: OrderProduct) => {
     setCart((c) => {
       const at = c.find((i) => i.product.id === product.id);
       return at
@@ -85,6 +98,37 @@ export function WaiterPage() {
 
   const send = async () => {
     setMessage(null);
+    if (od.device) {
+      setBusy(true);
+      try {
+        const { pending } = await od.enqueue({
+          storeId: store,
+          label,
+          items: cart.map((i) => ({
+            productId: i.product.id,
+            quantityMilli: i.quantity * 1000,
+            name: i.product.name,
+          })),
+        });
+        setCart([]);
+        if (!pending) {
+          setMessage({ ok: true, text: `${label}: pedido enviado. O caixa recebe em instantes.` });
+        } else if (pending.status === 'failed') {
+          setMessage({ ok: false, text: `${label}: o pedido não entrou. ${pending.error ?? ''}` });
+        } else {
+          setMessage({
+            ok: true,
+            text: `Sem internet: o pedido de ${label} ficou guardado no celular e sai sozinho quando a internet voltar.`,
+          });
+        }
+        await queryClient.invalidateQueries({ queryKey: ['tab-orders'] });
+      } catch (e) {
+        setMessage({ ok: false, text: (e as Error).message });
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     if (!navigator.onLine) {
       setMessage({
         ok: false,
@@ -150,6 +194,12 @@ export function WaiterPage() {
           </div>
         )}
       </Card>
+      {od.catalogAt && (
+        <p className="text-sm text-muted" data-testid="device-ready">
+          Pronto para vender sem internet: produtos atualizados às{' '}
+          {new Date(od.catalogAt).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}.
+        </p>
+      )}
       <Card className="flex flex-col gap-3">
         <TextField
           label="Buscar produto"
@@ -159,20 +209,18 @@ export function WaiterPage() {
         />
         {found.data && search.trim().length >= 2 && (
           <ul className="flex flex-col divide-y divide-border" aria-label="Produtos encontrados">
-            {found.data.items
-              .filter((p) => p.active)
-              .map((p) => (
-                <li key={p.id}>
-                  <button
-                    type="button"
-                    className="flex w-full justify-between gap-2 py-2 text-left"
-                    onClick={() => add(p)}
-                  >
-                    <span>{p.name}</span>
-                    <span className="tabular-nums">{brl(p.priceCents)}</span>
-                  </button>
-                </li>
-              ))}
+            {found.data.map((p) => (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  className="flex w-full justify-between gap-2 py-2 text-left"
+                  onClick={() => add(p)}
+                >
+                  <span>{p.name}</span>
+                  <span className="tabular-nums">{brl(p.priceCents)}</span>
+                </button>
+              </li>
+            ))}
           </ul>
         )}
         {cart.length > 0 && (
@@ -209,6 +257,32 @@ export function WaiterPage() {
           Mandar pedido{cart.length > 0 ? ` · ${brl(total)}` : ''}
         </Button>
       </Card>
+      {od.queue.length > 0 && (
+        <section aria-label="Guardados no celular" className="flex flex-col gap-2">
+          <h2 className="text-lg font-bold">Guardados no celular</h2>
+          {od.queue.map((o) => (
+            <Card key={o.id} className="flex flex-col gap-1">
+              <span className="flex items-center justify-between gap-2">
+                <span className="font-semibold">{o.label}</span>
+                <Badge tone={o.status === 'failed' ? 'danger' : 'warning'}>
+                  {o.status === 'failed' ? 'Não entrou' : 'Esperando internet'}
+                </Badge>
+              </span>
+              <span className="text-sm text-muted">
+                {o.items
+                  .map((i) => `${(i.quantityMilli / 1000).toLocaleString('pt-BR')} ${i.name}`)
+                  .join(', ')}
+              </span>
+              {o.error && <span className="text-sm text-danger">{o.error}</span>}
+              {o.status === 'failed' && (
+                <Button variant="ghost" onClick={() => void od.discard(o.id)}>
+                  Descartar
+                </Button>
+              )}
+            </Card>
+          ))}
+        </section>
+      )}
       {(orders.data?.length ?? 0) > 0 && (
         <section aria-label="Pedidos de hoje" className="flex flex-col gap-2">
           <h2 className="text-lg font-bold">Pedidos de hoje</h2>

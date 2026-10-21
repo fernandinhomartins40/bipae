@@ -1,5 +1,14 @@
 # Changelog
 
+## [F8-04 Pedidos pelo celular sem internet] — 20/10/2026
+
+### Adicionado
+- **Pedidos e comandas funcionam sem internet no celular.** O aparelho guarda os produtos (atualizados a cada 10 minutos e quando a rede volta) e acha pelo nome, sem acento, ou pelo código.
+  - A tela avisa: "Pronto para vender sem internet: produtos atualizados às 14:05".
+- **Pedido feito sem internet fica guardado no celular** e sai sozinho quando a rede volta, na ordem em que foi feito e uma vez só, mesmo que seja mandado de novo.
+  - A seção "Guardados no celular" mostra o que está esperando.
+  - Se o servidor recusar um pedido (por exemplo, produto inativo), ele aparece com o motivo e pode ser descartado.
+
 ## [F8-03 Pedido do vendedor pelo celular] — 20/10/2026
 
 ### Mudou

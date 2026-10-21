@@ -189,4 +189,26 @@ describe('vendedores (F8-01)', () => {
     ).json() as CommissionReport;
     expect(r.rows).toMatchObject([{ sellerId: eu.id, baseCents: 8000, commissionCents: 800 }]);
   });
+
+  it('o mesmo pedido mandado de novo pelo aparelho entra uma vez só (F8-04)', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const suco = (await admin.post('/products', { name: 'Suco', priceCents: 900 })).json();
+    const store = (await admin.get('/stores')).json()[0];
+    const id = '01920000-0000-7000-8000-00000000f804';
+    const body = {
+      id,
+      storeId: store.id,
+      label: 'Mesa 9',
+      items: [{ productId: suco.id, quantityMilli: 2000 }],
+    };
+    const [a, b] = await Promise.all([
+      admin.post('/tabs/orders', body),
+      admin.post('/tabs/orders', body),
+    ]);
+    const c = await admin.post('/tabs/orders', body);
+    for (const r of [a, b, c]) expect(r.json().id).toBe(id);
+    const orders = (await admin.get(`/tabs/orders?storeId=${store.id}`)).json();
+    expect(orders.filter((o: { id: string }) => o.id === id)).toHaveLength(1);
+  });
 });

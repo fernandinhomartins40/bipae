@@ -11,3 +11,4 @@ export * from './danfe-nfce';
 export * from './danfe-nfce-xml';
 export * from './scale';
 export * from './service';
+export * from './order-device';

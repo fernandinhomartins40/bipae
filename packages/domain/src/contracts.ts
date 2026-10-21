@@ -1831,6 +1831,8 @@ export interface CommissionReport {
 // ---------- Pedidos do garçom (F5-08) ----------
 
 export const tabOrderInput = z.object({
+  /** ID gerado no aparelho (F8-04): o mesmo pedido mandado de novo entra uma vez só. */
+  id: z.string().uuid().optional(),
   storeId: z.string().uuid('Escolha a loja'),
   label: z.string().trim().min(1, 'Informe a mesa ou a comanda').max(30, 'Até 30 letras'),
   items: z
