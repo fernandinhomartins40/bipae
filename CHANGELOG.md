@@ -1,5 +1,16 @@
 # Changelog
 
+## [F8-06 Caixa no celular e no tablet] — 20/10/2026
+
+### Mudou
+- **No celular e no tablet, o total e o botão Pagar ficam numa barra fixa embaixo**, no alcance do polegar. A lista de itens rola normalmente.
+- O cabeçalho do caixa não empurra mais a tela para o lado em celulares pequenos.
+- A lista de atalhos do teclado (F2 a F12) aparece só do notebook para cima. Os atalhos continuam funcionando em qualquer tela.
+- "1 item" no singular.
+
+### Corrigido
+- No tablet (cerca de 768 px), a lista de itens do caixa ficava sem altura e o produto bipado não aparecia.
+
 ## [F8-04 Pedidos pelo celular sem internet] — 20/10/2026
 
 ### Adicionado

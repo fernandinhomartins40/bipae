@@ -441,8 +441,8 @@ Pedido do dono em 20/10/2026: um app Android para o caixa e para vendas (vendedo
 - [x] F8-04 · Fila sem internet no aparelho de vendas: pedido de vendedor e de garçom gravados localmente com UUIDv7 e enviados quando a rede voltar, uma vez só — depende: F8-03
   - Feito em 20/10/2026: `OrderDevice` (`packages/pdv-core`) guarda no banco local do aparelho uma cópia dos produtos (busca sem acento e por código) e a fila de pedidos; envia em ordem, para sem rede e marca o recusado com o motivo; o servidor aceita o ID do aparelho uma vez só, inclusive com dois envios simultâneos. A tela mostra "Pronto para vender sem internet" e "Guardados no celular". E2E no celular com a rede desligada.
 - [ ] F8-05 · Tela "Vendas" para celular: buscar ou bipar pela câmera, montar pedido ou comanda, cliente opcional, mandar ao caixa e acompanhar; quem tem permissão de caixa pode fechar ali mesmo — depende: F8-03
-- [ ] F8-06 · Caixa em celular e tablet: layout do PDV de 360 px a 1280 px, sem perder atalhos nem a venda sem internet
-  - Pronto quando: E2E do caixa nas larguras de celular e tablet, com axe sem violações.
+- [x] F8-06 · Caixa em celular e tablet: layout do PDV de 360 px a 1280 px, sem perder atalhos nem a venda sem internet
+  - Feito em 20/10/2026: abaixo de 1024 px a página rola e o total com o Pagar ficam numa barra fixa embaixo; corrigida a lista de itens que ficava sem altura no tablet; cabeçalho quebra sem rolagem lateral; atalhos F2–F12 só do notebook para cima (continuam funcionando). E2E no celular com venda completa, sem rolagem lateral em 360, 390 e 768 px e axe sem violações.
 - [ ] F8-07 · App Android (Tauri 2): projeto Android gerado, dependências só de computador fora do Android, app único que abre em Caixa ou Vendas conforme a permissão, AAB na CI; envio à faixa de teste interno da Play Store — depende: F8-05, F8-06 · externo: E24
   - [ ] F8-07.a · Build Android na CI sem assinatura (APK de depuração como artefato)
   - [ ] F8-07.b · Assinatura e envio à Play Store com os secrets do E24

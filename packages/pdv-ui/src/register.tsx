@@ -696,9 +696,11 @@ export function Register({
   };
 
   return (
-    <div className="flex h-screen flex-col bg-bg">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2">
-        <div className="flex items-center gap-3">
+    // Celular e tablet (F8-06): a página rola e o total com o Pagar ficam fixos embaixo; do
+    // notebook para cima, tudo cabe numa tela só.
+    <div className="flex min-h-screen flex-col bg-bg lg:h-screen">
+      <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border bg-surface px-3 py-2 sm:px-4 [&_button]:whitespace-nowrap">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <Logo className="text-xl" />
           <span className="font-semibold">{context.terminal.name}</span>
           <span className="text-sm text-muted" data-testid="pdv-operator">
@@ -710,7 +712,7 @@ export function Register({
             </Button>
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <SyncBadge status={syncStatus} onSync={() => void onSyncNow()} />
           {selfMode ? (
             <Button variant="ghost" onClick={() => void stopSelfCheckout()}>
@@ -764,7 +766,7 @@ export function Register({
         </Alert>
       )}
 
-      <div className="grid flex-1 gap-4 overflow-hidden p-4 lg:grid-cols-[1fr_380px]">
+      <div className="grid flex-1 gap-4 p-3 pb-28 sm:p-4 sm:pb-28 lg:grid-cols-[1fr_380px] lg:overflow-hidden lg:pb-4">
         <section className="flex min-h-0 flex-col gap-3" aria-label="Itens da venda">
           <form
             onSubmit={(e) => {
@@ -811,7 +813,7 @@ export function Register({
               ))}
             </ul>
           )}
-          <div className="min-h-0 flex-1 overflow-y-auto rounded-ui border border-border bg-surface">
+          <div className="min-h-40 flex-1 overflow-y-auto rounded-ui border border-border bg-surface lg:min-h-0">
             {cart.lines.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center text-muted">
                 <p className="text-lg font-semibold text-text">Caixa livre</p>
@@ -903,7 +905,7 @@ export function Register({
         </section>
 
         <aside className="flex flex-col gap-3" aria-label="Resumo">
-          <div className="rounded-ui bg-primary p-5 text-primary-contrast">
+          <div className="hidden rounded-ui bg-primary p-5 text-primary-contrast lg:block">
             <p className="text-sm font-semibold uppercase tracking-wide opacity-90">Total</p>
             <p
               className="text-5xl font-extrabold tabular-nums"
@@ -918,7 +920,9 @@ export function Register({
                 Taxa de entrega: {brl(t.deliveryFeeCents)}
               </p>
             )}
-            <p className="mt-1 text-sm opacity-90">{cart.lines.length} itens</p>
+            <p className="mt-1 text-sm opacity-90">
+              {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
+            </p>
           </div>
           {(priced.appliedPromotions?.length ?? 0) > 0 && (
             <ul className="rounded-ui border border-success p-3 text-sm" aria-label="Promoções">
@@ -1031,14 +1035,16 @@ export function Register({
               Preços da tabela {priceTable}
             </p>
           )}
-          <Button
-            size="lg"
-            onClick={() => setDialog({ kind: 'payment' })}
-            disabled={cart.lines.length === 0}
-            aria-keyshortcuts="F10"
-          >
-            Pagar (F10)
-          </Button>
+          <div className="hidden lg:grid">
+            <Button
+              size="lg"
+              onClick={() => setDialog({ kind: 'payment' })}
+              disabled={cart.lines.length === 0}
+              aria-keyshortcuts="F10"
+            >
+              Pagar (F10)
+            </Button>
+          </div>
           {selfMode ? (
             <div className="grid grid-cols-2 gap-2">
               <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
@@ -1091,8 +1097,34 @@ export function Register({
         </aside>
       </div>
 
+      {/* Celular e tablet: o total e o Pagar sempre à mão, no alcance do polegar. */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-20 flex items-center gap-3 border-t border-border bg-surface p-3 shadow-lg lg:hidden"
+        aria-label="Total e pagamento"
+        role="region"
+      >
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+            Total · {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
+          </p>
+          <p
+            className="truncate text-2xl font-extrabold tabular-nums"
+            data-testid="pdv-total-mobile"
+          >
+            {brl(t.totalCents)}
+          </p>
+        </div>
+        <Button
+          size="lg"
+          onClick={() => setDialog({ kind: 'payment' })}
+          disabled={cart.lines.length === 0}
+        >
+          Pagar
+        </Button>
+      </div>
+
       <footer
-        className="hidden flex-wrap gap-x-4 gap-y-1 border-t border-border bg-surface px-4 py-2 text-sm text-muted md:flex"
+        className="hidden flex-wrap gap-x-4 gap-y-1 border-t border-border bg-surface px-4 py-2 text-sm text-muted lg:flex"
         aria-label="Atalhos do teclado"
       >
         {SHORTCUTS.map(([key, label]) => (
