@@ -540,12 +540,14 @@ function withSpDrinksBase(annexes) {
 // Substituição tributária por UF (F3-26): a MVA (IVA-ST) publicada por cada SEFAZ, por CEST e
 // NCM. É referência para a regra de ICMS da empresa, não regra do motor: a empresa confirma.
 // Paraná (F3-26.c): MVA da Resolução SEFA 571/2019 e o que saiu da ST pelo Anexo IX do RICMS/PR.
-async function importStPr(known) {
+async function importStPr(cest, known) {
   const pdf = async (key) => pdfLines(readFileSync(join(sourcesDir, manifest[key].file)));
   const res = parsePrRes571(await pdf('stPrRes571'), known);
   return prStReferences(res.tables, parsePrAnexoIX(anexoIXLines(await pdf('stPrAnexoIX'))), {
     resUrl: manifest.stPrRes571.page,
     anexoUrl: manifest.stPrAnexoIX.page,
+    articles: res.articles,
+    cestNames: new Map(cest.items.map((c) => [c.cest, c.description])),
   });
 }
 
@@ -576,7 +578,7 @@ function importStRs(cest, known) {
 
 async function importStReferences(cest) {
   const known = new Set(cest.items.map((c) => c.cest));
-  const pr = await importStPr(known);
+  const pr = await importStPr(cest, known);
   const mg = importStMg(known);
   const rs = importStRs(cest, known);
   // Santa Catarina (F3-26.c.SC): Anexo 1-A do RICMS/SC, atual e com as seções revogadas.

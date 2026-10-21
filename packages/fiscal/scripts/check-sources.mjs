@@ -330,14 +330,16 @@ async function checkPr() {
   const known = new Set(
     JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
   );
-  const build = async (resBytes, ricmsBytes) =>
-    prStRows(
-      prStReferences(
-        parsePrRes571(await pdfLines(resBytes), known).tables,
-        parsePrAnexoIX(anexoIXLines(await pdfLines(ricmsBytes))),
-        { resUrl: '', anexoUrl: '' },
-      ),
+  const build = async (resBytes, ricmsBytes) => {
+    const res = parsePrRes571(await pdfLines(resBytes), known);
+    return prStRows(
+      prStReferences(res.tables, parsePrAnexoIX(anexoIXLines(await pdfLines(ricmsBytes))), {
+        resUrl: '',
+        anexoUrl: '',
+        articles: res.articles,
+      }),
     );
+  };
   const file = (key) => readFileSync(join(sourcesDir, manifest[key].file));
   const old = await build(file('stPrRes571'), file('stPrAnexoIX'));
   const [res, ricms] = await Promise.all([

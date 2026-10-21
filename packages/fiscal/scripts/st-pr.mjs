@@ -295,7 +295,175 @@ export function parsePrRes571(lines, knownCest) {
   if (total < 400) {
     throw new Error(`Esperava a Resolução SEFA 571/2019 inteira; achei ${total} itens`);
   }
-  return { tables: result, unknownCest: [...unknownCest].sort() };
+  return { tables: result, articles: articleMvas(text), unknownCest: [...unknownCest].sort() };
+}
+
+/**
+ * Seções em que a resolução escreve a MVA no texto do artigo, uma por hipótese, para os produtos
+ * da tabela do Anexo IX (autopeças, no art. 5º, e veículos, no art. 29), em vez de uma tabela.
+ */
+function articleMvas(text) {
+  const out = [];
+  let section = null;
+  let hypothesis = null;
+  for (let i = 0; i < text.length; i++) {
+    const line = text[i];
+    const sec = /^SEÇÃO ([IVXL]+)$/.exec(line);
+    if (sec) {
+      hypothesis = null;
+      section = {
+        roman: sec[1],
+        name: (text[i + 1] ?? '').replace(/^DAS OPERAÇÕES COM /, ''),
+        revoked: /^Revogada a Seção/.test(text[i + 1] ?? ''),
+        article: null,
+      };
+      continue;
+    }
+    if (!section || section.revoked) continue;
+    const art = /^Art\. (\d+)\.º? Os percentuais correspondentes à MVA original/.exec(line);
+    if (art) {
+      const head = text.slice(i, i + 4).join(' ');
+      const annex = /art\. (\d+) do\s+Anexo IX/.exec(head);
+      section.article = { article: art[1], annexArticle: annex?.[1] ?? null, hypotheses: [] };
+      out.push({ section: section.roman, sectionName: section.name, ...section.article });
+      continue;
+    }
+    if (!section.article) continue;
+    const inc = /^([IVXL]+) - (\d{1,3}(?:,\d{1,2})?)% (.*)$/.exec(line);
+    if (inc) {
+      hypothesis = { inciso: inc[1], mva: inc[2].replace(',', '.'), text: [inc[3]] };
+      section.article.hypotheses.push(hypothesis);
+      continue;
+    }
+    if (/^(ITEM|POSIÇÃO) CEST|^Art\. |^Redação|^Nova redação/.test(line)) {
+      // Artigo com tabela: a MVA está nos itens, não no texto.
+      section.article.hypotheses.length = 0;
+      section.article = null;
+      hypothesis = null;
+      continue;
+    }
+    hypothesis?.text.push(line);
+  }
+  return out
+    .filter((a) => a.hypotheses.length > 0)
+    .map((a) => ({
+      ...a,
+      hypotheses: a.hypotheses.map((h) => ({
+        ...h,
+        // Tira o percentual por extenso: "(trinta e seis inteiros ... por cento), nas demais".
+        text: h.text
+          .join(' ')
+          .replace(/^\([^)]*\),?\s*/, '')
+          .replace(/\s+/g, ' ')
+          .trim(),
+      })),
+    }));
+}
+
+/**
+ * Tabelas de produtos de uma seção do Anexo IX (posição, CEST e NCM na redação atual). A redação
+ * antiga vem entre aspas ou, quando a posição foi revogada, com números que já passaram.
+ */
+function annexTables(body) {
+  const tables = [];
+  let inciso = null;
+  let table = null;
+  let item = null;
+  let history = false;
+  const close = () => {
+    item = null;
+  };
+  for (let i = 0; i < body.length; i++) {
+    let line = body[i];
+    // Às vezes o número da posição fica sozinho numa linha e o CEST vem na seguinte.
+    if (/^\d+(?:-[A-Z])?$/.test(line) && /^\d{2}\.\d{3}\.\d{2}\b/.test(body[i + 1] ?? '')) {
+      line = `${line} ${body[++i]}`;
+    }
+    const inc = /^([IVXL]+) - /.exec(line);
+    if (inc && !table) {
+      inciso = inc[1];
+      continue;
+    }
+    if (/^POSIÇÃO CEST N(CM|BM\/SH) DESCRIÇÃO/.test(line)) {
+      close();
+      table = { inciso, items: [], seen: new Set(), max: 0 };
+      tables.push(table);
+      history = false;
+      continue;
+    }
+    if (!table) continue;
+    // Fim da tabela: parágrafo, outro artigo ou o próximo inciso do caput.
+    if (/^(§ ?\d|Parágrafo único|Art\. )/.test(line) || (inc && !/^I+ - \(/.test(line))) {
+      close();
+      table = null;
+      inciso = inc ? inc[1] : null;
+      continue;
+    }
+    if (/produziu efeitos|^Redação (original|anterior)/.test(line)) {
+      close();
+      history = true;
+      continue;
+    }
+    const start = ITEM_START.exec(line);
+    if (start) {
+      const [, num, suffix, cestText, rest = ''] = start;
+      const key = `${num}${suffix ? `-${suffix}` : ''}`;
+      const cest = cestText.replace(/\./g, '');
+      const order = orderOf(num, suffix);
+      const previous = item ?? table.items[table.items.length - 1];
+      // Posição que passa de uma página para outra: o PDF repete a primeira linha dela.
+      if (previous && previous.item === key && previous.cest === cest) {
+        item = null;
+        continue;
+      }
+      if (history && (order <= table.max || table.seen.has(key))) {
+        close();
+        continue;
+      }
+      history = false;
+      table.seen.add(key);
+      table.max = Math.max(table.max, order);
+      const { ncm, rest: desc } = splitNcm(rest.split(/\s+/).filter(Boolean));
+      item = { item: key, cest, ncmTokens: ncm, description: desc };
+      table.items.push(item);
+      continue;
+    }
+    const revoked = /^(\d+)(?:-([A-Z]))?$/.exec(line);
+    if (revoked && /^Revogada a posição/.test(body[i + 1] ?? '')) {
+      close();
+      table.seen.add(`${revoked[1]}${revoked[2] ? `-${revoked[2]}` : ''}`);
+      table.max = Math.max(table.max, orderOf(revoked[1], revoked[2]));
+      continue;
+    }
+    if (!item) continue;
+    const { ncm, rest } = splitNcm(line.split(/\s+/));
+    if (item.description.length === 0 && ncm.length > 0 && rest.length === 0) {
+      item.ncmTokens.push(...ncm);
+      continue;
+    }
+    if (/^\(/.test(line) || /^"/.test(line)) {
+      close();
+      continue;
+    }
+    item.description.push(line);
+  }
+  return tables.map((t) => ({
+    inciso: t.inciso,
+    items: t.items
+      .map((i) => ({
+        item: i.item,
+        cest: i.cest,
+        ncms: [
+          ...new Set(
+            i.ncmTokens.filter((n) => !/^[Ee]$/.test(n)).map((n) => n.replace(/[.,*]/g, '')),
+          ),
+        ],
+        ncmText: i.ncmTokens.join(' ').replace(/\s+,/g, ','),
+        description: i.description.join(' ').replace(/\s+/g, ' ').trim(),
+      }))
+      // "Outras peças ... não relacionados" (NCM "-") não tem NCM para casar.
+      .filter((i) => i.ncms.length > 0),
+  }));
 }
 
 export { roman };
@@ -348,6 +516,7 @@ export function parsePrAnexoIX(lines) {
   }
   return sections.map(({ body, ...s }) => ({
     ...s,
+    tables: annexTables(body),
     // O CEST às vezes quebra no meio ("21.001." numa linha, "00" na outra).
     cests: [
       ...new Set(
@@ -376,12 +545,128 @@ const words = (name) =>
   );
 
 /**
+ * MVA escrita no artigo da resolução, uma por hipótese: a que tabela do Anexo IX cada hipótese se
+ * aplica e como ela aparece para a empresa. `check` confere que o texto oficial ainda diz isso.
+ * Cada hipótese vira uma referência separada; a empresa escolhe a dela, o Bipaê não escolhe.
+ */
+const ARTICLE_HYPOTHESES = {
+  V: {
+    I: {
+      check: /fidelidade de compra.*contrato de\s+fidelidade/,
+      name: 'Autopeças: saída do fabricante de veículos para a rede com índice ou contrato de fidelidade',
+    },
+    II: { check: /^nas demais hipóteses/, name: 'Autopeças: demais casos' },
+  },
+  XXVIII: {
+    // Art. 136 do Anexo IX: inciso II do caput (veículos do inciso I do art. 134 sem preço de
+    // tabela) e § 4º (veículos de duas rodas, inciso II do art. 134, sem preço de tabela).
+    I: {
+      check: /inciso II do .caput. do art\. 136/,
+      tables: ['I'],
+      name: 'Veículos automotores novos sem preço de tabela ou sugerido (art. 136, II, do Anexo IX)',
+    },
+    II: {
+      check: /§ 4º do art\. 136/,
+      tables: ['II'],
+      name: 'Veículos novos de duas rodas sem preço de tabela ou sugerido (art. 136, § 4º, do Anexo IX)',
+    },
+  },
+};
+
+/**
+ * Seções com MVA no texto do artigo que ainda não viram referência, e por quê. Seção nova que
+ * aparecer na resolução para a geração até alguém decidir.
+ */
+const ARTICLE_PENDING = {
+  // Art. 25: a hipótese depende da lista do PIS/COFINS (negativa, positiva ou neutra) e das
+  // exceções de NCM do texto, que a tabela do art. 125 do Anexo IX não separa item a item.
+  XXIV: 'farmacêuticos',
+};
+
+const ARTICLE_NOTES = {
+  V: 'MVA original do art. 5º da resolução, para os produtos do art. 28 do Anexo IX do RICMS/PR. A base é o preço sugerido ao público quando houver (art. 29 do Anexo IX); a MVA vale na falta dele. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.',
+  XXVIII:
+    'MVA original do art. 29 da resolução. Só vale quando não há preço de venda ao consumidor de tabela ou sugerido (art. 136 do Anexo IX); a MVA de 34% é para os veículos de duas rodas (§§ 3º e 4º); para triciclos, confira com a SEFA/PR. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.',
+};
+
+/** Referências das seções com MVA no artigo (autopeças e veículos), item a item do Anexo IX. */
+function articleReferences(articles, byAnnex, { resUrl, cestNames }) {
+  const references = [];
+  const annexes = [];
+  for (const a of articles) {
+    if (ARTICLE_PENDING[a.section]) continue;
+    const plan = ARTICLE_HYPOTHESES[a.section];
+    const ricms = byAnnex.get(a.section);
+    if (!plan || !ricms) {
+      throw new Error(
+        `Seção ${a.section} (${a.sectionName}) da Resolução SEFA 571/2019 tem MVA no artigo e não está mapeada`,
+      );
+    }
+    if (![...words(a.sectionName)].some((w) => words(ricms.name).has(w))) {
+      throw new Error(`Seção ${a.section} da Resolução SEFA 571/2019 não bate com o Anexo IX`);
+    }
+    const known = Object.keys(plan).sort().join(',');
+    const found = a.hypotheses
+      .map((h) => h.inciso)
+      .sort()
+      .join(',');
+    if (known !== found) {
+      throw new Error(
+        `Art. ${a.article} da Resolução SEFA 571/2019: hipóteses ${found}, esperava ${known}`,
+      );
+    }
+    const describe = (item) => ({
+      ...item,
+      description: cestNames?.get(item.cest) ?? item.description,
+    });
+    for (const h of a.hypotheses) {
+      const rule = plan[h.inciso];
+      if (!rule.check.test(h.text)) {
+        throw new Error(
+          `Art. ${a.article}, ${h.inciso}, da Resolução SEFA 571/2019 mudou: ${h.text}`,
+        );
+      }
+      const tables = ricms.tables.filter((t) => !rule.tables || rule.tables.includes(t.inciso));
+      if (tables.length === 0 || (rule.tables && tables.length !== rule.tables.length)) {
+        throw new Error(`Seção ${a.section} do Anexo IX sem a tabela da hipótese ${h.inciso}`);
+      }
+      references.push({
+        uf: 'PR',
+        segment: `${a.section}-${h.inciso}`,
+        segmentName: rule.name,
+        act: `Resolução SEFA 571/2019 (texto consolidado), art. ${a.article}, ${h.inciso}`,
+        source: 'stPrRes571',
+        url: resUrl,
+        validFrom: '2019-07-04',
+        validTo: ricms.excludedFrom ? day(ricms.excludedFrom, -1) : null,
+        note: ARTICLE_NOTES[a.section],
+        items: tables.flatMap((t) => t.items).map((i) => ({ ...describe(i), mva: h.mva })),
+      });
+    }
+    const items = ricms.tables.flatMap((t) => t.items);
+    const ncmsOf = new Map();
+    for (const i of items)
+      ncmsOf.set(i.cest, [...new Set([...(ncmsOf.get(i.cest) ?? []), ...i.ncms])]);
+    annexes.push({
+      annex: a.section,
+      name: sentence(ricms.name),
+      cests: [...ncmsOf.keys()].sort().map((cest) => ({ cest, ncms: ncmsOf.get(cest) })),
+      ...(ricms.excludedFrom && { excludedFrom: ricms.excludedFrom, excludedBy: ricms.excludedBy }),
+    });
+  }
+  return { references, annexes };
+}
+
+/**
  * Junta a resolução (MVA por item) e o Anexo IX (o que saiu da ST e quando) no formato de
  * st-references.json. Seção que o RICMS revogou deixa de sugerir MVA a partir da revogação, mesmo
  * que a resolução ainda não tenha sido atualizada (eletrônicos e celulares em 1º/03/2026).
+ * `articles` são as seções com MVA no texto do artigo; `cestNames`, a descrição do CEST no
+ * Convênio ICMS 142/18 (no PDF do Anexo IX a descrição às vezes cai fora do lugar).
  */
-export function prStReferences(res, anexo, { resUrl, anexoUrl }) {
+export function prStReferences(res, anexo, { resUrl, anexoUrl, articles = [], cestNames }) {
   const byAnnex = new Map(anexo.map((s) => [s.annex, s]));
+  const byArticle = articleReferences(articles, byAnnex, { resUrl, cestNames });
   const annexes = [];
   const references = [];
   const sections = [...new Set(res.map((t) => t.section))];
@@ -444,15 +729,16 @@ export function prStReferences(res, anexo, { resUrl, anexoUrl }) {
       });
     }
   }
+  const order = (r) => roman(r.annex ?? r.segment.split('-')[0]);
   return {
     segment: {
       uf: 'PR',
       act: 'RICMS/PR, Anexo IX (texto consolidado), com os itens da Resolução SEFA 571/2019',
       source: 'stPrAnexoIX',
       url: anexoUrl,
-      annexes,
+      annexes: [...annexes, ...byArticle.annexes].sort((a, b) => order(a) - order(b)),
     },
-    references,
+    references: [...references, ...byArticle.references].sort((a, b) => order(a) - order(b)),
   };
 }
 

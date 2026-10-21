@@ -183,6 +183,45 @@ describe('Paraná: Resolução SEFA 571/2019 e Anexo IX do RICMS/PR (F3-26.c)', 
     const chocolate = stStatusFor('PR', '17049010', '2026-10-17', ncmsOf);
     expect(chocolate.find((s) => s.cest === '1700100')).toMatchObject({ inSt: true });
   });
+
+  it('autopeças: as duas MVAs do art. 5º viram duas referências, a empresa escolhe a dela', () => {
+    // Espelho retrovisor (CEST 01.016.00, NCM 7009.10.00, posição 16 do art. 28 do Anexo IX).
+    const espelho = stReferencesFor('PR', '70091000', '2026-10-21').filter(
+      (m) => m.cest === '0101600',
+    );
+    expect(espelho.map((m) => m.mva).sort()).toEqual(['36.56', '71.78']);
+    expect(espelho.find((m) => m.mva === '71.78')).toMatchObject({
+      cest: '0101600',
+      segmentName: 'Autopeças: demais casos',
+      description: 'Espelhos retrovisores',
+    });
+    const autopecas = pr.filter((r) => r.segment.startsWith('V-'));
+    expect(autopecas.map((r) => r.segment)).toEqual(['V-I', 'V-II']);
+    for (const r of autopecas) {
+      // Posição 109 revogada em 2020 e a 125 ("outras peças", sem NCM) ficam de fora.
+      expect(r.items.map((i) => i.item)).not.toContain('109');
+      expect(r.items.map((i) => i.cest)).not.toContain('0111000');
+      expect(r.items.length).toBe(123);
+    }
+    // A redação atual da posição 41 (8421.32.00), não a original (8421.39.20).
+    const depurador = autopecas[0]!.items.find((i) => i.item === '41')!;
+    expect(depurador.ncms).toEqual(['84213200']);
+    const status = stStatusFor('PR', '70091000', '2026-10-21', ncmsOf);
+    expect(status.find((s) => s.cest === '0101600')).toMatchObject({ annex: 'V', inSt: true });
+  });
+
+  it('veículos: 30% pela tabela do inciso I e 34% para os de duas rodas (art. 29 da resolução)', () => {
+    const carro = stReferencesFor('PR', '87032310', '2026-10-21');
+    expect(carro.map((m) => m.mva)).toEqual(['30']);
+    expect(carro[0]!.segmentName).toMatch(/art\. 136, II/);
+    const moto = stReferencesFor('PR', '87112000', '2026-10-21');
+    expect(moto.map((m) => m.mva).sort()).toEqual(['34', '34']);
+    // Posição 32 (furgão elétrico, Convênio ICMS 174/2024), número e CEST em linhas separadas.
+    expect(stReferencesFor('PR', '87046000', '2026-10-21')[0]).toMatchObject({
+      cest: '2503200',
+      mva: '30',
+    });
+  });
 });
 
 describe('Minas Gerais: Anexo XV do RICMS/MG, Parte 2 (F3-26.c.MG)', () => {

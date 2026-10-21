@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.c.PR2 ST do Paraná: autopeças e veículos] — 21/10/2026
+
+### Adicionado
+- **Substituição tributária no Paraná: autopeças e veículos.** A MVA dessas seções vem escrita no artigo da Resolução SEFA 571/2019, uma por hipótese; agora cada hipótese aparece como sugestão separada, com os produtos do Anexo IX do RICMS/PR:
+  - Autopeças (123 itens): 36,56% na saída do fabricante de veículos para a rede com índice ou contrato de fidelidade; 71,78% nos demais casos.
+  - Veículos novos: 30% quando não há preço de tabela ou sugerido; 34% para os de duas rodas.
+  - A empresa escolhe a hipótese dela; o Bipaê não escolhe sozinho. Medicamentos e venda porta a porta ficam para a próxima etapa.
+
 ## [F3-33.h NF-e de devolução de venda] — 21/10/2026
 
 ### Adicionado
