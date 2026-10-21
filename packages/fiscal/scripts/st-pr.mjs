@@ -295,7 +295,197 @@ export function parsePrRes571(lines, knownCest) {
   if (total < 400) {
     throw new Error(`Esperava a Resolução SEFA 571/2019 inteira; achei ${total} itens`);
   }
-  return { tables: result, articles: articleMvas(text), unknownCest: [...unknownCest].sort() };
+  return {
+    tables: result,
+    articles: articleMvas(text),
+    doorToDoor: parseDoorToDoor(text),
+    unknownCest: [...unknownCest].sort(),
+  };
+}
+
+/**
+ * Venda porta a porta (Seção XX, art. 20): listas de NCM sem CEST, uma MVA por inciso (I a VIII),
+ * duas por item no inciso IX (saída da indústria e do atacado) e a do inciso X nos demais casos.
+ * A redação antiga vem entre aspas ou com números de item que já passaram.
+ */
+/** Palavras curtas de verdade, que não são pedaço de palavra quebrada no fim da linha. */
+const SHORT_WORDS = new Set([
+  'a',
+  'e',
+  'o',
+  'à',
+  'é',
+  'ou',
+  'os',
+  'as',
+  'em',
+  'de',
+  'da',
+  'do',
+  'no',
+  'na',
+  'se',
+  'um',
+]);
+
+function parseDoorToDoor(text) {
+  const start = text.findIndex(
+    (l, i) => l === 'SEÇÃO XX' && /PORTA-A-PORTA/.test(text.slice(i, i + 3).join(' ')),
+  );
+  if (start < 0) throw new Error('Resolução SEFA 571/2019 sem a Seção XX (porta a porta)');
+  const end = text.indexOf('SEÇÃO XXI', start);
+  const lines = text.slice(start, end);
+  const hypotheses = [];
+  let hyp = null;
+  let item = null;
+  let history = false;
+  let quoted = false;
+  let note = false;
+  let paren = false;
+  // MVA do inciso IX, às vezes com milhar: "1.138,0 27,4".
+  const PAIR =
+    /^(?:(.*\S)\s+)?(\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?) (\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?)$/;
+  const decimal = (t) => t.replace(/\./g, '').replace(',', '.');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (quoted) {
+      if (/"[.;]?$/.test(line)) quoted = false;
+      continue;
+    }
+    if (line.startsWith('"')) {
+      item = null;
+      quoted = !/"[.;]?$/.test(line.slice(1));
+      continue;
+    }
+    if (note) {
+      if (/[.:]$/.test(line)) note = false;
+      continue;
+    }
+    if (/^(Acrescentad|Nova redação|Redação|Revogad)/.test(line)) {
+      item = null;
+      if (/^(Redação|Revogad)/.test(line)) history = true;
+      note = !/[.:]$/.test(line);
+      continue;
+    }
+    const inc = /^([IVX]+) - (?:(\d{1,3}(?:,\d{1,2})?)% )?(.*)$/.exec(line);
+    if (inc) {
+      item = null;
+      history = false;
+      hyp = {
+        inciso: inc[1],
+        mva: inc[2]?.replace(',', '.') ?? null,
+        text: inc[3].replace(/^\([^)]*\),?\s*/, ''),
+        items: [],
+        seen: new Set(),
+        max: 0,
+      };
+      hypotheses.push(hyp);
+      continue;
+    }
+    if (!hyp) continue;
+    if (/^Parágrafo único/.test(line)) break;
+    if (/^ITEM NCM\/SH/.test(line)) {
+      item = null;
+      hyp.listed = true;
+      continue;
+    }
+    // O texto do inciso continua até o cabeçalho da lista.
+    if (!hyp.listed && hyp.items.length === 0) {
+      hyp.text += ` ${line}`;
+      continue;
+    }
+    if (/^(MVA PARA|SAÍDA D[AO]|INDÚSTRIA|ATACADO)$/.test(line)) continue;
+    const start = /^(\d+)(?:-([A-Z]))?\s+(\S+)(?:\s+(.*))?$/.exec(line);
+    if (start && NCM_TOKEN.test(start[3])) {
+      const [, num, suffix, ncm, rest = ''] = start;
+      const key = `${num}${suffix ? `-${suffix}` : ''}`;
+      const order = orderOf(num, suffix);
+      // Item que passa de uma página para outra: o PDF repete a primeira linha dele.
+      const last = hyp.items[hyp.items.length - 1];
+      if (last && last.item === key && last.ncmTokens[0] === ncm) {
+        item = last;
+        continue;
+      }
+      if (history && (order <= hyp.max || hyp.seen.has(key))) {
+        item = null;
+        continue;
+      }
+      history = false;
+      paren = false;
+      hyp.seen.add(key);
+      hyp.max = Math.max(hyp.max, order);
+      item = {
+        item: key,
+        ncmTokens: [ncm],
+        description: [],
+        notes: [],
+        mva: null,
+        wholesale: null,
+      };
+      hyp.items.push(item);
+      if (rest) {
+        // O resto da linha é descrição (e às vezes a MVA): lê de novo como se fosse a próxima.
+        lines[i] = rest;
+        i--;
+      }
+      continue;
+    }
+    const revoked = /^(\d+)(?:-([A-Z]))?$/.exec(line);
+    if (revoked && /^Revogado o item/.test(lines[i + 1] ?? '')) {
+      item = null;
+      hyp.seen.add(`${revoked[1]}${revoked[2] ? `-${revoked[2]}` : ''}`);
+      hyp.max = Math.max(hyp.max, orderOf(revoked[1], revoked[2]));
+      continue;
+    }
+    if (!item) continue;
+    if (/^\*código não está na$|^TIPI\/2017$/.test(line)) continue;
+    if (NCM_TOKEN.test(line) && item.description.length === 0) {
+      item.ncmTokens.push(line);
+      continue;
+    }
+    // Só o inciso IX tem MVA no item, no fim da última linha: "líquidos 378,95 57,29".
+    const pair = hyp.mva === null ? PAIR.exec(line) : null;
+    if (pair) {
+      if (pair[1] && !paren) item.description.push(pair[1]);
+      item.mva = decimal(pair[2]);
+      item.wholesale = decimal(pair[3]);
+      item = null;
+      continue;
+    }
+    // Referências a convênios e o CEST que alguns itens trazem: "(CEST -" / "28.033.00)".
+    if (/^\((Conv|Prot|CEST)/.test(line)) paren = true;
+    if (paren) item.notes.push(line);
+    else item.description.push(line);
+    if (paren && line.includes(')')) paren = false;
+  }
+  const problems = [];
+  const result = hypotheses.map(({ seen: _s, max: _m, listed: _l, ...h }) => ({
+    ...h,
+    text: h.text.replace(/\s+/g, ' ').trim(),
+    items: h.items.map((i) => {
+      if (h.mva === null && !i.mva) problems.push(`inciso ${h.inciso}, item ${i.item} sem MVA`);
+      return {
+        item: i.item,
+        ncms: [...new Set(i.ncmTokens.map((n) => n.replace(/[.*]/g, '')))],
+        ncmText: i.ncmTokens.join(' '),
+        // A coluna estreita quebra palavras ("Antiperspirante" / "s"): o pedaço curto gruda.
+        description: i.description
+          .reduce((text, part) => {
+            const head = /^([a-zà-ú]{1,2}|\))(?:\s|$)/.exec(part)?.[1];
+            const glue =
+              head && /[a-zà-ú]$/i.test(text) && (part === head || !SHORT_WORDS.has(head));
+            return glue ? text + part : `${text} ${part}`;
+          }, '')
+          .replace(/\s+/g, ' ')
+          .trim(),
+        cest:
+          /CEST -\s*(\d{2})\.(\d{3})\.(\d{2})/.exec(i.notes.join(' '))?.slice(1).join('') ?? null,
+        ...(h.mva === null && { mva: i.mva, wholesale: i.wholesale }),
+      };
+    }),
+  }));
+  if (problems.length > 0) throw new Error(`Porta a porta: ${problems.join('; ')}`);
+  return result;
 }
 
 /**
@@ -544,6 +734,12 @@ const words = (name) =>
       .filter((w) => w.length >= 5),
   );
 
+// Art. 25, I e II: soros, vacinas e medicamentos, com as exceções de NCM escritas no texto.
+const MEDICINES =
+  /30\.02 .*exceto nos itens 3002\.30 e 3002\.90.*30\.03 .*exceto no código 3003\.90\.56.*30\.04 .*exceto no código 3004\.90\.46\)/;
+const MEDICINES_NEGATIVE = new RegExp(`${MEDICINES.source} \\(LISTA NEGATIVA\\)`);
+const MEDICINES_POSITIVE = new RegExp(`${MEDICINES.source}.*\\(LISTA POSITIVA\\)`);
+
 /**
  * MVA escrita no artigo da resolução, uma por hipótese: a que tabela do Anexo IX cada hipótese se
  * aplica e como ela aparece para a empresa. `check` confere que o texto oficial ainda diz isso.
@@ -571,26 +767,96 @@ const ARTICLE_HYPOTHESES = {
       name: 'Veículos novos de duas rodas sem preço de tabela ou sugerido (art. 136, § 4º, do Anexo IX)',
     },
   },
+  // Medicamentos (art. 25): a MVA depende da lista do PIS/COFINS, que o CEST do Anexo IX já traz
+  // ("- positiva", "- negativa", "- neutra"), e do NCM, com as exceções escritas no texto.
+  XXIV: {
+    I: {
+      check: MEDICINES_NEGATIVE,
+      list: 'negativa',
+      ncm: {
+        include: ['3002', '3003', '3004'],
+        exclude: ['300230', '300290', '30039056', '30049046'],
+      },
+      name: 'Medicamentos, soros e vacinas da lista negativa (art. 25, I)',
+    },
+    II: {
+      check: MEDICINES_POSITIVE,
+      list: 'positiva',
+      ncm: {
+        include: ['3002', '3003', '3004'],
+        exclude: ['300230', '300290', '30039056', '30049046'],
+      },
+      name: 'Medicamentos, soros e vacinas da lista positiva (art. 25, II)',
+    },
+    III: {
+      check: /3006\.30 .*3005\.10\.10 .*3006\.60\.00 .*\(LISTA NEGATIVA\)/,
+      list: 'negativa',
+      ncm: { include: ['300630', '30051010', '30066000'], exclude: [] },
+      name: 'Contrastes, curativos e contraceptivos da lista negativa (art. 25, III)',
+    },
+    IV: {
+      check: /3006\.30 .*3005\.10\.10 .*3006\.60\.00 .*\(LISTA POSITIVA\)/,
+      list: 'positiva',
+      ncm: { include: ['300630', '30051010', '30066000'], exclude: [] },
+      name: 'Contrastes, curativos e contraceptivos da lista positiva (art. 25, IV)',
+    },
+    V: {
+      check: /§ 1º do art\. 125 .*exceto aqueles de que tratam os incisos I a IV.*\(LISTA NEUTRA\)/,
+      list: 'neutra',
+      name: 'Medicamentos e produtos da lista neutra (art. 25, V)',
+    },
+  },
 };
+
+/** Lista do PIS/COFINS escrita na descrição do CEST ("Medicamentos genérico - positiva"). */
+const pisCofinsList = (description) =>
+  /\b(positiva|negativa|neutra)\b/i.exec(description)?.[1].toLowerCase() ?? null;
+
+/**
+ * Posições de NCM do item que ficam dentro de `include` e fora de `exclude`, com as mais largas
+ * que der: "3004" sem o 3004.90.46 vira 3004.10, 3004.20, ..., 3004.90.1, ..., 3004.90.45, etc.
+ */
+function restrictNcms(ncms, { include, exclude }, codes) {
+  const allowed = (c) =>
+    include.some((p) => c.startsWith(p)) && !exclude.some((p) => c.startsWith(p));
+  const out = [];
+  const walk = (prefix, top) => {
+    const under = codes.filter((c) => c.startsWith(prefix));
+    if (under.length === 0) {
+      // Só o NCM escrito no item pode faltar na tabela NCM; um dígito a mais sem código não conta.
+      if (top && allowed(prefix)) out.push(prefix);
+      return;
+    }
+    const kept = under.filter(allowed);
+    if (kept.length === 0) return;
+    if (kept.length === under.length) {
+      out.push(prefix);
+      return;
+    }
+    for (const d of '0123456789') walk(prefix + d, false);
+  };
+  for (const p of ncms) walk(p, true);
+  return [...new Set(out)];
+}
 
 /**
  * Seções com MVA no texto do artigo que ainda não viram referência, e por quê. Seção nova que
  * aparecer na resolução para a geração até alguém decidir.
  */
-const ARTICLE_PENDING = {
-  // Art. 25: a hipótese depende da lista do PIS/COFINS (negativa, positiva ou neutra) e das
-  // exceções de NCM do texto, que a tabela do art. 125 do Anexo IX não separa item a item.
-  XXIV: 'farmacêuticos',
-};
+const ARTICLE_PENDING = {};
+
+/** Seções que o RICMS renomeou depois da resolução (Decreto 6.048/2024: "produtos farmacêuticos"). */
+const RENAMED_IN_ANNEX = { XXIV: /^MEDICAMENTOS$/ };
 
 const ARTICLE_NOTES = {
   V: 'MVA original do art. 5º da resolução, para os produtos do art. 28 do Anexo IX do RICMS/PR. A base é o preço sugerido ao público quando houver (art. 29 do Anexo IX); a MVA vale na falta dele. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.',
+  XXIV: 'MVA original do art. 25 da resolução. A base é o PMPF publicado pela SEFA/PR (art. 126 do Anexo IX); a MVA vale na falta dele (§ 1º). A lista (positiva, negativa ou neutra) é a do PIS/COFINS do produto, como no CEST. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.',
   XXVIII:
     'MVA original do art. 29 da resolução. Só vale quando não há preço de venda ao consumidor de tabela ou sugerido (art. 136 do Anexo IX); a MVA de 34% é para os veículos de duas rodas (§§ 3º e 4º); para triciclos, confira com a SEFA/PR. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.',
 };
 
 /** Referências das seções com MVA no artigo (autopeças e veículos), item a item do Anexo IX. */
-function articleReferences(articles, byAnnex, { resUrl, cestNames }) {
+function articleReferences(articles, byAnnex, { resUrl, cestNames, ncmCodes }) {
   const references = [];
   const annexes = [];
   for (const a of articles) {
@@ -602,7 +868,8 @@ function articleReferences(articles, byAnnex, { resUrl, cestNames }) {
         `Seção ${a.section} (${a.sectionName}) da Resolução SEFA 571/2019 tem MVA no artigo e não está mapeada`,
       );
     }
-    if (![...words(a.sectionName)].some((w) => words(ricms.name).has(w))) {
+    const renamed = RENAMED_IN_ANNEX[a.section]?.test(ricms.name) ?? false;
+    if (!renamed && ![...words(a.sectionName)].some((w) => words(ricms.name).has(w))) {
       throw new Error(`Seção ${a.section} da Resolução SEFA 571/2019 não bate com o Anexo IX`);
     }
     const known = Object.keys(plan).sort().join(',');
@@ -640,7 +907,18 @@ function articleReferences(articles, byAnnex, { resUrl, cestNames }) {
         validFrom: '2019-07-04',
         validTo: ricms.excludedFrom ? day(ricms.excludedFrom, -1) : null,
         note: ARTICLE_NOTES[a.section],
-        items: tables.flatMap((t) => t.items).map((i) => ({ ...describe(i), mva: h.mva })),
+        items: tables
+          .flatMap((t) => t.items)
+          .map(describe)
+          .filter((i) => !rule.list || pisCofinsList(i.description) === rule.list)
+          .map((i) => {
+            if (!rule.ncm) return i;
+            if (!ncmCodes) throw new Error('Faltou a tabela NCM para separar as hipóteses');
+            const ncms = restrictNcms(i.ncms, rule.ncm, ncmCodes);
+            return { ...i, ncms };
+          })
+          .filter((i) => i.ncms.length > 0)
+          .map((i) => ({ ...i, mva: h.mva })),
       });
     }
     const items = ricms.tables.flatMap((t) => t.items);
@@ -657,6 +935,122 @@ function articleReferences(articles, byAnnex, { resUrl, cestNames }) {
   return { references, annexes };
 }
 
+const DOOR_TO_DOOR_NOTE =
+  'MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).';
+
+/**
+ * Venda porta a porta (Seção XX): uma referência por inciso do art. 20 da resolução, e duas no
+ * inciso IX (saída da indústria e do atacado). O CEST vem do Anexo IX pelo NCM; quando a lista do
+ * Anexo IX tem mais de um CEST para o NCM, vale o de descrição mais parecida, e o produto que não
+ * está nela fica com o 28.999.00 ("outros produtos comercializados pelo sistema de marketing
+ * direto"), como manda o próprio Anexo IX.
+ */
+function doorToDoorReferences(doorToDoor, byAnnex, { resUrl, cestNames }) {
+  const ricms = byAnnex.get('XX');
+  if (!ricms || !/PORTA-A-PORTA/.test(ricms.name)) {
+    throw new Error('Seção XX do Anexo IX não é a da venda porta a porta');
+  }
+  if (!ricms.cests.includes('2899900')) {
+    throw new Error('Seção XX do Anexo IX sem o CEST 28.999.00');
+  }
+  const incisos = doorToDoor.map((h) => h.inciso).join(',');
+  if (incisos !== 'I,II,III,IV,V,VI,VII,VIII,IX,X') {
+    throw new Error(`Art. 20 da Resolução SEFA 571/2019: incisos ${incisos}`);
+  }
+  const listed = ricms.tables.flatMap((t) => t.items);
+  const nameOf = (cest, fallback) => cestNames?.get(cest) ?? fallback;
+  const overlap = (a, b) => [...words(a)].filter((w) => words(b).has(w)).length;
+  // CEST do item; empate quer dizer que o item cobre os dois (pincéis para artistas e para
+  // cosméticos, no 9603.30.00), e aí ele aparece uma vez com cada CEST.
+  const cestsFor = (item) => {
+    if (item.cest) return [item.cest];
+    const candidates = listed.filter((l) =>
+      l.ncms.some((n) => item.ncms.some((m) => m.startsWith(n) || n.startsWith(m))),
+    );
+    if (candidates.length === 0) return ['2899900'];
+    const scored = candidates.map((c) => ({
+      cest: c.cest,
+      score: overlap(item.description, nameOf(c.cest, c.description)),
+    }));
+    const best = Math.max(...scored.map((s) => s.score));
+    return [...new Set(scored.filter((s) => s.score === best).map((s) => s.cest))];
+  };
+  const base = (inciso, segmentName, items) => ({
+    uf: 'PR',
+    segment: `XX-${inciso}`,
+    segmentName,
+    act: `Resolução SEFA 571/2019 (texto consolidado), art. 20, ${inciso.split('-')[0]}`,
+    source: 'stPrRes571',
+    url: resUrl,
+    validFrom: '2019-07-04',
+    validTo: ricms.excludedFrom ? day(ricms.excludedFrom, -1) : null,
+    note: DOOR_TO_DOOR_NOTE,
+    items,
+  });
+  const references = [];
+  for (const h of doorToDoor) {
+    const what =
+      /seguintes (.+?),? classificad/.exec(h.text)?.[1] ??
+      /^nas operações com (.+?):?$/.exec(h.text)?.[1] ??
+      null;
+    const items = (i, mva) =>
+      cestsFor(i).map((cest) => ({
+        item: i.item,
+        cest,
+        ncms: i.ncms,
+        ncmText: i.ncmText,
+        description: i.description,
+        mva,
+      }));
+    if (h.inciso === 'X') {
+      if (!/^nos demais casos/.test(h.text)) throw new Error(`Art. 20, X, mudou: ${h.text}`);
+      references.push({
+        ...base('X', 'Venda porta a porta: demais produtos (art. 20, X)', []),
+        note: `${DOOR_TO_DOOR_NOTE} Só para o produto que não está nos incisos I a IX. Se ele também estiver em outra seção da ST, a base daquela seção prevalece (parágrafo único do art. 20).`,
+        items: listed.map((l) => ({
+          ...l,
+          description: nameOf(l.cest, l.description),
+          mva: h.mva,
+        })),
+      });
+      continue;
+    }
+    if (!what) throw new Error(`Art. 20, ${h.inciso}: não entendi o texto "${h.text}"`);
+    if (h.inciso === 'IX') {
+      for (const [key, label, field] of [
+        ['IX-industria', 'saída da indústria', 'mva'],
+        ['IX-atacado', 'saída do atacado', 'wholesale'],
+      ]) {
+        references.push(
+          base(
+            key,
+            `Venda porta a porta: ${what}, ${label} (art. 20, IX)`,
+            h.items.flatMap((i) => items(i, i[field])),
+          ),
+        );
+      }
+      continue;
+    }
+    references.push(
+      base(
+        h.inciso,
+        `Venda porta a porta: ${what} (art. 20, ${h.inciso})`,
+        h.items.flatMap((i) => items(i, h.mva)),
+      ),
+    );
+  }
+  const ncmsOf = new Map(listed.map((l) => [l.cest, l.ncms]));
+  const annex = {
+    annex: 'XX',
+    name: sentence(ricms.name),
+    cests: [...new Set([...listed.map((l) => l.cest), '2899900'])]
+      .sort()
+      .map((cest) => (ncmsOf.has(cest) ? { cest, ncms: ncmsOf.get(cest) } : { cest })),
+    ...(ricms.excludedFrom && { excludedFrom: ricms.excludedFrom, excludedBy: ricms.excludedBy }),
+  };
+  return { references, annexes: [annex] };
+}
+
 /**
  * Junta a resolução (MVA por item) e o Anexo IX (o que saiu da ST e quando) no formato de
  * st-references.json. Seção que o RICMS revogou deixa de sugerir MVA a partir da revogação, mesmo
@@ -664,9 +1058,18 @@ function articleReferences(articles, byAnnex, { resUrl, cestNames }) {
  * `articles` são as seções com MVA no texto do artigo; `cestNames`, a descrição do CEST no
  * Convênio ICMS 142/18 (no PDF do Anexo IX a descrição às vezes cai fora do lugar).
  */
-export function prStReferences(res, anexo, { resUrl, anexoUrl, articles = [], cestNames }) {
+export function prStReferences(
+  res,
+  anexo,
+  { resUrl, anexoUrl, articles = [], doorToDoor = null, cestNames, ncmCodes },
+) {
   const byAnnex = new Map(anexo.map((s) => [s.annex, s]));
-  const byArticle = articleReferences(articles, byAnnex, { resUrl, cestNames });
+  const byArticle = articleReferences(articles, byAnnex, { resUrl, cestNames, ncmCodes });
+  if (doorToDoor) {
+    const door = doorToDoorReferences(doorToDoor, byAnnex, { resUrl, cestNames });
+    byArticle.references.push(...door.references);
+    byArticle.annexes.push(...door.annexes);
+  }
   const annexes = [];
   const references = [];
   const sections = [...new Set(res.map((t) => t.section))];

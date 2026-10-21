@@ -5374,6 +5374,403 @@
      ]
     },
     {
+     "annex": "XX",
+     "name": "Mercadorias destinadas a revendedores para venda porta-a-porta",
+     "cests": [
+      {
+       "cest": "2800100",
+       "ncms": [
+        "33030010"
+       ]
+      },
+      {
+       "cest": "2800200",
+       "ncms": [
+        "33030020"
+       ]
+      },
+      {
+       "cest": "2800300",
+       "ncms": [
+        "33041000"
+       ]
+      },
+      {
+       "cest": "2800400",
+       "ncms": [
+        "33042010"
+       ]
+      },
+      {
+       "cest": "2800500",
+       "ncms": [
+        "33042090"
+       ]
+      },
+      {
+       "cest": "2800600",
+       "ncms": [
+        "33043000"
+       ]
+      },
+      {
+       "cest": "2800700",
+       "ncms": [
+        "33049100"
+       ]
+      },
+      {
+       "cest": "2800800",
+       "ncms": [
+        "33049910"
+       ]
+      },
+      {
+       "cest": "2800900",
+       "ncms": [
+        "33049990"
+       ]
+      },
+      {
+       "cest": "2801000",
+       "ncms": [
+        "33049990"
+       ]
+      },
+      {
+       "cest": "2801100",
+       "ncms": [
+        "33051000"
+       ]
+      },
+      {
+       "cest": "2801200",
+       "ncms": [
+        "33052000"
+       ]
+      },
+      {
+       "cest": "2801300",
+       "ncms": [
+        "33059000"
+       ]
+      },
+      {
+       "cest": "2801400",
+       "ncms": [
+        "33059000"
+       ]
+      },
+      {
+       "cest": "2801500",
+       "ncms": [
+        "33071000"
+       ]
+      },
+      {
+       "cest": "2801600",
+       "ncms": [
+        "33072010"
+       ]
+      },
+      {
+       "cest": "2801601",
+       "ncms": [
+        "33072010"
+       ]
+      },
+      {
+       "cest": "2801602",
+       "ncms": [
+        "33072010"
+       ]
+      },
+      {
+       "cest": "2801700",
+       "ncms": [
+        "33072090"
+       ]
+      },
+      {
+       "cest": "2801701",
+       "ncms": [
+        "33072090"
+       ]
+      },
+      {
+       "cest": "2801702",
+       "ncms": [
+        "33072090"
+       ]
+      },
+      {
+       "cest": "2801800",
+       "ncms": [
+        "33079000"
+       ]
+      },
+      {
+       "cest": "2801900",
+       "ncms": [
+        "33079000"
+       ]
+      },
+      {
+       "cest": "2802000",
+       "ncms": [
+        "34011190"
+       ]
+      },
+      {
+       "cest": "2802001",
+       "ncms": [
+        "34011190"
+       ]
+      },
+      {
+       "cest": "2802100",
+       "ncms": [
+        "34011900"
+       ]
+      },
+      {
+       "cest": "2802200",
+       "ncms": [
+        "34012010"
+       ]
+      },
+      {
+       "cest": "2802300",
+       "ncms": [
+        "34013000"
+       ]
+      },
+      {
+       "cest": "2802400",
+       "ncms": [
+        "48182000"
+       ]
+      },
+      {
+       "cest": "2802401",
+       "ncms": [
+        "48182000"
+       ]
+      },
+      {
+       "cest": "2802500",
+       "ncms": [
+        "82141000"
+       ]
+      },
+      {
+       "cest": "2802501",
+       "ncms": [
+        "82141000"
+       ]
+      },
+      {
+       "cest": "2802502",
+       "ncms": [
+        "82141000"
+       ]
+      },
+      {
+       "cest": "2802600",
+       "ncms": [
+        "82142000"
+       ]
+      },
+      {
+       "cest": "2802700",
+       "ncms": [
+        "96032900"
+       ]
+      },
+      {
+       "cest": "2802701",
+       "ncms": [
+        "96032900"
+       ]
+      },
+      {
+       "cest": "2802800",
+       "ncms": [
+        "96033000"
+       ]
+      },
+      {
+       "cest": "2802801",
+       "ncms": [
+        "96033000"
+       ]
+      },
+      {
+       "cest": "2802900",
+       "ncms": [
+        "96161000"
+       ]
+      },
+      {
+       "cest": "2803000",
+       "ncms": [
+        "96162000"
+       ]
+      },
+      {
+       "cest": "2803100",
+       "ncms": [
+        "42021"
+       ]
+      },
+      {
+       "cest": "2803200",
+       "ncms": [
+        "9615"
+       ]
+      },
+      {
+       "cest": "2803300",
+       "ncms": [
+        "39233090",
+        "39241000",
+        "39249000",
+        "40149090",
+        "7013"
+       ]
+      },
+      {
+       "cest": "2803400",
+       "ncms": [
+        "40149090"
+       ]
+      },
+      {
+       "cest": "2803500",
+       "ncms": [
+        "12119090"
+       ]
+      },
+      {
+       "cest": "2803600",
+       "ncms": [
+        "39262000"
+       ]
+      },
+      {
+       "cest": "2803700",
+       "ncms": [
+        "39264000"
+       ]
+      },
+      {
+       "cest": "2803800",
+       "ncms": [
+        "39269090"
+       ]
+      },
+      {
+       "cest": "2803900",
+       "ncms": [
+        "42022210"
+       ]
+      },
+      {
+       "cest": "2804000",
+       "ncms": [
+        "42022220"
+       ]
+      },
+      {
+       "cest": "2804100",
+       "ncms": [
+        "42022900"
+       ]
+      },
+      {
+       "cest": "2804200",
+       "ncms": [
+        "42023900"
+       ]
+      },
+      {
+       "cest": "2804300",
+       "ncms": [
+        "42029200"
+       ]
+      },
+      {
+       "cest": "2804400",
+       "ncms": [
+        "42029900"
+       ]
+      },
+      {
+       "cest": "2804500",
+       "ncms": [
+        "48192000"
+       ]
+      },
+      {
+       "cest": "2804600",
+       "ncms": [
+        "48194000"
+       ]
+      },
+      {
+       "cest": "2804700",
+       "ncms": [
+        "48211000"
+       ]
+      },
+      {
+       "cest": "2804800",
+       "ncms": [
+        "49111090"
+       ]
+      },
+      {
+       "cest": "2804900",
+       "ncms": [
+        "61159900"
+       ]
+      },
+      {
+       "cest": "2805000",
+       "ncms": [
+        "62171000"
+       ]
+      },
+      {
+       "cest": "2805100",
+       "ncms": [
+        "63026000"
+       ]
+      },
+      {
+       "cest": "2805200",
+       "ncms": [
+        "63079090"
+       ]
+      },
+      {
+       "cest": "2805300",
+       "ncms": [
+        "65069900"
+       ]
+      },
+      {
+       "cest": "2805400",
+       "ncms": [
+        "95059000"
+       ]
+      },
+      {
+       "cest": "2899900"
+      }
+     ]
+    },
+    {
      "annex": "XXI",
      "name": "Pneumáticos, câmaras de ar e protetores",
      "cests": [
@@ -6456,6 +6853,216 @@
      ],
      "excludedFrom": "2026-03-01",
      "excludedBy": "Decreto 12.828/2026"
+    },
+    {
+     "annex": "XXIV",
+     "name": "Medicamentos",
+     "cests": [
+      {
+       "cest": "1300100",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300101",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300102",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300200",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300201",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300202",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300300",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300301",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300302",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300400",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300401",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300402",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300500",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300501",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300502",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300503",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300504",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300505",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300600",
+       "ncms": [
+        "2936"
+       ]
+      },
+      {
+       "cest": "1300700",
+       "ncms": [
+        "300630"
+       ]
+      },
+      {
+       "cest": "1300701",
+       "ncms": [
+        "300630"
+       ]
+      },
+      {
+       "cest": "1300800",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300801",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300900",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300901",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1301000",
+       "ncms": [
+        "3005"
+       ]
+      },
+      {
+       "cest": "1301001",
+       "ncms": [
+        "3005"
+       ]
+      },
+      {
+       "cest": "1301100",
+       "ncms": [
+        "3005"
+       ]
+      },
+      {
+       "cest": "1301300",
+       "ncms": [
+        "40141000"
+       ]
+      },
+      {
+       "cest": "1301400",
+       "ncms": [
+        "901831"
+       ]
+      },
+      {
+       "cest": "1301500",
+       "ncms": [
+        "9018321"
+       ]
+      },
+      {
+       "cest": "1301600",
+       "ncms": [
+        "39269090"
+       ]
+      }
+     ]
     },
     {
      "annex": "XXV",
@@ -62724,6 +63331,3401 @@
   },
   {
    "uf": "PR",
+   "segment": "XX-I",
+   "segmentName": "Venda porta a porta: acessórios (art. 20, I)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, I",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2899900",
+     "ncms": [
+      "39232110"
+     ],
+     "ncmText": "3923.21.10",
+     "description": "Sacos, bolsas e cartuchos, de polímeros de etileno, de capacidade 3 inferior ou igual a 1000 cm",
+     "mva": "31.8"
+    },
+    {
+     "item": "2",
+     "cest": "2803100",
+     "ncms": [
+      "42021210"
+     ],
+     "ncmText": "4202.12.10",
+     "description": "Malas, maletas e pastas, de plástico",
+     "mva": "31.8"
+    },
+    {
+     "item": "3",
+     "cest": "2803100",
+     "ncms": [
+      "42021220"
+     ],
+     "ncmText": "4202.12.20",
+     "description": "Malas, maletas e pastas, de matérias têxteis",
+     "mva": "31.8"
+    },
+    {
+     "item": "4",
+     "cest": "2803100",
+     "ncms": [
+      "42021900"
+     ],
+     "ncmText": "4202.19.00",
+     "description": "Malas, maletas e pastas, de outras matérias",
+     "mva": "31.8"
+    },
+    {
+     "item": "5",
+     "cest": "2899900",
+     "ncms": [
+      "42023100"
+     ],
+     "ncmText": "4202.31.00",
+     "description": "Artigos de bolsos/bolsas, de couro natural ou reconstituído",
+     "mva": "31.8"
+    },
+    {
+     "item": "6",
+     "cest": "2899900",
+     "ncms": [
+      "42023200"
+     ],
+     "ncmText": "4202.32.00",
+     "description": "Artigos de bolsos/bolsas, de folhas de plásticos ou matérias têxteis",
+     "mva": "31.8"
+    },
+    {
+     "item": "7",
+     "cest": "2899900",
+     "ncms": [
+      "48191000"
+     ],
+     "ncmText": "4819.10.00",
+     "description": "Caixas de papel ou cartão, ondulados (canelados)",
+     "mva": "31.8"
+    },
+    {
+     "item": "8",
+     "cest": "2899900",
+     "ncms": [
+      "52113900"
+     ],
+     "ncmText": "5211.39.00",
+     "description": "Outros tecidos de algodão que contenham menos de 85%, em peso, de algodão, tinto ou fibra sintética ou artificial, com peso 2 superior a 200 g/m",
+     "mva": "31.8"
+    },
+    {
+     "item": "9",
+     "cest": "2899900",
+     "ncms": [
+      "52114100"
+     ],
+     "ncmText": "5211.41.00",
+     "description": "Tecido de algodão que contenha menos de 85%, em peso, de algodão, color/fibra.sintética ou artificial em ponto de tafetá, com 2 peso superior a 200 g/m",
+     "mva": "31.8"
+    },
+    {
+     "item": "10",
+     "cest": "2899900",
+     "ncms": [
+      "61179000"
+     ],
+     "ncmText": "6117.90.00",
+     "description": "Partes de vestuários ou seus acessórios, de malha",
+     "mva": "31.8"
+    },
+    {
+     "item": "11",
+     "cest": "2899900",
+     "ncms": [
+      "71090000"
+     ],
+     "ncmText": "7109.00.00",
+     "description": "Metais comuns ou prata, folheados ou chapeados (plaquê) de ouro, em formas brutas ou semimanufaturadas",
+     "mva": "31.8"
+    },
+    {
+     "item": "12",
+     "cest": "2899900",
+     "ncms": [
+      "71131100"
+     ],
+     "ncmText": "7113.11.00",
+     "description": "Artefatos de joalharia, de prata, mesmo folheados de metais preciosos",
+     "mva": "31.8"
+    },
+    {
+     "item": "13",
+     "cest": "2899900",
+     "ncms": [
+      "71131900"
+     ],
+     "ncmText": "7113.19.00",
+     "description": "Artefatos de joalheria de outros metais preciosos, mesmo revestidos, folheados ou chapeados de metais preciosos (plaquê)",
+     "mva": "31.8"
+    },
+    {
+     "item": "14",
+     "cest": "2899900",
+     "ncms": [
+      "71132000"
+     ],
+     "ncmText": "7113.20.00",
+     "description": "Artefatos de joalharia, de metais comuns folheados de metais preciosos",
+     "mva": "31.8"
+    },
+    {
+     "item": "15",
+     "cest": "2899900",
+     "ncms": [
+      "71162090"
+     ],
+     "ncmText": "7116.20.90",
+     "description": "Outras obras de pedras preciosas/semi, sintéticas/reconstituídas",
+     "mva": "31.8"
+    },
+    {
+     "item": "16",
+     "cest": "2899900",
+     "ncms": [
+      "71171900"
+     ],
+     "ncmText": "7117.19.00",
+     "description": "Outros bijuterias de metais comuns",
+     "mva": "31.8"
+    },
+    {
+     "item": "17",
+     "cest": "2899900",
+     "ncms": [
+      "71179000"
+     ],
+     "ncmText": "7117.90.00",
+     "description": "Outros bijuterias",
+     "mva": "31.8"
+    },
+    {
+     "item": "18",
+     "cest": "2899900",
+     "ncms": [
+      "83089090"
+     ],
+     "ncmText": "8308.90.90",
+     "description": "Outros fechos, armações com fecho, fivelas, fivelas-fecho, grampos, colchetes, ilhoses e artefatos semelhantes, de metais comuns, para vestuário, calçados, toldos, bolsas, artigos de viagem e para quaisquer outras confecções ou equipamentos; rebites tubulares ou de haste fendida, de metais comuns; contas e lantejoulas, de metais comuns",
+     "mva": "31.8"
+    },
+    {
+     "item": "19",
+     "cest": "2899900",
+     "ncms": [
+      "90041000"
+     ],
+     "ncmText": "9004.10.00",
+     "description": "Óculos de sol",
+     "mva": "31.8"
+    },
+    {
+     "item": "20",
+     "cest": "2899900",
+     "ncms": [
+      "91021110"
+     ],
+     "ncmText": "9102.11.10",
+     "description": "Relógio de pulso, com caixa de metal comum, funcionando eletricamente, de mostrador mecânico",
+     "mva": "31.8"
+    },
+    {
+     "item": "21",
+     "cest": "2899900",
+     "ncms": [
+      "91021210"
+     ],
+     "ncmText": "9102.12.10",
+     "description": "Relógio de pulso, com caixa de metal comum, funcionando eletricamente, de mostrador optoeletrônico",
+     "mva": "31.8"
+    },
+    {
+     "item": "22",
+     "cest": "2899900",
+     "ncms": [
+      "91021210"
+     ],
+     "ncmText": "9102.12.10",
+     "description": "Relógio de pulso, com caixa de plático, funcionando eletricamente, de mostrador optoeletrônico",
+     "mva": "31.8"
+    },
+    {
+     "item": "23",
+     "cest": "2899900",
+     "ncms": [
+      "91022100"
+     ],
+     "ncmText": "9102.21.00",
+     "description": "Relógio de pulso, de corda automático",
+     "mva": "31.8"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-II",
+   "segmentName": "Venda porta a porta: vestuários (art. 20, II)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, II",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2899900",
+     "ncms": [
+      "42033000"
+     ],
+     "ncmText": "4203.30.00",
+     "description": "Cintos, cinturões e bandoleiras ou talabartes de couro natural ou reconstituído",
+     "mva": "27.6"
+    },
+    {
+     "item": "2",
+     "cest": "2899900",
+     "ncms": [
+      "52114290"
+     ],
+     "ncmText": "5211.42.90",
+     "description": "Outros tecidos de algodão que contenham menos de 85%, em peso, de algodão, denim/fibra sintética ou artificial com peso 2 superior a 200 g/m",
+     "mva": "27.6"
+    },
+    {
+     "item": "3",
+     "cest": "2899900",
+     "ncms": [
+      "55151900"
+     ],
+     "ncmText": "5515.19.00",
+     "description": "Outros tecidos de fibras de poliéster",
+     "mva": "27.6"
+    },
+    {
+     "item": "4",
+     "cest": "2899900",
+     "ncms": [
+      "58062000"
+     ],
+     "ncmText": "5806.20.00",
+     "description": "Outras fitas que contenham, em peso, 5% ou mais de fios de elastômeros/borracha",
+     "mva": "27.6"
+    },
+    {
+     "item": "5",
+     "cest": "2899900",
+     "ncms": [
+      "61034200"
+     ],
+     "ncmText": "6103.42.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de algodão, de uso masculino",
+     "mva": "27.6"
+    },
+    {
+     "item": "6",
+     "cest": "2899900",
+     "ncms": [
+      "61034300"
+     ],
+     "ncmText": "6103.43.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de fibras sintéticas, de uso masculino",
+     "mva": "27.6"
+    },
+    {
+     "item": "7",
+     "cest": "2899900",
+     "ncms": [
+      "61042200"
+     ],
+     "ncmText": "6104.22.00",
+     "description": "Conjuntos de malha de algodão, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "8",
+     "cest": "2899900",
+     "ncms": [
+      "61043200"
+     ],
+     "ncmText": "6104.32.00",
+     "description": "Blazers de malha de algodão, de uso feminino Vestidos de malha de",
+     "mva": "27.6"
+    },
+    {
+     "item": "9",
+     "cest": "2899900",
+     "ncms": [
+      "61044200"
+     ],
+     "ncmText": "6104.42.00",
+     "description": "Vestidos de malha de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "10",
+     "cest": "2899900",
+     "ncms": [
+      "61044300"
+     ],
+     "ncmText": "6104.43.00",
+     "description": "Vestidos de malha de fibras sintéticas",
+     "mva": "27.6"
+    },
+    {
+     "item": "11",
+     "cest": "2899900",
+     "ncms": [
+      "61044900"
+     ],
+     "ncmText": "6104.49.00",
+     "description": "Vestidos de malha de outras matérias têxteis",
+     "mva": "27.6"
+    },
+    {
+     "item": "12",
+     "cest": "2899900",
+     "ncms": [
+      "61045900"
+     ],
+     "ncmText": "6104.59.00",
+     "description": "Saias e saias-calças, de malha de outras matérias têxteis",
+     "mva": "27.6"
+    },
+    {
+     "item": "13",
+     "cest": "2899900",
+     "ncms": [
+      "61046200"
+     ],
+     "ncmText": "6104.62.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de malha de algodão, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "14",
+     "cest": "2899900",
+     "ncms": [
+      "61046300"
+     ],
+     "ncmText": "6104.63.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de malha de fibras sintéticas, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "15",
+     "cest": "2899900",
+     "ncms": [
+      "61046900"
+     ],
+     "ncmText": "6104.69.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de malha de outra matéria têxtil, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "16",
+     "cest": "2899900",
+     "ncms": [
+      "61051000"
+     ],
+     "ncmText": "6105.10.00",
+     "description": "Camisas de malha de algodão, de uso masculino",
+     "mva": "27.6"
+    },
+    {
+     "item": "17",
+     "cest": "2899900",
+     "ncms": [
+      "61052000"
+     ],
+     "ncmText": "6105.20.00",
+     "description": "Camisas de malha de fibra sintética, artificial, de uso masculino",
+     "mva": "27.6"
+    },
+    {
+     "item": "18",
+     "cest": "2899900",
+     "ncms": [
+      "61061000"
+     ],
+     "ncmText": "6106.10.00",
+     "description": "Camisas, blusas, blusas chemisiers, de malha de algodão, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "19",
+     "cest": "2899900",
+     "ncms": [
+      "61062000"
+     ],
+     "ncmText": "6106.20.00",
+     "description": "Camisas, blusas, blusas chemisiers, de malha de fibras sintéticas ou artificiais, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "20",
+     "cest": "2899900",
+     "ncms": [
+      "61069000"
+     ],
+     "ncmText": "6106.90.00",
+     "description": "Camisas, blusas, blusas chemisiers, de malha de outras matérias têxteis, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "21",
+     "cest": "2899900",
+     "ncms": [
+      "61071100"
+     ],
+     "ncmText": "6107.11.00",
+     "description": "Cuecas e ceroulas, de malha de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "22",
+     "cest": "2899900",
+     "ncms": [
+      "61071200"
+     ],
+     "ncmText": "6107.12.00",
+     "description": "Cuecas e ceroulas, de malha de fibras sintéticas/artificiais",
+     "mva": "27.6"
+    },
+    {
+     "item": "23",
+     "cest": "2899900",
+     "ncms": [
+      "61072900"
+     ],
+     "ncmText": "6107.29.00",
+     "description": "Camisolões e pijamas de outras matérias têxteis, de uso masculino",
+     "mva": "27.6"
+    },
+    {
+     "item": "24",
+     "cest": "2899900",
+     "ncms": [
+      "61081100"
+     ],
+     "ncmText": "6108.11.00",
+     "description": "Combinações e anáguas, de malha de fibra sintética/artificial",
+     "mva": "27.6"
+    },
+    {
+     "item": "25",
+     "cest": "2899900",
+     "ncms": [
+      "61082100"
+     ],
+     "ncmText": "6108.21.00",
+     "description": "Calcinhas de malha de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "26",
+     "cest": "2899900",
+     "ncms": [
+      "61082200"
+     ],
+     "ncmText": "6108.22.00",
+     "description": "Calcinhas de malha de fibras sintéticas ou artificiais",
+     "mva": "27.6"
+    },
+    {
+     "item": "27",
+     "cest": "2899900",
+     "ncms": [
+      "61082900"
+     ],
+     "ncmText": "6108.29.00",
+     "description": "Calcinhas de malha de outras matérias têxteis",
+     "mva": "27.6"
+    },
+    {
+     "item": "28",
+     "cest": "2899900",
+     "ncms": [
+      "61083100"
+     ],
+     "ncmText": "6108.31.00",
+     "description": "Camisolas e pijamas de malha de algodão, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "29",
+     "cest": "2899900",
+     "ncms": [
+      "61083200"
+     ],
+     "ncmText": "6108.32.00",
+     "description": "Camisolas e pijamas de malha de fibras sintéticas ou artificiais, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "30",
+     "cest": "2899900",
+     "ncms": [
+      "61083900"
+     ],
+     "ncmText": "6108.39.00",
+     "description": "Camisolas e pijamas de malha de outras matérias têxteis, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "31",
+     "cest": "2899900",
+     "ncms": [
+      "61089100"
+     ],
+     "ncmText": "6108.91.00",
+     "description": "Roupões de banho, penhoares e semelhantes, de malha de algodão, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "32",
+     "cest": "2899900",
+     "ncms": [
+      "61091000"
+     ],
+     "ncmText": "6109.10.00",
+     "description": "Camisetas, incluindo as interiores, de malha de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "33",
+     "cest": "2899900",
+     "ncms": [
+      "61099000"
+     ],
+     "ncmText": "6109.90.00",
+     "description": "Camisetas, incluindo as interiores, de malha de outras matérias têxteis",
+     "mva": "27.6"
+    },
+    {
+     "item": "34",
+     "cest": "2899900",
+     "ncms": [
+      "61102000"
+     ],
+     "ncmText": "6110.20.00",
+     "description": "Suéteres, pulôveres, cardigãs, coletes e artigos semelhantes, de malha de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "35",
+     "cest": "2899900",
+     "ncms": [
+      "61122000"
+     ],
+     "ncmText": "6112.20.00",
+     "description": "Macacões e conjuntos, de esqui, de malha de matéria têxtil",
+     "mva": "27.6"
+    },
+    {
+     "item": "36",
+     "cest": "2899900",
+     "ncms": [
+      "61123100"
+     ],
+     "ncmText": "6112.31.00",
+     "description": "Shorts e sungas, de banho ,de malha de fibra sintética",
+     "mva": "27.6"
+    },
+    {
+     "item": "37",
+     "cest": "2899900",
+     "ncms": [
+      "61123900"
+     ],
+     "ncmText": "6112.39.00",
+     "description": "Shorts e sungas, de banho, de malha de outras matérias têxteis",
+     "mva": "27.6"
+    },
+    {
+     "item": "38",
+     "cest": "2899900",
+     "ncms": [
+      "61124100"
+     ],
+     "ncmText": "6112.41.00",
+     "description": "Maios e biquínis, de banho ,de malha de fibras sintéticas",
+     "mva": "27.6"
+    },
+    {
+     "item": "39",
+     "cest": "2899900",
+     "ncms": [
+      "61143000"
+     ],
+     "ncmText": "6114.30.00",
+     "description": "Outros vestuários de malha de fibra sintética/artificial",
+     "mva": "27.6"
+    },
+    {
+     "item": "40",
+     "cest": "2899900",
+     "ncms": [
+      "61151014"
+     ],
+     "ncmText": "6115.10.14",
+     "description": "Meias-calças de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "41",
+     "cest": "2899900",
+     "ncms": [
+      "61151200"
+     ],
+     "ncmText": "*6115.12.00",
+     "description": "Meias-calças de malha de fibra sintética, de título igual ou superior a 67decitex",
+     "mva": "27.6"
+    },
+    {
+     "item": "42",
+     "cest": "2899900",
+     "ncms": [
+      "61151920"
+     ],
+     "ncmText": "*6115.19.20",
+     "description": "Meias-calças de malha de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "43",
+     "cest": "2899900",
+     "ncms": [
+      "61152010"
+     ],
+     "ncmText": "*6115.20.10",
+     "description": "Meias de senhora, de malha de fibra sintética/artificial, de título inferior a 67decitex",
+     "mva": "27.6"
+    },
+    {
+     "item": "44",
+     "cest": "2899900",
+     "ncms": [
+      "61152090"
+     ],
+     "ncmText": "*6115.20.90",
+     "description": "Meias de senhora, de outras matérias têxteis, de título inferior a 67decitex",
+     "mva": "27.6"
+    },
+    {
+     "item": "45",
+     "cest": "2899900",
+     "ncms": [
+      "61159100"
+     ],
+     "ncmText": "*6115.91.00",
+     "description": "Outras meias de malha delã ou de pelos finos",
+     "mva": "27.6"
+    },
+    {
+     "item": "46",
+     "cest": "2899900",
+     "ncms": [
+      "61159300"
+     ],
+     "ncmText": "*6115.93.00",
+     "description": "Outras meias de malha de fibras sintéticas",
+     "mva": "27.6"
+    },
+    {
+     "item": "47",
+     "cest": "2899900",
+     "ncms": [
+      "61159500"
+     ],
+     "ncmText": "6115.95.00",
+     "description": "Outros de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "48",
+     "cest": "2899900",
+     "ncms": [
+      "61169200"
+     ],
+     "ncmText": "6116.92.00",
+     "description": "Luvas, mitenes e semelhantes, de malha de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "49",
+     "cest": "2899900",
+     "ncms": [
+      "62034200"
+     ],
+     "ncmText": "6203.42.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de algodão, de uso masculino",
+     "mva": "27.6"
+    },
+    {
+     "item": "50",
+     "cest": "2899900",
+     "ncms": [
+      "62044200"
+     ],
+     "ncmText": "6204.42.00",
+     "description": "Vestidos de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "51",
+     "cest": "2899900",
+     "ncms": [
+      "62044300"
+     ],
+     "ncmText": "6204.43.00",
+     "description": "Vestidos de fibras sintéticas",
+     "mva": "27.6"
+    },
+    {
+     "item": "52",
+     "cest": "2899900",
+     "ncms": [
+      "62044900"
+     ],
+     "ncmText": "6204.49.00",
+     "description": "Vestidos de outras matérias têxteis",
+     "mva": "27.6"
+    },
+    {
+     "item": "53",
+     "cest": "2899900",
+     "ncms": [
+      "62045200"
+     ],
+     "ncmText": "6204.52.00",
+     "description": "Saias e saias-calças, de algodão",
+     "mva": "27.6"
+    },
+    {
+     "item": "54",
+     "cest": "2899900",
+     "ncms": [
+      "62046200"
+     ],
+     "ncmText": "6204.62.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de algodão, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "55",
+     "cest": "2899900",
+     "ncms": [
+      "62046300"
+     ],
+     "ncmText": "6204.63.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de fibra sintética, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "56",
+     "cest": "2899900",
+     "ncms": [
+      "62046900"
+     ],
+     "ncmText": "6204.69.00",
+     "description": "Calças, jardineiras, bermudas e shorts (calções) de outra matéria têxtil, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "57",
+     "cest": "2899900",
+     "ncms": [
+      "62062000"
+     ],
+     "ncmText": "6206.20.00",
+     "description": "Camisas, blusas, blusas chemisiers, de lã ou pelos finos de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "58",
+     "cest": "2899900",
+     "ncms": [
+      "62064000"
+     ],
+     "ncmText": "6206.40.00",
+     "description": "Camisas, blusas, blusas chemisiers, de fibras sintéticas ou artificiais, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "59",
+     "cest": "2899900",
+     "ncms": [
+      "62082100"
+     ],
+     "ncmText": "6208.21.00",
+     "description": "Camisolas e pijamas, de algodão, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "60",
+     "cest": "2899900",
+     "ncms": [
+      "62082200"
+     ],
+     "ncmText": "6208.22.00",
+     "description": "Camisolas e pijamas, de fibras sintéticas/artificiais, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "61",
+     "cest": "2899900",
+     "ncms": [
+      "62089100"
+     ],
+     "ncmText": "6208.91.00",
+     "description": "Corpetes, calcinhas, déshabillés, roupões de banho, penhoares e artefatos semelhantes, de algodão, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "62",
+     "cest": "2899900",
+     "ncms": [
+      "62089200"
+     ],
+     "ncmText": "6208.92.00",
+     "description": "Corpetes, calcinhas, déshabillés, roupões de banho, penhoares e artefatos semelhantes, de fibras sintéticas ou artificiais, de uso feminino",
+     "mva": "27.6"
+    },
+    {
+     "item": "63",
+     "cest": "2899900",
+     "ncms": [
+      "62121000"
+     ],
+     "ncmText": "6212.10.00",
+     "description": "Sutiãs e \"bustiers\" (\"soutiens\" de cós alto)",
+     "mva": "27.6"
+    },
+    {
+     "item": "64",
+     "cest": "2899900",
+     "ncms": [
+      "62122000"
+     ],
+     "ncmText": "6212.20.00",
+     "description": "Cintas e cintas-calças",
+     "mva": "27.6"
+    },
+    {
+     "item": "65",
+     "cest": "2899900",
+     "ncms": [
+      "62123000"
+     ],
+     "ncmText": "6212.30.00",
+     "description": "Modeladores de torso inteiro (cintas \"soutiens\")",
+     "mva": "27.6"
+    },
+    {
+     "item": "66",
+     "cest": "2899900",
+     "ncms": [
+      "62129000"
+     ],
+     "ncmText": "6212.90.00",
+     "description": "Espartilhos, suspensórios, ligas, artefatos semelhantes e partes",
+     "mva": "27.6"
+    },
+    {
+     "item": "67",
+     "cest": "2899900",
+     "ncms": [
+      "62141000"
+     ],
+     "ncmText": "6214.10.00",
+     "description": "Xales, echarpes, lenços de pescoço, cachenês, cachecóis, mantilhas, véus e artefatos semelhantes, de seda ou de desperdícios de seda",
+     "mva": "27.6"
+    },
+    {
+     "item": "68",
+     "cest": "2899900",
+     "ncms": [
+      "62143000"
+     ],
+     "ncmText": "6214.30.00",
+     "description": "Xales, echarpes, lenços de pescoço, cachenês, cachecóis, mantilhas, véus e artefatos semelhantes, de e artefatos semelhantes, de fibras sintéticas",
+     "mva": "27.6"
+    },
+    {
+     "item": "69",
+     "cest": "2899900",
+     "ncms": [
+      "62144000"
+     ],
+     "ncmText": "6214.40.00",
+     "description": "Xales, echarpes, lenços de pescoço, cachenês, cachecóis, mantilhas, véus e artefatos semelhantes de fibras artificiais",
+     "mva": "27.6"
+    },
+    {
+     "item": "70",
+     "cest": "2899900",
+     "ncms": [
+      "62160000"
+     ],
+     "ncmText": "6216.00.00",
+     "description": "Luvas, mitenes e semelhantes",
+     "mva": "27.6"
+    },
+    {
+     "item": "71",
+     "cest": "2899900",
+     "ncms": [
+      "63072000"
+     ],
+     "ncmText": "6307.20.00",
+     "description": "Cintos e coletes salva-vidas",
+     "mva": "27.6"
+    },
+    {
+     "item": "72",
+     "cest": "2899900",
+     "ncms": [
+      "63090010"
+     ],
+     "ncmText": "6309.00.10",
+     "description": "Vestuário, seus acessórios e suas partes, usados",
+     "mva": "27.6"
+    },
+    {
+     "item": "73",
+     "cest": "2899900",
+     "ncms": [
+      "64021900"
+     ],
+     "ncmText": "6402.19.00",
+     "description": "Calçados para outros esportes, de borracha ou plástico",
+     "mva": "27.6"
+    },
+    {
+     "item": "74",
+     "cest": "2899900",
+     "ncms": [
+      "64022000"
+     ],
+     "ncmText": "6402.20.00",
+     "description": "Calçados de borracha/plástico, com parte superior em tiras ou correias, fixados à sola por pregos, tachas, pinos e semelhantes",
+     "mva": "27.6"
+    },
+    {
+     "item": "75",
+     "cest": "2899900",
+     "ncms": [
+      "64029910"
+     ],
+     "ncmText": "6402.99.10",
+     "description": "Outros calçados com sola exterior e parte superior de borracha ou plásticos, outros, com biqueira protetora de metal Outros calçados com sola exterior e parte superior de",
+     "mva": "27.6"
+    },
+    {
+     "item": "76",
+     "cest": "2899900",
+     "ncms": [
+      "64029990"
+     ],
+     "ncmText": "6402.99.90",
+     "description": "Outros calçados com sola exterior e parte superior de borracha ou plásticos, outros",
+     "mva": "27.6"
+    },
+    {
+     "item": "77",
+     "cest": "2899900",
+     "ncms": [
+      "64031900"
+     ],
+     "ncmText": "6403.19.00",
+     "description": "Calçados para outros esportes, de couro natural",
+     "mva": "27.6"
+    },
+    {
+     "item": "78",
+     "cest": "2899900",
+     "ncms": [
+      "64041900"
+     ],
+     "ncmText": "6404.19.00",
+     "description": "Outros calçados de matéria têxtil, sola de borracha/plástico",
+     "mva": "27.6"
+    },
+    {
+     "item": "79",
+     "cest": "2899900",
+     "ncms": [
+      "64042000"
+     ],
+     "ncmText": "6404.20.00",
+     "description": "Calçados de matéria têxtil, com sola exterior de couro",
+     "mva": "27.6"
+    },
+    {
+     "item": "80",
+     "cest": "2899900",
+     "ncms": [
+      "64052000"
+     ],
+     "ncmText": "6405.20.00",
+     "description": "Outros calçados de matérias têxteis",
+     "mva": "27.6"
+    },
+    {
+     "item": "81",
+     "cest": "2899900",
+     "ncms": [
+      "64069090"
+     ],
+     "ncmText": "6406.90.90",
+     "description": "Partes de calçados, palmilhas amovíveis, reforços interiores e artefatos semelhantes, amovíveis, polainas, perneiras e artefatos semelhantes, e suas partes",
+     "mva": "27.6"
+    },
+    {
+     "item": "82",
+     "cest": "2899900",
+     "ncms": [
+      "65040090"
+     ],
+     "ncmText": "6504.00.90",
+     "description": "Chapéus e outros artefatos de uso semelhante, entrançados ou obtidos por reunião de tiras, de outras matérias",
+     "mva": "27.6"
+    },
+    {
+     "item": "83",
+     "cest": "2899900",
+     "ncms": [
+      "65050090"
+     ],
+     "ncmText": "6505.00.90",
+     "description": "Chapéus e outros artefatos de uso semelhante, de malha ou confeccionados com rendas, feltro ou outros produtos têxteis, em peça (mas não em tiras), mesmo guarnecidos, coifas e redes, para o cabelo, de qualquer matéria, mesmo guarnecidas",
+     "mva": "27.6"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-III",
+   "segmentName": "Venda porta a porta: artigos para casa (art. 20, III)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, III",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2899900",
+     "ncms": [
+      "39239000"
+     ],
+     "ncmText": "3923.90.00",
+     "description": "Outros artigos de transporte ou de embalagem, de plásticos",
+     "mva": "28.6"
+    },
+    {
+     "item": "2",
+     "cest": "2803300",
+     "ncms": [
+      "39241000"
+     ],
+     "ncmText": "3924.10.00",
+     "description": "Serviços de mesa/outros artigos mesa/cozinha, de plásticos",
+     "mva": "28.6"
+    },
+    {
+     "item": "3",
+     "cest": "2803300",
+     "ncms": [
+      "39249000"
+     ],
+     "ncmText": "3924.90.00",
+     "description": "Outros artigos de higiene ou de toucador, de plástico",
+     "mva": "28.6"
+    },
+    {
+     "item": "4",
+     "cest": "2899900",
+     "ncms": [
+      "39259000"
+     ],
+     "ncmText": "*3925.90.00",
+     "description": "Outros artefatos para apetrechamento de construções, de plásticos",
+     "mva": "28.6"
+    },
+    {
+     "item": "5",
+     "cest": "2899900",
+     "ncms": [
+      "40151900"
+     ],
+     "ncmText": "4015.19.00",
+     "description": "Outras luvas de borracha vulcanizada, não endurecida",
+     "mva": "28.6"
+    },
+    {
+     "item": "6",
+     "cest": "2899900",
+     "ncms": [
+      "40169990"
+     ],
+     "ncmText": "4016.99.90",
+     "description": "Outras obras de borracha vulcanizada, não endurecida",
+     "mva": "28.6"
+    },
+    {
+     "item": "7",
+     "cest": "2899900",
+     "ncms": [
+      "52083200"
+     ],
+     "ncmText": "5208.32.00",
+     "description": "Tecido de algodão que contenha pelo menos 85%, em peso, de 2 algodão, tinto, em ponto tafetá, com peso superior a 100 g/m e 2 inferior ou igual a 200 g/m",
+     "mva": "28.6"
+    },
+    {
+     "item": "8",
+     "cest": "2899900",
+     "ncms": [
+      "56090090"
+     ],
+     "ncmText": "5609.00.90",
+     "description": "Artigos de fios, lâminas ou formas semelhantes das posições 54.04 ou 54.05, cordéis, cordas ou cabos, não especificados nem compreendidos noutras posições, de outras matérias têxteis sintéticas/artificiais",
+     "mva": "28.6"
+    },
+    {
+     "item": "9",
+     "cest": "2899900",
+     "ncms": [
+      "62042300"
+     ],
+     "ncmText": "6204.23.00",
+     "description": "Conjuntos de fibras sintéticas, de uso feminino",
+     "mva": "28.6"
+    },
+    {
+     "item": "10",
+     "cest": "2899900",
+     "ncms": [
+      "62114200"
+     ],
+     "ncmText": "6211.42.00",
+     "description": "Outros vestuários de algodão, de uso feminino",
+     "mva": "28.6"
+    },
+    {
+     "item": "11",
+     "cest": "2899900",
+     "ncms": [
+      "63013000"
+     ],
+     "ncmText": "6301.30.00",
+     "description": "Cobertores e mantas, de algodão, não elétricos",
+     "mva": "28.6"
+    },
+    {
+     "item": "12",
+     "cest": "2899900",
+     "ncms": [
+      "63014000"
+     ],
+     "ncmText": "6301.40.00",
+     "description": "Cobertores e mantas, de fibras sintéticas, não elétricos Roupas de cama, de",
+     "mva": "28.6"
+    },
+    {
+     "item": "13",
+     "cest": "2899900",
+     "ncms": [
+      "63022100"
+     ],
+     "ncmText": "6302.21.00",
+     "description": "Roupas de cama, de algodão, estampadas",
+     "mva": "28.6"
+    },
+    {
+     "item": "14",
+     "cest": "2899900",
+     "ncms": [
+      "63022200"
+     ],
+     "ncmText": "6302.22.00",
+     "description": "Roupas de cama, de fibras sintéticas ou artificiais, estampadas",
+     "mva": "28.6"
+    },
+    {
+     "item": "15",
+     "cest": "2899900",
+     "ncms": [
+      "63022900"
+     ],
+     "ncmText": "6302.29.00",
+     "description": "Roupas de cama, de outras matérias têxteis, estampadas",
+     "mva": "28.6"
+    },
+    {
+     "item": "16",
+     "cest": "2899900",
+     "ncms": [
+      "63023200"
+     ],
+     "ncmText": "6302.32.00",
+     "description": "Outras roupas de cama, de fibras sintéticas ou artificiais",
+     "mva": "28.6"
+    },
+    {
+     "item": "17",
+     "cest": "2899900",
+     "ncms": [
+      "63023900"
+     ],
+     "ncmText": "6302.39.00",
+     "description": "Outras roupas de cama, de outras matérias têxteis",
+     "mva": "28.6"
+    },
+    {
+     "item": "18",
+     "cest": "2899900",
+     "ncms": [
+      "63025100"
+     ],
+     "ncmText": "6302.51.00",
+     "description": "Roupas de mesa, de algodão, exceto de malha",
+     "mva": "28.6"
+    },
+    {
+     "item": "19",
+     "cest": "2899900",
+     "ncms": [
+      "63025300"
+     ],
+     "ncmText": "6302.53.00",
+     "description": "Roupas de mesa, de fibras sintéticas/artificiais, exceto de malha",
+     "mva": "28.6"
+    },
+    {
+     "item": "20",
+     "cest": "2899900",
+     "ncms": [
+      "63029100"
+     ],
+     "ncmText": "6302.91.00",
+     "description": "Outras roupas de toucador ou de cozinha, de algodão",
+     "mva": "28.6"
+    },
+    {
+     "item": "21",
+     "cest": "2899900",
+     "ncms": [
+      "63039100"
+     ],
+     "ncmText": "6303.91.00",
+     "description": "Cortinados, cortinas, reposteiros e estores, sanefas, de algodão, exceto de malha Colchas de algodão, exceto",
+     "mva": "28.6"
+    },
+    {
+     "item": "22",
+     "cest": "2899900",
+     "ncms": [
+      "63041910"
+     ],
+     "ncmText": "6304.19.10",
+     "description": "Colchas de algodão, exceto de malha",
+     "mva": "28.6"
+    },
+    {
+     "item": "23",
+     "cest": "2899900",
+     "ncms": [
+      "63049200"
+     ],
+     "ncmText": "6304.92.00",
+     "description": "Outros artefatos para guarnição de interiores, de algodão, exceto de malha",
+     "mva": "28.6"
+    },
+    {
+     "item": "24",
+     "cest": "2899900",
+     "ncms": [
+      "63049300"
+     ],
+     "ncmText": "6304.93.00",
+     "description": "Outros artefatos para guarnição de interiores, de fibra sintética, exceto de malha",
+     "mva": "28.6"
+    },
+    {
+     "item": "25",
+     "cest": "2899900",
+     "ncms": [
+      "63049900"
+     ],
+     "ncmText": "6304.99.00",
+     "description": "Outros artefatos para guarnição de interiores, de outras matérias têxteis, exceto malha",
+     "mva": "28.6"
+    },
+    {
+     "item": "26",
+     "cest": "2899900",
+     "ncms": [
+      "66019110"
+     ],
+     "ncmText": "6601.91.10",
+     "description": "Guarda-chuvas de haste/cabo telescópico cobertos com tecido de seda ou de matérias têxteis sintéticas ou artificiais",
+     "mva": "28.6"
+    },
+    {
+     "item": "27",
+     "cest": "2899900",
+     "ncms": [
+      "69111090"
+     ],
+     "ncmText": "6911.10.90",
+     "description": "Outros artigos para serviço de mesa ou cozinha, de porcelana",
+     "mva": "28.6"
+    },
+    {
+     "item": "28",
+     "cest": "2899900",
+     "ncms": [
+      "69120000"
+     ],
+     "ncmText": "6912.00.00",
+     "description": "Louça, outros artigos de uso doméstico e artigos de higiene ou de toucador, de cerâmica, exceto de porcelana",
+     "mva": "28.6"
+    },
+    {
+     "item": "29",
+     "cest": "2899900",
+     "ncms": [
+      "69149000"
+     ],
+     "ncmText": "6914.90.00",
+     "description": "Outras obras de cerâmica, exceto porcelana Objetos de vidro para",
+     "mva": "28.6"
+    },
+    {
+     "item": "30",
+     "cest": "2803300",
+     "ncms": [
+      "70134290"
+     ],
+     "ncmText": "7013.42.90",
+     "description": "Objetos de vidro para serviço de mesa, cozinha, toucador, escritório, ornamentação de interiores ou usos semelhantes (exceto os das posições 70.10 ou 70.18), De vidro com um coeficiente de dilatação linear não superior a 5x10-6 por Kelvin, entre 0 °C e 300 °C, Outros",
+     "mva": "28.6"
+    },
+    {
+     "item": "31",
+     "cest": "2803300",
+     "ncms": [
+      "70134900"
+     ],
+     "ncmText": "7013.49.00",
+     "description": "Objetos de vidro para serviço de mesa, cozinha, toucador, escritório, ornamentação de interiores ou usos semelhantes (exceto os das posições 70.10 ou 70.18), Outros",
+     "mva": "28.6"
+    },
+    {
+     "item": "32",
+     "cest": "2803300",
+     "ncms": [
+      "70139900"
+     ],
+     "ncmText": "7013.99.00",
+     "description": "Outros objetos de vidro, para toucador, escritório, ornamentação de interiores ou usos semelhantes",
+     "mva": "28.6"
+    },
+    {
+     "item": "33",
+     "cest": "2899900",
+     "ncms": [
+      "70189000"
+     ],
+     "ncmText": "7018.90.00",
+     "description": "Outras obras e objetos de ornamentação, de vidro",
+     "mva": "28.6"
+    },
+    {
+     "item": "34",
+     "cest": "2899900",
+     "ncms": [
+      "70191900"
+     ],
+     "ncmText": "7019.19.00",
+     "description": "Outros mechas e fios, de fibras de vidro",
+     "mva": "28.6"
+    },
+    {
+     "item": "35",
+     "cest": "2899900",
+     "ncms": [
+      "73102110"
+     ],
+     "ncmText": "7310.21.10",
+     "description": "Latas de ferro/aço, fechamento para soldadura ou cravação, de capacidade inferior a 50 l, para produtos alimentícios Artefatos de uso doméstico,",
+     "mva": "28.6"
+    },
+    {
+     "item": "36",
+     "cest": "2899900",
+     "ncms": [
+      "73239400"
+     ],
+     "ncmText": "7323.94.00",
+     "description": "Artefatos de uso doméstico, e suas partes, de ferro fundido, ferro ou aço; palha de ferro ou aço; esponjas, esfregões, luvas e artefatos semelhantes para limpeza, polimento ou usos semelhantes, de ferro ou aço, outros, de ferro ou aço, esmaltados",
+     "mva": "28.6"
+    },
+    {
+     "item": "37",
+     "cest": "2899900",
+     "ncms": [
+      "73239900"
+     ],
+     "ncmText": "7323.99.00",
+     "description": "Outros artefatos domésticos, de ferro fundido/ferro/aço, e partes",
+     "mva": "28.6"
+    },
+    {
+     "item": "38",
+     "cest": "2899900",
+     "ncms": [
+      "73262000"
+     ],
+     "ncmText": "7326.20.00",
+     "description": "Obras de fios de ferro ou aço",
+     "mva": "28.6"
+    },
+    {
+     "item": "39",
+     "cest": "2899900",
+     "ncms": [
+      "76151000"
+     ],
+     "ncmText": "7615.10.00",
+     "description": "Artefatos de uso doméstico, de higiene ou de toucador, e suas partes, de alumínio; esponjas, esfregões, luvas e artefatos semelhantes, para limpeza, polimento ou usos semelhantes, de alumínio",
+     "mva": "28.6"
+    },
+    {
+     "item": "40",
+     "cest": "2899900",
+     "ncms": [
+      "82119320"
+     ],
+     "ncmText": "8211.93.20",
+     "description": "Canivetes com uma/várias lâminas/outras peças, de metais comuns",
+     "mva": "28.6"
+    },
+    {
+     "item": "41",
+     "cest": "2899900",
+     "ncms": [
+      "82159910"
+     ],
+     "ncmText": "8215.99.10",
+     "description": "Colheres, garfos, conchas, escumadeiras, pás para tortas, facas especiais para peixe ou para manteiga, pinças para açúcar e artefatos semelhantes, outros, de aço inoxidável Molduras para fotografia,",
+     "mva": "28.6"
+    },
+    {
+     "item": "42",
+     "cest": "2899900",
+     "ncms": [
+      "83063000"
+     ],
+     "ncmText": "8306.30.00",
+     "description": "Molduras para fotografia, gravura, espelhos, de metais comuns",
+     "mva": "28.6"
+    },
+    {
+     "item": "43",
+     "cest": "2899900",
+     "ncms": [
+      "84242000"
+     ],
+     "ncmText": "8424.20.00",
+     "description": "Pistolas aerográficas e aparelhos semelhantes",
+     "mva": "28.6"
+    },
+    {
+     "item": "44",
+     "cest": "2899900",
+     "ncms": [
+      "84451924"
+     ],
+     "ncmText": "8445.19.24",
+     "description": "Abridoras de fibras de lã",
+     "mva": "28.6"
+    },
+    {
+     "item": "45",
+     "cest": "2899900",
+     "ncms": [
+      "91069000"
+     ],
+     "ncmText": "9106.90.00",
+     "description": "Outros aparatos de controle/contadores de tempo, com maquinismo de artigos de relojoaria ou com motor síncrono",
+     "mva": "28.6"
+    },
+    {
+     "item": "46",
+     "cest": "2899900",
+     "ncms": [
+      "94037000"
+     ],
+     "ncmText": "9403.70.00",
+     "description": "Móveis de plásticos",
+     "mva": "28.6"
+    },
+    {
+     "item": "47",
+     "cest": "2899900",
+     "ncms": [
+      "94039090"
+     ],
+     "ncmText": "9403.90.90",
+     "description": "Partes para móveis, de outras matérias",
+     "mva": "28.6"
+    },
+    {
+     "item": "48",
+     "cest": "2899900",
+     "ncms": [
+      "94049000"
+     ],
+     "ncmText": "9404.90.00",
+     "description": "Edredões, almofadas, pufes, travesseiros e artigos semelhantes",
+     "mva": "28.6"
+    },
+    {
+     "item": "49",
+     "cest": "2899900",
+     "ncms": [
+      "94055000"
+     ],
+     "ncmText": "9405.50.00",
+     "description": "Aparelhos não elétricos de iluminação",
+     "mva": "28.6"
+    },
+    {
+     "item": "50",
+     "cest": "2899900",
+     "ncms": [
+      "96138000"
+     ],
+     "ncmText": "9613.80.00",
+     "description": "Outros isqueiros e acendedores",
+     "mva": "28.6"
+    },
+    {
+     "item": "51",
+     "cest": "2802900",
+     "ncms": [
+      "96161000"
+     ],
+     "ncmText": "9616.10.00",
+     "description": "Vaporizadores de toucador, armações e suas cabeças",
+     "mva": "28.6"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-IV",
+   "segmentName": "Venda porta a porta: artigos destinados a cuidados pessoais (art. 20, IV)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, IV",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2899900",
+     "ncms": [
+      "14042090"
+     ],
+     "ncmText": "1404.20.90",
+     "description": "Outros linteres de algodão",
+     "mva": "38.6"
+    },
+    {
+     "item": "2",
+     "cest": "2899900",
+     "ncms": [
+      "39123119"
+     ],
+     "ncmText": "3912.31.19",
+     "description": "Outros carboximetilceluloses em formas primárias",
+     "mva": "38.6"
+    },
+    {
+     "item": "3",
+     "cest": "2899900",
+     "ncms": [
+      "39173900"
+     ],
+     "ncmText": "3917.39.00",
+     "description": "Outros tubos de plásticos",
+     "mva": "38.6"
+    },
+    {
+     "item": "4",
+     "cest": "2899900",
+     "ncms": [
+      "39269040"
+     ],
+     "ncmText": "3926.90.40",
+     "description": "Artigos de laboratório ou de farmácia, de plásticos",
+     "mva": "38.6"
+    },
+    {
+     "item": "5",
+     "cest": "2803400",
+     "ncms": [
+      "40149090"
+     ],
+     "ncmText": "4014.90.90",
+     "description": "Outros artigos higiene ou de farmácia (incluindo as chupetas), de borracha vulcanizada não endurecida Outras obras de madeira",
+     "mva": "38.6"
+    },
+    {
+     "item": "6",
+     "cest": "2899900",
+     "ncms": [
+      "44219000"
+     ],
+     "ncmText": "*4421.90.00",
+     "description": "Outras obras de madeira",
+     "mva": "38.6"
+    },
+    {
+     "item": "7",
+     "cest": "2802400",
+     "ncms": [
+      "48182000"
+     ],
+     "ncmText": "4818.20.00",
+     "description": "Lenços, incluindo os de desmaquiar, e toalhas de mão",
+     "mva": "38.6"
+    },
+    {
+     "item": "8",
+     "cest": "2899900",
+     "ncms": [
+      "63090090"
+     ],
+     "ncmText": "6309.00.90",
+     "description": "Outros artefatos de matérias têxteis, usados",
+     "mva": "38.6"
+    },
+    {
+     "item": "9",
+     "cest": "2899900",
+     "ncms": [
+      "64069020"
+     ],
+     "ncmText": "6406.90.20",
+     "description": "Palmilhas",
+     "mva": "38.6"
+    },
+    {
+     "item": "10",
+     "cest": "2899900",
+     "ncms": [
+      "65069100"
+     ],
+     "ncmText": "6506.91.00",
+     "description": "Chapéus e outros artefatos de borracha ou de plástico",
+     "mva": "38.6"
+    },
+    {
+     "item": "11",
+     "cest": "2899900",
+     "ncms": [
+      "65070000"
+     ],
+     "ncmText": "6507.00.00",
+     "description": "Tiras para guarnição interior, forros, carneiras, capas, armações, palas e barbicachos, para chapéus/outros artefatos",
+     "mva": "38.6"
+    },
+    {
+     "item": "12",
+     "cest": "2899900",
+     "ncms": [
+      "67041900"
+     ],
+     "ncmText": "6704.19.00",
+     "description": "Perucas, barbas, sobrancelhas, pestanas, madeixas e artefatos semelhantes, de cabelo, pelos ou de matérias têxteis; outras obras de cabelo não especificadas nem compreendidas noutras posições, outros Espelhos de vidro,",
+     "mva": "38.6"
+    },
+    {
+     "item": "13",
+     "cest": "2899900",
+     "ncms": [
+      "70099200"
+     ],
+     "ncmText": "7009.92.00",
+     "description": "Espelhos de vidro, emoldurados",
+     "mva": "38.6"
+    },
+    {
+     "item": "14",
+     "cest": "2899900",
+     "ncms": [
+      "82032010"
+     ],
+     "ncmText": "8203.20.10",
+     "description": "Alicates de metais comuns",
+     "mva": "38.6"
+    },
+    {
+     "item": "15",
+     "cest": "2899900",
+     "ncms": [
+      "82130000"
+     ],
+     "ncmText": "8213.00.00",
+     "description": "Tesouras e suas lâminas, de metais comuns",
+     "mva": "38.6"
+    },
+    {
+     "item": "16",
+     "cest": "2802502",
+     "ncms": [
+      "82141000"
+     ],
+     "ncmText": "8214.10.00",
+     "description": "Espátulas, abre-cartas, raspadeiras, apontadores de lápis e suas lâminas",
+     "mva": "38.6"
+    },
+    {
+     "item": "17",
+     "cest": "2899900",
+     "ncms": [
+      "90211010"
+     ],
+     "ncmText": "9021.10.10",
+     "description": "Artigos e aparelhos ortopédicos",
+     "mva": "38.6"
+    },
+    {
+     "item": "18",
+     "cest": "2802701",
+     "ncms": [
+      "96032900"
+     ],
+     "ncmText": "9603.29.00",
+     "description": "Vassouras e escovas, mesmo constituindo partes de máquinas, de aparelhos ou de veículos, vassouras mecânicas de uso manual não motorizadas, pincéis e espanadores; cabeças preparadas para escovas, pincéis e artigos semelhantes; bonecas e rolos para pintura; rodos de borracha ou de matérias flexíveis semelhantes, outros",
+     "mva": "38.6"
+    },
+    {
+     "item": "19",
+     "cest": "2802800",
+     "ncms": [
+      "96033000"
+     ],
+     "ncmText": "9603.30.00",
+     "description": "Pincéis e escovas, para artistas, pincéis de escrever e pincéis semelhantes para aplicação de produtos cosméticos",
+     "mva": "38.6"
+    },
+    {
+     "item": "19",
+     "cest": "2802801",
+     "ncms": [
+      "96033000"
+     ],
+     "ncmText": "9603.30.00",
+     "description": "Pincéis e escovas, para artistas, pincéis de escrever e pincéis semelhantes para aplicação de produtos cosméticos",
+     "mva": "38.6"
+    },
+    {
+     "item": "20",
+     "cest": "2899900",
+     "ncms": [
+      "96190000"
+     ],
+     "ncmText": "9619.00.00",
+     "description": "Absorventes e tampões higiênicos, cueiros e fraldas para bebês e artigos higiênicos semelhantes, de qualquer matéria",
+     "mva": "38.6"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-V",
+   "segmentName": "Venda porta a porta: artigos infantis (art. 20, V)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, V",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2899900",
+     "ncms": [
+      "39046190"
+     ],
+     "ncmText": "3904.61.90",
+     "description": "Outros politetrafluoretilenos em formas primárias",
+     "mva": "26.5"
+    },
+    {
+     "item": "2",
+     "cest": "2899900",
+     "ncms": [
+      "39189000"
+     ],
+     "ncmText": "3918.90.00",
+     "description": "Revestimento de pavimentos/paredes/tetos, de outros plásticos",
+     "mva": "26.5"
+    },
+    {
+     "item": "3",
+     "cest": "2899900",
+     "ncms": [
+      "49030000"
+     ],
+     "ncmText": "4903.00.00",
+     "description": "Álbuns ou livros de ilustrações e álbuns para desenhar ou colorir, para crianças",
+     "mva": "26.5"
+    },
+    {
+     "item": "4",
+     "cest": "2899900",
+     "ncms": [
+      "95066900"
+     ],
+     "ncmText": "9506.69.00",
+     "description": "Outras bolas",
+     "mva": "26.5"
+    },
+    {
+     "item": "5",
+     "cest": "2899900",
+     "ncms": [
+      "96110000"
+     ],
+     "ncmText": "9611.00.00",
+     "description": "Carimbos, datadores, numeradores, sinetes e artigos semelhantes",
+     "mva": "26.5"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-VI",
+   "segmentName": "Venda porta a porta: produtos para nutrição (art. 20, VI)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, VI",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2803500",
+     "ncms": [
+      "12119090"
+     ],
+     "ncmText": "1211.90.90",
+     "description": "Outras plantas e partes, para perfumaria, medicina e semelhantes",
+     "mva": "669.6"
+    },
+    {
+     "item": "2",
+     "cest": "2899900",
+     "ncms": [
+      "13021999"
+     ],
+     "ncmText": "1302.19.99",
+     "description": "Outros sucos e extratos vegetais",
+     "mva": "669.6"
+    },
+    {
+     "item": "3",
+     "cest": "2899900",
+     "ncms": [
+      "21069030"
+     ],
+     "ncmText": "2106.90.30",
+     "description": "Complementos alimentares",
+     "mva": "669.6"
+    },
+    {
+     "item": "4",
+     "cest": "2899900",
+     "ncms": [
+      "15151100"
+     ],
+     "ncmText": "1515.11.00",
+     "description": "Óleo de linhaça, em bruto",
+     "mva": "669.6"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-VII",
+   "segmentName": "Venda porta a porta: acessórios, vestuário, artigos para casa, artigos infantis e artigos destinados a cuidados pessoais (art. 20, VII)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, VII",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2803600",
+     "ncms": [
+      "39262000"
+     ],
+     "ncmText": "3926.20.00",
+     "description": "Vestuário e seus acessórios, de plásticos, inclusive luvas",
+     "mva": "35.7"
+    },
+    {
+     "item": "2",
+     "cest": "2803700",
+     "ncms": [
+      "39264000"
+     ],
+     "ncmText": "3926.40.00",
+     "description": "Estatuetas e outros objetos de ornamentação, de plásticos",
+     "mva": "35.7"
+    },
+    {
+     "item": "3",
+     "cest": "2803800",
+     "ncms": [
+      "39269090"
+     ],
+     "ncmText": "3926.90.90",
+     "description": "Outras obras de plásticos",
+     "mva": "35.7"
+    },
+    {
+     "item": "4",
+     "cest": "2803900",
+     "ncms": [
+      "42022210"
+     ],
+     "ncmText": "4202.22.10",
+     "description": "Bolsas de folhas de plástico",
+     "mva": "35.7"
+    },
+    {
+     "item": "5",
+     "cest": "2804000",
+     "ncms": [
+      "42022220"
+     ],
+     "ncmText": "4202.22.20",
+     "description": "Bolsas de matérias têxteis",
+     "mva": "35.7"
+    },
+    {
+     "item": "6",
+     "cest": "2804100",
+     "ncms": [
+      "42022900"
+     ],
+     "ncmText": "4202.29.00",
+     "description": "Bolsas de outras matérias",
+     "mva": "35.7"
+    },
+    {
+     "item": "7",
+     "cest": "2804200",
+     "ncms": [
+      "42023900"
+     ],
+     "ncmText": "4202.39.00",
+     "description": "Artigos de bolsos/bolsas, de outras matérias",
+     "mva": "35.7"
+    },
+    {
+     "item": "8",
+     "cest": "2804300",
+     "ncms": [
+      "42029200"
+     ],
+     "ncmText": "4202.92.00",
+     "description": "Outros artefatos, de folhas de plásticos ou matérias têxteis",
+     "mva": "35.7"
+    },
+    {
+     "item": "9",
+     "cest": "2804400",
+     "ncms": [
+      "42029900"
+     ],
+     "ncmText": "4202.99.00",
+     "description": "Outros artefatos, de outras matérias",
+     "mva": "35.7"
+    },
+    {
+     "item": "10",
+     "cest": "2804500",
+     "ncms": [
+      "48192000"
+     ],
+     "ncmText": "4819.20.00",
+     "description": "Caixas e cartonagens, dobráveis, de papel/cartão, não ondulados",
+     "mva": "35.7"
+    },
+    {
+     "item": "11",
+     "cest": "2804600",
+     "ncms": [
+      "48194000"
+     ],
+     "ncmText": "4819.40.00",
+     "description": "Outros sacos, bolsas e cartuchos, de papel ou cartão",
+     "mva": "35.7"
+    },
+    {
+     "item": "12",
+     "cest": "2804700",
+     "ncms": [
+      "48211000"
+     ],
+     "ncmText": "4821.10.00",
+     "description": "Etiquetas de papel ou cartão, impressas",
+     "mva": "35.7"
+    },
+    {
+     "item": "13",
+     "cest": "2804800",
+     "ncms": [
+      "49111090"
+     ],
+     "ncmText": "4911.10.90",
+     "description": "Outros impressos publicitários, catálogos comerciais e semelhantes",
+     "mva": "35.7"
+    },
+    {
+     "item": "14",
+     "cest": "2805000",
+     "ncms": [
+      "62171000"
+     ],
+     "ncmText": "6217.10.00",
+     "description": "Outros acessórios confeccionados, de vestuário",
+     "mva": "35.7"
+    },
+    {
+     "item": "15",
+     "cest": "2805100",
+     "ncms": [
+      "63026000"
+     ],
+     "ncmText": "6302.60.00",
+     "description": "Roupas de toucador/cozinha, de tecidos atoalhados de algodão",
+     "mva": "35.7"
+    },
+    {
+     "item": "16",
+     "cest": "2805200",
+     "ncms": [
+      "63079090"
+     ],
+     "ncmText": "6307.90.90",
+     "description": "Outros artefatos têxteis confeccionados",
+     "mva": "35.7"
+    },
+    {
+     "item": "17",
+     "cest": "2805400",
+     "ncms": [
+      "95059000"
+     ],
+     "ncmText": "9505.90.00",
+     "description": "Artigos para outras festas, carnaval ou outros divertimentos",
+     "mva": "35.7"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-VIII",
+   "segmentName": "Venda porta a porta: vestuário e artigos destinados a cuidados pessoais (art. 20, VIII)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, VIII",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2804900",
+     "ncms": [
+      "61159900"
+     ],
+     "ncmText": "6115.99.00",
+     "description": "Outras meias de malha de outras matérias têxteis",
+     "mva": "25"
+    },
+    {
+     "item": "2",
+     "cest": "2805300",
+     "ncms": [
+      "65069900"
+     ],
+     "ncmText": "6506.99.00",
+     "description": "Chapéus e outros artefatos de outras matérias, exceto de malha",
+     "mva": "25"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-IX-industria",
+   "segmentName": "Venda porta a porta: perfumaria e de higiene pessoal, saída da indústria (art. 20, IX)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, IX",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2800100",
+     "ncms": [
+      "33030010"
+     ],
+     "ncmText": "3303.00.10",
+     "description": "Perfumes (extratos)",
+     "mva": "398.58"
+    },
+    {
+     "item": "2",
+     "cest": "2800200",
+     "ncms": [
+      "33030020"
+     ],
+     "ncmText": "3303.00.20",
+     "description": "Águas-de-colônia",
+     "mva": "626.14"
+    },
+    {
+     "item": "3",
+     "cest": "2800300",
+     "ncms": [
+      "33041000"
+     ],
+     "ncmText": "3304.10.00",
+     "description": "Produtos de Maquilagem para os Lábios",
+     "mva": "375.57"
+    },
+    {
+     "item": "4",
+     "cest": "2800400",
+     "ncms": [
+      "33042010"
+     ],
+     "ncmText": "3304.20.10",
+     "description": "Sombra, Delineador, Lápis para sobrancelhas e rímel",
+     "mva": "497.95"
+    },
+    {
+     "item": "5",
+     "cest": "2800500",
+     "ncms": [
+      "33042090"
+     ],
+     "ncmText": "3304.20.90",
+     "description": "Outros produtos de maquilagem para os olhos",
+     "mva": "398.58"
+    },
+    {
+     "item": "6",
+     "cest": "2800600",
+     "ncms": [
+      "33043000"
+     ],
+     "ncmText": "3304.30.00",
+     "description": "Preparações para manicuros e pedicuros",
+     "mva": "378.81"
+    },
+    {
+     "item": "7",
+     "cest": "2800700",
+     "ncms": [
+      "33049100"
+     ],
+     "ncmText": "3304.91.00",
+     "description": "Pós, incluídos os compactos, para maquilagem",
+     "mva": "281.05"
+    },
+    {
+     "item": "8",
+     "cest": "2800800",
+     "ncms": [
+      "33049910"
+     ],
+     "ncmText": "3304.99.10",
+     "description": "Cremes de beleza, cremes nutritivos e loções tônicas",
+     "mva": "394.40"
+    },
+    {
+     "item": "9",
+     "cest": "2800900",
+     "ncms": [
+      "33049990"
+     ],
+     "ncmText": "3304.99.90",
+     "description": "Outros produtos de beleza ou de maquilagem preparados e preparações para conservação ou cuidados da pele",
+     "mva": "428.75"
+    },
+    {
+     "item": "10",
+     "cest": "2801100",
+     "ncms": [
+      "33051000"
+     ],
+     "ncmText": "3305.10.00",
+     "description": "Xampus para o cabelo",
+     "mva": "313.45"
+    },
+    {
+     "item": "11",
+     "cest": "2801200",
+     "ncms": [
+      "33052000"
+     ],
+     "ncmText": "3305.20.00",
+     "description": "Preparações para ondulação ou alisamento, permanentes, dos cabelos",
+     "mva": "398.58"
+    },
+    {
+     "item": "12",
+     "cest": "2801300",
+     "ncms": [
+      "33059000"
+     ],
+     "ncmText": "3305.90.00",
+     "description": "Outras preparações capilares",
+     "mva": "366.45"
+    },
+    {
+     "item": "13",
+     "cest": "2801400",
+     "ncms": [
+      "33059000"
+     ],
+     "ncmText": "3305.90.00",
+     "description": "Tintura para o cabelo",
+     "mva": "398.58"
+    },
+    {
+     "item": "14",
+     "cest": "2801500",
+     "ncms": [
+      "33071000"
+     ],
+     "ncmText": "3307.10.00",
+     "description": "Preparações para barbear (antes, durante ou após)",
+     "mva": "219.02"
+    },
+    {
+     "item": "15",
+     "cest": "2801600",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Desodorantes (desodorizantes) corporais líquidos, exceto os classificados na posição 16-A desta tabela",
+     "mva": "378.95"
+    },
+    {
+     "item": "15-A",
+     "cest": "2801601",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Loções e óleos desodorantes hidratantes líquidos",
+     "mva": "378.95"
+    },
+    {
+     "item": "15-B",
+     "cest": "2801602",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Antiperspirantes líquidos",
+     "mva": "378.95"
+    },
+    {
+     "item": "16",
+     "cest": "2801700",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outros desodorantes (desodorizantes) corporais, exceto os classificados na posição 16-A desta tabela",
+     "mva": "486.30"
+    },
+    {
+     "item": "16-A",
+     "cest": "2801701",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outras loções e óleos desodorantes hidratantes",
+     "mva": "486.30"
+    },
+    {
+     "item": "16-B",
+     "cest": "2801702",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outros antiperspirantes",
+     "mva": "486.30"
+    },
+    {
+     "item": "17",
+     "cest": "2801800",
+     "ncms": [
+      "33079000"
+     ],
+     "ncmText": "3307.90.00",
+     "description": "Outros produtos de perfumaria ou de toucador preparados",
+     "mva": "280.71"
+    },
+    {
+     "item": "18",
+     "cest": "2802000",
+     "ncms": [
+      "34011190"
+     ],
+     "ncmText": "3401.11.90",
+     "description": "Sabões de toucador em barras, pedaços ou figuras moldados",
+     "mva": "284.38"
+    },
+    {
+     "item": "19",
+     "cest": "2802300",
+     "ncms": [
+      "34013000"
+     ],
+     "ncmText": "3401.30.00",
+     "description": "Produtos e preparações orgânicos tensoativos para lavagem da pele, na forma de líquido ou de creme, acondicionados para venda a retalho, mesmo contendo sabão",
+     "mva": "532.05"
+    },
+    {
+     "item": "20",
+     "cest": "2803100",
+     "ncms": [
+      "42021"
+     ],
+     "ncmText": "4202.1",
+     "description": "Malas e maletas de toucador",
+     "mva": "485"
+    },
+    {
+     "item": "21",
+     "cest": "2803200",
+     "ncms": [
+      "9615"
+     ],
+     "ncmText": "96.15",
+     "description": "Pentes, travessas para cabelo e artigos semelhantes; grampos (alfinetes) para cabelo; pinças (\"pinceguiches\" ), onduladores, bobs (rolos) e artefatos semelhantes para penteados, e suas partes",
+     "mva": "1138.0"
+    },
+    {
+     "item": "22",
+     "cest": "2803300",
+     "ncms": [
+      "39233090",
+      "39241000",
+      "39249000",
+      "40149090",
+      "7013"
+     ],
+     "ncmText": "3923.30.90 3924.10.00 3924.90.00 4014.90.90 7013",
+     "description": "Mamadeiras",
+     "mva": "485"
+    },
+    {
+     "item": "24",
+     "cest": "2802600",
+     "ncms": [
+      "82142000"
+     ],
+     "ncmText": "8214.20.00",
+     "description": "Utensílios e sortidos de utensílios de manicuros ou de pedicuros (incluídas as limas para unhas)",
+     "mva": "262.5"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-IX-atacado",
+   "segmentName": "Venda porta a porta: perfumaria e de higiene pessoal, saída do atacado (art. 20, IX)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, IX",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2800100",
+     "ncms": [
+      "33030010"
+     ],
+     "ncmText": "3303.00.10",
+     "description": "Perfumes (extratos)",
+     "mva": "33.72"
+    },
+    {
+     "item": "2",
+     "cest": "2800200",
+     "ncms": [
+      "33030020"
+     ],
+     "ncmText": "3303.00.20",
+     "description": "Águas-de-colônia",
+     "mva": "63.13"
+    },
+    {
+     "item": "3",
+     "cest": "2800300",
+     "ncms": [
+      "33041000"
+     ],
+     "ncmText": "3304.10.00",
+     "description": "Produtos de Maquilagem para os Lábios",
+     "mva": "39.35"
+    },
+    {
+     "item": "4",
+     "cest": "2800400",
+     "ncms": [
+      "33042010"
+     ],
+     "ncmText": "3304.20.10",
+     "description": "Sombra, Delineador, Lápis para sobrancelhas e rímel",
+     "mva": "59.97"
+    },
+    {
+     "item": "5",
+     "cest": "2800500",
+     "ncms": [
+      "33042090"
+     ],
+     "ncmText": "3304.20.90",
+     "description": "Outros produtos de maquilagem para os olhos",
+     "mva": "43.95"
+    },
+    {
+     "item": "6",
+     "cest": "2800600",
+     "ncms": [
+      "33043000"
+     ],
+     "ncmText": "3304.30.00",
+     "description": "Preparações para manicuros e pedicuros",
+     "mva": "39.35"
+    },
+    {
+     "item": "7",
+     "cest": "2800700",
+     "ncms": [
+      "33049100"
+     ],
+     "ncmText": "3304.91.00",
+     "description": "Pós, incluídos os compactos, para maquilagem",
+     "mva": "32.87"
+    },
+    {
+     "item": "8",
+     "cest": "2800800",
+     "ncms": [
+      "33049910"
+     ],
+     "ncmText": "3304.99.10",
+     "description": "Cremes de beleza, cremes nutritivos e loções tônicas",
+     "mva": "47.27"
+    },
+    {
+     "item": "9",
+     "cest": "2800900",
+     "ncms": [
+      "33049990"
+     ],
+     "ncmText": "3304.99.90",
+     "description": "Outros produtos de beleza ou de maquilagem preparados e preparações para conservação ou cuidados da pele",
+     "mva": "31.76"
+    },
+    {
+     "item": "10",
+     "cest": "2801100",
+     "ncms": [
+      "33051000"
+     ],
+     "ncmText": "3305.10.00",
+     "description": "Xampus para o cabelo",
+     "mva": "55.89"
+    },
+    {
+     "item": "11",
+     "cest": "2801200",
+     "ncms": [
+      "33052000"
+     ],
+     "ncmText": "3305.20.00",
+     "description": "Preparações para ondulação ou alisamento, permanentes, dos cabelos",
+     "mva": "29.97"
+    },
+    {
+     "item": "12",
+     "cest": "2801300",
+     "ncms": [
+      "33059000"
+     ],
+     "ncmText": "3305.90.00",
+     "description": "Outras preparações capilares",
+     "mva": "40.28"
+    },
+    {
+     "item": "13",
+     "cest": "2801400",
+     "ncms": [
+      "33059000"
+     ],
+     "ncmText": "3305.90.00",
+     "description": "Tintura para o cabelo",
+     "mva": "37.30"
+    },
+    {
+     "item": "14",
+     "cest": "2801500",
+     "ncms": [
+      "33071000"
+     ],
+     "ncmText": "3307.10.00",
+     "description": "Preparações para barbear (antes, durante ou após)",
+     "mva": "45.70"
+    },
+    {
+     "item": "15",
+     "cest": "2801600",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Desodorantes (desodorizantes) corporais líquidos, exceto os classificados na posição 16-A desta tabela",
+     "mva": "57.29"
+    },
+    {
+     "item": "15-A",
+     "cest": "2801601",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Loções e óleos desodorantes hidratantes líquidos",
+     "mva": "57.29"
+    },
+    {
+     "item": "15-B",
+     "cest": "2801602",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Antiperspirantes líquidos",
+     "mva": "57.29"
+    },
+    {
+     "item": "16",
+     "cest": "2801700",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outros desodorantes (desodorizantes) corporais, exceto os classificados na posição 16-A desta tabela",
+     "mva": "46.85"
+    },
+    {
+     "item": "16-A",
+     "cest": "2801701",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outras loções e óleos desodorantes hidratantes",
+     "mva": "46.85"
+    },
+    {
+     "item": "16-B",
+     "cest": "2801702",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outros antiperspirantes",
+     "mva": "46.85"
+    },
+    {
+     "item": "17",
+     "cest": "2801800",
+     "ncms": [
+      "33079000"
+     ],
+     "ncmText": "3307.90.00",
+     "description": "Outros produtos de perfumaria ou de toucador preparados",
+     "mva": "37.98"
+    },
+    {
+     "item": "18",
+     "cest": "2802000",
+     "ncms": [
+      "34011190"
+     ],
+     "ncmText": "3401.11.90",
+     "description": "Sabões de toucador em barras, pedaços ou figuras moldados",
+     "mva": "54.96"
+    },
+    {
+     "item": "19",
+     "cest": "2802300",
+     "ncms": [
+      "34013000"
+     ],
+     "ncmText": "3401.30.00",
+     "description": "Produtos e preparações orgânicos tensoativos para lavagem da pele, na forma de líquido ou de creme, acondicionados para venda a retalho, mesmo contendo sabão",
+     "mva": "62.70"
+    },
+    {
+     "item": "20",
+     "cest": "2803100",
+     "ncms": [
+      "42021"
+     ],
+     "ncmText": "4202.1",
+     "description": "Malas e maletas de toucador",
+     "mva": "35.5"
+    },
+    {
+     "item": "21",
+     "cest": "2803200",
+     "ncms": [
+      "9615"
+     ],
+     "ncmText": "96.15",
+     "description": "Pentes, travessas para cabelo e artigos semelhantes; grampos (alfinetes) para cabelo; pinças (\"pinceguiches\" ), onduladores, bobs (rolos) e artefatos semelhantes para penteados, e suas partes",
+     "mva": "27.4"
+    },
+    {
+     "item": "22",
+     "cest": "2803300",
+     "ncms": [
+      "39233090",
+      "39241000",
+      "39249000",
+      "40149090",
+      "7013"
+     ],
+     "ncmText": "3923.30.90 3924.10.00 3924.90.00 4014.90.90 7013",
+     "description": "Mamadeiras",
+     "mva": "61.10"
+    },
+    {
+     "item": "24",
+     "cest": "2802600",
+     "ncms": [
+      "82142000"
+     ],
+     "ncmText": "8214.20.00",
+     "description": "Utensílios e sortidos de utensílios de manicuros ou de pedicuros (incluídas as limas para unhas)",
+     "mva": "25.8"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XX-X",
+   "segmentName": "Venda porta a porta: demais produtos (art. 20, X)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 20, X",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 20 da resolução. A base é o preço de venda a consumidor de tabela ou o sugerido em catálogo ou lista de preços (art. 114 do Anexo IX); a MVA vale na falta dele (§ 1º). O CEST é o do Anexo IX (28.999.00 para o produto que não está listado lá). Só para o produto que não está nos incisos I a IX. Se ele também estiver em outra seção da ST, a base daquela seção prevalece (parágrafo único do art. 20).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "2800100",
+     "ncms": [
+      "33030010"
+     ],
+     "ncmText": "3303.00.10",
+     "description": "Perfumes (extratos)",
+     "mva": "30"
+    },
+    {
+     "item": "2",
+     "cest": "2800200",
+     "ncms": [
+      "33030020"
+     ],
+     "ncmText": "3303.00.20",
+     "description": "Águas-de-colônia",
+     "mva": "30"
+    },
+    {
+     "item": "3",
+     "cest": "2800300",
+     "ncms": [
+      "33041000"
+     ],
+     "ncmText": "3304.10.00",
+     "description": "Produtos de maquiagem para os lábios",
+     "mva": "30"
+    },
+    {
+     "item": "4",
+     "cest": "2800400",
+     "ncms": [
+      "33042010"
+     ],
+     "ncmText": "3304.20.10",
+     "description": "Sombra, delineador, lápis para sobrancelhas e rímel",
+     "mva": "30"
+    },
+    {
+     "item": "5",
+     "cest": "2800500",
+     "ncms": [
+      "33042090"
+     ],
+     "ncmText": "3304.20.90",
+     "description": "Outros produtos de maquiagem para os olhos",
+     "mva": "30"
+    },
+    {
+     "item": "6",
+     "cest": "2800600",
+     "ncms": [
+      "33043000"
+     ],
+     "ncmText": "3304.30.00",
+     "description": "Preparações para manicuros e pedicuros",
+     "mva": "30"
+    },
+    {
+     "item": "7",
+     "cest": "2800700",
+     "ncms": [
+      "33049100"
+     ],
+     "ncmText": "3304.91.00",
+     "description": "Pós para maquiagem, incluindo os compactos",
+     "mva": "30"
+    },
+    {
+     "item": "8",
+     "cest": "2800800",
+     "ncms": [
+      "33049910"
+     ],
+     "ncmText": "3304.99.10",
+     "description": "Cremes de beleza, cremes nutritivos e loções tônicas",
+     "mva": "30"
+    },
+    {
+     "item": "9",
+     "cest": "2800900",
+     "ncms": [
+      "33049990"
+     ],
+     "ncmText": "3304.99.90",
+     "description": "Outros produtos de beleza ou de maquiagem preparados e preparações para conservação ou cuidados da pele, exceto as preparações antissolares e os bronzeadores",
+     "mva": "30"
+    },
+    {
+     "item": "10",
+     "cest": "2801000",
+     "ncms": [
+      "33049990"
+     ],
+     "ncmText": "3304.99.90",
+     "description": "Preparações antissolares e os bronzeadores",
+     "mva": "30"
+    },
+    {
+     "item": "11",
+     "cest": "2801100",
+     "ncms": [
+      "33051000"
+     ],
+     "ncmText": "3305.10.00",
+     "description": "Xampus para o cabelo",
+     "mva": "30"
+    },
+    {
+     "item": "12",
+     "cest": "2801200",
+     "ncms": [
+      "33052000"
+     ],
+     "ncmText": "3305.20.00",
+     "description": "Preparações para ondulação ou alisamento, permanentes, dos cabelos",
+     "mva": "30"
+    },
+    {
+     "item": "13",
+     "cest": "2801300",
+     "ncms": [
+      "33059000"
+     ],
+     "ncmText": "3305.90.00",
+     "description": "Outras preparações capilares",
+     "mva": "30"
+    },
+    {
+     "item": "14",
+     "cest": "2801400",
+     "ncms": [
+      "33059000"
+     ],
+     "ncmText": "3305.90.00",
+     "description": "Tintura para o cabelo",
+     "mva": "30"
+    },
+    {
+     "item": "15",
+     "cest": "2801500",
+     "ncms": [
+      "33071000"
+     ],
+     "ncmText": "3307.10.00",
+     "description": "Preparações para barbear (antes, durante ou após)",
+     "mva": "30"
+    },
+    {
+     "item": "16",
+     "cest": "2801600",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Desodorantes (desodorizantes) corporais líquidos, exceto os classificados no CEST 28.016.01",
+     "mva": "30"
+    },
+    {
+     "item": "16-A",
+     "cest": "2801601",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Loções e óleos desodorantes hidratantes líquidos",
+     "mva": "30"
+    },
+    {
+     "item": "16-B",
+     "cest": "2801602",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "3307.20.10",
+     "description": "Antiperspirantes líquidos",
+     "mva": "30"
+    },
+    {
+     "item": "17",
+     "cest": "2801700",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outros desodorantes (desodorizantes) corporais, exceto os classificados no CEST 28.017.01",
+     "mva": "30"
+    },
+    {
+     "item": "17-A",
+     "cest": "2801701",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outras loções e óleos desodorantes hidratantes",
+     "mva": "30"
+    },
+    {
+     "item": "17-B",
+     "cest": "2801702",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "3307.20.90",
+     "description": "Outros antiperspirantes",
+     "mva": "30"
+    },
+    {
+     "item": "18",
+     "cest": "2801800",
+     "ncms": [
+      "33079000"
+     ],
+     "ncmText": "3307.90.00",
+     "description": "Outros produtos de perfumaria ou de toucador preparados",
+     "mva": "30"
+    },
+    {
+     "item": "19",
+     "cest": "2801900",
+     "ncms": [
+      "33079000"
+     ],
+     "ncmText": "3307.90.00",
+     "description": "Outras preparações cosméticas",
+     "mva": "30"
+    },
+    {
+     "item": "20",
+     "cest": "2802000",
+     "ncms": [
+      "34011190"
+     ],
+     "ncmText": "3401.11.90",
+     "description": "Sabões de toucador em barras, pedaços ou figuras moldados, exceto CEST 28.020.01",
+     "mva": "30"
+    },
+    {
+     "item": "20-A",
+     "cest": "2802001",
+     "ncms": [
+      "34011190"
+     ],
+     "ncmText": "3401.11.90",
+     "description": "Lenços umedecidos",
+     "mva": "30"
+    },
+    {
+     "item": "21",
+     "cest": "2802100",
+     "ncms": [
+      "34011900"
+     ],
+     "ncmText": "3401.19.00",
+     "description": "Outros sabões, produtos e preparações orgânicos tensoativos, inclusive papel, pastas (ouates), feltros e falsos tecidos, impregnados, revestidos ou recobertos de sabão ou de detergentes",
+     "mva": "30"
+    },
+    {
+     "item": "22",
+     "cest": "2802200",
+     "ncms": [
+      "34012010"
+     ],
+     "ncmText": "3401.20.10",
+     "description": "Sabões de toucador sob outras formas",
+     "mva": "30"
+    },
+    {
+     "item": "23",
+     "cest": "2802300",
+     "ncms": [
+      "34013000"
+     ],
+     "ncmText": "3401.30.00",
+     "description": "Produtos e preparações orgânicos tensoativos para lavagem da pele, em forma de líquido ou de creme, acondicionados para venda a retalho, mesmo contendo sabão",
+     "mva": "30"
+    },
+    {
+     "item": "24",
+     "cest": "2802400",
+     "ncms": [
+      "48182000"
+     ],
+     "ncmText": "4818.20.00",
+     "description": "Lenços de papel, incluindo os de desmaquiar",
+     "mva": "30"
+    },
+    {
+     "item": "25",
+     "cest": "2802401",
+     "ncms": [
+      "48182000"
+     ],
+     "ncmText": "4818.20.00",
+     "description": "Toalhas de mão",
+     "mva": "30"
+    },
+    {
+     "item": "26",
+     "cest": "2802500",
+     "ncms": [
+      "82141000"
+     ],
+     "ncmText": "8214.10.00",
+     "description": "Apontadores de lápis para maquiagem",
+     "mva": "30"
+    },
+    {
+     "item": "27",
+     "cest": "2802501",
+     "ncms": [
+      "82141000"
+     ],
+     "ncmText": "8214.10.00",
+     "description": "Espátulas, abre-cartas e raspadeiras",
+     "mva": "30"
+    },
+    {
+     "item": "28",
+     "cest": "2802502",
+     "ncms": [
+      "82141000"
+     ],
+     "ncmText": "8214.10.00",
+     "description": "Lâminas de espátulas, de abre-cartas, de raspadeiras e de apontadores de lápis",
+     "mva": "30"
+    },
+    {
+     "item": "29",
+     "cest": "2802600",
+     "ncms": [
+      "82142000"
+     ],
+     "ncmText": "8214.20.00",
+     "description": "Utensílios e sortidos de utensílios de manicuros ou de pedicuros (incluindo as limas para unhas)",
+     "mva": "30"
+    },
+    {
+     "item": "30",
+     "cest": "2802700",
+     "ncms": [
+      "96032900"
+     ],
+     "ncmText": "9603.29.00",
+     "description": "Escovas e pincéis de barba, escovas para cabelos, para cílios ou para unhas e outras escovas de toucador de pessoas",
+     "mva": "30"
+    },
+    {
+     "item": "31",
+     "cest": "2802701",
+     "ncms": [
+      "96032900"
+     ],
+     "ncmText": "9603.29.00",
+     "description": "Vassouras e escovas, mesmo constituindo partes de máquinas, de aparelhos ou de veículos, vassouras mecânicas de uso manual não motorizadas, pincéis e espanadores; cabeças preparadas para escovas, pincéis e artigos semelhantes; bonecas e rolos para pintura; rodos de borracha ou de matérias flexíveis semelhantes, outros",
+     "mva": "30"
+    },
+    {
+     "item": "32",
+     "cest": "2802800",
+     "ncms": [
+      "96033000"
+     ],
+     "ncmText": "9603.30.00",
+     "description": "Pincéis para aplicação de produtos cosméticos",
+     "mva": "30"
+    },
+    {
+     "item": "33",
+     "cest": "2802801",
+     "ncms": [
+      "96033000"
+     ],
+     "ncmText": "9603.30.00",
+     "description": "Pincéis e escovas, para artistas e pincéis de escrever",
+     "mva": "30"
+    },
+    {
+     "item": "34",
+     "cest": "2802900",
+     "ncms": [
+      "96161000"
+     ],
+     "ncmText": "9616.10.00",
+     "description": "Vaporizadores de toucador, suas armações e cabeças de armações",
+     "mva": "30"
+    },
+    {
+     "item": "35",
+     "cest": "2803000",
+     "ncms": [
+      "96162000"
+     ],
+     "ncmText": "9616.20.00",
+     "description": "Borlas ou esponjas para pós ou para aplicação de outros cosméticos ou de produtos de toucador",
+     "mva": "30"
+    },
+    {
+     "item": "36",
+     "cest": "2803100",
+     "ncms": [
+      "42021"
+     ],
+     "ncmText": "4202.1",
+     "description": "Malas e maletas de toucador",
+     "mva": "30"
+    },
+    {
+     "item": "37",
+     "cest": "2803200",
+     "ncms": [
+      "9615"
+     ],
+     "ncmText": "96.15",
+     "description": "Pentes, travessas para cabelo e artigos semelhantes; grampos (alfinetes) para cabelo; pinças (“pinceguiches”), onduladores, bobs (rolos) e artefatos semelhantes para penteados, e suas partes",
+     "mva": "30"
+    },
+    {
+     "item": "38",
+     "cest": "2803300",
+     "ncms": [
+      "39233090",
+      "39241000",
+      "39249000",
+      "40149090",
+      "7013"
+     ],
+     "ncmText": "3923.30.90 3924.10.00 3924.90.00 4014.90.90 7013",
+     "description": "Mamadeiras",
+     "mva": "30"
+    },
+    {
+     "item": "39",
+     "cest": "2803400",
+     "ncms": [
+      "40149090"
+     ],
+     "ncmText": "4014.90.90",
+     "description": "Chupetas e bicos para mamadeiras e para chupetas",
+     "mva": "30"
+    },
+    {
+     "item": "40",
+     "cest": "2803500",
+     "ncms": [
+      "12119090"
+     ],
+     "ncmText": "1211.90.90",
+     "description": "Outras plantas e partes, para perfumaria, medicina e semelhantes",
+     "mva": "30"
+    },
+    {
+     "item": "41",
+     "cest": "2803600",
+     "ncms": [
+      "39262000"
+     ],
+     "ncmText": "3926.20.00",
+     "description": "Vestuário e seus acessórios, de plásticos, inclusive luvas",
+     "mva": "30"
+    },
+    {
+     "item": "42",
+     "cest": "2803700",
+     "ncms": [
+      "39264000"
+     ],
+     "ncmText": "3926.40.00",
+     "description": "Estatuetas e outros objetos de ornamentação, de plásticos",
+     "mva": "30"
+    },
+    {
+     "item": "43",
+     "cest": "2803800",
+     "ncms": [
+      "39269090"
+     ],
+     "ncmText": "3926.90.90",
+     "description": "Outras obras de plásticos",
+     "mva": "30"
+    },
+    {
+     "item": "44",
+     "cest": "2803900",
+     "ncms": [
+      "42022210"
+     ],
+     "ncmText": "4202.22.10",
+     "description": "Bolsas de folhas de plástico",
+     "mva": "30"
+    },
+    {
+     "item": "45",
+     "cest": "2804000",
+     "ncms": [
+      "42022220"
+     ],
+     "ncmText": "4202.22.20",
+     "description": "Bolsas de matérias têxteis",
+     "mva": "30"
+    },
+    {
+     "item": "46",
+     "cest": "2804100",
+     "ncms": [
+      "42022900"
+     ],
+     "ncmText": "4202.29.00",
+     "description": "Bolsas de outras matérias",
+     "mva": "30"
+    },
+    {
+     "item": "47",
+     "cest": "2804200",
+     "ncms": [
+      "42023900"
+     ],
+     "ncmText": "4202.39.00",
+     "description": "Artigos de bolsos/bolsas, de outras matérias",
+     "mva": "30"
+    },
+    {
+     "item": "48",
+     "cest": "2804300",
+     "ncms": [
+      "42029200"
+     ],
+     "ncmText": "4202.92.00",
+     "description": "Outros artefatos, de folhas de plásticos ou matérias têxteis",
+     "mva": "30"
+    },
+    {
+     "item": "49",
+     "cest": "2804400",
+     "ncms": [
+      "42029900"
+     ],
+     "ncmText": "4202.99.00",
+     "description": "Outros artefatos, de outras matérias",
+     "mva": "30"
+    },
+    {
+     "item": "50",
+     "cest": "2804500",
+     "ncms": [
+      "48192000"
+     ],
+     "ncmText": "4819.20.00",
+     "description": "Caixas e cartonagens, dobráveis, de papel/cartão, não ondulados",
+     "mva": "30"
+    },
+    {
+     "item": "51",
+     "cest": "2804600",
+     "ncms": [
+      "48194000"
+     ],
+     "ncmText": "4819.40.00",
+     "description": "Outros sacos, bolsas e cartuchos, de papel ou cartão",
+     "mva": "30"
+    },
+    {
+     "item": "52",
+     "cest": "2804700",
+     "ncms": [
+      "48211000"
+     ],
+     "ncmText": "4821.10.00",
+     "description": "Etiquetas de papel ou cartão, impressas",
+     "mva": "30"
+    },
+    {
+     "item": "53",
+     "cest": "2804800",
+     "ncms": [
+      "49111090"
+     ],
+     "ncmText": "4911.10.90",
+     "description": "Outros impressos publicitários, catálogos comerciais e semelhantes",
+     "mva": "30"
+    },
+    {
+     "item": "54",
+     "cest": "2804900",
+     "ncms": [
+      "61159900"
+     ],
+     "ncmText": "6115.99.00",
+     "description": "Outras meias de malha de outras matérias têxteis",
+     "mva": "30"
+    },
+    {
+     "item": "55",
+     "cest": "2805000",
+     "ncms": [
+      "62171000"
+     ],
+     "ncmText": "6217.10.00",
+     "description": "Outros acessórios confeccionados, de vestuário",
+     "mva": "30"
+    },
+    {
+     "item": "56",
+     "cest": "2805100",
+     "ncms": [
+      "63026000"
+     ],
+     "ncmText": "6302.60.00",
+     "description": "Roupas de toucador/cozinha, de tecidos atoalhados de algodão",
+     "mva": "30"
+    },
+    {
+     "item": "57",
+     "cest": "2805200",
+     "ncms": [
+      "63079090"
+     ],
+     "ncmText": "6307.90.90",
+     "description": "Outros artefatos têxteis confeccionados",
+     "mva": "30"
+    },
+    {
+     "item": "58",
+     "cest": "2805300",
+     "ncms": [
+      "65069900"
+     ],
+     "ncmText": "6506.99.00",
+     "description": "Chapéus e outros artefatos de outras matérias, exceto de malha",
+     "mva": "30"
+    },
+    {
+     "item": "59",
+     "cest": "2805400",
+     "ncms": [
+      "95059000"
+     ],
+     "ncmText": "9505.90.00",
+     "description": "Artigos para outras festas, carnaval ou outros divertimentos",
+     "mva": "30"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
    "segment": "XXI",
    "segmentName": "Pneumáticos, câmaras de ar e protetores",
    "act": "Resolução SEFA 571/2019 (texto consolidado)",
@@ -64605,6 +68607,731 @@
      "ncmText": "8415.90.90",
      "description": "Outras partes para máquinas e aparelhos de ar-condicionado que contenham um ventilador motorizado e dispositivos próprios para modificar a temperatura e a umidade, incluindo as máquinas e aparelhos em que a umidade não seja regulável separadamente (Protocolos ICMS 93/2014) (Protocolo ICMS",
      "mva": "69"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XXIV-I",
+   "segmentName": "Medicamentos, soros e vacinas da lista negativa (art. 25, I)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 25, I",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 25 da resolução. A base é o PMPF publicado pela SEFA/PR (art. 126 do Anexo IX); a MVA vale na falta dele (§ 1º). A lista (positiva, negativa ou neutra) é a do PIS/COFINS do produto, como no CEST. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.",
+   "items": [
+    {
+     "item": "2",
+     "cest": "1300101",
+     "ncms": [
+      "30031",
+      "30032",
+      "30033",
+      "30034",
+      "30036",
+      "3003901",
+      "3003902",
+      "3003903",
+      "3003904",
+      "30039051",
+      "30039052",
+      "30039053",
+      "30039054",
+      "30039055",
+      "30039057",
+      "30039058",
+      "30039059",
+      "3003906",
+      "3003907",
+      "3003908",
+      "3003909",
+      "30041",
+      "30042",
+      "30043",
+      "30044",
+      "30045",
+      "30046",
+      "3004901",
+      "3004902",
+      "3004903",
+      "30049041",
+      "30049042",
+      "30049043",
+      "30049044",
+      "30049045",
+      "30049047",
+      "30049048",
+      "30049049",
+      "3004905",
+      "3004906",
+      "3004907",
+      "3004909"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos de referência - negativa, exceto para uso veterinário",
+     "mva": "33"
+    },
+    {
+     "item": "5",
+     "cest": "1300201",
+     "ncms": [
+      "30031",
+      "30032",
+      "30033",
+      "30034",
+      "30036",
+      "3003901",
+      "3003902",
+      "3003903",
+      "3003904",
+      "30039051",
+      "30039052",
+      "30039053",
+      "30039054",
+      "30039055",
+      "30039057",
+      "30039058",
+      "30039059",
+      "3003906",
+      "3003907",
+      "3003908",
+      "3003909",
+      "30041",
+      "30042",
+      "30043",
+      "30044",
+      "30045",
+      "30046",
+      "3004901",
+      "3004902",
+      "3004903",
+      "30049041",
+      "30049042",
+      "30049043",
+      "30049044",
+      "30049045",
+      "30049047",
+      "30049048",
+      "30049049",
+      "3004905",
+      "3004906",
+      "3004907",
+      "3004909"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos genérico - negativa, exceto para uso veterinário",
+     "mva": "33"
+    },
+    {
+     "item": "8",
+     "cest": "1300301",
+     "ncms": [
+      "30031",
+      "30032",
+      "30033",
+      "30034",
+      "30036",
+      "3003901",
+      "3003902",
+      "3003903",
+      "3003904",
+      "30039051",
+      "30039052",
+      "30039053",
+      "30039054",
+      "30039055",
+      "30039057",
+      "30039058",
+      "30039059",
+      "3003906",
+      "3003907",
+      "3003908",
+      "3003909",
+      "30041",
+      "30042",
+      "30043",
+      "30044",
+      "30045",
+      "30046",
+      "3004901",
+      "3004902",
+      "3004903",
+      "30049041",
+      "30049042",
+      "30049043",
+      "30049044",
+      "30049045",
+      "30049047",
+      "30049048",
+      "30049049",
+      "3004905",
+      "3004906",
+      "3004907",
+      "3004909"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos similar - negativa, exceto para uso veterinário",
+     "mva": "33"
+    },
+    {
+     "item": "11",
+     "cest": "1300401",
+     "ncms": [
+      "30031",
+      "30032",
+      "30033",
+      "30034",
+      "30036",
+      "3003901",
+      "3003902",
+      "3003903",
+      "3003904",
+      "30039051",
+      "30039052",
+      "30039053",
+      "30039054",
+      "30039055",
+      "30039057",
+      "30039058",
+      "30039059",
+      "3003906",
+      "3003907",
+      "3003908",
+      "3003909",
+      "30041",
+      "30042",
+      "30043",
+      "30044",
+      "30045",
+      "30046",
+      "3004901",
+      "3004902",
+      "3004903",
+      "30049041",
+      "30049042",
+      "30049043",
+      "30049044",
+      "30049045",
+      "30049047",
+      "30049048",
+      "30049049",
+      "3004905",
+      "3004906",
+      "3004907",
+      "3004909"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Outros tipos de medicamentos - negativa, exceto para uso veterinário",
+     "mva": "33"
+    },
+    {
+     "item": "19",
+     "cest": "1300801",
+     "ncms": [
+      "30021",
+      "30024",
+      "30025"
+     ],
+     "ncmText": "30.02",
+     "description": "Antissoro, outras frações do sangue, produtos imunológicos modificados, mesmo obtidos por via biotecnológica, exceto para uso veterinário - negativa",
+     "mva": "33"
+    },
+    {
+     "item": "21",
+     "cest": "1300901",
+     "ncms": [
+      "30021",
+      "30024",
+      "30025"
+     ],
+     "ncmText": "30.02",
+     "description": "Vacinas e produtos semelhantes, exceto para uso veterinário - negativa;",
+     "mva": "33"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XXIV-II",
+   "segmentName": "Medicamentos, soros e vacinas da lista positiva (art. 25, II)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 25, II",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 25 da resolução. A base é o PMPF publicado pela SEFA/PR (art. 126 do Anexo IX); a MVA vale na falta dele (§ 1º). A lista (positiva, negativa ou neutra) é a do PIS/COFINS do produto, como no CEST. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.",
+   "items": [
+    {
+     "item": "1",
+     "cest": "1300100",
+     "ncms": [
+      "30031",
+      "30032",
+      "30033",
+      "30034",
+      "30036",
+      "3003901",
+      "3003902",
+      "3003903",
+      "3003904",
+      "30039051",
+      "30039052",
+      "30039053",
+      "30039054",
+      "30039055",
+      "30039057",
+      "30039058",
+      "30039059",
+      "3003906",
+      "3003907",
+      "3003908",
+      "3003909",
+      "30041",
+      "30042",
+      "30043",
+      "30044",
+      "30045",
+      "30046",
+      "3004901",
+      "3004902",
+      "3004903",
+      "30049041",
+      "30049042",
+      "30049043",
+      "30049044",
+      "30049045",
+      "30049047",
+      "30049048",
+      "30049049",
+      "3004905",
+      "3004906",
+      "3004907",
+      "3004909"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos de referência - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "4",
+     "cest": "1300200",
+     "ncms": [
+      "30031",
+      "30032",
+      "30033",
+      "30034",
+      "30036",
+      "3003901",
+      "3003902",
+      "3003903",
+      "3003904",
+      "30039051",
+      "30039052",
+      "30039053",
+      "30039054",
+      "30039055",
+      "30039057",
+      "30039058",
+      "30039059",
+      "3003906",
+      "3003907",
+      "3003908",
+      "3003909",
+      "30041",
+      "30042",
+      "30043",
+      "30044",
+      "30045",
+      "30046",
+      "3004901",
+      "3004902",
+      "3004903",
+      "30049041",
+      "30049042",
+      "30049043",
+      "30049044",
+      "30049045",
+      "30049047",
+      "30049048",
+      "30049049",
+      "3004905",
+      "3004906",
+      "3004907",
+      "3004909"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos genérico - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "7",
+     "cest": "1300300",
+     "ncms": [
+      "30031",
+      "30032",
+      "30033",
+      "30034",
+      "30036",
+      "3003901",
+      "3003902",
+      "3003903",
+      "3003904",
+      "30039051",
+      "30039052",
+      "30039053",
+      "30039054",
+      "30039055",
+      "30039057",
+      "30039058",
+      "30039059",
+      "3003906",
+      "3003907",
+      "3003908",
+      "3003909",
+      "30041",
+      "30042",
+      "30043",
+      "30044",
+      "30045",
+      "30046",
+      "3004901",
+      "3004902",
+      "3004903",
+      "30049041",
+      "30049042",
+      "30049043",
+      "30049044",
+      "30049045",
+      "30049047",
+      "30049048",
+      "30049049",
+      "3004905",
+      "3004906",
+      "3004907",
+      "3004909"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos similar - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "10",
+     "cest": "1300400",
+     "ncms": [
+      "30031",
+      "30032",
+      "30033",
+      "30034",
+      "30036",
+      "3003901",
+      "3003902",
+      "3003903",
+      "3003904",
+      "30039051",
+      "30039052",
+      "30039053",
+      "30039054",
+      "30039055",
+      "30039057",
+      "30039058",
+      "30039059",
+      "3003906",
+      "3003907",
+      "3003908",
+      "3003909",
+      "30041",
+      "30042",
+      "30043",
+      "30044",
+      "30045",
+      "30046",
+      "3004901",
+      "3004902",
+      "3004903",
+      "30049041",
+      "30049042",
+      "30049043",
+      "30049044",
+      "30049045",
+      "30049047",
+      "30049048",
+      "30049049",
+      "3004905",
+      "3004906",
+      "3004907",
+      "3004909"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Outros tipos de medicamentos - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "18",
+     "cest": "1300800",
+     "ncms": [
+      "30021",
+      "30024",
+      "30025"
+     ],
+     "ncmText": "30.02",
+     "description": "Antissoro, outras frações do sangue, produtos imunológicos modificados, mesmo obtidos por via biotecnológica, exceto para uso veterinário - positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "20",
+     "cest": "1300900",
+     "ncms": [
+      "30021",
+      "30024",
+      "30025"
+     ],
+     "ncmText": "30.02",
+     "description": "Vacinas e produtos semelhantes, exceto para uso veterinário - positiva;",
+     "mva": "38.24"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XXIV-III",
+   "segmentName": "Contrastes, curativos e contraceptivos da lista negativa (art. 25, III)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 25, III",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 25 da resolução. A base é o PMPF publicado pela SEFA/PR (art. 126 do Anexo IX); a MVA vale na falta dele (§ 1º). A lista (positiva, negativa ou neutra) é a do PIS/COFINS do produto, como no CEST. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.",
+   "items": [
+    {
+     "item": "14",
+     "cest": "1300501",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "3006.60.00",
+     "description": "Preparações químicas contraceptivas de referência, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - negativa.",
+     "mva": "33"
+    },
+    {
+     "item": "14-B",
+     "cest": "1300503",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "3006.60.00",
+     "description": "Preparações químicas contraceptivas genérico, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – negativa.",
+     "mva": "33"
+    },
+    {
+     "item": "14-D",
+     "cest": "1300505",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "3006.60.00",
+     "description": "Preparações químicas contraceptivas similar, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – negativa.",
+     "mva": "33"
+    },
+    {
+     "item": "17",
+     "cest": "1300701",
+     "ncms": [
+      "300630"
+     ],
+     "ncmText": "3006.30",
+     "description": "Preparações opacificantes (contrastantes) para exames radiográficos e reagentes de diagnóstico concebidos para serem administrados ao paciente - negativa",
+     "mva": "33"
+    },
+    {
+     "item": "23",
+     "cest": "1301001",
+     "ncms": [
+      "3005101"
+     ],
+     "ncmText": "30.05",
+     "description": "Curativos (pensos) adesivos e outros artigos com uma camada adesiva, impregnados ou recobertos de substâncias farmacêuticas - Lista Negativa",
+     "mva": "33"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XXIV-IV",
+   "segmentName": "Contrastes, curativos e contraceptivos da lista positiva (art. 25, IV)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 25, IV",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 25 da resolução. A base é o PMPF publicado pela SEFA/PR (art. 126 do Anexo IX); a MVA vale na falta dele (§ 1º). A lista (positiva, negativa ou neutra) é a do PIS/COFINS do produto, como no CEST. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.",
+   "items": [
+    {
+     "item": "13",
+     "cest": "1300500",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "3006.60.00",
+     "description": "Preparações químicas contraceptivas de referência, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "14-A",
+     "cest": "1300502",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "3006.60.00",
+     "description": "Preparações químicas contraceptivas genérico, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "14-C",
+     "cest": "1300504",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "3006.60.00",
+     "description": "Preparações químicas contraceptivas similar, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "16",
+     "cest": "1300700",
+     "ncms": [
+      "300630"
+     ],
+     "ncmText": "3006.30",
+     "description": "Preparações opacificantes (contrastantes) para exames radiográficos e reagentes de diagnóstico concebidos para serem administrados ao paciente - positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "22",
+     "cest": "1301000",
+     "ncms": [
+      "3005101"
+     ],
+     "ncmText": "30.05",
+     "description": "Curativos (pensos) adesivos e outros artigos com uma camada adesiva, impregnados ou recobertos de substâncias farmacêuticas - Lista Positiva",
+     "mva": "38.24"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "segment": "XXIV-V",
+   "segmentName": "Medicamentos e produtos da lista neutra (art. 25, V)",
+   "act": "Resolução SEFA 571/2019 (texto consolidado), art. 25, V",
+   "source": "stPrRes571",
+   "url": "https://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/101201900571.pdf",
+   "validFrom": "2019-07-04",
+   "validTo": null,
+   "note": "MVA original do art. 25 da resolução. A base é o PMPF publicado pela SEFA/PR (art. 126 do Anexo IX); a MVA vale na falta dele (§ 1º). A lista (positiva, negativa ou neutra) é a do PIS/COFINS do produto, como no CEST. Vindo de outra UF, usar a MVA ajustada pela fórmula do § 5º do art. 1º do Anexo IX.",
+   "items": [
+    {
+     "item": "3",
+     "cest": "1300102",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos de referência - neutra, exceto para uso veterinário",
+     "mva": "41.38"
+    },
+    {
+     "item": "6",
+     "cest": "1300202",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos genérico - neutra, exceto para uso veterinário",
+     "mva": "41.38"
+    },
+    {
+     "item": "9",
+     "cest": "1300302",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Medicamentos similar - neutra, exceto para uso veterinário",
+     "mva": "41.38"
+    },
+    {
+     "item": "12",
+     "cest": "1300402",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "30.03 30.04",
+     "description": "Outros tipos de medicamentos - neutra, exceto para uso veterinário",
+     "mva": "41.38"
+    },
+    {
+     "item": "15",
+     "cest": "1300600",
+     "ncms": [
+      "2936"
+     ],
+     "ncmText": "29.36",
+     "description": "Provitaminas e vitaminas, naturais ou reproduzidas por síntese (incluídos os concentrados naturais), bem como os seus derivados utilizados principalmente como vitaminas, misturados ou não entre si, mesmo em quaisquer soluções - neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "24",
+     "cest": "1301100",
+     "ncms": [
+      "3005"
+     ],
+     "ncmText": "30.05",
+     "description": "Algodão, atadura, esparadrapo, gazes, pensos, sinapismos, e outros, acondicionados para venda a retalho para usos medicinais, cirúrgicos ou dentários, não impregnados ou recobertos de substâncias farmacêuticas - Lista Neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "25",
+     "cest": "1301300",
+     "ncms": [
+      "40141000"
+     ],
+     "ncmText": "4014.10.00",
+     "description": "Preservativo – neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "26",
+     "cest": "1301400",
+     "ncms": [
+      "901831"
+     ],
+     "ncmText": "9018.31",
+     "description": "Seringas, mesmo com agulhas - neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "27",
+     "cest": "1301500",
+     "ncms": [
+      "9018321"
+     ],
+     "ncmText": "9018.32.1",
+     "description": "Agulhas para seringas - neutra",
+     "mva": "41.38"
+    },
+    {
+     "item": "28",
+     "cest": "1301600",
+     "ncms": [
+      "39269090"
+     ],
+     "ncmText": "3926.90.90",
+     "description": "Contraceptivos (dispositivos intrauterinos - DIU) - neutra",
+     "mva": "41.38"
     }
    ]
   },

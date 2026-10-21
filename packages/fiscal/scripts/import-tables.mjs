@@ -541,13 +541,16 @@ function withSpDrinksBase(annexes) {
 // NCM. É referência para a regra de ICMS da empresa, não regra do motor: a empresa confirma.
 // Paraná (F3-26.c): MVA da Resolução SEFA 571/2019 e o que saiu da ST pelo Anexo IX do RICMS/PR.
 async function importStPr(cest, known) {
+  const ncmCodes = tables['ncm.json'].items.map((n) => n[0]).filter((c) => c.length === 8);
   const pdf = async (key) => pdfLines(readFileSync(join(sourcesDir, manifest[key].file)));
   const res = parsePrRes571(await pdf('stPrRes571'), known);
   return prStReferences(res.tables, parsePrAnexoIX(anexoIXLines(await pdf('stPrAnexoIX'))), {
     resUrl: manifest.stPrRes571.page,
     anexoUrl: manifest.stPrAnexoIX.page,
     articles: res.articles,
+    doorToDoor: res.doorToDoor,
     cestNames: new Map(cest.items.map((c) => [c.cest, c.description])),
+    ncmCodes,
   });
 }
 

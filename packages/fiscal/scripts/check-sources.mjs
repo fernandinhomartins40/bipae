@@ -330,6 +330,15 @@ async function checkPr() {
   const known = new Set(
     JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
   );
+  const cestNames = new Map(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => [
+      c.cest,
+      c.description,
+    ]),
+  );
+  const ncmCodes = JSON.parse(readFileSync(join(dataDir, 'ncm.json'), 'utf8'))
+    .items.map((n) => n[0])
+    .filter((c) => c.length === 8);
   const build = async (resBytes, ricmsBytes) => {
     const res = parsePrRes571(await pdfLines(resBytes), known);
     return prStRows(
@@ -337,6 +346,9 @@ async function checkPr() {
         resUrl: '',
         anexoUrl: '',
         articles: res.articles,
+        doorToDoor: res.doorToDoor,
+        cestNames,
+        ncmCodes,
       }),
     );
   };

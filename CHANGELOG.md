@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-26.c.PR3 ST do Paraná: medicamentos e venda porta a porta] — 21/10/2026
+
+### Adicionado
+- **Medicamentos no Paraná:** a MVA segue a lista do PIS/COFINS do produto, que já vem no CEST (33% na negativa, 38,24% na positiva, 41,38% na neutra), com as exceções de NCM da Resolução SEFA 571/2019. A base continua sendo o PMPF; a MVA vale na falta dele.
+- **Venda porta a porta no Paraná:** as listas de produtos do art. 20 (acessórios, vestuário, artigos para casa, cuidados pessoais, infantis, nutrição), a perfumaria com as duas MVAs (saída da indústria e do atacado) e os 30% dos demais casos.
+
 ## [F3-26.c.PR2 ST do Paraná: autopeças e veículos] — 21/10/2026
 
 ### Adicionado

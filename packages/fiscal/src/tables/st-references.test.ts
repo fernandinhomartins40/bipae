@@ -130,7 +130,8 @@ describe('Paraná: Resolução SEFA 571/2019 e Anexo IX do RICMS/PR (F3-26.c)', 
     const itens = pr.flatMap((r) => r.items);
     expect(itens.length).toBeGreaterThan(400);
     for (const item of itens) {
-      expect(item.mva, item.item).toMatch(/^\d{1,3}(\.\d{1,2})?$/);
+      // Até 1.138% (pentes vendidos porta a porta, art. 20, IX).
+      expect(item.mva, item.item).toMatch(/^\d{1,4}(\.\d{1,2})?$/);
       expect(item.ncms.length, item.item).toBeGreaterThan(0);
       for (const n of item.ncms) expect(n, item.item).toMatch(/^\d{4,8}$/);
     }
@@ -159,7 +160,9 @@ describe('Paraná: Resolução SEFA 571/2019 e Anexo IX do RICMS/PR (F3-26.c)', 
     const cosmeticos = pr.find((r) => r.segment === 'XII')!;
     expect(cosmeticos.validFrom).toBe('2026-04-01');
     expect(cosmeticos.items.find((i) => i.cest === '2000100')).toMatchObject({ mva: '46.78' });
-    expect(stReferencesFor('PR', '12119090', '2026-03-31')).toEqual([]);
+    // Antes disso, nada da tabela de cosméticos (o mesmo NCM aparece na venda porta a porta).
+    const antes = stReferencesFor('PR', '12119090', '2026-03-31');
+    expect(antes.filter((m) => !m.segmentName.startsWith('Venda porta a porta'))).toEqual([]);
   });
 
   it('eletrônicos saíram da ST em 01/03/2026 (Decreto 12.828/2026): a MVA para de ser sugerida', () => {
@@ -208,6 +211,47 @@ describe('Paraná: Resolução SEFA 571/2019 e Anexo IX do RICMS/PR (F3-26.c)', 
     expect(depurador.ncms).toEqual(['84213200']);
     const status = stStatusFor('PR', '70091000', '2026-10-21', ncmsOf);
     expect(status.find((s) => s.cest === '0101600')).toMatchObject({ annex: 'V', inSt: true });
+  });
+
+  it('medicamentos: a MVA segue a lista do PIS/COFINS do CEST, com as exceções de NCM', () => {
+    // Genérico da lista positiva (CEST 13.002.00) e da negativa (13.002.01), NCM 3004.90.69.
+    const generico = stReferencesFor('PR', '30049069', '2026-10-21');
+    expect(generico.find((m) => m.cest === '1300200')).toMatchObject({ mva: '38.24' });
+    expect(generico.find((m) => m.cest === '1300201')).toMatchObject({ mva: '33' });
+    expect(generico.find((m) => m.cest === '1300202')).toMatchObject({ mva: '41.38' });
+    // 3004.90.46 está fora dos incisos I e II (art. 25): só sobra a lista neutra.
+    const excecao = stReferencesFor('PR', '30049046', '2026-10-21').filter((m) =>
+      m.cest.startsWith('13'),
+    );
+    expect(excecao.map((m) => m.cest)).toEqual(['1300102', '1300202', '1300302', '1300402']);
+    const anexo = ST_SEGMENTS.find((s) => s.uf === 'PR')!.annexes.find((a) => a.annex === 'XXIV')!;
+    expect(anexo.name).toBe('Medicamentos');
+    expect(pr.find((r) => r.segment === 'XXIV-V')!.note).toMatch(/PMPF/);
+  });
+
+  it('venda porta a porta: MVA por lista do art. 20, duas no perfume (indústria e atacado)', () => {
+    const perfume = stReferencesFor('PR', '33030010', '2026-10-21');
+    expect(
+      perfume.map((m) => [m.segmentName.replace(/^Venda porta a porta: /, ''), m.mva]),
+    ).toEqual(
+      expect.arrayContaining([
+        ['perfumaria e de higiene pessoal, saída da indústria (art. 20, IX)', '398.58'],
+        ['perfumaria e de higiene pessoal, saída do atacado (art. 20, IX)', '33.72'],
+        ['demais produtos (art. 20, X)', '30'],
+      ]),
+    );
+    expect(perfume.find((m) => m.mva === '398.58')).toMatchObject({ cest: '2800100' });
+    // Vestido de malha de algodão (inciso II), fora da lista do Anexo IX: CEST 28.999.00.
+    expect(stReferencesFor('PR', '61044200', '2026-10-21')).toContainEqual(
+      expect.objectContaining({ mva: '27.6', cest: '2899900' }),
+    );
+    // A redação atual: o item 23 do inciso IX (chupetas) foi revogado em 01/10/2023.
+    const ix = pr.find((r) => r.segment === 'XX-IX-industria')!;
+    expect(ix.items.map((i) => i.item)).not.toContain('23');
+    expect(ix.items.find((i) => i.item === '21')).toMatchObject({ mva: '1138.0' });
+    // Pincéis do 9603.30.00: o item cobre os dois CEST do Anexo IX.
+    const pinceis = pr.find((r) => r.segment === 'XX-IV')!.items.filter((i) => i.item === '19');
+    expect(pinceis.map((i) => i.cest)).toEqual(['2802800', '2802801']);
   });
 
   it('veículos: 30% pela tabela do inciso I e 34% para os de duas rodas (art. 29 da resolução)', () => {
