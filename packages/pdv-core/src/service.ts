@@ -29,6 +29,7 @@ import {
   totals,
   type Cart,
   type CartDelivery,
+  type CartSeller,
   type CatalogItem,
 } from './cart';
 import {
@@ -352,6 +353,7 @@ export class PdvService {
       // Promoções (F5-02): a lista inteira, no formato do motor.
       await setMeta(tx, 'promotions', JSON.stringify(pricing.promotions ?? []));
       await setMeta(tx, 'delivery_zones', JSON.stringify(pricing.deliveryZones ?? []));
+      await setMeta(tx, 'sellers', JSON.stringify(pricing.sellers ?? []));
       await setMeta(tx, 'loyalty', JSON.stringify(pricing.loyalty ?? null));
       // Momento do retrato: vendas enviadas depois dele ainda não aparecem nos saldos do servidor.
       await setMeta(tx, 'pricing_applied_at', this.now().toISOString());
@@ -419,6 +421,17 @@ export class PdvService {
 
   /** Promoções do último retrato de preços (F5-02); vazio antes da primeira sincronização. */
   /** Bairros atendidos pela entrega, com a taxa (F5-10), do último retrato de preços. */
+  /** Vendedores ativos (F8-01), do último retrato: o caixa escolhe sem internet. */
+  async sellers(): Promise<CartSeller[]> {
+    return JSON.parse((await getMeta(this.storage, 'sellers')) || '[]') as CartSeller[];
+  }
+
+  /** Vendedor pelo código digitado no caixa ("7" acha o código "07" também). */
+  async sellerByCode(code: string): Promise<CartSeller | null> {
+    const wanted = code.trim().replace(/^0+(?=\d)/, '');
+    return (await this.sellers()).find((s) => s.code.replace(/^0+(?=\d)/, '') === wanted) ?? null;
+  }
+
   async deliveryZones(): Promise<{ id: string; name: string; feeCents: number }[]> {
     return JSON.parse((await getMeta(this.storage, 'delivery_zones')) || '[]') as {
       id: string;
@@ -744,6 +757,7 @@ export class PdvService {
         ...(nfce && { nfce }),
         ...(cart.delivery && { delivery: cart.delivery }),
         ...(cart.loyalty && { loyalty: cart.loyalty }),
+        ...(cart.seller && { sellerId: cart.seller.id }),
         quoteId: cart.quoteId,
       });
       if (cart.tabId) {

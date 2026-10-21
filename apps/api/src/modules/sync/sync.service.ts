@@ -30,6 +30,7 @@ import {
   priceTableItems,
   productComponents,
   priceTables,
+  sellers,
   promotions,
   productBarcodes,
   products,
@@ -349,6 +350,8 @@ export class SyncService {
           customerTaxId: p.customerTaxId ?? null,
           operatorId: event.operatorId,
           discountAuthorizedBy: p.discountAuthorizedBy ?? null,
+          // Vendedor (F8-01): vendedor desconhecido não recusa a venda; o relatório mostra assim.
+          sellerId: p.sellerId ?? null,
           occurredAt: at,
           data: p,
           ...(p.delivery && {
@@ -358,9 +361,14 @@ export class SyncService {
           }),
           taxCheck: await this.checkTaxes(tx, terminal.companyId, p.items, at),
         });
-        await tx
-          .insert(saleItems)
-          .values(p.items.map((i) => ({ tenantId: ctx.tenantId, saleId: p.saleId, ...i })));
+        await tx.insert(saleItems).values(
+          p.items.map((i) => ({
+            tenantId: ctx.tenantId,
+            saleId: p.saleId,
+            ...i,
+            sellerId: i.sellerId ?? p.sellerId ?? null,
+          })),
+        );
         await tx.insert(salePayments).values(
           p.payments.map((pay, idx) => ({
             tenantId: ctx.tenantId,
@@ -856,6 +864,13 @@ export class SyncService {
         n: sql<number>`count(*)`,
       })
       .from(promotions);
+    // Vendedores (F8-01): quem entra, sai ou muda de nome muda o retrato.
+    const [sellerState] = await tx
+      .select({
+        last: sql<string>`coalesce(max(${sellers.updatedAt})::text, '')`,
+        n: sql<number>`count(*)`,
+      })
+      .from(sellers);
     // Atacarejo (F5-03): produtos com preço de atacado também mudam o retrato.
     const [wholesale] = await tx
       .select({
@@ -885,6 +900,8 @@ export class SyncService {
           linked?.n,
           promos?.last,
           promos?.n,
+          sellerState?.last,
+          sellerState?.n,
           zones?.last,
           zones?.n,
           wholesale?.last,
@@ -962,6 +979,11 @@ export class SyncService {
             .map(({ productId, priceCents }) => ({ productId, priceCents })),
         })),
         customers: people.map((p) => ({ taxId: p.taxId!, priceTableId: p.priceTableId! })),
+        sellers: await tx
+          .select({ id: sellers.id, name: sellers.name, code: sellers.code })
+          .from(sellers)
+          .where(eq(sellers.active, true))
+          .orderBy(asc(sellers.name)),
         deliveryZones: terminal
           ? await tx
               .select({

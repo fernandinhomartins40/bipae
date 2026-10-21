@@ -432,8 +432,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 
 Pedido do dono em 20/10/2026: um app Android para o caixa e para vendas (vendedor de loja e garçom), comissão por vendedor e meios de pagamento que o próprio cliente integra (ADR-0017 e ADR-0018).
 
-- [ ] F8-01 · Vendedor na venda: o caixa escolhe quem vendeu (ou herda do pedido), cada item guarda o vendedor e a venda leva isso no evento; relatório de vendas por vendedor
-  - Pronto quando: venda sem internet com vendedor sincroniza e aparece em Relatórios por vendedor, com E2E.
+- [x] F8-01 · Vendedor na venda: o caixa escolhe quem vendeu (ou herda do pedido), cada item guarda o vendedor e a venda leva isso no evento; relatório de vendas por vendedor
+  - Feito em 20/10/2026: tela Vendedores (nome, código curto sugerido, usuário opcional, ativo), com auditoria; a lista vai ao caixa no retrato de preços; botão Vendedor no caixa (código com ou sem zero, ou nome), sem internet; `seller_id` na venda e em cada item; Relatórios agrupados por vendedor. Vendedor desconhecido nunca recusa a venda.
 - [ ] F8-02 · Comissão: % por vendedor, % próprio por produto ou categoria, vigência e auditoria; cálculo sobre vendas pagas menos devoluções; tela "Comissões" com período, total por vendedor e exportação — depende: F8-01
   - Pronto quando: testes do cálculo (exceção por produto, devolução desconta, cancelada não conta) e E2E da tela.
 - [ ] F8-03 · Pedido do vendedor (pré-venda): o vendedor monta o pedido no celular, o pedido sobe com o vendedor e o caixa o puxa pelo número ou pela lista "Pedidos de vendedores" e recebe; funciona em loja, roupa e restaurante — depende: F8-01

@@ -37,6 +37,7 @@ import {
   Tags,
   TrendingUp,
   Truck,
+  UserCheck,
   UserRound,
   Users,
   UtensilsCrossed,
@@ -75,6 +76,13 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: BarChart3,
         permission: 'catalog.read',
         keywords: 'cupom histórico cancelar nota do consumidor nfc-e',
+      },
+      {
+        to: '/vendedores',
+        label: 'Vendedores',
+        icon: UserCheck,
+        permission: 'catalog.read',
+        keywords: 'equipe de vendas código quem vendeu',
       },
       {
         to: '/comandas',

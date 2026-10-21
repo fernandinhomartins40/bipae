@@ -15,13 +15,14 @@ import { DB } from '../../common/di';
 import { AppError } from '../../common/errors';
 import { storeCondition } from '../../common/stores';
 import { withTenant, type Db } from '../../db/client';
-import { products, saleItems, salePayments, sales, stores, users } from '../../db/schema';
+import { products, saleItems, salePayments, sales, sellers, stores, users } from '../../db/schema';
 import { toCsv, toPdf, toXlsx, type ReportTable } from './report-export';
 
-const GROUPS: SalesReportGroup[] = ['product', 'operator', 'store', 'payment', 'day'];
+const GROUPS: SalesReportGroup[] = ['product', 'operator', 'seller', 'store', 'payment', 'day'];
 const GROUP_LABEL: Record<SalesReportGroup, string> = {
   product: 'Produto',
   operator: 'Operador',
+  seller: 'Vendedor',
   store: 'Loja',
   payment: 'Forma de pagamento',
   day: 'Dia',
@@ -99,17 +100,21 @@ export class ReportsService {
             ? sql`${saleItems.productId}::text`
             : input.group === 'operator'
               ? sql`${sales.operatorId}::text`
-              : input.group === 'store'
-                ? sql`${sales.storeId}::text`
-                : day;
+              : input.group === 'seller'
+                ? sql`coalesce(${saleItems.sellerId}::text, 'sem-vendedor')`
+                : input.group === 'store'
+                  ? sql`${sales.storeId}::text`
+                  : day;
         const labelCol: SQL<string> =
           input.group === 'product'
             ? sql`max(${products.name})`
             : input.group === 'operator'
               ? sql`max(coalesce(${users.name}, 'Operador'))`
-              : input.group === 'store'
-                ? sql`max(${stores.name})`
-                : sql`max(${day})`;
+              : input.group === 'seller'
+                ? sql`max(case when ${saleItems.sellerId} is null then 'Sem vendedor' else coalesce(${sellers.name}, 'Vendedor não encontrado') end)`
+                : input.group === 'store'
+                  ? sql`max(${stores.name})`
+                  : sql`max(${day})`;
         const r = await tx
           .select({
             key: keyCol,
@@ -126,6 +131,7 @@ export class ReportsService {
           .innerJoin(products, eq(products.id, saleItems.productId))
           .leftJoin(stores, eq(stores.id, sales.storeId))
           .leftJoin(users, eq(users.id, sales.operatorId))
+          .leftJoin(sellers, eq(sellers.id, saleItems.sellerId))
           .where(where)
           .groupBy(keyCol);
         rows = r.map((x) => {

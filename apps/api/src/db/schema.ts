@@ -422,6 +422,8 @@ export const sales = pgTable('sales', {
   delivery: jsonb('delivery').$type<SaleDelivery>(),
   deliveryStatus: text('delivery_status', { enum: ['pending', 'out', 'delivered'] }),
   deliveryUpdatedAt: ts('delivery_updated_at'),
+  /** Vendedor da venda (F8-01). */
+  sellerId: uuid('seller_id'),
 });
 
 export interface SaleDelivery {
@@ -458,6 +460,8 @@ export const saleItems = pgTable(
     totalCents: money('total_cents').notNull(),
     /** Resumo dos impostos do item, calculado pelo caixa (F3-06.d3). */
     taxes: jsonb('taxes'),
+    /** Quem vendeu o item (F8-01): o do item ou, sem ele, o da venda. */
+    sellerId: uuid('seller_id'),
   },
   (t) => [primaryKey({ columns: [t.saleId, t.line] })],
 );
@@ -1273,6 +1277,20 @@ export const deliveryZones = pgTable('delivery_zones', {
   storeId: uuid('store_id').notNull(),
   name: text('name').notNull(),
   feeCents: money('fee_cents').notNull(),
+  active: boolean('active').notNull().default(true),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+// ---------------------------------------------------------------- vendedores (0066)
+
+/** Vendedor (F8-01): escolhido no caixa; com usuário, também usa o app de vendas. */
+export const sellers = pgTable('sellers', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  name: text('name').notNull(),
+  code: text('code').notNull(),
+  userId: uuid('user_id'),
   active: boolean('active').notNull().default(true),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),

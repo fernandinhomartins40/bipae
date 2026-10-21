@@ -20,6 +20,7 @@ import {
   localDay,
   withPromotions,
   type Cart,
+  type CartSeller,
   type CatalogProduct,
   type Promotion,
   type CloseResult,
@@ -50,6 +51,7 @@ import {
 import { QuickProductDialog } from './quick-product';
 import { splitBill, TabsDialog } from './tabs';
 import { DeliveryDialog } from './delivery';
+import { SellerDialog } from './seller';
 import {
   loadSelfCheckout,
   newSelfCheckout,
@@ -103,7 +105,8 @@ type Dialog =
   | { kind: 'quick-product'; code: string; catalog: CatalogEntry | null }
   | { kind: 'operator' }
   | { kind: 'tabs' }
-  | { kind: 'delivery' };
+  | { kind: 'delivery' }
+  | { kind: 'seller' };
 
 export function Register({
   handle,
@@ -320,6 +323,16 @@ export function Register({
       alive = false;
     };
   }, [pdv, cart.customerTaxId, syncStatus?.lastSyncAt]);
+
+  // Vendedores (F8-01): do último retrato, recarregados a cada sincronização.
+  const [sellers, setSellers] = useState<CartSeller[]>([]);
+  useEffect(() => {
+    let alive = true;
+    void pdv.sellers().then((list) => alive && setSellers(list));
+    return () => {
+      alive = false;
+    };
+  }, [pdv, syncStatus?.lastSyncAt]);
 
   // Fidelidade (F6-08.b): os pontos do cliente da venda, do último retrato, sem internet.
   const [loyalty, setLoyalty] = useState<Awaited<ReturnType<PdvService['loyaltyFor']>> | null>(
@@ -972,6 +985,11 @@ export function Register({
           {cart.customerTaxId && (
             <p className="text-sm">CPF/CNPJ na nota: {formatTaxId(cart.customerTaxId)}</p>
           )}
+          {cart.seller && (
+            <p className="text-sm" data-testid="cart-seller">
+              Vendedor: {cart.seller.name} ({cart.seller.code})
+            </p>
+          )}
           {cart.loyalty ? (
             <div className="flex items-center justify-between gap-2 text-sm">
               <span data-testid="loyalty-used">
@@ -1049,6 +1067,11 @@ export function Register({
               <Button variant="secondary" onClick={() => setDialog({ kind: 'delivery' })}>
                 Entrega
               </Button>
+              {sellers.length > 0 && (
+                <Button variant="secondary" onClick={() => setDialog({ kind: 'seller' })}>
+                  Vendedor
+                </Button>
+              )}
             </div>
           )}
           {lastSale && (
@@ -1135,6 +1158,17 @@ export function Register({
           current={cart.customerTaxId}
           onConfirm={(taxId) => {
             void setCustomer(taxId);
+            closeDialog();
+          }}
+          onClose={closeDialog}
+        />
+      )}
+      {dialog.kind === 'seller' && (
+        <SellerDialog
+          sellers={sellers}
+          current={cart.seller ?? null}
+          onConfirm={(seller) => {
+            setCart((c) => ({ ...c, seller }));
             closeDialog();
           }}
           onClose={closeDialog}

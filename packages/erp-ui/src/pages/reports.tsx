@@ -26,6 +26,7 @@ const today = () =>
 const GROUPS: { value: SalesReportGroup; label: string }[] = [
   { value: 'product', label: 'Produto (com curva ABC)' },
   { value: 'operator', label: 'Operador' },
+  { value: 'seller', label: 'Vendedor' },
   { value: 'store', label: 'Loja' },
   { value: 'payment', label: 'Forma de pagamento' },
   { value: 'day', label: 'Dia' },

@@ -121,6 +121,7 @@ import { LoyaltyController, LoyaltyService } from './modules/crm/loyalty.service
 import { PublicApiController, PublicDataService } from './modules/public-api/public-api.controller';
 import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
 import { DeliveryController, DeliveryService } from './modules/sales/delivery.service';
+import { SellersController, SellersService } from './modules/sales/sellers.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
 import { TransferController, TransferService } from './modules/stock/transfer.service';
 import { LotsController, LotsService } from './modules/stock/lots.service';
@@ -197,6 +198,7 @@ class AppModule {
         LoyaltyController,
         PublicApiController,
         DeliveryController,
+        SellersController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -267,6 +269,7 @@ class AppModule {
         LoyaltyService,
         PublicDataService,
         DeliveryService,
+        SellersService,
         InventoryService,
         TransferService,
         LotsService,

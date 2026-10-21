@@ -47,6 +47,14 @@ export interface Cart {
    * desconto do operador: é o cliente usando o que já ganhou.
    */
   loyalty?: { points: number; discountCents: number } | null;
+  /** Quem vendeu (F8-01): escolhido no caixa ou vindo do pedido do vendedor. */
+  seller?: CartSeller | null;
+}
+
+export interface CartSeller {
+  id: string;
+  name: string;
+  code: string;
 }
 
 export interface CartDelivery {

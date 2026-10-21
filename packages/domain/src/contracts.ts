@@ -1252,7 +1252,7 @@ export interface DelinquentCustomer {
 
 // ---------- Relatórios (F4-10) ----------
 
-export type SalesReportGroup = 'product' | 'operator' | 'store' | 'payment' | 'day';
+export type SalesReportGroup = 'product' | 'operator' | 'seller' | 'store' | 'payment' | 'day';
 
 export interface SalesReportRow {
   key: string;
@@ -1741,6 +1741,29 @@ export interface KitchenTicketView {
   createdAt: string;
   readyAt: string | null;
   deliveredAt: string | null;
+}
+
+// ---------- Vendedores (F8-01) ----------
+
+/** Vendedor: aparece no caixa pelo nome ou pelo código; com usuário, também usa o app de vendas. */
+export const sellerInput = z.object({
+  name: z.string().trim().min(2, 'Informe o nome do vendedor').max(80, 'Nome muito longo'),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{1,6}$/, 'O código tem de 1 a 6 números'),
+  userId: z.string().uuid('Usuário inválido').nullish(),
+  active: z.boolean().default(true),
+});
+export type SellerInput = z.input<typeof sellerInput>;
+
+export interface SellerView {
+  id: string;
+  name: string;
+  code: string;
+  userId: string | null;
+  userName: string | null;
+  active: boolean;
 }
 
 // ---------- Pedidos do garçom (F5-08) ----------

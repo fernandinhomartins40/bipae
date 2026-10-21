@@ -174,8 +174,8 @@ describe('BipaeApp', () => {
     );
     // ...e só mostra o que o usuário pode acessar.
     await userEvent.clear(busca);
-    await userEvent.type(busca, 'equipe');
-    expect(screen.getByText(/Nada encontrado para “equipe”/)).toBeInTheDocument();
+    await userEvent.type(busca, 'convite');
+    expect(screen.getByText(/Nada encontrado para “convite”/)).toBeInTheDocument();
     await userEvent.clear(busca);
     expect(screen.getByRole('button', { name: 'Minha empresa' })).toBeInTheDocument();
     await waitFor(() =>

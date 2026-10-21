@@ -1,5 +1,13 @@
 # Changelog
 
+## [F8-01 Vendedor na venda] — 20/10/2026
+
+### Adicionado
+- **Vendedores** (menu Vendas e atendimento): nome, código curto para o caixa (o próximo livre já vem sugerido), usuário do Bipaê opcional (quem vai lançar pedidos pelo celular) e ativo/inativo. Toda mudança fica na auditoria.
+- **Botão "Vendedor" no caixa:** digite o código ("7" acha o "07") ou o nome e confirme com Enter. Funciona sem internet, com a lista da última sincronização. A venda seguinte começa sem vendedor.
+- **Relatórios por vendedor**, junto de produto, operador, loja, forma de pagamento e dia.
+- Base da comissão (F8-02) e dos pedidos de vendedor pelo celular (F8-03): cada item da venda guarda quem vendeu.
+
 ## [F7-08 Retaguarda mais simples para quem nunca usou um sistema] — 20/10/2026
 
 ### Mudou

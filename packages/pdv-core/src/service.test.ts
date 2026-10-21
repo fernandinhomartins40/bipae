@@ -668,3 +668,42 @@ describe('comandas (F5-07)', () => {
     await expect(pdv.saveTab(EMPTY_CART)).rejects.toThrow('não é de uma comanda');
   });
 });
+
+describe('vendedor na venda (F8-01)', () => {
+  const ANA = { id: uuidv7(), name: 'Ana Vendedora', code: '07' };
+  const BETO = { id: uuidv7(), name: 'Beto', code: '12' };
+
+  it('guarda os vendedores do retrato e acha pelo código, com ou sem zero na frente', async () => {
+    expect(await pdv.sellers()).toEqual([]);
+    await pdv.applyPricing({
+      version: 'v1',
+      storePriceTableId: null,
+      tables: [],
+      customers: [],
+      sellers: [ANA, BETO],
+    });
+    expect((await pdv.sellers()).map((s) => s.name)).toEqual(['Ana Vendedora', 'Beto']);
+    expect((await pdv.sellerByCode('7'))?.id).toBe(ANA.id);
+    expect((await pdv.sellerByCode('07'))?.id).toBe(ANA.id);
+    expect((await pdv.sellerByCode('012'))?.id).toBe(BETO.id);
+    expect(await pdv.sellerByCode('99')).toBeNull();
+  });
+
+  it('a venda leva o vendedor no evento, e sem vendedor o evento não muda', async () => {
+    const p = product();
+    await pdv.openSession(0);
+    await pdv.completeSale(
+      { ...addItem(EMPTY_CART, p), seller: ANA },
+      [{ method: 'cash', receivedCents: 2890 }],
+      { discountLimitPercent: 10 },
+    );
+    await pdv.completeSale(addItem(EMPTY_CART, p), [{ method: 'cash', receivedCents: 2890 }], {
+      discountLimitPercent: 10,
+    });
+    const sales = (await pdv.pendingEvents()).filter((e) => e.type === 'sale.completed');
+    for (const e of sales) expect(terminalEvent.safeParse(e).success).toBe(true);
+    const payloads = sales.map((e) => e.payload as { sellerId?: string | null });
+    expect(payloads[0]!.sellerId).toBe(ANA.id);
+    expect(payloads[1]).not.toHaveProperty('sellerId');
+  });
+});

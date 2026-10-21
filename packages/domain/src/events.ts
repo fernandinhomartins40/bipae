@@ -51,6 +51,8 @@ export const saleItemSchema = z.object({
   totalCents: cents,
   /** Ausente em vendas de caixas antigos e de empresas sem UF e regime configurados. */
   taxes: saleItemTaxesSchema.optional(),
+  /** Quem vendeu este item (F8-01), quando não é o vendedor da venda inteira. */
+  sellerId: uuid.nullish(),
 });
 export type SaleItem = z.infer<typeof saleItemSchema>;
 
@@ -92,6 +94,8 @@ export const saleCompletedEvent = z.object({
       .nullish(),
     discountAuthorizedBy: uuid.nullish(),
     quoteId: uuid.nullish(),
+    /** Vendedor da venda (F8-01); cada item pode ter o seu em items[].sellerId. */
+    sellerId: uuid.nullish(),
     /** Venda para entrega (F5-10): a taxa já está no totalCents (subtotal - desconto + taxa). */
     delivery: z
       .object({
@@ -412,6 +416,8 @@ export interface PricingSnapshot {
     /** Parcela vencida há mais do que a tolerância (F4-09): sem nova compra no crediário. */
     blocked?: boolean;
   }[];
+  /** Vendedores ativos (F8-01), para o caixa escolher quem vendeu. */
+  sellers?: { id: string; name: string; code: string }[];
   /** Bairros atendidos pela entrega da loja do caixa, com a taxa (F5-10). */
   deliveryZones?: { id: string; name: string; feeCents: number }[];
   /** Fidelidade (F6-08.b): o programa e o saldo de quem tem pontos. */
