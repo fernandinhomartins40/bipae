@@ -41,6 +41,7 @@ import { parsePbSheet } from './st-pb.mjs';
 import { parseMtPortaria195 } from './st-mt.mjs';
 import { parseConfazSt } from './st-confaz.mjs';
 import { parseRjAnexoI } from './st-rj.mjs';
+import { parseMsSubanexoI } from './st-ms.mjs';
 import { parseEsPortaria16R } from './st-es.mjs';
 import { parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI } from './st-ro.mjs';
@@ -831,6 +832,40 @@ async function checkRj() {
   };
 }
 
+/** Mato Grosso do Sul: o .doc do Subanexo I do Anexo III de hoje, lido como na geração. */
+async function checkMs() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = async (bytes) =>
+    parseMsSubanexoI(await docText(bytes), known).flatMap((t) => [
+      ...t.items.map((i) => [t.roman, i.item, i.cest, i.ncms.join(' '), i.mva ?? '']),
+      ...t.revoked.map((cest) => [t.roman, 'revogado', cest, t.excludedFrom ?? '', '']),
+    ]);
+  const old = await rowsOf(gunzipSync(readFileSync(join(sourcesDir, manifest.stMsAnexoIII.file))));
+  const title = 'ST em Mato Grosso do Sul (RICMS/MS, Anexo III, Subanexo I)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.stMsAnexoIII.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stMsAnexoIII.page,
+      status: 'mudou',
+      details: [`o arquivo novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stMsAnexoIII.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Espírito Santo: a Portaria 16-R atualizada de hoje, lida como na geração. */
 async function checkEs() {
   const known = new Set(
@@ -1253,6 +1288,7 @@ if (process.argv.includes('--save-listings')) {
       checkConfazSt('stConfazSe'),
     ),
     await safe('ST no Rio de Janeiro', manifest.stRjAnexoI.page, checkRj),
+    await safe('ST em Mato Grosso do Sul', manifest.stMsAnexoIII.page, checkMs),
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),
     await safe('ST em Rondônia', manifest.stRoAnexoVI.page, checkRo),

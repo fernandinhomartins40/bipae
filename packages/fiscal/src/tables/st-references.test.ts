@@ -557,6 +557,86 @@ describe('Rondônia: Anexo VI do RICMS/RO (F3-26.d.RO)', () => {
   });
 });
 
+describe('Mato Grosso do Sul: Subanexo I do Anexo III do RICMS/MS (F3-26.d.MS)', () => {
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+  const ms = ST_REFERENCES.filter((r) => r.uf === 'MS');
+  const itens = ms.flatMap((r) => r.items);
+
+  it('a redação atual inteira, com CEST, NCM e a MVA das operações internas', () => {
+    expect(ST_REFERENCE_UFS).toContain('MS');
+    expect(ST_SEGMENT_UFS).toContain('MS');
+    expect(itens.length).toBeGreaterThan(850);
+    const cests = new Set(CESTS.map((c) => c.cest));
+    for (const item of itens) {
+      expect(cests.has(item.cest), item.cest).toBe(true);
+      expect(item.mva, item.item).toMatch(/^\d{1,3}(\.\d{1,2})?$/);
+      for (const n of item.ncms) expect(n, item.item).toMatch(/^\d{2,8}$/);
+    }
+    const cimento = stReferencesFor('MS', '25232910', '2026-10-21').find(
+      (m) => m.cest === '0500100',
+    );
+    expect(cimento).toMatchObject({ mva: '20' });
+  });
+
+  it('água mineral em vidro: 140% quando vende a indústria (IV-A) e 100% no atacadista (IV-B)', () => {
+    const agua = stReferencesFor('MS', '22011000', '2026-10-21').filter(
+      (m) => m.cest === '0300300',
+    );
+    expect(agua.find((m) => /industrial/.test(m.segmentName))).toMatchObject({ mva: '140' });
+    expect(agua.find((m) => /atacadista/.test(m.segmentName))).toMatchObject({ mva: '100' });
+  });
+
+  it('medicamentos pela lista do PIS/COFINS: referência negativa com 19,75%', () => {
+    expect(itens.find((i) => i.cest === '1300101')).toMatchObject({
+      ncms: ['3003', '3004'],
+      mva: '19.75',
+    });
+  });
+
+  it('venda porta a porta: "Capítulos 13 e 15 a 23" vira os capítulos, faixa expandida', () => {
+    const alimentos = itens.find((i) => i.cest === '2806200')!;
+    expect(alimentos).toMatchObject({ mva: '37.63' });
+    expect(alimentos.ncms).toEqual(['13', '15', '16', '17', '18', '19', '20', '21', '22', '23']);
+  });
+
+  it('combustíveis estão na ST, mas sem MVA na tabela (PMPF): não viram sugestão', () => {
+    expect(itens.some((i) => i.cest.startsWith('06'))).toBe(false);
+    const gasolina = stStatusFor('MS', '27101259', '2026-10-21', ncmsOf).find(
+      (s) => s.cest === '0600200',
+    );
+    expect(gasolina).toMatchObject({ inSt: true, annex: 'VII' });
+  });
+
+  it('papelaria saiu da ST em 01/08/2024 (Decreto 16.467/2024), lista da redação anterior', () => {
+    const guache = stStatusFor('MS', '32131000', '2026-10-21', ncmsOf).find(
+      (s) => s.cest === '1900100',
+    );
+    expect(guache).toMatchObject({
+      inSt: false,
+      excludedFrom: '2024-08-01',
+      excludedBy: 'Decreto 16.467/2024',
+    });
+    expect(
+      stStatusFor('MS', '32131000', '2024-07-31', ncmsOf).find((s) => s.cest === '1900100'),
+    ).toMatchObject({ inSt: true });
+  });
+
+  it('eletrônicos saíram em 01/04/2025, menos as luminárias repristinadas (itens 122 a 125)', () => {
+    const freezer = stStatusFor('MS', '84181000', '2026-10-21', ncmsOf).find(
+      (s) => s.cest === '2100200',
+    );
+    expect(freezer).toMatchObject({
+      inSt: false,
+      excludedFrom: '2025-04-01',
+      excludedBy: 'Decreto 16.584/2025',
+    });
+    const luminaria = stReferencesFor('MS', '94051100', '2026-10-21').find(
+      (m) => m.cest === '2112300',
+    );
+    expect(luminaria).toMatchObject({ mva: '38', validFrom: '2025-04-01' });
+  });
+});
+
 describe('Pernambuco: Anexo 37 do RICMS/PE (F3-26.d.PE)', () => {
   const pe = ST_REFERENCES.filter((r) => r.uf === 'PE');
   const mvaOf = (cest: string) =>

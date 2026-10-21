@@ -42,6 +42,7 @@ import { parsePbSheet, pbStReferences } from './st-pb.mjs';
 import { mtStReferences, parseMtPortaria195 } from './st-mt.mjs';
 import { confazStReferences, parseConfazSt } from './st-confaz.mjs';
 import { parseRjAnexoI, rjStReferences } from './st-rj.mjs';
+import { msStReferences, parseMsSubanexoI } from './st-ms.mjs';
 import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI, roStReferences } from './st-ro.mjs';
@@ -614,6 +615,14 @@ async function importStReferences(cest) {
     ),
     { url: manifest.stRjAnexoI.page },
   );
+  // Mato Grosso do Sul (F3-26.d.MS): Subanexo I do Anexo III do RICMS/MS (.doc da SEFAZ-MS).
+  const ms = msStReferences(
+    parseMsSubanexoI(
+      await docText(gunzipSync(readFileSync(join(sourcesDir, manifest.stMsAnexoIII.file)))),
+      known,
+    ),
+    { url: manifest.stMsAnexoIII.page },
+  );
   // Espírito Santo (F3-26.d.ES): Portaria 16-R/2019 no texto atualizado da SEFAZ-ES.
   const es = esStReferences(
     parseEsPortaria16R(
@@ -727,6 +736,7 @@ async function importStReferences(cest) {
       ba.segment,
       go.segment,
       rj.segment,
+      ms.segment,
       es.segment,
       al.segment,
       ro.segment,
@@ -755,6 +765,7 @@ async function importStReferences(cest) {
       ...ba.references,
       ...go.references,
       ...rj.references,
+      ...ms.references,
       ...es.references,
       ...al.references,
       ...ro.references,

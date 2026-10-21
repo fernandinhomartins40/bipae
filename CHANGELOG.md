@@ -1,5 +1,10 @@
 # Changelog
 
+## [F3-26.d.MS ST de Mato Grosso do Sul] — 21/10/2026
+
+### Adicionado
+- **Substituição tributária em Mato Grosso do Sul:** a MVA de 893 itens do Subanexo I do Anexo III do RICMS/MS, lida do arquivo oficial da SEFAZ-MS, com o que saiu da ST e quando (papelaria em 01/08/2024, eletrônicos em 01/04/2025). Combustíveis aparecem na ST, mas sem MVA, porque a base é o PMPF. O monitor semanal avisa quando o arquivo mudar.
+
 ## [F3-27.c cBenef nas demais UFs] — 21/10/2026
 
 ### Adicionado
