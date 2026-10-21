@@ -11,6 +11,7 @@ import {
   type SalePayment,
   type SyncPullResult,
   type TabOrderForTerminal,
+  type TerminalPaymentSettings,
   type TerminalEvent,
 } from '@bipae/domain';
 import {
@@ -354,6 +355,7 @@ export class PdvService {
       await setMeta(tx, 'promotions', JSON.stringify(pricing.promotions ?? []));
       await setMeta(tx, 'delivery_zones', JSON.stringify(pricing.deliveryZones ?? []));
       await setMeta(tx, 'sellers', JSON.stringify(pricing.sellers ?? []));
+      await setMeta(tx, 'payments', JSON.stringify(pricing.payments ?? null));
       await setMeta(tx, 'loyalty', JSON.stringify(pricing.loyalty ?? null));
       // Momento do retrato: vendas enviadas depois dele ainda não aparecem nos saldos do servidor.
       await setMeta(tx, 'pricing_applied_at', this.now().toISOString());
@@ -421,6 +423,17 @@ export class PdvService {
 
   /** Promoções do último retrato de preços (F5-02); vazio antes da primeira sincronização. */
   /** Bairros atendidos pela entrega, com a taxa (F5-10), do último retrato de preços. */
+  /**
+   * Meios de pagamento da loja (F8-08), do último retrato. Sem retrato ainda: maquininha à parte
+   * e Pix manual, que funcionam em qualquer caso.
+   */
+  async paymentSettings(): Promise<TerminalPaymentSettings> {
+    const saved = JSON.parse(
+      (await getMeta(this.storage, 'payments')) || 'null',
+    ) as TerminalPaymentSettings | null;
+    return saved ?? { card: 'manual', pix: 'manual' };
+  }
+
   /** Vendedores ativos (F8-01), do último retrato: o caixa escolhe sem internet. */
   async sellers(): Promise<CartSeller[]> {
     return JSON.parse((await getMeta(this.storage, 'sellers')) || '[]') as CartSeller[];

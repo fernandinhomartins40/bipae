@@ -123,6 +123,10 @@ import { TabOrdersController, TabOrdersService } from './modules/sales/tab-order
 import { DeliveryController, DeliveryService } from './modules/sales/delivery.service';
 import { SellersController, SellersService } from './modules/sales/sellers.service';
 import { CommissionController, CommissionService } from './modules/sales/commission.service';
+import {
+  PaymentSettingsController,
+  PaymentSettingsService,
+} from './modules/sales/payment-settings.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
 import { TransferController, TransferService } from './modules/stock/transfer.service';
 import { LotsController, LotsService } from './modules/stock/lots.service';
@@ -201,6 +205,7 @@ class AppModule {
         DeliveryController,
         SellersController,
         CommissionController,
+        PaymentSettingsController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -273,6 +278,7 @@ class AppModule {
         DeliveryService,
         SellersService,
         CommissionService,
+        PaymentSettingsService,
         InventoryService,
         TransferService,
         LotsService,

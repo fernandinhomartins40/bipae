@@ -448,8 +448,8 @@ Pedido do dono em 20/10/2026: um app Android para o caixa e para vendas (vendedo
   - [ ] F8-07.a · Build Android na CI sem assinatura (APK de depuração como artefato)
   - [ ] F8-07.b · Assinatura e envio à Play Store com os secrets do E24
   - [ ] F8-07.c · Periféricos no Android: impressora térmica Bluetooth, câmera como leitor de código e leitor Bluetooth — externo: E25
-- [ ] F8-08 · Base de pagamentos (`packages/payments`, ADR-0018): `PaymentProvider`, registro de adaptadores e simuladores; tela "Meios de pagamento" por loja com segredos selados, teste de conexão e auditoria; o caixa usa o meio configurado (sem configuração, nada muda)
-  - Pronto quando: caixa web, desktop e celular cobram pelo simulador configurado na loja, com E2E.
+- [x] F8-08 · Base de pagamentos (ADR-0018): catálogo de integrações, configuração por loja, tela "Meios de pagamento" com auditoria; o caixa usa o meio configurado
+  - Feito em 21/10/2026: o caixa deixou de aprovar cartão sozinho fora do simulador. Padrão honesto: cartão na maquininha à parte (confirma no caixa, NSU opcional) e Pix pela chave da loja. Novo: QR Code Pix estático com o valor da venda, gerado no próprio Bipaê pelo BR Code do Banco Central (conferido com o exemplo oficial, CRC 1D3D), sem banco nem PSP. Simulador só se a loja escolher. Catálogo com o que está pronto e o que chega (F8-09 a F8-12). Configuração vai ao caixa no retrato e funciona sem internet. Credenciais de parceiros (colunas seladas) entram com o primeiro adaptador real (F8-09).
 - [ ] F8-09 · Pix com QR dinâmico pela API Pix do Banco Central (cobrança imediata, webhook e consulta), com perfis para Efí, Sicoob, Itaú, Banco do Brasil, Inter, Santander e Bradesco; Mercado Pago, PagBank e Asaas pelas APIs próprias — depende: F8-08 · externo: E9
 - [ ] F8-10 · Maquininha pela nuvem: Mercado Pago Point e Stone Connect (cobrança enviada ao aparelho e confirmada por webhook) — depende: F8-08 · externo: E26
 - [ ] F8-11 · TEF com pinpad no desktop e no Conector: SiTef (CliSiTef) e PayGo; Auttar e Linx depois — depende: F8-08 · externo: E10

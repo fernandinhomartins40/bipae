@@ -16,3 +16,5 @@ export * from './crm';
 export * from './loyalty';
 export * from './ai';
 export * from './password-policy';
+export * from './pix';
+export * from './payments';

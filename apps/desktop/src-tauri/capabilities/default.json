@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Permissões mínimas da janela principal do Bipaê Desktop",
+  "description": "Permissões mínimas da janela principal do Bipaê (computador e Android)",
   "windows": ["main"],
   "permissions": [
     "core:default",
@@ -12,9 +12,6 @@
           "url": "https://*"
         }
       ]
-    },
-    "autostart:allow-enable",
-    "autostart:allow-disable",
-    "autostart:allow-is-enabled"
+    }
   ]
 }

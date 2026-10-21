@@ -1,5 +1,17 @@
 # Changelog
 
+## [F8-08 Meios de pagamento e QR Code do Pix] — 21/10/2026
+
+### Adicionado
+- **Meios de pagamento** (menu Financeiro), por loja:
+  - **Pix com QR Code:** o caixa mostra o QR com a chave Pix da loja e o valor da venda, gerado no próprio Bipaê (padrão do Banco Central, sem precisar de banco nem de contrato). O cliente paga em qualquer banco e o operador confirma quando o dinheiro cai. Há também o "Pix copia e cola".
+  - A tela mostra uma prévia de R$ 1,00 para testar no app do seu banco antes de usar.
+- **Catálogo de integrações** com o que já funciona e o que chega em breve: API Pix dos bancos, Mercado Pago, PagBank e Asaas, maquininhas pela internet (Mercado Pago Point, Stone Connect), TEF com pinpad (SiTef, PayGo, Auttar, Linx) e maquininhas smart Android (PagBank, Stone, Cielo LIO, Getnet).
+
+### Mudou
+- **No caixa, o cartão não aprova mais sozinho.** Sem integração, o operador cobra na maquininha à parte e toca em "Aprovado na maquininha", com o NSU se quiser. O simulador só aparece se a loja escolher "Simulador (demonstração)".
+- Saiu do pagamento o aviso "Simulador: a integração real chega na Fase 6", que não era verdade para quem já vende.
+
 ## [F8-05 Vendas pelo celular com a câmera e papel Vendedor] — 20/10/2026
 
 ### Adicionado

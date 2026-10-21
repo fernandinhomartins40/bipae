@@ -1,4 +1,9 @@
-import { formatTaxId, maxRedeem, type CatalogProduct as CatalogEntry } from '@bipae/domain';
+import {
+  formatTaxId,
+  maxRedeem,
+  type CatalogProduct as CatalogEntry,
+  type TerminalPaymentSettings,
+} from '@bipae/domain';
 import {
   addItem,
   buildDanfeNfce,
@@ -324,6 +329,16 @@ export function Register({
       alive = false;
     };
   }, [pdv, cart.customerTaxId, syncStatus?.lastSyncAt]);
+
+  // Meios de pagamento da loja (F8-08), do último retrato.
+  const [payments, setPayments] = useState<TerminalPaymentSettings | undefined>(undefined);
+  useEffect(() => {
+    let alive = true;
+    void pdv.paymentSettings().then((p) => alive && setPayments(p));
+    return () => {
+      alive = false;
+    };
+  }, [pdv, syncStatus?.lastSyncAt]);
 
   // Vendedores (F8-01): do último retrato, recarregados a cada sincronização.
   const [sellers, setSellers] = useState<CartSeller[]>([]);
@@ -1248,6 +1263,7 @@ export function Register({
           totalCents={t.totalCents}
           credit={cart.customerTaxId ? creditInfo : undefined}
           {...(selfMode && { methods: ['pix', 'debit', 'credit'] as const })}
+          {...(payments && { payments })}
           onPaid={pay}
           onClose={closeDialog}
         />

@@ -26,6 +26,7 @@ import {
   PackagePlus,
   Percent,
   PieChart,
+  QrCode,
   Plug,
   Printer,
   Scale,
@@ -276,6 +277,13 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: TrendingUp,
         permission: 'finance.read',
         keywords: 'saldo entradas saídas dinheiro',
+      },
+      {
+        to: '/meios-de-pagamento',
+        label: 'Meios de pagamento',
+        icon: QrCode,
+        permission: 'catalog.read',
+        keywords: 'pix qr code chave maquininha cartão tef integração',
       },
       {
         to: '/recebiveis',

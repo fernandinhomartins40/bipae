@@ -32,6 +32,7 @@ import { captureSupportHandoff, endSupportSession, readSupportSession } from './
 import { SalesPage } from './pages/sales';
 import { SellersPage } from './pages/sellers';
 import { CommissionsPage } from './pages/commissions';
+import { PaymentsPage } from './pages/payments';
 import { ProductsPage } from './pages/products';
 import { BankPage } from './pages/bank';
 import { SettlementsPage } from './pages/settlements';
@@ -195,6 +196,7 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="vendas" element={<SalesPage />} />
               <Route path="vendedores" element={<SellersPage />} />
               <Route path="comissoes" element={<CommissionsPage />} />
+              <Route path="meios-de-pagamento" element={<PaymentsPage />} />
               <Route path="empresas" element={<CompaniesPage />} />
               <Route path="assinatura" element={<AccountPage />} />
               <Route path="produtos" element={<ProductsPage />} />

@@ -50,6 +50,7 @@ import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import { KitchenService } from '../sales/kitchen.service';
 import { TabOrdersService } from '../sales/tab-orders.service';
+import { PaymentSettingsService } from '../sales/payment-settings.service';
 import { WebhooksService } from '../public-api/webhooks.service';
 import { LoyaltyService } from '../crm/loyalty.service';
 import {
@@ -79,6 +80,7 @@ export class SyncService {
     @Inject(FiscalEventsService) private readonly fiscalEvents: FiscalEventsService,
     @Inject(KitchenService) private readonly kitchen: KitchenService,
     @Inject(TabOrdersService) private readonly tabOrders: TabOrdersService,
+    @Inject(PaymentSettingsService) private readonly paymentSettings: PaymentSettingsService,
     @Inject(WebhooksService) private readonly webhooks: WebhooksService,
     @Inject(LoyaltyService) private readonly loyalty: LoyaltyService,
   ) {}
@@ -902,6 +904,8 @@ export class SyncService {
           promos?.n,
           sellerState?.last,
           sellerState?.n,
+          // Meios de pagamento da loja (F8-08).
+          terminal ? await this.paymentSettings.version(tx, terminal.storeId) : '',
           zones?.last,
           zones?.n,
           wholesale?.last,
@@ -979,6 +983,7 @@ export class SyncService {
             .map(({ productId, priceCents }) => ({ productId, priceCents })),
         })),
         customers: people.map((p) => ({ taxId: p.taxId!, priceTableId: p.priceTableId! })),
+        ...(terminal && { payments: await this.paymentSettings.forTerminal(tx, terminal.storeId) }),
         sellers: await tx
           .select({ id: sellers.id, name: sellers.name, code: sellers.code })
           .from(sellers)

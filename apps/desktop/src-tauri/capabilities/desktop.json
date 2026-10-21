@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop",
+  "description": "Iniciar o Bipaê Conector com o computador (F2-08): só Windows, Linux e macOS",
+  "platforms": ["linux", "macOS", "windows"],
+  "windows": ["main"],
+  "permissions": ["autostart:allow-enable", "autostart:allow-disable", "autostart:allow-is-enabled"]
+}

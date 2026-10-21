@@ -4,12 +4,15 @@ import {
   parseBRL,
   parseTaxId,
   PAYMENT_LABELS,
+  staticPixPayload,
   type Cents,
   type PaymentMethod,
+  type TerminalPaymentSettings,
 } from '@bipae/domain';
 import {
   cashSuggestions,
   PdvError,
+  qrMatrix,
   summarizePayments,
   type ByMethod,
   type CloseResult,
@@ -378,6 +381,44 @@ const METHOD_KEYS: { method: PaymentMethod; key: string }[] = [
   { method: 'store_credit', key: 'R' },
 ];
 
+const PIX_HINT: Record<TerminalPaymentSettings['pix'], string> = {
+  manual: 'Receba pela chave Pix da loja e confirme quando cair.',
+  static_qr: 'O caixa mostra o QR com o valor; confirme quando o dinheiro cair.',
+  simulator: 'Simulador: aprova sozinho, para treinar. Ninguém é cobrado.',
+};
+
+/** QR do Pix desenhado em SVG, com o "copia e cola" embaixo. */
+function PixQr({ payload, cents }: { payload: string; cents: number }) {
+  const matrix = qrMatrix(payload);
+  const quiet = 4;
+  const side = matrix.length + quiet * 2;
+  let path = '';
+  matrix.forEach((row, y) =>
+    row.forEach((dark, x) => {
+      if (dark) path += `M${x + quiet} ${y + quiet}h1v1h-1z`;
+    }),
+  );
+  return (
+    <div className="mt-3 flex flex-col items-center gap-2">
+      <svg
+        viewBox={`0 0 ${side} ${side}`}
+        className="size-56 bg-white"
+        role="img"
+        aria-label={`QR Code do Pix de ${brl(cents)}`}
+        shapeRendering="crispEdges"
+      >
+        <path d={path} fill="#000" />
+      </svg>
+      <details className="w-full text-sm">
+        <summary className="cursor-pointer font-semibold">Pix copia e cola</summary>
+        <p className="mt-1 break-all font-mono text-xs" data-testid="pix-copia-e-cola">
+          {payload}
+        </p>
+      </details>
+    </div>
+  );
+}
+
 /**
  * Crediário no pagamento (F2-02): sem cliente (undefined), cliente sem crediário (null) ou o
  * valor disponível no limite.
@@ -400,6 +441,7 @@ export function PaymentDialog({
   totalCents,
   credit,
   methods,
+  payments = { card: 'manual', pix: 'manual' },
   onPaid,
   onClose,
 }: {
@@ -407,6 +449,8 @@ export function PaymentDialog({
   credit?: CreditInfo;
   /** Formas aceitas (autoatendimento, F5-06); sem a lista, todas. */
   methods?: PaymentMethod[];
+  /** Meios de pagamento da loja (F8-08): maquininha à parte, QR do Pix ou simulador. */
+  payments?: TerminalPaymentSettings;
   onPaid: (tenders: TenderInput[]) => Promise<void>;
   onClose: () => void;
 }) {
@@ -425,7 +469,20 @@ export function PaymentDialog({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [pixPending, setPixPending] = useState<number | null>(null);
+  const [cardPending, setCardPending] = useState<{ method: PaymentMethod; cents: number } | null>(
+    null,
+  );
+  const [nsu, setNsu] = useState('');
   const tef = useMemo(() => new SimulatedTef(), []);
+  // O QR do Pix com a chave da loja e o valor (F8-08); sem chave configurada, Pix manual.
+  const pixPayload = useMemo(() => {
+    if (pixPending === null || payments.pix !== 'static_qr' || !payments.pixStatic) return null;
+    try {
+      return staticPixPayload({ ...payments.pixStatic, amountCents: pixPending });
+    } catch {
+      return null;
+    }
+  }, [pixPending, payments]);
 
   useEffect(() => {
     amount.setText(brl(remaining).replace('R$ ', ''));
@@ -444,6 +501,14 @@ export function PaymentDialog({
         .reduce((a, t) => a + t.receivedCents, 0);
       if (!credit) return setError(creditHint(credit));
       if (used + received > credit.availableCents) return setError(creditHint(credit));
+    }
+    if (
+      (method === 'credit' || method === 'debit' || method === 'voucher') &&
+      payments.card !== 'simulator'
+    ) {
+      // Maquininha à parte: o operador cobra nela e confirma aqui (F8-08).
+      setNsu('');
+      return setCardPending({ method, cents: received });
     }
     if (method === 'credit' || method === 'debit' || method === 'voucher') {
       setBusy(true);
@@ -524,7 +589,11 @@ export function PaymentDialog({
               )}
               {method !== 'cash' && method !== 'store_credit' && (
                 <p className="text-sm text-muted">
-                  Simulador: a integração real com Pix e maquininhas chega na Fase 6.
+                  {method === 'pix'
+                    ? PIX_HINT[payments.pix]
+                    : payments.card === 'simulator'
+                      ? 'Simulador: aprova sozinho, para treinar. Ninguém é cobrado.'
+                      : 'Cobre na maquininha e confirme aqui.'}
                 </p>
               )}
               <Button type="submit" loading={busy}>
@@ -532,9 +601,57 @@ export function PaymentDialog({
               </Button>
             </form>
           )}
+          {cardPending !== null && (
+            <Alert tone="warning" title={`${PAYMENT_LABELS[cardPending.method]} na maquininha`}>
+              <p>
+                Cobre <strong>{brl(cardPending.cents)}</strong> na maquininha. Quando aprovar,
+                confirme aqui.
+              </p>
+              <div className="mt-3">
+                <TextField
+                  label="Código da transação (NSU), opcional"
+                  inputMode="numeric"
+                  value={nsu}
+                  onChange={(e) => setNsu(e.target.value.replace(/[^0-9A-Za-z]/g, '').slice(0, 40))}
+                />
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    setTenders((t) => [
+                      ...t,
+                      {
+                        method: cardPending.method,
+                        receivedCents: cardPending.cents,
+                        provider: 'Maquininha à parte',
+                        nsu: nsu || null,
+                      },
+                    ]);
+                    setCardPending(null);
+                  }}
+                >
+                  Aprovado na maquininha
+                </Button>
+                <Button variant="secondary" onClick={() => setCardPending(null)}>
+                  Não aprovou
+                </Button>
+              </div>
+            </Alert>
+          )}
           {pixPending !== null && (
-            <Alert tone="warning" title="Pix (simulador)">
-              <p>QR Code de {brl(pixPending)} gerado. Peça para o cliente pagar.</p>
+            <Alert tone="warning" title={payments.pix === 'simulator' ? 'Pix (simulador)' : 'Pix'}>
+              {pixPayload ? (
+                <>
+                  <p>Mostre o QR ao cliente. Quando o dinheiro cair na conta, confirme aqui.</p>
+                  <PixQr payload={pixPayload} cents={pixPending} />
+                </>
+              ) : (
+                <p>
+                  {payments.pix === 'simulator'
+                    ? `QR Code de ${brl(pixPending)} gerado. Peça para o cliente pagar.`
+                    : `Receba ${brl(pixPending)} pela chave Pix da loja e confirme quando cair.`}
+                </p>
+              )}
               <div className="mt-3 flex gap-2">
                 <Button
                   onClick={() => {
@@ -543,7 +660,12 @@ export function PaymentDialog({
                       {
                         method: 'pix',
                         receivedCents: pixPending,
-                        provider: 'Simulador',
+                        provider:
+                          payments.pix === 'simulator'
+                            ? 'Simulador'
+                            : pixPayload
+                              ? 'Pix (QR da loja)'
+                              : 'Pix (chave da loja)',
                         nsu: `PIX${Date.now()}`,
                       },
                     ]);

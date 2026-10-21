@@ -1,3 +1,4 @@
+import type { TerminalPaymentSettings } from './payments';
 import type { LoyaltyProgram } from './loyalty';
 import { z } from 'zod';
 import { PAYMENT_METHODS } from './payment-methods';
@@ -418,6 +419,8 @@ export interface PricingSnapshot {
     /** Parcela vencida há mais do que a tolerância (F4-09): sem nova compra no crediário. */
     blocked?: boolean;
   }[];
+  /** Meios de pagamento da loja do caixa (F8-08); sem isso, maquininha à parte e Pix manual. */
+  payments?: TerminalPaymentSettings;
   /** Vendedores ativos (F8-01), para o caixa escolher quem vendeu. */
   sellers?: { id: string; name: string; code: string }[];
   /** Bairros atendidos pela entrega da loja do caixa, com a taxa (F5-10). */

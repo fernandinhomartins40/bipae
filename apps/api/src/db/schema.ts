@@ -1316,6 +1316,22 @@ export const commissionRates = pgTable('commission_rates', {
   createdAt: ts('created_at').notNull().defaultNow(),
 });
 
+/** Meios de pagamento da loja (F8-08): sem linha, maquininha à parte e Pix manual. */
+export const paymentSettings = pgTable('payment_settings', {
+  storeId: uuid('store_id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  cardMode: text('card_mode', { enum: ['manual', 'simulator'] })
+    .notNull()
+    .default('manual'),
+  pixMode: text('pix_mode', { enum: ['manual', 'static_qr', 'simulator'] })
+    .notNull()
+    .default('manual'),
+  pixKey: text('pix_key'),
+  pixMerchantName: text('pix_merchant_name'),
+  pixCity: text('pix_city'),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
 // ---------------------------------------------------------------- condicional (0043)
 
 /** Venda condicional (F5-12.b): a mercadoria sai para o cliente provar, com prazo de volta. */
