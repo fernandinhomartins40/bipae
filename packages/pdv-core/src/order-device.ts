@@ -138,7 +138,7 @@ export class OrderDevice {
   }
 
   async queued(): Promise<QueuedOrder[]> {
-    const rows = await this.db.query<Row>('SELECT * FROM device_orders ORDER BY created_at, id');
+    const rows = await this.db.query<Row>('SELECT * FROM device_orders ORDER BY rowid');
     return rows.map((r) => ({
       ...(JSON.parse(r.body as string) as Omit<
         QueuedOrder,
