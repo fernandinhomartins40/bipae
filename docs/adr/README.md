@@ -20,3 +20,5 @@ Formato: contexto → decisão → alternativas → consequências. Status: `pro
 | [0014](0014-pdv-embed.md) | Bipaê PDV Embed: o caixa embutível em outras aplicações | aceita |
 | [0015](0015-integracao-mercadoflow.md) | Integração nativa com o MercadoFlow | aceita |
 | [0016](0016-api-publica.md) | API pública com chaves por cliente e webhooks | aceita |
+| [0017](0017-app-android-unico.md) | Um app Android só (caixa móvel e vendas), pelo Tauri 2 | aceita |
+| [0018](0018-meios-de-pagamento-integraveis.md) | Meios de pagamento que o próprio cliente integra (TEF, maquininha, Pix) | aceita |

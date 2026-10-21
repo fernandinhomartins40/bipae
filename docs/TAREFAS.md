@@ -42,6 +42,9 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] E21 · Decisão sobre gerar o SPED EFD ICMS/IPI no Bipaê ou deixar com o contador (dúvida D-031)
 - [ ] E22 · Publicação oficial do recolhimento na liquidação financeira (split payment, LC 214/2025, arts. 31 a 36): data e leiaute da consulta de débitos extintos. Não depende de decisão do dono; marque quando a Receita e o Comitê Gestor publicarem (dúvida D-027)
 - [ ] E23 · Conta de desenvolvedor da Apple (Developer ID) para assinar e notarizar o Bipaê Desktop do macOS; sem ela, o Mac pede para abrir com Control + clique
+- [ ] E24 · Play Console: criar o app `br.com.bipae.app`, ativar o Play App Signing e colocar a chave de upload nos secrets do GitHub (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`) e a conta de serviço da Play (`PLAY_SERVICE_ACCOUNT_JSON`)
+- [ ] E25 · Aparelhos Android de teste: um celular, um tablet e uma impressora térmica Bluetooth (de preferência também uma maquininha smart)
+- [ ] E26 · Contas de desenvolvedor ou homologação nas adquirentes que vamos integrar primeiro (PagBank, Stone, Cielo, Getnet, Mercado Pago); cada adaptador real espera a sua
 
 ---
 
@@ -389,8 +392,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F6-01.a · Chaves de API: criar (mostrada uma vez), listar e revogar na retaguarda; autenticação por chave com escopos, só em rotas marcadas como públicas; auditoria
   - [x] F6-01.b · Contrato OpenAPI 3.1 em /v1/public/openapi.json e rotas públicas de leitura: produtos, estoque, clientes e vendas; teste de conformidade — depende: F6-01.a
   - [x] F6-01.c · Webhooks: URL, eventos e segredo selado; envio pela fila com assinatura HMAC, novas tentativas e histórico na tela — depende: F6-01.a
-- [ ] F6-02 · Pix real com conciliação automática — externo: E9
-- [ ] F6-03 · TEF real (maquininha integrada) — externo: E10
+- [ ] F6-02 · Pix real com conciliação automática (detalhado em F8-08) — depende: F8-08 · externo: E9
+- [ ] F6-03 · TEF real (maquininha integrada; detalhado em F8-09 a F8-11) — depende: F8-10 · externo: E10
 - [ ] F6-04 · Cobrança automática dos planos e troca de plano pelo cliente — depende: F6-02, P-02
 - [ ] F6-05 · iFood — depende: F5-07 · externo: E14
 - [ ] F6-06 · Marketplaces — depende: F6-01 · externo: E14
@@ -424,3 +427,29 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [x] F7-08 · Retaguarda mais simples para leigos: menu agrupado pelo que a pessoa quer fazer e Início que antecipa pendências
   - Feito em 20/10/2026 (`docs/IMPLEMENTATION_PLAN.md`): 7 grupos em sanfona no lugar de 49 itens soltos, busca "O que você procura?" sem acento e pela palavra do dia a dia, gaveta no celular com "Abrir o caixa" sempre à vista; Início com atalhos de tarefa, "Precisa da sua atenção" (contas vencidas, lotes vencendo, certificado, notas para conferir), "Hoje na loja" e primeiros passos que se marcam sozinhos.
 - [ ] F7-07 · Teste de usabilidade com 10 pessoas (meta: 9 de 10 vendem e emitem sem ajuda) — depende: F3-14 · externo: E15
+
+## Fase 8 — Celular, vendedores e meios de pagamento
+
+Pedido do dono em 20/10/2026: um app Android para o caixa e para vendas (vendedor de loja e garçom), comissão por vendedor e meios de pagamento que o próprio cliente integra (ADR-0017 e ADR-0018).
+
+- [ ] F8-01 · Vendedor na venda: o caixa escolhe quem vendeu (ou herda do pedido), cada item guarda o vendedor e a venda leva isso no evento; relatório de vendas por vendedor
+  - Pronto quando: venda sem internet com vendedor sincroniza e aparece em Relatórios por vendedor, com E2E.
+- [ ] F8-02 · Comissão: % por vendedor, % próprio por produto ou categoria, vigência e auditoria; cálculo sobre vendas pagas menos devoluções; tela "Comissões" com período, total por vendedor e exportação — depende: F8-01
+  - Pronto quando: testes do cálculo (exceção por produto, devolução desconta, cancelada não conta) e E2E da tela.
+- [ ] F8-03 · Pedido do vendedor (pré-venda): o vendedor monta o pedido no celular, o pedido sobe com o vendedor e o caixa o puxa pelo número ou pela lista "Pedidos de vendedores" e recebe; funciona em loja, roupa e restaurante — depende: F8-01
+  - Pronto quando: E2E com o pedido feito no celular e pago no caixa, com o vendedor e a comissão certos.
+- [ ] F8-04 · Fila sem internet no aparelho de vendas: pedido de vendedor e de garçom gravados localmente com UUIDv7 e enviados quando a rede voltar, uma vez só — depende: F8-03
+  - Pronto quando: E2E com a rede desligada no celular, pedido criado, rede religada e pedido no caixa uma vez só.
+- [ ] F8-05 · Tela "Vendas" para celular: buscar ou bipar pela câmera, montar pedido ou comanda, cliente opcional, mandar ao caixa e acompanhar; quem tem permissão de caixa pode fechar ali mesmo — depende: F8-03
+- [ ] F8-06 · Caixa em celular e tablet: layout do PDV de 360 px a 1280 px, sem perder atalhos nem a venda sem internet
+  - Pronto quando: E2E do caixa nas larguras de celular e tablet, com axe sem violações.
+- [ ] F8-07 · App Android (Tauri 2): projeto Android gerado, dependências só de computador fora do Android, app único que abre em Caixa ou Vendas conforme a permissão, AAB na CI; envio à faixa de teste interno da Play Store — depende: F8-05, F8-06 · externo: E24
+  - [ ] F8-07.a · Build Android na CI sem assinatura (APK de depuração como artefato)
+  - [ ] F8-07.b · Assinatura e envio à Play Store com os secrets do E24
+  - [ ] F8-07.c · Periféricos no Android: impressora térmica Bluetooth, câmera como leitor de código e leitor Bluetooth — externo: E25
+- [ ] F8-08 · Base de pagamentos (`packages/payments`, ADR-0018): `PaymentProvider`, registro de adaptadores e simuladores; tela "Meios de pagamento" por loja com segredos selados, teste de conexão e auditoria; o caixa usa o meio configurado (sem configuração, nada muda)
+  - Pronto quando: caixa web, desktop e celular cobram pelo simulador configurado na loja, com E2E.
+- [ ] F8-09 · Pix com QR dinâmico pela API Pix do Banco Central (cobrança imediata, webhook e consulta), com perfis para Efí, Sicoob, Itaú, Banco do Brasil, Inter, Santander e Bradesco; Mercado Pago, PagBank e Asaas pelas APIs próprias — depende: F8-08 · externo: E9
+- [ ] F8-10 · Maquininha pela nuvem: Mercado Pago Point e Stone Connect (cobrança enviada ao aparelho e confirmada por webhook) — depende: F8-08 · externo: E26
+- [ ] F8-11 · TEF com pinpad no desktop e no Conector: SiTef (CliSiTef) e PayGo; Auttar e Linx depois — depende: F8-08 · externo: E10
+- [ ] F8-12 · Maquininhas smart e TEF no Android por plugin Kotlin: PagBank PlugPag, Stone, Cielo LIO, Getnet, m-SiTef e PayGo — depende: F8-07, F8-08 · externo: E26
