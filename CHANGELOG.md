@@ -1,5 +1,16 @@
 # Changelog
 
+## [F8-02 Comissão por vendedor] — 20/10/2026
+
+### Adicionado
+- **Comissão (%) no cadastro do vendedor.** Mudar o % vale a partir de hoje; as vendas antigas continuam com o % do dia em que foram feitas.
+- **Tela Comissões** (menu Vendas e atendimento): quanto cada vendedor ganhou no período, com vendas pagas, crediário recebido, devoluções, base e comissão. Exporta em CSV, XLSX e PDF.
+  - Conta só o que o cliente pagou: a parte à vista entra no dia da venda; a do crediário, no dia em que o cliente paga.
+  - A devolução desconta do vendedor do item. Venda cancelada não conta.
+- **Exceções por produto ou por categoria:** um % próprio vale no lugar do % do vendedor (o do produto vem antes do da categoria) e pode ser encerrado quando quiser.
+- **Categoria no cadastro do produto** (opcional), com sugestão das categorias que você já usa.
+- Toda mudança de % fica na auditoria.
+
 ## [F8-01 Vendedor na venda] — 20/10/2026
 
 ### Adicionado

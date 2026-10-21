@@ -210,10 +210,23 @@ export class CatalogService {
     return product;
   }
 
+  /** Categorias em uso, sem repetir maiúsculas e minúsculas. */
+  categories(ctx: RequestContext): Promise<string[]> {
+    return withTenant(this.db, ctx, async (tx) => {
+      const rows = await tx
+        .select({ category: sql<string>`min(${products.category})` })
+        .from(products)
+        .where(sql`${products.category} is not null`)
+        .groupBy(sql`lower(${products.category})`);
+      return rows.map((r) => r.category).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    });
+  }
+
   private columns(input: ProductData) {
     return {
       name: input.name,
       sku: input.sku ?? null,
+      category: input.category ?? null,
       unit: input.unit,
       priceCents: input.priceCents,
       costCents: input.costCents ?? null,
@@ -336,6 +349,7 @@ export class CatalogService {
       costCents: r.costCents,
       ncm: r.ncm,
       cest: r.cest,
+      category: r.category,
       isWeighable: r.isWeighable,
       tracksLot: r.tracksLot,
       kitchen: r.kitchen,

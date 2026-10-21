@@ -122,6 +122,7 @@ import { PublicApiController, PublicDataService } from './modules/public-api/pub
 import { TabOrdersController, TabOrdersService } from './modules/sales/tab-orders.service';
 import { DeliveryController, DeliveryService } from './modules/sales/delivery.service';
 import { SellersController, SellersService } from './modules/sales/sellers.service';
+import { CommissionController, CommissionService } from './modules/sales/commission.service';
 import { InventoryController, InventoryService } from './modules/stock/inventory.service';
 import { TransferController, TransferService } from './modules/stock/transfer.service';
 import { LotsController, LotsService } from './modules/stock/lots.service';
@@ -199,6 +200,7 @@ class AppModule {
         PublicApiController,
         DeliveryController,
         SellersController,
+        CommissionController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -270,6 +272,7 @@ class AppModule {
         PublicDataService,
         DeliveryService,
         SellersService,
+        CommissionService,
         InventoryService,
         TransferService,
         LotsService,

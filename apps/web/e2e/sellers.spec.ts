@@ -44,8 +44,10 @@ test('o caixa escolhe o vendedor pelo código e o relatório mostra as vendas de
   await page.getByLabel('Nome do vendedor').fill('Júlia Moraes');
   await expect(page.getByLabel('Código no caixa')).toHaveValue('1');
   await page.getByLabel('Código no caixa').fill('15');
+  await page.getByLabel('Comissão (%)').fill('5');
   await page.getByRole('button', { name: 'Salvar vendedor' }).click();
   await expect(page.getByRole('row', { name: /Júlia Moraes/ })).toContainText('Ativo');
+  await expect(page.getByRole('row', { name: /Júlia Moraes/ })).toContainText('5%');
 
   await page.getByRole('link', { name: 'Abrir o caixa' }).click();
   await page.getByLabel('Novo caixa').fill('Caixa 1');
@@ -80,4 +82,18 @@ test('o caixa escolhe o vendedor pelo código e o relatório mostra as vendas de
   await abrirNoMenu(page, 'Relatórios');
   await page.getByLabel('Agrupar por').selectOption({ label: 'Vendedor' });
   await expect(page.getByRole('row', { name: /Júlia Moraes/ })).toContainText('R$ 120,00');
+
+  // Comissão: 5% sobre R$ 120,00 pagos.
+  await abrirNoMenu(page, 'Comissões');
+  await expect(page.getByTestId('commission-total')).toHaveText('R$ 6,00');
+  await expect(page.getByRole('row', { name: /Júlia Moraes/ })).toContainText('R$ 120,00');
+
+  // Exceção por categoria aparece na lista e pode ser encerrada.
+  await page.getByLabel('Categoria', { exact: true }).fill('Vestidos');
+  await page.getByLabel('Comissão da exceção (%)').fill('8');
+  await page.getByRole('button', { name: 'Salvar exceção' }).click();
+  const excecoes = page.getByRole('list', { name: 'Exceções de comissão' });
+  await expect(excecoes).toContainText('Categoria Vestidos · 8%');
+  await excecoes.getByRole('button', { name: 'Encerrar' }).click();
+  await expect(page.getByText('Nenhuma exceção: vale o % de cada vendedor.')).toBeVisible();
 });

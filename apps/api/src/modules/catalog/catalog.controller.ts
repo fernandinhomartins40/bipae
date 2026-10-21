@@ -30,6 +30,13 @@ export class CatalogController {
     return this.catalog.listProducts(ctx, parse(productListQuery, query));
   }
 
+  /** Categorias já usadas, para sugerir no cadastro (F8-02). */
+  @Get('products/categories')
+  @RequirePermission('catalog.read')
+  categories(@Ctx() ctx: RequestContext) {
+    return this.catalog.categories(ctx);
+  }
+
   @Get('products/:id')
   @RequirePermission('catalog.read')
   getProduct(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {

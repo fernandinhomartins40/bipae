@@ -15,7 +15,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
+import { ApiError } from '../api-client';
 import { useForm } from '../forms';
+import { formatBp, parsePercentBp } from '../percent';
 
 interface MemberOption {
   userId: string;
@@ -75,6 +77,10 @@ export function SellersPage() {
             columns={[
               { header: 'Código', cell: (s) => <span className="tabular-nums">{s.code}</span> },
               { header: 'Nome', cell: (s) => <span className="font-semibold">{s.name}</span> },
+              {
+                header: 'Comissão',
+                cell: (s) => (s.commissionBp === null ? '—' : formatBp(s.commissionBp)),
+              },
               { header: 'Usuário', cell: (s) => s.userName ?? '—' },
               {
                 header: 'Situação',
@@ -121,12 +127,19 @@ function SellerForm({
     code: seller?.code ?? suggested,
     userId: seller?.userId ?? '',
     active: seller?.active ?? true,
+    commission: seller?.commissionBp != null ? formatBp(seller.commissionBp).replace('%', '') : '',
   });
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     void form.submit(async (v) => {
-      const body = { ...v, userId: v.userId || null };
+      const { commission, ...rest } = v;
+      const commissionBp = commission.trim() ? parsePercentBp(commission) : undefined;
+      if (commissionBp === null) {
+        const message = 'Comissão inválida. Use um número de 0 a 100, como 2,5.';
+        throw new ApiError(400, 'validation', message, [{ path: 'commission', message }]);
+      }
+      const body = { ...rest, userId: v.userId || null, commissionBp };
       if (seller) await api.put(`/sellers/${seller.id}`, body);
       else await api.post('/sellers', body);
       await queryClient.invalidateQueries({ queryKey: ['sellers'] });
@@ -156,6 +169,14 @@ function SellerForm({
           value={form.values.code}
           onChange={(e) => form.set('code', e.target.value.replace(/\D/g, '').slice(0, 6))}
           error={form.errors.code}
+        />
+        <TextField
+          label="Comissão (%)"
+          inputMode="decimal"
+          hint="Sobre o que ele vender e o cliente pagar. Mudar vale a partir de hoje; produtos e categorias podem ter um % próprio em Comissões."
+          value={form.values.commission}
+          onChange={(e) => form.set('commission', e.target.value)}
+          error={form.errors.commission ?? form.errors.commissionBp}
         />
         <SelectField
           label="Usuário do Bipaê (opcional)"

@@ -179,6 +179,8 @@ export type ProductPack = z.output<typeof productPackSchema>;
 export const productInput = z.object({
   name: trimmed(1, 120, 'Nome do produto'),
   sku: optionalText(60),
+  /** Categoria livre ("Roupas", "Bebidas"), usada na comissão e nos relatórios (F8-02). */
+  category: optionalText(60),
   barcodes: z.array(barcodeSchema).max(20).default([]),
   unit: z.string().trim().toUpperCase().min(1).max(6).default('UN'),
   priceCents: centsSchema,
@@ -239,6 +241,7 @@ export interface Product {
   costCents: number | null;
   ncm: string | null;
   cest: string | null;
+  category?: string | null;
   isWeighable: boolean;
   tracksLot: boolean;
   kitchen: boolean;
@@ -1754,6 +1757,13 @@ export const sellerInput = z.object({
     .regex(/^\d{1,6}$/, 'O código tem de 1 a 6 números'),
   userId: z.string().uuid('Usuário inválido').nullish(),
   active: z.boolean().default(true),
+  /** Comissão do vendedor em centésimos de ponto (250 = 2,5%); muda a partir de hoje (F8-02). */
+  commissionBp: z
+    .number()
+    .int('Comissão inválida')
+    .min(0, 'A comissão não pode ser negativa')
+    .max(10_000, 'A comissão vai até 100%')
+    .optional(),
 });
 export type SellerInput = z.input<typeof sellerInput>;
 
@@ -1764,6 +1774,58 @@ export interface SellerView {
   userId: string | null;
   userName: string | null;
   active: boolean;
+  /** % que vale hoje, em centésimos de ponto; nulo quando nunca foi definido. */
+  commissionBp: number | null;
+}
+
+// ---------- Comissão (F8-02) ----------
+
+/** Exceção de comissão por produto ou por categoria; rateBp nulo encerra a exceção. */
+export const commissionExceptionInput = z
+  .object({
+    productId: z.string().uuid('Produto inválido').nullish(),
+    category: z.string().trim().min(1).max(60, 'Categoria muito longa').nullish(),
+    rateBp: z
+      .number()
+      .int('Comissão inválida')
+      .min(0, 'A comissão não pode ser negativa')
+      .max(10_000, 'A comissão vai até 100%')
+      .nullable(),
+    startsOn: isoDay.optional(),
+  })
+  .refine((v) => !!v.productId !== !!v.category, {
+    message: 'Escolha um produto ou uma categoria',
+    path: ['productId'],
+  });
+export type CommissionExceptionInput = z.input<typeof commissionExceptionInput>;
+
+export interface CommissionExceptionView {
+  id: string;
+  productId: string | null;
+  productName: string | null;
+  category: string | null;
+  rateBp: number;
+  startsOn: string;
+}
+
+export interface CommissionReportRow {
+  sellerId: string;
+  sellerName: string;
+  code: string;
+  /** Pago na hora, das vendas do período. */
+  salesCents: number;
+  /** Crediário recebido no período (de vendas de qualquer data). */
+  creditReceivedCents: number;
+  returnsCents: number;
+  baseCents: number;
+  commissionCents: number;
+}
+
+export interface CommissionReport {
+  from: string;
+  to: string;
+  rows: CommissionReportRow[];
+  totalCommissionCents: number;
 }
 
 // ---------- Pedidos do garçom (F5-08) ----------

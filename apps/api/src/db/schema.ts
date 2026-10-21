@@ -226,6 +226,8 @@ export const products = pgTable('products', {
   costCents: money('cost_cents'),
   ncm: char('ncm', { length: 8 }),
   cest: char('cest', { length: 7 }),
+  /** Categoria livre (F8-02), usada na exceção de comissão e nos relatórios. */
+  category: text('category'),
   isWeighable: boolean('is_weighable').notNull().default(false),
   tracksLot: boolean('tracks_lot').notNull().default(false),
   /** Preparado na cozinha: vai para a tela da cozinha quando lançado numa comanda (F5-09). */
@@ -1294,6 +1296,22 @@ export const sellers = pgTable('sellers', {
   active: boolean('active').notNull().default(true),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/**
+ * Comissão (F8-02): % do vendedor, ou exceção por produto ou categoria, valendo a partir de uma
+ * data. Mudar é inserir outra linha; nulo encerra a exceção.
+ */
+export const commissionRates = pgTable('commission_rates', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  sellerId: uuid('seller_id'),
+  productId: uuid('product_id'),
+  category: text('category'),
+  rateBp: integer('rate_bp'),
+  startsOn: date('starts_on', { mode: 'string' }).notNull(),
+  createdBy: uuid('created_by'),
+  createdAt: ts('created_at').notNull().defaultNow(),
 });
 
 // ---------------------------------------------------------------- condicional (0043)

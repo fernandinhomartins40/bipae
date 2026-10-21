@@ -178,6 +178,10 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   // Recria o campo de preço quando a formação de preço (F4-03) escolhe um valor.
   const [priceKey, setPriceKey] = useState(0);
   const units = useQuery({ queryKey: ['units'], queryFn: () => api.get<Unit[]>('/units') });
+  const categories = useQuery({
+    queryKey: ['products', 'categories'],
+    queryFn: () => api.get<string[]>('/products/categories'),
+  });
   const [components, setComponents] = useState<KitComponent[]>(
     (product?.components ?? []).map((c) => ({
       productId: c.productId,
@@ -194,6 +198,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   const form = useForm({
     name: product?.name ?? '',
     sku: product?.sku ?? '',
+    category: product?.category ?? '',
     barcodes: product?.barcodes.join(', ') ?? '',
     unit: product?.unit ?? 'UN',
     priceCents: product?.priceCents ?? (null as number | null),
@@ -366,6 +371,19 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           onChange={(e) => form.set('barcodes', e.target.value)}
           error={Object.entries(form.errors).find(([k]) => k.startsWith('barcodes'))?.[1]}
         />
+        <TextField
+          label="Categoria (opcional)"
+          hint="Ex.: Roupas, Bebidas. Serve para a comissão e para os relatórios."
+          list="categorias-de-produto"
+          value={form.values.category}
+          onChange={(e) => form.set('category', e.target.value)}
+          error={form.errors.category}
+        />
+        <datalist id="categorias-de-produto">
+          {(categories.data ?? []).map((c) => (
+            <option key={c} value={c} />
+          ))}
+        </datalist>
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField
             label="Código interno (SKU)"

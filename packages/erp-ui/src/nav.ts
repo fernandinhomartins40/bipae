@@ -16,6 +16,7 @@ import {
   FileOutput,
   FileX,
   FolderDown,
+  HandCoins,
   HandPlatter,
   HeartHandshake,
   Landmark,
@@ -83,6 +84,13 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: UserCheck,
         permission: 'catalog.read',
         keywords: 'equipe de vendas código quem vendeu',
+      },
+      {
+        to: '/comissoes',
+        label: 'Comissões',
+        icon: HandCoins,
+        permission: 'finance.read',
+        keywords: 'comissão vendedor percentual quanto ganhou',
       },
       {
         to: '/comandas',

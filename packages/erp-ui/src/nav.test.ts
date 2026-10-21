@@ -18,7 +18,7 @@ describe('menu agrupado', () => {
   it('cada tela aparece uma vez só, em um grupo', () => {
     const routes = NAV_GROUPS.flatMap((g) => g.items.map((i) => i.to));
     expect(new Set(routes).size).toBe(routes.length);
-    expect(routes).toHaveLength(47);
+    expect(routes).toHaveLength(48);
   });
 
   it('cada grupo fica pequeno o bastante para ler de uma vez', () => {

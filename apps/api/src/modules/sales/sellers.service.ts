@@ -17,6 +17,7 @@ import { AppError, notFound, parse } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import { memberships, sellers, users } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { CommissionService } from './commission.service';
 
 /** Vendedores (F8-01): escolhidos no caixa pelo nome ou pelo código; a comissão parte daqui. */
 @Injectable()
@@ -24,6 +25,7 @@ export class SellersService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(CommissionService) private readonly commissions: CommissionService,
   ) {}
 
   list(ctx: RequestContext): Promise<SellerView[]> {
@@ -44,7 +46,12 @@ export class SellersService {
       .leftJoin(users, eq(users.id, sellers.userId))
       .where(id ? eq(sellers.id, id) : undefined)
       .orderBy(asc(sellers.name));
-    return rows.map((r) => ({ ...r, userName: r.userName ?? null }));
+    const rates = await this.commissions.sellerRates(tx);
+    return rows.map((r) => ({
+      ...r,
+      userName: r.userName ?? null,
+      commissionBp: rates.get(r.id) ?? null,
+    }));
   }
 
   async save(ctx: RequestContext, id: string | null, body: unknown): Promise<SellerView> {
@@ -111,6 +118,9 @@ export class SellersService {
           entityId: id,
           data: values,
         });
+      }
+      if (input.commissionBp !== undefined) {
+        await this.commissions.setSellerRate(tx, ctx, id, input.commissionBp);
       }
       const [view] = await this.rows(tx, id);
       return view!;

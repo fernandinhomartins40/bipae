@@ -434,8 +434,8 @@ Pedido do dono em 20/10/2026: um app Android para o caixa e para vendas (vendedo
 
 - [x] F8-01 · Vendedor na venda: o caixa escolhe quem vendeu (ou herda do pedido), cada item guarda o vendedor e a venda leva isso no evento; relatório de vendas por vendedor
   - Feito em 20/10/2026: tela Vendedores (nome, código curto sugerido, usuário opcional, ativo), com auditoria; a lista vai ao caixa no retrato de preços; botão Vendedor no caixa (código com ou sem zero, ou nome), sem internet; `seller_id` na venda e em cada item; Relatórios agrupados por vendedor. Vendedor desconhecido nunca recusa a venda.
-- [ ] F8-02 · Comissão: % por vendedor, % próprio por produto ou categoria, vigência e auditoria; cálculo sobre vendas pagas menos devoluções; tela "Comissões" com período, total por vendedor e exportação — depende: F8-01
-  - Pronto quando: testes do cálculo (exceção por produto, devolução desconta, cancelada não conta) e E2E da tela.
+- [x] F8-02 · Comissão: % por vendedor, % próprio por produto ou categoria, vigência e auditoria; cálculo sobre vendas pagas menos devoluções; tela "Comissões" com período, total por vendedor e exportação — depende: F8-01
+  - Feito em 20/10/2026: taxas com vigência em `commission_rates` (histórico, cada venda usa o % do dia dela); produto antes de categoria antes do vendedor; parte à vista conta na venda, crediário quando recebido, devolução desconta (a que só abateu o crediário não), cancelada não conta; arredondamento único por vendedor; categoria opcional no cadastro do produto; tela Comissões com CSV, XLSX e PDF e exceções.
 - [ ] F8-03 · Pedido do vendedor (pré-venda): o vendedor monta o pedido no celular, o pedido sobe com o vendedor e o caixa o puxa pelo número ou pela lista "Pedidos de vendedores" e recebe; funciona em loja, roupa e restaurante — depende: F8-01
   - Pronto quando: E2E com o pedido feito no celular e pago no caixa, com o vendedor e a comissão certos.
 - [ ] F8-04 · Fila sem internet no aparelho de vendas: pedido de vendedor e de garçom gravados localmente com UUIDv7 e enviados quando a rede voltar, uma vez só — depende: F8-03
