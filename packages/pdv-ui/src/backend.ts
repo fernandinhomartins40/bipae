@@ -75,7 +75,6 @@ export interface PosBackend extends SyncTransport {
   fiscalDocument?(
     saleId: string,
   ): Promise<{ status: FiscalDocumentStatus; xml: string | null; pendingItems: string[] } | null>;
-  /** Pix pela API do banco da loja (F8-09): cria a cobrança e acompanha. Precisa de internet. */
   /** Cartão na maquininha comandada pela internet (F8-10). Precisa de internet. */
   cardCharge?: {
     create(
@@ -86,9 +85,12 @@ export interface PosBackend extends SyncTransport {
     get(id: string): Promise<CardChargeView>;
     cancel(id: string): Promise<CardChargeView>;
   };
+  /** Pix com QR dinâmico do banco ou do parceiro (F8-09): cria e acompanha. Precisa de internet. */
   pixCharge?: {
     create(storeId: string, amountCents: number): Promise<PixChargeView>;
     get(txid: string): Promise<PixChargeView>;
+    /** Desiste do QR (F8-09.c): cancela no parceiro quando ele permite. */
+    cancel?(txid: string): Promise<PixChargeView>;
   };
 }
 

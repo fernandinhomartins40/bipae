@@ -1329,7 +1329,7 @@ export const paymentSettings = pgTable('payment_settings', {
   /** Mercado Pago Point (F8-10); token selado. */
   mpTerminalId: text('mp_terminal_id'),
   mpAccessTokenSealed: text('mp_access_token_sealed'),
-  pixMode: text('pix_mode', { enum: ['manual', 'static_qr', 'api', 'simulator'] })
+  pixMode: text('pix_mode', { enum: ['manual', 'static_qr', 'api', 'psp', 'simulator'] })
     .notNull()
     .default('manual'),
   pixKey: text('pix_key'),
@@ -1342,6 +1342,14 @@ export const paymentSettings = pgTable('payment_settings', {
   pixApiSecretSealed: text('pix_api_secret_sealed'),
   pixApiCertSealed: text('pix_api_cert_sealed'),
   pixApiCertPasswordSealed: text('pix_api_cert_password_sealed'),
+  /** Pix pela API própria do parceiro (F8-09.c); token selado. */
+  pixPspProvider: text('pix_psp_provider', { enum: ['mercadopago', 'pagbank', 'asaas'] }),
+  pixPspSandbox: boolean('pix_psp_sandbox').notNull().default(false),
+  pixPspTokenSealed: text('pix_psp_token_sealed'),
+  pixPspPayerName: text('pix_psp_payer_name'),
+  pixPspPayerEmail: text('pix_psp_payer_email'),
+  pixPspPayerTaxId: text('pix_psp_payer_tax_id'),
+  pixPspCustomerId: text('pix_psp_customer_id'),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
 
@@ -1370,9 +1378,15 @@ export const pixCharges = pgTable('pix_charges', {
   tenantId: uuid('tenant_id').notNull(),
   storeId: uuid('store_id').notNull(),
   txid: text('txid').notNull(),
+  /** Quem gerou: a API Pix do banco ou um parceiro (F8-09.c), com o ID da cobrança nele. */
+  provider: text('provider', { enum: ['pix_api', 'mercadopago', 'pagbank', 'asaas'] })
+    .notNull()
+    .default('pix_api'),
+  externalId: text('external_id'),
+  expiresAt: ts('expires_at'),
   amountCents: money('amount_cents').notNull(),
   copyPaste: text('copy_paste').notNull(),
-  status: text('status', { enum: ['pending', 'paid', 'expired', 'failed'] })
+  status: text('status', { enum: ['pending', 'paid', 'expired', 'failed', 'canceled'] })
     .notNull()
     .default('pending'),
   endToEndId: text('end_to_end_id'),

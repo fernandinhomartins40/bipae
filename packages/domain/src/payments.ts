@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseTaxId } from './documents';
 import { normalizePixKey } from './pix';
 
 /**
@@ -68,13 +69,36 @@ export const PAYMENT_PROVIDERS: PaymentProviderInfo[] = [
   },
   {
     id: 'mercadopago-pix',
-    name: 'Pix pelo Mercado Pago, PagBank ou Asaas',
+    name: 'Pix pelo Mercado Pago',
     family: 'pix-api',
     methods: ['pix'],
     targets: ALL,
-    status: 'coming-soon',
+    status: 'homologation',
     task: 'F8-09',
-    description: 'QR dinâmico com confirmação automática pela conta da loja no parceiro.',
+    description:
+      'QR dinâmico e confirmação automática pela conta da loja no Mercado Pago. Teste antes com as credenciais de teste.',
+  },
+  {
+    id: 'pagbank-pix',
+    name: 'Pix pelo PagBank',
+    family: 'pix-api',
+    methods: ['pix'],
+    targets: ALL,
+    status: 'homologation',
+    task: 'F8-09',
+    description:
+      'QR dinâmico e confirmação automática pela conta da loja no PagBank. Teste antes no sandbox do PagBank.',
+  },
+  {
+    id: 'asaas-pix',
+    name: 'Pix pelo Asaas',
+    family: 'pix-api',
+    methods: ['pix'],
+    targets: ALL,
+    status: 'homologation',
+    task: 'F8-09',
+    description:
+      'QR dinâmico e confirmação automática pela conta da loja no Asaas. Teste antes no sandbox do Asaas.',
   },
   {
     id: 'mp-point',
@@ -122,9 +146,43 @@ export const PAYMENT_PROVIDERS: PaymentProviderInfo[] = [
 ];
 
 export const CARD_MODES = ['manual', 'mp_point', 'simulator'] as const;
-export const PIX_MODES = ['manual', 'static_qr', 'api', 'simulator'] as const;
+export const PIX_MODES = ['manual', 'static_qr', 'api', 'psp', 'simulator'] as const;
 export type CardMode = (typeof CARD_MODES)[number];
 export type PixMode = (typeof PIX_MODES)[number];
+
+/**
+ * Pix pelas APIs próprias dos parceiros (F8-09.c): a loja informa o token da conta dela e o
+ * Bipaê cria a cobrança com QR e consulta até pagar. Documentação conferida em 21/10/2026.
+ */
+export const PIX_PSP_PROVIDERS = ['mercadopago', 'pagbank', 'asaas'] as const;
+export type PixPspProvider = (typeof PIX_PSP_PROVIDERS)[number];
+
+export const PIX_PSP_INFO: Record<
+  PixPspProvider,
+  { name: string; tokenHint: string; sandbox: boolean; source: string }
+> = {
+  mercadopago: {
+    name: 'Mercado Pago',
+    tokenHint:
+      'Access Token, no painel de desenvolvedores do Mercado Pago, em Credenciais. Para testar, use as credenciais de teste.',
+    // O Mercado Pago usa o mesmo endereço; o teste é pelas credenciais de teste.
+    sandbox: false,
+    source:
+      'https://www.mercadopago.com.br/developers/pt/docs/checkout-api-payments/integration-configuration/integrate-pix',
+  },
+  pagbank: {
+    name: 'PagBank',
+    tokenHint: 'Token da conta PagBank (no sandbox, no portal de desenvolvedores do PagBank).',
+    sandbox: true,
+    source: 'https://developer.pagbank.com.br/reference/criar-pedido',
+  },
+  asaas: {
+    name: 'Asaas',
+    tokenHint: 'Chave de API do Asaas, em Integrações. Começa com $aact_.',
+    sandbox: true,
+    source: 'https://docs.asaas.com/reference/criar-nova-cobranca',
+  },
+};
 
 /**
  * Endereços da API Pix que conferimos na documentação do banco (21/10/2026). Os outros bancos
@@ -223,6 +281,21 @@ export const paymentSettingsInput = z
         certificatePassword: z.string().max(200).optional(),
       })
       .nullish(),
+    /**
+     * Pix pela API própria do parceiro (F8-09.c). Token em branco mantém o guardado. O parceiro
+     * exige um pagador em cada cobrança: o "consumidor final" da loja.
+     */
+    pixPsp: z
+      .object({
+        provider: z.enum(PIX_PSP_PROVIDERS),
+        environment: z.enum(['sandbox', 'production']).default('production'),
+        accessToken: z.string().trim().max(500).optional(),
+        payerName: z.string().trim().max(100).nullish(),
+        payerEmail: z.string().trim().max(120).nullish(),
+        payerTaxId: z.string().trim().max(20).nullish(),
+        customerId: z.string().trim().max(60).nullish(),
+      })
+      .nullish(),
   })
   .superRefine((v, ctx) => {
     if (v.card === 'mp_point' && !v.mpPoint) {
@@ -231,6 +304,57 @@ export const paymentSettingsInput = z
         path: ['mpPoint', 'terminalId'],
         message: 'Informe o ID do terminal da Point',
       });
+    }
+    if (v.pix === 'psp') {
+      const p = v.pixPsp;
+      if (!p) {
+        ctx.addIssue({ code: 'custom', path: ['pixPsp'], message: 'Escolha o parceiro do Pix' });
+        return;
+      }
+      const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (p.provider !== 'asaas' && !email.test(p.payerEmail ?? '')) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pixPsp', 'payerEmail'],
+          message: 'Informe o e-mail do pagador padrão',
+        });
+      }
+      const digits = (p.payerTaxId ?? '').trim();
+      const taxIdOk = parseTaxId(digits) !== null;
+      if (p.provider === 'pagbank') {
+        if ((p.payerName ?? '').split(/\s+/).filter(Boolean).length < 2) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['pixPsp', 'payerName'],
+            message: 'Informe nome e sobrenome do pagador padrão',
+          });
+        }
+        if (!taxIdOk) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['pixPsp', 'payerTaxId'],
+            message: 'CPF ou CNPJ inválido',
+          });
+        }
+      }
+      if (p.provider === 'mercadopago' && digits && !taxIdOk) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pixPsp', 'payerTaxId'],
+          message: 'CPF ou CNPJ inválido',
+        });
+      }
+      if (p.provider === 'asaas' && !/^cus_[A-Za-z0-9]+$/.test(p.customerId ?? '')) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pixPsp', 'customerId'],
+          message: 'Informe o ID do cliente no Asaas, como cus_000005219613',
+        });
+      }
+      if (v.pixKey && !normalizePixKey(v.pixKey)) {
+        ctx.addIssue({ code: 'custom', path: ['pixKey'], message: 'Chave Pix inválida.' });
+      }
+      return;
     }
     if (v.pix === 'api') {
       if (!v.pixApi) {
@@ -279,6 +403,16 @@ export interface PaymentSettingsView {
     hasClientSecret: boolean;
     hasCertificate: boolean;
   } | null;
+  /** Pix pelo parceiro (F8-09.c): o que já está guardado, nunca o token. */
+  pixPsp: {
+    provider: PixPspProvider;
+    environment: 'sandbox' | 'production';
+    hasAccessToken: boolean;
+    payerName: string | null;
+    payerEmail: string | null;
+    payerTaxId: string | null;
+    customerId: string | null;
+  } | null;
 }
 
 /** Cobrança Pix pela API do banco (F8-09), como o caixa acompanha. */
@@ -286,9 +420,14 @@ export interface PixChargeView {
   txid: string;
   amountCents: number;
   copyPaste: string;
-  status: 'pending' | 'paid' | 'expired' | 'failed';
-  /** Identificador do pagamento no Pix (endToEndId), quando pago. */
+  status: 'pending' | 'paid' | 'expired' | 'failed' | 'canceled';
+  /**
+   * Identificador do pagamento, quando pago: o endToEndId do Pix na API do banco ou o ID do
+   * pagamento no parceiro (Mercado Pago, PagBank, Asaas).
+   */
   endToEndId: string | null;
+  /** Quem gerou o QR, para o comprovante ("Pix (Mercado Pago)"). */
+  providerName: string;
   message: string | null;
 }
 

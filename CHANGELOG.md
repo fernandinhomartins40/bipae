@@ -1,5 +1,12 @@
 # Changelog
 
+## [F8-09.c.1 Pix pelo Mercado Pago, PagBank e Asaas] — 21/10/2026
+
+### Adicionado
+- **Pix com QR dinâmico pela conta da loja no Mercado Pago, no PagBank ou no Asaas.** Em Meios de pagamento, escolha o parceiro, cole o token e informe o pagador padrão que ele exige. No caixa, o QR aparece e a venda confirma sozinha quando o parceiro diz que pagou.
+- O token fica guardado selado e nunca volta para a tela nem para a auditoria.
+- Os três aparecem como "Em homologação" até serem testados com uma conta de verdade. Sem internet, o caixa continua com o Pix manual ou o QR estático.
+
 ## [F3-26.d.MS ST de Mato Grosso do Sul] — 21/10/2026
 
 ### Adicionado

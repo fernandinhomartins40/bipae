@@ -30,6 +30,7 @@ export function createPosBackend(api: ApiClient): PosBackend {
       create: (storeId, amountCents) =>
         api.post<PixChargeView>('/payments/pix/charges', { storeId, amountCents }),
       get: (txid) => api.get<PixChargeView>(`/payments/pix/charges/${txid}`),
+      cancel: (txid) => api.post<PixChargeView>(`/payments/pix/charges/${txid}/cancel`),
     },
     createTerminal: (input) => api.post<PosTerminal>('/terminals', input),
     listStores: () => api.get<{ id: string; name: string }[]>('/stores'),

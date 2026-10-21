@@ -1273,12 +1273,15 @@ export function Register({
                 cancel: (id: string) => backend.cardCharge!.cancel(id),
               },
             })}
-          {...(payments?.pix === 'api' &&
+          {...((payments?.pix === 'api' || payments?.pix === 'psp') &&
             backend.pixCharge && {
               pixApi: {
                 create: (cents: number) =>
                   backend.pixCharge!.create(context.terminal.storeId, cents),
                 get: (txid: string) => backend.pixCharge!.get(txid),
+                ...(backend.pixCharge.cancel && {
+                  cancel: (txid: string) => backend.pixCharge!.cancel!(txid),
+                }),
               },
             })}
           onPaid={pay}

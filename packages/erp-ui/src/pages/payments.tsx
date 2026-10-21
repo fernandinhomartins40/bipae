@@ -1,7 +1,11 @@
 import {
+  formatTaxId,
   normalizePixKey,
   PAYMENT_PROVIDERS,
   PIX_API_PROFILES,
+  PIX_PSP_INFO,
+  PIX_PSP_PROVIDERS,
+  type PixPspProvider,
   staticPixPayload,
   type PaymentSettingsView,
 } from '@bipae/domain';
@@ -74,6 +78,13 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
     apiClientSecret: '',
     apiCertificate: '',
     apiCertificatePassword: '',
+    pspProvider: (settings.pixPsp?.provider ?? 'mercadopago') as PixPspProvider,
+    pspEnvironment: settings.pixPsp?.environment ?? 'sandbox',
+    pspToken: '',
+    pspPayerName: settings.pixPsp?.payerName ?? '',
+    pspPayerEmail: settings.pixPsp?.payerEmail ?? '',
+    pspPayerTaxId: settings.pixPsp?.payerTaxId ? formatTaxId(settings.pixPsp.payerTaxId) : '',
+    pspCustomerId: settings.pixPsp?.customerId ?? '',
   });
   const v = form.values;
   const [certName, setCertName] = useState<string | null>(null);
@@ -121,6 +132,13 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
         apiClientSecret,
         apiCertificate,
         apiCertificatePassword,
+        pspProvider,
+        pspEnvironment,
+        pspToken,
+        pspPayerName,
+        pspPayerEmail,
+        pspPayerTaxId,
+        pspCustomerId,
         ...rest
       } = values;
       await api.put(`/stores/${settings.storeId}/payment-settings`, {
@@ -141,6 +159,17 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
               certificateBase64: apiCertificate,
               certificatePassword: apiCertificatePassword,
             }),
+          },
+        }),
+        ...(values.pix === 'psp' && {
+          pixPsp: {
+            provider: pspProvider,
+            environment: pspEnvironment,
+            ...(pspToken && { accessToken: pspToken }),
+            payerName: pspPayerName || null,
+            payerEmail: pspPayerEmail || null,
+            payerTaxId: pspPayerTaxId || null,
+            customerId: pspCustomerId || null,
           },
         }),
       });
@@ -210,6 +239,11 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
             {
               value: 'api',
               label: 'API Pix do seu banco: QR do banco e confirmação automática (em homologação)',
+            },
+            {
+              value: 'psp',
+              label:
+                'Mercado Pago, PagBank ou Asaas: QR da sua conta e confirmação automática (em homologação)',
             },
             { value: 'simulator', label: 'Simulador (demonstração, não cobra ninguém)' },
           ]}
@@ -298,7 +332,101 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
             </div>
           </div>
         )}
-        {(v.pix === 'static_qr' || v.pix === 'api') && (
+        {v.pix === 'psp' && (
+          <div className="flex flex-col gap-4 rounded-ui border border-border p-4">
+            <Alert tone="warning">
+              Em homologação: teste primeiro com as credenciais de teste do parceiro, com valores
+              pequenos. Sem internet, o caixa usa o QR da loja (preencha a chave, o nome e a cidade
+              abaixo) ou o Pix manual.
+            </Alert>
+            <SelectField
+              label="Parceiro do Pix"
+              value={v.pspProvider}
+              disabled={!canWrite}
+              onChange={(e) => form.set('pspProvider', e.target.value as PixPspProvider)}
+              options={PIX_PSP_PROVIDERS.map((p) => ({ value: p, label: PIX_PSP_INFO[p].name }))}
+            />
+            {PIX_PSP_INFO[v.pspProvider].sandbox && (
+              <SelectField
+                label="Ambiente"
+                value={v.pspEnvironment}
+                disabled={!canWrite}
+                onChange={(e) =>
+                  form.set('pspEnvironment', e.target.value as 'sandbox' | 'production')
+                }
+                options={[
+                  { value: 'sandbox', label: 'Sandbox (teste, ninguém é cobrado)' },
+                  { value: 'production', label: 'Produção (cobra de verdade)' },
+                ]}
+              />
+            )}
+            <TextField
+              label="Token de acesso"
+              type="password"
+              autoComplete="off"
+              hint={PIX_PSP_INFO[v.pspProvider].tokenHint}
+              placeholder={
+                settings.pixPsp?.hasAccessToken && settings.pixPsp.provider === v.pspProvider
+                  ? 'Guardado (deixe em branco para manter)'
+                  : ''
+              }
+              value={v.pspToken}
+              disabled={!canWrite}
+              onChange={(e) => form.set('pspToken', e.target.value)}
+              error={form.errors['pixPsp.accessToken']}
+            />
+            {v.pspProvider === 'asaas' ? (
+              <TextField
+                label="ID do cliente no Asaas"
+                hint='O Asaas exige um cliente em cada cobrança. Cadastre lá um "Consumidor final" e cole o ID (começa com cus_).'
+                value={v.pspCustomerId}
+                disabled={!canWrite}
+                onChange={(e) => form.set('pspCustomerId', e.target.value)}
+                error={form.errors['pixPsp.customerId']}
+              />
+            ) : (
+              <>
+                <p className="text-sm text-muted">
+                  O {PIX_PSP_INFO[v.pspProvider].name} exige um pagador em cada cobrança. Use os
+                  dados do consumidor final da loja; quem paga de verdade é quem lê o QR.
+                </p>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {v.pspProvider === 'pagbank' && (
+                    <TextField
+                      label="Nome do pagador padrão"
+                      hint="Nome e sobrenome."
+                      value={v.pspPayerName}
+                      disabled={!canWrite}
+                      onChange={(e) => form.set('pspPayerName', e.target.value)}
+                      error={form.errors['pixPsp.payerName']}
+                    />
+                  )}
+                  <TextField
+                    label="E-mail do pagador padrão"
+                    type="email"
+                    value={v.pspPayerEmail}
+                    disabled={!canWrite}
+                    onChange={(e) => form.set('pspPayerEmail', e.target.value)}
+                    error={form.errors['pixPsp.payerEmail']}
+                  />
+                  <TextField
+                    label={
+                      v.pspProvider === 'pagbank'
+                        ? 'CPF ou CNPJ do pagador padrão'
+                        : 'CPF ou CNPJ do pagador padrão (opcional)'
+                    }
+                    inputMode="numeric"
+                    value={v.pspPayerTaxId}
+                    disabled={!canWrite}
+                    onChange={(e) => form.set('pspPayerTaxId', formatTaxId(e.target.value))}
+                    error={form.errors['pixPsp.payerTaxId']}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        )}
+        {(v.pix === 'static_qr' || v.pix === 'api' || v.pix === 'psp') && (
           <div className="flex flex-col gap-4 rounded-ui border border-border p-4">
             <TextField
               label="Chave Pix da loja"

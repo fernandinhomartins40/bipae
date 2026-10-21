@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
   normalizePixKey,
+  normalizeTaxId,
   paymentSettingsInput,
   PAYMENT_PROVIDERS,
   type PaymentSettingsView,
@@ -70,6 +71,17 @@ export class PaymentSettingsService {
               hasCertificate: Boolean(row.pixApiCertSealed),
             }
           : null,
+      pixPsp: row?.pixPspProvider
+        ? {
+            provider: row.pixPspProvider,
+            environment: row.pixPspSandbox ? 'sandbox' : 'production',
+            hasAccessToken: Boolean(row.pixPspTokenSealed),
+            payerName: row.pixPspPayerName,
+            payerEmail: row.pixPspPayerEmail,
+            payerTaxId: row.pixPspPayerTaxId,
+            customerId: row.pixPspCustomerId,
+          }
+        : null,
     };
   }
 
@@ -145,9 +157,32 @@ export class PaymentSettingsService {
           ...(token && { mpAccessTokenSealed: this.box.seal(token) }),
         };
       }
+      // Pix pelo parceiro (F8-09.c): token em branco mantém o guardado, se o parceiro é o mesmo.
+      let pspValues = {};
+      const psp = input.pixPsp;
+      if (input.pix === 'psp' && psp) {
+        const token = psp.accessToken || null;
+        const sameProvider = current?.pixPspProvider === psp.provider;
+        if (!token && !(sameProvider && current?.pixPspTokenSealed)) {
+          throw new AppError(400, 'validation', 'Informe o token de acesso do parceiro.', [
+            { path: 'pixPsp.accessToken', message: 'Informe o token de acesso' },
+          ]);
+        }
+        const digits = psp.payerTaxId ? normalizeTaxId(psp.payerTaxId) || null : null;
+        pspValues = {
+          pixPspProvider: psp.provider,
+          pixPspSandbox: psp.environment === 'sandbox',
+          pixPspPayerName: psp.payerName?.trim() || null,
+          pixPspPayerEmail: psp.payerEmail?.trim() || null,
+          pixPspPayerTaxId: digits,
+          pixPspCustomerId: psp.customerId?.trim() || null,
+          ...(token && { pixPspTokenSealed: this.box.seal(token) }),
+        };
+      }
       const values = {
         ...apiValues,
         ...pointValues,
+        ...pspValues,
         cardMode: input.card,
         pixMode: input.pix,
         pixKey: input.pixKey ? (normalizePixKey(input.pixKey)?.key ?? null) : null,
@@ -177,9 +212,13 @@ export class PaymentSettingsService {
       // Sem a Point completa, o caixa usa a maquininha à parte.
       card: s.card === 'mp_point' && !s.mpPoint?.hasAccessToken ? 'manual' : s.card,
       // Sem a API completa, o caixa usa o Pix manual (nada aprova sozinho).
-      pix: s.pix === 'api' && !s.pixApi ? 'manual' : s.pix,
-      // QR estático também serve de reserva para a API Pix quando o caixa está sem internet.
-      ...((s.pix === 'static_qr' || s.pix === 'api') &&
+      pix:
+        (s.pix === 'api' && !s.pixApi) || (s.pix === 'psp' && !s.pixPsp?.hasAccessToken)
+          ? 'manual'
+          : s.pix,
+      // QR estático também serve de reserva para a API Pix e o parceiro quando o caixa está sem
+      // internet.
+      ...((s.pix === 'static_qr' || s.pix === 'api' || s.pix === 'psp') &&
         s.pixKey &&
         s.pixMerchantName &&
         s.pixCity && {

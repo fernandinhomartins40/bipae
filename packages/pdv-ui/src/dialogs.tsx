@@ -386,6 +386,7 @@ const METHOD_KEYS: { method: PaymentMethod; key: string }[] = [
 const PIX_HINT: Record<TerminalPaymentSettings['pix'], string> = {
   manual: 'Receba pela chave Pix da loja e confirme quando cair.',
   api: 'O QR sai do seu banco e o pagamento entra sozinho quando o banco confirma.',
+  psp: 'O QR sai da sua conta no parceiro e o pagamento entra sozinho quando ele confirma.',
   static_qr: 'O caixa mostra o QR com o valor; confirme quando o dinheiro cair.',
   simulator: 'Simulador: aprova sozinho, para treinar. Ninguém é cobrado.',
 };
@@ -462,10 +463,11 @@ export function PaymentDialog({
     get(id: string): Promise<CardChargeView>;
     cancel(id: string): Promise<CardChargeView>;
   };
-  /** Pix pela API do banco (F8-09): cria a cobrança e acompanha até o banco confirmar. */
+  /** Pix com QR dinâmico do banco ou do parceiro (F8-09): cria e acompanha até confirmar. */
   pixApi?: {
     create(amountCents: number): Promise<PixChargeView>;
     get(txid: string): Promise<PixChargeView>;
+    cancel?(txid: string): Promise<PixChargeView>;
   };
   onPaid: (tenders: TenderInput[]) => Promise<void>;
   onClose: () => void;
@@ -533,7 +535,7 @@ export function PaymentDialog({
               {
                 method: 'pix',
                 receivedCents: next.amountCents,
-                provider: 'Pix (API do banco)',
+                provider: next.providerName,
                 nsu: next.endToEndId,
               },
             ]);
@@ -549,7 +551,7 @@ export function PaymentDialog({
   const tef = useMemo(() => new SimulatedTef(), []);
   // O QR do Pix com a chave da loja e o valor (F8-08); sem chave configurada, Pix manual.
   const pixPayload = useMemo(() => {
-    // QR da loja: no modo QR estático e como reserva da API Pix quando o banco não responde.
+    // QR da loja: no modo QR estático e como reserva da API Pix ou do parceiro quando não respondem.
     if (pixPending === null || payments.pix === 'simulator' || !payments.pixStatic) return null;
     try {
       return staticPixPayload({ ...payments.pixStatic, amountCents: pixPending });
@@ -570,7 +572,7 @@ export function PaymentDialog({
       return setError('Só pagamento em dinheiro pode passar do valor (para dar troco).');
     if (method === 'pix') {
       setPixNotice(null);
-      if (payments.pix === 'api' && pixApi) {
+      if ((payments.pix === 'api' || payments.pix === 'psp') && pixApi) {
         setBusy(true);
         try {
           setCharge(await pixApi.create(received));
@@ -707,21 +709,50 @@ export function PaymentDialog({
             </form>
           )}
           {charge && (
-            <Alert tone="warning" title="Pix">
+            <Alert tone="warning" title={charge.providerName}>
               {charge.status === 'pending' ? (
                 <>
-                  <p>Mostre o QR ao cliente. O pagamento entra sozinho quando o banco confirmar.</p>
+                  <p>Mostre o QR ao cliente. O pagamento entra sozinho quando for confirmado.</p>
                   <PixQr payload={charge.copyPaste} cents={charge.amountCents} />
                   <p className="mt-2 text-sm" role="status">
-                    Esperando o banco confirmar…
+                    Esperando a confirmação do pagamento…
                   </p>
                 </>
               ) : (
                 <p>{charge.message ?? 'O QR não vale mais. Gere outro.'}</p>
               )}
               <div className="mt-3 flex gap-2">
-                <Button variant="secondary" onClick={() => setCharge(null)}>
-                  Cancelar Pix
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    const current = charge;
+                    if (current.status !== 'pending' || !pixApi?.cancel) return setCharge(null);
+                    // Cancela no parceiro; se já tinha sido pago, o Pix entra em vez de sumir.
+                    void pixApi
+                      .cancel(current.txid)
+                      .then((next) => {
+                        if (next.status === 'paid') {
+                          setTenders((t) => [
+                            ...t,
+                            {
+                              method: 'pix',
+                              receivedCents: next.amountCents,
+                              provider: next.providerName,
+                              nsu: next.endToEndId,
+                            },
+                          ]);
+                          setCharge(null);
+                        } else {
+                          setCharge(null);
+                          if (next.message && next.message !== 'Pix cancelado.') {
+                            setPixNotice(next.message);
+                          }
+                        }
+                      })
+                      .catch((err: unknown) => setError(errorMessage(err)));
+                  }}
+                >
+                  {charge.status === 'pending' ? 'Cancelar Pix' : 'Fechar'}
                 </Button>
               </div>
             </Alert>

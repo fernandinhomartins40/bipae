@@ -6,12 +6,17 @@ import { PaymentDialog } from './dialogs';
 
 /** F8-08 e F8-09: cartão na maquininha à parte, Pix pela API do banco e a reserva sem internet. */
 
-const charge = (status: PixChargeView['status']): PixChargeView => ({
+const charge = (
+  status: PixChargeView['status'],
+  providerName = 'Pix (API do banco)',
+  endToEndId = 'E00000000202610211200abcdefghijk',
+): PixChargeView => ({
   txid: '0192abcd0000700080000000000000aa',
   amountCents: 1890,
   copyPaste: '00020126580014br.gov.bcb.pix-simulado6304ABCD',
   status,
-  endToEndId: status === 'paid' ? 'E00000000202610211200abcdefghijk' : null,
+  endToEndId: status === 'paid' ? endToEndId : null,
+  providerName,
   message: null,
 });
 
@@ -48,6 +53,64 @@ describe('pagamento no caixa', () => {
       }),
     ]);
     vi.useRealTimers();
+  });
+
+  it('Pix pelo Mercado Pago (F8-09.c): QR do parceiro e confirmação sozinha', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const onPaid = vi.fn(async () => {});
+    const mp = (s: PixChargeView['status']) => charge(s, 'Pix (Mercado Pago)', '1234567890');
+    const get = vi.fn().mockResolvedValueOnce(mp('pending')).mockResolvedValue(mp('paid'));
+    render(
+      <PaymentDialog
+        totalCents={1890}
+        payments={{ card: 'manual', pix: 'psp' }}
+        pixApi={{ create: async () => mp('pending'), get }}
+        onPaid={onPaid}
+        onClose={() => {}}
+      />,
+    );
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    await user.click(screen.getByRole('radio', { name: 'Pix' }));
+    expect(screen.getByText(/O QR sai da sua conta no parceiro/)).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Adicionar pix' }));
+    expect(await screen.findByRole('img', { name: 'QR Code do Pix de R$ 18,90' })).toBeVisible();
+    await vi.advanceTimersByTimeAsync(7000);
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Finalizar venda' })).toBeEnabled(),
+    );
+    await user.click(screen.getByRole('button', { name: 'Finalizar venda' }));
+    expect(onPaid).toHaveBeenCalledWith([
+      expect.objectContaining({ method: 'pix', provider: 'Pix (Mercado Pago)', nsu: '1234567890' }),
+    ]);
+    vi.useRealTimers();
+  });
+
+  it('cancelar o Pix do parceiro chama o cancelamento e libera o caixa', async () => {
+    const cancel = vi.fn(async () => ({
+      ...charge('canceled', 'Pix (Asaas)'),
+      message: 'Pix cancelado.',
+    }));
+    render(
+      <PaymentDialog
+        totalCents={1890}
+        payments={{ card: 'manual', pix: 'psp' }}
+        pixApi={{
+          create: async () => charge('pending', 'Pix (Asaas)'),
+          get: async () => charge('pending', 'Pix (Asaas)'),
+          cancel,
+        }}
+        onPaid={async () => {}}
+        onClose={() => {}}
+      />,
+    );
+    await userEvent.click(screen.getByRole('radio', { name: 'Pix' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Adicionar pix' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancelar Pix' }));
+    expect(cancel).toHaveBeenCalledWith('0192abcd0000700080000000000000aa');
+    await waitFor(() =>
+      expect(screen.queryByRole('img', { name: /QR Code do Pix/ })).not.toBeInTheDocument(),
+    );
+    expect(screen.getByRole('button', { name: 'Finalizar venda' })).toBeDisabled();
   });
 
   it('sem resposta do banco, cai para o QR da loja e o operador confirma', async () => {
