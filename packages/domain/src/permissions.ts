@@ -15,6 +15,7 @@ export const PERMISSIONS = {
   },
   'fiscal.profile.write': { label: 'Alterar configuração fiscal', sensitive: true },
   'pos.sell': { label: 'Vender no caixa', sensitive: false },
+  'pos.order': { label: 'Lançar pedidos e comandas pelo celular', sensitive: false },
   'pos.discount.above_limit': { label: 'Dar desconto acima do limite', sensitive: true },
   'pos.sale.cancel': { label: 'Cancelar venda', sensitive: true },
   'pos.cash.withdrawal': { label: 'Fazer sangria', sensitive: true },
@@ -35,7 +36,7 @@ export function isPermission(value: string): value is Permission {
   return value in PERMISSIONS;
 }
 
-export type SystemRoleKey = 'owner' | 'manager' | 'cashier' | 'accountant';
+export type SystemRoleKey = 'owner' | 'manager' | 'cashier' | 'seller' | 'accountant';
 
 export const SYSTEM_ROLES: Record<SystemRoleKey, { name: string; permissions: Permission[] }> = {
   owner: { name: 'Dono', permissions: ALL_PERMISSIONS },
@@ -47,7 +48,12 @@ export const SYSTEM_ROLES: Record<SystemRoleKey, { name: string; permissions: Pe
   },
   cashier: {
     name: 'Operador de caixa',
-    permissions: ['catalog.read', 'parties.read', 'parties.write', 'pos.sell'],
+    permissions: ['catalog.read', 'parties.read', 'parties.write', 'pos.sell', 'pos.order'],
+  },
+  /** Lança pedidos e comandas pelo celular; o cliente paga no caixa (F8-05). */
+  seller: {
+    name: 'Vendedor',
+    permissions: ['catalog.read', 'parties.read', 'pos.order'],
   },
   accountant: {
     name: 'Contador',

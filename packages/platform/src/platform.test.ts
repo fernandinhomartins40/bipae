@@ -15,7 +15,10 @@ import {
 describe('capabilities', () => {
   it('desktop has everything natively', () => {
     const caps = baselineCapabilities('desktop', { connectorPaired: false, webSerial: false });
-    expect(Object.values(caps).every((c) => c.available)).toBe(true);
+    // A câmera depende do WebView (lê no Android, não no Windows): fica de fora da conta.
+    const { barcodeCamera, ...native } = caps;
+    expect(Object.values(native).every((c) => c.available)).toBe(true);
+    expect(barcodeCamera.available).toBe(false);
   });
 
   it('web without connector: browser print, scale missing, A1 on server', () => {

@@ -1,6 +1,8 @@
 import { baselineCapabilities } from './capabilities';
 import {
   SaleInProgressError,
+  type BarcodeCameraPort,
+  type CameraVideo,
   type CashDrawerPort,
   type NotificationPort,
   type Platform,
@@ -91,6 +93,23 @@ export class SimulatedUpdater implements UpdaterPort {
   }
 }
 
+/** Câmera de teste: `show(code)` faz de conta que a câmera leu o código. */
+export class SimulatedBarcodeCamera implements BarcodeCameraPort {
+  private listener: ((code: string) => void) | null = null;
+  active = false;
+  async start(_video: CameraVideo, onCode: (code: string) => void) {
+    this.listener = onCode;
+    this.active = true;
+    return () => {
+      this.listener = null;
+      this.active = false;
+    };
+  }
+  show(code: string) {
+    this.listener?.(code);
+  }
+}
+
 export class SimulatedNotifications implements NotificationPort {
   readonly sent: { title: string; body: string }[] = [];
   async notify(title: string, body: string) {
@@ -105,18 +124,24 @@ export function createSimulatedPlatform(kind: PlatformKind = 'web'): Platform & 
   tef: SimulatedTef;
   updater: SimulatedUpdater;
   notifications: SimulatedNotifications;
+  barcodeCamera: SimulatedBarcodeCamera;
 } {
   return {
     kind,
     version: '0.0.0-sim',
     preferences: new MemoryPreferences(),
     capabilities: async () =>
-      baselineCapabilities(kind, { connectorPaired: kind === 'web', webSerial: false }),
+      baselineCapabilities(kind, {
+        connectorPaired: kind === 'web',
+        webSerial: false,
+        camera: true,
+      }),
     printer: new SimulatedPrinter(),
     cashDrawer: new SimulatedCashDrawer(),
     scale: new SimulatedScale(),
     tef: new SimulatedTef(),
     updater: new SimulatedUpdater(),
     notifications: new SimulatedNotifications(),
+    barcodeCamera: new SimulatedBarcodeCamera(),
   };
 }

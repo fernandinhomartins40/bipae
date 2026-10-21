@@ -11,6 +11,7 @@ const CAPABILITY_LABELS: Record<CapabilityName, { name: string; article: 'o' | '
   certificateA3: { name: 'certificado digital A3 (token ou cartão)', article: 'o' },
   updater: { name: 'atualização automática', article: 'a' },
   notifications: { name: 'notificações', article: 'as' },
+  barcodeCamera: { name: 'câmera como leitor de código', article: 'a' },
 };
 
 export interface CapabilityExplanation {
@@ -33,6 +34,13 @@ export function explainCapability(
   if (status.available) return null;
   const { name: label, article } = CAPABILITY_LABELS[name];
   const explanation = explainGap(`${article} ${label}`, status.reason, platform);
+  if (name === 'barcodeCamera') {
+    return {
+      title: 'Não funciona neste aparelho',
+      message:
+        'A câmera lê código de barras no Chrome do celular Android e no app Bipaê. Aqui, use um leitor ou digite o código.',
+    };
+  }
   // A balança também funciona direto no Chrome e no Edge, pela Web Serial (F2-06).
   if (name === 'scale' && status.reason === 'needs-connector' && platform === 'web') {
     return {
@@ -86,8 +94,12 @@ function explainGap(
 /** Capability matrix from Adendo 01 §4: what each platform supports by design. */
 export function baselineCapabilities(
   platform: PlatformKind,
-  options: { connectorPaired: boolean; webSerial: boolean },
+  options: { connectorPaired: boolean; webSerial: boolean; camera?: boolean },
 ): Record<CapabilityName, CapabilityStatus> {
+  // Depende do navegador ou do WebView, não do alvo: o Chrome do Android lê, o Windows ainda não.
+  const barcodeCamera: CapabilityStatus = options.camera
+    ? { available: true, via: 'browser' }
+    : { available: false, reason: 'browser-unsupported' };
   if (platform === 'desktop') {
     return {
       storage: { available: true, via: 'native' },
@@ -99,6 +111,7 @@ export function baselineCapabilities(
       certificateA3: { available: true, via: 'native' },
       updater: { available: true, via: 'native' },
       notifications: { available: true, via: 'native' },
+      barcodeCamera,
     };
   }
   const viaConnector = (): CapabilityStatus =>
@@ -122,6 +135,7 @@ export function baselineCapabilities(
     certificateA3: viaConnector(),
     updater: { available: true, via: 'browser' },
     notifications: { available: true, via: 'browser' },
+    barcodeCamera,
   };
 }
 

@@ -2,6 +2,8 @@ import { invoke, isTauri } from '@tauri-apps/api/core';
 import { openWasmDatabase } from '@bipae/local-db/wasm';
 import {
   baselineCapabilities,
+  browserBarcodeCamera,
+  supportsBarcodeCamera,
   implementedCapabilities,
   LocalCertificateStore,
   SaleInProgressError,
@@ -99,8 +101,11 @@ export async function createDesktopPlatform(): Promise<Platform> {
     const implemented: CapabilityName[] = ['storage', 'notifications', 'certificateA1'];
     if (native) implemented.push('printer', 'cashDrawer', 'scale');
     if (updaterBuilt) implemented.push('updater');
+    // No Android (ADR-0017) o WebView lê código pela câmera; no Windows, ainda não.
+    const camera = supportsBarcodeCamera();
+    if (camera) implemented.push('barcodeCamera');
     const caps = implementedCapabilities(
-      baselineCapabilities('desktop', { connectorPaired: false, webSerial: false }),
+      baselineCapabilities('desktop', { connectorPaired: false, webSerial: false, camera }),
       implemented,
     );
     if (!(await certificate.info()))
@@ -124,6 +129,7 @@ export async function createDesktopPlatform(): Promise<Platform> {
     capabilities,
     certificate,
     notifications: new WebViewNotifications(),
+    barcodeCamera: browserBarcodeCamera(),
     ...(native && {
       // Abre no navegador do sistema (plugin opener do Tauri, liberado só para https).
       openExternal: async (url: string) => {

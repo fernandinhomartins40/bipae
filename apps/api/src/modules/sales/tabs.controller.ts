@@ -33,7 +33,7 @@ export class TabsController {
 
   /** ?status=open|paid|cancelled (padrão: open)&storeId= ; as fechadas, só das últimas 24 horas. */
   @Get()
-  @RequirePermission('pos.sell')
+  @RequirePermission('pos.order')
   list(
     @Ctx() ctx: RequestContext,
     @Query('status') status = 'open',

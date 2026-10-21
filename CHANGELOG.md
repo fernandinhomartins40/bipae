@@ -1,5 +1,14 @@
 # Changelog
 
+## [F8-05 Vendas pelo celular com a câmera e papel Vendedor] — 20/10/2026
+
+### Adicionado
+- **Ler código de barras com a câmera** do celular, no caixa e em "Pedidos pelo celular". Cada leitura entra sozinha. Funciona no Chrome do Android e no app Bipaê; onde não funciona, o Início explica e sugere o leitor ou digitar.
+- **Papel "Vendedor"** na equipe: lança pedidos e comandas pelo celular, mas não abre o caixa nem recebe pagamento.
+  - Dono, gerente e operador de caixa continuam podendo lançar pedidos.
+- Em "Pedidos pelo celular", quem também tem permissão de caixa vê **"Receber neste aparelho"**, que abre o caixa ali mesmo.
+- Artigo de ajuda "Vendedores, pedidos pelo celular e comissão".
+
 ## [F8-06 Caixa no celular e no tablet] — 20/10/2026
 
 ### Mudou

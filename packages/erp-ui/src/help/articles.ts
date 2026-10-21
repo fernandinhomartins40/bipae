@@ -94,6 +94,30 @@ export const HELP_ARTICLES: HelpArticle[] = [
     ],
   },
   {
+    slug: 'vendedores-e-comissao',
+    title: 'Vendedores, pedidos pelo celular e comissão',
+    category: 'Caixa',
+    summary: 'Quem vendeu cada item, pedidos lançados no celular e quanto cada vendedor ganhou.',
+    keywords: ['vendedor', 'comissão', 'pré-venda', 'pedido', 'garçom', 'celular', 'comanda'],
+    screen: { label: 'Vendedores', to: '/vendedores' },
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'Em "Vendedores", cadastre cada vendedor com um código curto e a "Comissão (%)". Para ele lançar pedidos pelo celular, ligue ao usuário dele.',
+          'Convide a pessoa em "Equipe" com o papel "Vendedor": ela lança pedidos e comandas pelo celular, mas não abre o caixa.',
+          'No celular, em "Pedidos pelo celular", escreva a mesa, a comanda ou o nome do cliente, escolha os itens (ou leia o código com a câmera) e toque em "Mandar pedido". Funciona até sem internet: o pedido sai quando a rede voltar.',
+          'No caixa, o pedido aparece em "Comandas". Abra, confira e receba. Numa venda de balcão, toque em "Vendedor" e digite o código.',
+          'Em "Comissões", escolha o período e veja quanto cada um ganhou. Produtos ou categorias podem ter um % próprio.',
+        ],
+      },
+      {
+        kind: 'tip',
+        text: 'A comissão conta o que o cliente pagou: o crediário entra quando é recebido, e a devolução desconta. Mudar o % vale a partir do dia da mudança.',
+      },
+    ],
+  },
+  {
     slug: 'abrir-o-caixa',
     title: 'Abrir o caixa e fazer a primeira venda',
     category: 'Caixa',

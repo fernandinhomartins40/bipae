@@ -41,6 +41,7 @@ const CAPABILITY_LABELS: Record<CapabilityName, string> = {
   certificateA3: 'Certificado A3',
   updater: 'Atualização automática',
   notifications: 'Notificações',
+  barcodeCamera: 'Câmera como leitor de código',
 };
 
 const VIA_LABEL = {

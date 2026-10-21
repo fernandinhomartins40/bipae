@@ -1,6 +1,8 @@
 import { openWasmDatabase } from '@bipae/local-db/wasm';
 import {
   baselineCapabilities,
+  browserBarcodeCamera,
+  supportsBarcodeCamera,
   implementedCapabilities,
   LocalCertificateStore,
   ConnectorClient,
@@ -146,8 +148,10 @@ export function createWebPlatform(updates: {
       ];
       if (paired) implemented.push('cashDrawer', 'scale');
       else if (serialPaired) implemented.push('scale');
+      const camera = supportsBarcodeCamera();
+      if (camera) implemented.push('barcodeCamera');
       return implementedCapabilities(
-        baselineCapabilities('web', { connectorPaired: paired, webSerial: serialPaired }),
+        baselineCapabilities('web', { connectorPaired: paired, webSerial: serialPaired, camera }),
         implemented,
       );
     },
@@ -166,6 +170,7 @@ export function createWebPlatform(updates: {
     serialScale,
     connector,
     notifications: new BrowserNotifications(),
+    barcodeCamera: browserBarcodeCamera(),
     updater: new ServiceWorkerUpdater(updates.applyUpdate, updates.waiting),
   };
 }

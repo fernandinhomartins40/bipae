@@ -10,7 +10,9 @@ import {
 import { Alert, Badge, Button, Card, PageHeader, SelectField, TextField } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useApp } from '../context';
+import { CameraScanButton } from '@bipae/pdv-ui';
+import { Link } from 'react-router';
+import { useApp, useCan } from '../context';
 import { useOrderDevice } from '../use-order-device';
 
 const brl = (value: number) => formatBRL(cents(value));
@@ -34,7 +36,8 @@ const STATUS: Record<
  * dos itens. O celular precisa de internet para mandar; o caixa, não.
  */
 export function WaiterPage() {
-  const { api } = useApp();
+  const { api, platform } = useApp();
+  const canReceive = useCan('pos.sell');
   const queryClient = useQueryClient();
   const stores = useQuery({
     queryKey: ['stores'],
@@ -87,6 +90,16 @@ export function WaiterPage() {
         : [...c, { product, quantity: 1 }];
     });
     setSearch('');
+  };
+  /** Código lido pela câmera (F8-05): acha no aparelho ou na API e põe no pedido. */
+  const addByCode = async (code: string) => {
+    const hits =
+      od.device && od.catalogAt
+        ? await od.device.search(code, 1)
+        : (await api.get<Page<Product>>(`/products?q=${encodeURIComponent(code)}&limit=1`)).items;
+    const product = hits[0];
+    if (product) add(product);
+    else setMessage({ ok: false, text: `Código ${code} não encontrado. Busque pelo nome.` });
   };
   const change = (id: string, delta: number) =>
     setCart((c) =>
@@ -159,6 +172,15 @@ export function WaiterPage() {
         title="Pedidos e comandas"
         description="Escolha a mesa ou escreva o nome do cliente, os itens e mande ao caixa. O cliente paga lá."
       />
+      {canReceive && (
+        <p className="text-sm">
+          Também recebe pagamento?{' '}
+          <Link to="/caixa" className="font-semibold text-primary underline">
+            Receber neste aparelho
+          </Link>{' '}
+          abre o caixa aqui mesmo.
+        </p>
+      )}
       {me.data?.seller && (
         <p className="text-sm" data-testid="waiter-seller">
           Você lança como <strong>{me.data.seller.name}</strong> ({me.data.seller.code}): os itens
@@ -207,6 +229,7 @@ export function WaiterPage() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Digite o nome"
         />
+        <CameraScanButton platform={platform} onCode={(code) => void addByCode(code)} />
         {found.data && search.trim().length >= 2 && (
           <ul className="flex flex-col divide-y divide-border" aria-label="Produtos encontrados">
             {found.data.map((p) => (

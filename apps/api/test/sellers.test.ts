@@ -211,4 +211,53 @@ describe('vendedores (F8-01)', () => {
     const orders = (await admin.get(`/tabs/orders?storeId=${store.id}`)).json();
     expect(orders.filter((o: { id: string }) => o.id === id)).toHaveLength(1);
   });
+
+  it('o papel Vendedor lança pedidos pelo celular, mas não abre o caixa (F8-05)', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const roles = (await admin.get('/roles')).json() as {
+      id: string;
+      systemKey: string | null;
+      name: string;
+      permissions: string[];
+    }[];
+    const papel = roles.find((r) => r.systemKey === 'seller')!;
+    expect(papel).toMatchObject({ name: 'Vendedor' });
+    expect(papel.permissions).toContain('pos.order');
+    expect(papel.permissions).not.toContain('pos.sell');
+    // Quem já vendia no caixa continua lançando pedidos.
+    expect(roles.find((r) => r.systemKey === 'cashier')!.permissions).toContain('pos.order');
+
+    const email = `bruna-${Date.now()}@exemplo.com.br`;
+    expect(
+      (
+        await admin.post('/members', {
+          name: 'Bruna',
+          email,
+          password: 'senha-forte-123',
+          roleId: papel.id,
+        })
+      ).statusCode,
+    ).toBe(201);
+    const login = await t.app.inject({
+      method: 'POST',
+      url: '/v1/auth/login',
+      payload: { email, password: 'senha-forte-123' },
+    });
+    const bruna = api(t.app, { authorization: `Bearer ${login.json().accessToken}` });
+    const store = (await admin.get('/stores')).json()[0];
+    const pao = (await admin.post('/products', { name: 'Pão', priceCents: 100 })).json();
+    const pedido = await bruna.post('/tabs/orders', {
+      storeId: store.id,
+      label: 'Cliente Ivo',
+      items: [{ productId: pao.id, quantityMilli: 1000 }],
+    });
+    expect(pedido.statusCode).toBe(201);
+    // Sem a permissão de caixa: não cria nem usa caixa.
+    expect(
+      (await bruna.post('/terminals', { storeId: store.id, name: 'X', platform: 'web' }))
+        .statusCode,
+    ).toBe(403);
+    expect((await bruna.get('/sync/pull?limit=1')).statusCode).toBe(403);
+  });
 });

@@ -150,7 +150,7 @@ export class SellersController {
   }
 
   @Get('me')
-  @RequirePermission('pos.sell')
+  @RequirePermission('pos.order')
   me(@Ctx() ctx: RequestContext) {
     return this.sellers.me(ctx);
   }

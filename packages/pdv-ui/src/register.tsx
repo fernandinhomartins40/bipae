@@ -52,6 +52,7 @@ import { QuickProductDialog } from './quick-product';
 import { splitBill, TabsDialog } from './tabs';
 import { DeliveryDialog } from './delivery';
 import { SellerDialog } from './seller';
+import { CameraScanButton } from './camera-scan';
 import {
   loadSelfCheckout,
   newSelfCheckout,
@@ -400,17 +401,17 @@ export function Register({
 
   // A scan is async (local database lookup). Shortcuts pressed meanwhile wait for it.
   const pendingScan = useRef<Promise<void> | null>(null);
-  const scanNow = () => {
-    const run = handleScan().finally(() => {
+  const scanNow = (text?: string) => {
+    const run = handleScan(text).finally(() => {
       if (pendingScan.current === run) pendingScan.current = null;
     });
     pendingScan.current = run;
     return run;
   };
 
-  const handleScan = async () => {
-    const text = input;
-    setInput('');
+  const handleScan = async (typed?: string) => {
+    const text = typed ?? input;
+    if (typed === undefined) setInput('');
     const scan = parseScan(text);
     if (!scan) return;
     const explicitQuantity = /^\d+(?:[.,]\d{1,3})?\s*[*xX]/.test(text.trim());
@@ -788,6 +789,8 @@ export function Register({
               className="min-h-16 w-full rounded-ui border-2 border-primary bg-surface px-4 text-2xl"
             />
           </form>
+          {/* No celular, a câmera faz de leitor (F8-05); cada leitura vira uma bipada. */}
+          <CameraScanButton platform={platform} onCode={(code) => void scanNow(code)} />
           {message && <Alert tone={message.tone}>{message.text}</Alert>}
           {results.length > 0 && (
             <ul

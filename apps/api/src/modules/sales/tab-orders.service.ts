@@ -192,13 +192,13 @@ export class TabOrdersController {
   constructor(@Inject(TabOrdersService) private readonly orders: TabOrdersService) {}
 
   @Post()
-  @RequirePermission('pos.sell')
+  @RequirePermission('pos.order')
   create(@Ctx() ctx: RequestContext, @Body() body: unknown) {
     return this.orders.create(ctx, body);
   }
 
   @Get()
-  @RequirePermission('pos.sell')
+  @RequirePermission('pos.order')
   list(@Ctx() ctx: RequestContext, @Query('storeId') storeId?: string) {
     if (storeId && !/^[0-9a-f-]{36}$/i.test(storeId)) {
       throw new AppError(422, 'invalid_store', 'Loja inválida.');

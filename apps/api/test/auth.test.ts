@@ -48,7 +48,7 @@ describe('signup', () => {
     const units = (await client.get('/units')).json() as { code: string }[];
     expect(units.map((u) => u.code)).toEqual(expect.arrayContaining(['UN', 'KG', 'L']));
     expect((await client.get('/fiscal-profiles')).json()).toHaveLength(1);
-    expect((await client.get('/roles')).json()).toHaveLength(4);
+    expect((await client.get('/roles')).json()).toHaveLength(5); // dono, gerente, operador de caixa, vendedor e contador
 
     const audit = (await client.get('/audit')).json();
     expect(audit.items[0]).toMatchObject({ action: 'tenant.created', seq: 1 });

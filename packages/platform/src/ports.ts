@@ -30,7 +30,9 @@ export type CapabilityName =
   | 'certificateA1'
   | 'certificateA3'
   | 'updater'
-  | 'notifications';
+  | 'notifications'
+  /** Câmera do aparelho lendo código de barras (F8-05). */
+  | 'barcodeCamera';
 
 /** Local SQL storage (SQLite native on desktop, SQLite WASM on web — ADR-0004). */
 export interface StoragePort {
@@ -139,6 +141,21 @@ export interface UpdaterPort {
   install(context: { saleInProgress: boolean }): Promise<void>;
 }
 
+/**
+ * Câmera como leitor de código de barras (F8-05): liga a câmera traseira no vídeo indicado e
+ * avisa cada código lido (o mesmo código não repete em seguida). Devolve como desligar.
+ */
+export interface BarcodeCameraPort {
+  start(video: CameraVideo, onCode: (code: string) => void): Promise<() => void>;
+}
+
+/** O que o port usa do elemento <video> (sem depender dos tipos do navegador). */
+export interface CameraVideo {
+  srcObject: unknown;
+  play(): Promise<void>;
+  setAttribute(name: string, value: string): void;
+}
+
 export interface NotificationPort {
   notify(title: string, body: string): Promise<void>;
 }
@@ -155,6 +172,7 @@ export interface Platform {
   cashDrawer?: CashDrawerPort;
   scale?: ScalePort;
   tef?: TefPort;
+  barcodeCamera?: BarcodeCameraPort;
   certificate?: CertificatePort;
   /** Abre um endereço no navegador do sistema (o vínculo com o MercadoFlow, por exemplo). */
   openExternal?: (url: string) => Promise<void>;
