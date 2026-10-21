@@ -3,6 +3,7 @@ import type {
   FiscalDocumentStatus,
   ProductCatalog,
   ProductPack,
+  PixChargeView,
 } from '@bipae/domain';
 import type { SyncTransport } from '@bipae/sync';
 
@@ -73,6 +74,11 @@ export interface PosBackend extends SyncTransport {
   fiscalDocument?(
     saleId: string,
   ): Promise<{ status: FiscalDocumentStatus; xml: string | null; pendingItems: string[] } | null>;
+  /** Pix pela API do banco da loja (F8-09): cria a cobrança e acompanha. Precisa de internet. */
+  pixCharge?: {
+    create(storeId: string, amountCents: number): Promise<PixChargeView>;
+    get(txid: string): Promise<PixChargeView>;
+  };
 }
 
 export interface PosUser {

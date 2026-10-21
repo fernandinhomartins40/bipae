@@ -1264,6 +1264,14 @@ export function Register({
           credit={cart.customerTaxId ? creditInfo : undefined}
           {...(selfMode && { methods: ['pix', 'debit', 'credit'] as const })}
           {...(payments && { payments })}
+          {...(payments?.pix === 'api' &&
+            backend.pixCharge && {
+              pixApi: {
+                create: (cents: number) =>
+                  backend.pixCharge!.create(context.terminal.storeId, cents),
+                get: (txid: string) => backend.pixCharge!.get(txid),
+              },
+            })}
           onPaid={pay}
           onClose={closeDialog}
         />

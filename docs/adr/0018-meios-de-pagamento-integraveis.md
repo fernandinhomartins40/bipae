@@ -40,6 +40,7 @@ Pesquisa feita em 20/10/2026. Há quatro famílias de integração no mercado:
 
 ## Ajuste na implementação (21/10/2026)
 - Em vez de um pacote `packages/payments`, o catálogo e a configuração ficam em `@bipae/domain` (`payments.ts`), compartilhados pela API e pelas telas, e o gerador do BR Code em `@bipae/domain` (`pix.ts`). Cada adaptador real mora onde roda: na API (Pix e nuvem) ou nos ports de `packages/platform` (TEF e SDKs).
+- Adaptador construído e testado contra o padrão, mas ainda sem homologação com um parceiro real, aparece como "Em homologação" e pode ser escolhido pela loja, com o aviso de testar antes no sandbox do banco (pedido do dono: deixar pronto para o próprio cliente integrar).
 - O padrão sem integração deixou de ser o simulador: cartão na maquininha à parte e Pix pela chave da loja, com QR Code estático opcional.
 
 ## Consequências

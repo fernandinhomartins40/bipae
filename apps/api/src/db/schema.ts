@@ -1323,13 +1323,39 @@ export const paymentSettings = pgTable('payment_settings', {
   cardMode: text('card_mode', { enum: ['manual', 'simulator'] })
     .notNull()
     .default('manual'),
-  pixMode: text('pix_mode', { enum: ['manual', 'static_qr', 'simulator'] })
+  pixMode: text('pix_mode', { enum: ['manual', 'static_qr', 'api', 'simulator'] })
     .notNull()
     .default('manual'),
   pixKey: text('pix_key'),
   pixMerchantName: text('pix_merchant_name'),
   pixCity: text('pix_city'),
+  /** API Pix do banco (F8-09); segredos selados. */
+  pixApiBaseUrl: text('pix_api_base_url'),
+  pixApiTokenUrl: text('pix_api_token_url'),
+  pixApiClientId: text('pix_api_client_id'),
+  pixApiSecretSealed: text('pix_api_secret_sealed'),
+  pixApiCertSealed: text('pix_api_cert_sealed'),
+  pixApiCertPasswordSealed: text('pix_api_cert_password_sealed'),
   updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Cobrança Pix pela API do banco (F8-09). */
+export const pixCharges = pgTable('pix_charges', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  txid: text('txid').notNull(),
+  amountCents: money('amount_cents').notNull(),
+  copyPaste: text('copy_paste').notNull(),
+  status: text('status', { enum: ['pending', 'paid', 'expired', 'failed'] })
+    .notNull()
+    .default('pending'),
+  endToEndId: text('end_to_end_id'),
+  message: text('message'),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  checkedAt: ts('checked_at'),
+  paidAt: ts('paid_at'),
 });
 
 // ---------------------------------------------------------------- condicional (0043)

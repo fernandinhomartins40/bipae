@@ -17,8 +17,11 @@ import {
 } from '@bipae/domain';
 import { eq } from 'drizzle-orm';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
-import { DB } from '../../common/di';
-import { notFound, parse } from '../../common/errors';
+import { CONFIG, DB } from '../../common/di';
+import { AppError, notFound, parse } from '../../common/errors';
+import { SecretBox } from '../../common/secrets';
+import type { Config } from '../../config';
+import { parsePfx } from '../fiscal/certificates.service';
 import { assertStore } from '../../common/stores';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import { paymentSettings, stores } from '../../db/schema';
@@ -32,10 +35,15 @@ const DEFAULTS = { card: 'manual', pix: 'manual' } as const;
  */
 @Injectable()
 export class PaymentSettingsService {
+  private readonly box: SecretBox;
+
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
-  ) {}
+    @Inject(CONFIG) config: Config,
+  ) {
+    this.box = new SecretBox(config.SECRETS_KEY ?? config.JWT_SECRET);
+  }
 
   private async row(tx: Tx, storeId: string): Promise<PaymentSettingsView> {
     const [row] = await tx
@@ -49,6 +57,16 @@ export class PaymentSettingsService {
       pixKey: row?.pixKey ?? null,
       pixMerchantName: row?.pixMerchantName ?? null,
       pixCity: row?.pixCity ?? null,
+      pixApi:
+        row?.pixApiBaseUrl && row.pixApiTokenUrl && row.pixApiClientId
+          ? {
+              baseUrl: row.pixApiBaseUrl,
+              tokenUrl: row.pixApiTokenUrl,
+              clientId: row.pixApiClientId,
+              hasClientSecret: Boolean(row.pixApiSecretSealed),
+              hasCertificate: Boolean(row.pixApiCertSealed),
+            }
+          : null,
     };
   }
 
@@ -68,7 +86,50 @@ export class PaymentSettingsService {
       const [store] = await tx.select({ id: stores.id }).from(stores).where(eq(stores.id, storeId));
       if (!store) throw notFound('Loja');
       const before = await this.row(tx, storeId);
+      const [current] = await tx
+        .select()
+        .from(paymentSettings)
+        .where(eq(paymentSettings.storeId, storeId));
+      // API Pix (F8-09): segredo em branco mantém o guardado; o certificado é conferido com a senha.
+      const api = input.pixApi;
+      let apiValues = {};
+      if (api) {
+        const password =
+          api.certificatePassword ??
+          (current?.pixApiCertPasswordSealed
+            ? this.box.open(current.pixApiCertPasswordSealed)
+            : '');
+        if (api.certificateBase64) {
+          try {
+            parsePfx(Buffer.from(api.certificateBase64, 'base64'), password);
+          } catch {
+            throw new AppError(
+              400,
+              'validation',
+              'Certificado ou senha do certificado inválidos.',
+              [{ path: 'pixApi.certificateBase64', message: 'Certificado ou senha inválidos' }],
+            );
+          }
+        }
+        const secret = api.clientSecret || null;
+        if (!secret && !current?.pixApiSecretSealed) {
+          throw new AppError(400, 'validation', 'Informe o Client Secret.', [
+            { path: 'pixApi.clientSecret', message: 'Informe o Client Secret' },
+          ]);
+        }
+        apiValues = {
+          pixApiBaseUrl: api.baseUrl,
+          pixApiTokenUrl: api.tokenUrl,
+          pixApiClientId: api.clientId,
+          ...(secret && { pixApiSecretSealed: this.box.seal(secret) }),
+          ...(api.certificateBase64 && {
+            pixApiCertSealed: this.box.seal(api.certificateBase64),
+            pixApiCertPasswordSealed: this.box.seal(password),
+          }),
+        };
+      }
       const values = {
+        ...apiValues,
         cardMode: input.card,
         pixMode: input.pix,
         pixKey: input.pixKey ? (normalizePixKey(input.pixKey)?.key ?? null) : null,
@@ -96,8 +157,10 @@ export class PaymentSettingsService {
     const s = await this.row(tx, storeId);
     return {
       card: s.card,
-      pix: s.pix,
-      ...(s.pix === 'static_qr' &&
+      // Sem a API completa, o caixa usa o Pix manual (nada aprova sozinho).
+      pix: s.pix === 'api' && !s.pixApi ? 'manual' : s.pix,
+      // QR estático também serve de reserva para a API Pix quando o caixa está sem internet.
+      ...((s.pix === 'static_qr' || s.pix === 'api') &&
         s.pixKey &&
         s.pixMerchantName &&
         s.pixCity && {

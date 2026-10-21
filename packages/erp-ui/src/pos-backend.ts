@@ -1,6 +1,7 @@
 import type {
   CatalogProduct,
   FiscalDocumentView,
+  PixChargeView,
   SyncPullResult,
   SyncPushResult,
 } from '@bipae/domain';
@@ -18,6 +19,11 @@ export function createPosBackend(api: ApiClient): PosBackend {
         }${fiscalVersion ? `&fiscalVersion=${encodeURIComponent(fiscalVersion)}` : ''}`,
       ),
     listTerminals: () => api.get<PosTerminal[]>('/pos/terminals'),
+    pixCharge: {
+      create: (storeId, amountCents) =>
+        api.post<PixChargeView>('/payments/pix/charges', { storeId, amountCents }),
+      get: (txid) => api.get<PixChargeView>(`/payments/pix/charges/${txid}`),
+    },
     createTerminal: (input) => api.post<PosTerminal>('/terminals', input),
     listStores: () => api.get<{ id: string; name: string }[]>('/stores'),
     terminalContext: (id) => api.get<TerminalContext>(`/pos/terminals/${id}/context`),

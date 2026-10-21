@@ -7,6 +7,7 @@ import {
   staticPixPayload,
   type Cents,
   type PaymentMethod,
+  type PixChargeView,
   type TerminalPaymentSettings,
 } from '@bipae/domain';
 import {
@@ -383,6 +384,7 @@ const METHOD_KEYS: { method: PaymentMethod; key: string }[] = [
 
 const PIX_HINT: Record<TerminalPaymentSettings['pix'], string> = {
   manual: 'Receba pela chave Pix da loja e confirme quando cair.',
+  api: 'O QR sai do seu banco e o pagamento entra sozinho quando o banco confirma.',
   static_qr: 'O caixa mostra o QR com o valor; confirme quando o dinheiro cair.',
   simulator: 'Simulador: aprova sozinho, para treinar. Ninguém é cobrado.',
 };
@@ -442,6 +444,7 @@ export function PaymentDialog({
   credit,
   methods,
   payments = { card: 'manual', pix: 'manual' },
+  pixApi,
   onPaid,
   onClose,
 }: {
@@ -451,6 +454,11 @@ export function PaymentDialog({
   methods?: PaymentMethod[];
   /** Meios de pagamento da loja (F8-08): maquininha à parte, QR do Pix ou simulador. */
   payments?: TerminalPaymentSettings;
+  /** Pix pela API do banco (F8-09): cria a cobrança e acompanha até o banco confirmar. */
+  pixApi?: {
+    create(amountCents: number): Promise<PixChargeView>;
+    get(txid: string): Promise<PixChargeView>;
+  };
   onPaid: (tenders: TenderInput[]) => Promise<void>;
   onClose: () => void;
 }) {
@@ -473,10 +481,40 @@ export function PaymentDialog({
     null,
   );
   const [nsu, setNsu] = useState('');
+  const [charge, setCharge] = useState<PixChargeView | null>(null);
+  const [pixNotice, setPixNotice] = useState<string | null>(null);
+
+  // Acompanha a cobrança: quando o banco confirma, o Pix entra sozinho (F8-09).
+  useEffect(() => {
+    if (!charge || charge.status !== 'pending' || !pixApi) return;
+    const timer = setInterval(() => {
+      void pixApi
+        .get(charge.txid)
+        .then((next) => {
+          if (next.status === 'paid') {
+            setTenders((t) => [
+              ...t,
+              {
+                method: 'pix',
+                receivedCents: next.amountCents,
+                provider: 'Pix (API do banco)',
+                nsu: next.endToEndId,
+              },
+            ]);
+            setCharge(null);
+          } else {
+            setCharge(next);
+          }
+        })
+        .catch(() => undefined);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [charge, pixApi]);
   const tef = useMemo(() => new SimulatedTef(), []);
   // O QR do Pix com a chave da loja e o valor (F8-08); sem chave configurada, Pix manual.
   const pixPayload = useMemo(() => {
-    if (pixPending === null || payments.pix !== 'static_qr' || !payments.pixStatic) return null;
+    // QR da loja: no modo QR estático e como reserva da API Pix quando o banco não responde.
+    if (pixPending === null || payments.pix === 'simulator' || !payments.pixStatic) return null;
     try {
       return staticPixPayload({ ...payments.pixStatic, amountCents: pixPending });
     } catch {
@@ -494,7 +532,22 @@ export function PaymentDialog({
     if (received === null || received <= 0) return setError('Informe um valor válido.');
     if (method !== 'cash' && received > remaining)
       return setError('Só pagamento em dinheiro pode passar do valor (para dar troco).');
-    if (method === 'pix') return setPixPending(received);
+    if (method === 'pix') {
+      setPixNotice(null);
+      if (payments.pix === 'api' && pixApi) {
+        setBusy(true);
+        try {
+          setCharge(await pixApi.create(received));
+          return;
+        } catch (err) {
+          // Sem internet ou banco fora: segue com o QR da loja ou o Pix manual.
+          setPixNotice(`${errorMessage(err)} Use o QR da loja e confirme quando cair.`);
+        } finally {
+          setBusy(false);
+        }
+      }
+      return setPixPending(received);
+    }
     if (method === 'store_credit') {
       const used = tenders
         .filter((t) => t.method === 'store_credit')
@@ -601,6 +654,27 @@ export function PaymentDialog({
               </Button>
             </form>
           )}
+          {charge && (
+            <Alert tone="warning" title="Pix">
+              {charge.status === 'pending' ? (
+                <>
+                  <p>Mostre o QR ao cliente. O pagamento entra sozinho quando o banco confirmar.</p>
+                  <PixQr payload={charge.copyPaste} cents={charge.amountCents} />
+                  <p className="mt-2 text-sm" role="status">
+                    Esperando o banco confirmar…
+                  </p>
+                </>
+              ) : (
+                <p>{charge.message ?? 'O QR não vale mais. Gere outro.'}</p>
+              )}
+              <div className="mt-3 flex gap-2">
+                <Button variant="secondary" onClick={() => setCharge(null)}>
+                  Cancelar Pix
+                </Button>
+              </div>
+            </Alert>
+          )}
+          {pixNotice && <Alert tone="warning">{pixNotice}</Alert>}
           {cardPending !== null && (
             <Alert tone="warning" title={`${PAYMENT_LABELS[cardPending.method]} na maquininha`}>
               <p>

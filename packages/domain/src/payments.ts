@@ -17,7 +17,8 @@ export interface PaymentProviderInfo {
   methods: ('card' | 'pix')[];
   /** Onde funciona: navegador, computador (desktop) e o app Android. */
   targets: ('web' | 'desktop' | 'android')[];
-  status: 'ready' | 'coming-soon';
+  /** homologation: construído e testado contra o padrão, falta homologar com um banco de verdade. */
+  status: 'ready' | 'homologation' | 'coming-soon';
   /** Tarefa do backlog que entrega a integração (quando ainda não está pronta). */
   task?: string;
   description: string;
@@ -60,9 +61,10 @@ export const PAYMENT_PROVIDERS: PaymentProviderInfo[] = [
     family: 'pix-api',
     methods: ['pix'],
     targets: ALL,
-    status: 'coming-soon',
+    status: 'homologation',
     task: 'F8-09',
-    description: 'QR dinâmico e confirmação automática do pagamento, pelo padrão do Banco Central.',
+    description:
+      'QR dinâmico e confirmação automática do pagamento, pelo padrão do Banco Central. Teste primeiro no sandbox do seu banco.',
   },
   {
     id: 'mercadopago-pix',
@@ -109,9 +111,71 @@ export const PAYMENT_PROVIDERS: PaymentProviderInfo[] = [
 ];
 
 export const CARD_MODES = ['manual', 'simulator'] as const;
-export const PIX_MODES = ['manual', 'static_qr', 'simulator'] as const;
+export const PIX_MODES = ['manual', 'static_qr', 'api', 'simulator'] as const;
 export type CardMode = (typeof CARD_MODES)[number];
 export type PixMode = (typeof PIX_MODES)[number];
+
+/**
+ * Endereços da API Pix que conferimos na documentação do banco (21/10/2026). Os outros bancos
+ * entram por "Outro banco", com as URLs do portal do banco: não inventamos endereço.
+ */
+export interface PixApiProfile {
+  id: string;
+  name: string;
+  environment: 'sandbox' | 'production';
+  baseUrl: string;
+  tokenUrl: string;
+  source: string;
+}
+
+export const PIX_API_PROFILES: PixApiProfile[] = [
+  {
+    id: 'inter-sandbox',
+    name: 'Banco Inter (sandbox)',
+    environment: 'sandbox',
+    baseUrl: 'https://cdpj-sandbox.partners.uatinter.co/pix/v2',
+    tokenUrl: 'https://cdpj-sandbox.partners.uatinter.co/oauth/v2/token',
+    source: 'https://developers.inter.co/references/pix',
+  },
+  {
+    id: 'inter',
+    name: 'Banco Inter',
+    environment: 'production',
+    baseUrl: 'https://cdpj.partners.bancointer.com.br/pix/v2',
+    tokenUrl: 'https://cdpj.partners.bancointer.com.br/oauth/v2/token',
+    source: 'https://developers.inter.co/references/pix',
+  },
+  {
+    id: 'efi-sandbox',
+    name: 'Efí (homologação)',
+    environment: 'sandbox',
+    baseUrl: 'https://pix-h.api.efipay.com.br/v2',
+    tokenUrl: 'https://pix-h.api.efipay.com.br/oauth/token',
+    source: 'https://dev.efipay.com.br/en/docs/api-pix/cobrancas-imediatas/',
+  },
+  {
+    id: 'sicoob-sandbox',
+    name: 'Sicoob (homologação)',
+    environment: 'sandbox',
+    baseUrl: 'https://api-homol.sicoob.com.br/cooperado/pix/api/v2',
+    tokenUrl: 'https://api-homol.sicoob.com.br/cooperado/pix/token',
+    source: 'Manual para utilização da API Pix 2.2.1 Sicoob',
+  },
+  {
+    id: 'sicredi',
+    name: 'Sicredi',
+    environment: 'production',
+    baseUrl: 'https://api-pix.sicredi.com.br/api/v2',
+    tokenUrl: 'https://api-pix.sicredi.com.br/oauth/token',
+    source: 'https://developers.sicredi.com.br/public/docs/getting-started-pix',
+  },
+];
+
+const httpsUrl = z
+  .string()
+  .trim()
+  .url('Endereço inválido')
+  .refine((u) => u.startsWith('https://'), 'Use um endereço https://');
 
 export const paymentSettingsInput = z
   .object({
@@ -120,8 +184,36 @@ export const paymentSettingsInput = z
     pixKey: z.string().trim().max(77).nullish(),
     pixMerchantName: z.string().trim().max(25, 'Até 25 letras').nullish(),
     pixCity: z.string().trim().max(15, 'Até 15 letras').nullish(),
+    /** API Pix do banco (F8-09). Segredos em branco mantêm os que já estão guardados. */
+    pixApi: z
+      .object({
+        baseUrl: httpsUrl,
+        tokenUrl: httpsUrl,
+        clientId: z.string().trim().min(1, 'Informe o Client ID').max(200),
+        clientSecret: z.string().max(500).optional(),
+        certificateBase64: z
+          .string()
+          .regex(/^[A-Za-z0-9+/=]+$/, 'Arquivo do certificado em formato inválido')
+          .max(200_000, 'Arquivo grande demais')
+          .optional(),
+        certificatePassword: z.string().max(200).optional(),
+      })
+      .nullish(),
   })
   .superRefine((v, ctx) => {
+    if (v.pix === 'api') {
+      if (!v.pixApi) {
+        ctx.addIssue({ code: 'custom', path: ['pixApi'], message: 'Informe os dados da API Pix' });
+      }
+      if (!v.pixKey || !normalizePixKey(v.pixKey)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['pixKey'],
+          message: 'Informe a chave Pix da conta que recebe.',
+        });
+      }
+      return;
+    }
     if (v.pix !== 'static_qr') return;
     if (!v.pixKey || !normalizePixKey(v.pixKey)) {
       ctx.addIssue({
@@ -146,7 +238,31 @@ export interface PaymentSettingsView {
   pixKey: string | null;
   pixMerchantName: string | null;
   pixCity: string | null;
+  /** API Pix (F8-09): endereços e o que já está guardado, nunca os segredos. */
+  pixApi: {
+    baseUrl: string;
+    tokenUrl: string;
+    clientId: string;
+    hasClientSecret: boolean;
+    hasCertificate: boolean;
+  } | null;
 }
+
+/** Cobrança Pix pela API do banco (F8-09), como o caixa acompanha. */
+export interface PixChargeView {
+  txid: string;
+  amountCents: number;
+  copyPaste: string;
+  status: 'pending' | 'paid' | 'expired' | 'failed';
+  /** Identificador do pagamento no Pix (endToEndId), quando pago. */
+  endToEndId: string | null;
+  message: string | null;
+}
+
+export const pixChargeInput = z.object({
+  storeId: z.string().uuid('Loja inválida'),
+  amountCents: z.number().int().positive('Valor inválido').max(100_000_000, 'Valor alto demais'),
+});
 
 /** O que o caixa recebe (sem segredo: a chave Pix é pública para quem paga). */
 export interface TerminalPaymentSettings {

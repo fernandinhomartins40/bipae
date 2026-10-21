@@ -1,6 +1,7 @@
 import {
   normalizePixKey,
   PAYMENT_PROVIDERS,
+  PIX_API_PROFILES,
   staticPixPayload,
   type PaymentSettingsView,
 } from '@bipae/domain';
@@ -65,8 +66,31 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
     pixKey: settings.pixKey ?? '',
     pixMerchantName: settings.pixMerchantName ?? me.tenant.name.slice(0, 25),
     pixCity: settings.pixCity ?? '',
+    apiBaseUrl: settings.pixApi?.baseUrl ?? '',
+    apiTokenUrl: settings.pixApi?.tokenUrl ?? '',
+    apiClientId: settings.pixApi?.clientId ?? '',
+    apiClientSecret: '',
+    apiCertificate: '',
+    apiCertificatePassword: '',
   });
   const v = form.values;
+  const [certName, setCertName] = useState<string | null>(null);
+  const pickProfile = (id: string) => {
+    const p = PIX_API_PROFILES.find((x) => x.id === id);
+    if (!p) return;
+    form.set('apiBaseUrl', p.baseUrl);
+    form.set('apiTokenUrl', p.tokenUrl);
+  };
+  const readCertificate = (file: File | undefined) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const data = String(reader.result ?? '');
+      form.set('apiCertificate', data.slice(data.indexOf(',') + 1));
+      setCertName(file.name);
+    };
+    reader.readAsDataURL(file);
+  };
   // Prévia: o mesmo QR que o caixa vai mostrar, com R$ 1,00 para testar no seu banco.
   let preview: string | null = null;
   if (v.pix === 'static_qr' && normalizePixKey(v.pixKey) && v.pixMerchantName && v.pixCity) {
@@ -86,7 +110,30 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
     e.preventDefault();
     setSaved(false);
     void form.submit(async (values) => {
-      await api.put(`/stores/${settings.storeId}/payment-settings`, values);
+      const {
+        apiBaseUrl,
+        apiTokenUrl,
+        apiClientId,
+        apiClientSecret,
+        apiCertificate,
+        apiCertificatePassword,
+        ...rest
+      } = values;
+      await api.put(`/stores/${settings.storeId}/payment-settings`, {
+        ...rest,
+        ...(values.pix === 'api' && {
+          pixApi: {
+            baseUrl: apiBaseUrl,
+            tokenUrl: apiTokenUrl,
+            clientId: apiClientId,
+            ...(apiClientSecret && { clientSecret: apiClientSecret }),
+            ...(apiCertificate && {
+              certificateBase64: apiCertificate,
+              certificatePassword: apiCertificatePassword,
+            }),
+          },
+        }),
+      });
       await queryClient.invalidateQueries({ queryKey: ['payment-settings'] });
       setSaved(true);
     });
@@ -117,10 +164,98 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
           options={[
             { value: 'manual', label: 'Chave Pix da loja, sem QR: o cliente digita a chave' },
             { value: 'static_qr', label: 'QR Code com a chave da loja e o valor da venda' },
+            {
+              value: 'api',
+              label: 'API Pix do seu banco: QR do banco e confirmação automática (em homologação)',
+            },
             { value: 'simulator', label: 'Simulador (demonstração, não cobra ninguém)' },
           ]}
         />
-        {v.pix === 'static_qr' && (
+        {v.pix === 'api' && (
+          <div className="flex flex-col gap-4 rounded-ui border border-border p-4">
+            <Alert tone="warning">
+              Em homologação: teste primeiro no sandbox do seu banco, com valores pequenos. Sem
+              internet, o caixa usa o QR da loja (preencha nome e cidade abaixo) ou o Pix manual.
+            </Alert>
+            <SelectField
+              label="Banco"
+              value=""
+              disabled={!canWrite}
+              onChange={(e) => pickProfile(e.target.value)}
+              options={[
+                {
+                  value: '',
+                  label: 'Escolha para preencher os endereços (ou digite os do seu banco)',
+                },
+                ...PIX_API_PROFILES.map((p) => ({ value: p.id, label: p.name })),
+              ]}
+            />
+            <TextField
+              label="Endereço da API Pix"
+              hint="No portal de desenvolvedores do seu banco. Começa com https://"
+              value={v.apiBaseUrl}
+              disabled={!canWrite}
+              onChange={(e) => form.set('apiBaseUrl', e.target.value)}
+              error={form.errors['pixApi.baseUrl']}
+            />
+            <TextField
+              label="Endereço do token (OAuth)"
+              value={v.apiTokenUrl}
+              disabled={!canWrite}
+              onChange={(e) => form.set('apiTokenUrl', e.target.value)}
+              error={form.errors['pixApi.tokenUrl']}
+            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <TextField
+                label="Client ID"
+                value={v.apiClientId}
+                disabled={!canWrite}
+                onChange={(e) => form.set('apiClientId', e.target.value)}
+                error={form.errors['pixApi.clientId']}
+              />
+              <TextField
+                label="Client Secret"
+                type="password"
+                autoComplete="off"
+                placeholder={
+                  settings.pixApi?.hasClientSecret ? 'Guardado (deixe em branco para manter)' : ''
+                }
+                value={v.apiClientSecret}
+                disabled={!canWrite}
+                onChange={(e) => form.set('apiClientSecret', e.target.value)}
+                error={form.errors['pixApi.clientSecret']}
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="flex flex-col gap-1 text-sm font-semibold">
+                Certificado da API (.pfx ou .p12)
+                <input
+                  type="file"
+                  accept=".pfx,.p12"
+                  disabled={!canWrite}
+                  onChange={(e) => readCertificate(e.target.files?.[0])}
+                  className="text-sm font-normal"
+                />
+                <span className="font-normal text-muted">
+                  {certName ??
+                    (settings.pixApi?.hasCertificate
+                      ? 'Certificado guardado.'
+                      : 'O banco entrega junto com as credenciais.')}
+                </span>
+              </label>
+              <TextField
+                label="Senha do certificado"
+                type="password"
+                autoComplete="off"
+                value={v.apiCertificatePassword}
+                disabled={!canWrite}
+                onChange={(e) => form.set('apiCertificatePassword', e.target.value)}
+                error={form.errors['pixApi.certificateBase64']}
+              />
+            </div>
+          </div>
+        )}
+        {(v.pix === 'static_qr' || v.pix === 'api') && (
           <div className="flex flex-col gap-4 rounded-ui border border-border p-4">
             <TextField
               label="Chave Pix da loja"
@@ -183,8 +318,10 @@ function Catalog() {
               <p className="font-semibold">{p.name}</p>
               {p.status === 'ready' ? (
                 <Badge tone="success">Pronto</Badge>
+              ) : p.status === 'homologation' ? (
+                <Badge tone="warning">Em homologação</Badge>
               ) : (
-                <Badge tone="warning">Chega em breve</Badge>
+                <Badge>Chega em breve</Badge>
               )}
             </div>
             <p className="mt-1 text-sm text-muted">{p.description}</p>

@@ -1,5 +1,15 @@
 # Changelog
 
+## [F8-09.a Pix com confirmação automática pela API do banco (em homologação)] — 21/10/2026
+
+### Adicionado
+- **API Pix do seu banco**, em "Meios de pagamento". O caixa pede a cobrança ao banco, mostra o QR do banco e o pagamento entra sozinho quando o banco confirma, com o código do Pix (endToEndId) guardado na venda.
+  - Segue o padrão do Banco Central.
+  - Endereços prontos para Banco Inter, Efí, Sicoob e Sicredi (conferidos na documentação de cada um) e "Outro banco" para os demais.
+  - Client Secret e certificado ficam cifrados e nunca voltam para a tela.
+- Se o banco não responder ou o caixa estiver sem internet, o caixa mostra o QR da loja e o operador confirma quando o dinheiro cair.
+- Aparece como **"Em homologação"**: teste primeiro no sandbox do seu banco, com valores pequenos.
+
 ## [F8-07.a App Android: primeiro APK de teste] — 21/10/2026
 
 ### Adicionado
