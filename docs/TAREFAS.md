@@ -444,8 +444,9 @@ Pedido do dono em 20/10/2026: um app Android para o caixa e para vendas (vendedo
   - Feito em 20/10/2026: port `BarcodeCameraPort` e capacidade "câmera como leitor de código" (Chrome do Android e app; onde não há, a tela explica); botão "Ler com a câmera" no caixa e nos pedidos; permissão `pos.order` e papel de sistema "Vendedor" (lança pedidos, não abre o caixa; a migração dá a permissão a dono, gerente e operador); "Receber neste aparelho" para quem tem caixa; artigo de ajuda.
 - [x] F8-06 · Caixa em celular e tablet: layout do PDV de 360 px a 1280 px, sem perder atalhos nem a venda sem internet
   - Feito em 20/10/2026: abaixo de 1024 px a página rola e o total com o Pagar ficam numa barra fixa embaixo; corrigida a lista de itens que ficava sem altura no tablet; cabeçalho quebra sem rolagem lateral; atalhos F2–F12 só do notebook para cima (continuam funcionando). E2E no celular com venda completa, sem rolagem lateral em 360, 390 e 768 px e axe sem violações.
-- [ ] F8-07 · App Android (Tauri 2): projeto Android gerado, dependências só de computador fora do Android, app único que abre em Caixa ou Vendas conforme a permissão, AAB na CI; envio à faixa de teste interno da Play Store — depende: F8-05, F8-06 · externo: E24
-  - [ ] F8-07.a · Build Android na CI sem assinatura (APK de depuração como artefato)
+- [~] F8-07 · App Android (Tauri 2): projeto Android gerado, dependências só de computador fora do Android, app único que abre em Caixa ou Vendas conforme a permissão, AAB na CI; envio à faixa de teste interno da Play Store — depende: F8-05, F8-06 · externo: E24
+  - [x] F8-07.a · Build Android na CI sem assinatura (APK de depuração como artefato)
+    - Feito em 21/10/2026: job "Android (APK de teste)" verde (ARM 64 bits, artefato `bipae-android-apk-de-teste`); pacote `br.com.bipae.app`, mínimo Android 9; periféricos de computador, Conector, bandeja e início automático só no computador; a casca marca `mobile`; câmera como leitor de código pelo WebView.
   - [ ] F8-07.b · Assinatura e envio à Play Store com os secrets do E24
   - [ ] F8-07.c · Periféricos no Android: impressora térmica Bluetooth, câmera como leitor de código e leitor Bluetooth — externo: E25
 - [x] F8-08 · Base de pagamentos (ADR-0018): catálogo de integrações, configuração por loja, tela "Meios de pagamento" com auditoria; o caixa usa o meio configurado

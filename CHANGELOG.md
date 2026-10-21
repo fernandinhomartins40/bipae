@@ -1,5 +1,12 @@
 # Changelog
 
+## [F8-07.a App Android: primeiro APK de teste] — 21/10/2026
+
+### Adicionado
+- **O Bipaê compila para Android** (celular e tablet, Android 9 ou mais novo), com o mesmo caixa e as mesmas telas do computador. A cada mudança, a CI gera um APK de teste ("Android (APK de teste)").
+- No Android, o app mostra "Bipaê Android" e "neste aparelho", e o Início tem o atalho **Lançar pedido** para quem lança pedidos.
+- Ainda falta para a Play Store: a assinatura e o envio (item E24) e a impressora Bluetooth (com aparelho de teste, E25).
+
 ## [F8-08 Meios de pagamento e QR Code do Pix] — 21/10/2026
 
 ### Adicionado
