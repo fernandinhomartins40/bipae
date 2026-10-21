@@ -88,18 +88,23 @@ export async function createDesktopPlatform(): Promise<Platform> {
   const native = isTauri();
   let version = __APP_VERSION__;
   let updaterBuilt = false;
+  let mobile = false;
   if (native) {
     const { getVersion } = await import('@tauri-apps/api/app');
     version = await getVersion();
-    updaterBuilt = (await invoke<{ updater: boolean }>('platform_info')).updater;
+    const info = await invoke<{ updater: boolean; os: string }>('platform_info');
+    updaterBuilt = info.updater;
+    mobile = info.os === 'android' || info.os === 'ios';
   }
+  // Periféricos, Conector e bandeja só existem no computador (ADR-0017).
+  const computer = native && !mobile;
 
   // Certificado A1 instalado neste computador, para assinar sem internet (F3-21).
   const certificate = new LocalCertificateStore(indexedDbStore());
 
   const capabilities = async (): Promise<Record<CapabilityName, CapabilityStatus>> => {
     const implemented: CapabilityName[] = ['storage', 'notifications', 'certificateA1'];
-    if (native) implemented.push('printer', 'cashDrawer', 'scale');
+    if (computer) implemented.push('printer', 'cashDrawer', 'scale');
     if (updaterBuilt) implemented.push('updater');
     // No Android (ADR-0017) o WebView lê código pela câmera; no Windows, ainda não.
     const camera = supportsBarcodeCamera();
@@ -110,7 +115,7 @@ export async function createDesktopPlatform(): Promise<Platform> {
     );
     if (!(await certificate.info()))
       caps.certificateA1 = { available: false, reason: 'not-configured' };
-    if (native) {
+    if (computer) {
       const config = await nativeDevices.getConfig();
       const notConfigured: CapabilityStatus = { available: false, reason: 'not-configured' };
       if (!config.printer) caps.printer = notConfigured;
@@ -122,6 +127,7 @@ export async function createDesktopPlatform(): Promise<Platform> {
 
   return {
     kind: 'desktop',
+    mobile,
     version,
     preferences: new WebViewPreferences(),
     // Native SQLite inside the app; the WASM driver only when the UI runs outside Tauri (dev/E2E).
@@ -136,6 +142,8 @@ export async function createDesktopPlatform(): Promise<Platform> {
         if (!/^https:\/\//i.test(url)) throw new Error('Só abrimos links seguros (https).');
         await invoke('plugin:opener|open_url', { url });
       },
+    }),
+    ...(computer && {
       devices: nativeDevices,
       printer: {
         print: async (job: PrintJob) => {

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "br.com.bipae.app",
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Bipaê"
+      }
+    ]
+  },
+  "bundle": {
+    "android": {
+      "minSdkVersion": 28
+    }
+  }
+}

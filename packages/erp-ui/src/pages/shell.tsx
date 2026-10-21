@@ -238,7 +238,7 @@ export function Shell() {
           <div className="flex items-center justify-between gap-2 p-4">
             <Logo className="text-xl" />
             <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs font-semibold text-muted">
-              {platform.kind === 'desktop' ? 'Desktop' : 'Online'}
+              {platform.mobile ? 'App' : platform.kind === 'desktop' ? 'Desktop' : 'Online'}
             </span>
             {mobileOpen && (
               <Button

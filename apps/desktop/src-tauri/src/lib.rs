@@ -4,16 +4,25 @@
 //!
 //! Started with `--connector`, the app runs as the Bipaê Conector only: no window, an icon in
 //! the system tray, serving peripherals to the web register on this computer.
+//!
+//! O mesmo código vira o app Android (ADR-0017): lá só o banco local; periféricos do celular,
+//! Conector, bandeja e atualizador ficam de fora (`cfg(desktop)`).
 
+#[cfg(desktop)]
 mod connector;
 mod db;
+#[cfg(desktop)]
 mod peripherals;
 
+#[cfg(desktop)]
 use std::sync::Arc;
 
 use serde::Serialize;
+#[cfg(desktop)]
 use tauri::menu::{Menu, MenuItem};
+#[cfg(desktop)]
 use tauri::tray::TrayIconBuilder;
+#[cfg(desktop)]
 use tauri::Manager;
 
 #[derive(Serialize)]
@@ -41,6 +50,7 @@ fn connector_mode() -> bool {
     std::env::args().any(|a| a == "--connector")
 }
 
+#[cfg(desktop)]
 /// A janela principal vem da configuração (tauri.conf.json, com "create": false) e é criada aqui.
 /// No Windows, o WebDriver de teste (msedgedriver) pede a porta de depuração pela variável
 /// WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS; os argumentos padrão do WebView2 não podem apagá-la (F2-10).
@@ -65,6 +75,7 @@ fn create_main_window(app: &tauri::App) -> tauri::Result<()> {
     Ok(())
 }
 
+#[cfg(desktop)]
 fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
     let open = MenuItem::with_id(app, "open", "Abrir o Bipaê", true, None::<&str>)?;
     let quit = MenuItem::with_id(app, "quit", "Sair do Bipaê Conector", true, None::<&str>)?;
@@ -91,20 +102,22 @@ fn setup_tray(app: &tauri::App) -> tauri::Result<()> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let builder = tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
-        // Ao ligar "iniciar com o computador", o sistema abre o app já como Conector (bandeja).
-        .plugin(tauri_plugin_autostart::init(
-            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-            Some(vec!["--connector"]),
-        ));
+    let builder = tauri::Builder::default().plugin(tauri_plugin_opener::init());
+    #[cfg(desktop)]
+    // Ao ligar "iniciar com o computador", o sistema abre o app já como Conector (bandeja).
+    let builder = builder.plugin(tauri_plugin_autostart::init(
+        tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+        Some(vec!["--connector"]),
+    ));
     #[cfg(feature = "updater")]
     let builder = builder
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init());
 
-    builder
-        .manage(db::DbState::default())
+    let builder = builder.manage(db::DbState::default());
+
+    #[cfg(desktop)]
+    let builder = builder
         .manage(Arc::new(connector::ConnectorState::default()))
         .setup(|app| {
             create_main_window(app)?;
@@ -133,9 +146,21 @@ pub fn run() {
             connector::connector_status,
             connector::connector_new_code,
             connector::connector_revoke
-        ])
+        ]);
+
+    // No celular a janela vem da configuração (tauri.android.conf.json) e só há o banco local.
+    #[cfg(mobile)]
+    let builder = builder.invoke_handler(tauri::generate_handler![
+        platform_info,
+        db::db_open,
+        db::db_run,
+        db::db_exec,
+        db::db_close
+    ]);
+
+    builder
         .run(tauri::generate_context!())
-        .expect("erro ao iniciar o Bipaê Desktop");
+        .expect("erro ao iniciar o Bipaê");
 }
 
 #[cfg(test)]

@@ -215,6 +215,45 @@ jobs:
             apps/desktop/src-tauri/target/release/bundle/appimage/*.AppImage
             apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
 
+  # F8-07.a (ADR-0017): o mesmo app compilado para Android, como APK de teste (sem assinatura
+  # da Play Store). O projeto Android é gerado aqui a partir de tauri.android.conf.json.
+  android:
+    name: Android (APK de teste)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+      - name: NDK do Android
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.1.12297006" > /dev/null
+          echo "NDK_HOME=$ANDROID_HOME/ndk/27.1.12297006" >> "$GITHUB_ENV"
+      - run: pnpm install --frozen-lockfile
+      - name: Projeto Android
+        run: pnpm --filter @bipae/desktop tauri android init --ci
+      - name: Build do APK de teste (ARM 64 bits)
+        env:
+          VITE_API_URL: https://www.bipae.com.br
+        shell: bash
+        run: bash scripts/ci-annotate.sh "tauri android build" pnpm --filter @bipae/desktop tauri android build --apk --debug --target aarch64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bipae-android-apk-de-teste
+          path: apps/desktop/src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+
   # F2-10: o app de verdade, no WebView do sistema (WebView2 no Windows, WebKitGTK no Linux),
   # pilotado pelo tauri-driver: entra, abre o caixa e vende com o banco SQLite nativo.
   desktop-webview:

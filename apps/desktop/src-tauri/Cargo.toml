@@ -20,25 +20,30 @@ default = []
 updater = ["dep:tauri-plugin-updater", "dep:tauri-plugin-process"]
 
 [dependencies]
-tauri = { version = "2", features = ["tray-icon"] }
+tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 rusqlite = { version = "0.40", features = ["bundled"] }
+# Abre links (MercadoFlow, termos) no navegador do sistema; só https, ver capabilities.
+tauri-plugin-opener = "2"
+# Mesma versão menor dos pacotes npm (@tauri-apps/plugin-*): o tauri build recusa versões diferentes.
+# Sem o recurso "zip" (pacotes .zip/.tar.gz, que o instalador do Windows e o AppImage não usam):
+# a biblioteca zip 4.x foi retirada do crates.io em 10/2026 e quebrava a compilação.
+tauri-plugin-updater = { version = "~2.13", optional = true, default-features = false, features = ["rustls-tls", "system-proxy"] }
+tauri-plugin-process = { version = "~2.4", optional = true }
+
+# Só no computador (ADR-0017): periféricos pela porta serial, o servidor do Bipaê Conector, a
+# bandeja e o início automático. No Android ficam de fora.
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
 serialport = "4"
 tokio = { version = "1", features = ["net"] }
 tokio-tungstenite = "0.30"
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
 base64 = "0.22"
 getrandom = "0.3"
-# Abre links (MercadoFlow, termos) no navegador do sistema; só https, ver capabilities.
-tauri-plugin-opener = "2"
 # Iniciar o Bipaê Conector junto com o computador (F2-08).
 tauri-plugin-autostart = "2"
-# Mesma versão menor dos pacotes npm (@tauri-apps/plugin-*): o tauri build recusa versões diferentes.
-# Sem o recurso "zip" (pacotes .zip/.tar.gz, que o instalador do Windows e o AppImage não usam):
-# a biblioteca zip 4.x foi retirada do crates.io em 10/2026 e quebrava a compilação.
-tauri-plugin-updater = { version = "~2.13", optional = true, default-features = false, features = ["rustls-tls", "system-proxy"] }
-tauri-plugin-process = { version = "~2.4", optional = true }
 
 # Impressora USB pelo spooler do Windows, em modo RAW (F2-07).
 [target.'cfg(windows)'.dependencies]

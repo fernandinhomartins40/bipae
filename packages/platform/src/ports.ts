@@ -162,6 +162,8 @@ export interface NotificationPort {
 
 export interface Platform {
   kind: PlatformKind;
+  /** App no celular ou tablet (Android, ADR-0017): sem os periféricos do computador. */
+  mobile?: boolean;
   version: string;
   preferences: PreferencesPort;
   capabilities(): Promise<Record<CapabilityName, CapabilityStatus>>;

@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Circle,
   ExternalLink,
+  HandPlatter,
   PackagePlus,
   PartyPopper,
   Plus,
@@ -98,6 +99,13 @@ const QUICK_ACTIONS: QuickAction[] = [
     permission: 'pos.sell',
   },
   {
+    to: '/garcom',
+    title: 'Lançar pedido',
+    text: 'Mesa, comanda ou cliente da loja; o cliente paga no caixa.',
+    icon: HandPlatter,
+    permission: 'pos.order',
+  },
+  {
     to: '/produtos?novo=1',
     title: 'Cadastrar produto',
     text: 'Abre o cadastro já pronto para preencher.',
@@ -130,7 +138,7 @@ function QuickActions() {
       <h2 id="atalhos-titulo" className="mb-3 text-lg font-bold">
         O que você quer fazer?
       </h2>
-      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {actions.map(({ to, title, text, icon: Icon }) => (
           <li key={to}>
             <Link
@@ -429,10 +437,16 @@ function CapabilitiesCard() {
   return (
     <Card>
       <h2 className="text-lg font-bold">
-        O que funciona {platform.kind === 'desktop' ? 'neste computador' : 'neste navegador'}
+        O que funciona{' '}
+        {platform.mobile
+          ? 'neste aparelho'
+          : platform.kind === 'desktop'
+            ? 'neste computador'
+            : 'neste navegador'}
       </h2>
       <p className="mb-4 text-sm text-muted">
-        Bipaê {platform.kind === 'desktop' ? 'Desktop' : 'Online'} · versão {platform.version}
+        Bipaê {platform.mobile ? 'Android' : platform.kind === 'desktop' ? 'Desktop' : 'Online'} ·
+        versão {platform.version}
       </p>
       <ul className="flex flex-col gap-3">
         {capabilities.data &&
