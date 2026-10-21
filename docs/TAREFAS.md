@@ -202,6 +202,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
     - [x] F3-26.c.BA · Bahia: Anexo 1 do RICMS/BA vigente em 2026 (282 linhas de MVA original, faixas de CEST expandidas); monitor semanal
   - [~] F3-26.d · Demais UFs, uma por vez — depende: F3-26.a
     - [ ] F3-26.d.DF · Distrito Federal: Caderno I do Anexo IV do RICMS/DF; achar o endereço direto do texto compilado no SINJ-DF
+      - Busca de 21/10/2026: o SINJ publica o Decreto 18.955/1997 em https://www.sinj.df.gov.br/sinj/Norma/33077/Decreto_18955_22_12_1997.html, mas a página traz o texto original de 1997 (NBM/SH, convênios de 1994) misturado às alterações, sem a tabela vigente do Caderno I com CEST e MVA (as consultas COTRI 7/2025 e 2/2026 citam o item 40 para alimentícios). Falta achar a versão compilada vigente antes de gerar a tabela.
       - Busca de 18/10/2026: o RICMS/DF é a norma 33077 do SINJ-DF, mas o arquivo "atualizado" de lá é só a republicação de 1998 (Anexo IV com as MVA de 1997). O texto compilado do Anexo IV não está no SINJ nem no portal da Secretaria de Economia; continua sem fonte oficial que dê para ler.
     - [ ] F3-26.d.CE · Ceará: Anexo IX do RICMS/CE (Decreto 33.327/2019); achar o texto consolidado oficial
       - Busca de 18/10/2026: o portal oficial (sefazlegis.sefaz.ce.gov.br) abre os arquivos pelo id sem login, mas a busca exige captcha; o único PDF achado é o texto original de 2019, sem as alterações. Falta o id do texto consolidado do Anexo IX.
