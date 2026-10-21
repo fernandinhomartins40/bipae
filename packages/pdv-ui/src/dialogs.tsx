@@ -7,6 +7,7 @@ import {
   staticPixPayload,
   type Cents,
   type PaymentMethod,
+  type CardChargeView,
   type PixChargeView,
   type TerminalPaymentSettings,
 } from '@bipae/domain';
@@ -445,6 +446,7 @@ export function PaymentDialog({
   methods,
   payments = { card: 'manual', pix: 'manual' },
   pixApi,
+  cardApi,
   onPaid,
   onClose,
 }: {
@@ -454,6 +456,12 @@ export function PaymentDialog({
   methods?: PaymentMethod[];
   /** Meios de pagamento da loja (F8-08): maquininha à parte, QR do Pix ou simulador. */
   payments?: TerminalPaymentSettings;
+  /** Cartão na maquininha comandada pela internet (F8-10): manda o valor e acompanha. */
+  cardApi?: {
+    create(amountCents: number, method: 'credit' | 'debit'): Promise<CardChargeView>;
+    get(id: string): Promise<CardChargeView>;
+    cancel(id: string): Promise<CardChargeView>;
+  };
   /** Pix pela API do banco (F8-09): cria a cobrança e acompanha até o banco confirmar. */
   pixApi?: {
     create(amountCents: number): Promise<PixChargeView>;
@@ -483,6 +491,34 @@ export function PaymentDialog({
   const [nsu, setNsu] = useState('');
   const [charge, setCharge] = useState<PixChargeView | null>(null);
   const [pixNotice, setPixNotice] = useState<string | null>(null);
+  const [cardCharge, setCardCharge] = useState<CardChargeView | null>(null);
+
+  // Acompanha a maquininha: aprovou, o cartão entra sozinho (F8-10).
+  useEffect(() => {
+    if (!cardCharge || cardCharge.status !== 'pending' || !cardApi) return;
+    const timer = setInterval(() => {
+      void cardApi
+        .get(cardCharge.id)
+        .then((next) => {
+          if (next.status === 'paid') {
+            setTenders((t) => [
+              ...t,
+              {
+                method: next.method,
+                receivedCents: next.amountCents,
+                provider: 'Mercado Pago Point',
+                nsu: next.paymentId,
+              },
+            ]);
+            setCardCharge(null);
+          } else {
+            setCardCharge(next);
+          }
+        })
+        .catch(() => undefined);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [cardCharge, cardApi]);
 
   // Acompanha a cobrança: quando o banco confirma, o Pix entra sozinho (F8-09).
   useEffect(() => {
@@ -554,6 +590,20 @@ export function PaymentDialog({
         .reduce((a, t) => a + t.receivedCents, 0);
       if (!credit) return setError(creditHint(credit));
       if (used + received > credit.availableCents) return setError(creditHint(credit));
+    }
+    if ((method === 'credit' || method === 'debit') && payments.card === 'mp_point' && cardApi) {
+      setBusy(true);
+      try {
+        setCardCharge(await cardApi.create(received, method));
+        return;
+      } catch (err) {
+        // Sem internet ou maquininha fora: cobra na maquininha à parte.
+        setError(`${errorMessage(err)}`);
+        setNsu('');
+        return setCardPending({ method, cents: received });
+      } finally {
+        setBusy(false);
+      }
     }
     if (
       (method === 'credit' || method === 'debit' || method === 'voucher') &&
@@ -646,7 +696,9 @@ export function PaymentDialog({
                     ? PIX_HINT[payments.pix]
                     : payments.card === 'simulator'
                       ? 'Simulador: aprova sozinho, para treinar. Ninguém é cobrado.'
-                      : 'Cobre na maquininha e confirme aqui.'}
+                      : payments.card === 'mp_point' && method !== 'voucher' && cardApi
+                        ? 'O valor vai sozinho para a maquininha Point.'
+                        : 'Cobre na maquininha e confirme aqui.'}
                 </p>
               )}
               <Button type="submit" loading={busy}>
@@ -675,6 +727,52 @@ export function PaymentDialog({
             </Alert>
           )}
           {pixNotice && <Alert tone="warning">{pixNotice}</Alert>}
+          {cardCharge && (
+            <Alert tone="warning" title={`${PAYMENT_LABELS[cardCharge.method]} na Point`}>
+              {cardCharge.status === 'pending' ? (
+                <p role="status">
+                  {brl(cardCharge.amountCents)} enviado para a maquininha. Peça para o cliente
+                  aproximar ou inserir o cartão; a aprovação entra sozinha.
+                </p>
+              ) : (
+                <p>{cardCharge.message}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {cardCharge.status === 'pending' ? (
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      void cardApi
+                        ?.cancel(cardCharge.id)
+                        .then(setCardCharge)
+                        .catch((err: unknown) => setError(errorMessage(err)))
+                    }
+                  >
+                    Cancelar na maquininha
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        setNsu('');
+                        setCardPending({
+                          method: cardCharge.method,
+                          cents: cardCharge.amountCents,
+                        });
+                        setCardCharge(null);
+                      }}
+                    >
+                      Cobrar na maquininha à parte
+                    </Button>
+                    <Button variant="ghost" onClick={() => setCardCharge(null)}>
+                      Fechar
+                    </Button>
+                  </>
+                )}
+              </div>
+            </Alert>
+          )}
           {cardPending !== null && (
             <Alert tone="warning" title={`${PAYMENT_LABELS[cardPending.method]} na maquininha`}>
               <p>

@@ -77,15 +77,26 @@ export const PAYMENT_PROVIDERS: PaymentProviderInfo[] = [
     description: 'QR dinâmico com confirmação automática pela conta da loja no parceiro.',
   },
   {
-    id: 'cloud-terminal',
-    name: 'Maquininha comandada pela internet (Mercado Pago Point, Stone Connect)',
+    id: 'mp-point',
+    name: 'Mercado Pago Point (maquininha comandada pela internet)',
+    family: 'cloud-terminal',
+    methods: ['card'],
+    targets: ALL,
+    status: 'homologation',
+    task: 'F8-10',
+    description:
+      'O caixa manda o valor para a Point, sem digitar de novo, e recebe a aprovação. Teste antes com as credenciais de teste do Mercado Pago.',
+  },
+  {
+    id: 'stone-connect',
+    name: 'Stone Connect',
     family: 'cloud-terminal',
     methods: ['card', 'pix'],
     targets: ALL,
     status: 'coming-soon',
     task: 'F8-10',
     description:
-      'O caixa manda o valor para a maquininha, sem digitar de novo, e recebe a aprovação.',
+      'Pedido enviado à maquininha Stone pela API Pagar.me. Exige o cadastro do Bipaê no Programa de Parcerias da Stone.',
   },
   {
     id: 'tef',
@@ -110,7 +121,7 @@ export const PAYMENT_PROVIDERS: PaymentProviderInfo[] = [
   },
 ];
 
-export const CARD_MODES = ['manual', 'simulator'] as const;
+export const CARD_MODES = ['manual', 'mp_point', 'simulator'] as const;
 export const PIX_MODES = ['manual', 'static_qr', 'api', 'simulator'] as const;
 export type CardMode = (typeof CARD_MODES)[number];
 export type PixMode = (typeof PIX_MODES)[number];
@@ -184,6 +195,19 @@ export const paymentSettingsInput = z
     pixKey: z.string().trim().max(77).nullish(),
     pixMerchantName: z.string().trim().max(25, 'Até 25 letras').nullish(),
     pixCity: z.string().trim().max(15, 'Até 15 letras').nullish(),
+    /** Mercado Pago Point (F8-10). Token em branco mantém o guardado. */
+    mpPoint: z
+      .object({
+        accessToken: z.string().trim().max(300).optional(),
+        terminalId: z
+          .string()
+          .trim()
+          .regex(
+            /^[A-Za-z0-9_]+__[A-Za-z0-9]+$/,
+            'Use o ID do terminal, como NEWLAND_N950__SBX0000001',
+          ),
+      })
+      .nullish(),
     /** API Pix do banco (F8-09). Segredos em branco mantêm os que já estão guardados. */
     pixApi: z
       .object({
@@ -201,6 +225,13 @@ export const paymentSettingsInput = z
       .nullish(),
   })
   .superRefine((v, ctx) => {
+    if (v.card === 'mp_point' && !v.mpPoint) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['mpPoint', 'terminalId'],
+        message: 'Informe o ID do terminal da Point',
+      });
+    }
     if (v.pix === 'api') {
       if (!v.pixApi) {
         ctx.addIssue({ code: 'custom', path: ['pixApi'], message: 'Informe os dados da API Pix' });
@@ -238,6 +269,8 @@ export interface PaymentSettingsView {
   pixKey: string | null;
   pixMerchantName: string | null;
   pixCity: string | null;
+  /** Mercado Pago Point (F8-10): o terminal e se o token está guardado. */
+  mpPoint: { terminalId: string; hasAccessToken: boolean } | null;
   /** API Pix (F8-09): endereços e o que já está guardado, nunca os segredos. */
   pixApi: {
     baseUrl: string;
@@ -258,6 +291,23 @@ export interface PixChargeView {
   endToEndId: string | null;
   message: string | null;
 }
+
+/** Cobrança no cartão enviada à maquininha pela internet (F8-10). */
+export interface CardChargeView {
+  id: string;
+  amountCents: number;
+  method: 'credit' | 'debit';
+  status: 'pending' | 'paid' | 'failed' | 'canceled' | 'expired';
+  /** ID do pagamento no parceiro, quando aprovado. */
+  paymentId: string | null;
+  message: string | null;
+}
+
+export const cardChargeInput = z.object({
+  storeId: z.string().uuid('Loja inválida'),
+  amountCents: z.number().int().positive('Valor inválido').max(100_000_000, 'Valor alto demais'),
+  method: z.enum(['credit', 'debit']),
+});
 
 export const pixChargeInput = z.object({
   storeId: z.string().uuid('Loja inválida'),

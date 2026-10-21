@@ -1264,6 +1264,15 @@ export function Register({
           credit={cart.customerTaxId ? creditInfo : undefined}
           {...(selfMode && { methods: ['pix', 'debit', 'credit'] as const })}
           {...(payments && { payments })}
+          {...(payments?.card === 'mp_point' &&
+            backend.cardCharge && {
+              cardApi: {
+                create: (cents: number, m: 'credit' | 'debit') =>
+                  backend.cardCharge!.create(context.terminal.storeId, cents, m),
+                get: (id: string) => backend.cardCharge!.get(id),
+                cancel: (id: string) => backend.cardCharge!.cancel(id),
+              },
+            })}
           {...(payments?.pix === 'api' &&
             backend.pixCharge && {
               pixApi: {

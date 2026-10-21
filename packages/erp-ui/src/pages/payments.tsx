@@ -66,6 +66,8 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
     pixKey: settings.pixKey ?? '',
     pixMerchantName: settings.pixMerchantName ?? me.tenant.name.slice(0, 25),
     pixCity: settings.pixCity ?? '',
+    mpTerminalId: settings.mpPoint?.terminalId ?? '',
+    mpAccessToken: '',
     apiBaseUrl: settings.pixApi?.baseUrl ?? '',
     apiTokenUrl: settings.pixApi?.tokenUrl ?? '',
     apiClientId: settings.pixApi?.clientId ?? '',
@@ -111,6 +113,8 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
     setSaved(false);
     void form.submit(async (values) => {
       const {
+        mpTerminalId,
+        mpAccessToken,
         apiBaseUrl,
         apiTokenUrl,
         apiClientId,
@@ -121,6 +125,12 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
       } = values;
       await api.put(`/stores/${settings.storeId}/payment-settings`, {
         ...rest,
+        ...(values.card === 'mp_point' && {
+          mpPoint: {
+            terminalId: mpTerminalId,
+            ...(mpAccessToken && { accessToken: mpAccessToken }),
+          },
+        }),
         ...(values.pix === 'api' && {
           pixApi: {
             baseUrl: apiBaseUrl,
@@ -153,9 +163,42 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
           onChange={(e) => form.set('card', e.target.value as typeof v.card)}
           options={[
             { value: 'manual', label: 'Maquininha à parte: cobro nela e confirmo no caixa' },
+            {
+              value: 'mp_point',
+              label: 'Mercado Pago Point: o caixa manda o valor para a maquininha (em homologação)',
+            },
             { value: 'simulator', label: 'Simulador (demonstração, não cobra ninguém)' },
           ]}
         />
+        {v.card === 'mp_point' && (
+          <div className="flex flex-col gap-4 rounded-ui border border-border p-4">
+            <Alert tone="warning">
+              Em homologação: teste primeiro com as credenciais de teste do Mercado Pago. Vale de
+              vale-refeição continua na maquininha à parte; sem internet, também.
+            </Alert>
+            <TextField
+              label="ID do terminal (Point)"
+              hint="No formato TIPO__SERIE, como NEWLAND_N950__SBX0000001. Aparece na lista de terminais da sua conta."
+              value={v.mpTerminalId}
+              disabled={!canWrite}
+              onChange={(e) => form.set('mpTerminalId', e.target.value)}
+              error={form.errors['mpPoint.terminalId']}
+            />
+            <TextField
+              label="Token de acesso (Access Token)"
+              type="password"
+              autoComplete="off"
+              hint="No painel de desenvolvedores do Mercado Pago, em Credenciais."
+              placeholder={
+                settings.mpPoint?.hasAccessToken ? 'Guardado (deixe em branco para manter)' : ''
+              }
+              value={v.mpAccessToken}
+              disabled={!canWrite}
+              onChange={(e) => form.set('mpAccessToken', e.target.value)}
+              error={form.errors['mpPoint.accessToken']}
+            />
+          </div>
+        )}
         <SelectField
           label="Pix"
           value={v.pix}

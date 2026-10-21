@@ -57,6 +57,9 @@ export class PaymentSettingsService {
       pixKey: row?.pixKey ?? null,
       pixMerchantName: row?.pixMerchantName ?? null,
       pixCity: row?.pixCity ?? null,
+      mpPoint: row?.mpTerminalId
+        ? { terminalId: row.mpTerminalId, hasAccessToken: Boolean(row.mpAccessTokenSealed) }
+        : null,
       pixApi:
         row?.pixApiBaseUrl && row.pixApiTokenUrl && row.pixApiClientId
           ? {
@@ -128,8 +131,23 @@ export class PaymentSettingsService {
           }),
         };
       }
+      // Mercado Pago Point (F8-10): token em branco mantém o guardado.
+      let pointValues = {};
+      if (input.card === 'mp_point' && input.mpPoint) {
+        const token = input.mpPoint.accessToken || null;
+        if (!token && !current?.mpAccessTokenSealed) {
+          throw new AppError(400, 'validation', 'Informe o token de acesso do Mercado Pago.', [
+            { path: 'mpPoint.accessToken', message: 'Informe o token de acesso' },
+          ]);
+        }
+        pointValues = {
+          mpTerminalId: input.mpPoint.terminalId,
+          ...(token && { mpAccessTokenSealed: this.box.seal(token) }),
+        };
+      }
       const values = {
         ...apiValues,
+        ...pointValues,
         cardMode: input.card,
         pixMode: input.pix,
         pixKey: input.pixKey ? (normalizePixKey(input.pixKey)?.key ?? null) : null,
@@ -156,7 +174,8 @@ export class PaymentSettingsService {
   async forTerminal(tx: Tx, storeId: string): Promise<TerminalPaymentSettings> {
     const s = await this.row(tx, storeId);
     return {
-      card: s.card,
+      // Sem a Point completa, o caixa usa a maquininha à parte.
+      card: s.card === 'mp_point' && !s.mpPoint?.hasAccessToken ? 'manual' : s.card,
       // Sem a API completa, o caixa usa o Pix manual (nada aprova sozinho).
       pix: s.pix === 'api' && !s.pixApi ? 'manual' : s.pix,
       // QR estático também serve de reserva para a API Pix quando o caixa está sem internet.

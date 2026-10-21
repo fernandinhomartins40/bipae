@@ -90,4 +90,62 @@ describe('pagamento no caixa', () => {
       expect.objectContaining({ method: 'credit', provider: 'Maquininha à parte', nsu: '777' }),
     ]);
   });
+
+  it('cartão pela Point: manda o valor e entra sozinho quando a maquininha aprova (F8-10)', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const point = (status: 'pending' | 'paid') => ({
+      id: '0192abcd-0000-7000-8000-000000000001',
+      amountCents: 5000,
+      method: 'debit' as const,
+      status,
+      paymentId: status === 'paid' ? 'PAY123' : null,
+      message: null,
+    });
+    const onPaid = vi.fn(async () => {});
+    const create = vi.fn(async () => point('pending'));
+    render(
+      <PaymentDialog
+        totalCents={5000}
+        payments={{ card: 'mp_point', pix: 'manual' }}
+        cardApi={{ create, get: async () => point('paid'), cancel: async () => point('pending') }}
+        onPaid={onPaid}
+        onClose={() => {}}
+      />,
+    );
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    await user.click(screen.getByRole('radio', { name: 'Cartão de débito' }));
+    await user.click(screen.getByRole('button', { name: 'Adicionar cartão de débito' }));
+    expect(create).toHaveBeenCalledWith(5000, 'debit');
+    expect(await screen.findByText(/enviado para a maquininha/)).toBeVisible();
+    await vi.advanceTimersByTimeAsync(4000);
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Finalizar venda' })).toBeEnabled(),
+    );
+    await user.click(screen.getByRole('button', { name: 'Finalizar venda' }));
+    expect(onPaid).toHaveBeenCalledWith([
+      expect.objectContaining({ method: 'debit', provider: 'Mercado Pago Point', nsu: 'PAY123' }),
+    ]);
+    vi.useRealTimers();
+  });
+
+  it('Point fora do ar: cai para a maquininha à parte', async () => {
+    render(
+      <PaymentDialog
+        totalCents={5000}
+        payments={{ card: 'mp_point', pix: 'manual' }}
+        cardApi={{
+          create: async () => {
+            throw new Error('O Mercado Pago respondeu 503. Cobre na maquininha à parte.');
+          },
+          get: vi.fn(),
+          cancel: vi.fn(),
+        }}
+        onPaid={async () => {}}
+        onClose={() => {}}
+      />,
+    );
+    await userEvent.click(screen.getByRole('radio', { name: 'Cartão de crédito' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Adicionar cartão de crédito' }));
+    expect(await screen.findByRole('button', { name: 'Aprovado na maquininha' })).toBeVisible();
+  });
 });

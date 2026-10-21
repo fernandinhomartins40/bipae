@@ -455,6 +455,9 @@ Pedido do dono em 20/10/2026: um app Android para o caixa e para vendas (vendedo
   - [x] F8-09.a · Adaptador genérico da API Pix (OAuth2, certificado da conta, PUT e GET /cob/{txid}), segredos selados, cobrança pelo caixa com QR do banco e confirmação por consulta (no máximo a cada 2 s); sem resposta, o caixa usa o QR da loja; endereços só dos bancos conferidos em fonte (Inter, Efí, Sicoob, Sicredi) e "Outro banco"; testes contra banco simulado
   - [ ] F8-09.b · Homologar no sandbox de um banco de verdade e então marcar "Pronto" no catálogo — externo: E9
   - [ ] F8-09.c · Webhook do banco (exige decidir o acesso sem cliente no CLAUDE.md, hoje restrito ao asPlatform) e APIs próprias de Mercado Pago, PagBank e Asaas — depende: F8-09.b
-- [ ] F8-10 · Maquininha pela nuvem: Mercado Pago Point e Stone Connect (cobrança enviada ao aparelho e confirmada por webhook) — depende: F8-08 · externo: E26
+- [~] F8-10 · Maquininha pela nuvem: Mercado Pago Point e Stone Connect (cobrança enviada ao aparelho e confirmada por webhook) — depende: F8-08
+  - [x] F8-10.a · Mercado Pago Point pela Orders API (POST /v1/orders com chave de idempotência, GET para acompanhar, cancelar): token selado, crédito à vista e débito pela maquininha, acompanhamento pelo caixa e volta para a maquininha à parte em falha; "Em homologação"; testes contra Mercado Pago simulado
+  - [ ] F8-10.b · Homologar com as credenciais de teste do Mercado Pago (terminal virtual) e marcar "Pronto" — externo: E26
+  - [ ] F8-10.c · Stone Connect 2.0 pela API Pagar.me (exige o Bipaê no Programa de Parcerias da Stone) — externo: E26
 - [ ] F8-11 · TEF com pinpad no desktop e no Conector: SiTef (CliSiTef) e PayGo; Auttar e Linx depois — depende: F8-08 · externo: E10
 - [ ] F8-12 · Maquininhas smart e TEF no Android por plugin Kotlin: PagBank PlugPag, Stone, Cielo LIO, Getnet, m-SiTef e PayGo — depende: F8-07, F8-08 · externo: E26

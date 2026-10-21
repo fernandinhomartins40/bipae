@@ -1320,9 +1320,12 @@ export const commissionRates = pgTable('commission_rates', {
 export const paymentSettings = pgTable('payment_settings', {
   storeId: uuid('store_id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),
-  cardMode: text('card_mode', { enum: ['manual', 'simulator'] })
+  cardMode: text('card_mode', { enum: ['manual', 'mp_point', 'simulator'] })
     .notNull()
     .default('manual'),
+  /** Mercado Pago Point (F8-10); token selado. */
+  mpTerminalId: text('mp_terminal_id'),
+  mpAccessTokenSealed: text('mp_access_token_sealed'),
   pixMode: text('pix_mode', { enum: ['manual', 'static_qr', 'api', 'simulator'] })
     .notNull()
     .default('manual'),
@@ -1337,6 +1340,25 @@ export const paymentSettings = pgTable('payment_settings', {
   pixApiCertSealed: text('pix_api_cert_sealed'),
   pixApiCertPasswordSealed: text('pix_api_cert_password_sealed'),
   updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Cobrança no cartão enviada à maquininha pela internet (F8-10). */
+export const cardCharges = pgTable('card_charges', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  storeId: uuid('store_id').notNull(),
+  provider: text('provider', { enum: ['mp_point'] }).notNull(),
+  orderId: text('order_id').notNull(),
+  amountCents: money('amount_cents').notNull(),
+  method: text('method', { enum: ['credit', 'debit'] }).notNull(),
+  status: text('status', { enum: ['pending', 'paid', 'failed', 'canceled', 'expired'] })
+    .notNull()
+    .default('pending'),
+  paymentId: text('payment_id'),
+  message: text('message'),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  checkedAt: ts('checked_at'),
 });
 
 /** Cobrança Pix pela API do banco (F8-09). */

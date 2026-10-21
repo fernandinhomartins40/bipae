@@ -244,6 +244,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Projeto Android
         run: pnpm --filter @bipae/desktop tauri android init --ci
+      # Câmera como leitor de código (F8-05): o WebView só pede a câmera se o manifesto declarar.
+      - name: Permissão da câmera no Android
+        run: |
+          manifest=apps/desktop/src-tauri/gen/android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.CAMERA' "$manifest" || sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" /><application#' "$manifest"
+          grep -q 'android.permission.CAMERA' "$manifest"
       # Em caso de falha, a saída de erro do build (o "--- stderr" do cargo) vira anotação.
       - name: Build do APK de teste (ARM 64 bits)
         env:

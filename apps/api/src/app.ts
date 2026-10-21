@@ -124,6 +124,7 @@ import { DeliveryController, DeliveryService } from './modules/sales/delivery.se
 import { SellersController, SellersService } from './modules/sales/sellers.service';
 import { CommissionController, CommissionService } from './modules/sales/commission.service';
 import { PixChargesController, PixChargesService } from './modules/payments/pix-charges.service';
+import { CardChargesController, CardChargesService } from './modules/payments/card-charges.service';
 import {
   PaymentSettingsController,
   PaymentSettingsService,
@@ -208,6 +209,7 @@ class AppModule {
         CommissionController,
         PaymentSettingsController,
         PixChargesController,
+        CardChargesController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -282,6 +284,7 @@ class AppModule {
         CommissionService,
         PaymentSettingsService,
         PixChargesService,
+        CardChargesService,
         InventoryService,
         TransferService,
         LotsService,

@@ -1,5 +1,15 @@
 # Changelog
 
+## [F8-10.a Mercado Pago Point pela internet (em homologação)] — 21/10/2026
+
+### Adicionado
+- **Mercado Pago Point** em "Meios de pagamento": no crédito e no débito, o caixa manda o valor para a maquininha pela internet, sem digitar de novo.
+  - A aprovação entra sozinha, com o código do pagamento na venda. Dá para cancelar a cobrança na maquininha pelo caixa.
+  - Se a maquininha recusar, a internet cair ou o Mercado Pago não responder, o caixa oferece "Cobrar na maquininha à parte".
+  - O vale-refeição segue na maquininha à parte.
+  - Usa a Orders API atual do Mercado Pago. O token de acesso fica cifrado.
+  - Aparece como "Em homologação": teste antes com as credenciais de teste do Mercado Pago.
+
 ## [F8-09.a Pix com confirmação automática pela API do banco (em homologação)] — 21/10/2026
 
 ### Adicionado

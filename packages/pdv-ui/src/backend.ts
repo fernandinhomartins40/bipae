@@ -4,6 +4,7 @@ import type {
   ProductCatalog,
   ProductPack,
   PixChargeView,
+  CardChargeView,
 } from '@bipae/domain';
 import type { SyncTransport } from '@bipae/sync';
 
@@ -75,6 +76,16 @@ export interface PosBackend extends SyncTransport {
     saleId: string,
   ): Promise<{ status: FiscalDocumentStatus; xml: string | null; pendingItems: string[] } | null>;
   /** Pix pela API do banco da loja (F8-09): cria a cobrança e acompanha. Precisa de internet. */
+  /** Cartão na maquininha comandada pela internet (F8-10). Precisa de internet. */
+  cardCharge?: {
+    create(
+      storeId: string,
+      amountCents: number,
+      method: 'credit' | 'debit',
+    ): Promise<CardChargeView>;
+    get(id: string): Promise<CardChargeView>;
+    cancel(id: string): Promise<CardChargeView>;
+  };
   pixCharge?: {
     create(storeId: string, amountCents: number): Promise<PixChargeView>;
     get(txid: string): Promise<PixChargeView>;
