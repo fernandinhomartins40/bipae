@@ -11,6 +11,7 @@ export * from './nfce/access-key';
 export * from './nfce/build';
 export * from './nfe/build';
 export * from './nfe/draft';
+export * from './nfe/sale-return';
 export { NfeBuildError, type NfeIssuer, type NfeItem, type NfePayment, type NfeTotals } from './nfe/groups';
 export * from './nfce/sign';
 export * from './nfce/numbering';

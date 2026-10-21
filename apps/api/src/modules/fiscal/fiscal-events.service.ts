@@ -24,7 +24,7 @@ import {
   signFiscalXml,
   type FiscalEventResult,
 } from '@bipae/fiscal';
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB, QUEUE } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
@@ -444,7 +444,12 @@ export class FiscalEventsService implements OnModuleInit {
     const out = await tx
       .select()
       .from(stockMovements)
-      .where(and(eq(stockMovements.refId, invoiceId), eq(stockMovements.reason, 'nfe_out')));
+      .where(
+        and(
+          eq(stockMovements.refId, invoiceId),
+          inArray(stockMovements.reason, ['nfe_out', 'nfe_in']),
+        ),
+      );
     const now = new Date();
     for (const m of out) {
       await tx.insert(stockMovements).values({
@@ -459,6 +464,22 @@ export class FiscalEventsService implements OnModuleInit {
         actorId: ctx.userId,
         occurredAt: now,
       });
+    }
+    // Devolução de venda cancelada: o que ela abateu volta para as contas a receber da venda.
+    for (const adj of invoice.returnAdjustments ?? []) {
+      const [entry] = await tx
+        .select()
+        .from(financialEntries)
+        .where(eq(financialEntries.id, adj.entryId));
+      if (!entry) continue;
+      await tx
+        .update(financialEntries)
+        .set(
+          entry.status === 'cancelled' && entry.cancelReason === 'Devolução de venda'
+            ? { status: 'open', cancelReason: null, updatedAt: now }
+            : { amountCents: entry.amountCents + adj.cents, updatedAt: now },
+        )
+        .where(eq(financialEntries.id, adj.entryId));
     }
     const cancelled = await tx
       .update(financialEntries)

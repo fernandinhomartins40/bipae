@@ -40,7 +40,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-034 | 🟡 parcial | Código de benefício fiscal (cBenef) por UF |
 | D-035 | 🟡 configurável | Natureza da operação da entrada simbólica do condicional passa de 60 caracteres |
 | D-036 | 🟡 a confirmar com o certificado | NFS-e Nacional: mensagem JSON da Sefin, assinatura, convênio do município e grupo do IBS/CBS |
-| D-037 | 🟡 parcial | NF-e de devolução de venda (entrada do cliente): a referência item a item está confirmada (NT 2025.002 v1.52); falta o imposto por regime |
+| D-037 | ✅ resolvida | NF-e de devolução de venda (entrada do cliente): referência item a item e imposto espelhado da venda, na proporção devolvida |
 
 ---
 
@@ -682,3 +682,8 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Imposto da devolução por regime:** CST ou CSOSN, destaque e crédito do ICMS; IBS e CBS na devolução (estorno do débito da venda, LC 214/2025).
 - **Por enquanto:** a devolução do cliente continua fora do Bipaê; a tela não oferece o que não está construído.
 - **Próximo passo:** achar as regras de imposto da devolução de venda por regime no MOC 7.0 e na regulamentação do IBS e da CBS (nota de crédito); com elas, construir a F3-33.h.
+- **Resolução (21/10/2026), em fontes oficiais:**
+  - **IBS e CBS (LC 214/2025, publicação oficial da Câmara):** "A base de cálculo relativa à devolução ou ao cancelamento será a mesma utilizada na operação original" (art. 12, § 7º); "A alíquota aplicada para fins de devolução ou cancelamento da operação será a mesma cobrada na operação original" (art. 17); "Na devolução e no cancelamento de operações por adquirente não contribuinte no regime regular, o fornecedor sujeito ao regime regular poderá apropriar créditos com base nos valores dos débitos incidentes na operação devolvida ou cancelada" (art. 47, § 8º).
+  - **ICMS (RICMS-SP, art. 452, redação do Decreto 67.761/2023, com base no Convênio SINIEF s/n de 1970, art. 54, § 3º; Resposta à Consulta 30429/2024):** o estabelecimento que recebe a devolução de não contribuinte emite a nota de entrada e pode se creditar do imposto debitado na saída, com prova cabal; "aplicar-se-ão a mesma base de cálculo e a mesma alíquota constantes no documento fiscal que acobertou a operação original"; na devolução parcial "os valores deverão ser proporcionais aos da Nota Fiscal de origem". Em SP, fora da garantia, o crédito só vale até 45 dias da saída (Anexo IV da Portaria SRE 41/2023); isso é da escrituração, não muda a nota.
+  - **Como o Bipaê faz (F3-33.h):** a nota de entrada (tpNF 0, finNFe 4) espelha os grupos de imposto da nota de venda autorizada (CST ou CSOSN, base, alíquota, ST, FCP, PIS, COFINS, IBS e CBS), na proporção devolvida, com o CFOP de devolução tirado da tabela oficial e a referência item a item. O que ainda não espelha (partilha do DIFAL, IPI) aparece como pendência e não é emitido.
+  - **Fica para acompanhar:** o prazo do crédito em outras UFs (escrituração) e a regulamentação do estorno do IBS e da CBS quando houver split payment (dúvida D-027).

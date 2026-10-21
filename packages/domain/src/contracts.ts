@@ -2195,7 +2195,8 @@ export const nfeInvoiceInput = z
     companyId: z.string().uuid('Escolha a empresa emitente'),
     storeId: z.string().uuid('Escolha a loja'),
     nature: trimmed(1, 60, 'Natureza da operação').default('Venda de mercadoria'),
-    purpose: z.enum(['normal', 'devolucao']).default('normal'),
+    /** devolucao: ao fornecedor (saída); devolucao_venda: o cliente devolveu (entrada, F3-33.h). */
+    purpose: z.enum(['normal', 'devolucao', 'devolucao_venda']).default('normal'),
     presence: z.enum(NFE_PRESENCE_MODES).default('presencial'),
     /** Sem a escolha, é consumidor final quem não é contribuinte do ICMS. */
     finalConsumer: z.boolean().nullish(),
@@ -2275,7 +2276,7 @@ export const nfeInvoiceInput = z
     additionalInfo: optionalText(2000),
   })
   .superRefine((v, ctx) => {
-    if (v.purpose !== 'devolucao') return;
+    if (v.purpose !== 'devolucao' && v.purpose !== 'devolucao_venda') return;
     v.items.forEach((item, index) => {
       if (!item.reference) {
         ctx.addIssue({
@@ -2297,7 +2298,7 @@ export interface NfeInvoiceView {
   storeId: string;
   status: 'draft' | 'issued' | 'discarded';
   nature: string;
-  purpose: 'normal' | 'devolucao';
+  purpose: 'normal' | 'devolucao' | 'devolucao_venda';
   presence: (typeof NFE_PRESENCE_MODES)[number];
   finalConsumer: boolean | null;
   references: string[];

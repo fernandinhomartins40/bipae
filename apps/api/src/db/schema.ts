@@ -506,6 +506,7 @@ export const stockMovements = pgTable('stock_movements', {
       'nfe_out',
       'service_order',
       'nfe_cancelled',
+      'nfe_in',
     ],
   }).notNull(),
   refId: uuid('ref_id'),
@@ -1080,7 +1081,9 @@ export const nfeInvoices = pgTable('nfe_invoices', {
     .notNull()
     .default('draft'),
   nature: text('nature').notNull(),
-  purpose: text('purpose', { enum: ['normal', 'devolucao'] }).notNull(),
+  purpose: text('purpose', { enum: ['normal', 'devolucao', 'devolucao_venda'] }).notNull(),
+  /** Devolução de venda (F3-33.h): quanto abateu de cada conta a receber da venda. */
+  returnAdjustments: jsonb('return_adjustments').$type<{ entryId: string; cents: number }[]>(),
   presence: text('presence').notNull(),
   finalConsumer: boolean('final_consumer'),
   refs: text('refs').array().notNull().default([]),

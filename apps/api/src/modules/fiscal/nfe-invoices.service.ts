@@ -28,7 +28,9 @@ import {
   brasiliaDateTime,
   buildDraftNfe,
   buildNfeProc,
+  readSaleForReturn,
   signNfe,
+  type SaleReturnItem,
   type NfeDraftInput,
   type NfeDraftResult,
   type SaleFiscalProfile,
@@ -36,7 +38,7 @@ import {
 } from '@bipae/fiscal';
 import { findPaymentMeans, nfeEndpoints, PAYMENT_MEANS } from '@bipae/fiscal/tables';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
-import { and, desc, eq, inArray, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, or, sql } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';
 import type { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
@@ -56,6 +58,7 @@ import {
   nfeInvoices,
   productBarcodes,
   products,
+  saleItems,
   stockMovements,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
@@ -71,6 +74,24 @@ const APP_VERSION = 'Bipaê 1.0';
 type Input = z.output<typeof nfeInvoiceInput>;
 type Invoice = typeof nfeInvoices.$inferSelect;
 type StoredItem = Input['items'][number];
+
+/** A venda pela chave, pronta para a devolução (F3-33.h). */
+export interface SaleForReturnView {
+  key: string;
+  model: 'nfe' | 'nfce';
+  issuedAt: string;
+  companyId: string;
+  recipient: Input['recipient'] | null;
+  customerTaxId: string | null;
+  items: {
+    item: number;
+    productId: string;
+    description: string;
+    soldMilli: number;
+    returnedMilli: number;
+    unitPriceCents: number;
+  }[];
+}
 type Document = typeof fiscalDocuments.$inferSelect;
 
 const documentView = (
@@ -195,8 +216,12 @@ export class NfeInvoicesService implements OnModuleInit {
       number: numbering.number,
       issuedAt: numbering.issuedAt,
       nature: invoice.nature,
-      purpose: invoice.purpose,
+      // Devolução de venda (F3-33.h): para o leiaute é devolução (finNFe 4), de entrada.
+      purpose: invoice.purpose === 'devolucao_venda' ? 'devolucao' : invoice.purpose,
       presence: invoice.presence as NfeDraftInput['presence'],
+      ...(invoice.purpose === 'devolucao_venda' && {
+        saleReturn: await this.saleReturnItems(tx, items),
+      }),
       ...(invoice.finalConsumer !== null && { finalConsumer: invoice.finalConsumer }),
       references: invoice.refs,
       recipient: {
@@ -288,6 +313,114 @@ export class NfeInvoicesService implements OnModuleInit {
         },
       }),
     };
+  }
+
+  /**
+   * Devolução de venda (F3-33.h, dúvida D-037): os itens e impostos espelhados da nota original
+   * (NF-e da retaguarda ou NFC-e do caixa), pelo XML autorizado, na proporção devolvida.
+   */
+  private async saleReturnItems(
+    tx: Tx,
+    items: StoredItem[],
+  ): Promise<{ items: SaleReturnItem[]; pending: string[] }> {
+    const out: SaleReturnItem[] = [];
+    const pending: string[] = [];
+    const keys = [...new Set(items.flatMap((i) => (i.reference ? [i.reference.key] : [])))];
+    const docs = keys.length
+      ? await tx.select().from(fiscalDocuments).where(inArray(fiscalDocuments.accessKey, keys))
+      : [];
+    for (const [index, item] of items.entries()) {
+      const label = `Item ${index + 1}`;
+      const doc = docs.find((d) => d.accessKey === item.reference?.key);
+      const xml = doc?.nfeProc ?? doc?.signedXml;
+      if (!item.reference || !doc || doc.status !== 'authorized' || !xml) {
+        pending.push(`${label}: a venda devolvida precisa ser uma nota autorizada desta empresa.`);
+        continue;
+      }
+      const read = readSaleForReturn(xml, [
+        { item: item.reference.item, quantityMilli: item.quantityMilli },
+      ]);
+      pending.push(...read.pending.map((p) => `${label}: ${p}`));
+      const mirrored = read.items[0];
+      // O CFOP escolhido no item vale sobre o da tabela.
+      if (mirrored) out.push(item.cfop ? { ...mirrored, cfop: item.cfop } : mirrored);
+    }
+    return { items: out, pending };
+  }
+
+  /** Produto vendido em cada item da nota original (NF-e da retaguarda ou NFC-e do caixa). */
+  private async soldProduct(tx: Tx, key: string, nItem: number) {
+    const [doc] = await tx.select().from(fiscalDocuments).where(eq(fiscalDocuments.accessKey, key));
+    if (!doc || doc.status !== 'authorized') return null;
+    if (doc.invoiceId) {
+      const [inv] = await tx.select().from(nfeInvoices).where(eq(nfeInvoices.id, doc.invoiceId));
+      const sold = (inv?.items as StoredItem[] | undefined)?.[nItem - 1];
+      return sold ? { productId: sold.productId, quantityMilli: sold.quantityMilli } : null;
+    }
+    if (doc.saleId) {
+      const lines = await tx
+        .select()
+        .from(saleItems)
+        .where(eq(saleItems.saleId, doc.saleId))
+        .orderBy(saleItems.line);
+      const sold = lines[nItem - 1];
+      return sold ? { productId: sold.productId, quantityMilli: sold.quantityMilli } : null;
+    }
+    return null;
+  }
+
+  /**
+   * Devolução de venda: abate o valor devolvido das contas a receber ainda abertas da venda (as
+   * mais novas primeiro) e guarda quanto abateu de cada uma, para desfazer se a nota cair.
+   */
+  private async reduceReceivables(tx: Tx, invoice: Invoice, totalCents: number) {
+    const keys = [
+      ...new Set(
+        (invoice.items as StoredItem[]).flatMap((i) => (i.reference ? [i.reference.key] : [])),
+      ),
+    ];
+    const docs = keys.length
+      ? await tx.select().from(fiscalDocuments).where(inArray(fiscalDocuments.accessKey, keys))
+      : [];
+    const invoiceIds = docs.flatMap((d) => (d.invoiceId ? [d.invoiceId] : []));
+    const saleIds = docs.flatMap((d) => (d.saleId ? [d.saleId] : []));
+    const of = [
+      ...(invoiceIds.length ? [inArray(financialEntries.invoiceId, invoiceIds)] : []),
+      ...(saleIds.length ? [inArray(financialEntries.saleId, saleIds)] : []),
+    ];
+    const open = of.length
+      ? await tx
+          .select()
+          .from(financialEntries)
+          .where(
+            and(
+              eq(financialEntries.status, 'open'),
+              eq(financialEntries.kind, 'receivable'),
+              or(...of),
+            ),
+          )
+          .orderBy(desc(financialEntries.dueDate))
+      : [];
+    let left = totalCents;
+    const adjustments: { entryId: string; cents: number }[] = [];
+    for (const entry of open) {
+      if (left <= 0) break;
+      const cents = Math.min(left, entry.amountCents);
+      left -= cents;
+      adjustments.push({ entryId: entry.id, cents });
+      await tx
+        .update(financialEntries)
+        .set(
+          cents === entry.amountCents
+            ? { status: 'cancelled', cancelReason: 'Devolução de venda', updatedAt: new Date() }
+            : { amountCents: entry.amountCents - cents, updatedAt: new Date() },
+        )
+        .where(eq(financialEntries.id, entry.id));
+    }
+    await tx
+      .update(nfeInvoices)
+      .set({ returnAdjustments: adjustments })
+      .where(eq(nfeInvoices.id, invoice.id));
   }
 
   /** A conferência do rascunho, com o próximo número da série (o número final sai ao emitir). */
@@ -532,12 +665,56 @@ export class NfeInvoicesService implements OnModuleInit {
       .from(products)
       .where(inArray(products.id, ids));
     if (found.length !== ids.length) throw notFound('Produto');
+    if (input.purpose !== 'devolucao_venda') return;
+    // Devolução de venda: cada item volta de uma venda autorizada, sem passar do que foi vendido.
+    const others = await tx
+      .select({ items: nfeInvoices.items })
+      .from(nfeInvoices)
+      .where(
+        and(
+          eq(nfeInvoices.purpose, 'devolucao_venda'),
+          sql`${nfeInvoices.status} in ('issued', 'authorized')`,
+        ),
+      );
+    for (const [index, item] of input.items.entries()) {
+      const label = `Item ${index + 1}`;
+      const ref = item.reference;
+      if (!ref) {
+        throw new AppError(
+          422,
+          'missing_reference',
+          `${label}: diga de qual venda e de qual item ele volta.`,
+        );
+      }
+      const sold = await this.soldProduct(tx, ref.key, ref.item);
+      if (!sold) {
+        throw new AppError(
+          422,
+          'unknown_sale',
+          `${label}: a venda devolvida precisa ser uma nota autorizada desta empresa.`,
+        );
+      }
+      if (sold.productId !== item.productId) {
+        throw new AppError(422, 'wrong_product', `${label}: o produto não é o do item da venda.`);
+      }
+      const back = others
+        .flatMap((o) => o.items as StoredItem[])
+        .filter((i) => i.reference?.key === ref.key && i.reference.item === ref.item)
+        .reduce((t, i) => t + i.quantityMilli, 0);
+      if (back + item.quantityMilli > sold.quantityMilli) {
+        throw new AppError(
+          422,
+          'too_much_returned',
+          `${label}: volta mais do que foi vendido (já voltaram ${back / 1000} de ${sold.quantityMilli / 1000}).`,
+        );
+      }
+    }
   }
 
   private columns(input: Input) {
     // Na devolução a nota devolvida vai em cada item (VC02-14) e as chaves ficam guardadas para a
     // lista. Fora dela, nenhum item leva referência.
-    const isReturn = input.purpose === 'devolucao';
+    const isReturn = input.purpose === 'devolucao' || input.purpose === 'devolucao_venda';
     const items = input.items.map(({ reference, ...item }) =>
       isReturn && reference ? { ...item, reference } : item,
     );
@@ -560,6 +737,87 @@ export class NfeInvoicesService implements OnModuleInit {
       payments: input.payments,
       additionalInfo: input.additionalInfo ?? null,
     };
+  }
+
+  /**
+   * Devolução de venda (F3-33.h): os itens da venda pela chave (NF-e da retaguarda ou NFC-e do
+   * caixa), com o que já voltou e o cliente, para a tela montar a nota de entrada.
+   */
+  saleForReturn(ctx: RequestContext, key: string): Promise<SaleForReturnView> {
+    return withTenant(this.db, ctx, async (tx) => {
+      const [doc] = await tx
+        .select()
+        .from(fiscalDocuments)
+        .where(eq(fiscalDocuments.accessKey, key));
+      const xml = doc?.nfeProc ?? doc?.signedXml;
+      if (!doc || doc.status !== 'authorized' || !xml) {
+        throw new AppError(
+          404,
+          'sale_not_found',
+          'Não achamos uma venda autorizada desta empresa com essa chave.',
+        );
+      }
+      const read = readSaleForReturn(xml, []);
+      const others = await tx
+        .select({ items: nfeInvoices.items })
+        .from(nfeInvoices)
+        .where(
+          and(
+            eq(nfeInvoices.purpose, 'devolucao_venda'),
+            sql`${nfeInvoices.status} in ('issued', 'authorized')`,
+          ),
+        );
+      const backOf = (nItem: number) =>
+        others
+          .flatMap((o) => o.items as StoredItem[])
+          .filter((i) => i.reference?.key === key && i.reference.item === nItem)
+          .reduce((t, i) => t + i.quantityMilli, 0);
+      let recipient: Input['recipient'] | null = null;
+      let invoice: Invoice | undefined;
+      if (doc.invoiceId) {
+        [invoice] = await tx.select().from(nfeInvoices).where(eq(nfeInvoices.id, doc.invoiceId));
+        recipient = (invoice?.recipient as Input['recipient'] | undefined) ?? null;
+      }
+      const sold = doc.invoiceId
+        ? ((invoice?.items as StoredItem[] | undefined) ?? []).map((i) => ({
+            productId: i.productId,
+            quantityMilli: i.quantityMilli,
+            unitPriceCents: i.unitPriceCents,
+          }))
+        : (
+            await tx
+              .select()
+              .from(saleItems)
+              .where(eq(saleItems.saleId, doc.saleId!))
+              .orderBy(saleItems.line)
+          ).map((i) => ({
+            productId: i.productId,
+            quantityMilli: i.quantityMilli,
+            unitPriceCents: i.unitPriceCents,
+          }));
+      const names = sold.length
+        ? await tx
+            .select({ id: products.id, name: products.name })
+            .from(products)
+            .where(inArray(products.id, [...new Set(sold.map((i) => i.productId))]))
+        : [];
+      return {
+        key,
+        model: doc.model === '65' ? 'nfce' : 'nfe',
+        issuedAt: read.issuedAt,
+        companyId: doc.companyId,
+        recipient,
+        customerTaxId: read.recipient?.taxId ?? null,
+        items: sold.map((i, index) => ({
+          item: index + 1,
+          productId: i.productId,
+          description: names.find((n) => n.id === i.productId)?.name ?? 'Produto',
+          soldMilli: i.quantityMilli,
+          returnedMilli: backOf(index + 1),
+          unitPriceCents: i.unitPriceCents,
+        })),
+      };
+    });
   }
 
   list(ctx: RequestContext): Promise<NfeInvoiceView[]> {
@@ -672,6 +930,8 @@ export class NfeInvoicesService implements OnModuleInit {
       // F3-33.e: a nota é de saída (tpNF 1): a venda e a devolução de compra ao fornecedor tiram
       // a mercadoria do estoque da loja.
       const isReturn = invoice.purpose === 'devolucao';
+      // Devolução de venda (F3-33.h): nota de entrada, a mercadoria volta ao estoque.
+      const saleReturn = invoice.purpose === 'devolucao_venda';
       const now = new Date();
       // Remessa, retorno e entrada simbólica do condicional não mexem no estoque: o condicional
       // já tirou as peças na saída e pôs de volta na volta (F5-12.c.2).
@@ -682,8 +942,8 @@ export class NfeInvoicesService implements OnModuleInit {
           tenantId: ctx.tenantId,
           storeId: invoice.storeId,
           productId: item.productId,
-          deltaMilli: -item.quantityMilli,
-          reason: 'nfe_out',
+          deltaMilli: saleReturn ? item.quantityMilli : -item.quantityMilli,
+          reason: saleReturn ? 'nfe_in' : 'nfe_out',
           refId: invoice.id,
           note: `NF-e nº ${number} · ${recipient.name}`,
           actorId: ctx.userId,
@@ -692,7 +952,8 @@ export class NfeInvoicesService implements OnModuleInit {
       }
       // Cada parcela da venda a prazo vira uma conta a receber (a soma é o total da nota).
       const installments = invoice.installments as Input['installments'];
-      if (!isReturn && moves && installments.length > 0) {
+      if (saleReturn) await this.reduceReceivables(tx, invoice, check.document.totalCents);
+      if (!isReturn && !saleReturn && moves && installments.length > 0) {
         const groupId = uuidv7();
         await tx.insert(financialEntries).values(
           installments.map((p, index) => ({
@@ -1131,6 +1392,16 @@ export class NfeInvoicesController {
       code: m.code,
       description: m.description,
     }));
+  }
+
+  /** Itens da venda pela chave, para a devolução de venda (F3-33.h). */
+  @Get('sale-return/:key')
+  @RequirePermission('catalog.read')
+  saleForReturn(@Ctx() ctx: RequestContext, @Param('key') key: string) {
+    if (!/^[0-9A-Z]{44}$/.test(key)) {
+      throw new AppError(422, 'invalid_key', 'A chave de acesso tem 44 caracteres.');
+    }
+    return this.invoices.saleForReturn(ctx, key);
   }
 
   @Post()

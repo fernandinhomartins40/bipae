@@ -1,3 +1,4 @@
+import type { SaleReturnItem } from './sale-return';
 import { companyIcmsSettings, type CompanyIcmsRule } from '../company-rules';
 import {
   brasiliaDateTime,
@@ -109,6 +110,11 @@ export interface NfeDraftInput {
     note: DemonstrationNote;
     profile: (SaleFiscalProfile & { origem?: number }) | null;
   };
+  /**
+   * Devolução de venda (F3-33.h): nota de entrada com os itens e os impostos espelhados da venda
+   * original (`readSaleForReturn`), sem recalcular pelo perfil. Os itens de `items` ficam de fora.
+   */
+  saleReturn?: { items: SaleReturnItem[]; pending?: string[] };
 }
 
 export type NfeDraftResult =
@@ -226,7 +232,11 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
       `Na demonstração o ICMS fica suspenso (${DEMONSTRATION.act}, cláusula quarta): o perfil fiscal da venda condicional precisa do CST 50 (suspensão).`,
     );
   }
-  const direction = demo?.direction ?? 'saida';
+  const direction = input.saleReturn ? 'entrada' : (demo?.direction ?? 'saida');
+  pending.push(...(input.saleReturn?.pending ?? []));
+  if (input.saleReturn && input.purpose !== 'devolucao') {
+    pending.push('A nota da devolução de venda precisa da finalidade devolução.');
+  }
   // O leiaute aceita até 60 caracteres na natureza da operação; o texto do Ajuste para a entrada
   // simbólica tem mais. Sem abreviação oficial (dúvida D-035), vale a que a empresa escrever na
   // nota, e o texto completo vai nas informações complementares.
@@ -254,12 +264,42 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
 
   // ---------------------------------------------------------------- itens
   const date = brasiliaDateTime(input.issuedAt).slice(0, 10);
-  if (input.items.length === 0) pending.push('A nota precisa de pelo menos um item.');
+  const returned = input.saleReturn?.items ?? null;
+  if ((returned ?? input.items).length === 0) pending.push('A nota precisa de pelo menos um item.');
   const freight = prorateFreight(
     input.transport.freightCents ?? 0,
     input.items.map((i) => i.grossCents - i.discountCents),
   );
-  const items = input.items.map((item, index): NfeItem | null => {
+  // Devolução de venda: os impostos são os da nota original, na proporção devolvida (D-037).
+  const returnItems = (returned ?? []).map((item, index): NfeItem => {
+    const label = `Item ${index + 1} (${item.description})`;
+    const typed = input.items[index]?.cfop?.trim();
+    const cfop = typed || item.cfop || '';
+    if (!cfop) pending.push(`${label}: escolha o CFOP de devolução.`);
+    return {
+      code: item.code,
+      gtin: item.gtin,
+      description: item.description,
+      ncm: item.ncm,
+      ...(item.cest && { cest: item.cest }),
+      cfop,
+      unit: item.unit,
+      quantityMilli: item.quantityMilli,
+      unitPriceCents: item.unitPriceCents,
+      grossCents: item.grossCents,
+      discountCents: item.discountCents,
+      ...(item.freightCents > 0 && { freightCents: item.freightCents }),
+      ...(item.insuranceCents > 0 && { insuranceCents: item.insuranceCents }),
+      ...(item.otherCents > 0 && { otherCents: item.otherCents }),
+      origin: item.origin,
+      icms: item.icms,
+      pis: item.pis,
+      cofins: item.cofins,
+      ibsCbs: item.ibsCbs,
+      reference: item.reference,
+    };
+  });
+  const items = (returned ? [] : input.items).map((item, index): NfeItem | null => {
     const label = `Item ${index + 1} (${item.description})`;
     if (!item.ncm) pending.push(`${label}: o produto não tem NCM.`);
     if (input.purpose === 'devolucao' && !item.reference) {
@@ -369,7 +409,8 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
   // ---------------------------------------------------------------- pagamento e cobrança
   const payments: NfePayment[] = [];
   // Remessa, retorno e entrada simbólica não têm pagamento (tPag 90).
-  const paid = suspended ? [{ code: '90', amountCents: 0, description: null }] : input.payments;
+  const paid =
+    suspended || returned ? [{ code: '90', amountCents: 0, description: null }] : input.payments;
   for (const p of paid) {
     const means = findPaymentMeans(p.code, date);
     if (!means) {
@@ -386,7 +427,7 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
   }
   if (payments.length === 0 && paid.length === 0)
     pending.push('Informe o pagamento (ou "sem pagamento", na devolução e na remessa).');
-  const installments = suspended ? [] : (input.installments ?? []);
+  const installments = suspended || returned ? [] : (input.installments ?? []);
 
   if (pending.length > 0) return { ok: false, pending: [...new Set(pending)] };
 
@@ -444,7 +485,7 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
     ...(input.purpose !== 'devolucao' &&
       input.references?.length && { references: input.references }),
     recipient,
-    items: items.filter((i): i is NfeItem => i !== null),
+    items: returned ? returnItems : items.filter((i): i is NfeItem => i !== null),
     transport: {
       freight: input.transport.freight,
       ...(input.transport.carrier && { carrier: input.transport.carrier }),

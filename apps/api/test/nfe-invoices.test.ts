@@ -591,3 +591,98 @@ describe('carta de correção da NF-e (F3-33.g)', () => {
     expect(depois.statusCode).toBe(409);
   });
 });
+
+describe('devolução de venda pela NF-e de entrada (F3-33.h)', () => {
+  it('espelha a venda, devolve o estoque, abate o crediário e desfaz se for cancelada', async () => {
+    sefaz.mode = 'normal';
+    const { admin, rascunho, produto } = await retaguarda();
+    const venda = (await admin.post('/fiscal/nfe', rascunho())).json();
+    await admin.post(`/fiscal/nfe/${venda.id}/issue`);
+    const autorizada = await nota(admin, venda.id, (s) => s === 'authorized');
+    const chave = autorizada.document.accessKey as string;
+
+    const devolucao = (quantityMilli: number, productId = produto.id) =>
+      rascunho({
+        nature: 'Devolução de venda',
+        purpose: 'devolucao_venda',
+        presence: 'presencial',
+        items: [
+          { productId, quantityMilli, unitPriceCents: 2500, reference: { key: chave, item: 1 } },
+        ],
+        transport: { freight: 'semFrete' },
+        installments: [],
+        payments: [{ code: '90', amountCents: 0 }],
+      });
+
+    // Mais do que foi vendido, ou outro produto: recusa com a explicação.
+    expect((await admin.post('/fiscal/nfe', devolucao(11_000))).json().message).toContain(
+      'volta mais do que foi vendido',
+    );
+    const outro = (await admin.post('/products', { name: 'Feijão', priceCents: 900 })).json();
+    expect((await admin.post('/fiscal/nfe', devolucao(1_000, outro.id))).json().message).toBe(
+      'Item 1: o produto não é o do item da venda.',
+    );
+
+    const criada = (await admin.post('/fiscal/nfe', devolucao(4_000))).json();
+    expect(criada.check.pending).toEqual([]);
+    await admin.post(`/fiscal/nfe/${criada.id}/issue`);
+    await nota(admin, criada.id, (s) => s === 'authorized');
+    const xml = (await admin.get(`/fiscal/nfe/${criada.id}/xml`)).body;
+    expect(xml).toContain('<tpNF>0</tpNF>');
+    expect(xml).toContain('<finNFe>4</finNFe>');
+    expect(xml).toContain('<CFOP>1202</CFOP>');
+    expect(xml).toContain('<CSOSN>102</CSOSN>');
+    expect(xml).toContain(`<chaveAcesso>${chave}</chaveAcesso>`);
+    // 40% de R$ 250,00 com 40% do frete de R$ 10,00.
+    expect(xml).toContain('<vNF>104.00</vNF>');
+
+    const saldo = async () =>
+      (await admin.get(`/stock?productId=${produto.id}`))
+        .json()
+        .reduce((t: number, r: { quantityMilli: number }) => t + r.quantityMilli, 0);
+    expect(await saldo()).toBe(-6_000);
+    const parcelas = async () =>
+      (
+        (await admin.get('/finance/entries?kind=receivable')).json() as {
+          description: string;
+          amountCents: number;
+          status: string;
+        }[]
+      )
+        .filter((c) => c.description.startsWith('NF-e nº 1 '))
+        .map((c) => [c.amountCents, c.status]);
+    // A parcela mais nova é abatida primeiro.
+    expect(await parcelas()).toEqual(
+      expect.arrayContaining([
+        [13_000, 'open'],
+        [2_600, 'open'],
+      ]),
+    );
+    // A tela acha a venda pela chave, com o que já voltou e o cliente.
+    const pronta = (await admin.get(`/fiscal/nfe/sale-return/${chave}`)).json();
+    expect(pronta).toMatchObject({
+      key: chave,
+      model: 'nfe',
+      recipient: { name: 'Mercado do Bairro LTDA' },
+      items: [{ item: 1, productId: produto.id, soldMilli: 10_000, returnedMilli: 4_000 }],
+    });
+    expect((await admin.get(`/fiscal/nfe/sale-return/${'9'.repeat(44)}`)).statusCode).toBe(404);
+    // Já voltaram 4: mais 7 passaria do que foi vendido.
+    expect((await admin.post('/fiscal/nfe', devolucao(7_000))).json().message).toContain(
+      'já voltaram 4 de 10',
+    );
+
+    // Cancelada a devolução, o estoque sai de novo e a parcela volta ao valor da venda.
+    await admin.post(`/fiscal/nfe/${criada.id}/cancel`, {
+      reason: 'Cliente desistiu da devolução e levou de volta',
+    });
+    await nota(admin, criada.id, (s) => s === 'cancelled');
+    expect(await saldo()).toBe(-10_000);
+    expect(await parcelas()).toEqual(
+      expect.arrayContaining([
+        [13_000, 'open'],
+        [13_000, 'open'],
+      ]),
+    );
+  });
+});

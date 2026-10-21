@@ -285,7 +285,7 @@ interface Draft {
   storeId: string;
   nature: string;
   presence: string;
-  purpose: 'normal' | 'devolucao';
+  purpose: 'normal' | 'devolucao' | 'devolucao_venda';
   references: string;
   customerId: string | null;
   taxId: string;
@@ -414,7 +414,7 @@ function toInput(d: Draft, fallbackStore: string, fallbackCompany: string): NfeI
       unitPriceCents: l.unitPriceCents,
       discountCents: l.discountCents,
       ...(l.cfop.trim() && { cfop: l.cfop.trim() }),
-      ...(d.purpose === 'devolucao' &&
+      ...((d.purpose === 'devolucao' || d.purpose === 'devolucao_venda') &&
         key &&
         Number.isInteger(refItem) &&
         refItem > 0 && { reference: { key, item: refItem } }),
@@ -426,7 +426,7 @@ function toInput(d: Draft, fallbackStore: string, fallbackCompany: string): NfeI
     nature: d.nature,
     presence: d.presence as NfeInvoiceInput['presence'],
     purpose: d.purpose,
-    references: d.purpose === 'devolucao' ? [] : keys,
+    references: d.purpose === 'normal' ? keys : [],
     recipient: {
       customerId: d.customerId,
       taxId: d.taxId,
@@ -452,6 +452,62 @@ function toInput(d: Draft, fallbackStore: string, fallbackCompany: string): NfeI
     payments: [{ code: d.paymentCode, amountCents: d.paymentCode === '90' ? 0 : total }],
     additionalInfo: d.additionalInfo,
   };
+}
+
+interface SaleForReturn {
+  key: string;
+  model: 'nfe' | 'nfce';
+  companyId: string;
+  recipient: NfeInvoiceInput['recipient'] | null;
+  customerTaxId: string | null;
+  items: {
+    item: number;
+    productId: string;
+    description: string;
+    soldMilli: number;
+    returnedMilli: number;
+    unitPriceCents: number;
+  }[];
+}
+
+/**
+ * Devolução de venda (F3-33.h): a pessoa cola a chave da venda (NF-e ou NFC-e) e a nota de entrada
+ * já vem com o cliente e os itens; é só ajustar quanto volta de cada um.
+ */
+function SaleReturnPicker({ onPicked }: { onPicked: (sale: SaleForReturn) => void }) {
+  const { api } = useApp();
+  const [key, setKey] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const search = async () => {
+    setError(null);
+    setBusy(true);
+    try {
+      onPicked(await api.get<SaleForReturn>(`/fiscal/nfe/sale-return/${key.replace(/\D/g, '')}`));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="flex flex-col gap-2 rounded-ui border border-border p-3">
+      <TextField
+        label="Chave da venda devolvida"
+        hint="Os 44 números da NF-e ou da NFC-e da venda. O cliente e os itens vêm sozinhos."
+        value={key}
+        onChange={(e) => setKey(e.target.value)}
+      />
+      {error && <Alert>{error}</Alert>}
+      <Button variant="secondary" loading={busy} onClick={() => void search()}>
+        Buscar a venda
+      </Button>
+      <p className="text-sm text-muted">
+        Os impostos repetem os da venda, na proporção que volta (LC 214/2025, arts. 12 e 17, e a
+        regra do ICMS da devolução). Quantidade e CFOP você ajusta nos itens.
+      </p>
+    </div>
+  );
 }
 
 function NfeDrawer({
@@ -915,8 +971,56 @@ function DraftForm({
         options={[
           { value: 'normal', label: 'Venda (nota normal)' },
           { value: 'devolucao', label: 'Devolução de compra (ao fornecedor)' },
+          { value: 'devolucao_venda', label: 'Devolução de venda (o cliente devolveu)' },
         ]}
       />
+      {d.purpose === 'devolucao_venda' && (
+        <SaleReturnPicker
+          onPicked={(sale) =>
+            setD((x) => ({
+              ...x,
+              companyId: sale.companyId,
+              nature: 'Devolução de venda',
+              references: sale.key,
+              ...(sale.recipient
+                ? {
+                    customerId: sale.recipient.customerId ?? null,
+                    taxId: sale.recipient.taxId,
+                    name: sale.recipient.name,
+                    ieIndicator: String(sale.recipient.ieIndicator),
+                    ie: sale.recipient.ie ?? '',
+                    email: sale.recipient.email ?? '',
+                    cep: sale.recipient.address.cep,
+                    street: sale.recipient.address.street,
+                    number: sale.recipient.address.number,
+                    complement: sale.recipient.address.complement ?? '',
+                    district: sale.recipient.address.district,
+                    uf: sale.recipient.address.uf,
+                    ibgeCode: sale.recipient.address.ibgeCode ?? '',
+                    city: sale.recipient.address.city,
+                  }
+                : { taxId: sale.customerTaxId ?? x.taxId, ieIndicator: '9' }),
+              lines: sale.items
+                .filter((i) => i.soldMilli > i.returnedMilli)
+                .map((i) => ({
+                  productId: i.productId,
+                  name: i.description,
+                  unit: 'UN',
+                  quantity: qtyText(i.soldMilli - i.returnedMilli),
+                  unitPriceCents: i.unitPriceCents,
+                  discountCents: 0,
+                  cfop: '',
+                  refKey: sale.key,
+                  refItem: String(i.item),
+                })),
+              freight: 'semFrete',
+              freightCents: 0,
+              installments: [],
+              paymentCode: '90',
+            }))
+          }
+        />
+      )}
       {d.purpose === 'devolucao' && (
         <TextField
           label="Chave da nota devolvida"

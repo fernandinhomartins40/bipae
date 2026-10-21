@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-33.h NF-e de devolução de venda] — 21/10/2026
+
+### Adicionado
+- **Devolução de venda pela NF-e** (finalidade "Devolução de venda (o cliente devolveu)"):
+  - Cole a chave da venda (NF-e ou NFC-e) e a nota de entrada vem com o cliente e os itens; é só dizer quanto volta de cada um.
+  - Os impostos repetem os da venda, na proporção que volta, como mandam a LC 214/2025 (IBS e CBS) e a regra do ICMS da devolução. O CFOP de devolução sai da tabela oficial.
+  - Não deixa devolver mais do que foi vendido, contando o que já voltou.
+  - Ao emitir, a mercadoria volta ao estoque e o valor devolvido sai das contas a receber da venda. Se a devolução for cancelada, tudo volta como estava.
+  - Partilha do ICMS (DIFAL) e IPI ainda não são espelhados: a nota mostra a pendência em vez de emitir errado.
+
 ## [F8-10.a Mercado Pago Point pela internet (em homologação)] — 21/10/2026
 
 ### Adicionado
