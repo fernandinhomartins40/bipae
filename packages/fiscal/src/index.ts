@@ -25,3 +25,4 @@ export * from './nfse';
 export * from './efd/read';
 export * from './efd/build';
 export * from './efd/entry';
+export * from './efd/uf-rules';

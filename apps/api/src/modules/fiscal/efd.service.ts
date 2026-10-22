@@ -13,6 +13,9 @@ import { efdRequest, efdSettingsInput, type EfdSettings, type EfdSummaryView } f
 import {
   buildEfdIcmsIpi,
   EfdError,
+  EFD_1601_BY_UF,
+  EFD_SIMPLES_BY_UF,
+  efdUfRule,
   encodeEfdLatin1,
   readEfdDocument,
   type EfdEntry,
@@ -218,11 +221,24 @@ export class EfdService {
           `${outside} nota(s) da venda deste mês têm emissão em outro mês e vão no arquivo daquele mês.`,
         );
       }
+      // Regras por UF (F4-14.b.4): só o que foi lido em fonte oficial; o resto é "não confirmado".
+      const lastDay = `${month}-28`;
       if (company.taxRegime === 'simples' || company.taxRegime === 'mei') {
+        const rule = efdUfRule(EFD_SIMPLES_BY_UF, company.uf ?? '', lastDay);
         warnings.push(
-          'Empresa do Simples: confira se a sua UF obriga a EFD ICMS/IPI (Protocolo ICMS 49/2015). A lista por UF chega em breve.',
+          company.taxRegime === 'mei'
+            ? 'O MEI é dispensado da EFD ICMS/IPI (Protocolo ICMS 03/2011).'
+            : rule
+              ? `${rule.note} Fonte: ${rule.act}.`
+              : 'Empresa do Simples: a regra da sua UF para a EFD ICMS/IPI ainda não foi confirmada em fonte oficial pelo Bipaê. Pelo Protocolo ICMS 49/2015, só entrega quem a UF obrigou; confira com o contador.',
         );
       }
+      const r1601 = efdUfRule(EFD_1601_BY_UF, company.uf ?? '', lastDay);
+      const register1601 = r1601
+        ? r1601.status === 'exempt'
+          ? null
+          : `${r1601.note} O Bipaê ainda não gera o 1601. Fonte: ${r1601.act}.`
+        : 'A obrigação do registro 1601 (vendas com cartão e Pix) na sua UF ainda não foi confirmada em fonte oficial pelo Bipaê, e ele ainda não é gerado.';
       let result: EfdResult;
       try {
         result = buildEfdIcmsIpi({
@@ -267,7 +283,12 @@ export class EfdService {
         if (error instanceof EfdError) throw new AppError(422, 'efd_invalid', error.message);
         throw error;
       }
-      result.warnings.unshift(...warnings);
+      // O aviso genérico do 1601 dá lugar ao da UF (ou some, quando a UF dispensa).
+      result.warnings = [
+        ...warnings,
+        ...result.warnings.filter((w) => !w.includes('registro 1601')),
+        ...(register1601 ? [register1601] : []),
+      ];
       return { result, documents: entries.length + purchases.length };
     });
   }

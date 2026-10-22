@@ -702,6 +702,7 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
 - **Registro 1601 (em aberto):** operações com cartão e Pix por instituição de pagamento (Convênio ICMS 134/2016). O Guia diz: "A obrigatoriedade deste registro deve ser verificada junto a cada uma das unidades federativas a partir de 2.023."
   - **Hoje:** o 1010 responde "N" e o arquivo avisa que o 1601 não é gerado.
   - **Próximo passo:** levantar, na legislação de cada UF, quem exige o 1601. Fica junto da F4-14.b.4.
+- **Atualização (22/10/2026, F4-14.b.4):** com fonte oficial lida, MS exige o 1601 desde 01/01/2023 (Resolução SEFAZ 3.298/2023), SC dispensa quem entrega no perfil A (Portaria SEF 082/2023, requisito XXVI) e a BA dispensa até publicar norma (página da SEFAZ-BA). As demais UFs seguem como "não confirmado", e o arquivo avisa. As linhas ficam em packages/fiscal/src/efd/uf-rules.ts.
 
 
 ### D-039 — EFD ICMS/IPI: notas de compra (C170), CFOP de entrada e crédito do ICMS

@@ -1,5 +1,10 @@
 # Changelog
 
+## [F4-14.b.4 Regras da EFD por UF] — 22/10/2026
+
+### Adicionado
+- **Arquivo do SPED: avisos certos para a sua UF.** Diz se a sua UF obriga o Simples a entregar a EFD (PB obriga, AM dispensa, MS em casos listados) e se exige o registro de vendas com cartão e Pix (1601: MS exige, SC dispensa o perfil A, BA dispensa). UF ainda não confirmada em fonte oficial aparece como tal, sem suposição.
+
 ## [F4-14.b.2 Compras no arquivo do SPED] — 22/10/2026
 
 ### Adicionado
