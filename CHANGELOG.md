@@ -1,5 +1,11 @@
 # Changelog
 
+## [F4-14.b.1 Gerador da EFD ICMS/IPI] — 21/10/2026
+
+### Adicionado
+- **Gerador do arquivo da EFD ICMS/IPI do mês**, pelo Guia Prático 3.2.2 e o leiaute 020 de 2026. Ele lê o XML autorizado das NF-e e NFC-e e monta os cadastros, as notas, a apuração do ICMS e os blocos obrigatórios. O arquivo sai em ISO 8859-1.
+- Ainda sem tela: as notas de compra, o download e o inventário vêm nas próximas etapas (F4-14.b.2 a b.5).
+
 ## [F8-09.c.1 Pix pelo Mercado Pago, PagBank e Asaas] — 21/10/2026
 
 ### Adicionado

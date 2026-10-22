@@ -22,3 +22,5 @@ export * from './xml-reader';
 export * from './sefaz';
 export * from './purchase/read';
 export * from './nfse';
+export * from './efd/read';
+export * from './efd/build';

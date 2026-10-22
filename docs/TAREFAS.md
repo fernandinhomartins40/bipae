@@ -39,7 +39,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] E20 · Formato da resposta de `GET /markets/{id}/local-prices` (nomes dos campos da mediana, p25, p75, menor preço e loja, raio), a combinar com o MercadoFlow
 - [ ] E19 · Credenciais do parceiro Bipaê no MercadoFlow (client id e secret, gerados em Parceiros → Bipaê) no `.env` da VPS
 - [ ] E18 · Token ou cartão A3 de teste (com a leitora) para a assinatura pelo desktop
-- [ ] E21 · Decisão sobre gerar o SPED EFD ICMS/IPI no Bipaê ou deixar com o contador (dúvida D-031)
+- [x] E21 · Decisão sobre gerar o SPED EFD ICMS/IPI no Bipaê ou deixar com o contador (dúvida D-031) — 21/10/2026: gerar no Bipaê, para Presumido, Real e também o Simples nos estados que o obrigam
 - [ ] E22 · Publicação oficial do recolhimento na liquidação financeira (split payment, LC 214/2025, arts. 31 a 36): data e leiaute da consulta de débitos extintos. Não depende de decisão do dono; marque quando a Receita e o Comitê Gestor publicarem (dúvida D-027)
 - [ ] E23 · Conta de desenvolvedor da Apple (Developer ID) para assinar e notarizar o Bipaê Desktop do macOS; sem ela, o Mac pede para abrir com Control + clique
 - [ ] E24 · Play Console: criar o app `br.com.bipae.app`, ativar o Play App Signing e colocar a chave de upload nos secrets do GitHub (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`) e a conta de serviço da Play (`PLAY_SERVICE_ACCOUNT_JSON`)
@@ -335,8 +335,15 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
 - [~] F4-14 · Exportação SPED/EFD e pacote de XMLs para o contador — depende: F3-14, F4-13
   - [x] F4-14.a · Pacote do mês para o contador: ZIP com os XML autorizados das NFC-e, dos cancelamentos e das inutilizações, e resumo em CSV
   - [x] F4-14.c · O pacote leva também o XML de cada NFS-e autorizada no mês (pasta NFSe) e a linha dela no resumo, com o valor dos serviços — depende: F4-14.a, F5-13.d
-  - [ ] F4-14.b · Arquivo SPED EFD ICMS/IPI do mês (registros das NFC-e), conforme o Guia Prático oficial, validado no PVA — depende: F4-14.a · externo: E21
-  - Pesquisa feita em 16/10/2026 (dúvida D-031): o arquivo completo exige entradas, apuração e inventário; espera a decisão do dono.
+  - [~] F4-14.b · Arquivo SPED EFD ICMS/IPI do mês, conforme o Guia Prático oficial, validado no PVA — depende: F4-14.a
+    - Decisão do dono (E21, 21/10/2026): gerar no Bipaê, inclusive para o Simples nos estados que o obrigam.
+    - [x] F4-14.b.1 · Gerador puro (packages/fiscal/src/efd): blocos 0, C (C100/C190 das NF-e e NFC-e próprias), E (E100, E110, E116), blocos sem movimento, 1 e 9, pelo Guia 3.2.2 e leiaute 020, com testes
+      - Feito em 21/10/2026: leitura do XML autorizado (NF-e e NFC-e), C100 com as Exceções 1 (cancelada) e 9 (NFC-e), C190 por CST, CFOP e alíquota (com VL_RED_BC nos CST 20 e 70), E110 a partir dos C190 (5605 e 1605 trocam de lado), E116, bloco 9 conferido linha a linha; arquivo em ISO 8859-1. Simples: CSOSN nas saídas (D-038).
+    - [ ] F4-14.b.2 · Entradas: notas de compra (C100 de terceiros com C170, 0150, 0190 e 0200) e o crédito de ICMS na apuração — depende: F4-14.b.1
+    - [ ] F4-14.b.3 · API e tela: arquivo do mês em Arquivos para o contador, com perfil, contador (0100), vencimento e código de receita do ICMS (E116) e os avisos — depende: F4-14.b.1
+    - [ ] F4-14.b.4 · Simples Nacional: estados que obrigam o Simples à EFD (Protocolo ICMS 49/2015 e lei de cada UF) e o CST/CSOSN no C190, em fonte oficial — depende: F4-14.b.1
+    - [ ] F4-14.b.5 · Inventário (bloco H) no arquivo de fevereiro e quando pedido — depende: F4-14.b.1
+    - [ ] F4-14.b.6 · Validar um arquivo real no PVA da Receita — externo: dono
 - [ ] F4-15 · Boletos via PSP — depende: F4-04 · externo: E9
 - [ ] F4-16 · Crédito de IBS/CBS pela extinção do débito do fornecedor, quando o split payment estiver em funcionamento (LC 214/2025, arts. 47 e 48; dúvida D-027) — depende: F4-13 · externo: E22
 

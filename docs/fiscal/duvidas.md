@@ -34,13 +34,14 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-028 | 🟡 parcial | Unidade do qLote na NF-e de compra |
 | D-029 | ✅ resolvida | Pix e vale do caixa: qual código tPag |
 | D-030 | ✅ resolvida | Descrição do primeiro item da NFC-e em homologação |
-| D-031 | 🟡 aguarda o dono | SPED EFD ICMS/IPI: gerar no Bipaê ou deixar com o contador (E21) |
+| D-031 | ✅ resolvida | SPED EFD ICMS/IPI: gerar no Bipaê, inclusive para o Simples nos estados que obrigam (E21) |
 | D-032 | ✅ resolvida | NFC-e de entrega a domicílio (delivery) |
 | D-033 | ✅ resolvida | Venda condicional: notas da remessa, da volta e da venda |
 | D-034 | ✅ resolvida | Código de benefício fiscal (cBenef) por UF |
 | D-035 | 🟡 configurável | Natureza da operação da entrada simbólica do condicional passa de 60 caracteres |
 | D-036 | 🟡 a confirmar com o certificado | NFS-e Nacional: mensagem JSON da Sefin, assinatura, convênio do município e grupo do IBS/CBS |
 | D-037 | ✅ resolvida | NF-e de devolução de venda (entrada do cliente): referência item a item e imposto espelhado da venda, na proporção devolvida |
+| D-038 | 🟡 parcial | EFD ICMS/IPI: CSOSN do Simples no C190 (resolvida) e registro 1601 por UF (em aberto) |
 
 ---
 
@@ -503,6 +504,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
   - validação no programa oficial (PVA).
 - **Situação no Bipaê:** o pacote do mês para o contador (F4-14.a) já entrega todos os XML. Na prática, o escritório costuma gerar a EFD no sistema dele a partir desses XML.
 - **Pergunta ao dono:** gerar a EFD completa no Bipaê agora (tarefa grande, F4-14.b) ou deixar para depois, com o contador gerando a partir do pacote? E, se gerar: só para Presumido e Real, ou também para o Simples nos estados que obrigam (a lista de estados exige ler a lei de cada um)?
+- **Decisão do dono (21/10/2026):** gerar a EFD no Bipaê, para Presumido e Real e também para o Simples nos estados que o obrigam. Subtarefas F4-14.b.1 a F4-14.b.6.
 
 
 ---
@@ -690,3 +692,13 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **ICMS (RICMS-SP, art. 452, redação do Decreto 67.761/2023, com base no Convênio SINIEF s/n de 1970, art. 54, § 3º; Resposta à Consulta 30429/2024):** o estabelecimento que recebe a devolução de não contribuinte emite a nota de entrada e pode se creditar do imposto debitado na saída, com prova cabal; "aplicar-se-ão a mesma base de cálculo e a mesma alíquota constantes no documento fiscal que acobertou a operação original"; na devolução parcial "os valores deverão ser proporcionais aos da Nota Fiscal de origem". Em SP, fora da garantia, o crédito só vale até 45 dias da saída (Anexo IV da Portaria SRE 41/2023); isso é da escrituração, não muda a nota.
   - **Como o Bipaê faz (F3-33.h):** a nota de entrada (tpNF 0, finNFe 4) espelha os grupos de imposto da nota de venda autorizada (CST ou CSOSN, base, alíquota, ST, FCP, PIS, COFINS, IBS e CBS), na proporção devolvida, com o CFOP de devolução tirado da tabela oficial e a referência item a item. O que ainda não espelha (partilha do DIFAL, IPI) aparece como pendência e não é emitido.
   - **Fica para acompanhar:** o prazo do crédito em outras UFs (escrituração) e a regulamentação do estorno do IBS e da CBS quando houver split payment (dúvida D-027).
+
+### D-038 — EFD ICMS/IPI: CSOSN do Simples e registro 1601
+
+- **Fonte:** Guia Prático da EFD ICMS/IPI versão 3.2.2 (11/02/2026), guardado em .
+- **CSOSN (resolvida):** registro C170, campo 10 (CST_ICMS): "Para os estabelecimentos informantes da EFD-ICMS/IPI, optantes pelo Simples Nacional e que recolham o ICMS por este regime, na escrituração de documentos fiscais de saída deverá ser utilizada a Tabela B do CSOSN e na escrituração dos documentos fiscais de entrada, informar o CST_ICMS sob o enfoque do declarante." E, nas tabelas: "O CSOSN é utilizado somente na emissão da NF-e, não é utilizado no registro das mercadorias nas entradas."
+  - **Como o Bipaê faz (F4-14.b.1):** nas saídas próprias, o C190 leva origem + CSOSN, como está no XML. As entradas (F4-14.b.2) usam o CST do ponto de vista da empresa.
+- **Registro 1601 (em aberto):** operações com cartão e Pix por instituição de pagamento (Convênio ICMS 134/2016). O Guia diz: "A obrigatoriedade deste registro deve ser verificada junto a cada uma das unidades federativas a partir de 2.023."
+  - **Hoje:** o 1010 responde "N" e o arquivo avisa que o 1601 não é gerado.
+  - **Próximo passo:** levantar, na legislação de cada UF, quem exige o 1601. Fica junto da F4-14.b.4.
+
