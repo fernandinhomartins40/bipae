@@ -695,7 +695,7 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
 
 ### D-038 — EFD ICMS/IPI: CSOSN do Simples e registro 1601
 
-- **Fonte:** Guia Prático da EFD ICMS/IPI versão 3.2.2 (11/02/2026), guardado em .
+- **Fonte:** Guia Prático da EFD ICMS/IPI versão 3.2.2 (11/02/2026), guardado em `packages/fiscal/sources`.
 - **CSOSN (resolvida):** registro C170, campo 10 (CST_ICMS): "Para os estabelecimentos informantes da EFD-ICMS/IPI, optantes pelo Simples Nacional e que recolham o ICMS por este regime, na escrituração de documentos fiscais de saída deverá ser utilizada a Tabela B do CSOSN e na escrituração dos documentos fiscais de entrada, informar o CST_ICMS sob o enfoque do declarante." E, nas tabelas: "O CSOSN é utilizado somente na emissão da NF-e, não é utilizado no registro das mercadorias nas entradas."
   - **Como o Bipaê faz (F4-14.b.1):** nas saídas próprias, o C190 leva origem + CSOSN, como está no XML. As entradas (F4-14.b.2) usam o CST do ponto de vista da empresa.
 - **Registro 1601 (em aberto):** operações com cartão e Pix por instituição de pagamento (Convênio ICMS 134/2016). O Guia diz: "A obrigatoriedade deste registro deve ser verificada junto a cada uma das unidades federativas a partir de 2.023."
