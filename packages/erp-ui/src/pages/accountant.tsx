@@ -151,7 +151,11 @@ function EfdForm({
 
   const set = (patch: Partial<EfdSettings>) => setForm({ ...form, ...patch });
   const text = (v: string) => (v.trim() ? v : null);
-  const query = `companyId=${companyId}&month=${month}&previousCreditCents=${previousCredit ?? 0}`;
+  // Inventário (F4-14.b.5): em fevereiro vai o de 31/12 sozinho; em outro mês, só se pedir.
+  const [inventoryDate, setInventoryDate] = useState('');
+  const query =
+    `companyId=${companyId}&month=${month}&previousCreditCents=${previousCredit ?? 0}` +
+    (inventoryDate ? `&inventoryDate=${inventoryDate}` : '');
   // A conferência só vale para o mês e o saldo com que foi feita.
   const summary = checked?.query === query ? checked.view : null;
 
@@ -250,6 +254,13 @@ function EfdForm({
         label="Saldo credor de ICMS do mês anterior"
         value={previousCredit}
         onChange={setPreviousCredit}
+      />
+      <TextField
+        label="Data do inventário (opcional)"
+        hint="Em fevereiro o arquivo já leva o estoque de 31/12. Preencha só se o fisco pediu outro."
+        type="date"
+        value={inventoryDate}
+        onChange={(e) => setInventoryDate(e.target.value)}
       />
       {message && <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>}
       <div className="flex flex-wrap gap-2">
