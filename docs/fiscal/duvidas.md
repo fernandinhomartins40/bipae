@@ -42,6 +42,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-036 | 🟡 a confirmar com o certificado | NFS-e Nacional: mensagem JSON da Sefin, assinatura, convênio do município e grupo do IBS/CBS |
 | D-037 | ✅ resolvida | NF-e de devolução de venda (entrada do cliente): referência item a item e imposto espelhado da venda, na proporção devolvida |
 | D-038 | 🟡 parcial | EFD ICMS/IPI: CSOSN do Simples no C190 (resolvida) e registro 1601 por UF (em aberto) |
+| D-039 | 🟡 a construir | EFD ICMS/IPI: finalidade da compra, CFOP de entrada e crédito do ICMS nas notas de compra (C170) |
 
 ---
 
@@ -702,3 +703,13 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **Hoje:** o 1010 responde "N" e o arquivo avisa que o 1601 não é gerado.
   - **Próximo passo:** levantar, na legislação de cada UF, quem exige o 1601. Fica junto da F4-14.b.4.
 
+
+### D-039 — EFD ICMS/IPI: notas de compra (C170), CFOP de entrada e crédito do ICMS
+
+- **Fonte:** Guia Prático da EFD ICMS/IPI 3.2.2, registro C170, campo 10 (CST_ICMS): "o campo deverá ser preenchido com o código da Situação Tributária sob o enfoque do declarante. Exemplo 1 - Aquisição de mercadorias tributadas para uso e consumo - informar código "90" da tabela B. Exemplo 2 - Aquisição de mercadorias para comercialização com ICMS retido por ST - informar código "60" da tabela B." E, no mesmo Guia: o CFOP da entrada é o "do ponto de vista do contribuinte informante", iniciado por 1, 2 ou 3, e não o CFOP do documento do fornecedor.
+- **O que falta no Bipaê:** a compra importada guarda o XML do fornecedor, mas não a finalidade da entrada (revenda, uso e consumo, ativo imobilizado, industrialização). O CFOP de entrada, o CST do ponto de vista da empresa e o direito ao crédito do ICMS dependem dela.
+- **Plano (F4-14.b.2), como configuração e nunca como suposição:**
+  - a compra ganha a **finalidade**, escolhida pela empresa ao importar (padrão: revenda, que é o caso do varejo);
+  - o CFOP de entrada sai da finalidade e do CFOP do fornecedor por uma tabela versionada, tirada dos títulos oficiais da tabela de CFOP (por exemplo, compra para comercialização 1102/2102; com ST 1403/2403; uso e consumo 1556/2556; ativo 1551/2551);
+  - o crédito segue a lei: entrada para comercialização dá crédito do ICMS destacado (LC 87/1996, art. 20); uso e consumo só a partir de 01/01/2033 (LC 87/1996, art. 33, I); com ST, sem crédito (CST 60); fornecedor do Simples só dá crédito no valor do pCredSN (LC 123/2006, art. 23); empresa do Simples não credita.
+- **Antes de construir:** conferir no texto oficial a redação atual do art. 33, I, da LC 87/1996 e montar a tabela de CFOP de entrada a partir de `cfop.json`.
