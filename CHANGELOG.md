@@ -1,5 +1,10 @@
 # Changelog
 
+## [F4-14.b.5 Inventário no arquivo do SPED] — 22/10/2026
+
+### Adicionado
+- **Inventário (bloco H) no arquivo do SPED.** No arquivo de fevereiro vai o estoque de 31/12 do ano anterior, valorizado pelo custo do produto. Em outros meses, só quando pedido. Produto sem custo ou com estoque negativo fica de fora e aparece nos avisos. Se o Bipaê não tem estoque com custo na data, o bloco segue vazio e o arquivo avisa, sem afirmar "estoque zero".
+
 ## [F4-14.b.4 Regras da EFD por UF] — 22/10/2026
 
 ### Adicionado

@@ -43,6 +43,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-037 | ✅ resolvida | NF-e de devolução de venda (entrada do cliente): referência item a item e imposto espelhado da venda, na proporção devolvida |
 | D-038 | 🟡 parcial | EFD ICMS/IPI: CSOSN do Simples no C190 (resolvida) e registro 1601 por UF (em aberto) |
 | D-039 | ✅ resolvida | EFD ICMS/IPI: finalidade da compra, CFOP de entrada e crédito do ICMS nas notas de compra (C170) |
+| D-040 | 🟡 configurável | EFD ICMS/IPI: inventário (bloco H) exigido em fevereiro, sem estoque conhecido na data |
 
 ---
 
@@ -715,3 +716,10 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - o crédito segue a lei: entrada para comercialização dá crédito do ICMS destacado (LC 87/1996, art. 20); uso e consumo só a partir de 01/01/2033 (LC 87/1996, art. 33, I); com ST, sem crédito (CST 60); fornecedor do Simples só dá crédito no valor do pCredSN (LC 123/2006, art. 23); empresa do Simples não credita.
 - **Antes de construir:** conferir no texto oficial a redação atual do art. 33, I, da LC 87/1996 e montar a tabela de CFOP de entrada a partir de `cfop.json`.
 - **Resolução (22/10/2026, F4-14.b.2):** construído como planejado. A redação atual do art. 33, I, da LC 87/1996 foi conferida no Planalto (LC 171/2019: uso e consumo só dá crédito a partir de 01/01/2033), assim como o art. 23 da LC 123/2006. CST do declarante: 60 quando a mercadoria veio com ST (exemplo 2 do Guia), o CST do fornecedor quando há crédito do ICMS destacado, e 90 quando não há crédito ou quando o crédito é o do Simples (pCredSN). As regras ficam em `packages/fiscal/src/efd/entry.ts`, como dados com a fonte.
+
+### D-040 — EFD ICMS/IPI: inventário (bloco H) em fevereiro
+
+- **Fonte:** Guia Prático da EFD ICMS/IPI 3.2.2, registros H001, H005, H010, H020 e H990 (guardado em `packages/fiscal/sources`). H001: "Obrigatoriamente deverá ser informado "0" no campo IND_MOV no período de referência fevereiro de cada ano." H005: "Atribuir valor Zero ao inventário significa escriturar sem estoque." O PVA avisa se a EFD de fevereiro não tiver um H005 com DT_INV de 31/12 do ano anterior e MOT_INV "01". H005 campo 03 = soma dos VL_ITEM dos H010; H010 não pode existir com H005 de valor 0. O motivo 01 não pode ser apresentado depois do segundo mês seguinte à data.
+- **Ambiguidade:** o Guia exige o bloco com dados em fevereiro, mas o Bipaê só conhece o estoque pelos movimentos que registrou. Se não houver estoque valorizado na data (loja que começou no Bipaê depois de 31/12, ou produtos sem custo), gerar H005 com valor 0 afirmaria "sem estoque" ao fisco, o que o Bipaê não sabe.
+- **Como o Bipaê faz (F4-14.b.5):** o estoque na data (soma de `stock_movements` das lojas da empresa até o fim do dia, em Brasília) é valorizado pelo custo do produto (`products.cost_cents`, o último custo de compra gravado), em centavos inteiros, com o motivo 01. Em fevereiro vai o de 31/12 do ano anterior; em outro mês, só com o parâmetro `inventoryDate`. Produto sem custo ou com saldo negativo fica de fora e aparece como aviso. Sem nenhum item, o bloco continua com IND_MOV "1" e o arquivo avisa, em vez de afirmar estoque zero. Os motivos 02 a 05 (com H020) existem no gerador, mas a API só pede o 01; o 06 (H030, ICMS ST médio) não é gerado.
+- **Em aberto:** o custo gravado no produto é o do último recebimento, não um custo médio ponderado; para o inventário do IR (VL_ITEM_IR) e para o critério de valoração da UF, confirmar com o contador se serve.

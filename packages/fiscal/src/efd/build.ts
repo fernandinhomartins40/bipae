@@ -1,4 +1,4 @@
-import { dec } from '../decimal';
+import { dec, round } from '../decimal';
 import {
   C100_CANCELLED_FIELDS,
   C100_NFCE_BLANK_FIELDS,
@@ -12,8 +12,13 @@ import {
   EFD_BRAZIL_COUNTRY,
   EFD_DOCUMENT_SITUATION,
   EFD_EMPTY_BLOCKS,
+  EFD_INVENTORY_MAX_MONTHS_AFTER,
+  EFD_INVENTORY_OWNERSHIP_WITH_PARTY,
+  EFD_INVENTORY_REASONS,
+  EFD_ITEM_TYPE_RESALE,
   EFD_LAYOUT_VERSIONS,
   EFD_REGISTERS,
+  EFD_YEAR_END_INVENTORY,
   type EfdBlock,
   type EfdFieldName,
   type EfdRegister,
@@ -97,6 +102,45 @@ export interface EfdPurchase {
   products: Readonly<Record<number, EfdProduct>>;
 }
 
+/** O inventário de 31/12 do arquivo de fevereiro (data e motivo), para quem monta o pedido. */
+export { EFD_YEAR_END_INVENTORY } from './layout';
+
+/** Um item do inventário (H010) com o que o 0200 e o 0190 pedem para ele. */
+export interface EfdInventoryItem {
+  /** Código próprio do item (0200, COD_ITEM): o mesmo das notas e do cadastro. */
+  code: string;
+  description: string;
+  /** Unidade de medida do estoque (0200, UNID_INV; H010, UNID). */
+  unit: string;
+  unitDescription?: string;
+  barcode?: string;
+  ncm?: string;
+  cest?: string;
+  /** Quantidade em texto decimal ("12.5"), com até 3 casas no arquivo. */
+  quantity: string;
+  /** Custo unitário em centavos; com ele o valor do item sai de quantidade × custo. */
+  unitCostCents?: number;
+  /** Valor do item em centavos; se vier, vale no lugar da conta. */
+  valueCents?: number;
+  /** IND_PROP: 0 próprio em poder do informante, 1 próprio com terceiros, 2 de terceiros. */
+  ownership?: '0' | '1' | '2';
+  /** Dono ou possuidor quando não é o informante (vai no 0150 e no COD_PART). */
+  party?: EfdParty;
+  note?: string;
+  accountCode?: string;
+  /** H020 (motivos 02 a 05): CST, base e ICMS unitários, em centavos. */
+  icms?: { cst: string; baseCents: number; icmsCents: number };
+}
+
+/** Inventário do bloco H: uma data, o motivo (MOT_INV) e os itens contados. */
+export interface EfdInventory {
+  /** Data do inventário (AAAA-MM-DD). */
+  date: string;
+  /** MOT_INV; o padrão é "01", no final do período. */
+  reason?: string;
+  items: EfdInventoryItem[];
+}
+
 export interface EfdInput {
   /** Mês da escrituração (AAAA-MM). */
   month: string;
@@ -109,6 +153,8 @@ export interface EfdInput {
   purchases?: EfdPurchase[];
   /** A empresa é do Simples (as compras não dão crédito de ICMS, LC 123/2006, art. 23). */
   simples?: boolean;
+  /** Inventário (bloco H); sem ele o bloco vai sem movimento. */
+  inventory?: EfdInventory;
   /** Saldo credor do período anterior, em centavos (E110, campo 10). */
   previousCreditCents?: number;
   /** Vencimento do ICMS a recolher (AAAA-MM-DD) e código de receita da UF (E116). */
@@ -177,6 +223,8 @@ function formatField(type: string, value: Value, name: string): string {
       return dec(text).toFixed(5).replace('.', ',');
     case 'factor':
       return dec(text).toFixed(6).replace('.', ',');
+    case 'quantity3':
+      return dec(text).toFixed(3).replace('.', ',');
     default:
       return text;
   }
@@ -332,6 +380,132 @@ function situation(entry: EfdEntry): string {
   if (entry.status === 'cancelled') return EFD_DOCUMENT_SITUATION.cancelled;
   if (entry.document.purpose === '2') return EFD_DOCUMENT_SITUATION.complementary;
   return EFD_DOCUMENT_SITUATION.regular;
+}
+
+interface PreparedItem {
+  item: EfdInventoryItem;
+  valueCents: number;
+  /** Valor unitário em reais, texto decimal. */
+  unitValue: string;
+}
+
+interface PreparedInventory {
+  date: string;
+  reason: string;
+  items: PreparedItem[];
+  totalCents: number;
+}
+
+/**
+ * Confere o inventário pelas validações do Guia (H005 e H010) e calcula o valor de cada item em
+ * centavos inteiros (quantidade × custo, meio para cima). Itens sem quantidade ficam de fora; se
+ * o total der zero, o H005 vai com valor 0 e sem H010 ("sem estoque").
+ */
+function prepareInventory(inventory: EfdInventory, month: string, end: string): PreparedInventory {
+  const reason = inventory.reason ?? EFD_YEAR_END_INVENTORY.reason;
+  const rule = EFD_INVENTORY_REASONS[reason];
+  if (!rule) throw new EfdError(`Motivo de inventário inválido: ${reason}.`);
+  if (!rule.supported) {
+    throw new EfdError(`O inventário ${rule.label} (motivo ${reason}) ainda não é gerado pelo Bipaê.`);
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(inventory.date)) {
+    throw new EfdError(`Data do inventário inválida: ${inventory.date}.`);
+  }
+  if (inventory.date > end) {
+    throw new EfdError('A data do inventário não pode ser depois do fim do mês do arquivo.');
+  }
+  if (reason === EFD_YEAR_END_INVENTORY.reason) {
+    const index = (ym: string) => Number(ym.slice(0, 4)) * 12 + Number(ym.slice(5, 7));
+    if (index(month) - index(inventory.date.slice(0, 7)) > EFD_INVENTORY_MAX_MONTHS_AFTER) {
+      throw new EfdError(
+        `O inventário de ${inventory.date.split('-').reverse().join('/')} só pode ir até o segundo mês seguinte à data.`,
+      );
+    }
+  }
+  const seen = new Set<string>();
+  const items: PreparedItem[] = [];
+  for (const item of inventory.items) {
+    if (!item.code || item.code.length > 60) {
+      throw new EfdError(`Código de item inválido no inventário: ${item.code}.`);
+    }
+    if (seen.has(item.code)) throw new EfdError(`Item repetido no inventário: ${item.code}.`);
+    seen.add(item.code);
+    if (!item.unit || item.unit.length > 6) {
+      throw new EfdError(`Unidade inválida no item ${item.code} (até 6 caracteres).`);
+    }
+    if (!/^\d+(\.\d+)?$/.test(item.quantity)) {
+      throw new EfdError(`Quantidade inválida no item ${item.code}: ${item.quantity}.`);
+    }
+    const quantity = dec(item.quantity);
+    if (quantity.isZero()) continue;
+    const ownership = item.ownership ?? '0';
+    if (EFD_INVENTORY_OWNERSHIP_WITH_PARTY.includes(ownership) && !item.party) {
+      throw new EfdError(`Informe o dono ou possuidor do item ${item.code} (propriedade ${ownership}).`);
+    }
+    if (item.valueCents === undefined && item.unitCostCents === undefined) {
+      throw new EfdError(`Falta o custo do item ${item.code} no inventário.`);
+    }
+    const valueCents =
+      item.valueCents ?? round(quantity.mul(item.unitCostCents!), 0, 'half-up').toNumber();
+    if (!Number.isSafeInteger(valueCents) || valueCents < 0) {
+      throw new EfdError(`Valor inválido no item ${item.code} do inventário.`);
+    }
+    const unitValue =
+      item.unitCostCents !== undefined && item.valueCents === undefined
+        ? dec(item.unitCostCents).div(100)
+        : dec(valueCents).div(100).div(quantity);
+    if (rule.h020 && !item.icms) {
+      throw new EfdError(
+        `O inventário ${rule.label} pede o CST, a base e o ICMS do item ${item.code} (H020).`,
+      );
+    }
+    items.push({ item, valueCents, unitValue: unitValue.toFixed(6) });
+  }
+  const totalCents = items.reduce((total, p) => total + p.valueCents, 0);
+  return {
+    date: inventory.date,
+    reason,
+    items: totalCents > 0 ? items.sort((a, b) => a.item.code.localeCompare(b.item.code)) : [],
+    totalCents,
+  };
+}
+
+/** Bloco H com movimento: H001, H005, um H010 por item (e o H020 dos motivos que pedem). */
+function inventoryBlock(inventory: PreparedInventory): Line[] {
+  const rule = EFD_INVENTORY_REASONS[inventory.reason]!;
+  return [
+    record('H001', { IND_MOV: '0' }),
+    record('H005', {
+      DT_INV: inventory.date,
+      VL_INV: inventory.totalCents,
+      MOT_INV: inventory.reason,
+    }),
+    ...inventory.items.flatMap(({ item, valueCents, unitValue }) => {
+      const ownership = item.ownership ?? '0';
+      return [
+        record('H010', {
+          COD_ITEM: item.code,
+          UNID: item.unit,
+          QTD: item.quantity,
+          VL_UNIT: unitValue,
+          VL_ITEM: valueCents,
+          IND_PROP: ownership,
+          COD_PART: item.party && partyCode(item.party),
+          TXT_COMPL: item.note,
+          COD_CTA: item.accountCode,
+        }),
+        ...(rule.h020 && item.icms
+          ? [
+              record('H020', {
+                CST_ICMS: item.icms.cst,
+                BC_ICMS: item.icms.baseCents,
+                VL_ICMS: item.icms.icmsCents,
+              }),
+            ]
+          : []),
+      ];
+    }),
+  ];
 }
 
 /** Monta o arquivo da EFD ICMS/IPI do mês. */
@@ -541,6 +715,35 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
     }
   }
 
+  // Inventário (bloco H): os itens entram no 0200 e no 0190 junto com os das compras.
+  const inventory = input.inventory
+    ? prepareInventory(input.inventory, input.month, end)
+    : undefined;
+  for (const { item } of inventory?.items ?? []) {
+    const known = items.get(item.code);
+    if (known && known.product.unit !== item.unit) {
+      throw new EfdError(
+        `O item ${item.code} tem unidade ${item.unit} no inventário e ${known.product.unit} nas compras.`,
+      );
+    }
+    if (!known) {
+      items.set(item.code, {
+        product: {
+          code: item.code,
+          name: item.description,
+          unit: item.unit,
+          factor: '1',
+          ...(item.ncm && { ncm: item.ncm }),
+          ...(item.cest && { cest: item.cest }),
+          ...(item.barcode && { barcode: item.barcode }),
+        },
+        itemType: EFD_ITEM_TYPE_RESALE,
+      });
+    }
+    units.add(item.unit);
+    if (item.party) participants.set(partyCode(item.party), item.party);
+  }
+
   // Apuração (E110): sem ajustes nem deduções, que o Bipaê ainda não registra.
   const previousCredit = input.previousCreditCents ?? 0;
   const balance = debits - credits - previousCredit;
@@ -668,6 +871,7 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
         ]
       : []),
   ]);
+  blocks.set('H', inventory ? inventoryBlock(inventory) : [record('H001', { IND_MOV: '1' })]);
   for (const block of EFD_EMPTY_BLOCKS) {
     const open = `${block}001` as EfdRegister;
     const [field] = EFD_REGISTERS[open][0] as readonly [string, string];
@@ -710,8 +914,17 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
       'As notas de compra (entradas) não foram informadas: sem elas não há crédito de ICMS e o valor a recolher fica maior. Confira com o contador antes de transmitir.',
     );
   }
-  if (input.month.endsWith('-02')) {
-    warnings.push('Fevereiro pede o inventário de 31/12 (bloco H), que o Bipaê ainda não gera.');
+  if (input.month.slice(5) === EFD_YEAR_END_INVENTORY.month) {
+    const yearEnd = `${Number(input.month.slice(0, 4)) - 1}-${EFD_YEAR_END_INVENTORY.day}`;
+    if (!inventory) {
+      warnings.push(
+        'Fevereiro pede o inventário de 31/12 (bloco H) e o arquivo está sem ele. Se a empresa tinha estoque nessa data, confira com o contador antes de transmitir.',
+      );
+    } else if (inventory.date !== yearEnd || inventory.reason !== EFD_YEAR_END_INVENTORY.reason) {
+      warnings.push(
+        'Fevereiro pede o inventário de 31/12 do ano anterior com o motivo 01 (final do período); o do arquivo é outro, e o PVA vai avisar.',
+      );
+    }
   }
   if (company.uf === 'DF') {
     warnings.push('No Distrito Federal o bloco B (ISS) é obrigatório e o Bipaê ainda não o gera.');

@@ -66,6 +66,14 @@ export const efdRequest = z.object({
   month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Mês inválido (use AAAA-MM)'),
   /** Saldo credor de ICMS do mês anterior, em centavos (E110, campo 10). */
   previousCreditCents: z.coerce.number().int().min(0).default(0),
+  /**
+   * Inventário do estoque nesta data (AAAA-MM-DD), motivo 01 (bloco H). Em fevereiro, sem este
+   * campo, o arquivo leva o de 31/12 do ano anterior.
+   */
+  inventoryDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data do inventário inválida (use AAAA-MM-DD)')
+    .optional(),
 });
 
 /** O que a tela mostra antes de baixar: a apuração e o que ainda falta. */

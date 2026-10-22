@@ -1,5 +1,5 @@
 import { inflateRawSync } from 'node:zlib';
-import type { SyncPullResult, SyncPushResult, TerminalEvent } from '@bipae/domain';
+import { uuidv7, type SyncPullResult, type SyncPushResult, type TerminalEvent } from '@bipae/domain';
 import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { addItem, EMPTY_CART, PdvService } from '@bipae/pdv-core';
@@ -8,6 +8,7 @@ import { brasiliaDateTime, buildSaleNfceContingency, signNfe } from '@bipae/fisc
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
 import { withTenant } from '../src/db/client';
+import { stockMovements } from '../src/db/schema';
 import { SefazService } from '../src/modules/fiscal/sefaz.service';
 import { MaintenanceService } from '../src/modules/maintenance/maintenance.service';
 import { api, createTestApp, signup, type TestApp } from './helpers';
@@ -719,6 +720,82 @@ describe('arquivo da EFD ICMS/IPI do mês (F4-14.b.3)', () => {
     expect(
       (await admin.get(`/fiscal/efd/summary?companyId=${empresa.id}&month=2026-13`)).json().message,
     ).toBe('Mês inválido (use AAAA-MM)');
+  });
+});
+
+describe('inventário no arquivo da EFD ICMS/IPI (F4-14.b.5)', () => {
+  it('fevereiro leva o estoque de 31/12 a custo médio; outros meses só a pedido', async () => {
+    sefaz.mode = 'normal';
+    const { admin, empresa, ctx } = await loja();
+    const [store] = (await admin.get('/stores')).json();
+    const arroz = (
+      await admin.post('/products', {
+        name: 'Arroz do inventário',
+        sku: 'ARZ-INV',
+        priceCents: 3000,
+        costCents: 1999,
+        ncm: '10063021',
+      })
+    ).json();
+    const semCusto = (await admin.post('/products', { name: 'Sem custo', priceCents: 500 })).json();
+    const mov = (productId: string, deltaMilli: number, quando: string) => ({
+      id: uuidv7(),
+      tenantId: ctx.tenantId,
+      storeId: store.id,
+      productId,
+      deltaMilli,
+      reason: 'adjustment' as const,
+      occurredAt: new Date(quando),
+    });
+    await withTenant(t.database.db, ctx as never, (tx) =>
+      tx.insert(stockMovements).values([
+        mov(arroz.id, 10_000, '2025-12-20T12:00:00-03:00'),
+        mov(arroz.id, -2_000, '2025-12-31T20:00:00-03:00'),
+        // Depois de 31/12: não entra no inventário de fevereiro.
+        mov(arroz.id, 5_000, '2026-01-05T12:00:00-03:00'),
+        mov(semCusto.id, 1_000, '2025-12-20T12:00:00-03:00'),
+      ]),
+    );
+    const leitura = async (query: string) => {
+      const arquivo = await admin.get(`/fiscal/efd/file?companyId=${empresa.id}&${query}`);
+      expect(arquivo.statusCode, arquivo.body).toBe(200);
+      return arquivo.rawPayload
+        .toString('latin1')
+        .split('\r\n')
+        .filter(Boolean)
+        .map((l) => l.slice(1, -1).split('|'));
+    };
+
+    const fev = await leitura('month=2026-02');
+    expect(fev.find((l) => l[0] === 'H001')).toEqual(['H001', '0']);
+    // 8 unidades (10 − 2) a R$ 19,99 = R$ 159,92.
+    expect(fev.find((l) => l[0] === 'H005')).toEqual(['H005', '31122025', '159,92', '01']);
+    expect(fev.filter((l) => l[0] === 'H010').map((l) => l.slice(1, 7))).toEqual([
+      ['ARZ-INV', 'UN', '8,000', '19,990000', '159,92', '0'],
+    ]);
+    expect(fev.find((l) => l[0] === '0200' && l[1] === 'ARZ-INV')![7]).toBe('10063021');
+    expect(fev.find((l) => l[0] === 'H990')).toEqual(['H990', '4']);
+    const resumo = (await admin.get(`/fiscal/efd/summary?companyId=${empresa.id}&month=2026-02`)).json();
+    expect(resumo.warnings.join(' ')).toMatch(/1 produto\(s\) com estoque em 31\/12\/2025 estão sem custo/);
+    expect(resumo.warnings.join(' ')).not.toMatch(/Fevereiro pede o inventário/);
+
+    // Outro mês: sem pedido, o bloco H fica sem movimento.
+    const mar = await leitura('month=2026-03');
+    expect(mar.find((l) => l[0] === 'H001')).toEqual(['H001', '1']);
+    // A pedido, com data explícita: entra a compra de janeiro (8 + 5 = 13 unidades).
+    const pedido = await leitura('month=2026-03&inventoryDate=2026-02-28');
+    expect(pedido.find((l) => l[0] === 'H005')).toEqual(['H005', '28022026', '259,87', '01']);
+
+    // Data fora do prazo do motivo 01: recusa em português.
+    const velho = await admin.get(
+      `/fiscal/efd/summary?companyId=${empresa.id}&month=2026-03&inventoryDate=2025-12-31`,
+    );
+    expect(velho.statusCode).toBe(422);
+    expect(velho.json().message).toMatch(/segundo mês seguinte/);
+
+    // Sem estoque na data: o arquivo não afirma "sem estoque", só avisa.
+    const vazio = await leitura('month=2026-03&inventoryDate=2020-01-31');
+    expect(vazio.find((l) => l[0] === 'H001')).toEqual(['H001', '1']);
   });
 });
 

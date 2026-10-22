@@ -18,12 +18,14 @@ import {
   efdUfRule,
   encodeEfdLatin1,
   readEfdDocument,
+  EFD_YEAR_END_INVENTORY,
   type EfdEntry,
+  type EfdInventory,
   type EfdProduct,
   type EfdPurchase,
   type EfdResult,
 } from '@bipae/fiscal';
-import { and, asc, eq, gte, inArray, lt } from 'drizzle-orm';
+import { and, asc, eq, gte, inArray, lt, sql } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
@@ -38,6 +40,8 @@ import {
   products,
   purchaseInvoices,
   sales,
+  stockMovements,
+  stores,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 import { monthRange } from './accountant-export.service';
@@ -119,9 +123,86 @@ export class EfdService {
     });
   }
 
+  /**
+   * Estoque das lojas da empresa na data, pelos movimentos até o fim do dia (Brasília), valorizado
+   * pelo custo médio do produto (products.cost_cents). Produto sem custo ou com saldo negativo
+   * fica de fora e vira aviso. Sem nenhum item, devolve nada: o arquivo não afirma "sem estoque"
+   * (dúvida D-040).
+   */
+  private async loadInventory(
+    tx: Tx,
+    companyId: string,
+    date: string,
+    warnings: string[],
+  ): Promise<EfdInventory | undefined> {
+    const next = new Date(Date.parse(`${date}T00:00:00-03:00`) + 24 * 3600_000);
+    const balances = await tx
+      .select({
+        productId: stockMovements.productId,
+        milli: sql<string>`sum(${stockMovements.deltaMilli})`,
+      })
+      .from(stockMovements)
+      .innerJoin(stores, eq(stores.id, stockMovements.storeId))
+      .where(and(eq(stores.companyId, companyId), lt(stockMovements.occurredAt, next)))
+      .groupBy(stockMovements.productId);
+    const positive = balances.filter((b) => Number(b.milli) > 0);
+    const negative = balances.filter((b) => Number(b.milli) < 0).length;
+    const rows = positive.length
+      ? await tx
+          .select()
+          .from(products)
+          .where(
+            inArray(
+              products.id,
+              positive.map((b) => b.productId),
+            ),
+          )
+      : [];
+    const byId = new Map(rows.map((p) => [p.id, p]));
+    const label = date.split('-').reverse().join('/');
+    const items: EfdInventory['items'] = [];
+    let noCost = 0;
+    for (const b of positive) {
+      const product = byId.get(b.productId);
+      if (!product) continue;
+      if (product.costCents === null || product.costCents === undefined) {
+        noCost++;
+        continue;
+      }
+      const milli = Number(b.milli);
+      items.push({
+        // O mesmo código das notas de venda e de compra (cProd).
+        code: product.sku ?? product.id.slice(0, 60),
+        description: product.name,
+        unit: product.unit.toUpperCase(),
+        quantity: `${Math.floor(milli / 1000)}.${String(milli % 1000).padStart(3, '0')}`,
+        unitCostCents: Number(product.costCents),
+        ...(product.ncm && { ncm: product.ncm }),
+        ...(product.cest && { cest: product.cest }),
+      });
+    }
+    if (noCost > 0) {
+      warnings.push(
+        `${noCost} produto(s) com estoque em ${label} estão sem custo e ficaram fora do inventário. Cadastre o custo e gere de novo.`,
+      );
+    }
+    if (negative > 0) {
+      warnings.push(
+        `${negative} produto(s) tinham estoque negativo em ${label} e ficaram fora do inventário.`,
+      );
+    }
+    if (items.length === 0) {
+      warnings.push(
+        `O Bipaê não tem estoque com custo em ${label}, então o inventário não entrou no arquivo (bloco H sem movimento). Se a empresa tinha estoque nessa data, o contador informa o inventário.`,
+      );
+      return undefined;
+    }
+    return { date, reason: EFD_YEAR_END_INVENTORY.reason, items };
+  }
+
   /** Monta o arquivo do mês; a tela usa o resumo e o download usa o texto. */
   build(ctx: RequestContext, raw: unknown): Promise<{ result: EfdResult; documents: number }> {
-    const { companyId, month, previousCreditCents } = parse(efdRequest, raw);
+    const { companyId, month, previousCreditCents, inventoryDate } = parse(efdRequest, raw);
     const { start, end } = monthRange(month);
     return withTenant(this.db, ctx, async (tx) => {
       const [company] = await tx.select().from(companies).where(eq(companies.id, companyId));
@@ -239,6 +320,15 @@ export class EfdService {
           ? null
           : `${r1601.note} O Bipaê ainda não gera o 1601. Fonte: ${r1601.act}.`
         : 'A obrigação do registro 1601 (vendas com cartão e Pix) na sua UF ainda não foi confirmada em fonte oficial pelo Bipaê, e ele ainda não é gerado.';
+      // Inventário (F4-14.b.5): pedido explícito ou, em fevereiro, o de 31/12 do ano anterior.
+      const inventoryOn =
+        inventoryDate ??
+        (month.slice(5) === EFD_YEAR_END_INVENTORY.month
+          ? `${Number(month.slice(0, 4)) - 1}-${EFD_YEAR_END_INVENTORY.day}`
+          : undefined);
+      const inventory = inventoryOn
+        ? await this.loadInventory(tx, companyId, inventoryOn, warnings)
+        : undefined;
       let result: EfdResult;
       try {
         result = buildEfdIcmsIpi({
@@ -274,6 +364,7 @@ export class EfdService {
           }),
           entries,
           purchases,
+          ...(inventory && { inventory }),
           simples: company.taxRegime === 'simples' || company.taxRegime === 'mei',
           previousCreditCents,
           ...(settings.icmsDueDay && { icmsDueDate: dueDate(month, settings.icmsDueDay) }),

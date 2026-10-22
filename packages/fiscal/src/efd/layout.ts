@@ -15,11 +15,12 @@
  * - monthYear: mmaaaa (recebe AAAA-MM);
  * - money: centavos inteiros escritos com vírgula e duas casas ("1234,56");
  * - rate: percentual decimal com vírgula e duas casas ("18,00");
- * - quantity: quantidade com vírgula e cinco casas ("12,00000"), do texto decimal do XML;
- * - factor: fator de conversão com vírgula e seis casas ("12,000000").
+ * - quantity: quantidade com vírgula e cinco casas ('12,00000'), do texto decimal do XML;
+ * - quantity3: quantidade com vírgula e três casas ('12,500'), a do inventário (H010);
+ * - factor: fator de conversão ou valor unitário com vírgula e seis casas ('12,000000').
  */
 export type EfdFieldType =
-  'text' | 'code' | 'date' | 'monthYear' | 'money' | 'rate' | 'quantity' | 'factor';
+  | 'text' | 'code' | 'date' | 'monthYear' | 'money' | 'rate' | 'quantity' | 'quantity3' | 'factor';
 
 type Fields = readonly (readonly [string, EfdFieldType])[];
 
@@ -233,6 +234,28 @@ export const EFD_REGISTERS = {
   G001: movement,
   G990: closing('QTD_LIN_G'),
   H001: movement,
+  H005: [
+    ['DT_INV', 'date'],
+    ['VL_INV', 'money'],
+    ['MOT_INV', 'code'],
+  ],
+  H010: [
+    ['COD_ITEM', 'text'],
+    ['UNID', 'text'],
+    ['QTD', 'quantity3'],
+    ['VL_UNIT', 'factor'],
+    ['VL_ITEM', 'money'],
+    ['IND_PROP', 'code'],
+    ['COD_PART', 'text'],
+    ['TXT_COMPL', 'text'],
+    ['COD_CTA', 'text'],
+    ['VL_ITEM_IR', 'money'],
+  ],
+  H020: [
+    ['CST_ICMS', 'code'],
+    ['BC_ICMS', 'money'],
+    ['VL_ICMS', 'money'],
+  ],
   H990: closing('QTD_LIN_H'),
   K001: movement,
   K990: closing('QTD_LIN_K'),
@@ -361,7 +384,35 @@ export type EfdBlock = (typeof EFD_BLOCK_ORDER)[number];
  * é o ISS do Distrito Federal (os demais estados informam só B001 e B990); D é transporte e
  * comunicação; G é o CIAP; H é o inventário; K é produção e estoque.
  */
-export const EFD_EMPTY_BLOCKS: readonly EfdBlock[] = ['B', 'D', 'G', 'H', 'K'];
+export const EFD_EMPTY_BLOCKS: readonly EfdBlock[] = ['B', 'D', 'G', 'K'];
+
+/**
+ * Bloco H, H005 campo 04 (MOT_INV): `h020` diz se o motivo exige o H020 em cada item (motivos 02
+ * a 05, Guia 3.2.2); `supported` é falso onde o Bipaê ainda não gera os registros do motivo (o 06
+ * pede o H030, valores médios de ICMS ST por item).
+ */
+export const EFD_INVENTORY_REASONS: Readonly<
+  Record<string, { label: string; h020: boolean; supported: boolean }>
+> = {
+  '01': { label: 'no final do período', h020: false, supported: true },
+  '02': { label: 'na mudança de forma de tributação da mercadoria', h020: true, supported: true },
+  '03': { label: 'na baixa cadastral ou paralisação', h020: true, supported: true },
+  '04': { label: 'na alteração de regime de pagamento', h020: true, supported: true },
+  '05': { label: 'por determinação do fisco', h020: true, supported: true },
+  '06': { label: 'controle da substituição tributária', h020: false, supported: false },
+};
+
+/** Motivo do inventário de 31/12 que o arquivo de fevereiro deve trazer (Guia, H001 e H005). */
+export const EFD_YEAR_END_INVENTORY = { month: '02', reason: '01', day: '12-31' } as const;
+
+/** H005, campo 02: o inventário do motivo 01 vai até o segundo mês depois da data (Guia, H005). */
+export const EFD_INVENTORY_MAX_MONTHS_AFTER = 2;
+
+/** H010, campo 07 (IND_PROP): 1 e 2 exigem o COD_PART de quem é dono ou possui o item. */
+export const EFD_INVENTORY_OWNERSHIP_WITH_PARTY: readonly string[] = ['1', '2'];
+
+/** 0200, campo 07 (TIPO_ITEM): "00" é mercadoria para revenda, o caso do varejo do Bipaê. */
+export const EFD_ITEM_TYPE_RESALE = '00';
 
 /**
  * Registro 1010: "S" obriga o registro respectivo. O Bipaê responde "N" em todos; o 1601 (vendas
