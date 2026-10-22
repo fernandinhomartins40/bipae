@@ -766,6 +766,23 @@ export const purchaseXmlInput = z.object({
 /** Marca ou desmarca a nota de compra como uso ou consumo pessoal (LC 214/2025, art. 57). */
 export const purchasePersonalUseInput = z.object({ personalUse: z.boolean() });
 
+/**
+ * Finalidade da compra (F4-14.b.2, dúvida D-039): decide o CFOP de entrada e o crédito do ICMS
+ * no arquivo da EFD. O varejo compra para revender, por isso é o padrão.
+ */
+export const PURCHASE_PURPOSES = [
+  { id: 'resale', label: 'Revenda' },
+  { id: 'industrialization', label: 'Industrialização' },
+  { id: 'consumption', label: 'Uso e consumo' },
+  { id: 'fixed_asset', label: 'Ativo imobilizado' },
+] as const;
+export type PurchasePurpose = (typeof PURCHASE_PURPOSES)[number]['id'];
+export const purchasePurposeInput = z.object({
+  purpose: z.enum(['resale', 'industrialization', 'consumption', 'fixed_asset'], {
+    message: 'Escolha a finalidade da compra',
+  }),
+});
+
 /** Fator de conversão como texto decimal ("12", "0,5"): unidades de estoque por unidade da nota. */
 const conversionFactor = z
   .union([z.number(), z.string()])
@@ -844,6 +861,8 @@ export interface PurchaseSummary {
   authorized: boolean;
   /** Uso ou consumo pessoal (LC 214/2025, art. 57): sem crédito de IBS e CBS. */
   personalUse: boolean;
+  /** Finalidade da compra (EFD): revenda, industrialização, uso e consumo ou ativo. */
+  purpose: PurchasePurpose;
   itemCount: number;
   createdAt: string;
 }

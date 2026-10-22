@@ -24,3 +24,4 @@ export * from './purchase/read';
 export * from './nfse';
 export * from './efd/read';
 export * from './efd/build';
+export * from './efd/entry';

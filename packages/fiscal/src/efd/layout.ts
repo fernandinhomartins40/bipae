@@ -14,9 +14,12 @@
  * - date: ddmmaaaa (recebe AAAA-MM-DD);
  * - monthYear: mmaaaa (recebe AAAA-MM);
  * - money: centavos inteiros escritos com vírgula e duas casas ("1234,56");
- * - rate: percentual decimal com vírgula e duas casas ("18,00").
+ * - rate: percentual decimal com vírgula e duas casas ("18,00");
+ * - quantity: quantidade com vírgula e cinco casas ("12,00000"), do texto decimal do XML;
+ * - factor: fator de conversão com vírgula e seis casas ("12,000000").
  */
-export type EfdFieldType = 'text' | 'code' | 'date' | 'monthYear' | 'money' | 'rate';
+export type EfdFieldType =
+  'text' | 'code' | 'date' | 'monthYear' | 'money' | 'rate' | 'quantity' | 'factor';
 
 type Fields = readonly (readonly [string, EfdFieldType])[];
 
@@ -82,6 +85,29 @@ export const EFD_REGISTERS = {
     ['COMPL', 'text'],
     ['BAIRRO', 'text'],
   ],
+  '0190': [
+    ['UNID', 'text'],
+    ['DESCR', 'text'],
+  ],
+  '0200': [
+    ['COD_ITEM', 'text'],
+    ['DESCR_ITEM', 'text'],
+    ['COD_BARRA', 'text'],
+    ['COD_ANT_ITEM', 'text'],
+    ['UNID_INV', 'text'],
+    ['TIPO_ITEM', 'code'],
+    ['COD_NCM', 'text'],
+    ['EX_IPI', 'text'],
+    ['COD_GEN', 'code'],
+    ['COD_LST', 'text'],
+    ['ALIQ_ICMS', 'rate'],
+    ['CEST', 'code'],
+  ],
+  '0220': [
+    ['UNID_CONV', 'text'],
+    ['FAT_CONV', 'factor'],
+    ['COD_BARRA', 'text'],
+  ],
   '0990': closing('QTD_LIN_0'),
   B001: [['IND_DAD', 'code']],
   B990: closing('QTD_LIN_B'),
@@ -115,6 +141,45 @@ export const EFD_REGISTERS = {
     ['VL_COFINS', 'money'],
     ['VL_PIS_ST', 'money'],
     ['VL_COFINS_ST', 'money'],
+  ],
+  C170: [
+    ['NUM_ITEM', 'code'],
+    ['COD_ITEM', 'text'],
+    ['DESCR_COMPL', 'text'],
+    ['QTD', 'quantity'],
+    ['UNID', 'text'],
+    ['VL_ITEM', 'money'],
+    ['VL_DESC', 'money'],
+    ['IND_MOV', 'code'],
+    ['CST_ICMS', 'code'],
+    ['CFOP', 'code'],
+    ['COD_NAT', 'text'],
+    ['VL_BC_ICMS', 'money'],
+    ['ALIQ_ICMS', 'rate'],
+    ['VL_ICMS', 'money'],
+    ['VL_BC_ICMS_ST', 'money'],
+    ['ALIQ_ST', 'rate'],
+    ['VL_ICMS_ST', 'money'],
+    ['IND_APUR', 'code'],
+    ['CST_IPI', 'code'],
+    ['COD_ENQ', 'text'],
+    ['VL_BC_IPI', 'money'],
+    ['ALIQ_IPI', 'rate'],
+    ['VL_IPI', 'money'],
+    ['CST_PIS', 'code'],
+    ['VL_BC_PIS', 'money'],
+    ['ALIQ_PIS_PERC', 'rate'],
+    ['QUANT_BC_PIS', 'quantity'],
+    ['ALIQ_PIS_QUANT', 'rate'],
+    ['VL_PIS', 'money'],
+    ['CST_COFINS', 'code'],
+    ['VL_BC_COFINS', 'money'],
+    ['ALIQ_COFINS_PERC', 'rate'],
+    ['QUANT_BC_COFINS', 'quantity'],
+    ['ALIQ_COFINS_QUANT', 'rate'],
+    ['VL_COFINS', 'money'],
+    ['COD_CTA', 'text'],
+    ['VL_ABAT_NT', 'money'],
   ],
   C190: [
     ['CST_ICMS', 'code'],

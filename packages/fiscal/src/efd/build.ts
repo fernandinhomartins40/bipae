@@ -18,6 +18,12 @@ import {
   type EfdFieldName,
   type EfdRegister,
 } from './layout';
+import {
+  EFD_ENTRY_RULES,
+  purchaseLines,
+  type EfdPurchasePurpose,
+  type PurchaseLine,
+} from './entry';
 import { EfdError, type EfdDocument, type EfdParty } from './read';
 
 /**
@@ -67,6 +73,30 @@ export interface EfdEntry {
   document: EfdDocument;
 }
 
+/** O produto da empresa ligado a um item da nota de compra (0200 e 0220). */
+export interface EfdProduct {
+  /** Código próprio do item, o mesmo usado nas notas de venda (0200, campo 02). */
+  code: string;
+  name: string;
+  /** Unidade do estoque (0200, campo 06). */
+  unit: string;
+  /** Unidades de estoque por unidade da nota (0220, campo 03), como texto decimal. */
+  factor: string;
+  ncm?: string;
+  cest?: string;
+  barcode?: string;
+}
+
+/** Nota de compra (de terceiros) que entrou no mês (F4-14.b.2). */
+export interface EfdPurchase {
+  /** Data da entrada na empresa (AAAA-MM-DD), que decide o mês do arquivo (C100, DT_E_S). */
+  enteredOn: string;
+  purpose: EfdPurchasePurpose;
+  document: EfdDocument;
+  /** Produto da empresa em cada item da nota, pelo número do item. */
+  products: Readonly<Record<number, EfdProduct>>;
+}
+
 export interface EfdInput {
   /** Mês da escrituração (AAAA-MM). */
   month: string;
@@ -75,6 +105,10 @@ export interface EfdInput {
   profile: 'A' | 'B' | 'C';
   accountant?: EfdAccountant;
   entries: EfdEntry[];
+  /** Notas de compra; sem elas o arquivo avisa que o crédito das compras não entrou. */
+  purchases?: EfdPurchase[];
+  /** A empresa é do Simples (as compras não dão crédito de ICMS, LC 123/2006, art. 23). */
+  simples?: boolean;
   /** Saldo credor do período anterior, em centavos (E110, campo 10). */
   previousCreditCents?: number;
   /** Vencimento do ICMS a recolher (AAAA-MM-DD) e código de receita da UF (E116). */
@@ -139,6 +173,10 @@ function formatField(type: string, value: Value, name: string): string {
     }
     case 'rate':
       return dec(text).toFixed(2).replace('.', ',');
+    case 'quantity':
+      return dec(text).toFixed(5).replace('.', ',');
+    case 'factor':
+      return dec(text).toFixed(6).replace('.', ',');
     default:
       return text;
   }
@@ -201,14 +239,34 @@ interface Analytic {
   ipiCents: number;
 }
 
-/** C190: soma os itens por CST, CFOP e alíquota, como o registro pede. */
-function analytics(doc: EfdDocument): Analytic[] {
+/** Uma linha para o C190: o item com o CST, o CFOP e o ICMS que valem no arquivo. */
+interface AnalyticSource {
+  cst: string;
+  cfop: string;
+  rate: string;
+  goodsCents: number;
+  baseCents: number;
+  icmsCents: number;
+  stBaseCents: number;
+  stCents: number;
+  ipiCents: number;
+}
+
+const goodsOf = (item: EfdDocument['items'][number]) =>
+  item.productCents +
+  item.freightCents +
+  item.insuranceCents +
+  item.otherCents -
+  item.discountCents;
+
+/** C190: soma as linhas por CST, CFOP e alíquota, como o registro pede. */
+function analytics(sources: AnalyticSource[]): Analytic[] {
   const groups = new Map<string, Analytic>();
-  for (const item of doc.items) {
-    const rate = dec(item.icmsRate).toFixed(2);
-    const key = `${item.cstIcms}|${item.cfop}|${rate}`;
+  for (const item of sources) {
+    const rate = dec(item.rate).toFixed(2);
+    const key = `${item.cst}|${item.cfop}|${rate}`;
     const g = groups.get(key) ?? {
-      cst: item.cstIcms,
+      cst: item.cst,
       cfop: item.cfop,
       rate,
       operationCents: 0,
@@ -219,21 +277,15 @@ function analytics(doc: EfdDocument): Analytic[] {
       reducedCents: 0,
       ipiCents: 0,
     };
-    const goods =
-      item.productCents +
-      item.freightCents +
-      item.insuranceCents +
-      item.otherCents -
-      item.discountCents;
-    g.operationCents += goods + item.stCents + item.ipiCents;
-    g.baseCents += item.icmsBaseCents;
+    g.operationCents += item.goodsCents + item.stCents + item.ipiCents;
+    g.baseCents += item.baseCents;
     g.icmsCents += item.icmsCents;
     g.stBaseCents += item.stBaseCents;
     g.stCents += item.stCents;
     g.ipiCents += item.ipiCents;
     // Só o CST de 3 dígitos (regime normal) tem redução de base: 20 e 70 na Tabela B.
-    if (item.cstIcms.length === 3 && C190_REDUCED_BASE_CSTS.includes(item.cstIcms.slice(1))) {
-      g.reducedCents += Math.max(0, goods - item.icmsBaseCents);
+    if (item.cst.length === 3 && C190_REDUCED_BASE_CSTS.includes(item.cst.slice(1))) {
+      g.reducedCents += Math.max(0, item.goodsCents - item.baseCents);
     }
     groups.set(key, g);
   }
@@ -244,6 +296,34 @@ function analytics(doc: EfdDocument): Analytic[] {
       dec(a.rate).comparedTo(dec(b.rate)),
   );
 }
+
+/** Itens da nota própria (venda ou entrada emitida pela empresa), como estão no XML. */
+const ownSources = (doc: EfdDocument): AnalyticSource[] =>
+  doc.items.map((item) => ({
+    cst: item.cstIcms,
+    cfop: item.cfop,
+    rate: item.icmsRate,
+    goodsCents: goodsOf(item),
+    baseCents: item.icmsBaseCents,
+    icmsCents: item.icmsCents,
+    stBaseCents: item.stBaseCents,
+    stCents: item.stCents,
+    ipiCents: item.ipiCents,
+  }));
+
+/** Linhas da compra, sob o enfoque da empresa (entry.ts). */
+const purchaseSources = (lines: PurchaseLine[]): AnalyticSource[] =>
+  lines.map((l) => ({
+    cst: l.cst,
+    cfop: l.cfop,
+    rate: l.icmsRate,
+    goodsCents: goodsOf(l.item),
+    baseCents: l.icmsBaseCents,
+    icmsCents: l.icmsCents,
+    stBaseCents: l.stBaseCents,
+    stCents: l.stCents,
+    ipiCents: l.item.ipiCents,
+  }));
 
 const sum = (list: Analytic[], field: keyof Analytic) =>
   list.reduce((total, g) => total + (g[field] as number), 0);
@@ -284,7 +364,7 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
   for (const entry of entries) {
     const d = entry.document;
     const sit = situation(entry);
-    const groups = entry.status === 'cancelled' ? [] : analytics(d);
+    const groups = entry.status === 'cancelled' ? [] : analytics(ownSources(d));
     const recipient = d.model === '55' && entry.status !== 'cancelled' ? d.recipient : undefined;
     if (recipient) participants.set(partyCode(recipient), recipient);
     const movedOn =
@@ -344,6 +424,120 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
       const side = E110_CFOP_SIDE[g.cfop] ?? (d.direction === 'out' ? 'debit' : 'credit');
       if (side === 'debit') debits += g.icmsCents;
       else credits += g.icmsCents;
+    }
+  }
+
+  // Notas de compra (F4-14.b.2): C100 de terceiros com C170 e C190 sob o enfoque da empresa.
+  const items = new Map<string, { product: EfdProduct; itemType: string }>();
+  const units = new Set<string>();
+  const conversions = new Map<string, Map<string, string>>();
+  const purchases = [...(input.purchases ?? [])].sort(
+    (a, b) =>
+      a.enteredOn.localeCompare(b.enteredOn) ||
+      a.document.series - b.document.series ||
+      a.document.number - b.document.number,
+  );
+  for (const purchase of purchases) {
+    const d = purchase.document;
+    if (purchase.enteredOn < start || purchase.enteredOn > end) {
+      throw new EfdError(
+        `A compra ${d.number} (série ${d.series}) não entrou no mês ${input.month}.`,
+      );
+    }
+    if (!d.issuer) throw new EfdError(`A compra ${d.number} não traz o fornecedor no XML.`);
+    participants.set(partyCode(d.issuer), d.issuer);
+    const lines = purchaseLines(d.items, {
+      purpose: purchase.purpose,
+      enteredOn: purchase.enteredOn,
+      declarantSimples: input.simples ?? false,
+    });
+    const groups = analytics(purchaseSources(lines));
+    blockC.push(
+      record('C100', {
+        IND_OPER: '0',
+        IND_EMIT: '1',
+        COD_PART: partyCode(d.issuer),
+        COD_MOD: d.model,
+        COD_SIT: EFD_DOCUMENT_SITUATION.regular,
+        SER: String(d.series).padStart(3, '0'),
+        NUM_DOC: d.number,
+        CHV_NFE: d.accessKey,
+        DT_DOC: d.issuedOn,
+        DT_E_S: purchase.enteredOn,
+        VL_DOC: d.totalCents,
+        IND_PGTO: d.paymentIndicator,
+        VL_DESC: d.discountCents,
+        VL_ABAT_NT: 0,
+        VL_MERC: d.productsCents,
+        IND_FRT: d.freightMode,
+        VL_FRT: d.freightCents,
+        VL_SEG: d.insuranceCents,
+        VL_OUT_DA: d.otherCents,
+        VL_BC_ICMS: sum(groups, 'baseCents'),
+        VL_ICMS: sum(groups, 'icmsCents'),
+        VL_BC_ICMS_ST: sum(groups, 'stBaseCents'),
+        VL_ICMS_ST: sum(groups, 'stCents'),
+        VL_IPI: sum(groups, 'ipiCents'),
+      }),
+    );
+    for (const line of lines) {
+      const product = purchase.products[line.item.line];
+      if (!product) {
+        throw new EfdError(
+          `O item ${line.item.line} da compra ${d.number} não está ligado a um produto. Confira a nota em Compras.`,
+        );
+      }
+      if (!items.has(product.code)) items.set(product.code, { product, itemType: line.itemType });
+      units.add(line.item.unit).add(product.unit);
+      if (line.item.unit !== product.unit) {
+        const byUnit = conversions.get(product.code) ?? new Map<string, string>();
+        byUnit.set(line.item.unit, product.factor);
+        conversions.set(product.code, byUnit);
+      }
+      blockC.push(
+        record('C170', {
+          NUM_ITEM: line.item.line,
+          COD_ITEM: product.code,
+          DESCR_COMPL: line.item.description,
+          QTD: line.item.quantity,
+          UNID: line.item.unit,
+          VL_ITEM: line.item.productCents,
+          VL_DESC: line.item.discountCents,
+          IND_MOV: '0',
+          CST_ICMS: line.cst,
+          CFOP: line.cfop,
+          VL_BC_ICMS: line.icmsBaseCents,
+          ALIQ_ICMS: line.icmsRate,
+          VL_ICMS: line.icmsCents,
+          VL_BC_ICMS_ST: line.stBaseCents,
+          ALIQ_ST: line.stRate,
+          VL_ICMS_ST: line.stCents,
+          VL_IPI: line.item.ipiCents,
+          VL_ABAT_NT: 0,
+        }),
+      );
+    }
+    for (const g of groups) {
+      blockC.push(
+        record('C190', {
+          CST_ICMS: g.cst,
+          CFOP: g.cfop,
+          ALIQ_ICMS: g.rate,
+          VL_OPR: g.operationCents,
+          VL_BC_ICMS: g.baseCents,
+          VL_ICMS: g.icmsCents,
+          VL_BC_ICMS_ST: g.stBaseCents,
+          VL_ICMS_ST: g.stCents,
+          VL_RED_BC: g.reducedCents,
+          VL_IPI: g.ipiCents,
+        }),
+      );
+      credits += g.icmsCents;
+    }
+    if (purchase.purpose === 'fixed_asset') {
+      warnings.push(
+        `A compra ${d.number} é para o ativo imobilizado: o crédito em 48 parcelas (CIAP, bloco G) ainda não é gerado pelo Bipaê (${EFD_ENTRY_RULES.fixed_asset.source}).`,
+      );
     }
   }
 
@@ -423,6 +617,24 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
           BAIRRO: p.district,
         });
       }),
+    ...[...units].sort().map((unit) => record('0190', { UNID: unit, DESCR: unit })),
+    ...[...items.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .flatMap(([code, { product, itemType }]) => [
+        record('0200', {
+          COD_ITEM: code,
+          DESCR_ITEM: product.name,
+          COD_BARRA: product.barcode,
+          UNID_INV: product.unit,
+          TIPO_ITEM: itemType,
+          COD_NCM: product.ncm,
+          CEST: product.cest,
+        }),
+        // Unidade da nota diferente da do estoque: o fator que converte (0220).
+        ...[...(conversions.get(code) ?? new Map<string, string>())]
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([unit, factor]) => record('0220', { UNID_CONV: unit, FAT_CONV: factor })),
+      ]),
   ]);
   blocks.set('C', [record('C001', { IND_MOV: blockC.length > 0 ? '0' : '1' }), ...blockC]);
   blocks.set('E', [
@@ -493,9 +705,11 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
       'Falta o contador responsável (registro 0100), obrigatório nos perfis A e B. Cadastre em Arquivos para o contador.',
     );
   }
-  warnings.push(
-    'As notas de compra (entradas) ainda não vão para o arquivo: sem elas não há crédito de ICMS e o valor a recolher fica maior. Confira com o contador antes de transmitir.',
-  );
+  if (!input.purchases) {
+    warnings.push(
+      'As notas de compra (entradas) não foram informadas: sem elas não há crédito de ICMS e o valor a recolher fica maior. Confira com o contador antes de transmitir.',
+    );
+  }
   if (input.month.endsWith('-02')) {
     warnings.push('Fevereiro pede o inventário de 31/12 (bloco H), que o Bipaê ainda não gera.');
   }

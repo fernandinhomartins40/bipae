@@ -41,6 +41,24 @@ export interface EfdItem {
   /** ICMS-ST mais o FCP-ST (C190, campo 09). */
   stCents: number;
   ipiCents: number;
+  /** Para a entrada de terceiros (C170 e 0200): o que o fornecedor escreveu no item. */
+  supplierCode: string;
+  description: string;
+  ncm?: string;
+  cest?: string;
+  gtin?: string;
+  /** Unidade e quantidade comerciais (uCom, qCom como texto decimal). */
+  unit: string;
+  quantity: string;
+  /** Origem da mercadoria (primeiro dígito do CST). */
+  origin: string;
+  /** CST (2 dígitos) do regime normal ou CSOSN (3 dígitos) do Simples, como o fornecedor pôs. */
+  supplierCst: string;
+  /** pICMSST como veio, quando houver. */
+  stRate?: string;
+  /** Crédito do Simples (pCredSN e vCredICMSSN, LC 123/2006, art. 23). */
+  simplesCreditRate?: string;
+  simplesCreditCents: number;
 }
 
 export interface EfdDocument {
@@ -57,6 +75,8 @@ export interface EfdDocument {
   /** finNFe: 1 normal, 2 complementar, 3 ajuste, 4 devolução. */
   purpose: string;
   issuerCnpj?: string;
+  /** Emitente, para a nota de compra (0150 do fornecedor). */
+  issuer?: EfdParty;
   recipient?: EfdParty;
   /** Indicador de pagamento do C100 (0 à vista, 1 a prazo, 2 outros, 9 sem pagamento). */
   paymentIndicator: '0' | '1' | '2' | '9';
@@ -73,9 +93,9 @@ export interface EfdDocument {
 
 const cents = (node: XmlElement | null, path: string) => decimalTextToCents(textOf(node, path));
 
-function readParty(dest: XmlElement | null): EfdParty | undefined {
+function readParty(dest: XmlElement | null, addressTag = 'enderDest'): EfdParty | undefined {
   if (!dest) return undefined;
-  const a = find(dest, 'enderDest');
+  const a = find(dest, addressTag);
   const text = (node: XmlElement | null, path: string) => textOf(node, path) || undefined;
   const party: EfdParty = {
     name: textOf(dest, 'xNome') ?? '',
@@ -106,11 +126,25 @@ function readItem(det: XmlElement): EfdItem {
   if (!cfop) throw new EfdError(`Item ${line} da nota sem CFOP.`);
   const cst = textOf(icms, 'CST') ?? textOf(icms, 'CSOSN');
   if (!cst) throw new EfdError(`Item ${line} da nota sem CST ou CSOSN do ICMS.`);
+  const origin = textOf(icms, 'orig') ?? '0';
+  const optional = (node: XmlElement | null, path: string) => textOf(node, path) || undefined;
   return {
     line,
     cfop,
-    cstIcms: (textOf(icms, 'orig') ?? '0') + cst,
+    cstIcms: origin + cst,
     icmsRate: textOf(icms, 'pICMS') ?? '0',
+    supplierCode: textOf(prod, 'cProd') ?? '',
+    description: textOf(prod, 'xProd') ?? '',
+    ...(optional(prod, 'NCM') && { ncm: optional(prod, 'NCM') }),
+    ...(optional(prod, 'CEST') && { cest: optional(prod, 'CEST') }),
+    ...(/^\d{8,14}$/.test(textOf(prod, 'cEAN') ?? '') && { gtin: textOf(prod, 'cEAN') }),
+    unit: textOf(prod, 'uCom') ?? '',
+    quantity: textOf(prod, 'qCom') ?? '0',
+    origin,
+    supplierCst: cst,
+    ...(optional(icms, 'pICMSST') && { stRate: optional(icms, 'pICMSST') }),
+    ...(optional(icms, 'pCredSN') && { simplesCreditRate: optional(icms, 'pCredSN') }),
+    simplesCreditCents: cents(icms, 'vCredICMSSN'),
     productCents: cents(prod, 'vProd'),
     discountCents: cents(prod, 'vDesc'),
     freightCents: cents(prod, 'vFrete'),
@@ -150,6 +184,7 @@ export function readEfdDocument(xml: string): EfdDocument {
   const issuedAt = textOf(ide, 'dhEmi') ?? '';
   const movedAt = textOf(ide, 'dhSaiEnt');
   const recipient = readParty(find(inf, 'dest'));
+  const issuer = readParty(find(inf, 'emit'), 'enderEmit');
   const items = findAll(inf, 'det').map(readItem);
   if (items.length === 0) throw new EfdError('A nota não tem itens.');
   return {
@@ -162,6 +197,7 @@ export function readEfdDocument(xml: string): EfdDocument {
     direction: textOf(ide, 'tpNF') === '0' ? 'in' : 'out',
     purpose: textOf(ide, 'finNFe') ?? '1',
     ...(textOf(inf, 'emit/CNPJ') && { issuerCnpj: textOf(inf, 'emit/CNPJ') }),
+    ...(issuer && { issuer }),
     ...(recipient && { recipient }),
     paymentIndicator: paymentIndicator(find(inf, 'pag')),
     freightMode: textOf(inf, 'transp/modFrete') ?? '9',

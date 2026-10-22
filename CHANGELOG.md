@@ -1,5 +1,11 @@
 # Changelog
 
+## [F4-14.b.2 Compras no arquivo do SPED] — 22/10/2026
+
+### Adicionado
+- **Finalidade da compra** em Compras: revenda (o padrão), industrialização, uso e consumo ou ativo imobilizado. A finalidade define o CFOP de entrada e se a nota dá crédito de ICMS.
+- **O arquivo do SPED agora leva as compras do mês**, com fornecedor, itens e o crédito de ICMS que a lei permite. Revenda com ICMS destacado credita; compra com ST e uso e consumo (até 2032) não creditam; de fornecedor do Simples, credita só o valor informado na nota. O ICMS a recolher passa a descontar esse crédito.
+
 ## [F4-14.b.3 Arquivo do SPED na tela do contador] — 21/10/2026
 
 ### Adicionado

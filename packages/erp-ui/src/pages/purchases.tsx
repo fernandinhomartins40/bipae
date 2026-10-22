@@ -4,7 +4,9 @@ import {
   type Cents,
   type Page,
   type Product,
+  PURCHASE_PURPOSES,
   type PurchasePreview,
+  type PurchasePurpose,
   type PurchaseSummary,
 } from '@bipae/domain';
 import {
@@ -63,6 +65,17 @@ export function PurchasesPage() {
       await api.put(`/purchases/${p.id}/personal-use`, { personalUse });
       await queryClient.invalidateQueries({ queryKey: ['purchases'] });
       await queryClient.invalidateQueries({ queryKey: ['ibs-cbs'] });
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
+  /** Finalidade da compra (F4-14.b.2): CFOP de entrada e crédito do ICMS no arquivo do SPED. */
+  const setPurpose = async (p: PurchaseSummary, purpose: PurchasePurpose) => {
+    setError(null);
+    try {
+      await api.put(`/purchases/${p.id}/purpose`, { purpose });
+      await queryClient.invalidateQueries({ queryKey: ['purchases'] });
     } catch (err) {
       setError((err as Error).message);
     }
@@ -152,6 +165,26 @@ export function PurchasesPage() {
                   ),
               },
               { header: 'Total', align: 'right', cell: (p) => money(p.totalCents) },
+              {
+                header: 'Finalidade',
+                cell: (p) =>
+                  canFiscal ? (
+                    <select
+                      aria-label={`Finalidade (nota nº ${p.number})`}
+                      className="min-h-11 rounded-ui border border-border bg-surface px-3"
+                      value={p.purpose}
+                      onChange={(e) => void setPurpose(p, e.target.value as PurchasePurpose)}
+                    >
+                      {PURCHASE_PURPOSES.map((o) => (
+                        <option key={o.id} value={o.id}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    (PURCHASE_PURPOSES.find((o) => o.id === p.purpose)?.label ?? '—')
+                  ),
+              },
               {
                 header: 'Uso pessoal',
                 cell: (p) =>

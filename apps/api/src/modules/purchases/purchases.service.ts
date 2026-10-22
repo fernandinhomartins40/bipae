@@ -4,6 +4,7 @@ import {
   uuidv7,
   type CatalogProduct,
   type PurchasePreview,
+  type PurchasePurpose,
   type PurchaseSummary,
   type purchaseImportInput,
 } from '@bipae/domain';
@@ -540,6 +541,7 @@ export class PurchasesService {
           storeName: stores.name,
           authorized: purchaseInvoices.authorized,
           personalUse: purchaseInvoices.personalUse,
+          purpose: purchaseInvoices.purpose,
           items: purchaseInvoices.items,
           createdAt: purchaseInvoices.createdAt,
         })
@@ -580,6 +582,31 @@ export class PurchasesService {
         });
       }
       return { id, personalUse };
+    });
+  }
+
+  /**
+   * Finalidade da compra (F4-14.b.2): muda o CFOP de entrada e o crédito do ICMS da nota no
+   * arquivo da EFD. É alteração fiscal, então fica na auditoria.
+   */
+  async setPurpose(ctx: RequestContext, id: string, purpose: PurchasePurpose) {
+    return withTenant(this.db, ctx, async (tx) => {
+      const [row] = await tx
+        .select({ storeId: purchaseInvoices.storeId, purpose: purchaseInvoices.purpose })
+        .from(purchaseInvoices)
+        .where(eq(purchaseInvoices.id, id));
+      if (!row) throw notFound('Nota de compra');
+      assertStore(ctx, row.storeId);
+      if (row.purpose !== purpose) {
+        await tx.update(purchaseInvoices).set({ purpose }).where(eq(purchaseInvoices.id, id));
+        await this.audit.record(tx, ctx, {
+          action: 'purchase.purpose',
+          entity: 'purchase_invoice',
+          entityId: id,
+          data: { from: row.purpose, to: purpose },
+        });
+      }
+      return { id, purpose };
     });
   }
 }

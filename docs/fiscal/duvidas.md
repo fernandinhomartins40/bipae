@@ -42,7 +42,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-036 | 🟡 a confirmar com o certificado | NFS-e Nacional: mensagem JSON da Sefin, assinatura, convênio do município e grupo do IBS/CBS |
 | D-037 | ✅ resolvida | NF-e de devolução de venda (entrada do cliente): referência item a item e imposto espelhado da venda, na proporção devolvida |
 | D-038 | 🟡 parcial | EFD ICMS/IPI: CSOSN do Simples no C190 (resolvida) e registro 1601 por UF (em aberto) |
-| D-039 | 🟡 a construir | EFD ICMS/IPI: finalidade da compra, CFOP de entrada e crédito do ICMS nas notas de compra (C170) |
+| D-039 | ✅ resolvida | EFD ICMS/IPI: finalidade da compra, CFOP de entrada e crédito do ICMS nas notas de compra (C170) |
 
 ---
 
@@ -713,3 +713,4 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - o CFOP de entrada sai da finalidade e do CFOP do fornecedor por uma tabela versionada, tirada dos títulos oficiais da tabela de CFOP (por exemplo, compra para comercialização 1102/2102; com ST 1403/2403; uso e consumo 1556/2556; ativo 1551/2551);
   - o crédito segue a lei: entrada para comercialização dá crédito do ICMS destacado (LC 87/1996, art. 20); uso e consumo só a partir de 01/01/2033 (LC 87/1996, art. 33, I); com ST, sem crédito (CST 60); fornecedor do Simples só dá crédito no valor do pCredSN (LC 123/2006, art. 23); empresa do Simples não credita.
 - **Antes de construir:** conferir no texto oficial a redação atual do art. 33, I, da LC 87/1996 e montar a tabela de CFOP de entrada a partir de `cfop.json`.
+- **Resolução (22/10/2026, F4-14.b.2):** construído como planejado. A redação atual do art. 33, I, da LC 87/1996 foi conferida no Planalto (LC 171/2019: uso e consumo só dá crédito a partir de 01/01/2033), assim como o art. 23 da LC 123/2006. CST do declarante: 60 quando a mercadoria veio com ST (exemplo 2 do Guia), o CST do fornecedor quando há crédito do ICMS destacado, e 90 quando não há crédito ou quando o crédito é o do Simples (pCredSN). As regras ficam em `packages/fiscal/src/efd/entry.ts`, como dados com a fonte.

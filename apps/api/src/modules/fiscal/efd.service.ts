@@ -16,6 +16,8 @@ import {
   encodeEfdLatin1,
   readEfdDocument,
   type EfdEntry,
+  type EfdProduct,
+  type EfdPurchase,
   type EfdResult,
 } from '@bipae/fiscal';
 import { and, asc, eq, gte, inArray, lt } from 'drizzle-orm';
@@ -25,9 +27,21 @@ import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
-import { companies, efdSettings, fiscalDocuments, nfeInvoices, sales } from '../../db/schema';
+import {
+  companies,
+  efdSettings,
+  fiscalDocuments,
+  nfeInvoices,
+  products,
+  purchaseInvoices,
+  sales,
+} from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 import { monthRange } from './accountant-export.service';
+
+/** Dia (AAAA-MM-DD) em Brasília, sem horário de verão desde 2019. */
+const brasiliaDay = (date: Date) =>
+  new Date(date.getTime() - 3 * 3600_000).toISOString().slice(0, 10);
 
 const companyQuery = z.object({ companyId: z.string().uuid('Escolha a empresa') });
 
@@ -156,6 +170,44 @@ export class EfdService {
         }
         entries.push({ status: d.status === 'cancelled' ? 'cancelled' : 'authorized', document });
       }
+      // Compras (F4-14.b.2): pelo mês em que a nota entrou na empresa (importação do XML).
+      const purchaseRows = await tx
+        .select()
+        .from(purchaseInvoices)
+        .where(
+          and(
+            eq(purchaseInvoices.companyId, companyId),
+            gte(purchaseInvoices.createdAt, start),
+            lt(purchaseInvoices.createdAt, end),
+          ),
+        );
+      const productIds = [...new Set(purchaseRows.flatMap((p) => p.items.map((i) => i.productId)))];
+      const productRows = productIds.length
+        ? await tx.select().from(products).where(inArray(products.id, productIds))
+        : [];
+      const productById = new Map(productRows.map((p) => [p.id, p]));
+      const purchases: EfdPurchase[] = purchaseRows.map((p) => {
+        const byLine: Record<number, EfdProduct> = {};
+        for (const item of p.items) {
+          const product = productById.get(item.productId);
+          if (!product) continue;
+          byLine[item.line] = {
+            // O mesmo código que vai nas notas de venda (cProd).
+            code: product.sku ?? product.id.slice(0, 60),
+            name: product.name,
+            unit: product.unit,
+            factor: item.factor,
+            ...(product.ncm && { ncm: product.ncm }),
+            ...(product.cest && { cest: product.cest }),
+          };
+        }
+        return {
+          enteredOn: brasiliaDay(p.createdAt),
+          purpose: p.purpose,
+          document: readEfdDocument(p.xml),
+          products: byLine,
+        };
+      });
       if (denied > 0) {
         warnings.push(
           `${denied} nota(s) com uso denegado não entram no arquivo: o Bipaê ainda não gera o registro delas (situação 04).`,
@@ -205,6 +257,8 @@ export class EfdService {
             },
           }),
           entries,
+          purchases,
+          simples: company.taxRegime === 'simples' || company.taxRegime === 'mei',
           previousCreditCents,
           ...(settings.icmsDueDay && { icmsDueDate: dueDate(month, settings.icmsDueDay) }),
           ...(settings.icmsRevenueCode && { icmsRevenueCode: settings.icmsRevenueCode }),
@@ -214,7 +268,7 @@ export class EfdService {
         throw error;
       }
       result.warnings.unshift(...warnings);
-      return { result, documents: entries.length };
+      return { result, documents: entries.length + purchases.length };
     });
   }
 

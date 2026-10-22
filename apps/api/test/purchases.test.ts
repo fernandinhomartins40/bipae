@@ -263,3 +263,66 @@ describe('custo da compra sem os créditos recuperáveis (dúvida D-024)', () =>
     expect(refri.costCents).toBeLessThan(Math.round(bruto / 60));
   });
 });
+
+describe('finalidade da compra e o arquivo da EFD (F4-14.b.2)', () => {
+  it('a compra entra no SPED com crédito na revenda e sem crédito no uso e consumo', async () => {
+    const { admin, empresa, loja } = await mercado();
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      taxId: '11.222.333/0001-81',
+      uf: 'SP',
+      taxRegime: 'presumido',
+      ie: '110042490114',
+      cityCode: '3550308',
+    });
+    const xml = await notaDoFornecedor(2002);
+    const entrada = await admin.post('/purchases', {
+      xml,
+      storeId: loja.id,
+      items: [
+        { line: 1, productId: null, factor: '6', unit: 'UN', priceCents: 899 },
+        { line: 2, productId: null, factor: 1, priceCents: 300 },
+      ],
+    });
+    expect(entrada.statusCode).toBe(201);
+    const [compra] = (await admin.get('/purchases')).json();
+    expect(compra.purpose).toBe('resale');
+
+    const mes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' })
+      .format(new Date())
+      .slice(0, 7);
+    const arquivo = async () => {
+      const res = await admin.get(`/fiscal/efd/file?companyId=${empresa.id}&month=${mes}`);
+      expect(res.statusCode).toBe(200);
+      return res.rawPayload
+        .toString('latin1')
+        .split('\r\n')
+        .filter(Boolean)
+        .map((l) => l.slice(1, -1).split('|'));
+    };
+    const revenda = await arquivo();
+    const c100 = revenda.find((l) => l[0] === 'C100')!;
+    expect(c100.slice(1, 3)).toEqual(['0', '1']); // entrada de terceiros
+    expect(revenda.filter((l) => l[0] === 'C170')).toHaveLength(2);
+    expect(revenda.filter((l) => l[0] === 'C170').every((l) => /^[12]/.test(l[10]!))).toBe(true);
+    expect(revenda.some((l) => l[0] === '0200')).toBe(true);
+    const resumo = (
+      await admin.get(`/fiscal/efd/summary?companyId=${empresa.id}&month=${mes}`)
+    ).json();
+    expect(resumo.settlement.creditsCents).toBe(Number(c100[21]!.replace(',', '')));
+
+    const ruim = await admin.put(`/purchases/${compra.id}/purpose`, { purpose: 'presente' });
+    expect(ruim.statusCode).toBe(400);
+    const salvo = await admin.put(`/purchases/${compra.id}/purpose`, { purpose: 'consumption' });
+    expect(salvo.json()).toEqual({ id: compra.id, purpose: 'consumption' });
+    const consumo = await arquivo();
+    // Uso e consumo: CFOP 1556 ou 1407 (com ST) e nenhum crédito até 2033.
+    expect(
+      consumo.filter((l) => l[0] === 'C170').every((l) => ['1556', '1407'].includes(l[10]!)),
+    ).toBe(true);
+    expect(consumo.find((l) => l[0] === 'C100')![21]).toBe('0,00');
+    expect(JSON.stringify((await admin.get('/audit?limit=10')).json())).toContain(
+      'purchase.purpose',
+    );
+  });
+});

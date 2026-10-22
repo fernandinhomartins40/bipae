@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
-import { purchaseImportInput, purchasePersonalUseInput, purchaseXmlInput } from '@bipae/domain';
+import {
+  purchaseImportInput,
+  purchasePersonalUseInput,
+  purchasePurposeInput,
+  purchaseXmlInput,
+} from '@bipae/domain';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { parse } from '../../common/errors';
 import { PurchasesService } from './purchases.service';
@@ -41,5 +46,16 @@ export class PurchasesController {
       id,
       parse(purchasePersonalUseInput, body).personalUse,
     );
+  }
+
+  /** Finalidade da compra para a EFD (F4-14.b.2): CFOP de entrada e crédito do ICMS. */
+  @Put(':id/purpose')
+  @RequirePermission('fiscal.profile.write')
+  purpose(
+    @Ctx() ctx: RequestContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.purchases.setPurpose(ctx, id, parse(purchasePurposeInput, body).purpose);
   }
 }

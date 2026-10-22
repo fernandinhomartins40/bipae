@@ -548,6 +548,10 @@ export const purchaseInvoices = pgTable('purchase_invoices', {
   items: jsonb('items').$type<PurchaseInvoiceItem[]>().notNull(),
   /** Uso ou consumo pessoal (LC 214/2025, art. 57): fica fora do crédito de IBS e CBS (0042). */
   personalUse: boolean('personal_use').notNull().default(false),
+  /** Finalidade da compra para a EFD (F4-14.b.2): CFOP de entrada e crédito do ICMS. */
+  purpose: text('purpose', { enum: ['resale', 'industrialization', 'consumption', 'fixed_asset'] })
+    .notNull()
+    .default('resale'),
   importedBy: uuid('imported_by').notNull(),
   createdAt: ts('created_at').notNull().defaultNow(),
 });
