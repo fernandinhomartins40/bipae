@@ -87,6 +87,7 @@ import {
   AccountantExportController,
   AccountantExportService,
 } from './modules/fiscal/accountant-export.service';
+import { EfdController, EfdService } from './modules/fiscal/efd.service';
 import {
   FiscalEventsController,
   FiscalEventsService,
@@ -220,6 +221,7 @@ class AppModule {
         NfseParamsController,
         FiscalEventsController,
         AccountantExportController,
+        EfdController,
         LotsController,
         LabelsController,
         PromotionsController,
@@ -304,6 +306,7 @@ class AppModule {
         MailService,
         FiscalEventsService,
         AccountantExportService,
+        EfdService,
         PurchasesService,
         PurchaseOrdersService,
         {

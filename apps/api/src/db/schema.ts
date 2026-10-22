@@ -1659,3 +1659,22 @@ export const aiSuggestions = pgTable('ai_suggestions', {
   decidedBy: uuid('decided_by'),
   decidedAt: ts('decided_at'),
 });
+
+/** Configuração do arquivo da EFD ICMS/IPI por empresa (F4-14.b.3). */
+export const efdSettings = pgTable('efd_settings', {
+  companyId: uuid('company_id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  profile: char('profile', { length: 1, enum: ['A', 'B', 'C'] })
+    .notNull()
+    .default('A'),
+  accountantName: text('accountant_name'),
+  accountantCpf: text('accountant_cpf'),
+  accountantCrc: text('accountant_crc'),
+  accountantCnpj: text('accountant_cnpj'),
+  accountantEmail: text('accountant_email'),
+  accountantPhone: text('accountant_phone'),
+  accountantCityCode: char('accountant_city_code', { length: 7 }),
+  icmsDueDay: smallint('icms_due_day'),
+  icmsRevenueCode: text('icms_revenue_code'),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});

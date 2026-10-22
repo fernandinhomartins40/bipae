@@ -1,5 +1,11 @@
 # Changelog
 
+## [F4-14.b.3 Arquivo do SPED na tela do contador] — 21/10/2026
+
+### Adicionado
+- **Arquivo do SPED (EFD ICMS/IPI) em Arquivos para o contador.** Informe o perfil, o contador e o vencimento do ICMS. Depois clique em **Conferir o mês** para ver o ICMS das saídas, o valor a recolher e o que falta, e baixe o arquivo pronto para o programa da Receita (PVA).
+- As notas de compra e o inventário ainda não entram; a tela avisa.
+
 ## [F4-14.b.1 Gerador da EFD ICMS/IPI] — 21/10/2026
 
 ### Adicionado

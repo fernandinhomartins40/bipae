@@ -18,3 +18,4 @@ export * from './ai';
 export * from './password-policy';
 export * from './pix';
 export * from './payments';
+export * from './efd';

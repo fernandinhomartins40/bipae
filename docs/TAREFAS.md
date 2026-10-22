@@ -340,7 +340,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
     - [x] F4-14.b.1 · Gerador puro (packages/fiscal/src/efd): blocos 0, C (C100/C190 das NF-e e NFC-e próprias), E (E100, E110, E116), blocos sem movimento, 1 e 9, pelo Guia 3.2.2 e leiaute 020, com testes
       - Feito em 21/10/2026: leitura do XML autorizado (NF-e e NFC-e), C100 com as Exceções 1 (cancelada) e 9 (NFC-e), C190 por CST, CFOP e alíquota (com VL_RED_BC nos CST 20 e 70), E110 a partir dos C190 (5605 e 1605 trocam de lado), E116, bloco 9 conferido linha a linha; arquivo em ISO 8859-1. Simples: CSOSN nas saídas (D-038).
     - [ ] F4-14.b.2 · Entradas: notas de compra (C100 de terceiros com C170, 0150, 0190 e 0200) e o crédito de ICMS na apuração — depende: F4-14.b.1
-    - [ ] F4-14.b.3 · API e tela: arquivo do mês em Arquivos para o contador, com perfil, contador (0100), vencimento e código de receita do ICMS (E116) e os avisos — depende: F4-14.b.1
+    - [x] F4-14.b.3 · API e tela: arquivo do mês em Arquivos para o contador, com perfil, contador (0100), vencimento e código de receita do ICMS (E116) e os avisos — depende: F4-14.b.1
+      - Feito em 21/10/2026: configuração por empresa (perfil, contador do 0100, dia do vencimento e código de receita do E116), rotas /fiscal/efd/settings, /summary e /file (ISO 8859-1, com auditoria) e o cartão "Arquivo do SPED" em Arquivos para o contador, que confere a apuração e mostra os avisos antes de baixar. Nota com uso denegado ainda fica de fora, com aviso.
     - [ ] F4-14.b.4 · Simples Nacional: estados que obrigam o Simples à EFD (Protocolo ICMS 49/2015 e lei de cada UF) e o CST/CSOSN no C190, em fonte oficial — depende: F4-14.b.1
     - [ ] F4-14.b.5 · Inventário (bloco H) no arquivo de fevereiro e quando pedido — depende: F4-14.b.1
     - [ ] F4-14.b.6 · Validar um arquivo real no PVA da Receita — externo: dono

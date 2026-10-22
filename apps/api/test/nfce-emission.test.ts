@@ -642,6 +642,86 @@ describe('pacote do mês para o contador (F4-14.a)', () => {
   });
 });
 
+describe('arquivo da EFD ICMS/IPI do mês (F4-14.b.3)', () => {
+  it('configura o contador e o vencimento, confere a apuração e baixa o arquivo', async () => {
+    sefaz.mode = 'normal';
+    const { admin, empresa, vender } = await loja();
+    const venda = await vender();
+    const a = await nota(admin, venda.id, (s) => s === 'authorized');
+    const mes = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' })
+      .format(new Date())
+      .slice(0, 7);
+    const q = `companyId=${empresa.id}&month=${mes}`;
+
+    // Sem configuração: perfil A e o aviso do contador que falta.
+    expect((await admin.get(`/fiscal/efd/settings?companyId=${empresa.id}`)).json()).toMatchObject({
+      profile: 'A',
+      accountantName: null,
+    });
+    const antes = (await admin.get(`/fiscal/efd/summary?${q}`)).json();
+    expect(antes.documents).toBe(1);
+    expect(antes.warnings.join(' ')).toMatch(/contador responsável/);
+
+    const ruim = await admin.put('/fiscal/efd/settings', {
+      companyId: empresa.id,
+      accountantName: 'Contábil Exemplo',
+      accountantCpf: '123.456.789-00',
+    });
+    expect(ruim.statusCode).toBe(400);
+    expect(ruim.json().issues[0].path).toBe('accountantCpf');
+    const salvo = await admin.put('/fiscal/efd/settings', {
+      companyId: empresa.id,
+      profile: 'B',
+      accountantName: 'Contábil Exemplo',
+      accountantCpf: '529.982.247-25',
+      accountantCrc: 'SP123456',
+      icmsDueDay: 31,
+      icmsRevenueCode: '046-2',
+    });
+    expect(salvo.statusCode).toBe(200);
+    expect(salvo.json()).toMatchObject({ profile: 'B', accountantCpf: '52998224725' });
+
+    const resumo = (await admin.get(`/fiscal/efd/summary?${q}&previousCreditCents=0`)).json();
+    expect(resumo.warnings.join(' ')).not.toMatch(/contador responsável/);
+    expect(resumo.fileName).toBe(`EFD-ICMS-IPI-11222333000181-${mes}.txt`);
+
+    const arquivo = await admin.get(`/fiscal/efd/file?${q}`);
+    expect(arquivo.statusCode).toBe(200);
+    expect(arquivo.headers['content-type']).toContain('iso-8859-1');
+    expect(arquivo.headers['content-disposition']).toContain(resumo.fileName);
+    const linhas = arquivo.rawPayload
+      .toString('latin1')
+      .split('\r\n')
+      .filter(Boolean)
+      .map((l) => l.slice(1, -1).split('|'));
+    expect(linhas[0]![0]).toBe('0000');
+    expect(linhas[0]![13]).toBe('B'); // perfil
+    expect(linhas.find((l) => l[0] === '0100')!.slice(1, 4)).toEqual([
+      'Contábil Exemplo',
+      '52998224725',
+      'SP123456',
+    ]);
+    expect(linhas.find((l) => l[0] === 'C100')![8]).toBe(a.accessKey);
+    expect(linhas.at(-1)).toEqual(['9999', String(linhas.length)]);
+    const e110 = linhas.find((l) => l[0] === 'E110')!;
+    const centavos = (v: string) => Number(v.replace(',', ''));
+    expect(centavos(e110[1]!)).toBe(resumo.settlement.debitsCents);
+    if (resumo.settlement.dueCents > 0) {
+      // Vencimento no dia 31 do mês seguinte vira o último dia dele.
+      const e116 = linhas.find((l) => l[0] === 'E116')!;
+      expect(e116[3]).toMatch(/^(28|29|30|31)\d{6}$/);
+      expect(e116[4]).toBe('046-2');
+    }
+    const audit = JSON.stringify((await admin.get('/audit?limit=10')).json());
+    expect(audit).toContain('fiscal.efd_export');
+    expect(audit).toContain('fiscal.efd_settings');
+
+    expect(
+      (await admin.get(`/fiscal/efd/summary?companyId=${empresa.id}&month=2026-13`)).json().message,
+    ).toBe('Mês inválido (use AAAA-MM)');
+  });
+});
+
 describe('delivery com taxa por bairro (F5-10)', () => {
   it('o bairro chega ao caixa; a venda para entrega soma a taxa e a NFC-e leva o frete', async () => {
     sefaz.mode = 'normal';

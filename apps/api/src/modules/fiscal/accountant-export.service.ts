@@ -49,7 +49,7 @@ const money = (cents: number) =>
   `${Math.trunc(cents / 100)},${String(Math.abs(cents) % 100).padStart(2, '0')}`;
 
 /** Início do mês em Brasília (-03:00, sem horário de verão desde 2019) e o do mês seguinte. */
-function monthRange(month: string) {
+export function monthRange(month: string) {
   const [year, m] = month.split('-').map(Number) as [number, number];
   const next = m === 12 ? `${year + 1}-01` : `${year}-${String(m + 1).padStart(2, '0')}`;
   return {
