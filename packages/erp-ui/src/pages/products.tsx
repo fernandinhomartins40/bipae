@@ -14,13 +14,14 @@ import {
   DataTable,
   Drawer,
   EmptyState,
+  FormSection,
   MoneyField,
   PageHeader,
   SelectField,
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search } from 'lucide-react';
+import { Package, Plus, Search, SearchX } from 'lucide-react';
 import { useDeferredValue, useEffect, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { parseQuantity } from './purchase-orders';
@@ -67,32 +68,42 @@ export function ProductsPage() {
     return rows.length ? rows.reduce((a, s) => a + s.quantityMilli, 0) : null;
   };
 
+  const stockCell = (p: Product) => {
+    const q = stockOf(p.id);
+    if (q === null) return <span className="text-muted">—</span>;
+    const text = (q / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 3 });
+    return <span className={q < 0 ? 'font-semibold text-danger' : ''}>{text}</span>;
+  };
+  const codes = (p: Product) => [p.sku, p.barcodes[0]].filter(Boolean).join(' · ') || 'Sem código';
+  const newButton = (label: string) => (
+    <Button
+      size="lg"
+      icon={<Plus className="size-5" aria-hidden />}
+      onClick={() => setEditing('new')}
+    >
+      {label}
+    </Button>
+  );
+
   return (
     <>
       <PageHeader
         title="Produtos"
         description="Busque pelo nome, código interno ou bipando o código de barras."
-        actions={
-          canWrite && (
-            <Button
-              icon={<Plus className="size-5" aria-hidden />}
-              onClick={() => setEditing('new')}
-            >
-              Novo produto
-            </Button>
-          )
-        }
+        icon={<Package />}
+        tone="blue"
+        actions={canWrite && newButton('Novo produto')}
       />
-      <div className="relative mb-4 max-w-xl">
+      <div className="relative mb-5 max-w-2xl">
         <Search
-          className="pointer-events-none absolute left-3 top-3 size-5 text-muted"
+          className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted"
           aria-hidden
         />
         <input
           type="search"
           aria-label="Buscar produtos"
           placeholder="Buscar ou bipar…"
-          className="min-h-11 w-full rounded-ui border border-border bg-surface pl-10 pr-3"
+          className="min-h-12 w-full rounded-2xl border border-border bg-surface pl-12 pr-4 text-base shadow-sm"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoFocus
@@ -101,36 +112,65 @@ export function ProductsPage() {
 
       {products.error && <Alert>{(products.error as Error).message}</Alert>}
       {products.data && products.data.items.length === 0 ? (
-        <EmptyState title={deferred ? 'Nada encontrado' : 'Nenhum produto ainda'}>
-          {deferred
-            ? 'Confira o que foi digitado ou cadastre um produto novo.'
-            : 'Cadastre seu primeiro produto. Depois dá para importar tudo pelo XML das notas de compra.'}
-          {canWrite && !deferred && (
-            <div className="mt-4">
-              <Button
-                icon={<Plus className="size-5" aria-hidden />}
-                onClick={() => setEditing('new')}
-              >
-                Cadastrar o primeiro produto
+        deferred ? (
+          <EmptyState
+            title="Nada encontrado"
+            icon={<SearchX />}
+            tone="yellow"
+            action={
+              <Button variant="secondary" onClick={() => setQuery('')}>
+                Limpar a busca
               </Button>
-            </div>
-          )}
-        </EmptyState>
+            }
+          >
+            Confira o que foi digitado ou cadastre um produto novo.
+          </EmptyState>
+        ) : (
+          <EmptyState
+            title="Nenhum produto ainda"
+            icon={<Package />}
+            tone="blue"
+            action={canWrite && newButton('Cadastrar o primeiro produto')}
+          >
+            Cadastre seu primeiro produto e ele já aparece no caixa. Bipou? Bipaê! Depois dá para
+            trazer o resto pelo XML das notas de compra.
+          </EmptyState>
+        )
       ) : (
         products.data && (
           <DataTable
             caption="Lista de produtos"
             rows={products.data.items}
             onRowClick={canWrite ? (p) => setEditing(p) : undefined}
+            // A miniatura do produto entra à esquerda do nome, aqui e no cartão do celular.
+            card={(p) => (
+              <>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="font-bold">{p.name}</span>
+                  <span className="text-sm text-muted">{codes(p)}</span>
+                  <span className="mt-1 flex flex-wrap items-center gap-2 text-sm">
+                    {!p.active && <Badge>Inativo</Badge>}
+                    <span className="text-muted">
+                      Estoque: {stockCell(p)}
+                      {stockOf(p.id) !== null &&
+                        ` ${p.isWeighable ? `${p.unit} (pesável)` : p.unit}`}
+                    </span>
+                  </span>
+                </span>
+                <span className="shrink-0 text-lg font-extrabold tabular-nums">
+                  {formatBRL(p.priceCents as Cents)}
+                </span>
+              </>
+            )}
             columns={[
               {
                 header: 'Produto',
                 cell: (p) => (
-                  <div>
-                    <p className="font-semibold">{p.name}</p>
-                    <p className="text-sm text-muted">
-                      {[p.sku, p.barcodes[0]].filter(Boolean).join(' · ') || 'Sem código'}
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <div className="min-w-0">
+                      <p className="font-bold">{p.name}</p>
+                      <p className="text-sm text-muted">{codes(p)}</p>
+                    </div>
                   </div>
                 ),
               },
@@ -140,22 +180,19 @@ export function ProductsPage() {
                 cell: (p) =>
                   p.active ? <Badge tone="success">Ativo</Badge> : <Badge>Inativo</Badge>,
               },
+              { header: 'Estoque', align: 'right', cell: stockCell },
               {
-                header: 'Estoque',
+                header: 'Preço',
                 align: 'right',
-                cell: (p) => {
-                  const q = stockOf(p.id);
-                  if (q === null) return <span className="text-muted">—</span>;
-                  const text = (q / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 3 });
-                  return <span className={q < 0 ? 'font-semibold text-danger' : ''}>{text}</span>;
-                },
+                cell: (p) => (
+                  <span className="text-lg font-extrabold">{formatBRL(p.priceCents as Cents)}</span>
+                ),
               },
-              { header: 'Preço', align: 'right', cell: (p) => formatBRL(p.priceCents as Cents) },
             ]}
           />
         )
       )}
-      {products.data && (
+      {products.data && products.data.items.length > 0 && (
         <p className="mt-3 text-sm text-muted">
           {products.data.total} produto{products.data.total === 1 ? '' : 's'}
         </p>
@@ -315,199 +352,213 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
         {catalogSummary(catalog, packs) && (
           <p className="text-sm text-muted">{catalogSummary(catalog, packs)}</p>
         )}
-        <TextField
-          label="Nome"
-          value={form.values.name}
-          onChange={(e) => form.set('name', e.target.value)}
-          error={form.errors.name}
-          autoFocus
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <MoneyField
-            key={priceKey}
-            label="Preço de venda"
-            value={form.values.priceCents}
-            onChange={(v) => form.set('priceCents', v)}
-            error={form.errors.priceCents}
-            required
+        <FormSection
+          title="O básico"
+          description="Nome e preço: é o que o caixa precisa para vender."
+        >
+          <TextField
+            label="Nome"
+            value={form.values.name}
+            onChange={(e) => form.set('name', e.target.value)}
+            error={form.errors.name}
+            autoFocus
           />
-          <MoneyField
-            label="Custo (opcional)"
-            value={form.values.costCents}
-            onChange={(v) => form.set('costCents', v)}
-            error={form.errors.costCents}
-          />
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <MoneyField
-            label="Preço de atacado (opcional)"
-            value={form.values.wholesalePriceCents}
-            onChange={(v) => form.set('wholesalePriceCents', v)}
-            error={form.errors.wholesalePriceCents}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <MoneyField
+              key={priceKey}
+              label="Preço de venda"
+              value={form.values.priceCents}
+              onChange={(v) => form.set('priceCents', v)}
+              error={form.errors.priceCents}
+              required
+            />
+            <MoneyField
+              label="Custo (opcional)"
+              value={form.values.costCents}
+              onChange={(v) => form.set('costCents', v)}
+              error={form.errors.costCents}
+            />
+          </div>
+        </FormSection>
+        <FormSection title="Atacado e margem">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <MoneyField
+              label="Preço de atacado (opcional)"
+              value={form.values.wholesalePriceCents}
+              onChange={(v) => form.set('wholesalePriceCents', v)}
+              error={form.errors.wholesalePriceCents}
+            />
+            <TextField
+              label="Atacado a partir de"
+              inputMode="decimal"
+              placeholder="Ex.: 6"
+              hint="Quantidade em que o caixa passa a cobrar o preço de atacado."
+              value={form.values.wholesaleMin}
+              onChange={(e) => form.set('wholesaleMin', e.target.value)}
+            />
+          </div>
+          {product && canChangePrice && (
+            <PricingHelper
+              productId={product.id}
+              costCents={form.values.costCents}
+              onUse={(price) => {
+                form.set('priceCents', price);
+                setPriceKey((k) => k + 1);
+              }}
+            />
+          )}
+          {product && !canChangePrice && (
+            <p className="text-sm text-muted">Você pode editar o produto, mas não o preço.</p>
+          )}
+        </FormSection>
+        <FormSection title="Códigos e categoria">
+          <TextField
+            label="Código de barras"
+            hint="Separe vários códigos com vírgula."
+            inputMode="numeric"
+            value={form.values.barcodes}
+            onChange={(e) => form.set('barcodes', e.target.value)}
+            error={Object.entries(form.errors).find(([k]) => k.startsWith('barcodes'))?.[1]}
           />
           <TextField
-            label="Atacado a partir de"
-            inputMode="decimal"
-            placeholder="Ex.: 6"
-            hint="Quantidade em que o caixa passa a cobrar o preço de atacado."
-            value={form.values.wholesaleMin}
-            onChange={(e) => form.set('wholesaleMin', e.target.value)}
+            label="Categoria (opcional)"
+            hint="Ex.: Roupas, Bebidas. Serve para a comissão e para os relatórios."
+            list="categorias-de-produto"
+            value={form.values.category}
+            onChange={(e) => form.set('category', e.target.value)}
+            error={form.errors.category}
           />
-        </div>
-        {product && canChangePrice && (
-          <PricingHelper
-            productId={product.id}
-            costCents={form.values.costCents}
-            onUse={(price) => {
-              form.set('priceCents', price);
-              setPriceKey((k) => k + 1);
-            }}
+          <datalist id="categorias-de-produto">
+            {(categories.data ?? []).map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField
+              label="Código interno (SKU)"
+              value={form.values.sku}
+              onChange={(e) => form.set('sku', e.target.value)}
+              error={form.errors.sku}
+            />
+            <SelectField
+              label="Unidade"
+              value={form.values.unit}
+              onChange={(e) => form.set('unit', e.target.value)}
+              options={(units.data ?? [{ code: 'UN', description: 'Unidade' }]).map((u) => ({
+                value: u.code,
+                label: `${u.code} — ${u.description}`,
+              }))}
+            />
+          </div>
+        </FormSection>
+        <FormSection title="Impostos">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField
+              label="NCM"
+              inputMode="numeric"
+              maxLength={8}
+              value={form.values.ncm}
+              onChange={(e) => form.set('ncm', e.target.value.replace(/\D/g, ''))}
+              error={form.errors.ncm}
+            />
+            <TextField
+              label="CEST"
+              inputMode="numeric"
+              maxLength={7}
+              value={form.values.cest}
+              onChange={(e) => form.set('cest', e.target.value.replace(/\D/g, ''))}
+              error={form.errors.cest}
+            />
+          </div>
+          <NcmCestHelp
+            ncm={form.values.ncm}
+            cest={form.values.cest}
+            onPickNcm={(code) => form.set('ncm', code)}
+            onPickCest={(code) => form.set('cest', code)}
           />
-        )}
-        {product && !canChangePrice && (
-          <p className="text-sm text-muted">Você pode editar o produto, mas não o preço.</p>
-        )}
-        <TextField
-          label="Código de barras"
-          hint="Separe vários códigos com vírgula."
-          inputMode="numeric"
-          value={form.values.barcodes}
-          onChange={(e) => form.set('barcodes', e.target.value)}
-          error={Object.entries(form.errors).find(([k]) => k.startsWith('barcodes'))?.[1]}
-        />
-        <TextField
-          label="Categoria (opcional)"
-          hint="Ex.: Roupas, Bebidas. Serve para a comissão e para os relatórios."
-          list="categorias-de-produto"
-          value={form.values.category}
-          onChange={(e) => form.set('category', e.target.value)}
-          error={form.errors.category}
-        />
-        <datalist id="categorias-de-produto">
-          {(categories.data ?? []).map((c) => (
-            <option key={c} value={c} />
-          ))}
-        </datalist>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <TextField
-            label="Código interno (SKU)"
-            value={form.values.sku}
-            onChange={(e) => form.set('sku', e.target.value)}
-            error={form.errors.sku}
+          <StPautaPicker
+            uf={companies.data?.[0]?.uf ?? null}
+            cest={form.values.cest}
+            value={stPauta}
+            onChange={setStPauta}
           />
+          <StNetLoadClassPicker
+            uf={companies.data?.[0]?.uf ?? null}
+            cnae={companies.data?.[0]?.cnae ?? null}
+            cest={form.values.cest}
+            value={stNetLoadClass}
+            onChange={setStNetLoadClass}
+          />
+          {product && (
+            <AiFiscalSuggestionPanel
+              productId={product.id}
+              onApplied={(v) => {
+                form.set('ncm', v.ncm ?? form.values.ncm);
+                if (v.ncm) form.set('cest', v.cest ?? '');
+                if (v.fiscalProfileId) form.set('fiscalProfileId', v.fiscalProfileId);
+              }}
+            />
+          )}
           <SelectField
-            label="Unidade"
-            value={form.values.unit}
-            onChange={(e) => form.set('unit', e.target.value)}
-            options={(units.data ?? [{ code: 'UN', description: 'Unidade' }]).map((u) => ({
-              value: u.code,
-              label: `${u.code} — ${u.description}`,
-            }))}
+            label="Perfil fiscal"
+            hint="Como o produto é tributado. Os perfis ficam em Perfis fiscais."
+            value={form.values.fiscalProfileId}
+            onChange={(e) => form.set('fiscalProfileId', e.target.value)}
+            options={[
+              { value: '', label: 'Sem perfil' },
+              ...(profiles.data ?? []).map((p) => ({ value: p.id, label: p.name })),
+            ]}
           />
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <TextField
-            label="NCM"
-            inputMode="numeric"
-            maxLength={8}
-            value={form.values.ncm}
-            onChange={(e) => form.set('ncm', e.target.value.replace(/\D/g, ''))}
-            error={form.errors.ncm}
-          />
-          <TextField
-            label="CEST"
-            inputMode="numeric"
-            maxLength={7}
-            value={form.values.cest}
-            onChange={(e) => form.set('cest', e.target.value.replace(/\D/g, ''))}
-            error={form.errors.cest}
-          />
-        </div>
-        <NcmCestHelp
-          ncm={form.values.ncm}
-          cest={form.values.cest}
-          onPickNcm={(code) => form.set('ncm', code)}
-          onPickCest={(code) => form.set('cest', code)}
-        />
-        <StPautaPicker
-          uf={companies.data?.[0]?.uf ?? null}
-          cest={form.values.cest}
-          value={stPauta}
-          onChange={setStPauta}
-        />
-        <StNetLoadClassPicker
-          uf={companies.data?.[0]?.uf ?? null}
-          cnae={companies.data?.[0]?.cnae ?? null}
-          cest={form.values.cest}
-          value={stNetLoadClass}
-          onChange={setStNetLoadClass}
-        />
-        {product && (
-          <AiFiscalSuggestionPanel
-            productId={product.id}
-            onApplied={(v) => {
-              form.set('ncm', v.ncm ?? form.values.ncm);
-              if (v.ncm) form.set('cest', v.cest ?? '');
-              if (v.fiscalProfileId) form.set('fiscalProfileId', v.fiscalProfileId);
+        </FormSection>
+        <FormSection title="Como o produto é vendido">
+          <Checkbox
+            label="Vendido por peso"
+            hint="Lido na balança ou pela etiqueta de peso."
+            checked={form.values.isWeighable}
+            onChange={(v) => {
+              form.set('isWeighable', v);
+              // Weighed items are sold by the kilo; switching back restores units.
+              if (v && form.values.unit === 'UN') form.set('unit', 'KG');
+              if (!v && form.values.unit === 'KG') form.set('unit', 'UN');
             }}
           />
-        )}
-        <SelectField
-          label="Perfil fiscal"
-          hint="Como o produto é tributado. Os perfis ficam em Perfis fiscais."
-          value={form.values.fiscalProfileId}
-          onChange={(e) => form.set('fiscalProfileId', e.target.value)}
-          options={[
-            { value: '', label: 'Sem perfil' },
-            ...(profiles.data ?? []).map((p) => ({ value: p.id, label: p.name })),
-          ]}
-        />
-        <Checkbox
-          label="Vendido por peso"
-          hint="Lido na balança ou pela etiqueta de peso."
-          checked={form.values.isWeighable}
-          onChange={(v) => {
-            form.set('isWeighable', v);
-            // Weighed items are sold by the kilo; switching back restores units.
-            if (v && form.values.unit === 'UN') form.set('unit', 'KG');
-            if (!v && form.values.unit === 'KG') form.set('unit', 'UN');
-          }}
-        />
-        <Checkbox
-          label="Controla lote e validade"
-          hint="A venda sai do lote que vence primeiro, e a tela Lote e validade avisa o que está vencendo."
-          checked={form.values.tracksLot}
-          onChange={(v) => form.set('tracksLot', v)}
-        />
-        <Checkbox
-          label="Preparado na cozinha"
-          hint="Quando lançado numa comanda, aparece na tela da Cozinha para preparar."
-          checked={form.values.kitchen}
-          onChange={(v) => form.set('kitchen', v)}
-        />
-        <Checkbox
-          label="Insumo da ficha técnica"
-          hint="Ex.: farinha, queijo. Entra na composição dos pratos e baixa do estoque com eles, mas não aparece no caixa."
-          checked={form.values.ingredient}
-          onChange={(v) => form.set('ingredient', v)}
-        />
-        <KitEditor
-          productId={product?.id ?? null}
-          value={components}
-          onChange={setComponents}
-          priceCents={form.values.priceCents}
-        />
-        <Checkbox
-          label="Ativo"
-          hint="Produtos inativos não aparecem no caixa."
-          checked={form.values.active}
-          onChange={(v) => form.set('active', v)}
-        />
-        <div className="flex gap-2 pt-2">
-          <Button type="submit" loading={form.submitting}>
+          <Checkbox
+            label="Controla lote e validade"
+            hint="A venda sai do lote que vence primeiro, e a tela Lote e validade avisa o que está vencendo."
+            checked={form.values.tracksLot}
+            onChange={(v) => form.set('tracksLot', v)}
+          />
+          <Checkbox
+            label="Preparado na cozinha"
+            hint="Quando lançado numa comanda, aparece na tela da Cozinha para preparar."
+            checked={form.values.kitchen}
+            onChange={(v) => form.set('kitchen', v)}
+          />
+          <Checkbox
+            label="Insumo da ficha técnica"
+            hint="Ex.: farinha, queijo. Entra na composição dos pratos e baixa do estoque com eles, mas não aparece no caixa."
+            checked={form.values.ingredient}
+            onChange={(v) => form.set('ingredient', v)}
+          />
+          <KitEditor
+            productId={product?.id ?? null}
+            value={components}
+            onChange={setComponents}
+            priceCents={form.values.priceCents}
+          />
+          <Checkbox
+            label="Ativo"
+            hint="Produtos inativos não aparecem no caixa."
+            checked={form.values.active}
+            onChange={(v) => form.set('active', v)}
+          />
+        </FormSection>
+        {/* Salvar sempre à vista, grudado no pé da gaveta, por mais longo que seja o cadastro. */}
+        <div className="sticky -bottom-5 z-10 -mx-5 -mb-5 flex gap-2 border-t border-border bg-surface px-5 py-3">
+          <Button type="submit" size="lg" loading={form.submitting} className="flex-1 sm:flex-none">
             Salvar
           </Button>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" size="lg" onClick={onClose}>
             Cancelar
           </Button>
         </div>

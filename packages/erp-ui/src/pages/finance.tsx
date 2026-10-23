@@ -12,17 +12,27 @@ import {
   Alert,
   Badge,
   Button,
-  Card,
   DataTable,
   Drawer,
   EmptyState,
+  FilterChips,
   MoneyField,
   PageHeader,
   SelectField,
+  StatCard,
+  StatGrid,
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  CalendarCheck,
+  HandCoins,
+  Plus,
+  TriangleAlert,
+  Wallet,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useApp, useCan } from '../context';
 
@@ -61,9 +71,12 @@ export function FinancePage() {
       <PageHeader
         title="Contas a pagar e receber"
         description="O que vence, o que já foi pago e o que está atrasado."
+        icon={<Wallet />}
+        tone="yellow"
         actions={
           canWrite && (
             <Button
+              size="lg"
               icon={<Plus className="size-5" aria-hidden />}
               onClick={() => setEditing('new')}
             >
@@ -73,42 +86,60 @@ export function FinancePage() {
         }
       />
       {s && (
-        <div className="mb-6 grid gap-4 sm:grid-cols-2">
-          {(['payable', 'receivable'] as const).map((k) => (
-            <Card key={k}>
-              <h2 className="font-bold">{KIND_LABEL[k]}</h2>
-              <p className="text-2xl font-bold tabular-nums" data-testid={`open-${k}`}>
-                {brl(s[k].openCents)}
-              </p>
-              <p className="text-sm text-muted">
-                Vence em 7 dias: {brl(s[k].dueNext7Cents)}
-                {s[k].overdueCents > 0 && (
-                  <span className="ml-2 font-semibold text-danger">
-                    Vencido: {brl(s[k].overdueCents)}
-                  </span>
-                )}
-              </p>
-            </Card>
-          ))}
-        </div>
+        <StatGrid label="Resumo das contas">
+          <StatCard
+            label="A pagar"
+            tone="orange"
+            icon={<ArrowUpRight />}
+            value={brl(s.payable.openCents)}
+            valueTestId="open-payable"
+            hint={<Next7 cents={s.payable.dueNext7Cents} />}
+          />
+          <StatCard
+            label="Vencido a pagar"
+            tone={s.payable.overdueCents > 0 ? 'red' : 'green'}
+            icon={<TriangleAlert />}
+            value={brl(s.payable.overdueCents)}
+            hint={s.payable.overdueCents > 0 ? 'Já passou do vencimento.' : 'Nada atrasado.'}
+          />
+          <StatCard
+            label="A receber"
+            tone="green"
+            icon={<ArrowDownLeft />}
+            value={brl(s.receivable.openCents)}
+            valueTestId="open-receivable"
+            hint={<Next7 cents={s.receivable.dueNext7Cents} />}
+          />
+          <StatCard
+            label="Atrasado a receber"
+            tone={s.receivable.overdueCents > 0 ? 'red' : 'blue'}
+            icon={<HandCoins />}
+            value={brl(s.receivable.overdueCents)}
+            hint={
+              s.receivable.overdueCents > 0
+                ? 'Vale lembrar quem está devendo.'
+                : 'Ninguém atrasado.'
+            }
+          />
+        </StatGrid>
       )}
-      <div className="mb-4 flex flex-wrap gap-4">
-        <SelectField
+      <div className="mb-5 flex flex-wrap gap-x-8 gap-y-4">
+        <FilterChips
           label="Tipo"
           value={kind}
-          onChange={(e) => setKind(e.target.value as Kind)}
+          onChange={setKind}
           options={[
             { value: 'payable', label: 'Contas a pagar' },
             { value: 'receivable', label: 'Contas a receber' },
           ]}
         />
-        <SelectField
+        <FilterChips
           label="Situação"
           value={status}
-          onChange={(e) => setStatus(e.target.value as typeof status)}
+          onChange={setStatus}
           options={[
             { value: 'open', label: 'Em aberto' },
-            { value: 'paid', label: 'Pagas' },
+            { value: 'paid', label: kind === 'payable' ? 'Pagas' : 'Recebidas' },
             { value: 'cancelled', label: 'Canceladas' },
             { value: '', label: 'Todas' },
           ]}
@@ -116,8 +147,26 @@ export function FinancePage() {
       </div>
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
       {list.data && list.data.length === 0 ? (
-        <EmptyState title="Nada por aqui">
-          Lance as contas para acompanhar os vencimentos.
+        <EmptyState
+          title={
+            status === 'open'
+              ? `Nenhuma conta ${KIND_LABEL[kind].toLowerCase()} em aberto`
+              : 'Nada por aqui'
+          }
+          icon={<CalendarCheck />}
+          tone={kind === 'payable' ? 'orange' : 'green'}
+          action={
+            canWrite && (
+              <Button
+                icon={<Plus className="size-5" aria-hidden />}
+                onClick={() => setEditing('new')}
+              >
+                Lançar a primeira conta
+              </Button>
+            )
+          }
+        >
+          Lance as contas para acompanhar os vencimentos e não perder nenhum prazo.
         </EmptyState>
       ) : (
         list.data && (
@@ -125,32 +174,40 @@ export function FinancePage() {
             caption={kind === 'payable' ? 'Contas a pagar' : 'Contas a receber'}
             rows={list.data}
             onRowClick={setEditing}
+            card={(e) => (
+              <>
+                <span className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span>
+                    <span className="font-bold">{e.description}</span>
+                    {e.installments > 1 && ` (${e.installment}/${e.installments})`}
+                  </span>
+                  {e.partyName && <span className="text-sm text-muted">{e.partyName}</span>}
+                  <span className="text-sm text-muted">Vence em {day(e.dueDate)}</span>
+                </span>
+                <span className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="text-lg font-extrabold tabular-nums">{brl(e.amountCents)}</span>
+                  <EntryStatus entry={e} />
+                </span>
+              </>
+            )}
             columns={[
               { header: 'Vencimento', cell: (e) => day(e.dueDate) },
               {
                 header: 'Descrição',
                 cell: (e) => (
                   <span>
-                    <span className="font-semibold">{e.description}</span>
+                    <span className="font-bold">{e.description}</span>
                     {e.installments > 1 && ` (${e.installment}/${e.installments})`}
                     {e.partyName && <span className="block text-sm text-muted">{e.partyName}</span>}
                   </span>
                 ),
               },
-              { header: 'Valor', align: 'right', cell: (e) => brl(e.amountCents) },
               {
-                header: 'Situação',
-                cell: (e) =>
-                  e.status === 'paid' ? (
-                    <Badge tone="success">Paga em {e.paidAt ? day(e.paidAt) : ''}</Badge>
-                  ) : e.status === 'cancelled' ? (
-                    <Badge tone="neutral">Cancelada</Badge>
-                  ) : e.overdue ? (
-                    <Badge tone="danger">Vencida</Badge>
-                  ) : (
-                    <Badge tone="warning">Em aberto</Badge>
-                  ),
+                header: 'Valor',
+                align: 'right',
+                cell: (e) => <span className="text-lg font-extrabold">{brl(e.amountCents)}</span>,
               },
+              { header: 'Situação', cell: (e) => <EntryStatus entry={e} /> },
             ]}
           />
         )
@@ -161,6 +218,28 @@ export function FinancePage() {
       )}
     </>
   );
+}
+
+/** "Vence em 7 dias: R$ 150,00", sem o valor quebrar no meio no celular. */
+function Next7({ cents: value }: { cents: number }) {
+  return (
+    <>
+      Vence em 7 dias: <span className="whitespace-nowrap">{brl(value)}</span>
+    </>
+  );
+}
+
+function EntryStatus({ entry: e }: { entry: FinancialEntryView }) {
+  if (e.status === 'paid') {
+    return (
+      <Badge tone="success">
+        {e.kind === 'payable' ? 'Paga' : 'Recebida'} em {e.paidAt ? day(e.paidAt) : ''}
+      </Badge>
+    );
+  }
+  if (e.status === 'cancelled') return <Badge tone="neutral">Cancelada</Badge>;
+  if (e.overdue) return <Badge tone="danger">Vencida</Badge>;
+  return <Badge tone="warning">Em aberto</Badge>;
 }
 
 function useRefresh() {

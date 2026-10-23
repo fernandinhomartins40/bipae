@@ -1,5 +1,22 @@
 # Changelog
 
+## [F8-16 Retaguarda com o visual novo] — 23/10/2026
+
+### Alterado
+- **Produtos, Inventário, Contas a pagar e receber e Relatórios de vendas com o visual do Início e do caixa:** cabeçalho com ícone colorido e a ação principal grande ("Novo produto", "Nova conta", "Começar contagem"; nos relatórios, CSV, XLSX e PDF).
+- **Resumos em cartões coloridos no topo**, só com números que o sistema já tem: no Financeiro, A pagar, Vencido a pagar, A receber e Atrasado a receber; no Inventário, Contagens abertas, Estoque negativo, Vencendo em 30 dias e Vencidos; nos Relatórios, Vendas, Receita e Ticket médio.
+- **Filtros à vista em chips** no lugar das listas suspensas: Tipo e Situação no Financeiro; Período (Hoje, Últimos 7 dias, Este mês, Mês passado) e Agrupar por nos Relatórios; Todas, Abertas e Fechadas no Inventário.
+- **Listas:** no computador, a tabela ficou mais arejada, com o nome e o valor em destaque; no celular, cada linha vira um cartão, sem rolar para o lado.
+- **Estados vazios simpáticos e com o próximo passo:** "Cadastrar o primeiro produto", "Lançar a primeira conta", "Limpar a busca".
+- **Cadastro de produto em blocos** (O básico, Atacado e margem, Códigos e categoria, Impostos, Como o produto é vendido), com Salvar e Cancelar sempre à vista no pé da gaveta.
+- Contas a receber pagas aparecem como "Recebida em", e não "Paga em".
+
+### Corrigido
+- No celular, o topo fixo do app cobria o título e o botão de fechar das gavetas.
+
+### Sem mudança
+- Regras, rotas da API, permissões e textos fiscais continuam iguais. Tudo com as cores do tema (claro, escuro e alto contraste) e o axe sem violações.
+
 ## [F3-26.d.MA.b ST do Maranhão: demais anexos] — 23/10/2026
 
 ### Adicionado

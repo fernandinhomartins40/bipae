@@ -6,7 +6,12 @@ import {
   Button,
   DataTable,
   DEFAULT_DISPLAY,
+  EmptyState,
+  FilterChips,
   MoneyField,
+  NARROW_QUERY,
+  StatCard,
+  StatGrid,
   parseDisplayPreferences,
   TaxIdField,
   TextField,
@@ -70,6 +75,94 @@ describe('data table', () => {
     screen.getByText('Arroz').closest('tr')!.focus();
     await userEvent.keyboard('{Enter}');
     expect(onRowClick).toHaveBeenCalledWith({ id: '1', name: 'Arroz' });
+  });
+});
+
+describe('visual da retaguarda (F8-16)', () => {
+  function fakeScreen(narrow: boolean) {
+    vi.stubGlobal(
+      'matchMedia',
+      (query: string) =>
+        ({
+          matches: narrow && query === NARROW_QUERY,
+          media: query,
+          addEventListener: () => {},
+          removeEventListener: () => {},
+        }) as unknown as MediaQueryList,
+    );
+  }
+
+  it('no celular a tabela vira cartões que abrem a linha ao toque', async () => {
+    fakeScreen(true);
+    const onRowClick = vi.fn();
+    render(
+      <DataTable
+        caption="Produtos"
+        rows={[{ id: '1', name: 'Arroz' }]}
+        columns={[{ header: 'Nome', cell: (r) => r.name }]}
+        onRowClick={onRowClick}
+        card={(r) => <span>{r.name} no cartão</span>}
+      />,
+    );
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    expect(screen.getByRole('list', { name: 'Produtos' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Arroz no cartão' }));
+    expect(onRowClick).toHaveBeenCalledWith({ id: '1', name: 'Arroz' });
+    vi.unstubAllGlobals();
+  });
+
+  it('no computador continua a tabela, mesmo com cartão definido', () => {
+    fakeScreen(false);
+    render(
+      <DataTable
+        caption="Produtos"
+        rows={[{ id: '1', name: 'Arroz' }]}
+        columns={[{ header: 'Nome', cell: (r) => r.name }]}
+        card={(r) => <span>{r.name} no cartão</span>}
+      />,
+    );
+    expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.queryByText('Arroz no cartão')).not.toBeInTheDocument();
+    vi.unstubAllGlobals();
+  });
+
+  it('filtro em chips mostra o escolhido como pressionado', async () => {
+    const onChange = vi.fn();
+    render(
+      <FilterChips
+        label="Situação"
+        value="open"
+        onChange={onChange}
+        options={[
+          { value: 'open', label: 'Em aberto', count: 3 },
+          { value: 'paid', label: 'Pagas' },
+        ]}
+      />,
+    );
+    const group = screen.getByRole('group', { name: 'Situação' });
+    expect(group).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Em aberto \(3\)$/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Pagas' }));
+    expect(onChange).toHaveBeenCalledWith('paid');
+  });
+
+  it('resumo em cartão e estado vazio com o próximo passo', () => {
+    render(
+      <>
+        <StatGrid label="Resumo">
+          <StatCard label="A pagar" value="R$ 10,00" valueTestId="valor" tone="orange" />
+        </StatGrid>
+        <EmptyState title="Nenhum produto ainda" action={<Button>Cadastrar</Button>}>
+          Cadastre o primeiro.
+        </EmptyState>
+      </>,
+    );
+    expect(screen.getByRole('list', { name: 'Resumo' })).toHaveTextContent('A pagar');
+    expect(screen.getByTestId('valor')).toHaveTextContent('R$ 10,00');
+    expect(screen.getByRole('button', { name: 'Cadastrar' })).toBeInTheDocument();
   });
 });
 

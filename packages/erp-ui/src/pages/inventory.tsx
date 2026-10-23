@@ -5,11 +5,22 @@ import {
   Button,
   Card,
   EmptyState,
+  FilterChips,
   PageHeader,
   SelectField,
+  StatCard,
+  StatGrid,
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  CalendarClock,
+  ClipboardCheck,
+  ClipboardList,
+  PackageMinus,
+  ScanBarcode,
+  TriangleAlert,
+} from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useApp, useCan } from '../context';
 import { parseQuantity } from './purchase-orders';
@@ -43,6 +54,16 @@ export function InventoryPage() {
     queryKey: ['stores'],
     queryFn: () => api.get<{ id: string; name: string }[]>('/stores'),
   });
+  // Resumo do topo: só dados que a API já devolve (saldos e lotes perto da validade).
+  const stock = useQuery({
+    queryKey: ['stock'],
+    queryFn: () => api.get<{ productId: string; quantityMilli: number }[]>('/stock'),
+  });
+  const lots = useQuery({
+    queryKey: ['stock-lots', 'expiring', '30'],
+    queryFn: () => api.get<{ daysLeft: number | null }[]>('/stock/lots?days=30'),
+  });
+  const [filter, setFilter] = useState<'all' | 'open' | 'closed'>('all');
   const [openId, setOpenId] = useState<string | null>(null);
   const [storeId, setStoreId] = useState('');
   const [name, setName] = useState('');
@@ -66,16 +87,71 @@ export function InventoryPage() {
 
   if (openId) return <InventoryCount id={openId} onBack={() => setOpenId(null)} />;
 
-  const rows = list.data ?? [];
+  const all = list.data ?? [];
+  const openCount = all.filter((r) => r.status === 'open').length;
+  const rows = all.filter((r) => filter === 'all' || r.status === filter);
+  // Saldo de cada produto somando as lojas; só conta o que ficou abaixo de zero.
+  const totals = new Map<string, number>();
+  for (const s of stock.data ?? []) {
+    totals.set(s.productId, (totals.get(s.productId) ?? 0) + s.quantityMilli);
+  }
+  const negative = [...totals.values()].filter((q) => q < 0).length;
+  const lotList = lots.data ?? [];
+  const expired = lotList.filter((l) => l.daysLeft !== null && l.daysLeft < 0).length;
+  const expiring = lotList.filter((l) => l.daysLeft !== null && l.daysLeft >= 0).length;
   return (
     <>
       <PageHeader
         title="Inventário"
         description="Conte o estoque pelo celular: bipe cada produto ou digite o total da prateleira."
+        icon={<ClipboardCheck />}
+        tone="blue"
       />
+      {list.data && stock.data && lots.data && (
+        <StatGrid label="Resumo do estoque">
+          <StatCard
+            label="Contagens abertas"
+            tone="blue"
+            icon={<ClipboardList />}
+            value={openCount}
+            hint={openCount ? 'Feche quando terminar de contar.' : 'Nenhuma em andamento.'}
+          />
+          <StatCard
+            label="Estoque negativo"
+            tone={negative ? 'red' : 'green'}
+            icon={<PackageMinus />}
+            value={negative}
+            hint={negative ? 'Produto(s) abaixo de zero: vale contar.' : 'Nenhum produto.'}
+          />
+          <StatCard
+            label="Vencendo em 30 dias"
+            tone={expiring ? 'yellow' : 'green'}
+            icon={<CalendarClock />}
+            value={expiring}
+            hint={
+              expiring
+                ? 'Lote(s) perto da validade. Veja em Lote e validade.'
+                : 'Nada perto de vencer.'
+            }
+          />
+          <StatCard
+            label="Vencidos"
+            tone={expired ? 'red' : 'green'}
+            icon={<TriangleAlert />}
+            value={expired}
+            hint={expired ? 'Lote(s) para descartar ou trocar.' : 'Nenhum lote vencido.'}
+          />
+        </StatGrid>
+      )}
       {(error || list.error) && <Alert>{error ?? (list.error as Error).message}</Alert>}
       {canWrite && (
-        <Card className="mb-4 flex flex-col gap-3">
+        <section
+          aria-labelledby="nova-contagem"
+          className="mb-6 flex flex-col gap-4 rounded-2xl border border-transparent bg-tile-blue p-5 [[data-contrast=high]_&]:border-border"
+        >
+          <h2 id="nova-contagem" className="text-lg font-bold">
+            Começar uma contagem
+          </h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <SelectField
               label="Loja"
@@ -90,14 +166,38 @@ export function InventoryPage() {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <Button onClick={() => void start()} disabled={!store}>
+          <Button
+            size="lg"
+            icon={<ScanBarcode className="size-5" aria-hidden />}
+            onClick={() => void start()}
+            disabled={!store}
+            className="sm:self-start"
+          >
             Começar contagem
           </Button>
-        </Card>
+        </section>
       )}
-      {list.data && rows.length === 0 ? (
-        <EmptyState title="Nenhuma contagem ainda">
-          Comece uma contagem e bipe os produtos com o celular.
+      {all.length > 0 && (
+        <div className="mb-4">
+          <FilterChips
+            label="Mostrar"
+            value={filter}
+            onChange={setFilter}
+            options={[
+              { value: 'all', label: 'Todas', count: all.length },
+              { value: 'open', label: 'Abertas', count: openCount },
+              { value: 'closed', label: 'Fechadas', count: all.length - openCount },
+            ]}
+          />
+        </div>
+      )}
+      {list.data && all.length === 0 ? (
+        <EmptyState title="Nenhuma contagem ainda" icon={<ScanBarcode />} tone="blue">
+          Comece uma contagem e bipe os produtos com o celular: cada bipe soma um. Bipou? Bipaê!
+        </EmptyState>
+      ) : list.data && rows.length === 0 ? (
+        <EmptyState title="Nada com esse filtro" icon={<ClipboardList />} tone="blue">
+          Escolha outro filtro acima para ver as outras contagens.
         </EmptyState>
       ) : (
         <ul className="flex flex-col gap-2" aria-label="Contagens">
@@ -105,13 +205,21 @@ export function InventoryPage() {
             <li key={r.id}>
               <button
                 type="button"
-                className="flex w-full items-center justify-between gap-3 rounded-ui border border-border p-3 text-left hover:bg-surface-2"
+                className="flex min-h-11 w-full items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4 text-left shadow-sm hover:bg-surface-2"
                 onClick={() => setOpenId(r.id)}
               >
-                <span>
-                  <span className="font-semibold">{r.name}</span>
-                  <span className="block text-sm text-muted">
-                    {r.storeName} · {when(r.createdAt)}
+                <span className="flex min-w-0 items-center gap-3">
+                  <span
+                    aria-hidden
+                    className="flex size-10 shrink-0 items-center justify-center rounded-full bg-tile-blue-strong text-tile-icon"
+                  >
+                    <ClipboardList className="size-5" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="font-bold">{r.name}</span>
+                    <span className="block text-sm text-muted">
+                      {r.storeName} · {when(r.createdAt)}
+                    </span>
                   </span>
                 </span>
                 {r.status === 'open' ? (
@@ -265,7 +373,7 @@ function InventoryCount({ id, onBack }: { id: string; onBack: () => void }) {
             return (
               <li
                 key={i.productId}
-                className="flex items-center justify-between gap-3 rounded-ui border border-border p-3"
+                className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm"
               >
                 <span>
                   <span className="font-semibold">{i.productName}</span>

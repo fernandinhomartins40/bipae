@@ -7,6 +7,7 @@ import {
   useEffect,
   useId,
   useState,
+  useSyncExternalStore,
   type ButtonHTMLAttributes,
   type InputHTMLAttributes,
   type ReactNode,
@@ -269,31 +270,257 @@ export function Checkbox({
 
 // ---------------------------------------------------------------- Layout
 
+/**
+ * Cores dos cartões (tokens --tile-* do tema, com versões para o escuro e o alto contraste): o
+ * fundo suave e a cor forte do círculo do ícone. As mesmas do Início e do caixa.
+ */
+export type TileTone = 'green' | 'orange' | 'blue' | 'purple' | 'yellow' | 'red';
+
+export const TILE_TONES: Record<TileTone, { tile: string; circle: string }> = {
+  green: { tile: 'bg-tile-green', circle: 'bg-tile-green-strong' },
+  orange: { tile: 'bg-tile-orange', circle: 'bg-tile-orange-strong' },
+  blue: { tile: 'bg-tile-blue', circle: 'bg-tile-blue-strong' },
+  purple: { tile: 'bg-tile-purple', circle: 'bg-tile-purple-strong' },
+  yellow: { tile: 'bg-tile-yellow', circle: 'bg-tile-yellow-strong' },
+  red: { tile: 'bg-tile-red', circle: 'bg-tile-red-strong' },
+};
+
+/** No alto contraste os cartões ficam sem cor de fundo: a borda é que separa um do outro. */
+const HIGH_CONTRAST_BORDER = 'border border-transparent [[data-contrast=high]_&]:border-border';
+
+/** Celular e tablet pequeno: abaixo do `md` (768px) as listas viram cartões. */
+export const NARROW_QUERY = '(max-width: 767.98px)';
+
+const mediaMatches = (query: string) =>
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    ? window.matchMedia(query).matches
+    : false;
+
+/** Acompanha uma media query. Sem `matchMedia` (testes, SSR), responde falso. */
+export function useMediaQuery(query: string): boolean {
+  return useSyncExternalStore(
+    (notify) => {
+      if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+        return () => {};
+      }
+      const list = window.matchMedia(query);
+      list.addEventListener?.('change', notify);
+      return () => list.removeEventListener?.('change', notify);
+    },
+    () => mediaMatches(query),
+    () => false,
+  );
+}
+
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <section className={cx('rounded-ui border border-border bg-surface p-5 shadow-sm', className)}>
+    <section className={cx('rounded-2xl border border-border bg-surface p-5 shadow-sm', className)}>
       {children}
     </section>
   );
 }
 
+/** Bloco de um formulário longo ("O básico", "Impostos"...), para a pessoa achar cada campo. */
+export function FormSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
+  const id = useId();
+  return (
+    <section
+      aria-labelledby={id}
+      className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-4"
+    >
+      <div>
+        <h3 id={id} className="text-base font-bold">
+          {title}
+        </h3>
+        {description && <p className="text-sm text-muted">{description}</p>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/**
+ * Cabeçalho da tela: título, uma frase do que se faz ali e a ação principal à direita (no
+ * celular, embaixo e na largura toda). O ícone, quando vem, aparece num quadrado colorido.
+ */
 export function PageHeader({
   title,
   description,
   actions,
+  icon,
+  tone = 'green',
 }: {
   title: string;
   description?: string;
   actions?: ReactNode;
+  icon?: ReactNode;
+  tone?: TileTone;
 }) {
   return (
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-        {description && <p className="mt-1 text-muted">{description}</p>}
+    <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="flex min-w-0 items-center gap-4">
+        {icon && (
+          <span
+            aria-hidden
+            className={cx(
+              'hidden size-14 shrink-0 items-center justify-center rounded-2xl text-tile-icon shadow-sm sm:flex [&>svg]:size-7',
+              TILE_TONES[tone].circle,
+            )}
+          >
+            {icon}
+          </span>
+        )}
+        <div className="min-w-0">
+          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h1>
+          {description && <p className="mt-1 text-muted">{description}</p>}
+        </div>
       </div>
-      {actions && <div className="flex gap-2">{actions}</div>}
+      {actions && (
+        <div className="flex flex-wrap gap-2 max-sm:w-full max-sm:[&>*]:flex-1">{actions}</div>
+      )}
     </header>
+  );
+}
+
+/** Fileira de resumos no topo da tela: 2 por linha no celular, 3 ou 4 na tela larga. */
+export function StatGrid({
+  children,
+  label,
+  columns = 4,
+}: {
+  children: ReactNode;
+  label: string;
+  columns?: 3 | 4;
+}) {
+  return (
+    <ul
+      aria-label={label}
+      className={cx(
+        // No celular, um cartão que sobra sozinho na última linha ocupa a largura toda.
+        'mb-6 grid grid-cols-2 gap-3 max-sm:[&>li:last-child:nth-child(odd)]:col-span-2',
+        columns === 3 ? 'sm:grid-cols-3' : 'lg:grid-cols-4',
+      )}
+    >
+      {children}
+    </ul>
+  );
+}
+
+/**
+ * Um resumo em cartão colorido ("A pagar", "Vencido"...). Só mostra número que a API devolveu:
+ * quem chama só monta o cartão depois que o dado chega.
+ */
+export function StatCard({
+  label,
+  value,
+  hint,
+  icon,
+  tone = 'green',
+  valueTestId,
+}: {
+  label: string;
+  value: ReactNode;
+  hint?: ReactNode;
+  icon?: ReactNode;
+  tone?: TileTone;
+  valueTestId?: string;
+}) {
+  return (
+    <li
+      className={cx(
+        'flex min-w-0 flex-col gap-2 rounded-2xl p-4',
+        HIGH_CONTRAST_BORDER,
+        TILE_TONES[tone].tile,
+      )}
+    >
+      <span className="flex items-center gap-2">
+        {icon && (
+          <span
+            aria-hidden
+            className={cx(
+              'flex size-9 shrink-0 items-center justify-center rounded-full text-tile-icon [&>svg]:size-5',
+              TILE_TONES[tone].circle,
+            )}
+          >
+            {icon}
+          </span>
+        )}
+        <span className="text-sm leading-tight font-semibold">{label}</span>
+      </span>
+      <span
+        className="truncate text-xl font-extrabold tabular-nums sm:text-2xl"
+        data-testid={valueTestId}
+      >
+        {value}
+      </span>
+      {hint && <span className="text-sm leading-snug text-muted">{hint}</span>}
+    </li>
+  );
+}
+
+/**
+ * Filtro à vista em chips (no lugar de um menu escondido): um toque escolhe. O rótulo fica
+ * visível e dá nome ao grupo para o leitor de tela; o chip escolhido fica "pressionado".
+ */
+export function FilterChips<T extends string>({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: T;
+  onChange: (value: T) => void;
+  options: { value: T; label: string; count?: number }[];
+}) {
+  const id = useId();
+  return (
+    <div role="group" aria-labelledby={id} className="flex flex-col gap-2">
+      <span id={id} className="text-sm font-semibold text-muted">
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-2">
+        {options.map((o) => {
+          const selected = o.value === value;
+          return (
+            <button
+              key={o.value}
+              type="button"
+              aria-pressed={selected}
+              // O leitor de tela ouve "Abertas (2)", e não "Abertas2".
+              aria-label={o.count === undefined ? undefined : `${o.label} (${o.count})`}
+              onClick={() => onChange(o.value)}
+              className={cx(
+                'inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors',
+                selected
+                  ? 'border-primary bg-primary text-primary-contrast'
+                  : 'border-border bg-surface text-text hover:bg-surface-2',
+              )}
+            >
+              {o.label}
+              {o.count !== undefined && (
+                <span
+                  className={cx(
+                    'rounded-full px-2 text-xs tabular-nums',
+                    selected ? 'bg-primary-contrast text-primary' : 'bg-surface-2 text-text',
+                  )}
+                >
+                  {o.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -344,11 +571,39 @@ export function Alert({
   );
 }
 
-export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
+/**
+ * Lista vazia com o próximo passo: ícone num círculo colorido, o título, uma frase e a ação
+ * ("Cadastre seu primeiro produto").
+ */
+export function EmptyState({
+  title,
+  children,
+  icon,
+  tone = 'green',
+  action,
+}: {
+  title: string;
+  children?: ReactNode;
+  icon?: ReactNode;
+  tone?: TileTone;
+  action?: ReactNode;
+}) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-ui border border-dashed border-border p-10 text-center">
-      <p className="text-lg font-semibold">{title}</p>
-      {children && <div className="text-muted">{children}</div>}
+    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-surface px-6 py-10 text-center">
+      {icon && (
+        <span
+          aria-hidden
+          className={cx(
+            'flex size-16 items-center justify-center rounded-full text-tile-icon shadow-sm [&>svg]:size-8',
+            TILE_TONES[tone].circle,
+          )}
+        >
+          {icon}
+        </span>
+      )}
+      <p className="text-lg font-bold">{title}</p>
+      {children && <div className="max-w-md text-muted">{children}</div>}
+      {action && <div className="mt-2 flex flex-wrap justify-center gap-2">{action}</div>}
     </div>
   );
 }
@@ -364,23 +619,53 @@ export function DataTable<T extends { id: string }>({
   columns,
   onRowClick,
   caption,
+  card,
 }: {
   rows: T[];
   columns: Column<T>[];
   onRowClick?: (row: T) => void;
   caption: string;
+  /**
+   * Conteúdo do cartão de cada linha no celular (abaixo de 768px): a lista vira cartões, sem
+   * rolagem para o lado. Use só elementos de texto (`span`), porque o cartão pode ser um botão.
+   */
+  card?: (row: T) => ReactNode;
 }) {
+  const narrow = useMediaQuery(NARROW_QUERY);
+  if (card && narrow) {
+    return (
+      <ul aria-label={caption} className="flex flex-col gap-2">
+        {rows.map((row) => (
+          <li key={row.id}>
+            {onRowClick ? (
+              <button
+                type="button"
+                onClick={() => onRowClick(row)}
+                className="flex min-h-11 w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-left shadow-sm hover:bg-surface-2"
+              >
+                {card(row)}
+              </button>
+            ) : (
+              <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm">
+                {card(row)}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return (
-    <div className="overflow-x-auto rounded-ui border border-border bg-surface">
+    <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-sm">
       <table className="w-full border-collapse text-left">
         <caption className="sr-only">{caption}</caption>
-        <thead className="bg-surface-2 text-sm text-muted">
+        <thead className="bg-surface-2 text-xs tracking-wide text-muted uppercase">
           <tr>
             {columns.map((c) => (
               <th
                 key={c.header}
                 scope="col"
-                className={cx('px-4 py-3 font-semibold', c.align === 'right' && 'text-right')}
+                className={cx('px-4 py-3 font-bold', c.align === 'right' && 'text-right')}
               >
                 {c.header}
               </th>
@@ -408,7 +693,7 @@ export function DataTable<T extends { id: string }>({
               {columns.map((c) => (
                 <td
                   key={c.header}
-                  className={cx('px-4 py-3', c.align === 'right' && 'text-right tabular-nums')}
+                  className={cx('px-4 py-3.5', c.align === 'right' && 'text-right tabular-nums')}
                 >
                   {c.cell(row)}
                 </td>
@@ -459,10 +744,11 @@ export function Drawer({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 bg-black/40" />
+        {/* z-40/z-50 como no Modal: no celular, o topo fixo do app não cobre o título. */}
+        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/40" />
         <DialogPrimitive.Content
           aria-describedby={undefined}
-          className="fixed inset-y-0 right-0 flex w-full max-w-xl flex-col bg-surface shadow-xl"
+          className="fixed inset-y-0 right-0 z-50 flex w-full max-w-xl flex-col bg-surface shadow-xl"
         >
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
             <DialogPrimitive.Title className="text-xl font-bold">{title}</DialogPrimitive.Title>

@@ -36,6 +36,9 @@
   --tile-purple-strong: #7c3aed;
   --tile-yellow: #fff4d6;
   --tile-yellow-strong: #a16207;
+  /* Vermelho para o que pede atenção (vencido, negativo) nos resumos da retaguarda. */
+  --tile-red: #fdecea;
+  --tile-red-strong: #b42318;
   --tile-icon: #ffffff;
   --radius: 12px;
   color-scheme: light;
@@ -69,6 +72,8 @@
     --tile-purple-strong: #b794ff;
     --tile-yellow: #33290f;
     --tile-yellow-strong: #f5c542;
+    --tile-red: #3a1714;
+    --tile-red-strong: #ff7a6b;
     --tile-icon: #0e1411;
     color-scheme: dark;
   }
@@ -101,6 +106,8 @@
   --tile-purple-strong: #b794ff;
   --tile-yellow: #33290f;
   --tile-yellow-strong: #f5c542;
+  --tile-red: #3a1714;
+  --tile-red-strong: #ff7a6b;
   --tile-icon: #0e1411;
   color-scheme: dark;
 }
@@ -127,6 +134,8 @@
   --tile-purple-strong: #000000;
   --tile-yellow: var(--surface);
   --tile-yellow-strong: #000000;
+  --tile-red: var(--surface);
+  --tile-red-strong: #000000;
   --tile-icon: #ffffff;
 }
 :root[data-contrast='high'][data-theme='dark'] {
@@ -151,6 +160,8 @@
   --tile-purple-strong: #ffffff;
   --tile-yellow: var(--surface);
   --tile-yellow-strong: #ffffff;
+  --tile-red: var(--surface);
+  --tile-red-strong: #ffffff;
   --tile-icon: #000000;
 }
 
@@ -186,6 +197,8 @@
   --color-tile-purple-strong: var(--tile-purple-strong);
   --color-tile-yellow: var(--tile-yellow);
   --color-tile-yellow-strong: var(--tile-yellow-strong);
+  --color-tile-red: var(--tile-red);
+  --color-tile-red-strong: var(--tile-red-strong);
   --color-tile-icon: var(--tile-icon);
   --radius-ui: var(--radius);
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
