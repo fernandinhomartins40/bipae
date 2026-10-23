@@ -80,7 +80,10 @@ test('o caixa escolhe o vendedor pelo código e o relatório mostra as vendas de
   });
   await page.goto('/');
   await abrirNoMenu(page, 'Relatórios');
-  await page.getByLabel('Agrupar por').selectOption({ label: 'Vendedor' });
+  await page
+    .getByRole('group', { name: 'Agrupar por' })
+    .getByRole('button', { name: 'Vendedor', exact: true })
+    .click();
   await expect(page.getByRole('row', { name: /Júlia Moraes/ })).toContainText('R$ 120,00');
 
   // Comissão: 5% sobre R$ 120,00 pagos.

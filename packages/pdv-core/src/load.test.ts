@@ -105,6 +105,7 @@ describe('carga do caixa com 100 mil produtos (F7-01)', () => {
     expect(await pdv.catalogSize()).toBe(TOTAL);
   });
 
+  // Os limites que valem são os p95 abaixo; o tempo total depende da máquina da CI.
   it('código de barras e busca por nome em menos de 100 ms (p95)', async () => {
     const byCode: number[] = [];
     for (let k = 0; k < 200; k++) {
@@ -134,7 +135,7 @@ describe('carga do caixa com 100 mil produtos (F7-01)', () => {
     );
     expect(p95(byCode)).toBeLessThan(100);
     expect(p95(byName)).toBeLessThan(100);
-  });
+  }, 60_000);
 
   it('venda de 20 itens em menos de 1 s (p95)', async () => {
     const sales: number[] = [];
@@ -155,5 +156,5 @@ describe('carga do caixa com 100 mil produtos (F7-01)', () => {
     }
     console.log(`F7-01 · venda de 20 itens p95 ${p95(sales).toFixed(1)} ms`);
     expect(p95(sales)).toBeLessThan(1000);
-  });
+  }, 60_000);
 });
