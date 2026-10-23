@@ -18,6 +18,7 @@ import {
   type PixTransport,
 } from './pix-api';
 import { pixPspClient, PSP_EXPIRES_SECONDS, type PixPspClient, type PspCharge } from './pix-psp';
+import { publicApiBase, webhookUrls } from './webhook-urls';
 
 /** Quanto tempo o QR do banco vale (o cliente paga na hora, no caixa). */
 const EXPIRES_SECONDS = 600;
@@ -35,7 +36,7 @@ type Settings = typeof paymentSettings.$inferSelect;
  * Cobranças Pix com QR dinâmico (F8-09): pela API Pix do banco (padrão do Banco Central) ou pela
  * API própria do parceiro (Mercado Pago, PagBank, Asaas; F8-09.c). O caixa pede, mostra o QR e
  * acompanha; o Bipaê consulta pelo ID até confirmar. O "pago" vem sempre da consulta, nunca de
- * algo que chega de fora.
+ * algo que chega de fora: o aviso do banco ou do parceiro (F8-09.c.2) só antecipa a consulta.
  */
 @Injectable()
 export class PixChargesService {
@@ -49,7 +50,12 @@ export class PixChargesService {
     @Inject(CONFIG) config: Config,
   ) {
     this.box = new SecretBox(config.SECRETS_KEY ?? config.JWT_SECRET);
+    // O PagBank recebe o endereço do aviso em cada pedido; só vale com https (F8-09.c.2).
+    const url = webhookUrls(publicApiBase(config), null).pagbankUrl;
+    this.pagbankNotificationUrl = url.startsWith('https://') ? url : null;
   }
+
+  private readonly pagbankNotificationUrl: string | null;
 
   private async settings(tx: Tx, storeId: string): Promise<Settings | undefined> {
     const [s] = await tx.select().from(paymentSettings).where(eq(paymentSettings.storeId, storeId));
@@ -114,6 +120,7 @@ export class PixChargesService {
         payerEmail: s.pixPspPayerEmail,
         payerTaxId: s.pixPspPayerTaxId,
         customerId: s.pixPspCustomerId,
+        notificationUrl: this.pagbankNotificationUrl,
       },
       this.transport,
     );
@@ -247,40 +254,65 @@ export class PixChargesService {
       if (row.checkedAt && now.getTime() - row.checkedAt.getTime() < CHECK_EVERY_MS) {
         return this.view(row);
       }
-      const s = await this.settings(tx, row.storeId);
-      if (row.provider !== 'pix_api') return this.checkPsp(tx, row, s, now);
-      const { client } = this.bank(s, row.storeId);
-      let cob: Cob;
-      try {
-        cob = await client.getCharge(txid);
-      } catch (error) {
-        // Banco fora do ar: segue pendente, o caixa pergunta de novo.
-        if (error instanceof PixUnavailableError) return this.view(row);
-        this.failure(error);
-      }
-      const paid = cob.status === 'CONCLUIDA' && (cob.pix?.length ?? 0) > 0;
-      const removed = cob.status.startsWith('REMOVIDA');
-      const expired =
-        !paid && now.getTime() - row.createdAt.getTime() > EXPIRES_SECONDS * 1000 + GRACE_MS;
-      return this.update(tx, row, {
-        checkedAt: now,
-        ...(paid && {
-          status: 'paid' as const,
-          paidAt: now,
-          endToEndId: cob.pix![0]!.endToEndId,
-        }),
-        ...(!paid &&
-          (removed || expired) && { status: 'expired' as const, message: EXPIRED_MESSAGE }),
-      });
+      return this.refresh(tx, row, now, false);
     });
   }
 
-  private async checkPsp(tx: Tx, row: Row, s: Settings | undefined, now: Date) {
+  /**
+   * Chegou um aviso do banco ou do parceiro (F8-09.c.2): consulta agora, sem esperar os 2
+   * segundos, com o tenant da cobrança. O aviso não confirma nada: só a consulta. Cobrança já
+   * resolvida fica como está (o aviso repetido não muda nada). Banco fora do ar vira erro, para a
+   * fila tentar de novo.
+   */
+  confirmFromWebhook(
+    tenantId: string,
+    txid: string,
+    now = new Date(),
+  ): Promise<PixChargeView | null> {
+    return withTenant(this.db, { tenantId }, async (tx) => {
+      const [row] = await tx.select().from(pixCharges).where(eq(pixCharges.txid, txid));
+      if (!row || row.status !== 'pending') return null;
+      return this.refresh(tx, row, now, true);
+    });
+  }
+
+  /** Pergunta ao banco ou ao parceiro; strict: erros sobem como vieram (para a fila). */
+  private async refresh(tx: Tx, row: Row, now: Date, strict: boolean): Promise<PixChargeView> {
+    const s = await this.settings(tx, row.storeId);
+    if (row.provider !== 'pix_api') return this.checkPsp(tx, row, s, now, strict);
+    const { client } = this.bank(s, row.storeId);
+    let cob: Cob;
+    try {
+      cob = await client.getCharge(row.txid);
+    } catch (error) {
+      if (strict) throw error;
+      // Banco fora do ar: segue pendente, o caixa pergunta de novo.
+      if (error instanceof PixUnavailableError) return this.view(row);
+      this.failure(error);
+    }
+    const paid = cob.status === 'CONCLUIDA' && (cob.pix?.length ?? 0) > 0;
+    const removed = cob.status.startsWith('REMOVIDA');
+    const expired =
+      !paid && now.getTime() - row.createdAt.getTime() > EXPIRES_SECONDS * 1000 + GRACE_MS;
+    return this.update(tx, row, {
+      checkedAt: now,
+      ...(paid && {
+        status: 'paid' as const,
+        paidAt: now,
+        endToEndId: cob.pix![0]!.endToEndId,
+      }),
+      ...(!paid &&
+        (removed || expired) && { status: 'expired' as const, message: EXPIRED_MESSAGE }),
+    });
+  }
+
+  private async checkPsp(tx: Tx, row: Row, s: Settings | undefined, now: Date, strict = false) {
     const client = this.psp(s, row.provider);
     let charge: PspCharge;
     try {
       charge = await client.get(row.externalId!);
     } catch (error) {
+      if (strict) throw error;
       // Parceiro fora do ar: segue pendente, o caixa pergunta de novo.
       if (error instanceof PixUnavailableError) return this.view(row);
       this.failure(error);

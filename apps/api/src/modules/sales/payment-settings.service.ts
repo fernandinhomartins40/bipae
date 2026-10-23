@@ -27,6 +27,7 @@ import { assertStore } from '../../common/stores';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import { paymentSettings, stores } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { newWebhookToken, publicApiBase, webhookUrls } from '../payments/webhook-urls';
 
 const DEFAULTS = { card: 'manual', pix: 'manual' } as const;
 
@@ -37,6 +38,7 @@ const DEFAULTS = { card: 'manual', pix: 'manual' } as const;
 @Injectable()
 export class PaymentSettingsService {
   private readonly box: SecretBox;
+  private readonly apiBase: string;
 
   constructor(
     @Inject(DB) private readonly db: Db,
@@ -44,14 +46,25 @@ export class PaymentSettingsService {
     @Inject(CONFIG) config: Config,
   ) {
     this.box = new SecretBox(config.SECRETS_KEY ?? config.JWT_SECRET);
+    this.apiBase = publicApiBase(config);
   }
 
-  private async row(tx: Tx, storeId: string): Promise<PaymentSettingsView> {
+  /**
+   * A configuração como a tela vê. reveal: mostra o segredo dos avisos (só para quem altera a
+   * loja; nunca vai para a auditoria).
+   */
+  private async row(tx: Tx, storeId: string, reveal = false): Promise<PaymentSettingsView> {
     const [row] = await tx
       .select()
       .from(paymentSettings)
       .where(eq(paymentSettings.storeId, storeId));
+    const token = reveal && row?.webhookTokenSealed ? this.box.open(row.webhookTokenSealed) : null;
     return {
+      webhook: {
+        ...webhookUrls(this.apiBase, token),
+        token,
+        hasMercadoPagoSecret: Boolean(row?.mpWebhookSecretSealed),
+      },
       storeId,
       card: row?.cardMode ?? DEFAULTS.card,
       pix: row?.pixMode ?? DEFAULTS.pix,
@@ -90,7 +103,7 @@ export class PaymentSettingsService {
     return withTenant(this.db, ctx, async (tx) => {
       const [store] = await tx.select({ id: stores.id }).from(stores).where(eq(stores.id, storeId));
       if (!store) throw notFound('Loja');
-      return this.row(tx, storeId);
+      return this.row(tx, storeId, ctx.permissions.includes('admin.stores'));
     });
   }
 
@@ -179,10 +192,21 @@ export class PaymentSettingsService {
           ...(token && { pixPspTokenSealed: this.box.seal(token) }),
         };
       }
+      // Avisos (F8-09.c.2): o segredo da loja nasce no primeiro salvamento; a assinatura do
+      // Mercado Pago em branco mantém a guardada.
+      const webhookValues = {
+        ...(!current?.webhookTokenSealed && {
+          webhookTokenSealed: this.box.seal(newWebhookToken()),
+        }),
+        ...(input.mpWebhookSecret && {
+          mpWebhookSecretSealed: this.box.seal(input.mpWebhookSecret),
+        }),
+      };
       const values = {
         ...apiValues,
         ...pointValues,
         ...pspValues,
+        ...webhookValues,
         cardMode: input.card,
         pixMode: input.pix,
         pixKey: input.pixKey ? (normalizePixKey(input.pixKey)?.key ?? null) : null,
@@ -201,7 +225,7 @@ export class PaymentSettingsService {
         entityId: storeId,
         data: { before, after },
       });
-      return after;
+      return this.row(tx, storeId, true);
     });
   }
 

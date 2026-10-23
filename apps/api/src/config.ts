@@ -57,6 +57,11 @@ const envSchema = z.object({
   /** Endereço público do aplicativo, para os links dos e-mails. */
   APP_PUBLIC_URL: z.string().default('http://localhost:5173'),
   /**
+   * Endereço público da API (sem o /v1), para os avisos do banco e dos parceiros de pagamento
+   * (F8-09.c.2). Sem ele, usa a origem do APP_PUBLIC_URL (a API atende em /v1 no mesmo domínio).
+   */
+  API_PUBLIC_URL: z.string().optional(),
+  /**
    * Assistente de IA (F6-07, ADR-0011): chave da API dos modelos Claude (item E13). Sem ela, o
    * assistente aparece como "falta configurar" e nada mais muda.
    */

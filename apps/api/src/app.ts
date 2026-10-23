@@ -127,6 +127,10 @@ import { CommissionController, CommissionService } from './modules/sales/commiss
 import { PixChargesController, PixChargesService } from './modules/payments/pix-charges.service';
 import { CardChargesController, CardChargesService } from './modules/payments/card-charges.service';
 import {
+  PaymentWebhooksController,
+  PaymentWebhooksService,
+} from './modules/payments/payment-webhooks';
+import {
   PaymentSettingsController,
   PaymentSettingsService,
 } from './modules/sales/payment-settings.service';
@@ -211,6 +215,7 @@ class AppModule {
         PaymentSettingsController,
         PixChargesController,
         CardChargesController,
+        PaymentWebhooksController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -287,6 +292,7 @@ class AppModule {
         PaymentSettingsService,
         PixChargesService,
         CardChargesService,
+        PaymentWebhooksService,
         InventoryService,
         TransferService,
         LotsService,

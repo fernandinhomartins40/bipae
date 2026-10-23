@@ -1354,6 +1354,9 @@ export const paymentSettings = pgTable('payment_settings', {
   pixPspPayerEmail: text('pix_psp_payer_email'),
   pixPspPayerTaxId: text('pix_psp_payer_tax_id'),
   pixPspCustomerId: text('pix_psp_customer_id'),
+  /** Avisos do banco e dos parceiros (F8-09.c.2); segredos selados. */
+  webhookTokenSealed: text('webhook_token_sealed'),
+  mpWebhookSecretSealed: text('mp_webhook_secret_sealed'),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
 

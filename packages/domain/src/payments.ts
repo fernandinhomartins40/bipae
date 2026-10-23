@@ -296,6 +296,11 @@ export const paymentSettingsInput = z
         customerId: z.string().trim().max(60).nullish(),
       })
       .nullish(),
+    /**
+     * Assinatura secreta dos avisos do Mercado Pago (F8-09.c.2), que o painel do Mercado Pago gera
+     * ao cadastrar o webhook. Em branco mantém a guardada.
+     */
+    mpWebhookSecret: z.string().trim().max(200).optional(),
   })
   .superRefine((v, ctx) => {
     if (v.card === 'mp_point' && !v.mpPoint) {
@@ -413,6 +418,20 @@ export interface PaymentSettingsView {
     payerTaxId: string | null;
     customerId: string | null;
   } | null;
+  /**
+   * Avisos (webhooks) do banco e dos parceiros (F8-09.c.2): os endereços para cadastrar no
+   * parceiro. O aviso só apressa a consulta; quem confirma o pagamento é sempre a consulta.
+   */
+  webhook: {
+    /** Endereço da API Pix do banco (o banco acrescenta /pix); null até salvar a loja. */
+    pixApiUrl: string | null;
+    mercadopagoUrl: string;
+    pagbankUrl: string;
+    asaasUrl: string;
+    /** Segredo da loja (authToken do Asaas); só para quem pode alterar a loja. */
+    token: string | null;
+    hasMercadoPagoSecret: boolean;
+  };
 }
 
 /** Cobrança Pix pela API do banco (F8-09), como o caixa acompanha. */

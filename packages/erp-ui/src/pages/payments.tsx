@@ -85,6 +85,7 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
     pspPayerEmail: settings.pixPsp?.payerEmail ?? '',
     pspPayerTaxId: settings.pixPsp?.payerTaxId ? formatTaxId(settings.pixPsp.payerTaxId) : '',
     pspCustomerId: settings.pixPsp?.customerId ?? '',
+    mpWebhookSecret: '',
   });
   const v = form.values;
   const [certName, setCertName] = useState<string | null>(null);
@@ -139,10 +140,12 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
         pspPayerEmail,
         pspPayerTaxId,
         pspCustomerId,
+        mpWebhookSecret,
         ...rest
       } = values;
       await api.put(`/stores/${settings.storeId}/payment-settings`, {
         ...rest,
+        ...(mpWebhookSecret && { mpWebhookSecret }),
         ...(values.card === 'mp_point' && {
           mpPoint: {
             terminalId: mpTerminalId,
@@ -426,6 +429,16 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
             )}
           </div>
         )}
+        <WebhookSetup
+          settings={settings}
+          pix={v.pix}
+          card={v.card}
+          provider={v.pspProvider}
+          canWrite={canWrite}
+          secret={v.mpWebhookSecret}
+          onSecret={(value) => form.set('mpWebhookSecret', value)}
+          secretError={form.errors.mpWebhookSecret}
+        />
         {(v.pix === 'static_qr' || v.pix === 'api' || v.pix === 'psp') && (
           <div className="flex flex-col gap-4 rounded-ui border border-border p-4">
             <TextField
@@ -470,6 +483,123 @@ function SettingsForm({ settings }: { settings: PaymentSettingsView }) {
         )}
       </form>
     </Card>
+  );
+}
+
+/** Um endereço ou segredo para copiar e colar no portal do parceiro. */
+function CopyLine({ label, value, testId }: { label: string; value: string; testId: string }) {
+  return (
+    <div className="flex flex-col gap-1 text-sm">
+      <span className="font-semibold">{label}</span>
+      <code
+        data-testid={testId}
+        className="break-all rounded-ui border border-border bg-surface px-2 py-1 font-mono text-xs"
+      >
+        {value}
+      </code>
+    </div>
+  );
+}
+
+/**
+ * Avisos automáticos (webhooks, F8-09.c.2): o endereço que a loja cadastra no banco ou no
+ * parceiro. O aviso só apressa a conferência; quem confirma o pagamento é sempre a consulta.
+ */
+function WebhookSetup({
+  settings,
+  pix,
+  card,
+  provider,
+  canWrite,
+  secret,
+  onSecret,
+  secretError,
+}: {
+  settings: PaymentSettingsView;
+  pix: PaymentSettingsView['pix'];
+  card: PaymentSettingsView['card'];
+  provider: PixPspProvider;
+  canWrite: boolean;
+  secret: string;
+  onSecret: (value: string) => void;
+  secretError?: string;
+}) {
+  const w = settings.webhook;
+  const bank = pix === 'api';
+  const mercadoPago = (pix === 'psp' && provider === 'mercadopago') || card === 'mp_point';
+  const pagbank = pix === 'psp' && provider === 'pagbank';
+  const asaas = pix === 'psp' && provider === 'asaas';
+  if (!bank && !mercadoPago && !pagbank && !asaas) return null;
+  const saveFirst = 'Salve os meios de pagamento para gerar o endereço desta loja.';
+  return (
+    <div className="flex flex-col gap-4 rounded-ui border border-border p-4">
+      <div>
+        <p className="font-semibold">Aviso automático de pagamento (webhook)</p>
+        <p className="text-sm text-muted">
+          Com o aviso, o caixa fica sabendo do pagamento na hora. O Bipaê sempre confere o pagamento
+          no {bank ? 'banco' : 'parceiro'} antes de confirmar; sem o aviso, ele confere sozinho a
+          cada poucos segundos.
+        </p>
+      </div>
+      {bank &&
+        (w.pixApiUrl ? (
+          <>
+            <CopyLine label="Endereço para o banco" value={w.pixApiUrl} testId="webhook-pix-api" />
+            <p className="text-sm text-muted">
+              Cadastre no portal do seu banco como webhook da chave Pix da loja (na API Pix é o PUT
+              /webhook/sua-chave). O banco acrescenta /pix sozinho. Se o banco pedir para validar o
+              certificado (mTLS), escolha a opção sem validação: o segredo já vai no endereço.
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-muted">{saveFirst}</p>
+        ))}
+      {mercadoPago && (
+        <>
+          <CopyLine
+            label="Endereço para o Mercado Pago"
+            value={w.mercadopagoUrl}
+            testId="webhook-mercadopago"
+          />
+          <p className="text-sm text-muted">
+            No painel do Mercado Pago, em Suas integrações, abra Webhooks, cole este endereço e
+            marque os eventos de Pagamentos{card === 'mp_point' ? ' e Order (Mercado Pago)' : ''}.
+            Depois copie a assinatura secreta que o Mercado Pago mostra e cole abaixo.
+          </p>
+          <TextField
+            label="Assinatura secreta do webhook"
+            type="password"
+            autoComplete="off"
+            placeholder={
+              settings.webhook.hasMercadoPagoSecret ? 'Guardada (deixe em branco para manter)' : ''
+            }
+            value={secret}
+            disabled={!canWrite}
+            onChange={(e) => onSecret(e.target.value)}
+            error={secretError}
+          />
+        </>
+      )}
+      {pagbank && (
+        <p className="text-sm text-muted">
+          Nada a fazer: o Bipaê manda o endereço do aviso junto com cada cobrança e confere a
+          assinatura com o token da conta.
+        </p>
+      )}
+      {asaas &&
+        (w.token ? (
+          <>
+            <CopyLine label="Endereço para o Asaas" value={w.asaasUrl} testId="webhook-asaas" />
+            <CopyLine label="Token de autenticação" value={w.token} testId="webhook-token" />
+            <p className="text-sm text-muted">
+              No Asaas, em Integrações, abra Webhooks, crie um webhook com este endereço e este
+              token de autenticação e marque os eventos de cobrança.
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-muted">{saveFirst}</p>
+        ))}
+    </div>
   );
 }
 

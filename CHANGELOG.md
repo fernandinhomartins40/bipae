@@ -1,5 +1,11 @@
 # Changelog
 
+## [F8-09.c.2 Aviso automático de pagamento (webhook)] — 23/10/2026
+
+### Adicionado
+- **O caixa fica sabendo do Pix e da maquininha na hora.** O banco (API Pix do Banco Central), o Mercado Pago (Pix e Point), o PagBank e o Asaas agora avisam o Bipaê quando a cobrança muda. O aviso nunca confirma sozinho: o Bipaê consulta o banco ou o parceiro e só então marca como pago. Aviso repetido, desconhecido ou com assinatura errada não muda nada.
+- **Endereço do aviso em Meios de pagamento**, com o passo a passo de cada parceiro: o endereço do banco já leva um segredo da loja, o Mercado Pago pede a assinatura secreta do webhook, o Asaas usa o token de autenticação da loja e o PagBank recebe o endereço sozinho em cada cobrança.
+
 ## [F3-26.d.CE Substituição tributária do Ceará] — 22/10/2026
 
 ### Adicionado

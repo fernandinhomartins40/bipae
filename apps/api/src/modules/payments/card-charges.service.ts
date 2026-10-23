@@ -37,7 +37,8 @@ const MESSAGES: Record<'failed' | 'canceled' | 'expired', string> = {
 
 /**
  * Cartão cobrado na maquininha comandada pela internet (F8-10): o caixa manda o valor, a
- * maquininha recebe sozinha e o Bipaê acompanha pelo parceiro até aprovar ou recusar.
+ * maquininha recebe sozinha e o Bipaê acompanha pelo parceiro até aprovar ou recusar. O aviso do
+ * Mercado Pago (F8-09.c.2) só antecipa a consulta.
  */
 @Injectable()
 export class CardChargesService {
@@ -166,6 +167,24 @@ export class CardChargesService {
         if (error instanceof PixUnavailableError) return this.view(row);
         this.failure(error);
       }
+    });
+  }
+
+  /**
+   * Chegou um aviso do Mercado Pago sobre a ordem (F8-09.c.2): consulta agora, com o tenant da
+   * cobrança. O aviso não confirma nada: só a consulta. Cobrança resolvida fica como está.
+   * Parceiro fora do ar vira erro, para a fila tentar de novo.
+   */
+  confirmFromWebhook(
+    tenantId: string,
+    id: string,
+    now = new Date(),
+  ): Promise<CardChargeView | null> {
+    return withTenant(this.db, { tenantId }, async (tx) => {
+      const [row] = await tx.select().from(cardCharges).where(eq(cardCharges.id, id));
+      if (!row || row.status !== 'pending') return null;
+      const { client } = await this.point(tx, row.storeId);
+      return this.apply(tx, row, await client.getOrder(row.orderId), now);
     });
   }
 

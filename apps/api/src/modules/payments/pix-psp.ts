@@ -12,7 +12,8 @@ import { PixRejectedError, PixUnavailableError, type PixTransport } from './pix-
  * - Asaas: POST /v3/payments (billingType PIX), GET /v3/payments/{id}/pixQrCode, GET
  *   /v3/payments/{id} e DELETE /v3/payments/{id}; chave no cabeçalho access_token.
  *   https://docs.asaas.com/reference/criar-nova-cobranca
- * Confirmação sempre por consulta (o webhook fica para a F8-09.c). O token nunca vai para log.
+ * Confirmação sempre por consulta; o aviso (webhook, F8-09.c.2) só antecipa a consulta. O token
+ * nunca vai para log.
  */
 
 export interface PixPspConfig {
@@ -23,6 +24,8 @@ export interface PixPspConfig {
   payerEmail: string | null;
   payerTaxId: string | null;
   customerId: string | null;
+  /** Endereço do aviso que vai em cada pedido (PagBank: notification_urls; F8-09.c.2). */
+  notificationUrl?: string | null;
 }
 
 /** Cobrança no parceiro, como o Bipaê entende. */
@@ -278,6 +281,8 @@ export class PagBankPixClient extends BaseClient {
         qr_codes: [
           { amount: { value: input.amountCents }, expiration_date: brasiliaIso(input.expiresAt) },
         ],
+        // O PagBank avisa neste endereço; o aviso só apressa a consulta (F8-09.c.2).
+        ...(this.config.notificationUrl && { notification_urls: [this.config.notificationUrl] }),
       }),
       // O reference_id já é nosso; a chave evita pedido duplicado numa nova tentativa.
       { 'x-idempotency-key': input.reference },
