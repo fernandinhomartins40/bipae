@@ -822,6 +822,111 @@ describe('leitor do Anexo 007 do RICMS/RN (F3-26.d.RN)', () => {
   });
 });
 
+describe('Maranhão: Anexos 4.x do RICMS/MA (F3-26.d.MA)', () => {
+  const ma = ST_REFERENCES.filter((r) => r.uf === 'MA');
+  const anexo = (n: string) => ma.find((r) => r.act.endsWith(`Anexo ${n}`))!;
+  const mvas = (n: string, cest: string) =>
+    anexo(n)
+      .items.filter((i) => i.cest === cest)
+      .map((i) => i.mva);
+  const hoje = '2026-10-23';
+
+  it('treze anexos, cada um com o segmento do CEST e a vigência da redação em vigor', () => {
+    expect(ST_REFERENCE_UFS).toContain('MA');
+    expect(ma).toHaveLength(13);
+    expect(ma.flatMap((r) => r.items).length).toBe(424);
+    expect(anexo('4.33')).toMatchObject({ segment: '02', validFrom: '2021-01-01' });
+    expect(anexo('4.46')).toMatchObject({ segment: '20', validFrom: '2022-10-24' });
+    expect(anexo('4.41')).toMatchObject({ segment: '01', validFrom: '2023-02-01' });
+    // A lista do MA está incompleta (faltam anexos por ler): não entra como "lista de ST".
+    expect(ST_SEGMENT_UFS).not.toContain('MA');
+  });
+
+  it('MVA única do artigo: bebidas quentes 29,04%, higiene 41,38%, celulares 9%, motos 34%', () => {
+    expect(stReferencesFor('MA', '22083020', hoje).find((m) => m.cest === '0201600')).toMatchObject(
+      { mva: '29.04' },
+    );
+    expect(anexo('4.33').items).toHaveLength(25);
+    expect(stReferencesFor('MA', '96190000', hoje).map((m) => m.mva)).toEqual(
+      expect.arrayContaining(['41.38']),
+    );
+    expect(mvas('4.38', '2105300')).toEqual(['9']);
+    expect(mvas('4.22', '2600101')).toEqual(['34']);
+    expect(mvas('4.21', '2500300')).toEqual(['30']);
+    // Cigarros: 50% só quando não há preço final sugerido pelo fabricante.
+    expect(mvas('4.5', '0400100')).toEqual(['50']);
+    // Antes da RA 39/2020 (efeitos em 01/01/2021) a tabela de bebidas quentes não tinha CEST.
+    expect(stReferencesFor('MA', '22083020', '2020-12-31')).toEqual([]);
+  });
+
+  it('MVA na coluna da tabela (pneus, lâmpadas) e pela lista do medicamento', () => {
+    expect(mvas('4.16', '1600100')).toEqual(['42']);
+    expect(mvas('4.16', '1600200')).toEqual(['32']);
+    expect(mvas('4.16', '1600300')).toEqual(['60']);
+    expect(mvas('4.13', '0900100')).toEqual(['60.03']);
+    expect(mvas('4.13', '0900200')).toEqual(['102.31']);
+    // LED: vale a redação da RA 38/2022 (NCM 8539.52.00), não a anterior (8539.50.00).
+    const led = anexo('4.13').items.find((i) => i.cest === '0900500')!;
+    expect(led).toMatchObject({ ncms: ['85395200'], mva: '63.67' });
+    expect(mvas('4.17', '1300100')).toEqual(['38.24']);
+    expect(mvas('4.17', '1300101')).toEqual(['33.05']);
+    expect(mvas('4.17', '1300102')).toEqual(['41.34']);
+    expect(mvas('4.17', '1301200')).toEqual(['41.34']);
+  });
+
+  it('redação nova no lugar da anterior: mamadeiras e luvas pelo item atual', () => {
+    const mamadeira = anexo('4.46').items.find((i) => i.cest === '2006300')!;
+    expect(mamadeira.ncms).toEqual(['39233090', '39241000', '39249000', '40149090', '7013']);
+    const luvas = anexo('4.17').items.find((i) => i.cest === '1301200')!;
+    expect(luvas.ncms).toEqual(['40151200', '40151900']);
+    // Na tabela de veículos, "1000 cm³" é descrição, não NCM.
+    expect(anexo('4.21').items.find((i) => i.cest === '2500300')!.ncms).toEqual(['87032100']);
+  });
+
+  it('tintas: MVA por item do artigo; o xadrez acima de 1 kg (2.1) fica de fora (D-044)', () => {
+    expect(mvas('4.19', '2400100')).toEqual(['35']);
+    expect(mvas('4.19', '2400200')).toEqual(['35']);
+    expect(mvas('4.19', '2400300')).toEqual(['50']);
+    expect(mvas('4.19', '2400201')).toEqual([]);
+  });
+
+  it('autopeças: lista do Anexo II do Convênio ICMS 142/18, com e sem fidelidade', () => {
+    expect(mvas('4.41', '0100100')).toEqual(['36.56', '71.78']);
+    // O texto antigo (Protocolo ICMS 41/08, MVAs de 26,50% e 40%) não entra.
+    expect(anexo('4.41').items.some((i) => i.mva === '26.5' || i.mva === '40')).toBe(false);
+    expect(anexo('4.41').items).toHaveLength(260);
+  });
+
+  it('sorvetes: 70% e 328%, com a posição 0404 só desde a RA 32/2023', () => {
+    expect(mvas('4.45', '2300100')).toEqual(['70']);
+    const preparado = anexo('4.45').items.find((i) => i.cest === '2300200')!;
+    expect(preparado).toMatchObject({ ncms: ['1806', '1901', '2106', '0404'], mva: '328' });
+    expect(anexo('4.45').validFrom).toBe('2023-07-18');
+  });
+
+  it('bebidas frias: CEST só com correspondência clara; o resto fica sem CEST', () => {
+    // Cerveja: 70% do atacadista e 140% do industrial, em todas as embalagens do Convênio.
+    expect(mvas('4.2', '0302103')).toEqual(['70', '140']);
+    expect(mvas('4.2', '0302300')).toEqual(['115', '140']);
+    // Xarope para pré-mix/post-mix: CEST próprio.
+    expect(mvas('4.2', '0301200')).toEqual(['100', '140']);
+    // Refrigerante do industrial: 140% em qualquer embalagem; isotônicos e energéticos equiparados.
+    expect(mvas('4.2', '0301001')).toEqual(['140']);
+    expect(mvas('4.2', '0301500')).toEqual(['140']);
+    // Águas, refrigerante do atacadista (MVA pela capacidade) e gelo: sem CEST.
+    const semCest = anexo('4.2').items.filter((i) => i.cest === '');
+    expect(semCest).toHaveLength(15);
+    const agua = stReferencesFor('MA', '22011000', hoje).filter((m) => m.cest === '');
+    expect(agua.map((m) => m.mva)).toEqual(
+      expect.arrayContaining(['100', '170', '70', '140', '250', '120']),
+    );
+    expect(semCest.find((i) => i.description.startsWith('Gelo'))).toMatchObject({
+      ncms: ['22019000'],
+      mva: '100',
+    });
+  });
+});
+
 describe('Rondônia: Anexo VI do RICMS/RO (F3-26.d.RO)', () => {
   const ro = ST_REFERENCES.filter((r) => r.uf === 'RO');
 

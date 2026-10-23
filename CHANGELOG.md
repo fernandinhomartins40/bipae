@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.d.MA ST do Maranhão] — 23/10/2026
+
+### Adicionado
+- **MVA oficial do Maranhão na regra de ICMS.** Ao cadastrar uma regra para o MA, a tela sugere a MVA de 13 anexos do regulamento do ICMS do estado, lidos um por um do portal da SEFAZ-MA: bebidas frias, cigarros, lâmpadas, pneus, farmacêuticos, tintas, veículos, motos, bebidas quentes, celulares, autopeças, sorvetes e higiene pessoal (424 linhas). Onde há duas MVAs, as duas aparecem com o rótulo (autopeças com e sem fidelidade; bebidas frias vendidas pelo atacadista ou pelo industrial).
+- Nas bebidas frias, a MVA que depende da capacidade da embalagem (águas e refrigerante do atacadista) e a do gelo aparecem com "CEST não confirmado", para a empresa conferir a embalagem antes de usar.
+- O monitor semanal confere os 13 arquivos no portal da SEFAZ-MA e avisa quando algum for trocado.
+- O que ainda não foi lido (açúcar, carnes, cimento, rações, pilhas e outros) fica como "falta configurar" (F3-26.d.MA.b), e as lacunas do texto oficial estão na dúvida D-044.
+
 ## [F3-26.d.RN ST do Rio Grande do Norte] — 23/10/2026
 
 ### Adicionado

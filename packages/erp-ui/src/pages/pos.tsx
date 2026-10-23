@@ -10,7 +10,12 @@ export function PosPage() {
   const navigate = useNavigate();
   const backend = useMemo(() => createPosBackend(api), [api]);
   const user = useMemo(
-    () => ({ id: me.user.id, name: me.user.name, tenantId: me.tenant.id, permissions: me.permissions }),
+    () => ({
+      id: me.user.id,
+      name: me.user.name,
+      tenantId: me.tenant.id,
+      permissions: me.permissions,
+    }),
     [me],
   );
   return <PosApp platform={platform} backend={backend} user={user} onExit={() => navigate('/')} />;

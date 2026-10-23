@@ -51,6 +51,13 @@ import { CE_NET_LOAD_SOURCES, parseCeNetLoadSource } from './st-ce-carga.mjs';
 import { parseAcIn12023 } from './st-ac.mjs';
 import { parseAmLei6108 } from './st-am.mjs';
 import { parseRnAnexo007 } from './st-rn.mjs';
+import {
+  MA_ANNEX_REPOSITORY,
+  MA_ANNEX_SOURCES,
+  MA_PORTAL_API,
+  maPortalLogin,
+  parseMaAnnex,
+} from './st-ma.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -1192,6 +1199,69 @@ async function checkRn() {
   };
 }
 
+/**
+ * Maranhão: os Anexos 4.x do RICMS/MA de hoje, pela API do portal da SEFAZ-MA (repositório
+ * "Anexos do RICMS"). Arquivo trocado no portal ganha outro identificador: o novo é baixado e
+ * passa pelo leitor do Bipaê para mostrar o que mudou.
+ */
+async function checkMa() {
+  const cests = JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items;
+  const title = 'ST no Maranhão (RICMS/MA, Anexos 4.x)';
+  const page = manifest.stMaAnexo4_2.page;
+  const get = async (url) => (await download(url)).body.toString('utf8');
+  const post = async (url, body) => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return res.json();
+  };
+  const token = await maPortalLogin(get, post);
+  const list = await fetch(
+    `${MA_PORTAL_API}/portal/arquivos?descricao=${encodeURIComponent('ANEXO 4')}&pageSize=500&page=0`,
+    { headers: { AuthorizationPortal: token } },
+  ).then((r) => r.json());
+  const files = list.items.filter((i) => i.idRepositorio === MA_ANNEX_REPOSITORY);
+  const rowsOf = (annex, lines) =>
+    parseMaAnnex(annex, lines, cests).items.map((i) => [
+      annex,
+      i.item,
+      i.cest,
+      i.ncms.join(' '),
+      i.mva,
+    ]);
+  const details = [];
+  let changed = false;
+  for (const { annex, key } of MA_ANNEX_SOURCES) {
+    const id = /identificador=([0-9a-f-]{36})/.exec(manifest[key].page)[1];
+    const name = new RegExp(`^anexo ${annex.replace('.', '\\.')}(\\.pdf$|\\s)`, 'i');
+    const now = files.filter((f) => name.test(f.nomeArquivoOriginal));
+    if (now.length === 1 && now[0].identificador === id) continue;
+    changed = true;
+    if (now.length !== 1) {
+      details.push(`Anexo ${annex}: ${now.length} arquivo(s) com esse nome no portal`);
+      continue;
+    }
+    try {
+      const old = rowsOf(annex, await pdfLines(readFileSync(join(sourcesDir, manifest[key].file))));
+      const bytes = (
+        await download(
+          `${MA_PORTAL_API}/portal/arquivos/public/identificador?identificador=${now[0].identificador}`,
+        )
+      ).body;
+      const diff = diffRows(old, rowsOf(annex, await pdfLines(bytes)));
+      details.push(
+        `Anexo ${annex}: arquivo novo (${now[0].identificador}); ${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`,
+        ...diff.examples,
+      );
+    } catch (error) {
+      details.push(`Anexo ${annex}: o arquivo novo não passa no leitor do Bipaê: ${error.message}`);
+    }
+  }
+  return { title, page, status: changed ? 'mudou' : 'igual', details };
+}
+
 /** Rondônia: o Anexo VI de hoje, pela API do portal de legislação da SEFIN-RO. */
 async function checkRo() {
   const known = new Set(
@@ -1595,6 +1665,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Acre', manifest.stAcIn12023.page, checkAc),
     await safe('ST no Amazonas', manifest.stAmLei6108.page, checkAm),
     await safe('ST no Rio Grande do Norte', manifest.stRnAnexo007.page, checkRn),
+    await safe('ST no Maranhão', manifest.stMaAnexo4_2.page, checkMa),
     await safe('ST no Ceará (carga líquida)', manifest.stCeCargaAutopecas.page, checkCeNetLoads),
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),

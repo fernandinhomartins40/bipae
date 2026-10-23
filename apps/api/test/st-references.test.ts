@@ -107,4 +107,24 @@ describe('referências de ST por UF (F3-26)', () => {
     expect(fora.message).toMatch(/vale a ST comum/);
     expect((await admin.get('/fiscal/st-net-load-classes?uf=CE')).statusCode).toBe(400);
   });
+
+  it('MA: MVA dos Anexos 4.x do RICMS/MA (F3-26.d.MA), sem lista de "fora da ST"', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const pneu = (
+      await admin.get('/fiscal/st-references?uf=ma&ncm=40111000&date=2026-10-23')
+    ).json();
+    // Faltam anexos por ler: a UF tem MVA, mas não a lista completa de mercadorias em ST.
+    expect(pneu).toMatchObject({ uf: 'MA', covered: true, listed: false, status: [] });
+    expect(pneu.items[0]).toMatchObject({
+      cest: '1600100',
+      mva: '42',
+      act: 'RICMS/MA (Decreto 19.714/2003), Anexo 4.16',
+    });
+    // Água mineral: a MVA depende da embalagem, sem CEST correspondente ("não confirmado").
+    const agua = (
+      await admin.get('/fiscal/st-references?uf=MA&ncm=22011000&date=2026-10-23')
+    ).json();
+    expect(agua.items.some((i: { cest: string }) => i.cest === '')).toBe(true);
+  });
 });

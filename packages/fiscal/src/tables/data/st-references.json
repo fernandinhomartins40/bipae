@@ -206682,6 +206682,4519 @@
    ]
   },
   {
+   "uf": "MA",
+   "segment": "03",
+   "segmentName": "Cervejas, chopes, refrigerantes, águas e outras bebidas",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.2",
+   "source": "stMaAnexo4_2",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=5e8c9bf1-ad43-4dff-ae43-8793cd783157",
+   "validFrom": "2004-11-25",
+   "validTo": null,
+   "note": "Base: preço máximo de venda a varejo fixado pela autoridade; sem ele, preço praticado mais a MVA do art. 4º (§ 1º para o distribuidor, depósito ou atacadista; § 2º para o industrial, importador, arrematante ou engarrafador). A Receita Estadual pode fixar a média ponderada de preços a consumidor (art. 4º-A). As linhas sem CEST têm a MVA por capacidade ou embalagem, que o CEST não separa: confira a embalagem do produto.",
+   "items": [
+    {
+     "item": "atacadista/água/a",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em embalagem de vidro, não retornável, com capacidade de até 300 ml (remetente distribuidor, depósito ou atacadista)",
+     "mva": "100"
+    },
+    {
+     "item": "atacadista/água/b",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em garrafa de vidro, retornável ou não, com capacidade de até 500 ml (remetente distribuidor, depósito ou atacadista)",
+     "mva": "170"
+    },
+    {
+     "item": "atacadista/água/c",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em copos plásticos e embalagem plástica com capacidade de até 500 ml (remetente distribuidor, depósito ou atacadista)",
+     "mva": "100"
+    },
+    {
+     "item": "atacadista/água/d",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em garrafa plástica de 1.500 ml (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/água/e",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em embalagem com capacidade igual ou superior a 5.000 ml (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/água/f",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água gaseificada ou aromatizada artificialmente e demais casos de água (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/12.0",
+     "cest": "0301200",
+     "ncms": [
+      "21069010"
+     ],
+     "ncmText": "21069010",
+     "description": "Xarope ou extrato concentrado destinados ao preparo de refrigerante em máquina “pré-mix” ou “post-mix”, exceto o classificado no CEST 03.012.01 (remetente distribuidor, depósito ou atacadista)",
+     "mva": "100"
+    },
+    {
+     "item": "atacadista/refrigerante/a",
+     "cest": "",
+     "ncms": [
+      "22021000",
+      "22029900"
+     ],
+     "ncmText": "22021000 22029900",
+     "description": "Refrigerante em garrafa com capacidade igual ou superior a 600 ml (remetente distribuidor, depósito ou atacadista)",
+     "mva": "40"
+    },
+    {
+     "item": "atacadista/refrigerante/c",
+     "cest": "",
+     "ncms": [
+      "22021000",
+      "22029900"
+     ],
+     "ncmText": "22021000 22029900",
+     "description": "Demais casos de refrigerantes (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/23.0",
+     "cest": "0302300",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Chope (remetente distribuidor, depósito ou atacadista)",
+     "mva": "115"
+    },
+    {
+     "item": "atacadista/21.0",
+     "cest": "0302100",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em garrafa de vidro retornável (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/21.1",
+     "cest": "0302101",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em garrafa de vidro descartável (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/21.2",
+     "cest": "0302102",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em garrafa de alumínio (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/21.3",
+     "cest": "0302103",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em lata (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/21.4",
+     "cest": "0302104",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em barril (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/21.5",
+     "cest": "0302105",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em embalagem PET (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/21.6",
+     "cest": "0302106",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em outras embalagens (remetente distribuidor, depósito ou atacadista)",
+     "mva": "70"
+    },
+    {
+     "item": "atacadista/gelo",
+     "cest": "",
+     "ncms": [
+      "22019000"
+     ],
+     "ncmText": "22019000",
+     "description": "Gelo (remetente distribuidor, depósito ou atacadista)",
+     "mva": "100"
+    },
+    {
+     "item": "industrial/água/a",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em embalagem de vidro, não retornável, com capacidade de até 300 ml (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/água/b",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em garrafa de vidro, retornável ou não, com capacidade de até 500 ml (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "250"
+    },
+    {
+     "item": "industrial/água/c",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em copos plásticos e embalagem plástica com capacidade de até 500 ml (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/água/d",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em garrafa plástica de 1.500 ml (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "120"
+    },
+    {
+     "item": "industrial/água/e",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água mineral, gasosa ou não, ou potável, naturais, em embalagem com capacidade igual ou superior a 5.000 ml (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "100"
+    },
+    {
+     "item": "industrial/água/f",
+     "cest": "",
+     "ncms": [
+      "2201"
+     ],
+     "ncmText": "2201",
+     "description": "Água gaseificada ou aromatizada artificialmente e demais casos de água (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/12.0",
+     "cest": "0301200",
+     "ncms": [
+      "21069010"
+     ],
+     "ncmText": "21069010",
+     "description": "Xarope ou extrato concentrado destinados ao preparo de refrigerante em máquina “pré-mix” ou “post-mix”, exceto o classificado no CEST 03.012.01 (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/10.0",
+     "cest": "0301000",
+     "ncms": [
+      "22021000",
+      "22029900"
+     ],
+     "ncmText": "22021000 22029900",
+     "description": "Refrigerante em vidro descartável (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/10.1",
+     "cest": "0301001",
+     "ncms": [
+      "22021000",
+      "22029900"
+     ],
+     "ncmText": "22021000 22029900",
+     "description": "Refrigerante em embalagem pet (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/10.2",
+     "cest": "0301002",
+     "ncms": [
+      "22021000",
+      "22029900"
+     ],
+     "ncmText": "22021000 22029900",
+     "description": "Refrigerante em lata (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/11.0",
+     "cest": "0301100",
+     "ncms": [
+      "22021000",
+      "22029900"
+     ],
+     "ncmText": "22021000 22029900",
+     "description": "Demais refrigerantes, exceto os classificados no CEST 03.010.00, 03.010.01, 03.010.02 e 03.011.01 (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/13.0",
+     "cest": "0301300",
+     "ncms": [
+      "210690",
+      "22029900"
+     ],
+     "ncmText": "210690 22029900",
+     "description": "Bebidas energéticas em lata (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/13.1",
+     "cest": "0301301",
+     "ncms": [
+      "210690",
+      "22029900"
+     ],
+     "ncmText": "210690 22029900",
+     "description": "Bebidas energéticas em embalagem PET (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/13.2",
+     "cest": "0301302",
+     "ncms": [
+      "210690",
+      "22029900"
+     ],
+     "ncmText": "210690 22029900",
+     "description": "Bebidas energéticas em vidro (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/15.0",
+     "cest": "0301500",
+     "ncms": [
+      "210690",
+      "22029900"
+     ],
+     "ncmText": "210690 22029900",
+     "description": "Bebidas hidroeletrolíticas (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/23.0",
+     "cest": "0302300",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Chope (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/21.0",
+     "cest": "0302100",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em garrafa de vidro retornável (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/21.1",
+     "cest": "0302101",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em garrafa de vidro descartável (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/21.2",
+     "cest": "0302102",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em garrafa de alumínio (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/21.3",
+     "cest": "0302103",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em lata (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/21.4",
+     "cest": "0302104",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em barril (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/21.5",
+     "cest": "0302105",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em embalagem PET (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    },
+    {
+     "item": "industrial/21.6",
+     "cest": "0302106",
+     "ncms": [
+      "22030000"
+     ],
+     "ncmText": "22030000",
+     "description": "Cerveja em outras embalagens (remetente industrial, importador, arrematante ou engarrafador)",
+     "mva": "140"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "04",
+   "segmentName": "Cigarros e outros produtos derivados do fumo",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.5",
+   "source": "stMaAnexo4_5",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=2164b104-36b3-4c12-a674-803e87a438cc",
+   "validFrom": "2021-01-01",
+   "validTo": null,
+   "note": "Base: preço final a consumidor sugerido pelo fabricante ou importador; a MVA de 50% vale para os produtos sem esse preço.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "0400100",
+     "ncms": [
+      "2402"
+     ],
+     "ncmText": "2402",
+     "description": "Charutos, cigarrilhas e cigarros, de tabaco ou dos seus sucedâneos",
+     "mva": "50"
+    },
+    {
+     "item": "2.0",
+     "cest": "0400200",
+     "ncms": [
+      "24031"
+     ],
+     "ncmText": "24031",
+     "description": "Tabaco para fumar, mesmo contendo sucedâneos de tabaco em qualquer proporção",
+     "mva": "50"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "09",
+   "segmentName": "Lâmpadas, reatores e “starter”",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.13",
+   "source": "stMaAnexo4_13",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=ceb3173b-3e88-4f41-a585-9632209009a4",
+   "validFrom": "2022-05-26",
+   "validTo": null,
+   "note": "Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "0900100",
+     "ncms": [
+      "8539"
+     ],
+     "ncmText": "8539",
+     "description": "Lâmpadas elétricas",
+     "mva": "60.03"
+    },
+    {
+     "item": "2",
+     "cest": "0900200",
+     "ncms": [
+      "8540"
+     ],
+     "ncmText": "8540",
+     "description": "Lâmpadas eletrônicas",
+     "mva": "102.31"
+    },
+    {
+     "item": "3",
+     "cest": "0900300",
+     "ncms": [
+      "85041000"
+     ],
+     "ncmText": "85041000",
+     "description": "Reatores para lâmpadas ou tubos de descargas",
+     "mva": "53.13"
+    },
+    {
+     "item": "4",
+     "cest": "0900400",
+     "ncms": [
+      "853650"
+     ],
+     "ncmText": "853650",
+     "description": "“Starter”",
+     "mva": "102.31"
+    },
+    {
+     "item": "5",
+     "cest": "0900500",
+     "ncms": [
+      "85395200"
+     ],
+     "ncmText": "85395200",
+     "description": "Lâmpadas de LED (diodos emissores de luz)",
+     "mva": "63.67"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "16",
+   "segmentName": "Pneumáticos, câmaras de ar e protetores de borracha",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.16",
+   "source": "stMaAnexo4_16",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=c63f650a-51fd-4224-ab59-9c20b53bf652",
+   "validFrom": "2021-01-01",
+   "validTo": null,
+   "note": "Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual).",
+   "items": [
+    {
+     "item": "1",
+     "cest": "1600100",
+     "ncms": [
+      "40111000"
+     ],
+     "ncmText": "40111000",
+     "description": "Pneus novos, dos tipos utilizados em automóveis de passageiros, incluídos os veículos de uso misto - camionetas e os automóveis de corrida",
+     "mva": "42"
+    },
+    {
+     "item": "2",
+     "cest": "1600200",
+     "ncms": [
+      "4011"
+     ],
+     "ncmText": "4011",
+     "description": "Pneus novos, dos tipos utilizados em caminhões, inclusive para os fora-de- estrada, ônibus, aviões, máquinas de terraplenagem, de construção e conservação de estradas, máquinas e tratores agrícolas, pá-carregadeira",
+     "mva": "32"
+    },
+    {
+     "item": "3",
+     "cest": "1600300",
+     "ncms": [
+      "40114000"
+     ],
+     "ncmText": "40114000",
+     "description": "Pneus novos para motocicletas",
+     "mva": "60"
+    },
+    {
+     "item": "4",
+     "cest": "1600400",
+     "ncms": [
+      "4011"
+     ],
+     "ncmText": "4011",
+     "description": "Outros tipos de pneus novos, exceto os itens classificados no CEST 16.005.00",
+     "mva": "45"
+    },
+    {
+     "item": "5",
+     "cest": "1600700",
+     "ncms": [
+      "401290"
+     ],
+     "ncmText": "401290",
+     "description": "Protetores de borracha, exceto os itens classificados no CEST 16.007.01",
+     "mva": "45"
+    },
+    {
+     "item": "6",
+     "cest": "1600800",
+     "ncms": [
+      "4013"
+     ],
+     "ncmText": "4013",
+     "description": "Câmaras de ar de borracha, exceto os itens classificados no CEST 16.009.00",
+     "mva": "45"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "13",
+   "segmentName": "Medicamentos de uso humano e outros produtos farmacêuticos para uso humano ou veterinário",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.17",
+   "source": "stMaAnexo4_17",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=eaa721f0-bf5f-4e5b-9afe-93acd9f498e5",
+   "validFrom": "2022-05-26",
+   "validTo": null,
+   "note": "Medicamentos: a base é o preço da lista da CMED com o desconto do art. 2º ou o preço final a consumidor da legislação; a MVA (pela lista negativa, positiva ou neutra) só vale quando não há esses preços.",
+   "items": [
+    {
+     "item": "1",
+     "cest": "1300100",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos de referência - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "1.1",
+     "cest": "1300101",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos de referência - negativa, exceto para uso veterinário",
+     "mva": "33.05"
+    },
+    {
+     "item": "1.2",
+     "cest": "1300102",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos de referência - neutra, exceto para uso veterinário",
+     "mva": "41.34"
+    },
+    {
+     "item": "2.0",
+     "cest": "1300200",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos genérico - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "2.1",
+     "cest": "1300201",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos genérico - negativa, exceto para uso veterinário",
+     "mva": "33.05"
+    },
+    {
+     "item": "2.2",
+     "cest": "1300202",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos genérico - neutra, exceto para uso veterinário",
+     "mva": "41.34"
+    },
+    {
+     "item": "3.0",
+     "cest": "1300300",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos similar - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "3.1",
+     "cest": "1300301",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos similar - negativa, exceto para uso veterinário",
+     "mva": "33.05"
+    },
+    {
+     "item": "3.2",
+     "cest": "1300302",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Medicamentos similar - neutra, exceto para uso veterinário",
+     "mva": "41.34"
+    },
+    {
+     "item": "4.0",
+     "cest": "1300400",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Outros tipos de medicamentos - positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "4.1",
+     "cest": "1300401",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Outros tipos de medicamentos - negativa, exceto para uso veterinário",
+     "mva": "33.05"
+    },
+    {
+     "item": "4.2",
+     "cest": "1300402",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "ncmText": "3003 3004",
+     "description": "Outros tipos de medicamentos - neutra, exceto para uso veterinário",
+     "mva": "41.34"
+    },
+    {
+     "item": "5.0",
+     "cest": "1300500",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "30066000",
+     "description": "Preparações químicas contraceptivas de referência, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "5.1",
+     "cest": "1300501",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "30066000",
+     "description": "Preparações químicas contraceptivas de referência, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - negativa.",
+     "mva": "33.05"
+    },
+    {
+     "item": "5.2",
+     "cest": "1300502",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "30066000",
+     "description": "Preparações químicas contraceptivas genérico, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "5.3",
+     "cest": "1300503",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "30066000",
+     "description": "Preparações químicas contraceptivas genérico, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – negativa.",
+     "mva": "33.05"
+    },
+    {
+     "item": "5.4",
+     "cest": "1300504",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "30066000",
+     "description": "Preparações químicas contraceptivas similar, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – positiva.",
+     "mva": "38.24"
+    },
+    {
+     "item": "5.5",
+     "cest": "1300505",
+     "ncms": [
+      "30066000"
+     ],
+     "ncmText": "30066000",
+     "description": "Preparações químicas contraceptivas similar, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – negativa.",
+     "mva": "33.05"
+    },
+    {
+     "item": "6.0",
+     "cest": "1300600",
+     "ncms": [
+      "2936"
+     ],
+     "ncmText": "2936",
+     "description": "Provitaminas e vitaminas, naturais ou reproduzidas por síntese (incluídos os concentrados naturais), bem como os seus derivados utilizados principalmente como vitaminas, misturados ou não entre si, mesmo em quaisquer soluções - neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "7.0",
+     "cest": "1300700",
+     "ncms": [
+      "300630"
+     ],
+     "ncmText": "300630",
+     "description": "Preparações opacificantes (contrastantes) para exames radiográficos e reagentes de diagnóstico concebidos para serem administrados ao paciente - positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "7.1",
+     "cest": "1300701",
+     "ncms": [
+      "300630"
+     ],
+     "ncmText": "300630",
+     "description": "Preparações opacificantes (contrastantes) para exames radiográficos e reagentes de diagnóstico concebidos para serem administrados ao paciente - negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "8.0",
+     "cest": "1300800",
+     "ncms": [
+      "3002"
+     ],
+     "ncmText": "3002",
+     "description": "Antissoro, outras frações do sangue, produtos imunológicos modificados, mesmo obtidos por via biotecnológica, exceto para uso veterinário - positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "8.1",
+     "cest": "1300801",
+     "ncms": [
+      "3002"
+     ],
+     "ncmText": "3002",
+     "description": "Antissoro, outras frações do sangue, produtos imunológicos modificados, mesmo obtidos por via biotecnológica, exceto para uso veterinário - negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "9.0",
+     "cest": "1300900",
+     "ncms": [
+      "3002"
+     ],
+     "ncmText": "3002",
+     "description": "Vacinas e produtos semelhantes, exceto para uso veterinário - positiva;",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.1",
+     "cest": "1300901",
+     "ncms": [
+      "3002"
+     ],
+     "ncmText": "3002",
+     "description": "Vacinas e produtos semelhantes, exceto para uso veterinário - negativa;",
+     "mva": "33.05"
+    },
+    {
+     "item": "10.0",
+     "cest": "1301000",
+     "ncms": [
+      "30051010"
+     ],
+     "ncmText": "30051010",
+     "description": "Curativos (pensos) adesivos e outros artigos com uma camada adesiva, impregnados ou recobertos de substâncias farmacêuticas - Lista Positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "10.1",
+     "cest": "1301001",
+     "ncms": [
+      "30051010"
+     ],
+     "ncmText": "30051010",
+     "description": "Curativos (pensos) adesivos e outros artigos com uma camada adesiva, impregnados ou recobertos de substâncias farmacêuticas - Lista Negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "11.0",
+     "cest": "1301100",
+     "ncms": [
+      "3005"
+     ],
+     "ncmText": "3005",
+     "description": "Algodão, atadura, esparadrapo, gazes, pensos, sinapismos, e outros, acondicionados para venda a retalho para usos medicinais, cirúrgicos ou dentários, não impregnados ou recobertos de substâncias farmacêuticas - Lista Neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "12.0",
+     "cest": "1301200",
+     "ncms": [
+      "40151200",
+      "40151900"
+     ],
+     "ncmText": "40151200 40151900",
+     "description": "Luvas cirúrgicas e luvas de procedimento - neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "13.0",
+     "cest": "1301300",
+     "ncms": [
+      "40141000"
+     ],
+     "ncmText": "40141000",
+     "description": "Preservativo – neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "14.0",
+     "cest": "1301400",
+     "ncms": [
+      "901831"
+     ],
+     "ncmText": "901831",
+     "description": "Seringas, mesmo com agulhas - neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "15.0",
+     "cest": "1301500",
+     "ncms": [
+      "9018321"
+     ],
+     "ncmText": "9018321",
+     "description": "Agulhas para seringas - neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "16.0",
+     "cest": "1301600",
+     "ncms": [
+      "39269090",
+      "90189099"
+     ],
+     "ncmText": "39269090 90189099",
+     "description": "Contraceptivos (dispositivos intrauterinos - DIU) – neutra",
+     "mva": "41.34"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "24",
+   "segmentName": "Tintas e vernizes",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.19",
+   "source": "stMaAnexo4_19",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=8e57ffba-4218-4ff0-94c4-216248ec1ab4",
+   "validFrom": "2022-05-26",
+   "validTo": null,
+   "note": "Base: preço de venda ao consumidor de tabela de órgão competente; sem ele, preço praticado mais a MVA (ajustada na entrada interestadual). O xadrez em embalagem acima de 1 kg (CEST 24.002.01) não tem MVA no artigo e fica de fora (D-044).",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2400100",
+     "ncms": [
+      "3208",
+      "3209",
+      "321000"
+     ],
+     "ncmText": "3208 3209 321000",
+     "description": "Tintas, vernizes",
+     "mva": "35"
+    },
+    {
+     "item": "2.0",
+     "cest": "2400200",
+     "ncms": [
+      "2821",
+      "32041700",
+      "3206"
+     ],
+     "ncmText": "2821 32041700 3206",
+     "description": "Xadrez e pós assemelhados, em embalagem de conteúdo inferior ou igual a 1 kg, exceto pigmentos à base de dióxido de titânio classificados no código NCM 3206.11.10",
+     "mva": "35"
+    },
+    {
+     "item": "3.0",
+     "cest": "2400300",
+     "ncms": [
+      "3204",
+      "32050000",
+      "3206",
+      "3212"
+     ],
+     "ncmText": "3204 32050000 3206 3212",
+     "description": "Corantes para aplicação em bases, tintas e vernizes",
+     "mva": "50"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "25",
+   "segmentName": "Veículos automotores",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.21",
+   "source": "stMaAnexo4_21",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=aae3502e-81c1-485e-b15a-96b8dd710c05",
+   "validFrom": "2021-01-01",
+   "validTo": null,
+   "note": "Base: preço final a consumidor fixado por órgão público ou sugerido pela montadora; sem eles, valor da operação mais a MVA (ajustada na entrada interestadual).",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2500100",
+     "ncms": [
+      "87021000"
+     ],
+     "ncmText": "87021000",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, unicamente com motor de pistão, de ignição por compressão (diesel ou semidiesel), com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "2.0",
+     "cest": "2500200",
+     "ncms": [
+      "87024090"
+     ],
+     "ncmText": "87024090",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, unicamente com motor elétrico para propulsão, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "3.0",
+     "cest": "2500300",
+     "ncms": [
+      "87032100"
+     ],
+     "ncmText": "87032100",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada não superior a 1000 cm³",
+     "mva": "30"
+    },
+    {
+     "item": "4.0",
+     "cest": "2500400",
+     "ncms": [
+      "87032210"
+     ],
+     "ncmText": "87032210",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1000 cm³, mas não superior a 1500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular",
+     "mva": "30"
+    },
+    {
+     "item": "5.0",
+     "cest": "2500500",
+     "ncms": [
+      "87032290"
+     ],
+     "ncmText": "87032290",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1000 cm³, mas não superior a 1500 cm³, exceto carro celular",
+     "mva": "30"
+    },
+    {
+     "item": "6.0",
+     "cest": "2500600",
+     "ncms": [
+      "87032310"
+     ],
+     "ncmText": "87032310",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1500 cm³, mas não superior a 3000 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "7.0",
+     "cest": "2500700",
+     "ncms": [
+      "87032390"
+     ],
+     "ncmText": "87032390",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1500 cm³, mas não superior a 3000 cm³, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "8.0",
+     "cest": "2500800",
+     "ncms": [
+      "87032410"
+     ],
+     "ncmText": "87032410",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 3000 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "9.0",
+     "cest": "2500900",
+     "ncms": [
+      "87032490"
+     ],
+     "ncmText": "87032490",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 3000 cm³, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "10.0",
+     "cest": "2501000",
+     "ncms": [
+      "87033210"
+     ],
+     "ncmText": "87033210",
+     "description": "Automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 1500 cm³, mas não superior a 2500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto ambulância, carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "11.0",
+     "cest": "2501100",
+     "ncms": [
+      "87033290"
+     ],
+     "ncmText": "87033290",
+     "description": "Outros automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 1500 cm³, mas não superior a 2500 cm³, exceto ambulância, carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "12.0",
+     "cest": "2501200",
+     "ncms": [
+      "87033310"
+     ],
+     "ncmText": "87033310",
+     "description": "Automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 2500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "13.0",
+     "cest": "2501300",
+     "ncms": [
+      "87033390"
+     ],
+     "ncmText": "87033390",
+     "description": "Outros automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 2500 cm³, exceto carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "14.0",
+     "cest": "2501400",
+     "ncms": [
+      "87042110"
+     ],
+     "ncmText": "87042110",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, chassis com motor diesel ou semidiesel e cabina, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "15.0",
+     "cest": "2501500",
+     "ncms": [
+      "87042120"
+     ],
+     "ncmText": "87042120",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor diesel ou semidiesel, com caixa basculante, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "16.0",
+     "cest": "2501600",
+     "ncms": [
+      "87042130"
+     ],
+     "ncmText": "87042130",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, frigoríficos ou isotérmicos, com motor diesel ou semidiesel, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.0",
+     "cest": "2501700",
+     "ncms": [
+      "87042190"
+     ],
+     "ncmText": "87042190",
+     "description": "Outros veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor diesel ou semidiesel, exceto carro-forte para transporte de valores e caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "18.0",
+     "cest": "2501800",
+     "ncms": [
+      "87043110"
+     ],
+     "ncmText": "87043110",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor a explosão, chassis e cabina, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "19.0",
+     "cest": "2501900",
+     "ncms": [
+      "87043120"
+     ],
+     "ncmText": "87043120",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor explosão com caixa basculante, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "20.0",
+     "cest": "2502000",
+     "ncms": [
+      "87043130"
+     ],
+     "ncmText": "87043130",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, frigoríficos ou isotérmicos com motor explosão, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "21.0",
+     "cest": "2502100",
+     "ncms": [
+      "87043190"
+     ],
+     "ncmText": "87043190",
+     "description": "Outros veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor a explosão, exceto carro-forte para transporte de valores e caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "22.0",
+     "cest": "2502200",
+     "ncms": [
+      "87022000"
+     ],
+     "ncmText": "87022000",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com motor de pistão, de ignição por compressão (diesel ou semidiesel) e um motor elétrico, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "23.0",
+     "cest": "2502300",
+     "ncms": [
+      "87023000"
+     ],
+     "ncmText": "87023000",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com motor de pistão alternativo, de ignição por centelha (faísca) e um motor elétrico, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "24.0",
+     "cest": "2502400",
+     "ncms": [
+      "87029000"
+     ],
+     "ncmText": "87029000",
+     "description": "Outros veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "25.0",
+     "cest": "2502500",
+     "ncms": [
+      "87034000"
+     ],
+     "ncmText": "87034000",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão alternativo de ignição por centelha (faísca*) e um motor elétrico, exceto os suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "26.0",
+     "cest": "2502600",
+     "ncms": [
+      "87035000"
+     ],
+     "ncmText": "87035000",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão por compressão (diesel ou semidiesel) e um motor elétrico, exceto os suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "27.0",
+     "cest": "2502700",
+     "ncms": [
+      "87036000"
+     ],
+     "ncmText": "87036000",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão alternativo de ignição por centelha (faísca*) e um motor elétrico, suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "28.0",
+     "cest": "2502800",
+     "ncms": [
+      "87037000"
+     ],
+     "ncmText": "87037000",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão por compressão (diesel ou semidiesel) e um motor elétrico, suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "29.0",
+     "cest": "2502900",
+     "ncms": [
+      "87038000"
+     ],
+     "ncmText": "87038000",
+     "description": "Outros veículos, equipados unicamente com motor elétrico para propulsão",
+     "mva": "30"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "26",
+   "segmentName": "Veículos de duas e três rodas motorizados",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.22",
+   "source": "stMaAnexo4_22",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=c2267475-b909-4947-a4e6-3ff30585b2d5",
+   "validFrom": "2022-03-01",
+   "validTo": null,
+   "note": "Base: preço final a consumidor fixado por órgão público ou sugerido pelo fabricante; sem eles, valor da operação mais a MVA (ajustada na entrada interestadual).",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2600100",
+     "ncms": [
+      "8711"
+     ],
+     "ncmText": "8711",
+     "description": "Motocicletas (incluídos os ciclomotores) e outros ciclos equipados com motor auxiliar, mesmo com carro lateral, exceto os classificados no CEST 26.001.01; carros laterais.",
+     "mva": "34"
+    },
+    {
+     "item": "1.1",
+     "cest": "2600101",
+     "ncms": [
+      "8711"
+     ],
+     "ncmText": "8711",
+     "description": "Bicicletas e outros ciclos (incluídos os triciclos) com propulsão de motor elétrico auxiliar assistido pela força humana.",
+     "mva": "34"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "02",
+   "segmentName": "Bebidas alcoólicas, exceto cerveja e chope",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.33",
+   "source": "stMaAnexo4_33",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=8380ee07-5efe-4677-aad6-0b37fe7dda7f",
+   "validFrom": "2021-01-01",
+   "validTo": null,
+   "note": "Base: preço final a consumidor da legislação; sem ele, preço praticado mais a MVA (ajustada na entrada interestadual). Vale para o varejo e o atacadista não credenciado; o atacadista credenciado tem carga de 8% na entrada (Anexo 4.33.1).",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "0200100",
+     "ncms": [
+      "2205",
+      "22089000"
+     ],
+     "ncmText": "2205 22089000",
+     "description": "Aperitivos, amargos, bitter e similares",
+     "mva": "29.04"
+    },
+    {
+     "item": "2.0",
+     "cest": "0200200",
+     "ncms": [
+      "22089000"
+     ],
+     "ncmText": "22089000",
+     "description": "Batida e similares",
+     "mva": "29.04"
+    },
+    {
+     "item": "3.0",
+     "cest": "0200300",
+     "ncms": [
+      "22089000"
+     ],
+     "ncmText": "22089000",
+     "description": "Bebida ice",
+     "mva": "29.04"
+    },
+    {
+     "item": "4.0",
+     "cest": "0200400",
+     "ncms": [
+      "220720",
+      "22084000"
+     ],
+     "ncmText": "220720 22084000",
+     "description": "Cachaça e aguardentes",
+     "mva": "29.04"
+    },
+    {
+     "item": "5.0",
+     "cest": "0200500",
+     "ncms": [
+      "2205",
+      "22060090",
+      "22089000"
+     ],
+     "ncmText": "2205 22060090 22089000",
+     "description": "Catuaba e similares",
+     "mva": "29.04"
+    },
+    {
+     "item": "6.0",
+     "cest": "0200600",
+     "ncms": [
+      "22082000"
+     ],
+     "ncmText": "22082000",
+     "description": "Conhaque, brandy e similares",
+     "mva": "29.04"
+    },
+    {
+     "item": "7.0",
+     "cest": "0200700",
+     "ncms": [
+      "22060090",
+      "22089000"
+     ],
+     "ncmText": "22060090 22089000",
+     "description": "Cooler",
+     "mva": "29.04"
+    },
+    {
+     "item": "8.0",
+     "cest": "0200800",
+     "ncms": [
+      "22085000"
+     ],
+     "ncmText": "22085000",
+     "description": "Gim (gin) e genebra",
+     "mva": "29.04"
+    },
+    {
+     "item": "9.0",
+     "cest": "0200900",
+     "ncms": [
+      "2205",
+      "22060090",
+      "22089000"
+     ],
+     "ncmText": "2205 22060090 22089000",
+     "description": "Jurubeba e similares",
+     "mva": "29.04"
+    },
+    {
+     "item": "10.0",
+     "cest": "0201000",
+     "ncms": [
+      "22087000"
+     ],
+     "ncmText": "22087000",
+     "description": "Licores e similares",
+     "mva": "29.04"
+    },
+    {
+     "item": "11.0",
+     "cest": "0201100",
+     "ncms": [
+      "22082000"
+     ],
+     "ncmText": "22082000",
+     "description": "Pisco",
+     "mva": "29.04"
+    },
+    {
+     "item": "12.0",
+     "cest": "0201200",
+     "ncms": [
+      "22084000"
+     ],
+     "ncmText": "22084000",
+     "description": "Rum",
+     "mva": "29.04"
+    },
+    {
+     "item": "13.0",
+     "cest": "0201300",
+     "ncms": [
+      "22060090"
+     ],
+     "ncmText": "22060090",
+     "description": "Saquê",
+     "mva": "29.04"
+    },
+    {
+     "item": "14.0",
+     "cest": "0201400",
+     "ncms": [
+      "22089000"
+     ],
+     "ncmText": "22089000",
+     "description": "Steinhaeger",
+     "mva": "29.04"
+    },
+    {
+     "item": "15.0",
+     "cest": "0201500",
+     "ncms": [
+      "22089000"
+     ],
+     "ncmText": "22089000",
+     "description": "Tequila",
+     "mva": "29.04"
+    },
+    {
+     "item": "16.0",
+     "cest": "0201600",
+     "ncms": [
+      "220830"
+     ],
+     "ncmText": "220830",
+     "description": "Uísque",
+     "mva": "29.04"
+    },
+    {
+     "item": "17.0",
+     "cest": "0201700",
+     "ncms": [
+      "2205"
+     ],
+     "ncmText": "2205",
+     "description": "Vermute e similares",
+     "mva": "29.04"
+    },
+    {
+     "item": "18.0",
+     "cest": "0201800",
+     "ncms": [
+      "22086000"
+     ],
+     "ncmText": "22086000",
+     "description": "Vodka",
+     "mva": "29.04"
+    },
+    {
+     "item": "19.0",
+     "cest": "0201900",
+     "ncms": [
+      "22089000"
+     ],
+     "ncmText": "22089000",
+     "description": "Derivados de vodka",
+     "mva": "29.04"
+    },
+    {
+     "item": "20.0",
+     "cest": "0202000",
+     "ncms": [
+      "22089000"
+     ],
+     "ncmText": "22089000",
+     "description": "Arak",
+     "mva": "29.04"
+    },
+    {
+     "item": "21.0",
+     "cest": "0202100",
+     "ncms": [
+      "22082000"
+     ],
+     "ncmText": "22082000",
+     "description": "Aguardente vínica / grappa",
+     "mva": "29.04"
+    },
+    {
+     "item": "22.0",
+     "cest": "0202200",
+     "ncms": [
+      "22060010"
+     ],
+     "ncmText": "22060010",
+     "description": "Sidra e similares",
+     "mva": "29.04"
+    },
+    {
+     "item": "23.0",
+     "cest": "0202300",
+     "ncms": [
+      "2205",
+      "22060090",
+      "22089000"
+     ],
+     "ncmText": "2205 22060090 22089000",
+     "description": "Sangrias e coquetéis",
+     "mva": "29.04"
+    },
+    {
+     "item": "24.0",
+     "cest": "0202400",
+     "ncms": [
+      "2204"
+     ],
+     "ncmText": "2204",
+     "description": "Vinhos de uvas frescas, incluindo os vinhos enriquecidos com álcool; mostos de uvas.",
+     "mva": "29.04"
+    },
+    {
+     "item": "999.0",
+     "cest": "0299900",
+     "ncms": [
+      "2205",
+      "2206",
+      "2207",
+      "2208"
+     ],
+     "ncmText": "2205 2206 2207 2208",
+     "description": "Outras bebidas alcoólicas não especificadas nos itens anteriores",
+     "mva": "29.04"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "21",
+   "segmentName": "Produtos eletrônicos, eletroeletrônicos e eletrodomésticos",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.38",
+   "source": "stMaAnexo4_38",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=914eae59-fc33-4174-bf8c-3c639c291637",
+   "validFrom": "2022-05-26",
+   "validTo": null,
+   "note": "Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual).",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2105300",
+     "ncms": [
+      "85171300",
+      "8517143"
+     ],
+     "ncmText": "85171300 8517143",
+     "description": "Telefones inteligentes (“smartphones”) e para redes celulares, excetos por satélite, os de uso automotivo e os classificados nos CEST 21.053.01",
+     "mva": "9"
+    },
+    {
+     "item": "2.0",
+     "cest": "2105301",
+     "ncms": [
+      "85171300",
+      "85171431"
+     ],
+     "ncmText": "85171300 85171431",
+     "description": "Telefones inteligentes (“smartphones”) e para redes celulares portáteis, excetos por satélite",
+     "mva": "9"
+    },
+    {
+     "item": "3.0",
+     "cest": "2106300",
+     "ncms": [
+      "852352"
+     ],
+     "ncmText": "852352",
+     "description": "Cartões inteligentes (\"smartcards\"), exceto o item classificado no CEST 21.064.00",
+     "mva": "9"
+    },
+    {
+     "item": "4.0",
+     "cest": "2106400",
+     "ncms": [
+      "852352"
+     ],
+     "ncmText": "852352",
+     "description": "Cartões inteligentes (\"sim cards\")",
+     "mva": "9"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "01",
+   "segmentName": "Autopeças",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.41",
+   "source": "stMaAnexo4_41",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=608a4b84-3627-4398-90b7-9cd558b5c8f8",
+   "validFrom": "2023-02-01",
+   "validTo": null,
+   "note": "Lista do Anexo II do Convênio ICMS 142/2018 (RA 01/2023). Base: preço máximo ou sugerido ao público; sem eles, preço praticado mais a MVA: a menor na saída do fabricante para atender índice ou contrato de fidelidade, a maior nos demais casos.",
+   "items": [
+    {
+     "item": "1.0/1",
+     "cest": "0100100",
+     "ncms": [
+      "38151210",
+      "38151290"
+     ],
+     "ncmText": "38151210 38151290",
+     "description": "Catalisadores em colmeia cerâmica ou metálica para conversão catalítica de gases de escape de veículos e outros catalisadores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "1.0/2",
+     "cest": "0100100",
+     "ncms": [
+      "38151210",
+      "38151290"
+     ],
+     "ncmText": "38151210 38151290",
+     "description": "Catalisadores em colmeia cerâmica ou metálica para conversão catalítica de gases de escape de veículos e outros catalisadores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "2.0/1",
+     "cest": "0100200",
+     "ncms": [
+      "3917"
+     ],
+     "ncmText": "3917",
+     "description": "Tubos e seus acessórios (por exemplo, juntas, cotovelos, flanges, uniões), de plásticos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "2.0/2",
+     "cest": "0100200",
+     "ncms": [
+      "3917"
+     ],
+     "ncmText": "3917",
+     "description": "Tubos e seus acessórios (por exemplo, juntas, cotovelos, flanges, uniões), de plásticos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "3.0/1",
+     "cest": "0100300",
+     "ncms": [
+      "39181000"
+     ],
+     "ncmText": "39181000",
+     "description": "Protetores de caçamba — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "3.0/2",
+     "cest": "0100300",
+     "ncms": [
+      "39181000"
+     ],
+     "ncmText": "39181000",
+     "description": "Protetores de caçamba — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "4.0/1",
+     "cest": "0100400",
+     "ncms": [
+      "39233000"
+     ],
+     "ncmText": "39233000",
+     "description": "Reservatórios de óleo — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "4.0/2",
+     "cest": "0100400",
+     "ncms": [
+      "39233000"
+     ],
+     "ncmText": "39233000",
+     "description": "Reservatórios de óleo — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "5.0/1",
+     "cest": "0100500",
+     "ncms": [
+      "39263000"
+     ],
+     "ncmText": "39263000",
+     "description": "Frisos, decalques, molduras e acabamentos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "5.0/2",
+     "cest": "0100500",
+     "ncms": [
+      "39263000"
+     ],
+     "ncmText": "39263000",
+     "description": "Frisos, decalques, molduras e acabamentos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "6.0/1",
+     "cest": "0100600",
+     "ncms": [
+      "40103",
+      "59100000"
+     ],
+     "ncmText": "40103 59100000",
+     "description": "Correias de transmissão de borracha vulcanizada, de matérias têxteis, mesmo impregnadas, revestidas ou recobertas, de plástico, ou estratificadas com plástico ou reforçadas com metal ou com outras matérias — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "6.0/2",
+     "cest": "0100600",
+     "ncms": [
+      "40103",
+      "59100000"
+     ],
+     "ncmText": "40103 59100000",
+     "description": "Correias de transmissão de borracha vulcanizada, de matérias têxteis, mesmo impregnadas, revestidas ou recobertas, de plástico, ou estratificadas com plástico ou reforçadas com metal ou com outras matérias — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "7.0/1",
+     "cest": "0100700",
+     "ncms": [
+      "40169300",
+      "4823909"
+     ],
+     "ncmText": "40169300 4823909",
+     "description": "Juntas, gaxetas e outros elementos com função semelhante de vedação — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "7.0/2",
+     "cest": "0100700",
+     "ncms": [
+      "40169300",
+      "4823909"
+     ],
+     "ncmText": "40169300 4823909",
+     "description": "Juntas, gaxetas e outros elementos com função semelhante de vedação — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "8.0/1",
+     "cest": "0100800",
+     "ncms": [
+      "40161010"
+     ],
+     "ncmText": "40161010",
+     "description": "Partes de veículos automóveis, tratores e máquinas autopropulsadas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "8.0/2",
+     "cest": "0100800",
+     "ncms": [
+      "40161010"
+     ],
+     "ncmText": "40161010",
+     "description": "Partes de veículos automóveis, tratores e máquinas autopropulsadas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "9.0/1",
+     "cest": "0100900",
+     "ncms": [
+      "40169990",
+      "57050000"
+     ],
+     "ncmText": "40169990 57050000",
+     "description": "Tapetes, revestimentos, mesmo confeccionados, batentes, buchas e coxins — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "9.0/2",
+     "cest": "0100900",
+     "ncms": [
+      "40169990",
+      "57050000"
+     ],
+     "ncmText": "40169990 57050000",
+     "description": "Tapetes, revestimentos, mesmo confeccionados, batentes, buchas e coxins — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "10.0/1",
+     "cest": "0101000",
+     "ncms": [
+      "59039000"
+     ],
+     "ncmText": "59039000",
+     "description": "Tecidos impregnados, revestidos, recobertos ou estratificados, com plástico — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "10.0/2",
+     "cest": "0101000",
+     "ncms": [
+      "59039000"
+     ],
+     "ncmText": "59039000",
+     "description": "Tecidos impregnados, revestidos, recobertos ou estratificados, com plástico — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "11.0/1",
+     "cest": "0101100",
+     "ncms": [
+      "59090000"
+     ],
+     "ncmText": "59090000",
+     "description": "Mangueiras e tubos semelhantes, de matérias têxteis, mesmo com reforço ou acessórios de outras matérias — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "11.0/2",
+     "cest": "0101100",
+     "ncms": [
+      "59090000"
+     ],
+     "ncmText": "59090000",
+     "description": "Mangueiras e tubos semelhantes, de matérias têxteis, mesmo com reforço ou acessórios de outras matérias — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "12.0/1",
+     "cest": "0101200",
+     "ncms": [
+      "63061"
+     ],
+     "ncmText": "63061",
+     "description": "Encerados e toldos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "12.0/2",
+     "cest": "0101200",
+     "ncms": [
+      "63061"
+     ],
+     "ncmText": "63061",
+     "description": "Encerados e toldos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "13.0/1",
+     "cest": "0101300",
+     "ncms": [
+      "65061000"
+     ],
+     "ncmText": "65061000",
+     "description": "Capacetes e artefatos de uso semelhante, de proteção, para uso em motocicletas, incluídos ciclomotores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "13.0/2",
+     "cest": "0101300",
+     "ncms": [
+      "65061000"
+     ],
+     "ncmText": "65061000",
+     "description": "Capacetes e artefatos de uso semelhante, de proteção, para uso em motocicletas, incluídos ciclomotores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "14.0/1",
+     "cest": "0101400",
+     "ncms": [
+      "6813"
+     ],
+     "ncmText": "6813",
+     "description": "Guarnições de fricção (por exemplo, placas, rolos, tiras, segmentos, discos, anéis, pastilhas), não montadas, para freios, embreagens ou qualquer outro mecanismo de fricção, à base de amianto, de outras substâncias minerais ou de celulose, mesmo combinadas com têxteis ou outras matérias — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "14.0/2",
+     "cest": "0101400",
+     "ncms": [
+      "6813"
+     ],
+     "ncmText": "6813",
+     "description": "Guarnições de fricção (por exemplo, placas, rolos, tiras, segmentos, discos, anéis, pastilhas), não montadas, para freios, embreagens ou qualquer outro mecanismo de fricção, à base de amianto, de outras substâncias minerais ou de celulose, mesmo combinadas com têxteis ou outras matérias — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "15.0/1",
+     "cest": "0101500",
+     "ncms": [
+      "70071100",
+      "70072100"
+     ],
+     "ncmText": "70071100 70072100",
+     "description": "Vidros de dimensões e formatos que permitam aplicação automotiva — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "15.0/2",
+     "cest": "0101500",
+     "ncms": [
+      "70071100",
+      "70072100"
+     ],
+     "ncmText": "70071100 70072100",
+     "description": "Vidros de dimensões e formatos que permitam aplicação automotiva — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "16.0/1",
+     "cest": "0101600",
+     "ncms": [
+      "70091000"
+     ],
+     "ncmText": "70091000",
+     "description": "Espelhos retrovisores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "16.0/2",
+     "cest": "0101600",
+     "ncms": [
+      "70091000"
+     ],
+     "ncmText": "70091000",
+     "description": "Espelhos retrovisores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "17.0/1",
+     "cest": "0101700",
+     "ncms": [
+      "70140000"
+     ],
+     "ncmText": "70140000",
+     "description": "Lentes de faróis, lanternas e outros utensílios — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "17.0/2",
+     "cest": "0101700",
+     "ncms": [
+      "70140000"
+     ],
+     "ncmText": "70140000",
+     "description": "Lentes de faróis, lanternas e outros utensílios — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "18.0/1",
+     "cest": "0101800",
+     "ncms": [
+      "73110000"
+     ],
+     "ncmText": "73110000",
+     "description": "Cilindro de aço para GNV (gás natural veicular) — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "18.0/2",
+     "cest": "0101800",
+     "ncms": [
+      "73110000"
+     ],
+     "ncmText": "73110000",
+     "description": "Cilindro de aço para GNV (gás natural veicular) — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "19.0/1",
+     "cest": "0101900",
+     "ncms": [
+      "73110000"
+     ],
+     "ncmText": "73110000",
+     "description": "Recipientes para gases comprimidos ou liquefeitos, de ferro fundido, ferro ou aço, exceto o descrito no item 18.0 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "19.0/2",
+     "cest": "0101900",
+     "ncms": [
+      "73110000"
+     ],
+     "ncmText": "73110000",
+     "description": "Recipientes para gases comprimidos ou liquefeitos, de ferro fundido, ferro ou aço, exceto o descrito no item 18.0 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "20.0/1",
+     "cest": "0102000",
+     "ncms": [
+      "7320"
+     ],
+     "ncmText": "7320",
+     "description": "Molas e folhas de molas, de ferro ou aço — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "20.0/2",
+     "cest": "0102000",
+     "ncms": [
+      "7320"
+     ],
+     "ncmText": "7320",
+     "description": "Molas e folhas de molas, de ferro ou aço — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "21.0/1",
+     "cest": "0102100",
+     "ncms": [
+      "7325"
+     ],
+     "ncmText": "7325",
+     "description": "Obras moldadas, de ferro fundido, ferro ou aço, exceto as do código 7325.91.00 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "21.0/2",
+     "cest": "0102100",
+     "ncms": [
+      "7325"
+     ],
+     "ncmText": "7325",
+     "description": "Obras moldadas, de ferro fundido, ferro ou aço, exceto as do código 7325.91.00 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "22.0/1",
+     "cest": "0102200",
+     "ncms": [
+      "780600"
+     ],
+     "ncmText": "780600",
+     "description": "Peso de chumbo para balanceamento de roda — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "22.0/2",
+     "cest": "0102200",
+     "ncms": [
+      "780600"
+     ],
+     "ncmText": "780600",
+     "description": "Peso de chumbo para balanceamento de roda — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "23.0/1",
+     "cest": "0102300",
+     "ncms": [
+      "80070090"
+     ],
+     "ncmText": "80070090",
+     "description": "Peso para balanceamento de roda e outros utensílios de estanho — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "23.0/2",
+     "cest": "0102300",
+     "ncms": [
+      "80070090"
+     ],
+     "ncmText": "80070090",
+     "description": "Peso para balanceamento de roda e outros utensílios de estanho — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "24.0/1",
+     "cest": "0102400",
+     "ncms": [
+      "830120",
+      "830160"
+     ],
+     "ncmText": "830120 830160",
+     "description": "Fechaduras e partes de fechaduras — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "24.0/2",
+     "cest": "0102400",
+     "ncms": [
+      "830120",
+      "830160"
+     ],
+     "ncmText": "830120 830160",
+     "description": "Fechaduras e partes de fechaduras — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "25.0/1",
+     "cest": "0102500",
+     "ncms": [
+      "830170"
+     ],
+     "ncmText": "830170",
+     "description": "Chaves apresentadas isoladamente — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "25.0/2",
+     "cest": "0102500",
+     "ncms": [
+      "830170"
+     ],
+     "ncmText": "830170",
+     "description": "Chaves apresentadas isoladamente — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "26.0/1",
+     "cest": "0102600",
+     "ncms": [
+      "83021000",
+      "83023000"
+     ],
+     "ncmText": "83021000 83023000",
+     "description": "Dobradiças, guarnições, ferragens e artigos semelhantes de metais comuns — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "26.0/2",
+     "cest": "0102600",
+     "ncms": [
+      "83021000",
+      "83023000"
+     ],
+     "ncmText": "83021000 83023000",
+     "description": "Dobradiças, guarnições, ferragens e artigos semelhantes de metais comuns — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "27.0/1",
+     "cest": "0102700",
+     "ncms": [
+      "831000"
+     ],
+     "ncmText": "831000",
+     "description": "Triângulo de segurança — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "27.0/2",
+     "cest": "0102700",
+     "ncms": [
+      "831000"
+     ],
+     "ncmText": "831000",
+     "description": "Triângulo de segurança — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "28.0/1",
+     "cest": "0102800",
+     "ncms": [
+      "84073"
+     ],
+     "ncmText": "84073",
+     "description": "Motores de pistão alternativo dos tipos utilizados para propulsão de veículos do Capítulo 87 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "28.0/2",
+     "cest": "0102800",
+     "ncms": [
+      "84073"
+     ],
+     "ncmText": "84073",
+     "description": "Motores de pistão alternativo dos tipos utilizados para propulsão de veículos do Capítulo 87 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "29.0/1",
+     "cest": "0102900",
+     "ncms": [
+      "840820"
+     ],
+     "ncmText": "840820",
+     "description": "Motores dos tipos utilizados para propulsão de veículos automotores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "29.0/2",
+     "cest": "0102900",
+     "ncms": [
+      "840820"
+     ],
+     "ncmText": "840820",
+     "description": "Motores dos tipos utilizados para propulsão de veículos automotores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "30.0/1",
+     "cest": "0103000",
+     "ncms": [
+      "84099"
+     ],
+     "ncmText": "84099",
+     "description": "Partes reconhecíveis como exclusiva ou principalmente destinadas aos motores das posições 8407 ou 8408 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "30.0/2",
+     "cest": "0103000",
+     "ncms": [
+      "84099"
+     ],
+     "ncmText": "84099",
+     "description": "Partes reconhecíveis como exclusiva ou principalmente destinadas aos motores das posições 8407 ou 8408 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "31.0/1",
+     "cest": "0103100",
+     "ncms": [
+      "84122"
+     ],
+     "ncmText": "84122",
+     "description": "Motores hidráulicos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "31.0/2",
+     "cest": "0103100",
+     "ncms": [
+      "84122"
+     ],
+     "ncmText": "84122",
+     "description": "Motores hidráulicos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "32.0/1",
+     "cest": "0103200",
+     "ncms": [
+      "841330"
+     ],
+     "ncmText": "841330",
+     "description": "Bombas para combustíveis, lubrificantes ou líquidos de arrefecimento, próprias para motores de ignição por centelha ou por compressão — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "32.0/2",
+     "cest": "0103200",
+     "ncms": [
+      "841330"
+     ],
+     "ncmText": "841330",
+     "description": "Bombas para combustíveis, lubrificantes ou líquidos de arrefecimento, próprias para motores de ignição por centelha ou por compressão — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "33.0/1",
+     "cest": "0103300",
+     "ncms": [
+      "84141000"
+     ],
+     "ncmText": "84141000",
+     "description": "Bombas de vácuo — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "33.0/2",
+     "cest": "0103300",
+     "ncms": [
+      "84141000"
+     ],
+     "ncmText": "84141000",
+     "description": "Bombas de vácuo — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "34.0/1",
+     "cest": "0103400",
+     "ncms": [
+      "8414801",
+      "8414802"
+     ],
+     "ncmText": "8414801 8414802",
+     "description": "Compressores e turbocompressores de ar — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "34.0/2",
+     "cest": "0103400",
+     "ncms": [
+      "8414801",
+      "8414802"
+     ],
+     "ncmText": "8414801 8414802",
+     "description": "Compressores e turbocompressores de ar — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "35.0/1",
+     "cest": "0103500",
+     "ncms": [
+      "84139190",
+      "84149010",
+      "8414903",
+      "84149039"
+     ],
+     "ncmText": "84139190 84149010 8414903 84149039",
+     "description": "Partes das bombas, compressores e turbocompressores dos CEST 01.032.00, 01.033.00 e 01.034.00 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "35.0/2",
+     "cest": "0103500",
+     "ncms": [
+      "84139190",
+      "84149010",
+      "8414903",
+      "84149039"
+     ],
+     "ncmText": "84139190 84149010 8414903 84149039",
+     "description": "Partes das bombas, compressores e turbocompressores dos CEST 01.032.00, 01.033.00 e 01.034.00 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "36.0/1",
+     "cest": "0103600",
+     "ncms": [
+      "841520"
+     ],
+     "ncmText": "841520",
+     "description": "Máquinas e aparelhos de ar condicionado — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "36.0/2",
+     "cest": "0103600",
+     "ncms": [
+      "841520"
+     ],
+     "ncmText": "841520",
+     "description": "Máquinas e aparelhos de ar condicionado — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "37.0/1",
+     "cest": "0103700",
+     "ncms": [
+      "84212300"
+     ],
+     "ncmText": "84212300",
+     "description": "Aparelhos para filtrar óleos minerais nos motores de ignição por centelha ou por compressão — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "37.0/2",
+     "cest": "0103700",
+     "ncms": [
+      "84212300"
+     ],
+     "ncmText": "84212300",
+     "description": "Aparelhos para filtrar óleos minerais nos motores de ignição por centelha ou por compressão — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "38.0/1",
+     "cest": "0103800",
+     "ncms": [
+      "84212990"
+     ],
+     "ncmText": "84212990",
+     "description": "Filtros a vácuo — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "38.0/2",
+     "cest": "0103800",
+     "ncms": [
+      "84212990"
+     ],
+     "ncmText": "84212990",
+     "description": "Filtros a vácuo — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "39.0/1",
+     "cest": "0103900",
+     "ncms": [
+      "84219"
+     ],
+     "ncmText": "84219",
+     "description": "Partes dos aparelhos para filtrar ou depurar líquidos ou gases — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "39.0/2",
+     "cest": "0103900",
+     "ncms": [
+      "84219"
+     ],
+     "ncmText": "84219",
+     "description": "Partes dos aparelhos para filtrar ou depurar líquidos ou gases — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "40.0/1",
+     "cest": "0104000",
+     "ncms": [
+      "84241000"
+     ],
+     "ncmText": "84241000",
+     "description": "Extintores, mesmo carregados — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "40.0/2",
+     "cest": "0104000",
+     "ncms": [
+      "84241000"
+     ],
+     "ncmText": "84241000",
+     "description": "Extintores, mesmo carregados — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "41.0/1",
+     "cest": "0104100",
+     "ncms": [
+      "84213100"
+     ],
+     "ncmText": "84213100",
+     "description": "Filtros de entrada de ar para motores de ignição por centelha ou por compressão — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "41.0/2",
+     "cest": "0104100",
+     "ncms": [
+      "84213100"
+     ],
+     "ncmText": "84213100",
+     "description": "Filtros de entrada de ar para motores de ignição por centelha ou por compressão — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "42.0/1",
+     "cest": "0104200",
+     "ncms": [
+      "84213200"
+     ],
+     "ncmText": "84213200",
+     "description": "Depuradores por conversão catalítica de gases de escape — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "42.0/2",
+     "cest": "0104200",
+     "ncms": [
+      "84213200"
+     ],
+     "ncmText": "84213200",
+     "description": "Depuradores por conversão catalítica de gases de escape — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "43.0/1",
+     "cest": "0104300",
+     "ncms": [
+      "84254200"
+     ],
+     "ncmText": "84254200",
+     "description": "Macacos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "43.0/2",
+     "cest": "0104300",
+     "ncms": [
+      "84254200"
+     ],
+     "ncmText": "84254200",
+     "description": "Macacos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "44.0/1",
+     "cest": "0104400",
+     "ncms": [
+      "84311010"
+     ],
+     "ncmText": "84311010",
+     "description": "Partes para macacos do CEST 01.043.00 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "44.0/2",
+     "cest": "0104400",
+     "ncms": [
+      "84311010"
+     ],
+     "ncmText": "84311010",
+     "description": "Partes para macacos do CEST 01.043.00 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "45.0/1",
+     "cest": "0104500",
+     "ncms": [
+      "8431492"
+     ],
+     "ncmText": "8431492",
+     "description": "Partes reconhecíveis como exclusiva ou principalmente destinadas às máquinas agrícolas ou rodoviárias — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "45.0/2",
+     "cest": "0104500",
+     "ncms": [
+      "8431492"
+     ],
+     "ncmText": "8431492",
+     "description": "Partes reconhecíveis como exclusiva ou principalmente destinadas às máquinas agrícolas ou rodoviárias — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "45.1/1",
+     "cest": "0104501",
+     "ncms": [
+      "84339090"
+     ],
+     "ncmText": "84339090",
+     "description": "Partes reconhecíveis como exclusiva ou principalmente destinadas às máquinas agrícolas ou rodoviárias — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "45.1/2",
+     "cest": "0104501",
+     "ncms": [
+      "84339090"
+     ],
+     "ncmText": "84339090",
+     "description": "Partes reconhecíveis como exclusiva ou principalmente destinadas às máquinas agrícolas ou rodoviárias — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "46.0/1",
+     "cest": "0104600",
+     "ncms": [
+      "84811000"
+     ],
+     "ncmText": "84811000",
+     "description": "Válvulas redutoras de pressão — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "46.0/2",
+     "cest": "0104600",
+     "ncms": [
+      "84811000"
+     ],
+     "ncmText": "84811000",
+     "description": "Válvulas redutoras de pressão — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "47.0/1",
+     "cest": "0104700",
+     "ncms": [
+      "84812"
+     ],
+     "ncmText": "84812",
+     "description": "Válvulas para transmissão óleo-hidráulicas ou pneumáticas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "47.0/2",
+     "cest": "0104700",
+     "ncms": [
+      "84812"
+     ],
+     "ncmText": "84812",
+     "description": "Válvulas para transmissão óleo-hidráulicas ou pneumáticas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "48.0/1",
+     "cest": "0104800",
+     "ncms": [
+      "84818092"
+     ],
+     "ncmText": "84818092",
+     "description": "Válvulas solenoides — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "48.0/2",
+     "cest": "0104800",
+     "ncms": [
+      "84818092"
+     ],
+     "ncmText": "84818092",
+     "description": "Válvulas solenoides — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "49.0/1",
+     "cest": "0104900",
+     "ncms": [
+      "8482"
+     ],
+     "ncmText": "8482",
+     "description": "Rolamentos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "49.0/2",
+     "cest": "0104900",
+     "ncms": [
+      "8482"
+     ],
+     "ncmText": "8482",
+     "description": "Rolamentos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "50.0/1",
+     "cest": "0105000",
+     "ncms": [
+      "8483"
+     ],
+     "ncmText": "8483",
+     "description": "Árvores de transmissão (incluídas as árvores de “cames” e virabrequins) e manivelas; mancais e “bronzes”; engrenagens e rodas de fricção; eixos de esferas ou de roletes; redutores, multiplicadores, caixas de transmissão e variadores de velocidade, incluídos os conversores de torque; volantes e polias, incluídas as polias para cadernais; embreagens e dispositivos de acoplamento, incluídas as juntas de articulação — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "50.0/2",
+     "cest": "0105000",
+     "ncms": [
+      "8483"
+     ],
+     "ncmText": "8483",
+     "description": "Árvores de transmissão (incluídas as árvores de “cames” e virabrequins) e manivelas; mancais e “bronzes”; engrenagens e rodas de fricção; eixos de esferas ou de roletes; redutores, multiplicadores, caixas de transmissão e variadores de velocidade, incluídos os conversores de torque; volantes e polias, incluídas as polias para cadernais; embreagens e dispositivos de acoplamento, incluídas as juntas de articulação — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "51.0/1",
+     "cest": "0105100",
+     "ncms": [
+      "8484"
+     ],
+     "ncmText": "8484",
+     "description": "Juntas metaloplásticas; jogos ou sortidos de juntas de composições diferentes, apresentados em bolsas, envelopes ou embalagens semelhantes; juntas de vedação mecânicas (selos mecânicos) — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "51.0/2",
+     "cest": "0105100",
+     "ncms": [
+      "8484"
+     ],
+     "ncmText": "8484",
+     "description": "Juntas metaloplásticas; jogos ou sortidos de juntas de composições diferentes, apresentados em bolsas, envelopes ou embalagens semelhantes; juntas de vedação mecânicas (selos mecânicos) — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "52.0/1",
+     "cest": "0105200",
+     "ncms": [
+      "850520"
+     ],
+     "ncmText": "850520",
+     "description": "Acoplamentos, embreagens, variadores de velocidade e freios, eletromagnéticos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "52.0/2",
+     "cest": "0105200",
+     "ncms": [
+      "850520"
+     ],
+     "ncmText": "850520",
+     "description": "Acoplamentos, embreagens, variadores de velocidade e freios, eletromagnéticos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "53.0/1",
+     "cest": "0105300",
+     "ncms": [
+      "850710"
+     ],
+     "ncmText": "850710",
+     "description": "Acumuladores elétricos de chumbo, do tipo utilizado para o arranque dos motores de pistão, exceto os classificados no CEST 01.053.01 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "53.0/2",
+     "cest": "0105300",
+     "ncms": [
+      "850710"
+     ],
+     "ncmText": "850710",
+     "description": "Acumuladores elétricos de chumbo, do tipo utilizado para o arranque dos motores de pistão, exceto os classificados no CEST 01.053.01 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "53.1/1",
+     "cest": "0105301",
+     "ncms": [
+      "85071010"
+     ],
+     "ncmText": "85071010",
+     "description": "Acumuladores elétricos de chumbo, do tipo utilizado para o arranque dos motores de pistão e de capacidade inferior ou igual a 20 Ah e tensão inferior ou igual a 12 V — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "53.1/2",
+     "cest": "0105301",
+     "ncms": [
+      "85071010"
+     ],
+     "ncmText": "85071010",
+     "description": "Acumuladores elétricos de chumbo, do tipo utilizado para o arranque dos motores de pistão e de capacidade inferior ou igual a 20 Ah e tensão inferior ou igual a 12 V — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "54.0/1",
+     "cest": "0105400",
+     "ncms": [
+      "8511"
+     ],
+     "ncmText": "8511",
+     "description": "Aparelhos e dispositivos elétricos de ignição ou de arranque para motores de ignição por centelha ou por compressão (por exemplo, magnetos, dínamos-magnetos, bobinas de ignição, velas de ignição ou de aquecimento, motores de arranque); geradores (dínamos e alternadores, por exemplo) e conjuntores-disjuntores utilizados com estes motores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "54.0/2",
+     "cest": "0105400",
+     "ncms": [
+      "8511"
+     ],
+     "ncmText": "8511",
+     "description": "Aparelhos e dispositivos elétricos de ignição ou de arranque para motores de ignição por centelha ou por compressão (por exemplo, magnetos, dínamos-magnetos, bobinas de ignição, velas de ignição ou de aquecimento, motores de arranque); geradores (dínamos e alternadores, por exemplo) e conjuntores-disjuntores utilizados com estes motores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "55.0/1",
+     "cest": "0105500",
+     "ncms": [
+      "851220",
+      "851240",
+      "85129000"
+     ],
+     "ncmText": "851220 851240 85129000",
+     "description": "Aparelhos elétricos de iluminação ou de sinalização (exceto os da posição 8539), limpadores de para-brisas, degeladores e desembaçadores (desembaciadores) elétricos e suas partes — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "55.0/2",
+     "cest": "0105500",
+     "ncms": [
+      "851220",
+      "851240",
+      "85129000"
+     ],
+     "ncmText": "851220 851240 85129000",
+     "description": "Aparelhos elétricos de iluminação ou de sinalização (exceto os da posição 8539), limpadores de para-brisas, degeladores e desembaçadores (desembaciadores) elétricos e suas partes — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "56.0/1",
+     "cest": "0105600",
+     "ncms": [
+      "85171410"
+     ],
+     "ncmText": "85171410",
+     "description": "Telefones móveis do tipo dos utilizados em veículos automóveis — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "56.0/2",
+     "cest": "0105600",
+     "ncms": [
+      "85171410"
+     ],
+     "ncmText": "85171410",
+     "description": "Telefones móveis do tipo dos utilizados em veículos automóveis — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "57.0/1",
+     "cest": "0105700",
+     "ncms": [
+      "8518"
+     ],
+     "ncmText": "8518",
+     "description": "Alto-falantes, amplificadores elétricos de audiofrequência e partes — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "57.0/2",
+     "cest": "0105700",
+     "ncms": [
+      "8518"
+     ],
+     "ncmText": "8518",
+     "description": "Alto-falantes, amplificadores elétricos de audiofrequência e partes — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "58.0/1",
+     "cest": "0105800",
+     "ncms": [
+      "85185000"
+     ],
+     "ncmText": "85185000",
+     "description": "Aparelhos elétricos de amplificação de som para veículos automotores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "58.0/2",
+     "cest": "0105800",
+     "ncms": [
+      "85185000"
+     ],
+     "ncmText": "85185000",
+     "description": "Aparelhos elétricos de amplificação de som para veículos automotores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "59.0/1",
+     "cest": "0105900",
+     "ncms": [
+      "851981"
+     ],
+     "ncmText": "851981",
+     "description": "Aparelhos de reprodução de som — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "59.0/2",
+     "cest": "0105900",
+     "ncms": [
+      "851981"
+     ],
+     "ncmText": "851981",
+     "description": "Aparelhos de reprodução de som — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "60.0/1",
+     "cest": "0106000",
+     "ncms": [
+      "8525501",
+      "85256010"
+     ],
+     "ncmText": "8525501 85256010",
+     "description": "Aparelhos transmissores (emissores) de radiotelefonia ou radiotelegrafia (rádio receptor/transmissor) — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "60.0/2",
+     "cest": "0106000",
+     "ncms": [
+      "8525501",
+      "85256010"
+     ],
+     "ncmText": "8525501 85256010",
+     "description": "Aparelhos transmissores (emissores) de radiotelefonia ou radiotelegrafia (rádio receptor/transmissor) — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "61.0/1",
+     "cest": "0106100",
+     "ncms": [
+      "85272100"
+     ],
+     "ncmText": "85272100",
+     "description": "Aparelhos receptores de radiodifusão que só funcionem com fonte externa de energia combinados com um aparelho de gravação ou de reprodução de som, do tipo utilizado em veículos automóveis — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "61.0/2",
+     "cest": "0106100",
+     "ncms": [
+      "85272100"
+     ],
+     "ncmText": "85272100",
+     "description": "Aparelhos receptores de radiodifusão que só funcionem com fonte externa de energia combinados com um aparelho de gravação ou de reprodução de som, do tipo utilizado em veículos automóveis — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "62.0/1",
+     "cest": "0106200",
+     "ncms": [
+      "85272900"
+     ],
+     "ncmText": "85272900",
+     "description": "Outros aparelhos receptores de radiodifusão que só funcionem com fonte externa de energia, do tipo utilizado em veículos automóveis — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "62.0/2",
+     "cest": "0106200",
+     "ncms": [
+      "85272900"
+     ],
+     "ncmText": "85272900",
+     "description": "Outros aparelhos receptores de radiodifusão que só funcionem com fonte externa de energia, do tipo utilizado em veículos automóveis — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "62.1/1",
+     "cest": "0106201",
+     "ncms": [
+      "85219090"
+     ],
+     "ncmText": "85219090",
+     "description": "Outros aparelhos videofônicos de gravação ou de reprodução, mesmo incorporando um receptor de sinais videofônicos, dos tipos utilizados exclusivamente em veículos automotores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "62.1/2",
+     "cest": "0106201",
+     "ncms": [
+      "85219090"
+     ],
+     "ncmText": "85219090",
+     "description": "Outros aparelhos videofônicos de gravação ou de reprodução, mesmo incorporando um receptor de sinais videofônicos, dos tipos utilizados exclusivamente em veículos automotores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "63.0/1",
+     "cest": "0106300",
+     "ncms": [
+      "852910"
+     ],
+     "ncmText": "852910",
+     "description": "Antenas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "63.0/2",
+     "cest": "0106300",
+     "ncms": [
+      "852910"
+     ],
+     "ncmText": "852910",
+     "description": "Antenas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "64.0/1",
+     "cest": "0106400",
+     "ncms": [
+      "853400"
+     ],
+     "ncmText": "853400",
+     "description": "Circuitos impressos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "64.0/2",
+     "cest": "0106400",
+     "ncms": [
+      "853400"
+     ],
+     "ncmText": "853400",
+     "description": "Circuitos impressos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "65.0/1",
+     "cest": "0106500",
+     "ncms": [
+      "853530",
+      "853650"
+     ],
+     "ncmText": "853530 853650",
+     "description": "Interruptores e seccionadores e comutadores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "65.0/2",
+     "cest": "0106500",
+     "ncms": [
+      "853530",
+      "853650"
+     ],
+     "ncmText": "853530 853650",
+     "description": "Interruptores e seccionadores e comutadores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "66.0/1",
+     "cest": "0106600",
+     "ncms": [
+      "85361000"
+     ],
+     "ncmText": "85361000",
+     "description": "Fusíveis e corta-circuitos de fusíveis — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "66.0/2",
+     "cest": "0106600",
+     "ncms": [
+      "85361000"
+     ],
+     "ncmText": "85361000",
+     "description": "Fusíveis e corta-circuitos de fusíveis — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "67.0/1",
+     "cest": "0106700",
+     "ncms": [
+      "85362000"
+     ],
+     "ncmText": "85362000",
+     "description": "Disjuntores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "67.0/2",
+     "cest": "0106700",
+     "ncms": [
+      "85362000"
+     ],
+     "ncmText": "85362000",
+     "description": "Disjuntores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "68.0/1",
+     "cest": "0106800",
+     "ncms": [
+      "85364"
+     ],
+     "ncmText": "85364",
+     "description": "Relés — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "68.0/2",
+     "cest": "0106800",
+     "ncms": [
+      "85364"
+     ],
+     "ncmText": "85364",
+     "description": "Relés — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "69.0/1",
+     "cest": "0106900",
+     "ncms": [
+      "8538"
+     ],
+     "ncmText": "8538",
+     "description": "Partes reconhecíveis como exclusivas ou principalmente destinados aos aparelhos dos CEST 01.065.00, 01.066.00, 01.067.00 e 01.068.00 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "69.0/2",
+     "cest": "0106900",
+     "ncms": [
+      "8538"
+     ],
+     "ncmText": "8538",
+     "description": "Partes reconhecíveis como exclusivas ou principalmente destinados aos aparelhos dos CEST 01.065.00, 01.066.00, 01.067.00 e 01.068.00 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "70.0/1",
+     "cest": "0107000",
+     "ncms": [
+      "853910"
+     ],
+     "ncmText": "853910",
+     "description": "Faróis e projetores, em unidades seladas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "70.0/2",
+     "cest": "0107000",
+     "ncms": [
+      "853910"
+     ],
+     "ncmText": "853910",
+     "description": "Faróis e projetores, em unidades seladas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "71.0/1",
+     "cest": "0107100",
+     "ncms": [
+      "85392"
+     ],
+     "ncmText": "85392",
+     "description": "Lâmpadas e tubos de incandescência, exceto de raios ultravioleta ou infravermelhos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "71.0/2",
+     "cest": "0107100",
+     "ncms": [
+      "85392"
+     ],
+     "ncmText": "85392",
+     "description": "Lâmpadas e tubos de incandescência, exceto de raios ultravioleta ou infravermelhos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "72.0/1",
+     "cest": "0107200",
+     "ncms": [
+      "85442000"
+     ],
+     "ncmText": "85442000",
+     "description": "Cabos coaxiais e outros condutores elétricos coaxiais — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "72.0/2",
+     "cest": "0107200",
+     "ncms": [
+      "85442000"
+     ],
+     "ncmText": "85442000",
+     "description": "Cabos coaxiais e outros condutores elétricos coaxiais — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "73.0/1",
+     "cest": "0107300",
+     "ncms": [
+      "85443000"
+     ],
+     "ncmText": "85443000",
+     "description": "Jogos de fios para velas de ignição e outros jogos de fios — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "73.0/2",
+     "cest": "0107300",
+     "ncms": [
+      "85443000"
+     ],
+     "ncmText": "85443000",
+     "description": "Jogos de fios para velas de ignição e outros jogos de fios — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "74.0/1",
+     "cest": "0107400",
+     "ncms": [
+      "8707"
+     ],
+     "ncmText": "8707",
+     "description": "Carroçarias para os veículos automóveis das posições 8701 a 8705, incluídas as cabinas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "74.0/2",
+     "cest": "0107400",
+     "ncms": [
+      "8707"
+     ],
+     "ncmText": "8707",
+     "description": "Carroçarias para os veículos automóveis das posições 8701 a 8705, incluídas as cabinas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "75.0/1",
+     "cest": "0107500",
+     "ncms": [
+      "8708"
+     ],
+     "ncmText": "8708",
+     "description": "Partes e acessórios dos veículos automóveis das posições 8701 a 8705 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "75.0/2",
+     "cest": "0107500",
+     "ncms": [
+      "8708"
+     ],
+     "ncmText": "8708",
+     "description": "Partes e acessórios dos veículos automóveis das posições 8701 a 8705 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "76.0/1",
+     "cest": "0107600",
+     "ncms": [
+      "87141"
+     ],
+     "ncmText": "87141",
+     "description": "Parte e acessórios de motocicletas (incluídos os ciclomotores) — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "76.0/2",
+     "cest": "0107600",
+     "ncms": [
+      "87141"
+     ],
+     "ncmText": "87141",
+     "description": "Parte e acessórios de motocicletas (incluídos os ciclomotores) — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "77.0/1",
+     "cest": "0107700",
+     "ncms": [
+      "87169090"
+     ],
+     "ncmText": "87169090",
+     "description": "Engates para reboques e semirreboques — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "77.0/2",
+     "cest": "0107700",
+     "ncms": [
+      "87169090"
+     ],
+     "ncmText": "87169090",
+     "description": "Engates para reboques e semirreboques — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "78.0/1",
+     "cest": "0107800",
+     "ncms": [
+      "902610"
+     ],
+     "ncmText": "902610",
+     "description": "Medidores de nível; Medidores de vazão — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "78.0/2",
+     "cest": "0107800",
+     "ncms": [
+      "902610"
+     ],
+     "ncmText": "902610",
+     "description": "Medidores de nível; Medidores de vazão — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "79.0/1",
+     "cest": "0107900",
+     "ncms": [
+      "902620"
+     ],
+     "ncmText": "902620",
+     "description": "Aparelhos para medida ou controle da pressão — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "79.0/2",
+     "cest": "0107900",
+     "ncms": [
+      "902620"
+     ],
+     "ncmText": "902620",
+     "description": "Aparelhos para medida ou controle da pressão — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "80.0/1",
+     "cest": "0108000",
+     "ncms": [
+      "9029"
+     ],
+     "ncmText": "9029",
+     "description": "Contadores, indicadores de velocidade e tacômetros, suas partes e acessórios — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "80.0/2",
+     "cest": "0108000",
+     "ncms": [
+      "9029"
+     ],
+     "ncmText": "9029",
+     "description": "Contadores, indicadores de velocidade e tacômetros, suas partes e acessórios — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "81.0/1",
+     "cest": "0108100",
+     "ncms": [
+      "90303321"
+     ],
+     "ncmText": "90303321",
+     "description": "Amperímetros — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "81.0/2",
+     "cest": "0108100",
+     "ncms": [
+      "90303321"
+     ],
+     "ncmText": "90303321",
+     "description": "Amperímetros — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "82.0/1",
+     "cest": "0108200",
+     "ncms": [
+      "90318040"
+     ],
+     "ncmText": "90318040",
+     "description": "Aparelhos digitais, de uso em veículos automóveis, para medida e indicação de múltiplas grandezas tais como: velocidade média, consumos instantâneo e médio e autonomia (computador de bordo) — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "82.0/2",
+     "cest": "0108200",
+     "ncms": [
+      "90318040"
+     ],
+     "ncmText": "90318040",
+     "description": "Aparelhos digitais, de uso em veículos automóveis, para medida e indicação de múltiplas grandezas tais como: velocidade média, consumos instantâneo e médio e autonomia (computador de bordo) — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "83.0/1",
+     "cest": "0108300",
+     "ncms": [
+      "9032892"
+     ],
+     "ncmText": "9032892",
+     "description": "Controladores eletrônicos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "83.0/2",
+     "cest": "0108300",
+     "ncms": [
+      "9032892"
+     ],
+     "ncmText": "9032892",
+     "description": "Controladores eletrônicos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "84.0/1",
+     "cest": "0108400",
+     "ncms": [
+      "91040000"
+     ],
+     "ncmText": "91040000",
+     "description": "Relógios para painéis de instrumentos e relógios semelhantes — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "84.0/2",
+     "cest": "0108400",
+     "ncms": [
+      "91040000"
+     ],
+     "ncmText": "91040000",
+     "description": "Relógios para painéis de instrumentos e relógios semelhantes — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "85.0/1",
+     "cest": "0108500",
+     "ncms": [
+      "94012000",
+      "94019900"
+     ],
+     "ncmText": "94012000 94019900",
+     "description": "Assentos e partes de assentos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "85.0/2",
+     "cest": "0108500",
+     "ncms": [
+      "94012000",
+      "94019900"
+     ],
+     "ncmText": "94012000 94019900",
+     "description": "Assentos e partes de assentos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "86.0/1",
+     "cest": "0108600",
+     "ncms": [
+      "96138000"
+     ],
+     "ncmText": "96138000",
+     "description": "Acendedores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "86.0/2",
+     "cest": "0108600",
+     "ncms": [
+      "96138000"
+     ],
+     "ncmText": "96138000",
+     "description": "Acendedores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "87.0/1",
+     "cest": "0108700",
+     "ncms": [
+      "4009"
+     ],
+     "ncmText": "4009",
+     "description": "Tubos de borracha vulcanizada não endurecida, mesmo providos de seus acessórios — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "87.0/2",
+     "cest": "0108700",
+     "ncms": [
+      "4009"
+     ],
+     "ncmText": "4009",
+     "description": "Tubos de borracha vulcanizada não endurecida, mesmo providos de seus acessórios — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "88.0/1",
+     "cest": "0108800",
+     "ncms": [
+      "45049000",
+      "68129910"
+     ],
+     "ncmText": "45049000 68129910",
+     "description": "Juntas de vedação de cortiça natural e de amianto — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "88.0/2",
+     "cest": "0108800",
+     "ncms": [
+      "45049000",
+      "68129910"
+     ],
+     "ncmText": "45049000 68129910",
+     "description": "Juntas de vedação de cortiça natural e de amianto — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "89.0/1",
+     "cest": "0108900",
+     "ncms": [
+      "48234000"
+     ],
+     "ncmText": "48234000",
+     "description": "Papel-diagrama para tacógrafo, em disco — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "89.0/2",
+     "cest": "0108900",
+     "ncms": [
+      "48234000"
+     ],
+     "ncmText": "48234000",
+     "description": "Papel-diagrama para tacógrafo, em disco — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "90.0/1",
+     "cest": "0109000",
+     "ncms": [
+      "391910",
+      "391990",
+      "87082999"
+     ],
+     "ncmText": "391910 391990 87082999",
+     "description": "Fitas, tiras, adesivos, autocolantes, de plástico, refletores, mesmo em rolos; placas metálicas com película de plástico refletora, próprias para colocação em carrocerias, para-choques de veículos de carga, motocicletas, ciclomotores, capacetes, bonés de agentes de trânsito e de condutores de veículos, atuando como dispositivos refletivos de segurança rodoviários — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "90.0/2",
+     "cest": "0109000",
+     "ncms": [
+      "391910",
+      "391990",
+      "87082999"
+     ],
+     "ncmText": "391910 391990 87082999",
+     "description": "Fitas, tiras, adesivos, autocolantes, de plástico, refletores, mesmo em rolos; placas metálicas com película de plástico refletora, próprias para colocação em carrocerias, para-choques de veículos de carga, motocicletas, ciclomotores, capacetes, bonés de agentes de trânsito e de condutores de veículos, atuando como dispositivos refletivos de segurança rodoviários — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "91.0/1",
+     "cest": "0109100",
+     "ncms": [
+      "84123110"
+     ],
+     "ncmText": "84123110",
+     "description": "Cilindros pneumáticos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "91.0/2",
+     "cest": "0109100",
+     "ncms": [
+      "84123110"
+     ],
+     "ncmText": "84123110",
+     "description": "Cilindros pneumáticos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "92.0/1",
+     "cest": "0109200",
+     "ncms": [
+      "84131900",
+      "84135090",
+      "84138100"
+     ],
+     "ncmText": "84131900 84135090 84138100",
+     "description": "Bomba elétrica de lavador de para-brisa — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "92.0/2",
+     "cest": "0109200",
+     "ncms": [
+      "84131900",
+      "84135090",
+      "84138100"
+     ],
+     "ncmText": "84131900 84135090 84138100",
+     "description": "Bomba elétrica de lavador de para-brisa — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "93.0/1",
+     "cest": "0109300",
+     "ncms": [
+      "84136019",
+      "84137010"
+     ],
+     "ncmText": "84136019 84137010",
+     "description": "Bomba de assistência de direção hidráulica — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "93.0/2",
+     "cest": "0109300",
+     "ncms": [
+      "84136019",
+      "84137010"
+     ],
+     "ncmText": "84136019 84137010",
+     "description": "Bomba de assistência de direção hidráulica — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "94.0/1",
+     "cest": "0109400",
+     "ncms": [
+      "84145910",
+      "84145990"
+     ],
+     "ncmText": "84145910 84145990",
+     "description": "Motoventiladores — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "94.0/2",
+     "cest": "0109400",
+     "ncms": [
+      "84145910",
+      "84145990"
+     ],
+     "ncmText": "84145910 84145990",
+     "description": "Motoventiladores — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "95.0/1",
+     "cest": "0109500",
+     "ncms": [
+      "84213990"
+     ],
+     "ncmText": "84213990",
+     "description": "Filtros de pólen do ar-condicionado — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "95.0/2",
+     "cest": "0109500",
+     "ncms": [
+      "84213990"
+     ],
+     "ncmText": "84213990",
+     "description": "Filtros de pólen do ar-condicionado — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "96.0/1",
+     "cest": "0109600",
+     "ncms": [
+      "85011019"
+     ],
+     "ncmText": "85011019",
+     "description": "“Máquina” de vidro elétrico de porta — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "96.0/2",
+     "cest": "0109600",
+     "ncms": [
+      "85011019"
+     ],
+     "ncmText": "85011019",
+     "description": "“Máquina” de vidro elétrico de porta — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "97.0/1",
+     "cest": "0109700",
+     "ncms": [
+      "85013110"
+     ],
+     "ncmText": "85013110",
+     "description": "Motor de limpador de para-brisa — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "97.0/2",
+     "cest": "0109700",
+     "ncms": [
+      "85013110"
+     ],
+     "ncmText": "85013110",
+     "description": "Motor de limpador de para-brisa — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "98.0/1",
+     "cest": "0109800",
+     "ncms": [
+      "85045000"
+     ],
+     "ncmText": "85045000",
+     "description": "Bobinas de reatância e de autoindução — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "98.0/2",
+     "cest": "0109800",
+     "ncms": [
+      "85045000"
+     ],
+     "ncmText": "85045000",
+     "description": "Bobinas de reatância e de autoindução — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "99.0/1",
+     "cest": "0109900",
+     "ncms": [
+      "850720",
+      "850730"
+     ],
+     "ncmText": "850720 850730",
+     "description": "Baterias de chumbo e de níquel-cádmio — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "99.0/2",
+     "cest": "0109900",
+     "ncms": [
+      "850720",
+      "850730"
+     ],
+     "ncmText": "850720 850730",
+     "description": "Baterias de chumbo e de níquel-cádmio — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "100.0/1",
+     "cest": "0110000",
+     "ncms": [
+      "85123000"
+     ],
+     "ncmText": "85123000",
+     "description": "Aparelhos de sinalização acústica (buzina) — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "100.0/2",
+     "cest": "0110000",
+     "ncms": [
+      "85123000"
+     ],
+     "ncmText": "85123000",
+     "description": "Aparelhos de sinalização acústica (buzina) — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "101.0/1",
+     "cest": "0110100",
+     "ncms": [
+      "9032898",
+      "9032899"
+     ],
+     "ncmText": "9032898 9032899",
+     "description": "Instrumentos para regulação de grandezas não elétricas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "101.0/2",
+     "cest": "0110100",
+     "ncms": [
+      "9032898",
+      "9032899"
+     ],
+     "ncmText": "9032898 9032899",
+     "description": "Instrumentos para regulação de grandezas não elétricas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "102.0/1",
+     "cest": "0110200",
+     "ncms": [
+      "90271000"
+     ],
+     "ncmText": "90271000",
+     "description": "Analisadores de gases ou de fumaça (sonda lambda) — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "102.0/2",
+     "cest": "0110200",
+     "ncms": [
+      "90271000"
+     ],
+     "ncmText": "90271000",
+     "description": "Analisadores de gases ou de fumaça (sonda lambda) — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "103.0/1",
+     "cest": "0110300",
+     "ncms": [
+      "40081100"
+     ],
+     "ncmText": "40081100",
+     "description": "Perfilados de borracha vulcanizada não endurecida — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "103.0/2",
+     "cest": "0110300",
+     "ncms": [
+      "40081100"
+     ],
+     "ncmText": "40081100",
+     "description": "Perfilados de borracha vulcanizada não endurecida — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "104.0/1",
+     "cest": "0110400",
+     "ncms": [
+      "56012219"
+     ],
+     "ncmText": "56012219",
+     "description": "Artefatos de pasta de fibra de uso automotivo — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "104.0/2",
+     "cest": "0110400",
+     "ncms": [
+      "56012219"
+     ],
+     "ncmText": "56012219",
+     "description": "Artefatos de pasta de fibra de uso automotivo — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "105.0/1",
+     "cest": "0110500",
+     "ncms": [
+      "57032900"
+     ],
+     "ncmText": "57032900",
+     "description": "Tapetes/carpetes – náilon — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "105.0/2",
+     "cest": "0110500",
+     "ncms": [
+      "57032900"
+     ],
+     "ncmText": "57032900",
+     "description": "Tapetes/carpetes – náilon — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "106.0/1",
+     "cest": "0110600",
+     "ncms": [
+      "57033900"
+     ],
+     "ncmText": "57033900",
+     "description": "Tapetes de matérias têxteis sintéticas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "106.0/2",
+     "cest": "0110600",
+     "ncms": [
+      "57033900"
+     ],
+     "ncmText": "57033900",
+     "description": "Tapetes de matérias têxteis sintéticas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "107.0/1",
+     "cest": "0110700",
+     "ncms": [
+      "59119000"
+     ],
+     "ncmText": "59119000",
+     "description": "Forração interior capacete — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "107.0/2",
+     "cest": "0110700",
+     "ncms": [
+      "59119000"
+     ],
+     "ncmText": "59119000",
+     "description": "Forração interior capacete — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "108.0/1",
+     "cest": "0110800",
+     "ncms": [
+      "69039099"
+     ],
+     "ncmText": "69039099",
+     "description": "Outros para-brisas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "108.0/2",
+     "cest": "0110800",
+     "ncms": [
+      "69039099"
+     ],
+     "ncmText": "69039099",
+     "description": "Outros para-brisas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "109.0/1",
+     "cest": "0110900",
+     "ncms": [
+      "70072900"
+     ],
+     "ncmText": "70072900",
+     "description": "Moldura com espelho — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "109.0/2",
+     "cest": "0110900",
+     "ncms": [
+      "70072900"
+     ],
+     "ncmText": "70072900",
+     "description": "Moldura com espelho — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "111.0/1",
+     "cest": "0111100",
+     "ncms": [
+      "73151100"
+     ],
+     "ncmText": "73151100",
+     "description": "Corrente transmissão — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "111.0/2",
+     "cest": "0111100",
+     "ncms": [
+      "73151100"
+     ],
+     "ncmText": "73151100",
+     "description": "Corrente transmissão — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "112.0/1",
+     "cest": "0111200",
+     "ncms": [
+      "73151210"
+     ],
+     "ncmText": "73151210",
+     "description": "Outras correntes de transmissão — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "112.0/2",
+     "cest": "0111200",
+     "ncms": [
+      "73151210"
+     ],
+     "ncmText": "73151210",
+     "description": "Outras correntes de transmissão — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "113.0/1",
+     "cest": "0111300",
+     "ncms": [
+      "84189900"
+     ],
+     "ncmText": "84189900",
+     "description": "Condensador tubular metálico — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "113.0/2",
+     "cest": "0111300",
+     "ncms": [
+      "84189900"
+     ],
+     "ncmText": "84189900",
+     "description": "Condensador tubular metálico — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "114.0/1",
+     "cest": "0111400",
+     "ncms": [
+      "841950"
+     ],
+     "ncmText": "841950",
+     "description": "Trocadores de calor — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "114.0/2",
+     "cest": "0111400",
+     "ncms": [
+      "841950"
+     ],
+     "ncmText": "841950",
+     "description": "Trocadores de calor — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "115.0/1",
+     "cest": "0111500",
+     "ncms": [
+      "84249090"
+     ],
+     "ncmText": "84249090",
+     "description": "Partes de aparelhos mecânicos de pulverizar ou dispersar — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "115.0/2",
+     "cest": "0111500",
+     "ncms": [
+      "84249090"
+     ],
+     "ncmText": "84249090",
+     "description": "Partes de aparelhos mecânicos de pulverizar ou dispersar — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "116.0/1",
+     "cest": "0111600",
+     "ncms": [
+      "84254910"
+     ],
+     "ncmText": "84254910",
+     "description": "Macacos manuais para veículos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "116.0/2",
+     "cest": "0111600",
+     "ncms": [
+      "84254910"
+     ],
+     "ncmText": "84254910",
+     "description": "Macacos manuais para veículos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "117.0/1",
+     "cest": "0111700",
+     "ncms": [
+      "84314100"
+     ],
+     "ncmText": "84314100",
+     "description": "Caçambas, pás, ganchos e tenazes para máquinas rodoviárias — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "117.0/2",
+     "cest": "0111700",
+     "ncms": [
+      "84314100"
+     ],
+     "ncmText": "84314100",
+     "description": "Caçambas, pás, ganchos e tenazes para máquinas rodoviárias — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "118.0/1",
+     "cest": "0111800",
+     "ncms": [
+      "85016100"
+     ],
+     "ncmText": "85016100",
+     "description": "Geradores de corrente alternada de potência não superior a 75 kva — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "118.0/2",
+     "cest": "0111800",
+     "ncms": [
+      "85016100"
+     ],
+     "ncmText": "85016100",
+     "description": "Geradores de corrente alternada de potência não superior a 75 kva — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "119.0/1",
+     "cest": "0111900",
+     "ncms": [
+      "85311090"
+     ],
+     "ncmText": "85311090",
+     "description": "Aparelhos elétricos para alarme de uso automotivo — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "119.0/2",
+     "cest": "0111900",
+     "ncms": [
+      "85311090"
+     ],
+     "ncmText": "85311090",
+     "description": "Aparelhos elétricos para alarme de uso automotivo — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "120.0/1",
+     "cest": "0112000",
+     "ncms": [
+      "90141000"
+     ],
+     "ncmText": "90141000",
+     "description": "Bússolas — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "120.0/2",
+     "cest": "0112000",
+     "ncms": [
+      "90141000"
+     ],
+     "ncmText": "90141000",
+     "description": "Bússolas — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "121.0/1",
+     "cest": "0112100",
+     "ncms": [
+      "90251990"
+     ],
+     "ncmText": "90251990",
+     "description": "Indicadores de temperatura — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "121.0/2",
+     "cest": "0112100",
+     "ncms": [
+      "90251990"
+     ],
+     "ncmText": "90251990",
+     "description": "Indicadores de temperatura — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "122.0/1",
+     "cest": "0112200",
+     "ncms": [
+      "90259010"
+     ],
+     "ncmText": "90259010",
+     "description": "Partes de indicadores de temperatura — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "122.0/2",
+     "cest": "0112200",
+     "ncms": [
+      "90259010"
+     ],
+     "ncmText": "90259010",
+     "description": "Partes de indicadores de temperatura — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "123.0/1",
+     "cest": "0112300",
+     "ncms": [
+      "902690"
+     ],
+     "ncmText": "902690",
+     "description": "Partes de aparelhos de medida ou controle — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "123.0/2",
+     "cest": "0112300",
+     "ncms": [
+      "902690"
+     ],
+     "ncmText": "902690",
+     "description": "Partes de aparelhos de medida ou controle — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "124.0/1",
+     "cest": "0112400",
+     "ncms": [
+      "90321010"
+     ],
+     "ncmText": "90321010",
+     "description": "Termostatos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "124.0/2",
+     "cest": "0112400",
+     "ncms": [
+      "90321010"
+     ],
+     "ncmText": "90321010",
+     "description": "Termostatos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "125.0/1",
+     "cest": "0112500",
+     "ncms": [
+      "90321090"
+     ],
+     "ncmText": "90321090",
+     "description": "Instrumentos e aparelhos para regulação — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "125.0/2",
+     "cest": "0112500",
+     "ncms": [
+      "90321090"
+     ],
+     "ncmText": "90321090",
+     "description": "Instrumentos e aparelhos para regulação — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "126.0/1",
+     "cest": "0112600",
+     "ncms": [
+      "90322000"
+     ],
+     "ncmText": "90322000",
+     "description": "Pressostatos — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "126.0/2",
+     "cest": "0112600",
+     "ncms": [
+      "90322000"
+     ],
+     "ncmText": "90322000",
+     "description": "Pressostatos — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "127.0/1",
+     "cest": "0112700",
+     "ncms": [
+      "871690"
+     ],
+     "ncmText": "871690",
+     "description": "Peças para reboques e semirreboques, exceto os itens classificados no CEST 01.077.00 — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "127.0/2",
+     "cest": "0112700",
+     "ncms": [
+      "871690"
+     ],
+     "ncmText": "871690",
+     "description": "Peças para reboques e semirreboques, exceto os itens classificados no CEST 01.077.00 — demais casos",
+     "mva": "71.78"
+    },
+    {
+     "item": "128.0/1",
+     "cest": "0112800",
+     "ncms": [
+      "73229010"
+     ],
+     "ncmText": "73229010",
+     "description": "Geradores de ar quente a combustível líquido, com capacidade superior ou igual a 1.500 kcal/h, mas inferior ou igual a 10.400 kcal/h, do tipo dos utilizados em veículos automóveis — saída do fabricante para atender índice ou contrato de fidelidade",
+     "mva": "36.56"
+    },
+    {
+     "item": "128.0/2",
+     "cest": "0112800",
+     "ncms": [
+      "73229010"
+     ],
+     "ncmText": "73229010",
+     "description": "Geradores de ar quente a combustível líquido, com capacidade superior ou igual a 1.500 kcal/h, mas inferior ou igual a 10.400 kcal/h, do tipo dos utilizados em veículos automóveis — demais casos",
+     "mva": "71.78"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "23",
+   "segmentName": "Sorvetes e preparados para fabricação de sorvetes em máquinas",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.45",
+   "source": "stMaAnexo4_45",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=c3506379-f302-42a9-82d7-7bc48357caa3",
+   "validFrom": "2023-07-18",
+   "validTo": null,
+   "note": "Base: preço máximo ou único fixado por autoridade ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual).",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2300100",
+     "ncms": [
+      "210500"
+     ],
+     "ncmText": "210500",
+     "description": "Sorvetes de qualquer espécie",
+     "mva": "70"
+    },
+    {
+     "item": "2.0",
+     "cest": "2300200",
+     "ncms": [
+      "1806",
+      "1901",
+      "2106",
+      "0404"
+     ],
+     "ncmText": "1806 1901 2106 0404",
+     "description": "Preparados para fabricação de sorvete em máquina",
+     "mva": "328"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "20",
+   "segmentName": "Produtos de perfumaria e de higiene pessoal e cosméticos",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.46",
+   "source": "stMaAnexo4_46",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=f1e45ea1-52b4-4b30-9e5a-a8a8a7fc894d",
+   "validFrom": "2022-10-24",
+   "validTo": null,
+   "note": "Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual).",
+   "items": [
+    {
+     "item": "23.0",
+     "cest": "2002300",
+     "ncms": [
+      "33061000"
+     ],
+     "ncmText": "33061000",
+     "description": "Dentifrícios",
+     "mva": "41.38"
+    },
+    {
+     "item": "24.0",
+     "cest": "2002400",
+     "ncms": [
+      "33062000"
+     ],
+     "ncmText": "33062000",
+     "description": "Fios utilizados para limpar os espaços interdentais (fios dentais)",
+     "mva": "41.38"
+    },
+    {
+     "item": "25.0",
+     "cest": "2002500",
+     "ncms": [
+      "33069000"
+     ],
+     "ncmText": "33069000",
+     "description": "Outras preparações para higiene bucal ou dentária",
+     "mva": "41.38"
+    },
+    {
+     "item": "39.0",
+     "cest": "2003900",
+     "ncms": [
+      "40149090"
+     ],
+     "ncmText": "40149090",
+     "description": "Chupetas e bicos para mamadeiras e para chupetas, de borracha",
+     "mva": "41.38"
+    },
+    {
+     "item": "40.0",
+     "cest": "2004000",
+     "ncms": [
+      "39249000",
+      "39269040",
+      "39269090"
+     ],
+     "ncmText": "39249000 39269040 39269090",
+     "description": "Chupetas e bicos para mamadeiras e para chupetas, de silicone",
+     "mva": "41.38"
+    },
+    {
+     "item": "48.0",
+     "cest": "2004800",
+     "ncms": [
+      "96190000"
+     ],
+     "ncmText": "96190000",
+     "description": "Fraldas, exceto os descritos no CEST 20.048.01",
+     "mva": "41.38"
+    },
+    {
+     "item": "48.1",
+     "cest": "2004801",
+     "ncms": [
+      "96190000"
+     ],
+     "ncmText": "96190000",
+     "description": "Fraldas de fibras têxteis",
+     "mva": "41.38"
+    },
+    {
+     "item": "49.0",
+     "cest": "2004900",
+     "ncms": [
+      "96190000"
+     ],
+     "ncmText": "96190000",
+     "description": "Tampões higiênicos",
+     "mva": "41.38"
+    },
+    {
+     "item": "50.0",
+     "cest": "2005000",
+     "ncms": [
+      "96190000"
+     ],
+     "ncmText": "96190000",
+     "description": "Absorventes higiênicos externos",
+     "mva": "41.38"
+    },
+    {
+     "item": "51.0",
+     "cest": "2005100",
+     "ncms": [
+      "56012190"
+     ],
+     "ncmText": "56012190",
+     "description": "Hastes flexíveis (uso não medicinal)",
+     "mva": "41.38"
+    },
+    {
+     "item": "58.0",
+     "cest": "2005800",
+     "ncms": [
+      "96032100"
+     ],
+     "ncmText": "96032100",
+     "description": "Escovas de dentes, incluídas as escovas para dentaduras",
+     "mva": "41.38"
+    },
+    {
+     "item": "63.0",
+     "cest": "2006300",
+     "ncms": [
+      "39233090",
+      "39241000",
+      "39249000",
+      "40149090",
+      "7013"
+     ],
+     "ncmText": "39233090 39241000 39249000 40149090 7013",
+     "description": "Mamadeiras",
+     "mva": "41.38"
+    }
+   ]
+  },
+  {
    "uf": "PA",
    "segment": "01/Autopeças",
    "segmentName": "Autopeças",

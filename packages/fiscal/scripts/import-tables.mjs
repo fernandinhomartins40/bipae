@@ -52,6 +52,7 @@ import { CE_NET_LOAD_SOURCES, ceNetLoadRegimes, parseCeNetLoadSource } from './s
 import { acStReferences, parseAcIn12023 } from './st-ac.mjs';
 import { amStReferences, parseAmLei6108 } from './st-am.mjs';
 import { parseRnAnexo007, rnStReferences } from './st-rn.mjs';
+import { MA_ANNEX_SOURCES, maStReferences, parseMaAnnex } from './st-ma.mjs';
 import { docText } from './doc-text.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
@@ -770,6 +771,25 @@ async function importStReferences(cest) {
     throw new Error(`Anexo 007 do RICMS/RN: CEST fora do Convênio: ${rnParsed.unknown.join(', ')}`);
   }
   const rn = rnStReferences(rnParsed, { url: manifest.stRnAnexo007.page });
+  // Maranhão (F3-26.d.MA): um anexo 4.x do RICMS/MA por segmento, cada um no seu formato. Só
+  // entram nas referências (sem lista de segmentos): os anexos que ainda não foram lidos não podem
+  // passar por "fora da ST".
+  const maParsed = [];
+  for (const { annex, key } of MA_ANNEX_SOURCES) {
+    maParsed.push(
+      parseMaAnnex(
+        annex,
+        await pdfLines(readFileSync(join(sourcesDir, manifest[key].file))),
+        cest.items,
+      ),
+    );
+  }
+  const maKey = new Map(MA_ANNEX_SOURCES.map((s) => [s.annex, s.key]));
+  const ma = maStReferences(maParsed, {
+    urlOf: (annex) => manifest[maKey.get(annex)].page,
+    sourceOf: (annex) => maKey.get(annex),
+    segmentName: (code) => acNames.get(code),
+  });
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -839,6 +859,7 @@ async function importStReferences(cest) {
       ...ac.references,
       ...am.references,
       ...rn.references,
+      ...ma,
       ...confaz.flatMap((c) => c.references),
     ],
   };

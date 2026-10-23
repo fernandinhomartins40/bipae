@@ -426,7 +426,9 @@ function PortalReference({ uf }: { uf: string }) {
   );
 }
 
-const cestText = (cest: string) => cest.replace(/^(\d{2})(\d{3})(\d{2})$/, '$1.$2.$3');
+// Linha da tabela oficial sem CEST (no Maranhão, a MVA por embalagem que o CEST não separa).
+const cestText = (cest: string) =>
+  cest ? cest.replace(/^(\d{2})(\d{3})(\d{2})$/, '$1.$2.$3') : 'não confirmado';
 const day = (iso: string | null) => (iso ? iso.split('-').reverse().join('/') : '');
 
 interface StStatus {

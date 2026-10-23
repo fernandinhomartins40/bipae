@@ -721,6 +721,123 @@
   "downloadedAt": "2026-10-23",
   "sha256": "b77d3842b3905f577aa8191c2c40667842cb54372e2ba4dded84cc8c9e0e8149"
  },
+ "stMaAnexo4_2": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.2_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.2: substituição tributária nas operações com água mineral, água potável, cerveja, chope, gelo e refrigerante (texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=5e8c9bf1-ad43-4dff-ae43-8793cd783157",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "b6fd6ba8935fb05c9a3e7670d706c15d75204a62f2dbed0c09900a57f92c460d"
+ },
+ "stMaAnexo4_5": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.5_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.5: substituição tributária nas operações com cigarro, charuto, cigarrilha, fumo e artigos correlatos (Convênio ICMS 111/17; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=2164b104-36b3-4c12-a674-803e87a438cc",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "de30d520584269902dbc0c54e46a0e7b83a80bdc9cb4b05a30d44a380d2903b6"
+ },
+ "stMaAnexo4_13": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.13_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.13: substituição tributária nas operações com lâmpadas elétricas, reatores e starter (Protocolo ICMS 17/85; Anexo Único com CEST e MVA; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=ceb3173b-3e88-4f41-a585-9632209009a4",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "b66c19ca9ac9c206f16dff8bab695d77b89d3fcde4644d6aef48085127e3e794"
+ },
+ "stMaAnexo4_16": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.16_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.16: substituição tributária nas operações com pneumáticos, câmaras de ar e protetores de borracha (Convênio ICMS 102/17; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=c63f650a-51fd-4224-ab59-9c20b53bf652",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "485bd83e8625070e70940496c0bbf9d891217017b301e09627d65394643e429a"
+ },
+ "stMaAnexo4_17": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.17_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.17: substituição tributária nas operações com medicamentos de uso humano e outros produtos farmacêuticos (Convênio ICMS 234/17 e Protocolo ICMS 95/11; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=eaa721f0-bf5f-4e5b-9afe-93acd9f498e5",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "837173b179a659e68e00c38d4aa20398c992534ddb2f4d6565ad2336a2d2ff3e"
+ },
+ "stMaAnexo4_19": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.19_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.19: substituição tributária nas operações com tintas, vernizes e outras mercadorias da indústria química (Convênio ICMS 118/17; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=8e57ffba-4218-4ff0-94c4-216248ec1ab4",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "496d4fe67eef2828058867a11dbaddca0addfde2e6e1f30d2b5ba4b74b8cb1fd"
+ },
+ "stMaAnexo4_21": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.21_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.21: substituição tributária nas operações com veículos automotores novos (Convênio ICMS 199/17; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=aae3502e-81c1-485e-b15a-96b8dd710c05",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "bc80cee74f3c91860337c743d3bfe362cc5860eda08548054de48aba00322ea0"
+ },
+ "stMaAnexo4_22": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.22_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.22: substituição tributária nas operações com veículos de duas e três rodas motorizados (Convênio ICMS 200/17; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=c2267475-b909-4947-a4e6-3ff30585b2d5",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "ebfa8f50114f1053fe1cee1523d66d8ac64c559d385c3d05ec82d2ae86f902fe"
+ },
+ "stMaAnexo4_33": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.33_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.33: substituição tributária nas operações com bebidas quentes (Protocolos ICMS 13/06, 14/06, 15/06 e 103/12; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=8380ee07-5efe-4677-aad6-0b37fe7dda7f",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "f82bd8bcc4fd056959ba05568c5df6ebd498a66be43937bdb8b647b879d526e6"
+ },
+ "stMaAnexo4_38": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.38_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.38: substituição tributária nas operações com aparelhos celulares e cartões inteligentes (Convênio ICMS 213/17; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=914eae59-fc33-4174-bf8c-3c639c291637",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "784e5ffa6a0524f87432db71764040d891f07acd77a16f76f3e5cdfb66b45e61"
+ },
+ "stMaAnexo4_41": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.41_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.41: substituição tributária nas operações com autopeças (Protocolos ICMS 41/08 e 97/10; lista do Anexo II do Convênio ICMS 142/18 desde a RA 01/2023; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=608a4b84-3627-4398-90b7-9cd558b5c8f8",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "c068e8868f467105e9bd9c57b06d33b8ff4d348e7ca55ffcd72eca7a30093ddd"
+ },
+ "stMaAnexo4_45": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.45_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.45: substituição tributária nas operações com sorvetes e preparados para fabricação de sorvetes em máquinas (Protocolos ICMS 20/05 e 123/13; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=c3506379-f302-42a9-82d7-7bc48357caa3",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "54b9a1c478b072e9ead1b54be19f97e06346106c7e74a584fd9eb589c7c4c9e0"
+ },
+ "stMaAnexo4_46": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.46_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.46: substituição tributária nas operações com produtos de higiene pessoal (Protocolo ICMS 58/18; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=f1e45ea1-52b4-4b30-9e5a-a8a8a7fc894d",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23",
+  "sha256": "af47786d620e8239ce165137de7d68bdc0325d77c9af5a65f771a429d2255fb1"
+ },
  "stRoAnexoVI": {
   "file": "SEFIN-RO_RICMS_Anexo_VI_2026-10-17.json.gz",
   "title": "RICMS/RO (Decreto 22.721/2018), Anexo VI, da substituição tributária: texto consolidado até o Decreto 31.963/2026 (resposta da API do portal de legislação da SEFIN-RO)",
