@@ -19,7 +19,8 @@ export function unzip(buffer) {
     const commentLength = buffer.readUInt16LE(offset + 32);
     const local = buffer.readUInt32LE(offset + 42);
     const name = buffer.toString('utf8', offset + 46, offset + 46 + nameLength);
-    const dataStart = local + 30 + buffer.readUInt16LE(local + 26) + buffer.readUInt16LE(local + 28);
+    const dataStart =
+      local + 30 + buffer.readUInt16LE(local + 26) + buffer.readUInt16LE(local + 28);
     const raw = buffer.subarray(dataStart, dataStart + size);
     files.set(name, method === 0 ? raw : inflateRawSync(raw));
     offset += 46 + nameLength + extraLength + commentLength;
@@ -38,7 +39,8 @@ const decode = (text) =>
     .replace(/&amp;/g, '&')
     .replace(/_x000D_/g, '');
 
-const textOf = (xml) => [...xml.matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map((m) => decode(m[1])).join('');
+const textOf = (xml) =>
+  [...xml.matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map((m) => decode(m[1])).join('');
 
 const column = (ref) => {
   let n = 0;
@@ -50,7 +52,9 @@ const column = (ref) => {
 export function readXlsx(path) {
   const files = unzip(readFileSync(path));
   const get = (name) => files.get(name)?.toString('utf8') ?? '';
-  const shared = [...get('xl/sharedStrings.xml').matchAll(/<si>([\s\S]*?)<\/si>/g)].map((m) => textOf(m[1]));
+  const shared = [...get('xl/sharedStrings.xml').matchAll(/<si>([\s\S]*?)<\/si>/g)].map((m) =>
+    textOf(m[1]),
+  );
   const rels = new Map(
     [...get('xl/_rels/workbook.xml.rels').matchAll(/<Relationship\s[^>]*>/g)].map((m) => [
       /Id="([^"]+)"/.exec(m[0])[1],
@@ -88,6 +92,7 @@ if (process.argv[1]?.endsWith('xlsx.mjs') && process.argv[2]) {
   const limit = Number(process.argv[3] ?? 6);
   for (const sheet of readXlsx(process.argv[2])) {
     console.log(`\n## planilha "${sheet.name}" (${sheet.rows.length} linhas)`);
-    for (const row of sheet.rows.slice(0, limit)) console.log(JSON.stringify(row.map((c) => String(c).slice(0, 70))));
+    for (const row of sheet.rows.slice(0, limit))
+      console.log(JSON.stringify(row.map((c) => String(c).slice(0, 70))));
   }
 }

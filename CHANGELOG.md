@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-26.d.DF Substituição tributária no Distrito Federal] — 23/10/2026
+
+### Adicionado
+- **MVA da ST do Distrito Federal**, gerada do Caderno I do Anexo IV do RICMS/DF no texto compilado da Receita-DF (redação até o Decreto 48.865/2026). Os 25 itens vigentes entram com CEST e NCM; vale só a redação atual de cada linha, revogados saem e repristinados voltam.
+- A MVA vem da tabela do item (pneus; perfumaria, limpeza, alimentícios, construção e elétricos com a MVA da indústria e a do atacadista) ou do texto do item (cigarros 50%, cimento 20%, veículos 30%, motos 34%, tintas 35% e 50%, sorvetes 70% e 328% pela NCM, autopeças 36,56% com fidelidade e 71,78% nos demais casos, bebidas quentes 29,04%). Itens com base por pauta, PMPF ou portaria aparecem na ST, mas sem MVA sugerida.
+- Monitor semanal das fontes também confere o Caderno I do DF.
+
 ## [F8-09.c.2 Aviso automático de pagamento (webhook)] — 23/10/2026
 
 ### Adicionado

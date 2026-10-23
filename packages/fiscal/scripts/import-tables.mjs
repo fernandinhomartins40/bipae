@@ -47,6 +47,7 @@ import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI, roStReferences } from './st-ro.mjs';
 import { ceStReferences, parseCeVeiculos } from './st-ce.mjs';
+import { dfStReferences, parseDfAnexoIV } from './st-df.mjs';
 import { docText } from './doc-text.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
@@ -654,6 +655,15 @@ async function importStReferences(cest) {
       segmentName: (code) => roNames.get(code) ?? `Segmento ${code} do CEST`,
     },
   );
+  // Distrito Federal (F3-26.d.DF): Caderno I do Anexo IV do RICMS/DF, texto compilado da
+  // Receita-DF (resposta da API do portal de legislação).
+  const dfParsed = parseDfAnexoIV(
+    JSON.parse(
+      gunzipSync(readFileSync(join(sourcesDir, manifest.stDfAnexoIV.file))).toString('utf8'),
+    ).Documento,
+    known,
+  );
+  const df = dfStReferences(dfParsed, { url: manifest.stDfAnexoIV.page });
   // Paraíba (F3-26.d.PB): planilhas do Anexo 5 do RICMS/PB, uma por segmento.
   const pbKeys = Object.keys(manifest).filter((k) => k.startsWith('stPbAnexo5_'));
   const pbSheets = pbKeys.map((key) => ({
@@ -746,6 +756,7 @@ async function importStReferences(cest) {
       es.segment,
       al.segment,
       ro.segment,
+      df.segment,
       pe.segment,
       pb.segment,
       mt.segment,
@@ -776,6 +787,7 @@ async function importStReferences(cest) {
       ...es.references,
       ...al.references,
       ...ro.references,
+      ...df.references,
       ...pe.references,
       ...pb.references,
       ...mt.references,

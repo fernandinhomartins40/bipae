@@ -3,15 +3,50 @@
 // chave (urlChave). Nenhum endereço é digitado à mão.
 
 const UFS = {
-  Acre: 'AC', Alagoas: 'AL', Amapá: 'AP', Amazonas: 'AM', Bahia: 'BA', Ceará: 'CE',
-  'Distrito Federal': 'DF', 'Espírito Santo': 'ES', Goiás: 'GO', Maranhão: 'MA', 'Mato Grosso': 'MT',
-  'Mato Grosso do Sul': 'MS', 'Minas Gerais': 'MG', Pará: 'PA', Paraíba: 'PB', Paraná: 'PR',
-  Pernambuco: 'PE', Piauí: 'PI', Piaui: 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN',
-  'Rio Grande do Sul': 'RS', Rondônia: 'RO', Roraima: 'RR', 'Santa Catarina': 'SC', 'São Paulo': 'SP',
-  Sergipe: 'SE', Tocantins: 'TO',
+  Acre: 'AC',
+  Alagoas: 'AL',
+  Amapá: 'AP',
+  Amazonas: 'AM',
+  Bahia: 'BA',
+  Ceará: 'CE',
+  'Distrito Federal': 'DF',
+  'Espírito Santo': 'ES',
+  Goiás: 'GO',
+  Maranhão: 'MA',
+  'Mato Grosso': 'MT',
+  'Mato Grosso do Sul': 'MS',
+  'Minas Gerais': 'MG',
+  Pará: 'PA',
+  Paraíba: 'PB',
+  Paraná: 'PR',
+  Pernambuco: 'PE',
+  Piauí: 'PI',
+  Piaui: 'PI',
+  'Rio de Janeiro': 'RJ',
+  'Rio Grande do Norte': 'RN',
+  'Rio Grande do Sul': 'RS',
+  Rondônia: 'RO',
+  Roraima: 'RR',
+  'Santa Catarina': 'SC',
+  'São Paulo': 'SP',
+  Sergipe: 'SE',
+  Tocantins: 'TO',
 };
 
-const ENTITIES = { nbsp: ' ', amp: '&', aacute: 'á', eacute: 'é', iacute: 'í', oacute: 'ó', uacute: 'ú', atilde: 'ã', otilde: 'õ', ccedil: 'ç', ecirc: 'ê', ocirc: 'ô' };
+const ENTITIES = {
+  nbsp: ' ',
+  amp: '&',
+  aacute: 'á',
+  eacute: 'é',
+  iacute: 'í',
+  oacute: 'ó',
+  uacute: 'ú',
+  atilde: 'ã',
+  otilde: 'õ',
+  ccedil: 'ç',
+  ecirc: 'ê',
+  ocirc: 'ô',
+};
 
 /** Linhas de texto de uma página (sem tags), na ordem. */
 export function pageLines(html) {
@@ -50,7 +85,11 @@ function ufTable(lines, from, to) {
     const uf = UFS[lines[i]];
     if (!uf || result[uf]) continue;
     const cell = [];
-    for (let j = i + 1; j < to && !UFS[lines[j]] && !/^(Unidade Federada|Endereço da Consulta)/.test(lines[j]); j++) {
+    for (
+      let j = i + 1;
+      j < to && !UFS[lines[j]] && !/^(Unidade Federada|Endereço da Consulta)/.test(lines[j]);
+      j++
+    ) {
       cell.push(lines[j]);
     }
     const text = cell
@@ -70,7 +109,8 @@ function indexOf(lines, pattern, after = 0) {
   return i;
 }
 
-const SERVICE = /^(NFeAutorizacao|NFeRetAutorizacao|NFeInutilizacao|NFeConsultaProtocolo|NFeStatusServico|RecepcaoEvento)$/i;
+const SERVICE =
+  /^(NFeAutorizacao|NFeRetAutorizacao|NFeInutilizacao|NFeConsultaProtocolo|NFeStatusServico|RecepcaoEvento)$/i;
 const serviceName = (name) => name.replace(/^Nfe/, 'NFe');
 
 export function parseNfceEndpoints({ svrsHtml, encatWsHtml, qrHtml, chaveHtml }) {
@@ -82,7 +122,8 @@ export function parseNfceEndpoints({ svrsHtml, encatWsHtml, qrHtml, chaveHtml })
     if (!m) continue;
     const services = {};
     for (let j = i + 1; j < svrs.length && !/^Voltar ao topo/.test(svrs[j]); j++) {
-      if (SERVICE.test(svrs[j]) && /^https:\/\//.test(svrs[j + 2] ?? '')) services[serviceName(svrs[j])] = svrs[j + 2];
+      if (SERVICE.test(svrs[j]) && /^https:\/\//.test(svrs[j + 2] ?? ''))
+        services[serviceName(svrs[j])] = svrs[j + 2];
     }
     authorizers[m[1]] ??= {};
     authorizers[m[1]][m[2] === 'Produção' ? 'producao' : 'homologacao'] = services;
@@ -93,7 +134,8 @@ export function parseNfceEndpoints({ svrsHtml, encatWsHtml, qrHtml, chaveHtml })
   const mg = indexOf(encat, /^Minas Gerais$/, indexOf(encat, /^AMBIENTE DE HOMOLOGAÇÃO$/));
   const mgServices = {};
   for (let j = mg + 1; j < encat.length && !UFS[encat[j]]; j++) {
-    if (SERVICE.test(encat[j]) && /^https:\/\//.test(encat[j + 2] ?? '')) mgServices[serviceName(encat[j])] = encat[j + 2];
+    if (SERVICE.test(encat[j]) && /^https:\/\//.test(encat[j + 2] ?? ''))
+      mgServices[serviceName(encat[j])] = encat[j + 2];
   }
 
   // ---------------------------------------------------------------- QR Code e consulta pela chave
@@ -119,7 +161,10 @@ export function parseNfceEndpoints({ svrsHtml, encatWsHtml, qrHtml, chaveHtml })
     const webservices =
       uf === 'MG'
         ? { homologacao: mgServices }
-        : { producao: authorizers[authorizer]?.producao ?? {}, homologacao: authorizers[authorizer]?.homologacao ?? {} };
+        : {
+            producao: authorizers[authorizer]?.producao ?? {},
+            homologacao: authorizers[authorizer]?.homologacao ?? {},
+          };
     return {
       uf,
       authorizer,

@@ -46,6 +46,7 @@ import { parseEsPortaria16R } from './st-es.mjs';
 import { parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI } from './st-ro.mjs';
 import { parseCeVeiculos } from './st-ce.mjs';
+import { DF_ANEXO_IV_REQUEST, DF_LEGISLATION_API, parseDfAnexoIV } from './st-df.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -1010,6 +1011,56 @@ async function checkRo() {
   };
 }
 
+/** Distrito Federal: o Caderno I do Anexo IV de hoje, pela API do portal de legislação da Receita-DF. */
+async function checkDf() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (json) =>
+    parseDfAnexoIV(JSON.parse(json).Documento, known).items.flatMap((i) =>
+      i.rows.map((r) => [
+        String(i.number),
+        r.group ?? '',
+        r.sub,
+        r.cests.join(' '),
+        r.ncmText,
+        r.mvas.join(' '),
+      ]),
+    );
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stDfAnexoIV.file))).toString('utf8'),
+  );
+  const title = 'ST no Distrito Federal (RICMS/DF, Anexo IV, Caderno I)';
+  let now;
+  try {
+    // A página de visualização é montada no navegador; o texto vem desta API (POST).
+    const res = await fetch(DF_LEGISLATION_API, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'user-agent': BROWSER['user-agent'] },
+      body: JSON.stringify(DF_ANEXO_IV_REQUEST),
+      signal: AbortSignal.timeout(120_000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    now = rowsOf(await res.text());
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stDfAnexoIV.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stDfAnexoIV.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** cBenef do Paraná: o PDF de hoje (se a SEFA-PR publicar outra versão, o endereço muda e avisa). */
 async function checkCbenefPr() {
   const rowsOf = async (bytes) =>
@@ -1324,6 +1375,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),
     await safe('ST em Rondônia', manifest.stRoAnexoVI.page, checkRo),
     await safe('ST no Ceará', manifest.stCeRicms97.page, checkCe),
+    await safe('ST no Distrito Federal', manifest.stDfAnexoIV.page, checkDf),
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),
     await safe('cBenef do Rio Grande do Sul', manifest.cbenefRs.page, checkCbenefRs),

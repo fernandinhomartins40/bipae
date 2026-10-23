@@ -694,6 +694,15 @@
   "downloadedAt": "2026-10-22",
   "sha256": "8230578c4d97d82ac2c00ba5452b372b70c245b14d1c8f33d9eed7c57b05958e"
  },
+ "stDfAnexoIV": {
+  "file": "SEFAZ-DF_RICMS_Anexo_IV_Caderno_I_compilado_2026-10-22.json.gz",
+  "title": "RICMS/DF (Decreto 18.955/1997), Anexo IV, Caderno I (substituição tributária nas operações subsequentes): texto compilado até o Decreto 48.865/2026 (resposta da API do portal de legislação da Receita-DF, parte \"ANEXO 04 CADERNO 01 COMPILADO\")",
+  "publisher": "Secretaria de Estado de Economia do Distrito Federal (Receita-DF)",
+  "page": "https://ww1.receita.fazenda.df.gov.br/legislacao/visualizar-legislacao?txtNumero=18955&txtAno=1997&txtTipo=6&txtParte=ANEXO%2004%20CADERNO%2001%20COMPILADO",
+  "publishedAt": "2026-07-01",
+  "downloadedAt": "2026-10-22",
+  "sha256": "c645b703f47f78daa34bf33f0c2bb4af3495145f6c8d3d0c08991c2e017b67db"
+ },
  "cbenefPr": {
   "file": "SEFA-PR_Tabela_cBenef_por_CST_V27_2026-07-17.pdf",
   "title": "Tabela de Códigos de Benefício Fiscal por CST - Paraná (versão 27, atualizada em 17/07/2026)",

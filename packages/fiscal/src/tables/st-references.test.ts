@@ -540,6 +540,89 @@ describe('Alagoas: Decreto 90.309/2023 com as MVAs (F3-26.d.AL)', () => {
   });
 });
 
+describe('Distrito Federal: Caderno I do Anexo IV do RICMS/DF (F3-26.d.DF)', () => {
+  const df = ST_REFERENCES.filter((r) => r.uf === 'DF');
+  const linesOf = (cest: string) => df.flatMap((r) => r.items).filter((i) => i.cest === cest);
+  const annexOf = (annex: string) =>
+    ST_SEGMENTS.find((s) => s.uf === 'DF')!.annexes.find((a) => a.annex === annex)!;
+  const ncmsOf = (cest: string) => CESTS.find((c) => c.cest === cest)?.ncm ?? [];
+
+  it('os itens do texto compilado, com a redação até o Decreto 48.865/2026', () => {
+    expect(ST_REFERENCE_UFS).toContain('DF');
+    expect(ST_SEGMENT_UFS).toContain('DF');
+    expect(df.flatMap((r) => r.items).length).toBeGreaterThan(800);
+    for (const r of df) expect(r.validFrom).toBe('2026-07-01');
+    expect(annexOf('40-I').name).toBe('Chocolates');
+  });
+
+  it('MVA fixada no texto do item: cigarros 50%, cimento 20%, veículos 30% e motos 34%', () => {
+    expect(linesOf('0400100').map((i) => i.mva)).toEqual(['50', '50']);
+    expect(linesOf('0500100').map((i) => i.mva)).toEqual(['20']);
+    expect(linesOf('2500100').map((i) => i.mva)).toEqual(['30']);
+    expect(linesOf('2600100').map((i) => i.mva)).toEqual(['34']);
+  });
+
+  it('tintas: 35% nos subitens 1.0 e 2.0 e 50% no 3.0; o 2.1, fora do subitem 6.3, fica sem MVA', () => {
+    expect(linesOf('2400100').map((i) => i.mva)).toEqual(['35']);
+    expect(linesOf('2400300').map((i) => i.mva)).toEqual(['50']);
+    expect(linesOf('2400200').map((i) => [i.item, i.mva])).toEqual([['2.0', '35']]);
+  });
+
+  it('sorvetes pela posição da NCM: 70% no 2105.00 e 328% nos preparados (1806, 1901 e 2106)', () => {
+    expect(stReferencesFor('DF', '21050010', '2026-10-22').map((m) => m.mva)).toEqual(['70']);
+    expect(stReferencesFor('DF', '21069029', '2026-10-22').map((m) => m.mva)).toContain('328');
+    // O 0404 também está no CEST 23.002.00, mas o subitem 22.3 não dá MVA para ele.
+    expect(linesOf('2300200')[0]!.ncms).toEqual(['1806', '1901', '2106']);
+  });
+
+  it('autopeças: 36,56% com índice de fidelidade e 71,78% nos demais casos, cada uma com o nome', () => {
+    const catalisador = linesOf('0100100');
+    expect(catalisador.map((i) => i.mva)).toEqual(['36.56', '71.78']);
+    expect(catalisador[0]!.description).toMatch(/índice de fidelidade/);
+    expect(catalisador[1]!.description).toMatch(/nos demais casos\.$/);
+  });
+
+  it('tabelas com MVA da indústria e do atacadista: chocolate branco 41,47% e 32,60%', () => {
+    expect(linesOf('1700100').map((i) => [i.item, i.mva])).toEqual([
+      ['1.0/I', '41.47'],
+      ['1.0/A', '32.60'],
+    ]);
+    // Água sanitária: a célula repete o número para dois grupos de UF ("55,66 ___ 55,66").
+    expect(linesOf('1100100').map((i) => i.mva)).toEqual(['55.66', '44.39']);
+    expect(linesOf('1600100').map((i) => i.mva)).toEqual(['42']);
+  });
+
+  it('vale a redação nova: o subitem 6.0 do item 38 é dentifrício (26,04%), não óleo essencial', () => {
+    expect(linesOf('2002300').map((i) => [i.item, i.mva])).toEqual([
+      ['6.0/I', '26.04'],
+      ['6.0/A', '17.14'],
+    ]);
+    expect(annexOf('38').cests.some((c) => c.cest === '2000600')).toBe(false);
+  });
+
+  it('subitem revogado sai e o repristinado volta', () => {
+    // Telha de fibrocimento (1.0 do item 7, Decreto 42.320/2021) e vinho no item 34 (Decreto 43.938/2022).
+    expect(annexOf('7').cests.some((c) => c.cest === '1002300')).toBe(false);
+    expect(annexOf('34').cests.some((c) => c.cest === '0202400')).toBe(false);
+    expect(annexOf('31').cests.some((c) => c.cest === '0202400')).toBe(true);
+    // Corrente de transmissão (109.0 do item 28): revogada em 2020 e repristinada em 2021.
+    expect(annexOf('28').cests.some((c) => c.cest === '0111100')).toBe(true);
+  });
+
+  it('combustíveis estão na ST, mas sem MVA no texto (PMPF): não viram sugestão', () => {
+    expect(stReferencesFor('DF', '27101259', '2026-10-22')).toEqual([]);
+    const gasolina = stStatusFor('DF', '27101259', '2026-10-22', ncmsOf).find(
+      (s) => s.cest === '0600201',
+    );
+    expect(gasolina).toMatchObject({ inSt: true, annex: '4' });
+  });
+
+  it('a tabela de óleos repetida depois do texto do item 42 não entra no item 42', () => {
+    expect(annexOf('42').cests.some((c) => c.cest.startsWith('17'))).toBe(false);
+    expect(annexOf('40-VIII').cests.some((c) => c.cest === '1706500')).toBe(true);
+  });
+});
+
 describe('Rondônia: Anexo VI do RICMS/RO (F3-26.d.RO)', () => {
   const ro = ST_REFERENCES.filter((r) => r.uf === 'RO');
 

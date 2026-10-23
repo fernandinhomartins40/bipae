@@ -53,7 +53,8 @@ const effectDates = (note) => {
   if (at < 0) return [];
   return [...note.slice(at).matchAll(/\d{2}\.\d{2}\.\d{2}/g)].map((match) => shortDate(match[0]));
 };
-const nextDay = (iso) => new Date(Date.parse(`${iso}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+const nextDay = (iso) =>
+  new Date(Date.parse(`${iso}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
 
 const CEST = /^\d{2}\.\d{3}\.\d{2}$/;
 const NCM_TOKEN = /^\d{2,4}(\.\d{1,2}){0,2}$/;
@@ -82,7 +83,9 @@ export function parseCest(html, downloadedAt) {
     .filter((row) => row.length === 3 && /^\d{2}$/.test(row[0]) && /^\d{2}$/.test(row[2]))
     .map((row) => ({ code: row[2], name: row[1] }));
   if (segments.length !== LAST_ANNEX - FIRST_ANNEX + 1) {
-    throw new Error(`Anexo I com ${segments.length} segmentos; esperados ${LAST_ANNEX - FIRST_ANNEX + 1}`);
+    throw new Error(
+      `Anexo I com ${segments.length} segmentos; esperados ${LAST_ANNEX - FIRST_ANNEX + 1}`,
+    );
   }
 
   const items = [];
@@ -113,7 +116,8 @@ export function parseCest(html, downloadedAt) {
       // Os itens "999" não têm NCM: a célula vazia do meio continua contando.
       while (data.length < 4 && cells.length >= 4) data.push('');
       if (data.length !== 4 || !CEST.test(data[1])) {
-        if (data.some((cell) => CEST.test(cell))) throw new Error(`Linha de CEST fora do formato: ${JSON.stringify(cells)}`);
+        if (data.some((cell) => CEST.test(cell)))
+          throw new Error(`Linha de CEST fora do formato: ${JSON.stringify(cells)}`);
         continue; // cabeçalho ou linha vazia
       }
       const [item, cest, ncmCell, description] = data;
@@ -153,21 +157,26 @@ export function parseCest(html, downloadedAt) {
         oldNote = end === undefined ? null : { start, end };
       } else if (green) {
         // Linha verde sem nota própria: vale a última nota de redação antiga.
-        if (!oldNote) throw new Error(`Redação antiga do CEST ${cest} sem nota que diga até quando valeu`);
+        if (!oldNote)
+          throw new Error(`Redação antiga do CEST ${cest} sem nota que diga até quando valeu`);
         if (oldNote.never) continue;
         ({ start, end } = oldNote);
       } else {
         oldNote = null;
       }
       if (green && end === undefined) {
-        throw new Error(`CEST ${cest}: linha marcada como redação antiga, mas a nota não tem fim de vigência`);
+        throw new Error(
+          `CEST ${cest}: linha marcada como redação antiga, mas a nota não tem fim de vigência`,
+        );
       }
       // Redação já substituída só interessa se ainda valia no dia em que a página foi baixada
       // (acontece quando a nova redação tem efeito futuro).
       if (end !== undefined && end <= downloadedAt) continue;
 
       const tokens = ncmCell.split(/[\s,]+/).filter(Boolean);
-      const ncm = tokens.filter((token) => NCM_TOKEN.test(token)).map((token) => token.replaceAll('.', ''));
+      const ncm = tokens
+        .filter((token) => NCM_TOKEN.test(token))
+        .map((token) => token.replaceAll('.', ''));
       const plain = tokens.every((token) => NCM_TOKEN.test(token));
       items.push({
         cest: cest.replaceAll('.', ''),
@@ -193,13 +202,17 @@ export function parseCest(html, downloadedAt) {
     for (let i = 1; i < versions.length; i++) {
       const previous = versions[i - 1];
       if (previous.end === undefined || previous.end > versions[i].start) {
-        conflicts.push(`${code} (itens ${previous.item} de ${previous.start} e ${versions[i].item} de ${versions[i].start})`);
+        conflicts.push(
+          `${code} (itens ${previous.item} de ${previous.start} e ${versions[i].item} de ${versions[i].start})`,
+        );
       }
     }
   }
   if (conflicts.length > 0) {
     throw new Error(`CEST com duas redações valendo ao mesmo tempo: ${conflicts.join('; ')}`);
   }
-  items.sort((a, b) => (a.cest === b.cest ? (a.start < b.start ? -1 : 1) : a.cest < b.cest ? -1 : 1));
+  items.sort((a, b) =>
+    a.cest === b.cest ? (a.start < b.start ? -1 : 1) : a.cest < b.cest ? -1 : 1,
+  );
   return { segments, items };
 }
