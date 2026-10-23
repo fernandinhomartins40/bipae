@@ -91,5 +91,20 @@ describe('referências de ST por UF (F3-26)', () => {
       regimes: [],
     });
     expect((await admin.get('/fiscal/st-net-loads?uf=C')).statusCode).toBe(400);
+    expect(farma.outputNote).toBe(
+      'ICMS retido por substituição tributária - Decreto nº 36.617/2025',
+    );
+
+    // Classes da mercadoria da CNAE principal da empresa, para o cadastro do produto (F3-26.d.CE.c).
+    const vestuario = (await admin.get('/fiscal/st-net-load-classes?uf=CE&cnae=4781-4/00')).json();
+    expect(vestuario).toMatchObject({
+      status: 'choose-class',
+      regime: { act: 'Decreto 34.256/2021 (CE)' },
+    });
+    expect(vestuario.classes.map((c: { goodsClass: string }) => c.goodsClass)).toContain('rate-20');
+    const fora = (await admin.get('/fiscal/st-net-load-classes?uf=CE&cnae=4711302')).json();
+    expect(fora).toMatchObject({ status: 'not-listed', regime: null, classes: [] });
+    expect(fora.message).toMatch(/vale a ST comum/);
+    expect((await admin.get('/fiscal/st-net-load-classes?uf=CE')).statusCode).toBe(400);
   });
 });

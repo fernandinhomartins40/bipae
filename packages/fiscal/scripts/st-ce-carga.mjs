@@ -309,6 +309,39 @@ function mvaOf(text, label) {
   return mva ? decimalText(mva[1]) : null;
 }
 
+/**
+ * Expressão que a nota da saída interna seguinte leva (art. 7º, § 1º, ou o equivalente de cada
+ * decreto): "ICMS retido por substituição tributária", seguida do número do decreto. Todos os seis
+ * decretos trazem a regra; sem ela no texto, o monitor avisa.
+ */
+function outputNoteOf(text, decree, label) {
+  const m =
+    /[“"](ICMS retido por substituição tributária)[”"],? seguida do número deste Decreto/i.exec(
+      text,
+    );
+  if (!m) throw new Error(`${label}: expressão da nota de saída não encontrada`);
+  return `${m[1]} - Decreto nº ${decree.number}/${decree.year}`;
+}
+
+/**
+ * Comprador optante pelo Simples Nacional: o vestuário exclui (34.256, art. 3º: "não se aplicam às
+ * empresas optantes pelo Simples Nacional") e móveis troca a margem (32.900, art. 3º, § 8º). Os
+ * outros decretos não têm regra própria: null.
+ */
+function simplesBuyerOf(text) {
+  if (
+    /disposições deste decreto não se aplicam às empresas optantes pelo Simples Nacional/i.test(
+      text,
+    )
+  )
+    return { rule: 'excluded', mva: null };
+  const m =
+    /margem de valor agregado de que trata o caput deste artigo será de (\d{1,3}(?:,\d{1,2})?)% \([^)]*\) para os estabelecimentos optantes pelo Simples Nacional/i.exec(
+      text,
+    );
+  return m ? { rule: 'mva', mva: decimalText(m[1]) } : null;
+}
+
 /** Um decreto de carga líquida no modelo dos Anexos I, II e III (autopeças a vestuário). */
 export function parseCeNetLoadDecree(lines) {
   const decree = decreeOf(lines);
@@ -352,6 +385,8 @@ export function parseCeNetLoadDecree(lines) {
     mva: mvaOf(text, where),
     simplesAddition: additionsAfter(text, SIMPLES_START, `${where}, Simples Nacional`),
     importAddition: additionsAfter(text, IMPORT_START, `${where}, importado a 4%`),
+    outputNote: outputNoteOf(text, decree, where),
+    simplesBuyer: simplesBuyerOf(text),
     cestSegments: null,
   };
 }
@@ -428,6 +463,8 @@ export function parseCeFarmaDecree(lines) {
     mva: mvaOf(text, where),
     simplesAddition: additionsAfter(text, SIMPLES_START, `${where}, Simples Nacional`),
     importAddition: additionsAfter(text, IMPORT_START, `${where}, importado a 4%`),
+    outputNote: outputNoteOf(text, decree, where),
+    simplesBuyer: simplesBuyerOf(text),
     cestSegments: [cest[1]],
   };
 }
@@ -512,6 +549,8 @@ export function ceNetLoadRegimes(decrees, { ufRegions }) {
     buyers: parsed.buyers,
     simplesAddition: byColumn(parsed.simplesAddition),
     importAddition: byColumn(parsed.importAddition),
+    outputNote: parsed.outputNote,
+    simplesBuyer: parsed.simplesBuyer,
     versions: parsed.versions.map((v) => ({
       validFrom: v.validFrom,
       validTo: v.validTo,

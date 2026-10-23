@@ -321,3 +321,47 @@ describe('ST pela pauta de SP no rascunho (F3-26.f)', () => {
     expect(r.pending.join(' ')).toMatch(/não vale nesta data/);
   });
 });
+
+describe('carga líquida do Ceará no rascunho (F3-26.d.CE.c)', () => {
+  const ceara = (classe: string | null, ufDestino = 'CE') => {
+    const base = nota(ALIQUOTA_SP);
+    return nota({
+      ...ALIQUOTA_SP,
+      company: {
+        ...base.company,
+        uf: 'CE',
+        // Comércio varejista de artigos do vestuário: Anexo II do Decreto 34.256/2021.
+        cnae: '4781-4/00',
+        address: { ...base.company.address, cityCode: '2304400', cityName: 'Fortaleza' },
+      },
+      recipient: {
+        ...base.recipient,
+        address: {
+          ...base.recipient.address,
+          uf: ufDestino,
+          cityCode: ufDestino === 'CE' ? '2304400' : '3550308',
+          cityName: ufDestino === 'CE' ? 'Fortaleza' : 'São Paulo',
+        },
+      },
+      items: base.items.map((i) => ({ ...i, stNetLoadClass: classe })),
+    });
+  };
+
+  it('saída interna de produto no regime: a expressão do decreto vai nas informações complementares', () => {
+    const r = buildDraftNfe(ceara('rate-20'));
+    expect(r.ok, r.ok ? '' : r.pending.join(' | ')).toBe(true);
+    if (!r.ok) return;
+    expect(r.input.additionalInfo).toContain(
+      'ICMS retido por substituição tributária - Decreto nº 34.256/2021',
+    );
+    expect(r.notes.join(' ')).toMatch(/ST recolhida na entrada pela carga líquida/);
+  });
+
+  it('para outro estado, produto fora do regime ou sem classe: sem a expressão', () => {
+    for (const draft of [ceara('rate-20', 'SP'), ceara('outside'), ceara(null)]) {
+      const r = buildDraftNfe(draft);
+      expect(r.ok, r.ok ? '' : r.pending.join(' | ')).toBe(true);
+      expect(r.ok && (r.input.additionalInfo ?? '')).not.toContain('ICMS retido');
+    }
+  });
+});

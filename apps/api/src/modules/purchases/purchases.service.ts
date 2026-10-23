@@ -11,11 +11,13 @@ import {
 import {
   fixedAssetCredit,
   purchaseLotMilli,
+  purchaseNetLoad,
   purchaseStockMilli,
   purchaseUnitCostCents,
   readEfdDocument,
   readPurchaseNfe,
   PurchaseXmlError,
+  type PurchaseNetLoad,
   type PurchaseNfe,
 } from '@bipae/fiscal';
 import { ICP_BRASIL_CERTIFICATES } from '@bipae/fiscal/icp-brasil';
@@ -52,6 +54,10 @@ import { MercadoflowMarketSync } from '../mercadoflow/mercadoflow.market-sync';
 import { LotsService } from '../stock/lots.service';
 
 const DSIG_NS = 'http://www.w3.org/2000/09/xmldsig#';
+
+/** Data de hoje no fuso de Brasília (AAAA-MM-DD): a data da entrada. */
+const brasiliaToday = () =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
 
 export interface SignatureCheck {
   valid: boolean;
@@ -198,6 +204,48 @@ export class PurchasesService {
     return { company, supplier, alreadyImported: !!already, suggestions };
   }
 
+  /**
+   * ST de entrada pela carga líquida de um item (F3-26.d.CE.c): CNAE principal e RET da empresa,
+   * classe da mercadoria e CEST do produto. Qualquer erro vira "sem cálculo": nunca impede a compra.
+   */
+  private async netLoadOf(
+    tx: Tx,
+    company: typeof companies.$inferSelect,
+    nfe: PurchaseNfe,
+    item: PurchaseNfe['items'][number],
+    productId: string | null | undefined,
+  ): Promise<PurchaseNetLoad | null> {
+    if (!company.cnae || !company.uf) return null;
+    try {
+      let goodsClass: string | null = null;
+      let cest = item.cest ?? null;
+      if (productId) {
+        const [product] = await tx
+          .select({ stNetLoadClass: products.stNetLoadClass, cest: products.cest })
+          .from(products)
+          .where(eq(products.id, productId));
+        goodsClass = product?.stNetLoadClass ?? null;
+        cest = product?.cest ?? cest;
+      }
+      return purchaseNetLoad({
+        company: {
+          uf: company.uf,
+          cnae: company.cnae,
+          regime: company.taxRegime,
+          specialRegime: company.stSpecialRegime,
+          taxId: company.taxId,
+        },
+        nfe,
+        item,
+        goodsClass,
+        cest,
+        date: brasiliaToday(),
+      });
+    } catch {
+      return null;
+    }
+  }
+
   /** O que o catálogo sabe dos itens da nota (por GTIN), para cadastrar o que for novo. */
   private async catalogFor(ctx: RequestContext, nfe: PurchaseNfe) {
     const gtins = nfe.items.map((i) => i.gtin).filter((g): g is string => !!g);
@@ -212,6 +260,10 @@ export class PurchasesService {
     const catalog = await this.catalogFor(ctx, nfe);
     return withTenant(this.db, ctx, async (tx) => {
       const { company, supplier, alreadyImported, suggestions } = await this.analyze(tx, nfe);
+      const netLoads: (PurchaseNetLoad | null)[] = [];
+      for (const [i, item] of nfe.items.entries()) {
+        netLoads.push(await this.netLoadOf(tx, company, nfe, item, suggestions[i]?.productId));
+      }
       return {
         accessKey: nfe.accessKey,
         number: nfe.number,
@@ -247,6 +299,7 @@ export class PurchasesService {
                 }
               : null;
           })(),
+          netLoad: netLoads[i] ?? null,
         })),
       };
     });
@@ -322,7 +375,14 @@ export class PurchasesService {
       for (const item of nfe.items) {
         const decision = decisions.get(item.line)!;
         const factor = decision.factor;
-        const unitCostCents = purchaseUnitCostCents(item, factor, recoverable);
+        // ST de entrada pela carga líquida (F3-26.d.CE.c): sem crédito para quem recolhe (art. 8º
+        // dos decretos), então entra no custo como a ST retida pelo fornecedor.
+        const netLoad = await this.netLoadOf(tx, company, nfe, item, decision.productId);
+        const unitCostCents = purchaseUnitCostCents(
+          { ...item, stCents: item.stCents + (netLoad?.stCents ?? 0) },
+          factor,
+          recoverable,
+        );
         const quantityMilli = purchaseStockMilli(item, factor);
         let productId = decision.productId;
         let created = false;
@@ -490,6 +550,7 @@ export class PurchasesService {
           unitCostCents,
           created,
           taxes: item.taxes,
+          ...(netLoad && { netLoad }),
         });
       }
 
@@ -510,6 +571,7 @@ export class PurchasesService {
         items: lines,
         importedBy: ctx.userId,
       });
+      const netLoadCents = lines.reduce((sum, l) => sum + (l.netLoad?.stCents ?? 0), 0);
       await this.audit.record(tx, ctx, {
         action: 'purchase.imported',
         entity: 'purchase_invoice',
@@ -520,12 +582,15 @@ export class PurchasesService {
           totalCents: nfe.totalCents,
           items: lines.length,
           createdProducts: lines.filter((l) => l.created).length,
+          ...(netLoadCents > 0 && { stNetLoadCents: netLoadCents }),
         },
       });
       return {
         id: invoiceId,
         items: lines.length,
         createdProducts: lines.filter((l) => l.created).length,
+        /** ST de entrada pela carga líquida somada nos itens (F3-26.d.CE.c). */
+        stNetLoadCents: netLoadCents,
       };
     });
   }

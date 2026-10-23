@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-26.d.CE.c Carga líquida do Ceará na compra e na nota] — 23/10/2026
+
+### Adicionado
+- **CNAE principal e RET em Empresas e lojas.** A CNAE (com máscara 0000-0/00) diz se a empresa está num dos decretos de carga líquida do Ceará; quando está, a tela mostra o decreto e pergunta se a empresa tem Regime Especial de Tributação.
+- **Classe da mercadoria no produto.** Para quem está num decreto, o cadastro do produto mostra as linhas da tabela do decreto (cesta básica, 20%, 25%...) e a opção "fora do regime". O Bipaê não deduz a classe: a empresa escolhe.
+- **ST de entrada na compra pelo XML.** A prévia mostra, item a item, a carga líquida e o valor da ST de entrada (com IPI, frete e margem do decreto, acréscimo do fornecedor do Simples e do importado a 4%). Na entrada, o valor soma no custo do produto e fica guardado na compra. Produto sem classe, RET e transferência aparecem como "falta configurar", sem valor; nada disso impede a compra.
+- **Expressão do decreto na NF-e.** Na venda dentro do Ceará de produto do regime, o rascunho da NF-e põe "ICMS retido por substituição tributária - Decreto nº ..." nas informações complementares, como cada decreto manda.
+- Do texto dos decretos também veio a regra do comprador do Simples: o de vestuário não se aplica a ele, e o de móveis usa margem de 27%.
+
 ## [F8-14 Caixa no celular com cara de app] — 23/10/2026
 
 ### Adicionado

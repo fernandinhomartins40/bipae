@@ -436,3 +436,100 @@ describe('compra para o ativo e o CIAP no arquivo da EFD (F4-14.b.7)', () => {
     expect(controle).toEqual([2, 2]);
   });
 });
+
+describe('ST de entrada pela carga líquida do Ceará (F3-26.d.CE.c)', () => {
+  it('CNAE na empresa, classe no produto: a carga entra na prévia, no custo e na compra', async () => {
+    const { admin, empresa, loja } = await mercado();
+    // Varejo do vestuário (Anexo II do Decreto 34.256/2021), com a CNAE mascarada.
+    const salva = await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      taxId: '11.222.333/0001-81',
+      uf: 'CE',
+      cnae: '4781-4/00',
+    });
+    expect(salva.statusCode).toBe(200);
+    expect(salva.json()).toMatchObject({ cnae: '4781400', stSpecialRegime: false });
+    expect(
+      (await admin.patch(`/companies/${empresa.id}`, { legalName: empresa.legalName, cnae: '12' }))
+        .statusCode,
+    ).toBe(400);
+
+    const invalida = await admin.post('/products', {
+      name: 'Água 500 ml',
+      priceCents: 300,
+      stNetLoadClass: 'rate-99',
+    });
+    expect(invalida.statusCode).toBe(400);
+    expect(invalida.json().message).toMatch(/classe da mercadoria/);
+    const agua = (
+      await admin.post('/products', {
+        name: 'Água 500 ml',
+        priceCents: 300,
+        barcodes: ['7891000100103'],
+        stNetLoadClass: 'rate-20',
+      })
+    ).json();
+    expect(agua.stNetLoadClass).toBe('rate-20');
+
+    const xml = await notaDoFornecedor(3001);
+    const previa = (await admin.post('/purchases/preview', { xml })).json();
+    // Fornecedor de SP, mercadoria a 20%: 15,60%. Água: (36,00 + 3,60 de IPI) × 1,5 = 59,40.
+    expect(previa.items[1].netLoad).toMatchObject({
+      status: 'applies',
+      act: 'Decreto 34.256/2021 (CE)',
+      totalPercent: '15.60',
+      baseCents: 5_940,
+      stCents: 927,
+    });
+    // Produto novo, sem classe: falta configurar, sem valor.
+    expect(previa.items[0].netLoad).toMatchObject({ status: 'choose-class', stCents: 0 });
+    expect(previa.items[0].netLoad.message).toMatch(/escolha no produto a classe/);
+
+    const entrada = await admin.post('/purchases', {
+      xml,
+      storeId: loja.id,
+      items: [
+        { line: 1, productId: null, factor: '6', unit: 'UN', priceCents: 899 },
+        { line: 2, productId: agua.id, factor: 1 },
+      ],
+    });
+    expect(entrada.statusCode).toBe(201);
+    expect(entrada.json()).toMatchObject({ stNetLoadCents: 927 });
+    // Custo da água: (36,00 + 3,60 + 9,27) / 24 = 2,036 → R$ 2,04.
+    expect((await admin.get(`/products/${agua.id}`)).json().costCents).toBe(204);
+  });
+
+  it('com RET a carga fica como "falta configurar", sem valor e sem travar a compra', async () => {
+    const { admin, empresa, loja } = await mercado();
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      taxId: '11.222.333/0001-81',
+      uf: 'CE',
+      cnae: '4781400',
+      stSpecialRegime: true,
+    });
+    const agua = (
+      await admin.post('/products', {
+        name: 'Água 500 ml',
+        priceCents: 300,
+        barcodes: ['7891000100103'],
+        stNetLoadClass: 'rate-20',
+      })
+    ).json();
+    const xml = await notaDoFornecedor(3002);
+    const previa = (await admin.post('/purchases/preview', { xml })).json();
+    expect(previa.items[1].netLoad).toMatchObject({ status: 'missing', stCents: 0 });
+    const entrada = await admin.post('/purchases', {
+      xml,
+      storeId: loja.id,
+      items: [
+        { line: 1, productId: null, factor: '6', unit: 'UN', priceCents: 899 },
+        { line: 2, productId: agua.id, factor: 1 },
+      ],
+    });
+    expect(entrada.statusCode).toBe(201);
+    expect(entrada.json().stNetLoadCents).toBe(0);
+    // Sem a carga, o custo é o de sempre: 39,60 / 24 = 1,65.
+    expect((await admin.get(`/products/${agua.id}`)).json().costCents).toBe(165);
+  });
+});

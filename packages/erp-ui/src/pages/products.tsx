@@ -28,7 +28,7 @@ import { useApp, useCan } from '../context';
 import { CatalogAssist, catalogSummary } from './catalog-assist';
 import { ApiError } from '../api-client';
 import { useForm } from '../forms';
-import { NcmCestHelp, StPautaPicker, type StPautaRef } from './fiscal-lookup';
+import { NcmCestHelp, StNetLoadClassPicker, StPautaPicker, type StPautaRef } from './fiscal-lookup';
 import { PricingHelper } from './pricing-helper';
 import { KitEditor, type KitComponent } from './product-kit';
 import { AiFiscalSuggestionPanel } from './assistant';
@@ -222,9 +222,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   // Dados que vieram do catálogo: marca, fabricante, conteúdo e códigos de caixa.
   const [catalog, setCatalog] = useState(product?.catalog ?? null);
   const [stPauta, setStPauta] = useState<StPautaRef | null>(product?.stPauta ?? null);
+  const [stNetLoadClass, setStNetLoadClass] = useState<string | null>(
+    product?.stNetLoadClass ?? null,
+  );
   const companies = useQuery({
     queryKey: ['companies'],
-    queryFn: () => api.get<{ uf: string | null }[]>('/companies'),
+    queryFn: () => api.get<{ uf: string | null; cnae?: string | null }[]>('/companies'),
   });
   const [packs, setPacks] = useState(product?.packs ?? []);
   const [fromCatalog, setFromCatalog] = useState(false);
@@ -281,6 +284,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
         catalog,
         packs,
         stPauta,
+        stNetLoadClass,
         barcodes: v.barcodes
           .split(/[\s,;]+/)
           .map((b) => b.trim())
@@ -430,6 +434,13 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           cest={form.values.cest}
           value={stPauta}
           onChange={setStPauta}
+        />
+        <StNetLoadClassPicker
+          uf={companies.data?.[0]?.uf ?? null}
+          cnae={companies.data?.[0]?.cnae ?? null}
+          cest={form.values.cest}
+          value={stNetLoadClass}
+          onChange={setStNetLoadClass}
         />
         {product && (
           <AiFiscalSuggestionPanel

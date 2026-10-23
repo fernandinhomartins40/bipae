@@ -14,6 +14,8 @@ export interface PurchaseParty {
   name: string;
   tradeName?: string;
   ie?: string;
+  /** Código de regime tributário do emitente (CRT: 1 e 4 Simples, 2 Simples com excesso, 3 normal). */
+  crt?: string;
   address?: {
     street: string;
     number: string;
@@ -112,6 +114,7 @@ export function readNfeParty(node: XmlElement | null, addressTag: string): Purch
     name: textOf(node, 'xNome') ?? '',
     ...(text('xFant') && { tradeName: text('xFant') }),
     ...(text('IE') && { ie: text('IE') }),
+    ...(text('CRT') && { crt: text('CRT') }),
     ...(a && {
       address: {
         street: textOf(a, 'xLgr') ?? '',

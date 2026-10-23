@@ -1,4 +1,4 @@
-import { TextField } from '@bipae/ui';
+import { SelectField, TextField } from '@bipae/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useDeferredValue, useState } from 'react';
 import { useApp } from '../context';
@@ -238,6 +238,77 @@ interface StPautaItemView {
 
 const brl = (cents: number) =>
   (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+/** Decreto de carga líquida da CNAE principal da empresa e as classes da tabela do comprador. */
+export interface StNetLoadClassesView {
+  status: string;
+  regime: { act: string; segmentName: string; url: string; cestSegments: string[] | null } | null;
+  classes: { goodsClass: string; label: string }[];
+  message: string;
+}
+
+/** Valor que diz "o produto está fora do regime" (exclusões do decreto). */
+export const NET_LOAD_OUTSIDE = 'outside';
+
+/** O decreto de carga líquida da CNAE da empresa (F3-26.d.CE.c); nada quando falta UF ou CNAE. */
+export function useStNetLoadClasses(
+  uf: string | null | undefined,
+  cnae: string | null | undefined,
+  cest?: string,
+) {
+  const { api } = useApp();
+  const digits = (cnae ?? '').replace(/\D/g, '');
+  const code = /^\d{7}$/.test(cest ?? '') ? cest : '';
+  return useQuery({
+    queryKey: ['st-net-load-classes', uf, digits, code],
+    queryFn: () =>
+      api.get<StNetLoadClassesView>(
+        `/fiscal/st-net-load-classes?uf=${uf}&cnae=${digits}${code ? `&cest=${code}` : ''}`,
+      ),
+    enabled: Boolean(uf) && digits.length === 7,
+  });
+}
+
+/**
+ * Classe da mercadoria na ST com carga líquida (F3-26.d.CE.c, dúvida D-042): só aparece quando a
+ * CNAE principal da empresa está num decreto. A classe decide o percentual na entrada da compra;
+ * "fora do regime" é para os produtos que o decreto exclui. O Bipaê não deduz a classe.
+ */
+export function StNetLoadClassPicker({
+  uf,
+  cnae,
+  cest,
+  value,
+  onChange,
+}: {
+  uf: string | null;
+  cnae: string | null;
+  cest: string;
+  value: string | null;
+  onChange: (value: string | null) => void;
+}) {
+  const found = useStNetLoadClasses(uf, cnae, cest).data;
+  if (!found?.regime) return null;
+  const known = found.classes.some((c) => c.goodsClass === value) || value === NET_LOAD_OUTSIDE;
+  return (
+    <SelectField
+      label="Classe da mercadoria (ST com carga líquida)"
+      value={value ?? ''}
+      onChange={(e) => onChange(e.target.value || null)}
+      options={[
+        { value: '', label: 'Não informada (a compra avisa)' },
+        ...found.classes.map((c) => ({ value: c.goodsClass, label: c.label })),
+        ...(value && !known ? [{ value, label: `${value} (fora da tabela atual)` }] : []),
+        { value: NET_LOAD_OUTSIDE, label: 'Fora do regime (exclusões do decreto)' },
+      ]}
+      hint={
+        found.classes.length > 0
+          ? `${found.regime.act}: a carga da entrada depende da carga interna da mercadoria. Confira com o contador.`
+          : found.message
+      }
+    />
+  );
+}
 
 /**
  * Item da pauta da ST (F3-26.f): quando a UF da empresa publica pauta para o CEST do produto, a

@@ -11,6 +11,7 @@ import {
 import { findCompanyRegime } from '../regimes';
 import { calculateSaleItemTaxes, type SaleFiscalProfile, type TaxOutcome } from '../sale';
 import { DEMONSTRATION, type DemonstrationNote } from '../tables/demonstration';
+import { stNetLoadOutputNote } from '../tables/st-net-loads';
 import { findStPautaItem } from '../tables/st-pautas';
 import { findCfop } from '../tables/cfop';
 import { isImportedOrigin } from '../tables/icms-uf';
@@ -61,6 +62,8 @@ export interface NfeDraftItem extends SaleNfceItem {
   cfop?: string | null;
   /** Item da pauta da ST ligado ao produto (F3-26.f): UF, anexo e número na portaria. */
   stPauta?: { uf: string; annex: string; item: string } | null;
+  /** Classe da mercadoria na carga líquida (F3-26.d.CE.c), escolhida no produto. */
+  stNetLoadClass?: string | null;
   /** Na devolução (NT 2025.002, regra VC02-14): a chave da nota devolvida e o número do item nela. */
   reference?: { key: string; item: number } | null;
 }
@@ -68,7 +71,10 @@ export interface NfeDraftItem extends SaleNfceItem {
 export interface NfeDraftInput {
   /** Id do rascunho: dele sai o cNF, para a nota ter sempre a mesma chave nas novas tentativas. */
   draftId: string;
-  company: SaleNfceCompany;
+  company: SaleNfceCompany & {
+    /** CNAE-Fiscal principal: decide a carga líquida (F3-26.d.CE.c). */
+    cnae?: string | null;
+  };
   series: number;
   number: number;
   /** Momento da emissão (ISO). */
@@ -299,6 +305,7 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
       reference: item.reference,
     };
   });
+  const netLoadNotes = new Set<string>();
   const items = (returned ? [] : input.items).map((item, index): NfeItem | null => {
     const label = `Item ${index + 1} (${item.description})`;
     if (!item.ncm) pending.push(`${label}: o produto não tem NCM.`);
@@ -327,6 +334,25 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
       } else {
         pending.push(
           `${label}: o item ${item.stPauta.item} da pauta de ${item.stPauta.uf} não vale nesta data. Escolha o item da pauta nova no produto.`,
+        );
+      }
+    }
+    // Carga líquida (F3-26.d.CE.c): a ST foi recolhida na entrada; na saída interna a nota leva a
+    // expressão do decreto. Só aviso e texto: nunca impede a nota.
+    if (!suspended && !returned) {
+      const output = stNetLoadOutputNote({
+        uf,
+        sellerCnae: c.cnae,
+        destinationUf: ufDestino,
+        date,
+        goodsClass: item.stNetLoadClass,
+        cest: item.cest ?? null,
+        sellerSimples: regime?.taxRegime === 'simples',
+      });
+      if (output) {
+        netLoadNotes.add(output.note);
+        notes.push(
+          `${label}: ST recolhida na entrada pela carga líquida (${output.regime.act}); a nota leva "${output.note}" nas informações complementares.`,
         );
       }
     }
@@ -448,6 +474,7 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
   const additionalInfo = [
     ...(tooLong ? [`Natureza da operação: ${officialNature}`] : []),
     ...(demo?.texts ?? []),
+    ...netLoadNotes,
     input.additionalInfo?.trim(),
   ]
     .filter(Boolean)

@@ -47,6 +47,8 @@ import {
   stPautaFor,
   ST_NET_LOAD_ORIGINS,
   ST_NET_LOAD_UFS,
+  stNetLoadFor,
+  stNetLoadMessage,
   stNetLoadRegimesFor,
 } from '@bipae/fiscal/tables';
 import { findMunicipio, searchMunicipios } from '@bipae/fiscal/tables/municipios';
@@ -369,8 +371,55 @@ export class FiscalController {
         buyers: regime.buyers.filter((b) => b.validFrom === null || b.validFrom <= day),
         simplesAddition: regime.simplesAddition,
         importAddition: regime.importAddition,
+        simplesBuyer: regime.simplesBuyer,
+        outputNote: regime.outputNote,
         version,
       })),
+    };
+  }
+
+  /**
+   * Carga líquida da CNAE principal da empresa (F3-26.d.CE.c): o decreto em que ela está e as
+   * classes da mercadoria da tabela do comprador, para o cadastro do produto. Sem CNAE nos
+   * decretos, a situação e a mensagem dizem o porquê; nada é suposto.
+   */
+  @Get('st-net-load-classes')
+  @RequirePermission('catalog.read')
+  stNetLoadClasses(@Query() query: unknown) {
+    const { uf, cnae, cest } = parse(
+      z.object({
+        uf: z.string({ message: 'Informe a UF' }).trim().toUpperCase().length(2, 'Informe a UF'),
+        cnae: z.string({ message: 'Informe a CNAE' }).trim().min(1, 'Informe a CNAE'),
+        cest: z
+          .string()
+          .trim()
+          .regex(/^\d{7}$/, 'CEST inválido')
+          .optional(),
+      }),
+      query,
+    );
+    const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(
+      new Date(),
+    );
+    const result = stNetLoadFor({
+      uf,
+      buyerCnae: cnae,
+      originUf: uf,
+      date: day,
+      goodsClass: null,
+      cest: cest ?? null,
+    });
+    const regime = 'regime' in result ? result.regime : null;
+    return {
+      status: result.status,
+      regime: regime && {
+        act: regime.act,
+        segmentName: regime.segmentName,
+        url: regime.url,
+        cestSegments: regime.cestSegments,
+      },
+      classes: result.status === 'choose-class' ? result.classes : [],
+      message: stNetLoadMessage(result),
     };
   }
 

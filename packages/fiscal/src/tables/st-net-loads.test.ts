@@ -3,9 +3,13 @@ import {
   ST_NET_LOAD_ORIGINS,
   ST_NET_LOAD_REGIMES,
   ST_NET_LOAD_UFS,
+  NET_LOAD_OUTSIDE,
+  isNetLoadGoodsClass,
   netLoadOriginOf,
   stNetLoadAmount,
   stNetLoadFor,
+  stNetLoadMessage,
+  stNetLoadOutputNote,
   stNetLoadRegimesFor,
   type StNetLoadInput,
 } from './st-net-loads';
@@ -242,6 +246,65 @@ describe('vestuário (Decreto 34.256/2021)', () => {
   });
 });
 
+describe('comprador do Simples e expressão da nota de saída (F3-26.d.CE.c)', () => {
+  it('vestuário não se aplica ao comprador do Simples (art. 3º)', () => {
+    expect(regime('Decreto 34.256/2021 (CE)').simplesBuyer).toEqual({
+      rule: 'excluded',
+      mva: null,
+    });
+    expect(
+      load({ buyerCnae: '4781400', originUf: 'SP', goodsClass: 'rate-20', buyerSimples: true }),
+    ).toBe('simples-excluded');
+  });
+
+  it('móveis: margem de 27% para o comprador do Simples (art. 3º, § 8º)', () => {
+    expect(regime('Decreto 32.900/2018 (CE)').simplesBuyer).toEqual({ rule: 'mva', mva: '27' });
+    const r = stNetLoadFor({
+      uf: 'CE',
+      buyerCnae: '4754701',
+      originUf: 'SP',
+      date: '2026-10-23',
+      goodsClass: 'rate-20',
+      buyerSimples: true,
+    });
+    expect(r.status === 'applies' && r.mva).toBe('27');
+    expect(r.status === 'applies' && r.warnings.join(' ')).toMatch(/margem de 27%/);
+    // Os outros decretos não têm regra própria: a margem do artigo do cálculo.
+    expect(regime('Decreto 31.270/2013 (CE)').simplesBuyer).toBeNull();
+    expect(
+      load({ buyerCnae: '4744099', originUf: 'BA', goodsClass: 'rate-20', buyerSimples: true }),
+    ).toBe('19.71');
+  });
+
+  it('cada decreto traz a expressão "ICMS retido por substituição tributária" com o número', () => {
+    for (const r of ST_NET_LOAD_REGIMES) {
+      const number = /Decreto ([\d.]+\/\d{4})/.exec(r.act)![1];
+      expect(r.outputNote).toBe(`ICMS retido por substituição tributária - Decreto nº ${number}`);
+    }
+  });
+
+  it('a expressão só na saída interna, do comprador do regime, com o produto nele', () => {
+    const base = {
+      uf: 'CE',
+      sellerCnae: '4781400',
+      destinationUf: 'CE',
+      date: '2026-10-23',
+      goodsClass: 'rate-20',
+    };
+    expect(stNetLoadOutputNote(base)?.note).toMatch(/Decreto nº 34\.256\/2021$/);
+    // Sem classe, a empresa não confirmou que o produto está no regime: sem expressão. Uma classe
+    // que não é a da tabela do vendedor ainda põe o produto no regime (a expressão não depende dela).
+    expect(stNetLoadOutputNote({ ...base, goodsClass: null })).toBeNull();
+    expect(stNetLoadOutputNote({ ...base, goodsClass: 'qualquer' })?.regime.act).toBe(
+      'Decreto 34.256/2021 (CE)',
+    );
+    expect(stNetLoadOutputNote({ ...base, destinationUf: 'PE' })).toBeNull();
+    expect(stNetLoadOutputNote({ ...base, goodsClass: NET_LOAD_OUTSIDE })).toBeNull();
+    expect(stNetLoadOutputNote({ ...base, sellerCnae: null })).toBeNull();
+    expect(stNetLoadOutputNote({ ...base, sellerSimples: true })).toBeNull();
+  });
+});
+
 describe('farmacêuticos (Decreto 36.617/2025)', () => {
   const farma = { buyerCnae: '4771701', cest: '1300100' };
 
@@ -301,6 +364,54 @@ describe('o que não se aplica volta como situação, nunca como suposição (D-
   it('origem desconhecida', () => {
     expect(load({ buyerCnae: '4781400', originUf: 'ZZ', goodsClass: 'rate-20' })).toBe(
       'unknown-origin',
+    );
+  });
+
+  it('classes válidas para o cadastro do produto', () => {
+    expect(isNetLoadGoodsClass('rate-20')).toBe(true);
+    expect(isNetLoadGoodsClass('informatics')).toBe(true);
+    expect(isNetLoadGoodsClass(NET_LOAD_OUTSIDE)).toBe(true);
+    expect(isNetLoadGoodsClass('rate-99')).toBe(false);
+  });
+
+  it('produto marcado como fora do regime pela empresa', () => {
+    expect(load({ buyerCnae: '4781400', originUf: 'SP', goodsClass: NET_LOAD_OUTSIDE })).toBe(
+      'product-out',
+    );
+  });
+
+  it('RET e transferência: falta configurar, com o motivo', () => {
+    const base = { uf: 'CE', buyerCnae: '4781400', originUf: 'SP', date: '2026-10-23' };
+    const ret = stNetLoadFor({ ...base, goodsClass: 'rate-20', specialRegime: true });
+    expect(ret).toMatchObject({ status: 'missing', topic: 'special-regime' });
+    expect(stNetLoadMessage(ret)).toMatch(/Regime Especial de Tributação/);
+    const transfer = stNetLoadFor({ ...base, goodsClass: 'rate-20', transfer: true });
+    expect(transfer).toMatchObject({ status: 'missing', topic: 'transfer' });
+    expect(stNetLoadMessage(transfer)).toMatch(/transferência/);
+  });
+
+  it('cada situação tem mensagem em português', () => {
+    const cases: StNetLoadInput[] = [
+      { uf: 'CE', buyerCnae: '4781400', originUf: 'SP', date: '2026-10-23', goodsClass: 'rate-20' },
+      { uf: 'CE', buyerCnae: '4711302', originUf: 'SP', date: '2026-10-23' },
+      { uf: 'CE', buyerCnae: '2621300', originUf: 'SP', date: '2026-10-23' },
+      { uf: 'CE', buyerCnae: '4771701', originUf: 'SP', date: '2026-10-23', cest: '2003900' },
+      { uf: 'CE', buyerCnae: '4781400', originUf: 'SP', date: '2016-01-01', goodsClass: 'rate-18' },
+      { uf: 'CE', buyerCnae: '4781400', originUf: 'ZZ', date: '2026-10-23', goodsClass: 'rate-20' },
+      { uf: 'CE', buyerCnae: '4781400', originUf: 'SP', date: '2026-10-23' },
+      { uf: 'CE', buyerCnae: '4781400', originUf: 'SP', date: '2026-10-23', buyerSimples: true },
+    ];
+    const messages = cases.map((c) => stNetLoadMessage(stNetLoadFor(c)));
+    expect(messages[0]).toBe('Carga líquida de 15,60% (Decreto 34.256/2021 (CE), 20%).');
+    expect(messages[1]).toMatch(/vale a ST comum/);
+    expect(messages[2]).toMatch(/retenção nas saídas internas \(art\. 2º\) ainda falta configurar/);
+    expect(messages[3]).toMatch(/fora do Decreto 36\.617/);
+    expect(messages[4]).toMatch(/não tem a tabela/);
+    expect(messages[5]).toMatch(/Origem do fornecedor/);
+    expect(messages[6]).toMatch(/escolha no produto a classe/);
+    expect(messages[7]).toMatch(/não se aplica a empresas do Simples/);
+    expect(stNetLoadMessage({ status: 'ambiguous', regimes: [ST_NET_LOAD_REGIMES[0]!] })).toMatch(
+      /mais de um decreto/,
     );
   });
 

@@ -8,8 +8,10 @@ import data from './data/st-net-loads.json';
  * manda), e não como MVA × alíquota menos o crédito. O percentual depende de quem compra, da carga
  * interna da mercadoria e da origem. Tudo vem dos decretos guardados em sources/.
  *
- * Isto é referência e cálculo puro: o motor da regra de ICMS da empresa não usa a carga líquida
- * (o modelo dela é MVA, alíquota e crédito). Quem escolhe a classe da mercadoria e confirma que o
+ * Cálculo puro: a regra de ICMS da empresa (MVA, alíquota e crédito) não usa a carga líquida. A
+ * entrada da compra calcula a ST de entrada por `stNetLoadFor` com a CNAE principal da empresa e a
+ * classe da mercadoria do produto (F3-26.d.CE.c), e o rascunho da NF-e põe a expressão do decreto
+ * na saída interna (`stNetLoadOutputNote`). Quem escolhe a classe da mercadoria e confirma que o
  * produto está no regime é a empresa (dúvida D-042).
  */
 
@@ -76,6 +78,16 @@ export interface NetLoadRegime {
   simplesAddition: NetLoadPercents | null;
   /** Acréscimo no importado a 4% (Resolução do Senado 13/2012) vindo de outra UF, por origem. */
   importAddition: NetLoadPercents | null;
+  /**
+   * Expressão que a nota da saída interna seguinte leva ("ICMS retido por substituição
+   * tributária", seguida do número do decreto; art. 7º, § 1º, ou o equivalente de cada decreto).
+   */
+  outputNote: string;
+  /**
+   * Comprador optante pelo Simples Nacional: o decreto não se aplica a ele (`excluded`, vestuário,
+   * art. 3º) ou usa outra margem (`mva`, móveis, art. 3º, § 8º). Null quando o decreto não diz nada.
+   */
+  simplesBuyer: { rule: 'excluded' | 'mva'; mva: string | null } | null;
   /** Da redação atual para as anteriores. */
   versions: NetLoadVersion[];
 }
@@ -137,14 +149,39 @@ export interface StNetLoadInput {
   /** UF do remetente, ou "EX" para a importação direta do exterior. */
   originUf: string;
   date: string;
-  /** Classe da mercadoria na tabela, escolhida pela empresa (D-042). */
+  /**
+   * Classe da mercadoria na tabela, escolhida pela empresa no produto (D-042). `outside` diz que a
+   * empresa confirmou que o produto está fora do regime (exclusões do decreto).
+   */
   goodsClass?: string | null;
   cest?: string | null;
   /** O fornecedor é do Simples Nacional (acréscimo do decreto). */
   supplierSimples?: boolean;
   /** Importado a 4% (Resolução do Senado 13/2012) vindo de outra UF. */
   importedAt4?: boolean;
+  /** O comprador é optante pelo Simples Nacional (regra própria em alguns decretos). */
+  buyerSimples?: boolean;
+  /** Entrada em transferência entre estabelecimentos do mesmo titular (margem própria). */
+  transfer?: boolean;
+  /** O comprador tem Regime Especial de Tributação (RET) com a SEFAZ (cargas próprias). */
+  specialRegime?: boolean;
 }
+
+/** Classe que a empresa escolhe quando o produto está fora do regime de carga líquida. */
+export const NET_LOAD_OUTSIDE = 'outside';
+
+/** A classe existe em alguma tabela de carga líquida (ou é "fora do regime")? */
+export function isNetLoadGoodsClass(goodsClass: string): boolean {
+  return (
+    goodsClass === NET_LOAD_OUTSIDE ||
+    ST_NET_LOAD_REGIMES.some((r) =>
+      r.versions.some((v) => v.loads.some((l) => l.goodsClass === goodsClass)),
+    )
+  );
+}
+
+/** O que ainda não é calculado pelo Bipaê: volta como "falta configurar", com o motivo. */
+export type NetLoadMissingTopic = 'transfer' | 'special-regime';
 
 export type StNetLoadResult =
   | {
@@ -166,6 +203,8 @@ export type StNetLoadResult =
   | { status: 'ambiguous'; regimes: NetLoadRegime[] }
   | { status: 'industry'; regime: NetLoadRegime; buyer: NetLoadBuyer }
   | { status: 'product-out'; regime: NetLoadRegime }
+  | { status: 'simples-excluded'; regime: NetLoadRegime }
+  | { status: 'missing'; regime: NetLoadRegime; topic: NetLoadMissingTopic; message: string }
   | { status: 'no-table'; regime: NetLoadRegime }
   | { status: 'unknown-origin'; regime: NetLoadRegime }
   | {
@@ -193,7 +232,27 @@ export function stNetLoadFor(input: StNetLoadInput): StNetLoadResult {
   if (listed.length > 1) return { status: 'ambiguous', regimes: listed.map((l) => l.regime) };
   const { regime, buyer } = listed[0]!;
   if (buyer.group === 'industry') return { status: 'industry', regime, buyer };
-  if (!coversCest(regime, input.cest)) return { status: 'product-out', regime };
+  if (input.goodsClass === NET_LOAD_OUTSIDE || !coversCest(regime, input.cest))
+    return { status: 'product-out', regime };
+  const simplesRule = input.buyerSimples ? regime.simplesBuyer : null;
+  if (simplesRule?.rule === 'excluded') return { status: 'simples-excluded', regime };
+  // RET e transferência têm cargas e margens próprias que o Bipaê ainda não lê (D-042).
+  if (input.specialRegime) {
+    return {
+      status: 'missing',
+      regime,
+      topic: 'special-regime',
+      message: `Falta configurar: com Regime Especial de Tributação (RET), a carga do ${regime.act} vem do termo do regime, que o Bipaê ainda não calcula.`,
+    };
+  }
+  if (input.transfer) {
+    return {
+      status: 'missing',
+      regime,
+      topic: 'transfer',
+      message: `Falta configurar: a transferência entre estabelecimentos tem margem própria no ${regime.act}, que o Bipaê ainda não calcula.`,
+    };
+  }
   const version = netLoadVersionOn(regime, input.date);
   if (!version) return { status: 'no-table', regime };
   const origin = netLoadOriginOf(input.originUf);
@@ -220,6 +279,10 @@ export function stNetLoadFor(input: StNetLoadInput): StNetLoadResult {
     if (extra) additions.push({ kind: 'import4', percent: extra });
     else warnings.push(`O ${regime.act} não traz acréscimo para o importado a 4% desta origem.`);
   }
+  const simplesMva = simplesRule?.rule === 'mva' ? simplesRule.mva : null;
+  if (simplesMva) {
+    warnings.push(`Comprador do Simples Nacional: margem de ${simplesMva}% (${regime.act}).`);
+  }
   return {
     status: 'applies',
     regime,
@@ -231,9 +294,65 @@ export function stNetLoadFor(input: StNetLoadInput): StNetLoadResult {
     additions,
     totalPercent:
       additions.length === 0 ? loadPercent : sum([loadPercent, ...additions.map((a) => a.percent)]),
-    mva: regime.mva,
+    mva: simplesMva ?? regime.mva,
     warnings,
   };
+}
+
+/** Em palavras, para a compra e a nota: o que a situação da carga líquida quer dizer. */
+export function stNetLoadMessage(result: StNetLoadResult): string {
+  switch (result.status) {
+    case 'applies':
+      return `Carga líquida de ${result.totalPercent.replace('.', ',')}% (${result.regime.act}, ${result.row.label}).`;
+    case 'not-listed':
+      return 'A CNAE principal da empresa não está nos decretos de carga líquida: vale a ST comum.';
+    case 'ambiguous':
+      return `A CNAE principal está em mais de um decreto (${result.regimes.map((r) => r.act).join(', ')}): confira com o contador.`;
+    case 'industry':
+      return `Indústria no ${result.regime.act}: sem carga líquida na entrada. A retenção nas saídas internas (art. 2º) ainda falta configurar.`;
+    case 'product-out':
+      return `Produto fora do ${result.regime.act}.`;
+    case 'simples-excluded':
+      return `O ${result.regime.act} não se aplica a empresas do Simples Nacional.`;
+    case 'missing':
+      return result.message;
+    case 'no-table':
+      return `O Bipaê não tem a tabela do ${result.regime.act} nesta data.`;
+    case 'unknown-origin':
+      return `Origem do fornecedor fora das colunas do ${result.regime.act}.`;
+    case 'choose-class':
+      return `Falta configurar: escolha no produto a classe da mercadoria do ${result.regime.act} (ou "fora do regime").`;
+  }
+}
+
+/**
+ * Na saída interna de mercadoria cuja ST foi recolhida na entrada pela carga líquida, a nota leva a
+ * expressão do decreto (art. 7º, § 1º, ou o equivalente: "Nas operações internas"). Devolve a
+ * expressão quando o vendedor é comprador do regime e o produto está nele; null nos outros casos.
+ */
+export function stNetLoadOutputNote(input: {
+  uf: string;
+  sellerCnae: string | null | undefined;
+  destinationUf: string;
+  date: string;
+  goodsClass: string | null | undefined;
+  cest?: string | null;
+  sellerSimples?: boolean;
+}): { regime: NetLoadRegime; note: string } | null {
+  if (!input.sellerCnae || !input.goodsClass) return null;
+  if (input.destinationUf.toUpperCase() !== input.uf.toUpperCase()) return null;
+  const result = stNetLoadFor({
+    uf: input.uf,
+    buyerCnae: input.sellerCnae,
+    originUf: input.uf,
+    date: input.date,
+    goodsClass: input.goodsClass,
+    cest: input.cest ?? null,
+    buyerSimples: input.sellerSimples ?? false,
+  });
+  // A classe da tabela não muda a expressão: basta o produto estar no regime do comprador.
+  if (result.status !== 'applies' && result.status !== 'choose-class') return null;
+  return { regime: result.regime, note: result.regime.outputNote };
 }
 
 /**

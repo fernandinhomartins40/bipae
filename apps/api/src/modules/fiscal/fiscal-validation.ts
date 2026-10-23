@@ -9,7 +9,7 @@ import {
   isCfopValidOn,
 } from '@bipae/fiscal/tables';
 import { findNcm, isNcmValidOn } from '@bipae/fiscal/tables/ncm';
-import { findStPautaItem } from '@bipae/fiscal/tables';
+import { findStPautaItem, isNetLoadGoodsClass } from '@bipae/fiscal/tables';
 import { AppError } from '../../common/errors';
 
 /**
@@ -34,10 +34,19 @@ export function assertProductFiscal(
     stPauta?: { uf: string; annex: string; item: string } | null | undefined;
     /** CEST do produto, para conferir com o do item da pauta. */
     cestForPauta?: string | null | undefined;
+    /** Classe da mercadoria na carga líquida (F3-26.d.CE.c), conferida nas tabelas. */
+    stNetLoadClass?: string | null | undefined;
   },
   date = today(),
 ): void {
   const issues: Issue[] = [];
+  if (input.stNetLoadClass && !isNetLoadGoodsClass(input.stNetLoadClass)) {
+    issues.push({
+      path: 'stNetLoadClass',
+      message:
+        'Essa classe da mercadoria não está nas tabelas de carga líquida. Escolha uma da lista.',
+    });
+  }
   if (input.stPauta) {
     const p = input.stPauta;
     const found = findStPautaItem(p.uf, date, p.annex, p.item);

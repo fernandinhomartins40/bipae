@@ -153,6 +153,8 @@ export class CatalogService {
         cest: (input.cest ?? null) === current.cest ? null : input.cest,
         stPauta: samePauta(input.stPauta, current.stPauta) ? null : (input.stPauta ?? null),
         cestForPauta: input.cest ?? null,
+        stNetLoadClass:
+          (input.stNetLoadClass ?? null) === current.stNetLoadClass ? null : input.stNetLoadClass,
       });
       // Preço de atacado também é preço: pede a mesma permissão e entra na auditoria.
       const wholesaleChanged =
@@ -242,6 +244,7 @@ export class CatalogService {
       attributes: input.attributes ?? null,
       catalog: input.catalog ?? null,
       stPauta: input.stPauta ?? null,
+      stNetLoadClass: input.stNetLoadClass ?? null,
       wholesalePriceCents: input.wholesale?.priceCents ?? null,
       wholesaleMinMilli: input.wholesale?.minQuantityMilli ?? null,
     };
@@ -369,6 +372,7 @@ export class CatalogService {
         })),
       catalog: (r.catalog as Product['catalog']) ?? null,
       stPauta: r.stPauta ?? null,
+      stNetLoadClass: r.stNetLoadClass ?? null,
       packs: packs
         .filter((p) => p.productId === r.id)
         .map((p) => ({ packGtin: p.packGtin, unitsPerPack: p.unitsPerPack })),

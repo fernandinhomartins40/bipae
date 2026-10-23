@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { cleanPercent } from './companies';
+import { cleanPercent, formatCnae } from './companies';
+
+describe('campo da CNAE principal (F3-26.d.CE.c)', () => {
+  it('põe a máscara 0000-0/00 enquanto digita e corta no 7º dígito', () => {
+    expect(formatCnae('4781400')).toBe('4781-4/00');
+    expect(formatCnae('4781-4/00')).toBe('4781-4/00');
+    expect(formatCnae('47814001')).toBe('4781-4/00');
+    expect(formatCnae('4781')).toBe('4781');
+    expect(formatCnae('47814')).toBe('4781-4');
+    expect(formatCnae('478140')).toBe('4781-4/0');
+    expect(formatCnae('')).toBe('');
+  });
+});
 
 describe('campo de percentual da NFS-e', () => {
   it('aceita vírgula ou ponto e guarda só números, uma vírgula e até 2 casas', () => {

@@ -271,6 +271,8 @@
     "s-se-except-es": "4"
    },
    "importAddition": null,
+   "outputNote": "ICMS retido por substituição tributária - Decreto nº 30.519/2011",
+   "simplesBuyer": null,
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -605,6 +607,8 @@
     "s-se-except-es": "3"
    },
    "importAddition": null,
+   "outputNote": "ICMS retido por substituição tributária - Decreto nº 31.066/2012",
+   "simplesBuyer": null,
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -1084,6 +1088,8 @@
     "n-ne-co-es": "8",
     "s-se-except-es": "3"
    },
+   "outputNote": "ICMS retido por substituição tributária - Decreto nº 31.270/2013",
+   "simplesBuyer": null,
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -1469,6 +1475,11 @@
     "n-ne-co-es": "8",
     "s-se-except-es": "3"
    },
+   "outputNote": "ICMS retido por substituição tributária - Decreto nº 32.900/2018",
+   "simplesBuyer": {
+    "rule": "mva",
+    "mva": "27"
+   },
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -1790,6 +1801,11 @@
     "n-ne-co-es": "8",
     "s-se-except-es": "3"
    },
+   "outputNote": "ICMS retido por substituição tributária - Decreto nº 34.256/2021",
+   "simplesBuyer": {
+    "rule": "excluded",
+    "mva": null
+   },
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -2097,6 +2113,8 @@
     "n-ne-co-es": "8",
     "s-se-except-es": "3"
    },
+   "outputNote": "ICMS retido por substituição tributária - Decreto nº 36.617/2025",
+   "simplesBuyer": null,
    "versions": [
     {
      "validFrom": "2025-06-01",

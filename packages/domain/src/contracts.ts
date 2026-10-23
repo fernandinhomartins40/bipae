@@ -221,6 +221,16 @@ export const productInput = z.object({
       item: z.string().regex(/^\d{1,3}\.\d{1,4}$/),
     })
     .nullish(),
+  /**
+   * Classe da mercadoria na ST com carga líquida (F3-26.d.CE.c, D-042), como "rate-20" ou
+   * "basket-7", ou "outside" quando o produto está fora do regime. A API confere na tabela.
+   */
+  stNetLoadClass: z
+    .string()
+    .trim()
+    .regex(/^[a-z0-9-]{1,40}$/, 'Classe da mercadoria inválida')
+    .nullish()
+    .or(z.literal('').transform(() => null)),
   /** Atacarejo (F5-03): a partir de tal quantidade, cada unidade sai por tal preço. */
   wholesale: z
     .object({
@@ -263,6 +273,8 @@ export interface Product {
   catalog?: ProductCatalog | null;
   /** Item da pauta da ST da UF (F3-26.f). */
   stPauta?: { uf: string; annex: string; item: string } | null;
+  /** Classe da mercadoria na ST com carga líquida (F3-26.d.CE.c), ou "outside". */
+  stNetLoadClass?: string | null;
   /** Códigos de caixa ou fardo, com as unidades de cada um. */
   packs?: ProductPack[];
   /** Atacarejo (F5-03): preço de atacado a partir de uma quantidade. */
@@ -477,6 +489,15 @@ export const companyInput = z.object({
   taxRegime: z.enum(COMPANY_TAX_REGIMES, { message: 'Regime tributário inválido' }).nullish(),
   /** Optante pelo Simples que apura o IBS e a CBS pelo regime regular (LC 214/2025, art. 41, § 3º). */
   ibsCbsRegular: z.boolean().optional(),
+  /** CNAE-Fiscal principal (F3-26.d.CE.c): decide a ST com carga líquida. Com ou sem máscara. */
+  cnae: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, '') || null)
+    .refine((v) => v === null || v.length === 7, 'CNAE deve ter 7 dígitos (ex.: 4781-4/00)')
+    .nullish(),
+  /** Regime Especial de Tributação (RET) com a SEFAZ, que muda a carga líquida (D-042). */
+  stSpecialRegime: z.boolean().optional(),
   // Dados do emitente da NFC-e e da NF-e (F3-14.b).
   ie: z
     .string()
@@ -846,7 +867,21 @@ export interface PurchasePreview {
       brand: string | null;
       packageDescription: string | null;
     } | null;
+    /** ST de entrada pela carga líquida (F3-26.d.CE.c); null sem CNAE principal na empresa. */
+    netLoad?: PurchaseNetLoadView | null;
   }[];
+}
+
+/** ST de entrada pela carga líquida de um item da compra (F3-26.d.CE.c). */
+export interface PurchaseNetLoadView {
+  /** applies, choose-class, missing, not-listed, industry, supplier-retained... */
+  status: string;
+  act: string | null;
+  totalPercent: string | null;
+  baseCents: number;
+  stCents: number;
+  message: string;
+  warnings: string[];
 }
 
 export interface PurchaseSummary {

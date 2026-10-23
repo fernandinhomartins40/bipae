@@ -14,6 +14,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import type { AiFiscalSuggestion, PromotionRule } from '@bipae/domain';
+import type { PurchaseNetLoad } from '@bipae/fiscal';
 
 /** Typed mirror of migrations/*.sql. The SQL files are the source of truth (RLS, triggers). */
 
@@ -101,6 +102,10 @@ export const companies = pgTable('companies', {
   taxRegime: text('tax_regime'),
   /** Optante pelo Simples que apura o IBS e a CBS pelo regime regular (F4-13). */
   ibsCbsRegular: boolean('ibs_cbs_regular').notNull().default(false),
+  /** CNAE-Fiscal principal (0079, F3-26.d.CE.c): decide a ST com carga líquida. */
+  cnae: char('cnae', { length: 7 }),
+  /** Regime Especial de Tributação (RET) com a SEFAZ (0079): a carga vem do termo do regime. */
+  stSpecialRegime: boolean('st_special_regime').notNull().default(false),
   /** Dados do emitente da nota (F3-14.b). */
   ie: text('ie'),
   street: text('street'),
@@ -245,6 +250,8 @@ export const products = pgTable('products', {
   catalog: jsonb('catalog').$type<Record<string, unknown>>(),
   /** Item da pauta da ST (F3-26.f): UF, anexo e número na portaria. */
   stPauta: jsonb('st_pauta').$type<{ uf: string; annex: string; item: string }>(),
+  /** Classe da mercadoria na carga líquida (0079, F3-26.d.CE.c), ou "outside" fora do regime. */
+  stNetLoadClass: text('st_net_load_class'),
   version: integer('version').notNull().default(1),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
@@ -529,6 +536,8 @@ export interface PurchaseInvoiceItem {
   unitCostCents: number;
   created: boolean;
   taxes: unknown;
+  /** ST de entrada pela carga líquida (F3-26.d.CE.c), quando a empresa tem CNAE principal. */
+  netLoad?: PurchaseNetLoad | null;
 }
 
 export const purchaseInvoices = pgTable('purchase_invoices', {

@@ -384,6 +384,18 @@ function ImportDrawer({
                       .join(' · ')}
                   </p>
                 )}
+                {item.netLoad && item.netLoad.status !== 'not-listed' && (
+                  <p className="text-sm">
+                    <Badge tone={item.netLoad.status === 'applies' ? 'neutral' : 'warning'}>
+                      {item.netLoad.status === 'applies'
+                        ? `ST de entrada ${money(item.netLoad.stCents)}`
+                        : 'ST de entrada: falta configurar'}
+                    </Badge>{' '}
+                    {[item.netLoad.message, ...item.netLoad.warnings].join(' ')}
+                    {d.productId !== (item.suggestion?.productId ?? null) &&
+                      ' A conta da prévia é pelo produto sugerido; a compra refaz pelo escolhido.'}
+                  </p>
+                )}
                 <div className="mt-2 grid gap-2 sm:grid-cols-2">
                   <SelectField
                     label={`Produto do item ${item.line}`}

@@ -16,7 +16,15 @@ import { Building2, Plus, Store } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
 import { CertificateLine, useCertificates } from './certificate';
-import { formatRate, useFiscalOptions } from './fiscal-lookup';
+import { formatRate, useFiscalOptions, useStNetLoadClasses } from './fiscal-lookup';
+
+/** "4781400" → "4781-4/00", aceitando digitação parcial. */
+export function formatCnae(text: string): string {
+  const d = text.replace(/\D/g, '').slice(0, 7);
+  if (d.length <= 4) return d;
+  if (d.length <= 5) return `${d.slice(0, 4)}-${d.slice(4)}`;
+  return `${d.slice(0, 4)}-${d.slice(4, 5)}/${d.slice(5)}`;
+}
 
 interface Company {
   id: string;
@@ -26,6 +34,8 @@ interface Company {
   uf: string | null;
   taxRegime: string | null;
   ibsCbsRegular?: boolean;
+  cnae?: string | null;
+  stSpecialRegime?: boolean;
   ie?: string | null;
   street?: string | null;
   streetNumber?: string | null;
@@ -328,6 +338,8 @@ function CompanyForm({
     uf: company?.uf ?? '',
     taxRegime: company?.taxRegime ?? '',
     ibsCbsRegular: company?.ibsCbsRegular ?? false,
+    cnae: formatCnae(company?.cnae ?? ''),
+    stSpecialRegime: company?.stSpecialRegime ?? false,
     ie: company?.ie ?? '',
     street: company?.street ?? '',
     streetNumber: company?.streetNumber ?? '',
@@ -352,6 +364,7 @@ function CompanyForm({
   const fiscal = useFiscalOptions().data;
   const regime = fiscal?.regimes.find((r) => r.id === v.taxRegime);
   const ufRate = fiscal?.ufRates.find((r) => r.uf === v.uf);
+  const netLoad = useStNetLoadClasses(v.uf || null, v.cnae).data;
   const [error, setError] = useState<string | null>(null);
   const simplesRegime = v.taxRegime === 'simples' || v.taxRegime === 'simples-excesso';
   const otherRegime = v.taxRegime === 'presumido' || v.taxRegime === 'real';
@@ -365,6 +378,8 @@ function CompanyForm({
       uf: v.uf || null,
       taxRegime: v.taxRegime || null,
       ibsCbsRegular: v.ibsCbsRegular,
+      cnae: v.cnae || null,
+      stSpecialRegime: v.stSpecialRegime,
       ie: v.ie || null,
       street: v.street || null,
       streetNumber: v.streetNumber || null,
@@ -445,6 +460,26 @@ function CompanyForm({
             checked={v.ibsCbsRegular}
             onChange={(ibsCbsRegular) => setV({ ...v, ibsCbsRegular })}
             hint="Só se a empresa fez essa opção no Simples Nacional (LC 123/2006, art. 13, §§ 9º e 10). Ela vale por semestre (de janeiro ou de julho), é feita em setembro ou março e não pode ser desfeita no meio do semestre. Sem ela, o IBS e a CBS vão no DAS."
+          />
+        )}
+        <TextField
+          label="CNAE principal"
+          inputMode="numeric"
+          placeholder="0000-0/00"
+          value={v.cnae}
+          onChange={(e) => setV({ ...v, cnae: formatCnae(e.target.value) })}
+          hint={
+            netLoad?.regime
+              ? `ST com carga líquida do ${netLoad.regime.act} (${netLoad.regime.segmentName.toLowerCase()}): a compra calcula a ST de entrada pela classe da mercadoria de cada produto.`
+              : 'A atividade principal do cartão do CNPJ. No Ceará, ela decide a ST com carga líquida.'
+          }
+        />
+        {netLoad?.regime && (
+          <Checkbox
+            label="Tem Regime Especial de Tributação (RET) com a SEFAZ"
+            checked={v.stSpecialRegime}
+            onChange={(stSpecialRegime) => setV({ ...v, stSpecialRegime })}
+            hint="Com RET, a carga vem do termo do regime: o Bipaê ainda não calcula e a compra mostra 'falta configurar'."
           />
         )}
         <fieldset className="flex flex-col gap-4 rounded-ui border border-border p-4">
