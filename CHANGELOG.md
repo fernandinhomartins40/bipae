@@ -1,5 +1,15 @@
 # Changelog
 
+## [Site: landing em notebooks] — 23/10/2026
+
+### Corrigido
+- **Landing (`apps/site`) ajustada para notebooks (1024 a 1279 px de largura).** No herói, o título fica um pouco menor e a coluna de texto mais larga: "Mesmo sem internet." e as três vantagens cabem numa linha cada. O menu lateral do mockup do caixa ficou mais estreito para "Configurações" não vazar e o nome dos produtos não ser cortado.
+- Em telas baixas (até 720 px de altura) o herói tem menos respiro em cima e embaixo, para título, botões e vantagens aparecerem sem rolar.
+- Na seção "Sem internet", o aviso amarelo só fica ao lado da tabela a partir de 1280 px; antes disso vai para baixo e os nomes dos produtos não quebram mais em duas linhas.
+- A faixa de cinco recursos tem menos margem lateral abaixo de 1280 px, e o espaço entre os itens do menu encolhe perto de 900 px para o menu continuar numa linha.
+- Títulos com quebra equilibrada: acabou a palavra sozinha na última linha (ex.: "A internet caiu. A fila, não.").
+- Conferido de 900 a 1920 px de largura, no tablet (768) e no celular (390): sem rolagem horizontal e com o botão "Começar grátis" visível na primeira tela.
+
 ## [F3-26.d.MA ST do Maranhão] — 23/10/2026
 
 ### Adicionado

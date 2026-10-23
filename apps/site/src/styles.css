@@ -58,6 +58,8 @@ h3 {
   margin: 0;
   color: var(--green-900);
   letter-spacing: -0.02em;
+  /* Evita palavra sozinha na última linha (ex.: "não." em notebooks). */
+  text-wrap: balance;
 }
 h2 {
   font-size: clamp(1.45rem, 3vw, 2rem);
@@ -270,7 +272,8 @@ ol {
     border: 0;
     box-shadow: none;
     background: none;
-    gap: 34px;
+    /* 34px no desktop; encolhe perto de 900px para o menu caber numa linha. */
+    gap: clamp(18px, 2.6vw, 34px);
   }
   .nav > a,
   .nav--open > a {
@@ -371,6 +374,36 @@ h1 {
   .hero__grid {
     grid-template-columns: 1fr 1.08fr;
     gap: 48px;
+  }
+}
+/* Notebooks pequenos (1024–1279): mais espaço para o texto e título menor,
+   para "Mesmo sem internet." e as vantagens caberem numa linha cada. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .hero__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  h1 {
+    font-size: clamp(2.6rem, 4.9vw, 3.6rem);
+  }
+  /* Menu lateral do mockup mais estreito para os itens da venda não cortarem. */
+  .hero .app {
+    grid-template-columns: 124px 1fr;
+  }
+  .hero .app__side li {
+    gap: 6px;
+    padding: 8px 5px;
+    font-size: 0.68rem;
+  }
+  .hero .app__main {
+    padding-inline: 14px;
+  }
+}
+/* Telas baixas (notebook com 600–720 de altura): herói mais compacto para
+   título, botões e vantagens aparecerem sem rolar. */
+@media (min-width: 1024px) and (max-height: 720px) {
+  .hero {
+    padding: 32px 0 44px;
   }
 }
 
@@ -746,6 +779,12 @@ h1 {
     border-right: 0;
   }
 }
+/* Cinco colunas ficam apertadas abaixo de 1280: menos respiro lateral. */
+@media (min-width: 900px) and (max-width: 1279px) {
+  .strip li {
+    padding: 18px 14px;
+  }
+}
 .app--small .app__foot strong {
   font-size: 1.5rem;
 }
@@ -867,8 +906,12 @@ h1 {
   }
   .offline__grid {
     grid-template-columns: 1fr 1fr;
-    gap: 48px;
+    gap: clamp(32px, 4vw, 48px);
   }
+}
+/* Aviso amarelo ao lado da tabela só quando há largura; antes disso fica
+   embaixo, sem quebrar o nome dos produtos em duas linhas. */
+@media (min-width: 1280px) {
   .sync-card__body {
     grid-template-columns: 1fr 180px;
     align-items: center;
