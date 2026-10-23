@@ -64,4 +64,31 @@ describe('referências de ST por UF (F3-26)', () => {
     expect((await admin.get('/fiscal/cbenef?uf=PR')).statusCode).toBe(400);
     expect((await api(t.app, {}).get('/fiscal/st-references?uf=SP&ncm=0401')).statusCode).toBe(401);
   });
+
+  it('CE: carga líquida pela CNAE do comprador (F3-26.d.CE.b), com a tabela da data', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    // Medicamento (NCM 3004.90.99, CEST do segmento 13): entra o decreto dos farmacêuticos.
+    const remedio = (
+      await admin.get('/fiscal/st-net-loads?uf=ce&ncm=3004.90.99&date=2026-10-23')
+    ).json();
+    expect(remedio).toMatchObject({ uf: 'CE', covered: true });
+    expect(remedio.regimes.map((r: { act: string }) => r.act)).toContain(
+      'Decreto 36.617/2025 (CE)',
+    );
+    const farma = remedio.regimes.find(
+      (r: { act: string }) => r.act === 'Decreto 36.617/2025 (CE)',
+    );
+    expect(farma).toMatchObject({ mva: '33.05', version: { validFrom: '2025-06-01' } });
+    // Sem CEST do segmento 13 (pneu): só os decretos que valem para as mercadorias do comprador.
+    const pneu = (
+      await admin.get('/fiscal/st-net-loads?uf=CE&ncm=40111000&date=2026-10-23')
+    ).json();
+    expect(pneu.regimes).toHaveLength(5);
+    expect((await admin.get('/fiscal/st-net-loads?uf=SP&ncm=40111000')).json()).toMatchObject({
+      covered: false,
+      regimes: [],
+    });
+    expect((await admin.get('/fiscal/st-net-loads?uf=C')).statusCode).toBe(400);
+  });
 });

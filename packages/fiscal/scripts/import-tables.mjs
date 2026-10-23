@@ -48,6 +48,7 @@ import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI, roStReferences } from './st-ro.mjs';
 import { ceStReferences, parseCeVeiculos } from './st-ce.mjs';
 import { dfStReferences, parseDfAnexoIV } from './st-df.mjs';
+import { CE_NET_LOAD_SOURCES, ceNetLoadRegimes, parseCeNetLoadSource } from './st-ce-carga.mjs';
 import { docText } from './doc-text.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
@@ -827,6 +828,32 @@ tables['st-references.json'] = await importStReferences(tables['cest.json']);
       },
     ],
   };
+}
+// Ceará (F3-26.d.CE.b): ST com carga líquida pela CNAE do comprador (Lei 14.237/2008), um decreto
+// por segmento, cada um no texto consolidado do SefazLegis. As UFs de cada coluna de origem vêm das
+// regiões do IBGE.
+{
+  const ibge = JSON.parse(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.municipios.file))).toString('utf8'),
+  );
+  const ufRegions = [
+    ...new Map(
+      ibge.map((m) => [
+        m['UF-sigla'],
+        { uf: m['UF-sigla'], name: m['UF-nome'], region: m['regiao-nome'] },
+      ]),
+    ).values(),
+  ];
+  const decrees = [];
+  for (const source of CE_NET_LOAD_SOURCES) {
+    const lines = await pdfLines(readFileSync(join(sourcesDir, manifest[source].file)));
+    decrees.push({
+      source,
+      url: manifest[source].page,
+      parsed: parseCeNetLoadSource(source, lines),
+    });
+  }
+  tables['st-net-loads.json'] = ceNetLoadRegimes(decrees, { ufRegions });
 }
 // Anexos I a V do Simples Nacional (LC 123/2006, redação da LC 155/2016): a alíquota efetiva
 // que vai na NFS-e (pTotTribSN) e que o dono não precisa saber de cabeça.

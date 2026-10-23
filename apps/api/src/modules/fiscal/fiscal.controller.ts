@@ -45,6 +45,9 @@ import {
   searchNfseServices,
   searchStPauta,
   stPautaFor,
+  ST_NET_LOAD_ORIGINS,
+  ST_NET_LOAD_UFS,
+  stNetLoadRegimesFor,
 } from '@bipae/fiscal/tables';
 import { findMunicipio, searchMunicipios } from '@bipae/fiscal/tables/municipios';
 import { findNcm, isNcmValidOn, ncmPath, searchNcm, type Ncm } from '@bipae/fiscal/tables/ncm';
@@ -321,6 +324,53 @@ export class FiscalController {
       // Está ou saiu da ST na UF (lista de mercadorias da SEFAZ, por CEST).
       listed: ST_SEGMENT_UFS.includes(uf),
       status: stStatusFor(uf, ncm, day, (cest) => CESTS.find((c) => c.cest === cest)?.ncm ?? []),
+    };
+  }
+
+  /**
+   * ST com carga líquida pela CNAE do comprador (F3-26.d.CE.b, Lei 14.237/2008 do Ceará): os
+   * regimes da UF com a tabela que vale na data. Os de segmento do CEST (farmacêuticos) só
+   * aparecem quando o NCM está num CEST do segmento. Referência, não regra do motor.
+   */
+  @Get('st-net-loads')
+  @RequirePermission('catalog.read')
+  stNetLoads(@Query() query: unknown) {
+    const { uf, ncm, date } = parse(
+      z.object({
+        uf: z.string({ message: 'Informe a UF' }).trim().toUpperCase().length(2, 'Informe a UF'),
+        ncm: z
+          .string()
+          .trim()
+          .regex(/^[\d.]{2,10}$/, 'NCM inválido')
+          .optional(),
+        date: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional(),
+      }),
+      query,
+    );
+    const day =
+      date ??
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
+    const cests = ncm ? cestsForNcm(ncm.replace(/\D/g, ''), day).map((c) => c.cest) : [];
+    return {
+      uf,
+      covered: ST_NET_LOAD_UFS.includes(uf),
+      origins: ST_NET_LOAD_ORIGINS,
+      regimes: stNetLoadRegimesFor(uf, day, cests).map(({ regime, version }) => ({
+        act: regime.act,
+        law: regime.law,
+        url: regime.url,
+        segmentName: regime.segmentName,
+        cestSegments: regime.cestSegments,
+        mva: regime.mva,
+        groups: regime.groups,
+        buyers: regime.buyers.filter((b) => b.validFrom === null || b.validFrom <= day),
+        simplesAddition: regime.simplesAddition,
+        importAddition: regime.importAddition,
+        version,
+      })),
     };
   }
 

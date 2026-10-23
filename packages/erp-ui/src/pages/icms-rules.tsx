@@ -272,6 +272,13 @@ function RuleForm({
             }}
           />
         )}
+        {uf && (
+          <NetLoadReference
+            uf={uf}
+            ncm={form.values.ncm.split(/[,\s]+/).filter(Boolean)[0] ?? ''}
+            date={form.values.validFrom}
+          />
+        )}
         <TextField
           label="Código de benefício fiscal (cBenef, opcional)"
           hint="O código que a SEFAZ da UF dá para a isenção ou redução, como PR810001. Vai em cada item da nota; algumas UFs recusam a nota sem ele."
@@ -532,6 +539,136 @@ function StSuggestion({
       <p className="mt-2 text-muted">
         {items[0]!.act}. {items[0]!.note} Confira se o produto é o da descrição antes de usar.
       </p>
+    </section>
+  );
+}
+
+type NetLoadOriginKey = 'internal' | 'n-ne-co-es' | 's-se-except-es';
+
+interface NetLoadRegimeView {
+  act: string;
+  law: string;
+  url: string;
+  segmentName: string;
+  cestSegments: string[] | null;
+  mva: string | null;
+  groups: { group: string; label: string }[];
+  buyers: { cnae: string; description: string; group: string }[];
+  version: {
+    validFrom: string;
+    amendedBy: string | null;
+    loads: {
+      group: string;
+      goodsClass: string;
+      label: string;
+      percents: Partial<Record<NetLoadOriginKey, string>>;
+    }[];
+  };
+}
+
+const cnaeText = (cnae: string) => cnae.replace(/^(\d{4})(\d)(\d{2})$/, '$1-$2/$3');
+const pctText = (value: string | undefined) => (value ? `${value.replace('.', ',')}%` : '—');
+
+/**
+ * Carga líquida pela CNAE do comprador (F3-26.d.CE.b): no Ceará, vários segmentos recolhem a ST
+ * como um percentual sobre a nota de entrada, e não por MVA. Fica como referência: a regra de
+ * ICMS da empresa não calcula a ST desse jeito (falta configurar).
+ */
+function NetLoadReference({ uf, ncm, date }: { uf: string; ncm: string; date: string }) {
+  const { api } = useApp();
+  const code = ncm.replace(/\D/g, '');
+  const found = useQuery({
+    queryKey: ['st-net-loads', uf, code, date],
+    queryFn: () =>
+      api.get<{
+        uf: string;
+        covered: boolean;
+        origins: { key: NetLoadOriginKey; label: string }[];
+        regimes: NetLoadRegimeView[];
+      }>(
+        `/fiscal/st-net-loads?uf=${uf}${code.length === 8 ? `&ncm=${code}` : ''}${date ? `&date=${date}` : ''}`,
+      ),
+    enabled: code.length >= 4,
+  });
+  if (code.length < 4 || !found.data || found.data.regimes.length === 0) return null;
+  const { origins, regimes } = found.data;
+  return (
+    <section className="rounded-ui border border-border p-3 text-sm" aria-label="Carga líquida">
+      <p className="font-semibold">{`Carga líquida em ${uf}, pela CNAE de quem compra`}</p>
+      <p className="mt-1 text-muted">
+        {`Em ${uf}, a loja cuja CNAE principal está no decreto do segmento recolhe a ST como um percentual sobre o valor da nota de entrada (com a margem, quando o decreto manda), e não por MVA. O Bipaê mostra as tabelas oficiais; o cálculo da ST por carga líquida na nota ainda falta configurar.`}
+      </p>
+      <div className="mt-2 flex flex-col gap-2">
+        {regimes.map((r) => (
+          <details key={r.act} className="rounded-ui border border-border p-2">
+            <summary className="cursor-pointer font-semibold">
+              {`${r.segmentName} · ${r.act}`}
+            </summary>
+            <p className="mt-2 text-muted">
+              {[
+                r.cestSegments && `Mercadorias do segmento ${r.cestSegments.join(', ')} do CEST.`,
+                r.mva
+                  ? `Base: valor da nota + ${pctText(r.mva)} de margem.`
+                  : 'Base: valor da nota, sem margem.',
+                `Tabela desde ${day(r.version.validFrom)}${r.version.amendedBy ? ` (${r.version.amendedBy})` : ''}.`,
+                `${r.law}.`,
+              ]
+                .filter(Boolean)
+                .join(' ')}{' '}
+              <a href={r.url} target="_blank" rel="noreferrer" className="underline">
+                Ver o decreto
+              </a>
+            </p>
+            {r.groups.map((g) => {
+              const rows = r.version.loads.filter((l) => l.group === g.group);
+              const cnaes = r.buyers.filter((b) => b.group === g.group);
+              return (
+                <div key={g.group} className="mt-2">
+                  <p className="font-semibold">{g.label}</p>
+                  <p className="text-muted">
+                    {cnaes.map((b) => `${cnaeText(b.cnae)} ${b.description}`).join(' · ')}
+                  </p>
+                  {rows.length > 0 ? (
+                    <div className="mt-1 overflow-x-auto">
+                      <table className="w-full text-left">
+                        <thead>
+                          <tr>
+                            <th scope="col" className="pr-2">
+                              Mercadoria
+                            </th>
+                            {origins.map((o) => (
+                              <th key={o.key} scope="col" className="pr-2">
+                                {o.label}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rows.map((l) => (
+                            <tr key={l.goodsClass}>
+                              <td className="pr-2">{l.label}</td>
+                              {origins.map((o) => (
+                                <td key={o.key} className="pr-2">
+                                  {pctText(l.percents[o.key])}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-muted">
+                      Regime normal na entrada (a indústria retém nas saídas internas, pelo art. 2º
+                      do decreto).
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </details>
+        ))}
+      </div>
     </section>
   );
 }

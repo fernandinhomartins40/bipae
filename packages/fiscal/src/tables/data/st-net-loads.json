@@ -1,0 +1,2162 @@
+{
+ "origins": [
+  {
+   "key": "internal",
+   "label": "Próprio Estado ou Exterior do País",
+   "ufs": [
+    "CE"
+   ],
+   "abroad": true
+  },
+  {
+   "key": "n-ne-co-es",
+   "label": "Regiões Norte, Nordeste, Centro Oeste e Estado do Espírito Santo",
+   "ufs": [
+    "AC",
+    "AL",
+    "AM",
+    "AP",
+    "BA",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MS",
+    "MT",
+    "PA",
+    "PB",
+    "PE",
+    "PI",
+    "RN",
+    "RO",
+    "RR",
+    "SE",
+    "TO"
+   ],
+   "abroad": false
+  },
+  {
+   "key": "s-se-except-es",
+   "label": "Regiões Sul e Sudeste, exceto o Estado do Espírito Santo",
+   "ufs": [
+    "MG",
+    "PR",
+    "RJ",
+    "RS",
+    "SC",
+    "SP"
+   ],
+   "abroad": false
+  }
+ ],
+ "regimes": [
+  {
+   "uf": "CE",
+   "id": "stCeCargaAutopecas",
+   "act": "Decreto 30.519/2011 (CE)",
+   "law": "Lei 14.237/2008 (CE)",
+   "source": "stCeCargaAutopecas",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=d5e33d14-7888-4f67-8687-a18f4f657953",
+   "segmentName": "Peças, componentes e acessórios para veículos",
+   "cnaeBasis": "principal",
+   "cestSegments": null,
+   "mva": null,
+   "groups": [
+    {
+     "group": "wholesale",
+     "label": "Atacadista (Anexo I)"
+    },
+    {
+     "group": "retail",
+     "label": "Varejista (Anexo II)"
+    }
+   ],
+   "buyers": [
+    {
+     "cnae": "2910701",
+     "description": "Fabricação de automóveis, camionetas e utilitários",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "3091100",
+     "description": "Fabricação de motocicletas, peças e acessórios",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "3092000",
+     "description": "fabricação de bicicletas e triciclos não motorizados, peças e acessórios",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4511103",
+     "description": "Comércio por atacado de automóveis, camionetas e utilitários novos e usados",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4511104",
+     "description": "Comércio por atacado de caminhões novos e usados",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4511105",
+     "description": "Comércio por atacado de reboques e semi-reboques novos e usados",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4511106",
+     "description": "Comércio por atacado de ônibus e microônibus novos e usados",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4530701",
+     "description": "Comércio por atacado de peças e acessórios novos para veículos automotores",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4530702",
+     "description": "Comércio por atacado de pneumáticos e câmaras-de-ar",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4541201",
+     "description": "Comércio por atacado de motocicletas e motonetas",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4541202",
+     "description": "Comércio por atacado de peças e acessórios para motocicletas e motonetas",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4649403",
+     "description": "Comércio atacadista de bicicletas, triciclos e outros veículos recreativos",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4661300",
+     "description": "Comércio atacadista de máquinas, aparelhos e equipamentos para uso agropecuário; partes e peças",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4511101",
+     "description": "Comércio a varejo de automóveis, camionetas e utilitários novos",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4511102",
+     "description": "Comércio a varejo de automóveis, camionetas e utilitários usados",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4520001",
+     "description": "Serviços de manutenção e reparação mecânica de veículos automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4520002",
+     "description": "Serviços de lanternagem e pintura de veículos automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4520003",
+     "description": "Serviço de manutenção e reparação elétrico de veículos automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4520005",
+     "description": "Serviços de lavagem, lubrificação e polimento de veículos automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4520006",
+     "description": "Serviços de borracharia para veículos automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4520007",
+     "description": "Serviços de instalação, manutenção e reparação de acessórios para veículos automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4530703",
+     "description": "Comércio a varejo de peças e acessórios novos para veículos automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4530704",
+     "description": "Comércio a varejo de peças e acessórios usados para veículos automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4530705",
+     "description": "Comércio a varejo de pneumáticos e câmaras-de-ar",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4530706",
+     "description": "Representantes comerciais e agentes do comércio de peças e acessórios novos e usados para veículos Automotores",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4541203",
+     "description": "Comércio a varejo de motocicletas e motonetas novas",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4541204",
+     "description": "Comércio a varejo de motocicletas e motonetas usadas",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4541205",
+     "description": "Comércio a varejo de peças e acessórios para motocicletas e motonetas",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4543900",
+     "description": "Manutenção e reparação de motocicletas e motonetas",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4662100",
+     "description": "Comércio atacadista de máquinas, equipamentos para terraplenagem, mineração e construção; partes e peças;",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4763603",
+     "description": "Comércio varejista de bicicletas e triciclos; peças e acessórios",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4763605",
+     "description": "Comércio varejista de embarcações e outros veículos recreativos; peças e acessórios",
+     "validFrom": null,
+     "group": "retail"
+    }
+   ],
+   "simplesAddition": {
+    "internal": "3",
+    "n-ne-co-es": "6",
+    "s-se-except-es": "4"
+   },
+   "importAddition": null,
+   "versions": [
+    {
+     "validFrom": "2024-01-01",
+     "validTo": null,
+     "amendedBy": "Decreto 35.807",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.96",
+        "n-ne-co-es": "5.50",
+        "s-se-except-es": "7.25"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "5.08",
+        "n-ne-co-es": "9.42",
+        "s-se-except-es": "12.42"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "8.00",
+        "n-ne-co-es": "19.71",
+        "s-se-except-es": "21.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "11.20",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.54",
+        "n-ne-co-es": "4.20",
+        "s-se-except-es": "5.95"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.64",
+        "n-ne-co-es": "7.20",
+        "s-se-except-es": "10.20"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "8.00",
+        "n-ne-co-es": "19.71",
+        "s-se-except-es": "21.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "11.20",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    },
+    {
+     "validFrom": "2017-04-01",
+     "validTo": "2023-12-31",
+     "amendedBy": "Decreto 32.236",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.70",
+        "n-ne-co-es": "5.03",
+        "s-se-except-es": "6.97"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "4.60",
+        "n-ne-co-es": "8.62",
+        "s-se-except-es": "11.95"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "7.20",
+        "n-ne-co-es": "16.54",
+        "s-se-except-es": "18.20"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "11.20",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.40",
+        "n-ne-co-es": "3.73",
+        "s-se-except-es": "5.68"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.40",
+        "n-ne-co-es": "6.40",
+        "s-se-except-es": "9.73"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "7.20",
+        "n-ne-co-es": "16.54",
+        "s-se-except-es": "18.20"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "11.20",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "id": "stCeCargaInformatica",
+   "act": "Decreto 31.066/2012 (CE)",
+   "law": "Lei 14.237/2008 (CE)",
+   "source": "stCeCargaInformatica",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=70fc3e83-986b-4d68-8ea0-1ae85efb26fc",
+   "segmentName": "Produtos de informática",
+   "cnaeBasis": "principal",
+   "cestSegments": null,
+   "mva": "30",
+   "groups": [
+    {
+     "group": "wholesale",
+     "label": "Atacadista (Anexo I)"
+    },
+    {
+     "group": "retail",
+     "label": "Varejista (Anexo II)"
+    },
+    {
+     "group": "industry",
+     "label": "Indústria (Anexo I)"
+    }
+   ],
+   "buyers": [
+    {
+     "cnae": "2621300",
+     "description": "Fabricação de equipamentos de informática",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2622100",
+     "description": "Fabricação de periféricos para equipamentos de informática",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "4651601",
+     "description": "Comércio atacadista de equipamentos de informática",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4651602",
+     "description": "Comércio atacadista de suprimentos de informática",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4649407",
+     "description": "Comércio atacadista de filmes, CDs, DVDs, fitas e discos",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4751201",
+     "description": "Comércio varejista especializado de equipamentos e suprimentos de informática",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4762800",
+     "description": "Comércio varejista de discos, CDs, DVDs e fitas",
+     "validFrom": null,
+     "group": "retail"
+    }
+   ],
+   "simplesAddition": {
+    "internal": "1",
+    "n-ne-co-es": "2",
+    "s-se-except-es": "3"
+   },
+   "importAddition": null,
+   "versions": [
+    {
+     "validFrom": "2024-01-01",
+     "validTo": null,
+     "amendedBy": "Decreto 35.807",
+     "industryNormal": true,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "informatics",
+       "label": "Produtos de Informática",
+       "percents": {
+        "internal": "4.11",
+        "n-ne-co-es": "5.33",
+        "s-se-except-es": "5.33"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.96",
+        "n-ne-co-es": "5.50",
+        "s-se-except-es": "7.25"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "5.08",
+        "n-ne-co-es": "9.42",
+        "s-se-except-es": "12.42"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "7.70",
+        "n-ne-co-es": "15.70",
+        "s-se-except-es": "20.70"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "informatics",
+       "label": "Produtos de Informática",
+       "percents": {
+        "internal": "4.11",
+        "n-ne-co-es": "5.33",
+        "s-se-except-es": "5.33"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.54",
+        "n-ne-co-es": "4.20",
+        "s-se-except-es": "5.95"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.64",
+        "n-ne-co-es": "7.20",
+        "s-se-except-es": "10.20"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "4.00",
+        "n-ne-co-es": "12.00",
+        "s-se-except-es": "17.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    },
+    {
+     "validFrom": "2017-04-01",
+     "validTo": "2023-12-31",
+     "amendedBy": "Decreto 32.262",
+     "industryNormal": true,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "informatics",
+       "label": "Produtos de Informática",
+       "percents": {
+        "internal": "3.70",
+        "n-ne-co-es": "4.80",
+        "s-se-except-es": "4.80"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.70",
+        "n-ne-co-es": "5.03",
+        "s-se-except-es": "6.97"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "4.60",
+        "n-ne-co-es": "8.62",
+        "s-se-except-es": "11.95"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "6.93",
+        "n-ne-co-es": "12.93",
+        "s-se-except-es": "17.93"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "informatics",
+       "label": "Produtos de Informática",
+       "percents": {
+        "internal": "3.70",
+        "n-ne-co-es": "4.80",
+        "s-se-except-es": "4.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.40",
+        "n-ne-co-es": "3.73",
+        "s-se-except-es": "5.68"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.40",
+        "n-ne-co-es": "6.40",
+        "s-se-except-es": "9.73"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "3.60",
+        "n-ne-co-es": "9.60",
+        "s-se-except-es": "14.60"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "id": "stCeCargaConstrucao",
+   "act": "Decreto 31.270/2013 (CE)",
+   "law": "Lei 14.237/2008 (CE)",
+   "source": "stCeCargaConstrucao",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=9fb309fd-dc62-46ae-9225-0236c18a3856",
+   "segmentName": "Material de construção, ferragens e ferramentas",
+   "cnaeBasis": "principal",
+   "cestSegments": null,
+   "mva": "35",
+   "groups": [
+    {
+     "group": "wholesale",
+     "label": "Atacadista (Anexo I)"
+    },
+    {
+     "group": "retail",
+     "label": "Varejista (Anexo II)"
+    },
+    {
+     "group": "industry",
+     "label": "Indústria (Anexo I)"
+    }
+   ],
+   "buyers": [
+    {
+     "cnae": "2311700",
+     "description": "Fabricação de vidro plano e de segurança",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2319200",
+     "description": "Fabricação de artigos de vidro",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2330301",
+     "description": "Fabricação de estruturas pré-moldadas de concreto armado, em série e sob encomenda",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2342701",
+     "description": "Fabricação de azulejos e pisos",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2342702",
+     "description": "Fabricação de artefatos de cerâmica e barro cozido para uso na construção, exceto azulejos e pisos",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2349499",
+     "description": "Fabricação de produtos cerâmicos não-refratários não especificado anteriormente",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2392300",
+     "description": "Fabricação de cal e gesso",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "4649406",
+     "description": "Comércio atacadista de lustres, luminárias e abajures",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4672900",
+     "description": "Comércio atacadista de ferragens e ferramentas",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4673700",
+     "description": "Comércio atacadista de material elétrico",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4679601",
+     "description": "Comércio atacadista de tintas, vernizes e similares",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4679603",
+     "description": "Comércio atacadista de vidros, espelhos e vitrais",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4679604",
+     "description": "Comércio atacadista especializado de materiais de construção não especificados anteriormente",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4679699",
+     "description": "Comércio atacadista de materiais de construção em geral",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4671100",
+     "description": "Comércio atacadista de madeira e produtos derivados",
+     "validFrom": "2018-01-01",
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4741500",
+     "description": "Comércio varejista de tintas e materiais para pintura",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4742300",
+     "description": "Comércio varejista de material elétrico",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4743100",
+     "description": "Comércio varejista de vidros",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4744001",
+     "description": "Comércio varejista de ferragens e ferramentas",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4744003",
+     "description": "Comércio varejista de materiais hidráulicos",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4744005",
+     "description": "Comércio varejista de materiais de construção não especificados anteriormente",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4744099",
+     "description": "Comércio varejista de materiais de construção em geral",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4754703",
+     "description": "Comércio varejista de artigos de iluminação",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4744002",
+     "description": "Comércio varejista de madeira e artefatos",
+     "validFrom": "2018-01-01",
+     "group": "retail"
+    }
+   ],
+   "simplesAddition": {
+    "internal": "3",
+    "n-ne-co-es": "6",
+    "s-se-except-es": "4"
+   },
+   "importAddition": {
+    "n-ne-co-es": "8",
+    "s-se-except-es": "3"
+   },
+   "versions": [
+    {
+     "validFrom": "2024-01-01",
+     "validTo": null,
+     "amendedBy": "Decreto 35.807",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.96",
+        "n-ne-co-es": "5.50",
+        "s-se-except-es": "7.25"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "5.08",
+        "n-ne-co-es": "9.42",
+        "s-se-except-es": "12.42"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "7.70",
+        "n-ne-co-es": "19.71",
+        "s-se-except-es": "21"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.54",
+        "n-ne-co-es": "4.20",
+        "s-se-except-es": "5.95"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.64",
+        "n-ne-co-es": "7.20",
+        "s-se-except-es": "10.20"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "7.70",
+        "n-ne-co-es": "19.71",
+        "s-se-except-es": "21"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    },
+    {
+     "validFrom": "2017-04-01",
+     "validTo": "2023-12-31",
+     "amendedBy": "Decreto 32.260",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.70",
+        "n-ne-co-es": "5.03",
+        "s-se-except-es": "6.97"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "4.60",
+        "n-ne-co-es": "8.62",
+        "s-se-except-es": "11.95"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "6.93",
+        "n-ne-co-es": "16.54",
+        "s-se-except-es": "18.20"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.40",
+        "n-ne-co-es": "3.73",
+        "s-se-except-es": "5.68"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.40",
+        "n-ne-co-es": "6.40",
+        "s-se-except-es": "9.73"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "6.93",
+        "n-ne-co-es": "16.54",
+        "s-se-except-es": "18.20"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "id": "stCeCargaMoveis",
+   "act": "Decreto 32.900/2018 (CE)",
+   "law": "Lei 14.237/2008 (CE)",
+   "source": "stCeCargaMoveis",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=231c4c62-c1ef-4ab5-8e9d-e42d0767a1d5",
+   "segmentName": "Móveis, equipamentos elétricos, aparelhos eletrônicos de uso pessoal e doméstico",
+   "cnaeBasis": "principal",
+   "cestSegments": null,
+   "mva": "40",
+   "groups": [
+    {
+     "group": "wholesale",
+     "label": "Atacadista (Anexo I)"
+    },
+    {
+     "group": "retail",
+     "label": "Varejista (Anexo II)"
+    },
+    {
+     "group": "industry",
+     "label": "Indústria (Anexo I)"
+    }
+   ],
+   "buyers": [
+    {
+     "cnae": "2751100",
+     "description": "Fabricação de fogões, refrigeradores e máquinas de lavar e secar para uso doméstico, peças e acessórios",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2759701",
+     "description": "Fabricação de aparelhos elétricos de uso pessoal, peças e acessórios",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "2759799",
+     "description": "Fabricação de outros aparelhos eletrodomésticos não especificados anteriormente, peças e acessórios",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "3101200",
+     "description": "Fabricação de móveis com predominância de madeira",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "3102100",
+     "description": "Fabricação de móveis com predominância de metal",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "3103900",
+     "description": "Fabricação de móveis de outros materiais, exceto madeira e metal",
+     "validFrom": null,
+     "group": "industry"
+    },
+    {
+     "cnae": "4649401",
+     "description": "Comércio atacadista de equipamentos elétricos de uso pessoal e doméstico; Comércio atacadista de ar-condicionado para residências",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4649402",
+     "description": "Comércio atacadista de aparelhos eletrônicos de uso pessoal e doméstico",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4649404",
+     "description": "Comércio atacadista de móveis e artigos de colchoaria",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4649499",
+     "description": "Comércio atacadista de utensílios domésticos",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "3104700",
+     "description": "Fabricação de Colchões",
+     "validFrom": "2019-03-01",
+     "group": "industry"
+    },
+    {
+     "cnae": "4753900",
+     "description": "Comércio varejista especializado de eletrodomésticos e equipamentos de áudio e vídeo.",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4754701",
+     "description": "Comércio varejista de móveis",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4757100",
+     "description": "Comércio varejista especializado de peças e acessórios para aparelhos eletroeletrônicos para uso doméstico, exceto informática e comunicação",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4759899",
+     "description": "Comércio varejista de utensílios domésticos",
+     "validFrom": null,
+     "group": "retail"
+    }
+   ],
+   "simplesAddition": {
+    "internal": "3",
+    "n-ne-co-es": "6",
+    "s-se-except-es": "4"
+   },
+   "importAddition": {
+    "n-ne-co-es": "8",
+    "s-se-except-es": "3"
+   },
+   "versions": [
+    {
+     "validFrom": "2024-01-01",
+     "validTo": null,
+     "amendedBy": "Decreto 35.807",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.96",
+        "n-ne-co-es": "5.50",
+        "s-se-except-es": "7.25"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "5.08",
+        "n-ne-co-es": "9.42",
+        "s-se-except-es": "12.42"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "7.70",
+        "n-ne-co-es": "19.71",
+        "s-se-except-es": "21"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.54",
+        "n-ne-co-es": "4.20",
+        "s-se-except-es": "5.95"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.64",
+        "n-ne-co-es": "7.20",
+        "s-se-except-es": "10.20"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "5.71",
+        "n-ne-co-es": "12.46",
+        "s-se-except-es": "15.88"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    },
+    {
+     "validFrom": "2019-01-01",
+     "validTo": "2023-12-31",
+     "amendedBy": "Decreto 32.984",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.70",
+        "n-ne-co-es": "5.03",
+        "s-se-except-es": "6.97"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% - álcool com finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "4.60",
+        "n-ne-co-es": "8.62",
+        "s-se-except-es": "11.95"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "6.93",
+        "n-ne-co-es": "16.54",
+        "s-se-except-es": "18.20"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% - álcool com finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.40",
+        "n-ne-co-es": "3.73",
+        "s-se-except-es": "5.68"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% - álcool com finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.40",
+        "n-ne-co-es": "6.40",
+        "s-se-except-es": "9.73"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "5.14",
+        "n-ne-co-es": "10.01",
+        "s-se-except-es": "13.59"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% - álcool com finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "id": "stCeCargaVestuario",
+   "act": "Decreto 34.256/2021 (CE)",
+   "law": "Lei 14.237/2008 (CE)",
+   "source": "stCeCargaVestuario",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=3bd6fbf1-aaa4-460d-b8b2-99bb95ff95de",
+   "segmentName": "Produtos do vestuário e confecções",
+   "cnaeBasis": "principal",
+   "cestSegments": null,
+   "mva": "50",
+   "groups": [
+    {
+     "group": "wholesale",
+     "label": "Atacadista (Anexo I)"
+    },
+    {
+     "group": "retail",
+     "label": "Varejista (Anexo II)"
+    }
+   ],
+   "buyers": [
+    {
+     "cnae": "4641902",
+     "description": "Comércio atacadista de artigos de cama, mesa e banho",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4642701",
+     "description": "Comércio atacadista de artigos do vestuário e acessórios, exceto profissionais e de segurança",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4642702",
+     "description": "Comércio atacadista de roupas e acessórios para uso profissional e de segurança do trabalho",
+     "validFrom": null,
+     "group": "wholesale"
+    },
+    {
+     "cnae": "4755503",
+     "description": "Comércio varejista de artigos de cama, mesa e banho",
+     "validFrom": null,
+     "group": "retail"
+    },
+    {
+     "cnae": "4781400",
+     "description": "Comércio varejista de artigos do vestuário e acessórios",
+     "validFrom": null,
+     "group": "retail"
+    }
+   ],
+   "simplesAddition": {
+    "internal": "3",
+    "n-ne-co-es": "6",
+    "s-se-except-es": "4"
+   },
+   "importAddition": {
+    "n-ne-co-es": "8",
+    "s-se-except-es": "3"
+   },
+   "versions": [
+    {
+     "validFrom": "2024-01-01",
+     "validTo": null,
+     "amendedBy": "Decreto 35.957",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.96",
+        "n-ne-co-es": "5.50",
+        "s-se-except-es": "7.25"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "5.08",
+        "n-ne-co-es": "9.42",
+        "s-se-except-es": "12.42"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "7.70",
+        "n-ne-co-es": "18.54",
+        "s-se-except-es": "20.44"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.54",
+        "n-ne-co-es": "4.20",
+        "s-se-except-es": "5.95"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.64",
+        "n-ne-co-es": "7.20",
+        "s-se-except-es": "10.20"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "5.71",
+        "n-ne-co-es": "12.00",
+        "s-se-except-es": "15.60"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    },
+    {
+     "validFrom": "2021-10-01",
+     "validTo": "2023-12-31",
+     "amendedBy": "Decreto 34.486",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "2.70",
+        "n-ne-co-es": "5.03",
+        "s-se-except-es": "6.97"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool com finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "4.60",
+        "n-ne-co-es": "8.62",
+        "s-se-except-es": "11.95"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "6.93",
+        "n-ne-co-es": "16.54",
+        "s-se-except-es": "18.20"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-25",
+       "label": "25% álcool com finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "wholesale",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta básica",
+       "percents": {
+        "internal": "1.40",
+        "n-ne-co-es": "3.73",
+        "s-se-except-es": "5.68"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "9,72% álcool com finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta básica",
+       "percents": {
+        "internal": "2.40",
+        "n-ne-co-es": "6.40",
+        "s-se-except-es": "9.73"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-18",
+       "label": "18%",
+       "percents": {
+        "internal": "5.14",
+        "n-ne-co-es": "10.00",
+        "s-se-except-es": "13.60"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-25",
+       "label": "25% - álcool com finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "retail",
+       "goodsClass": "rate-28",
+       "label": "28%",
+       "percents": {
+        "internal": "8.13",
+        "n-ne-co-es": "30.39",
+        "s-se-except-es": "37.80"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "id": "stCeCargaFarmaceuticos",
+   "act": "Decreto 36.617/2025 (CE)",
+   "law": "Lei 14.237/2008 (CE)",
+   "source": "stCeCargaFarmaceuticos",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=90bf9696-6017-4a52-abbf-626f99539843",
+   "segmentName": "Produtos farmacêuticos",
+   "cnaeBasis": "principal",
+   "cestSegments": [
+    "13"
+   ],
+   "mva": "33.05",
+   "groups": [
+    {
+     "group": "all",
+     "label": "Atacadista ou varejista (art. 1º)"
+    }
+   ],
+   "buyers": [
+    {
+     "cnae": "4644301",
+     "description": "Comércio atacadista de medicamentos e drogas de uso humano",
+     "validFrom": null,
+     "group": "all"
+    },
+    {
+     "cnae": "4771701",
+     "description": "Comércio varejista de produtos farmacêuticos sem manipulação de fórmula",
+     "validFrom": null,
+     "group": "all"
+    },
+    {
+     "cnae": "4771703",
+     "description": "Comércio varejista de produtos farmacêuticos homeopáticos",
+     "validFrom": null,
+     "group": "all"
+    }
+   ],
+   "simplesAddition": {
+    "internal": "3",
+    "n-ne-co-es": "6",
+    "s-se-except-es": "4"
+   },
+   "importAddition": {
+    "n-ne-co-es": "8",
+    "s-se-except-es": "3"
+   },
+   "versions": [
+    {
+     "validFrom": "2025-06-01",
+     "validTo": null,
+     "amendedBy": "Decreto 36.734",
+     "industryNormal": false,
+     "loads": [
+      {
+       "group": "all",
+       "goodsClass": "basket-7",
+       "label": "7% - Cesta Básica",
+       "percents": {
+        "internal": "2.96",
+        "n-ne-co-es": "5.50",
+        "s-se-except-es": "7.25"
+       }
+      },
+      {
+       "group": "all",
+       "goodsClass": "basket-12",
+       "label": "12% - Cesta Básica",
+       "percents": {
+        "internal": "5.08",
+        "n-ne-co-es": "9.42",
+        "s-se-except-es": "12.42"
+       }
+      },
+      {
+       "group": "all",
+       "goodsClass": "rate-20",
+       "label": "20%",
+       "percents": {
+        "internal": "7.70",
+        "n-ne-co-es": "15.70",
+        "s-se-except-es": "20.70"
+       }
+      },
+      {
+       "group": "all",
+       "goodsClass": "rate-25",
+       "label": "25%",
+       "percents": {
+        "internal": "7.26",
+        "n-ne-co-es": "25.85",
+        "s-se-except-es": "33.00"
+       }
+      },
+      {
+       "group": "all",
+       "goodsClass": "alcohol-gel-antiseptic",
+       "label": "Álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+       "percents": {
+        "internal": "2.82",
+        "n-ne-co-es": "10.05",
+        "s-se-except-es": "12.83"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

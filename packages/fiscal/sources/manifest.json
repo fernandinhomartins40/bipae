@@ -641,6 +641,54 @@
   "publishedAt": "2026-07-01",
   "downloadedAt": "2026-10-22"
  },
+ "stCeCargaAutopecas": {
+  "file": "SEFAZ-CE_Decreto_30519-2011_autopecas_consolidado_2026-10-23.pdf",
+  "title": "Decreto 30.519/2011 (CE), ST com carga líquida em peças, componentes e acessórios para veículos (Lei 14.237/2008), texto consolidado do SefazLegis (Anexo III na redação do Decreto 35.807, DOE de 29/12/2023)",
+  "publisher": "Secretaria da Fazenda do Estado do Ceará (SefazLegis)",
+  "page": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=d5e33d14-7888-4f67-8687-a18f4f657953",
+  "publishedAt": "2023-12-29",
+  "downloadedAt": "2026-10-23"
+ },
+ "stCeCargaInformatica": {
+  "file": "SEFAZ-CE_Decreto_31066-2012_informatica_consolidado_2026-10-23.pdf",
+  "title": "Decreto 31.066/2012 (CE), ST com carga líquida em produtos de informática (Lei 14.237/2008), texto consolidado do SefazLegis (Anexo III na redação do Decreto 35.807, DOE de 29/12/2023)",
+  "publisher": "Secretaria da Fazenda do Estado do Ceará (SefazLegis)",
+  "page": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=70fc3e83-986b-4d68-8ea0-1ae85efb26fc",
+  "publishedAt": "2023-12-29",
+  "downloadedAt": "2026-10-23"
+ },
+ "stCeCargaConstrucao": {
+  "file": "SEFAZ-CE_Decreto_31270-2013_construcao_consolidado_2026-10-23.pdf",
+  "title": "Decreto 31.270/2013 (CE), ST com carga líquida em material de construção, ferragens e ferramentas (Lei 14.237/2008), texto consolidado do SefazLegis (Anexo III na redação do Decreto 35.807, DOE de 29/12/2023)",
+  "publisher": "Secretaria da Fazenda do Estado do Ceará (SefazLegis)",
+  "page": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=9fb309fd-dc62-46ae-9225-0236c18a3856",
+  "publishedAt": "2023-12-29",
+  "downloadedAt": "2026-10-23"
+ },
+ "stCeCargaMoveis": {
+  "file": "SEFAZ-CE_Decreto_32900-2018_moveis_eletro_consolidado_2026-10-23.pdf",
+  "title": "Decreto 32.900/2018 (CE), ST com carga líquida em móveis, equipamentos elétricos e aparelhos eletrônicos de uso pessoal e doméstico (Lei 14.237/2008), texto consolidado do SefazLegis (alterado até o Decreto 36.812, DOE de 29/08/2025)",
+  "publisher": "Secretaria da Fazenda do Estado do Ceará (SefazLegis)",
+  "page": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=231c4c62-c1ef-4ab5-8e9d-e42d0767a1d5",
+  "publishedAt": "2025-08-29",
+  "downloadedAt": "2026-10-23"
+ },
+ "stCeCargaVestuario": {
+  "file": "SEFAZ-CE_Decreto_34256-2021_vestuario_consolidado_2026-10-23.pdf",
+  "title": "Decreto 34.256/2021 (CE), ST com carga líquida em vestuário e confecções (Lei 14.237/2008), texto consolidado do SefazLegis (alterado até os Decretos 35.957 e 35.958, DOE de 17/04/2024)",
+  "publisher": "Secretaria da Fazenda do Estado do Ceará (SefazLegis)",
+  "page": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=3bd6fbf1-aaa4-460d-b8b2-99bb95ff95de",
+  "publishedAt": "2024-04-17",
+  "downloadedAt": "2026-10-23"
+ },
+ "stCeCargaFarmaceuticos": {
+  "file": "SEFAZ-CE_Decreto_36617-2025_farmaceuticos_consolidado_2026-10-23.pdf",
+  "title": "Decreto 36.617/2025 (CE), ST com carga líquida em produtos farmacêuticos (Lei 14.237/2008), texto consolidado do SefazLegis (alterado até o Decreto 36.743, DOE de 18/07/2025)",
+  "publisher": "Secretaria da Fazenda do Estado do Ceará (SefazLegis)",
+  "page": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=90bf9696-6017-4a52-abbf-626f99539843",
+  "publishedAt": "2025-07-18",
+  "downloadedAt": "2026-10-23"
+ },
  "cbenefPr": {
   "file": "SEFA-PR_Tabela_cBenef_por_CST_V27_2026-07-17.pdf",
   "title": "Tabela de Códigos de Benefício Fiscal por CST - Paraná (versão 27, atualizada em 17/07/2026)",

@@ -47,6 +47,7 @@ import { parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI } from './st-ro.mjs';
 import { parseCeVeiculos } from './st-ce.mjs';
 import { DF_ANEXO_IV_REQUEST, DF_LEGISLATION_API, parseDfAnexoIV } from './st-df.mjs';
+import { CE_NET_LOAD_SOURCES, parseCeNetLoadSource } from './st-ce-carga.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -1005,6 +1006,64 @@ async function checkCe() {
   };
 }
 
+/**
+ * Ceará: os decretos de carga líquida (Lei 14.237/2008) de hoje, pelo SefazLegis. Compara as CNAE
+ * dos anexos, a margem, os acréscimos e todas as tabelas do Anexo III, com a data de cada redação.
+ */
+async function checkCeNetLoads() {
+  const rowsOf = async (source, bytes) => {
+    const p = parseCeNetLoadSource(source, await pdfLines(bytes));
+    return [
+      ...p.buyers.map((b) => [source, 'CNAE', b.cnae, b.group, b.validFrom ?? '']),
+      [
+        source,
+        'margem',
+        p.mva ?? '',
+        JSON.stringify(p.simplesAddition),
+        JSON.stringify(p.importAddition),
+      ],
+      ...p.versions.flatMap((v) =>
+        v.rows.map((r) => [
+          source,
+          v.validFrom,
+          v.validTo ?? '',
+          r.group,
+          r.goodsClass,
+          ...r.values,
+        ]),
+      ),
+    ];
+  };
+  const title = 'ST no Ceará (carga líquida por CNAE, Lei 14.237/2008)';
+  const page = CE_NET_LOAD_SOURCES.map((s) => manifest[s].page).join(' ');
+  const old = [];
+  const now = [];
+  for (const source of CE_NET_LOAD_SOURCES) {
+    old.push(...(await rowsOf(source, readFileSync(join(sourcesDir, manifest[source].file)))));
+    try {
+      now.push(...(await rowsOf(source, (await download(manifest[source].page)).body)));
+    } catch (error) {
+      return {
+        title,
+        page,
+        status: 'mudou',
+        details: [
+          `${manifest[source].title}: o PDF novo não passa no leitor do Bipaê: ${error.message}`,
+        ],
+      };
+    }
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Rondônia: o Anexo VI de hoje, pela API do portal de legislação da SEFIN-RO. */
 async function checkRo() {
   const known = new Set(
@@ -1405,6 +1464,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Rondônia', manifest.stRoAnexoVI.page, checkRo),
     await safe('ST no Ceará', manifest.stCeRicms97.page, checkCe),
     await safe('ST no Distrito Federal', manifest.stDfAnexoIV.page, checkDf),
+    await safe('ST no Ceará (carga líquida)', manifest.stCeCargaAutopecas.page, checkCeNetLoads),
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),
     await safe('cBenef do Rio Grande do Sul', manifest.cbenefRs.page, checkCbenefRs),

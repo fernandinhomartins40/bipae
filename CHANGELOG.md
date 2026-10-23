@@ -1,5 +1,12 @@
 # Changelog
 
+## [F3-26.d.CE.b Carga líquida do Ceará] — 23/10/2026
+
+### Adicionado
+- **Tabelas de carga líquida do Ceará na regra de ICMS.** Ao cadastrar uma regra para o CE, a tela mostra os regimes em que a ST é um percentual sobre a nota de entrada, pela CNAE principal de quem compra (Lei 14.237/2008): autopeças, informática, material de construção, móveis e eletro, vestuário e farmacêuticos. Para cada um aparecem as CNAE alcançadas, a margem e a carga por tipo de mercadoria e origem, com o link do decreto.
+- Os números vêm dos decretos consolidados no SefazLegis, cada redação com a sua data, e o monitor semanal confere os seis textos.
+- O motor fiscal ganhou o cálculo da carga líquida (base e valor em centavos). O uso na nota ainda falta configurar (F3-26.d.CE.c), e os casos ambíguos estão na dúvida D-042.
+
 ## [F5-13.j NFS-e no leiaute novo da produção restrita] — 23/10/2026
 
 ### Alterado
