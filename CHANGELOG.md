@@ -1,5 +1,10 @@
 # Changelog
 
+## [F4-14.b.4 Regras da EFD por mais UFs] — 23/10/2026
+
+### Adicionado
+- **Arquivo do SPED: avisos para mais estados.** Empresa do Simples em SP, BA, PE, PA, MG, ES, SC e MT agora vê que o estado a dispensa da EFD, com a norma. O registro de vendas com cartão e Pix (1601) aparece como exigido em CE, PE, GO, DF e PB e como dispensado em SP, PR, MG, PA e MT. Tudo conferido no texto oficial de cada estado; o que ainda não foi confirmado continua aparecendo como tal.
+
 ## [F3-26.d.DF Substituição tributária no Distrito Federal] — 23/10/2026
 
 ### Adicionado

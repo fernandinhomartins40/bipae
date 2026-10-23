@@ -20,7 +20,7 @@
  * - factor: fator de conversão ou valor unitário com vírgula e seis casas ('12,000000').
  */
 export type EfdFieldType =
-  | 'text' | 'code' | 'date' | 'monthYear' | 'money' | 'rate' | 'quantity' | 'quantity3' | 'factor';
+  'text' | 'code' | 'date' | 'monthYear' | 'money' | 'rate' | 'quantity' | 'quantity3' | 'factor';
 
 type Fields = readonly (readonly [string, EfdFieldType])[];
 

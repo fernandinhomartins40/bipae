@@ -406,7 +406,9 @@ function prepareInventory(inventory: EfdInventory, month: string, end: string): 
   const rule = EFD_INVENTORY_REASONS[reason];
   if (!rule) throw new EfdError(`Motivo de inventário inválido: ${reason}.`);
   if (!rule.supported) {
-    throw new EfdError(`O inventário ${rule.label} (motivo ${reason}) ainda não é gerado pelo Bipaê.`);
+    throw new EfdError(
+      `O inventário ${rule.label} (motivo ${reason}) ainda não é gerado pelo Bipaê.`,
+    );
   }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(inventory.date)) {
     throw new EfdError(`Data do inventário inválida: ${inventory.date}.`);
@@ -440,7 +442,9 @@ function prepareInventory(inventory: EfdInventory, month: string, end: string): 
     if (quantity.isZero()) continue;
     const ownership = item.ownership ?? '0';
     if (EFD_INVENTORY_OWNERSHIP_WITH_PARTY.includes(ownership) && !item.party) {
-      throw new EfdError(`Informe o dono ou possuidor do item ${item.code} (propriedade ${ownership}).`);
+      throw new EfdError(
+        `Informe o dono ou possuidor do item ${item.code} (propriedade ${ownership}).`,
+      );
     }
     if (item.valueCents === undefined && item.unitCostCents === undefined) {
       throw new EfdError(`Falta o custo do item ${item.code} no inventário.`);
