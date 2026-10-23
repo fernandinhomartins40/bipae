@@ -303,6 +303,19 @@ export function Register({
       alive = false;
     };
   }, [mode, category, pdv, cart.customerTaxId, syncStatus?.lastSyncAt]);
+  // Fotos dos itens da venda (F2-14): o hash vem do catálogo local, sem rede.
+  const [lineImages, setLineImages] = useState<Map<string, string>>(() => new Map());
+  const lineProductIds = cart.lines.map((l) => l.productId).join(',');
+  useEffect(() => {
+    let alive = true;
+    void pdv
+      .imageHashes(lineProductIds ? lineProductIds.split(',') : [])
+      .then((map) => alive && setLineImages(map))
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [pdv, lineProductIds, syncStatus?.lastSyncAt]);
   const inCart = useMemo(() => {
     const map = new Map<string, number>();
     for (const l of cart.lines)
@@ -1185,6 +1198,8 @@ export function Register({
         own > 0 ? `Desconto no item: ${brl(own)}` : null,
       ].filter((n): n is string => n !== null),
       promotion: promo > 0 ? `Promoção: -${brl(promo)}` : null,
+      productId: item.productId,
+      imageHash: lineImages.get(item.productId) ?? null,
     };
   });
   const spotlightLine = lineViews.find((l) => l.line === selected) ?? lineViews.at(-1) ?? null;
@@ -1921,7 +1936,12 @@ function SaleTable({
               <td className="px-3 py-2 text-muted tabular-nums">{item.line}</td>
               <td className="px-3 py-2">
                 <span className="flex items-center gap-3">
-                  <ProductThumb name={item.name} size="sm" />
+                  <ProductThumb
+                    name={item.name}
+                    productId={item.productId}
+                    imageHash={item.imageHash}
+                    size="sm"
+                  />
                   <span className="min-w-0 font-medium">
                     {item.name}
                     {item.notes.map((note) => (

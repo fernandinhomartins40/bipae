@@ -87,6 +87,27 @@ describe('catalog on the terminal', () => {
     ]);
     expect(await pdv.browse(null, 2)).toHaveLength(2);
   });
+
+  it('guarda só o hash da foto e troca quando a foto muda ou sai (F2-14)', async () => {
+    const pao = { ...product({ name: 'Pão Francês' }), imageHash: 'a'.repeat(64) };
+    const suco = product({ name: 'Suco de Laranja' });
+    await pdv.applyCatalog([pao, suco]);
+    const hashes = async () =>
+      Object.fromEntries((await pdv.browse(null)).map((p) => [p.name, p.imageHash]));
+    expect(await hashes()).toEqual({ 'Pão Francês': 'a'.repeat(64), 'Suco de Laranja': null });
+    expect((await pdv.search('pão'))[0]?.imageHash).toBe('a'.repeat(64));
+    await pdv.applyCatalog([
+      { ...pao, imageHash: 'b'.repeat(64) },
+      { ...suco, imageHash: null },
+    ]);
+    expect((await hashes())['Pão Francês']).toBe('b'.repeat(64));
+    expect(await pdv.imageHashes([pao.id, suco.id, pao.id])).toEqual(
+      new Map([[pao.id, 'b'.repeat(64)]]),
+    );
+    expect(await pdv.imageHashes([])).toEqual(new Map());
+    await pdv.applyCatalog([{ ...pao, imageHash: null }]);
+    expect((await hashes())['Pão Francês']).toBeNull();
+  });
 });
 
 describe('selling', () => {

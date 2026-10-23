@@ -66,6 +66,11 @@ export interface PosBackend extends SyncTransport {
   ): Promise<{ userId: string; name: string; permissions: string[] }>;
   /** Consulta rápida ao catálogo (tempo limite de 1,5 s). Ausente: o caixa não oferece o cadastro. */
   catalogLookup?(gtin: string): Promise<CatalogProduct>;
+  /**
+   * Foto do produto (F2-14), pelo hash que veio no catálogo. Precisa de internet (ou do cache do
+   * navegador); se falhar, o caixa mostra as iniciais.
+   */
+  productImage?(productId: string, imageHash: string): Promise<Blob>;
   /** Cadastra o produto no servidor (precisa de internet e da permissão de cadastro). */
   createProduct?(input: QuickProductInput): Promise<{ id: string }>;
   /**

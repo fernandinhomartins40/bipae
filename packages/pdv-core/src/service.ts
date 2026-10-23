@@ -115,6 +115,8 @@ export interface CatalogProduct extends CatalogItem {
   active: boolean;
   /** Categoria do cadastro, para as abas da grade de produtos (F8-15). */
   category?: string | null;
+  /** Hash da foto (F2-14); null sem foto. A tela busca a foto pelo endereço, se tiver rede. */
+  imageHash?: string | null;
 }
 
 export interface CompleteSaleOptions {
@@ -143,6 +145,7 @@ function toProduct(row: Row): CatalogProduct {
     barcodes: row.barcodes ? String(row.barcodes).split(',') : [],
     active: Number(row.active) === 1,
     category: (row.category as string | null | undefined) ?? null,
+    imageHash: (row.image_hash as string | null | undefined) ?? null,
   };
 }
 
@@ -287,6 +290,17 @@ export class PdvService {
       [table, ...(category === null ? [] : [category]), limit],
     );
     return rows.map(toProduct);
+  }
+
+  /** Hash da foto de cada produto (F2-14), para mostrar a foto nos itens da venda. */
+  async imageHashes(productIds: string[]): Promise<Map<string, string>> {
+    const ids = [...new Set(productIds)];
+    if (ids.length === 0) return new Map();
+    const rows = await this.storage.query<{ id: string; image_hash: string | null }>(
+      `SELECT id, image_hash FROM products WHERE image_hash IS NOT NULL AND id IN (${ids.map(() => '?').join(', ')})`,
+      ids,
+    );
+    return new Map(rows.map((r) => [r.id, r.image_hash!]));
   }
 
   /** Preços dos produtos pela tabela em vigor (para recalcular um carrinho). */
@@ -550,13 +564,13 @@ export class PdvService {
       for (let start = 0; start < products.length; start += CHUNK) {
         const chunk = products.slice(start, start + CHUNK);
         await tx.execute(
-          `INSERT INTO products (id, name, search_name, sku, unit, price_cents, is_weighable, active, ncm, cest, fiscal_profile_id, parent_id, category, updated_at)
-           VALUES ${chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ')}
+          `INSERT INTO products (id, name, search_name, sku, unit, price_cents, is_weighable, active, ncm, cest, fiscal_profile_id, parent_id, category, image_hash, updated_at)
+           VALUES ${chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ')}
            ON CONFLICT (id) DO UPDATE SET name = excluded.name, search_name = excluded.search_name,
              sku = excluded.sku, unit = excluded.unit, price_cents = excluded.price_cents,
              is_weighable = excluded.is_weighable, active = excluded.active, ncm = excluded.ncm,
              cest = excluded.cest, fiscal_profile_id = excluded.fiscal_profile_id, parent_id = excluded.parent_id,
-             category = excluded.category, updated_at = excluded.updated_at`,
+             category = excluded.category, image_hash = excluded.image_hash, updated_at = excluded.updated_at`,
           chunk.flatMap((p) => [
             p.id,
             p.name,
@@ -571,6 +585,7 @@ export class PdvService {
             p.fiscalProfileId,
             p.parentId ?? null,
             p.category?.trim() || null,
+            p.imageHash ?? null,
             p.updatedAt,
           ]),
         );

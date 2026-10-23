@@ -279,6 +279,8 @@ export interface Product {
   packs?: ProductPack[];
   /** Atacarejo (F5-03): preço de atacado a partir de uma quantidade. */
   wholesale?: { minQuantityMilli: number; priceCents: number } | null;
+  /** Hash da foto do produto (F2-14); null sem foto. A foto sai de `productImagePath`. */
+  imageHash?: string | null;
   updatedAt: string;
 }
 

@@ -46,6 +46,22 @@ export default defineConfig({
         navigateFallbackAllowlist: [new RegExp(`^${base}`)],
         navigateFallbackDenylist: [new RegExp('^/v1/')],
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        // Fotos dos produtos (F2-14): o endereço leva o hash da foto, então a cópia guardada
+        // nunca fica velha. O caixa mostra a foto mesmo sem rede depois da primeira vez.
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.pathname.includes('/v1/products/') &&
+              url.pathname.endsWith('/image') &&
+              url.searchParams.has('v'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'bipae-product-images',
+              expiration: { maxEntries: 3000, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+        ],
       },
     }),
   ],

@@ -1,5 +1,6 @@
 import {
   formatBRL,
+  productImagePath,
   type CatalogProduct,
   type Cents,
   type FiscalProfile,
@@ -20,9 +21,10 @@ import {
   SelectField,
   TextField,
 } from '@bipae/ui';
+import { ProductImageProvider, ProductThumb } from '@bipae/pdv-ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Package, Plus, Search, SearchX } from 'lucide-react';
-import { useDeferredValue, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useDeferredValue, useEffect, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { parseQuantity } from './purchase-orders';
 import { useApp, useCan } from '../context';
@@ -34,6 +36,8 @@ import { PricingHelper } from './pricing-helper';
 import { KitEditor, type KitComponent } from './product-kit';
 import { AiFiscalSuggestionPanel } from './assistant';
 import { VariantsEditor } from './product-variants';
+import { ProductPhotoField, type PhotoChange } from './product-photo-field';
+import { blobToBase64, preparePhoto } from '../product-photo';
 
 interface Unit {
   code: string;
@@ -63,6 +67,12 @@ export function ProductsPage() {
     staleTime: 0,
     queryFn: () => api.get<{ productId: string; quantityMilli: number }[]>('/stock'),
   });
+  // Fotos (F2-14): baixadas com a sessão de quem está logado; o hash no endereço deixa o
+  // navegador guardar cada foto para sempre.
+  const imageLoader = useCallback(
+    (productId: string, imageHash: string) => api.download(productImagePath(productId, imageHash)),
+    [api],
+  );
   const stockOf = (productId: string) => {
     const rows = stock.data?.filter((s) => s.productId === productId) ?? [];
     return rows.length ? rows.reduce((a, s) => a + s.quantityMilli, 0) : null;
@@ -86,7 +96,7 @@ export function ProductsPage() {
   );
 
   return (
-    <>
+    <ProductImageProvider loader={imageLoader}>
       <PageHeader
         title="Produtos"
         description="Busque pelo nome, código interno ou bipando o código de barras."
@@ -142,9 +152,15 @@ export function ProductsPage() {
             caption="Lista de produtos"
             rows={products.data.items}
             onRowClick={canWrite ? (p) => setEditing(p) : undefined}
-            // A miniatura do produto entra à esquerda do nome, aqui e no cartão do celular.
+            // A miniatura do produto fica à esquerda do nome, aqui e na tabela.
             card={(p) => (
               <>
+                <ProductThumb
+                  name={p.name}
+                  productId={p.id}
+                  imageHash={p.imageHash ?? null}
+                  size="sm"
+                />
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="font-bold">{p.name}</span>
                   <span className="text-sm text-muted">{codes(p)}</span>
@@ -167,6 +183,12 @@ export function ProductsPage() {
                 header: 'Produto',
                 cell: (p) => (
                   <div className="flex items-center gap-3">
+                    <ProductThumb
+                      name={p.name}
+                      productId={p.id}
+                      imageHash={p.imageHash ?? null}
+                      size="sm"
+                    />
                     <div className="min-w-0">
                       <p className="font-bold">{p.name}</p>
                       <p className="text-sm text-muted">{codes(p)}</p>
@@ -204,7 +226,7 @@ export function ProductsPage() {
           onClose={() => setEditing(null)}
         />
       )}
-    </>
+    </ProductImageProvider>
   );
 }
 
@@ -268,6 +290,10 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
   });
   const [packs, setPacks] = useState(product?.packs ?? []);
   const [fromCatalog, setFromCatalog] = useState(false);
+  // Foto (F2-14). O produto é salvo primeiro; se a foto falhar depois, o próximo "Salvar" edita
+  // o produto já criado (sem duplicar) e tenta a foto de novo.
+  const [photo, setPhoto] = useState<PhotoChange>({ kind: 'keep' });
+  const [savedId, setSavedId] = useState<string | null>(product?.id ?? null);
   const applyCatalog = (found: CatalogProduct) => {
     form.set('name', found.description ?? form.values.name);
     const codes = new Set(form.values.barcodes.split(/[\s,;]+/).filter(Boolean));
@@ -327,8 +353,30 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           .map((b) => b.trim())
           .filter(Boolean),
       };
-      if (product) await api.put(`/products/${product.id}`, body);
-      else await api.post('/products', body);
+      // A foto é preparada antes, para um problema nela não deixar o produto salvo pela metade.
+      const prepared = photo.kind === 'new' ? await preparePhoto(photo.image, photo.zoom) : null;
+      const saved = savedId
+        ? await api.put<Product>(`/products/${savedId}`, body)
+        : await api.post<Product>('/products', body);
+      setSavedId(saved.id);
+      try {
+        if (prepared) {
+          await api.put(`/products/${saved.id}/image`, {
+            contentType: prepared.type,
+            data: await blobToBase64(prepared),
+          });
+        } else if (photo.kind === 'remove') {
+          await api.delete(`/products/${saved.id}/image`);
+        }
+      } catch (error) {
+        await queryClient.invalidateQueries({ queryKey: ['products'] });
+        const reason = error instanceof Error ? error.message : 'erro desconhecido';
+        throw new ApiError(
+          0,
+          'photo_failed',
+          `O produto foi salvo, mas a foto não foi: ${reason} Tente salvar de novo.`,
+        );
+      }
       await queryClient.invalidateQueries({ queryKey: ['products'] });
       onClose();
     });
@@ -362,6 +410,13 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
             onChange={(e) => form.set('name', e.target.value)}
             error={form.errors.name}
             autoFocus
+          />
+          <ProductPhotoField
+            name={form.values.name}
+            productId={product?.id ?? null}
+            imageHash={product?.imageHash ?? null}
+            value={photo}
+            onChange={setPhoto}
           />
           <div className="grid gap-4 sm:grid-cols-2">
             <MoneyField

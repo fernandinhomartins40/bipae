@@ -373,6 +373,7 @@ export class CatalogService {
       catalog: (r.catalog as Product['catalog']) ?? null,
       stPauta: r.stPauta ?? null,
       stNetLoadClass: r.stNetLoadClass ?? null,
+      imageHash: r.imageSha256 ?? null,
       packs: packs
         .filter((p) => p.productId === r.id)
         .map((p) => ({ packGtin: p.packGtin, unitsPerPack: p.unitsPerPack })),

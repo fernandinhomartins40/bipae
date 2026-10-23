@@ -1,3 +1,4 @@
+import { productImagePath } from '@bipae/domain';
 import type {
   CatalogProduct,
   FiscalDocumentView,
@@ -55,6 +56,8 @@ export function createPosBackend(api: ApiClient): PosBackend {
         ),
       ]).catch((): CatalogProduct => ({ gtin, found: false, reason: 'SEM_RESPOSTA' })),
     createProduct: (input) => api.post<{ id: string }>('/products', input),
+    // O hash vai no endereço: foto nova, endereço novo; a antiga fica no cache do navegador.
+    productImage: (productId, imageHash) => api.download(productImagePath(productId, imageHash)),
     fiscalDocument: async (saleId) => {
       const doc = await api.get<FiscalDocumentView | null>(`/sales/${saleId}/fiscal`);
       if (!doc) return null;

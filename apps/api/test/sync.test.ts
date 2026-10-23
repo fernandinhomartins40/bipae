@@ -1055,3 +1055,39 @@ describe('categoria no caixa (F8-15)', () => {
     expect((await device.pdv.browse('Padaria')).map((p) => p.name)).toEqual(['Pão de Queijo']);
   });
 });
+
+describe('foto no caixa (F2-14)', () => {
+  it('a sincronização leva só o hash da foto; trocar ou tirar a foto chega ao caixa', async () => {
+    const owner = await signup(t.app);
+    const admin = api(t.app, owner.auth);
+    const pao = (await admin.post('/products', { name: 'Pão de Queijo', priceCents: 450 })).json();
+    const jpeg = (seed: number) =>
+      Buffer.from([
+        0xff,
+        0xd8,
+        0xff,
+        0xe0,
+        ...Array.from({ length: 64 }, (_, i) => (i * seed) % 256),
+      ]);
+    const put = async (seed: number) =>
+      (
+        await admin.put(`/products/${pao.id}/image`, {
+          contentType: 'image/jpeg',
+          data: jpeg(seed).toString('base64'),
+        })
+      ).json().imageHash as string;
+    const first = await put(3);
+    const device = await terminalDevice(owner, 'Balcão', 'web');
+    expect((await device.sync.sync()).lastError).toBeNull();
+    expect((await device.pdv.search('queijo'))[0]?.imageHash).toBe(first);
+
+    const second = await put(5);
+    expect(second).not.toBe(first);
+    expect((await device.sync.sync()).lastError).toBeNull();
+    expect((await device.pdv.search('queijo'))[0]?.imageHash).toBe(second);
+
+    await admin.delete(`/products/${pao.id}/image`);
+    expect((await device.sync.sync()).lastError).toBeNull();
+    expect((await device.pdv.search('queijo'))[0]?.imageHash).toBeNull();
+  });
+});

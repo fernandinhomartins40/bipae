@@ -47,7 +47,15 @@ export class DataExportService {
         const rows = rowsOf<Record<string, unknown>>(
           await tx.execute(sql`select * from ${sql.identifier(table)} order by 1`),
         ).map((row) =>
-          Object.fromEntries(Object.entries(row).filter(([column]) => !SECRET_COLUMN.test(column))),
+          Object.fromEntries(
+            Object.entries(row)
+              .filter(([column]) => !SECRET_COLUMN.test(column))
+              // Bytes (a foto do produto, F2-14) saem em base64, não como lista de números.
+              .map(([column, value]) => [
+                column,
+                value instanceof Uint8Array ? Buffer.from(value).toString('base64') : value,
+              ]),
+          ),
         );
         counts[table] = rows.length;
         out.push({ name: `${table}.json`, data: JSON.stringify(rows, null, 2) });

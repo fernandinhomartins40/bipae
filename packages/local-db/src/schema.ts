@@ -131,6 +131,11 @@ export const LOCAL_MIGRATIONS: string[] = [
   CREATE INDEX products_category ON products (category);
   DELETE FROM meta WHERE key = 'catalog_cursor';
   `,
+  /* 10 — F2-14: hash da foto do produto (os bytes nunca vêm na sincronização; o caixa busca a
+     foto pelo endereço e cai nas iniciais sem rede). Zera o cursor para baixar os hashes. */ `
+  ALTER TABLE products ADD COLUMN image_hash TEXT;
+  DELETE FROM meta WHERE key = 'catalog_cursor';
+  `,
 ];
 
 /**

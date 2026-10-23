@@ -1,5 +1,14 @@
 # Changelog
 
+## [F2-14 Foto do produto] — 23/10/2026
+
+### Adicionado
+- **Foto no cadastro do produto.** Campo "Foto" na retaguarda: escolher arquivo, colar (botão "Colar" ou Ctrl+V na área da foto), arrastar e, no celular, "Tirar foto" com a câmera. A prévia já mostra o recorte quadrado no centro, com "Aproximar" (zoom) opcional, e "Remover foto". A foto é reduzida no próprio aparelho para no máximo 512 × 512, em WebP (ou JPEG, se o navegador não gerar WebP), com cerca de 80 KB. O que não é imagem é recusado com mensagem clara.
+- **Foto no caixa.** Na grade de produtos, na busca por nome, no item em destaque e na lista da venda, a foto aparece no lugar das iniciais coloridas. A sincronização leva só o hash da foto; a foto vem da internet e fica guardada no navegador (e no Service Worker do PWA), então continua aparecendo sem rede depois da primeira vez. Sem rede na primeira vez ou com a foto com problema, ficam as iniciais. A foto nunca segura a venda.
+- **Miniatura na lista de produtos** da retaguarda.
+- API: `PUT /v1/products/:id/image` (permissão de cadastro, conferência do tipo pelos bytes, até 200 KB, na auditoria), `DELETE` para tirar e `GET` com `ETag` e cache longo pelo hash. Fotos guardadas no PostgreSQL (migração 0080, tabela `product_images` com isolamento por empresa); a exportação de dados (LGPD) leva a foto em base64.
+- O caixa baixa o catálogo de novo uma vez, sozinho, para pegar as fotos (migração local 10).
+
 ## [F3-26.d.CE.d Carga líquida do Ceará: RET, transferências, indústria e NFC-e] — 23/10/2026
 
 ### Adicionado

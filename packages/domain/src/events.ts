@@ -322,6 +322,8 @@ export interface SyncPullResult {
     parentId: string | null;
     /** Categoria livre do cadastro, para as abas da grade de produtos do caixa (F8-15). */
     category?: string | null;
+    /** Hash da foto (F2-14): o caixa busca a foto pelo endereço, nunca pelos bytes no evento. */
+    imageHash?: string | null;
     barcodes: string[];
     updatedAt: string;
   }[];

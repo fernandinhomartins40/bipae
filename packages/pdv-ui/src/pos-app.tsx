@@ -4,6 +4,7 @@ import { Alert, Button, Card, Logo, TextField } from '@bipae/ui';
 import { useEffect, useState, type FormEvent } from 'react';
 import type { PosBackend, PosTerminal, PosUser } from './backend';
 import { brl } from './dialogs';
+import { ProductImageProvider } from './product-image';
 import { Register } from './register';
 import { useRegister, type RegisterHandle } from './use-register';
 
@@ -71,17 +72,20 @@ export function PosApp({
     return <OpenSession handle={state.handle} onOpened={register.refreshSession} onExit={onExit} />;
   }
   return (
-    <Register
-      handle={state.handle}
-      session={register.session}
-      user={user}
-      platform={platform}
-      backend={backend}
-      syncStatus={register.syncStatus}
-      onSyncNow={() => register.syncNow()}
-      onSessionClosed={() => void register.refreshSession()}
-      onExit={onExit}
-    />
+    // Fotos dos produtos (F2-14) vêm da API quando há rede; sem ela, iniciais coloridas.
+    <ProductImageProvider loader={backend.productImage}>
+      <Register
+        handle={state.handle}
+        session={register.session}
+        user={user}
+        platform={platform}
+        backend={backend}
+        syncStatus={register.syncStatus}
+        onSyncNow={() => register.syncNow()}
+        onSessionClosed={() => void register.refreshSession()}
+        onExit={onExit}
+      />
+    </ProductImageProvider>
   );
 }
 

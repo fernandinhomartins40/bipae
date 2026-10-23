@@ -809,6 +809,7 @@ export class SyncService {
           fiscalProfileId: p.fiscalProfileId,
           parentId: p.parentId,
           category: p.category,
+          imageHash: p.imageSha256,
           barcodes: codes.filter((c) => c.productId === p.id).map((c) => c.code),
           updatedAt: p.updatedAt.toISOString(),
         })),

@@ -138,6 +138,10 @@ import { InventoryController, InventoryService } from './modules/stock/inventory
 import { TransferController, TransferService } from './modules/stock/transfer.service';
 import { LotsController, LotsService } from './modules/stock/lots.service';
 import { LabelsController, LabelsService } from './modules/catalog/labels.service';
+import {
+  ProductImagesController,
+  ProductImagesService,
+} from './modules/catalog/product-images.service';
 import { PromotionsController, PromotionsService } from './modules/catalog/promotions.service';
 import {
   IbsCbsSettlementController,
@@ -229,6 +233,7 @@ class AppModule {
         EfdController,
         LotsController,
         LabelsController,
+        ProductImagesController,
         PromotionsController,
         IbsCbsSettlementController,
         PartiesController,
@@ -297,6 +302,7 @@ class AppModule {
         TransferService,
         LotsService,
         LabelsService,
+        ProductImagesService,
         PromotionsService,
         IbsCbsSettlementService,
         IcmsRulesService,

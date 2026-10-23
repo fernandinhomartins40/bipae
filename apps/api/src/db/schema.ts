@@ -2,6 +2,7 @@ import {
   bigint,
   boolean,
   char,
+  customType,
   date,
   integer,
   jsonb,
@@ -252,8 +253,25 @@ export const products = pgTable('products', {
   stPauta: jsonb('st_pauta').$type<{ uf: string; annex: string; item: string }>(),
   /** Classe da mercadoria na carga líquida (0079, F3-26.d.CE.c), ou "outside" fora do regime. */
   stNetLoadClass: text('st_net_load_class'),
+  /** SHA-256 da foto (0080, F2-14); null sem foto. Os bytes ficam em `product_images`. */
+  imageSha256: char('image_sha256', { length: 64 }),
   version: integer('version').notNull().default(1),
   createdAt: ts('created_at').notNull().defaultNow(),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+/** Bytes guardados no PostgreSQL (`bytea`): Buffer no node-postgres, Uint8Array no PGlite. */
+const bytea = customType<{ data: Uint8Array; driverData: Uint8Array }>({
+  dataType: () => 'bytea',
+});
+
+/** Foto do produto (0080, F2-14): uma por produto, já reduzida na tela. */
+export const productImages = pgTable('product_images', {
+  productId: uuid('product_id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  contentType: text('content_type').notNull(),
+  bytes: bytea('bytes').notNull(),
+  sha256: char('sha256', { length: 64 }).notNull(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
 

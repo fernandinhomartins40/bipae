@@ -10,8 +10,9 @@ import {
   VolumeX,
   type LucideIcon,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { brl } from './dialogs';
+import { useProductImage } from './product-image';
 import { REGISTER_MODES, type RegisterMode } from './register-prefs';
 
 /**
@@ -28,6 +29,9 @@ export interface SaleLineView {
   total: string;
   notes: string[];
   promotion: string | null;
+  /** Produto da linha e o hash da foto dele (F2-14), para mostrar a foto. */
+  productId?: string;
+  imageHash?: string | null;
 }
 
 // ---------------------------------------------------------------- foto do produto
@@ -64,26 +68,40 @@ const THUMB_SIZES = {
   lg: 'size-20 rounded-2xl text-2xl',
   fill: 'aspect-[4/3] w-full rounded-xl text-3xl',
   fillCompact: 'aspect-[16/10] w-full rounded-xl text-2xl',
+  /** Ocupa todo o quadro de quem chama (a prévia do cadastro, F2-14). */
+  cover: 'size-full text-2xl',
 };
 
 /**
- * Foto do produto. O cadastro ainda não guarda foto: aparecem as iniciais coloridas, e quando a
- * foto chegar ela entra aqui (`imageUrl`) sem mudar as telas.
+ * Foto do produto (F2-14). Com `productId` e `imageHash`, busca a foto pela API (ver
+ * `product-image.tsx`); enquanto carrega, sem rede ou se a foto falhar, mostra as iniciais numa
+ * cor fixa por nome.
  */
 export function ProductThumb({
   name,
+  productId,
+  imageHash,
   imageUrl,
   size = 'md',
 }: {
   name: string;
+  productId?: string | null;
+  imageHash?: string | null;
+  /** Endereço pronto da foto (quando quem chama já tem). */
   imageUrl?: string | null;
   size?: keyof typeof THUMB_SIZES;
 }) {
-  if (imageUrl) {
+  const loaded = useProductImage(productId, imageHash);
+  const src = imageUrl ?? loaded;
+  const [broken, setBroken] = useState<string | null>(null);
+  if (src && broken !== src) {
     return (
       <img
-        src={imageUrl}
+        src={src}
         alt=""
+        draggable={false}
+        onError={() => setBroken(src)}
+        data-testid="product-photo"
         className={cx('shrink-0 bg-surface-2 object-cover', THUMB_SIZES[size])}
       />
     );
@@ -132,7 +150,7 @@ export function SearchResults({
             className="flex min-h-14 w-full items-center gap-3 rounded-xl p-2 text-left hover:bg-surface-2"
             onClick={() => onPick(p)}
           >
-            <ProductThumb name={p.name} size="sm" />
+            <ProductThumb name={p.name} productId={p.id} imageHash={p.imageHash} size="sm" />
             <span className="min-w-0 flex-1 leading-tight">
               <span className="block truncate font-semibold">{p.name}</span>
               <span className="block text-sm tabular-nums text-muted">{price(p)}</span>
@@ -225,7 +243,12 @@ export function ProductGrid({
                     count > 0 ? 'border-primary' : 'border-border',
                   )}
                 >
-                  <ProductThumb name={p.name} size={compact ? 'fillCompact' : 'fill'} />
+                  <ProductThumb
+                    name={p.name}
+                    productId={p.id}
+                    imageHash={p.imageHash}
+                    size={compact ? 'fillCompact' : 'fill'}
+                  />
                   <span
                     className={cx(
                       'line-clamp-2 font-semibold leading-tight',
@@ -476,7 +499,12 @@ export function LastItem({ item, compact = false }: { item: SaleLineView; compac
         compact ? 'gap-3 p-2' : 'gap-4 p-4',
       )}
     >
-      <ProductThumb name={item.name} size={compact ? 'md' : 'lg'} />
+      <ProductThumb
+        name={item.name}
+        productId={item.productId}
+        imageHash={item.imageHash}
+        size={compact ? 'md' : 'lg'}
+      />
       <div className="min-w-0 flex-1 leading-tight">
         <p className={cx('truncate font-bold', compact ? 'text-lg' : 'text-2xl')}>{item.name}</p>
         <p className={cx('tabular-nums text-muted', compact ? 'text-sm' : 'mt-1 text-lg')}>

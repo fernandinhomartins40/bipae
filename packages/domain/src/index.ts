@@ -19,3 +19,4 @@ export * from './password-policy';
 export * from './pix';
 export * from './payments';
 export * from './efd';
+export * from './product-images';

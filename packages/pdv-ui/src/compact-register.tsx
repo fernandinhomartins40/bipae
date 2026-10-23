@@ -209,7 +209,12 @@ export function CompactRegister<A extends string>({
             aria-haspopup="dialog"
             data-testid="pdv-sale-summary"
           >
-            <ProductThumb name={lastLine.name} size="sm" />
+            <ProductThumb
+              name={lastLine.name}
+              productId={lastLine.productId}
+              imageHash={lastLine.imageHash}
+              size="sm"
+            />
             <span className="min-w-0 flex-1 leading-tight">
               <span className="block truncate text-sm font-semibold">{lastLine.name}</span>
               <span className="block text-xs text-muted">{items} na venda · toque para ver</span>
