@@ -236,6 +236,7 @@ export class NfceEmissionService implements OnModuleInit {
         ie: company.ie,
         uf: company.uf,
         regime: company.taxRegime,
+        cnae: company.cnae,
         address: {
           street: company.street,
           number: company.streetNumber,
@@ -266,6 +267,7 @@ export class NfceEmissionService implements OnModuleInit {
           grossCents: i.grossCents,
           discountCents: i.discountCents,
           profile: profile ?? null,
+          stNetLoadClass: p?.stNetLoadClass ?? null,
         };
       }),
       payments: payments.map((p) => ({

@@ -318,6 +318,9 @@ export class PdvService {
       }
       await setMeta(tx, 'company_uf', fiscal.company.uf ?? '');
       await setMeta(tx, 'company_tax_regime', fiscal.company.taxRegime ?? '');
+      // Carga líquida (F3-26.d.CE.d): CNAE e classes dos produtos, para a NFC-e em contingência.
+      await setMeta(tx, 'company_cnae', fiscal.company.cnae ?? '');
+      await setMeta(tx, 'st_net_load_classes', JSON.stringify(fiscal.stNetLoadClasses ?? {}));
       await setMeta(tx, 'company_icms_rules', JSON.stringify(fiscal.icmsRules ?? []));
       // Emitente e série do caixa, para a NFC-e em contingência (F3-15).
       await setMeta(tx, 'fiscal_issuer', fiscal.issuer ? JSON.stringify(fiscal.issuer) : '');
@@ -330,6 +333,7 @@ export class PdvService {
     profiles: Map<string, Omit<FiscalSnapshot['profiles'][number], 'id'>>;
     icmsRules: NonNullable<FiscalSnapshot['icmsRules']>;
     issuer: FiscalSnapshot['issuer'] | null;
+    stNetLoadClasses: Record<string, string>;
   }> {
     const rows = await this.storage.query<{ id: string; data: string }>(
       'SELECT id, data FROM fiscal_profiles',
@@ -338,10 +342,12 @@ export class PdvService {
       company: {
         uf: (await getMeta(this.storage, 'company_uf')) || null,
         taxRegime: (await getMeta(this.storage, 'company_tax_regime')) || null,
+        cnae: (await getMeta(this.storage, 'company_cnae')) || null,
       },
       profiles: new Map(rows.map((row) => [row.id, JSON.parse(row.data)])),
       icmsRules: JSON.parse((await getMeta(this.storage, 'company_icms_rules')) || '[]'),
       issuer: JSON.parse((await getMeta(this.storage, 'fiscal_issuer')) || 'null'),
+      stNetLoadClasses: JSON.parse((await getMeta(this.storage, 'st_net_load_classes')) || '{}'),
     };
   }
 
@@ -827,7 +833,7 @@ export class PdvService {
     signer: NfeSigner,
   ): Promise<{ accessKey: string; xml: string } | null> {
     try {
-      const { company, profiles, icmsRules, issuer } = await this.fiscalContext();
+      const { company, profiles, icmsRules, issuer, stNetLoadClasses } = await this.fiscalContext();
       if (!issuer) return null;
       const ids = [...new Set(sale.items.map((item) => item.productId))];
       const place = ids.map(() => '?').join(', ');
@@ -852,6 +858,7 @@ export class PdvService {
             ie: issuer.ie,
             uf: company.uf,
             regime: company.taxRegime,
+            cnae: company.cnae ?? null,
             address: issuer.address,
           },
           series: issuer.nfceSeries,
@@ -871,6 +878,7 @@ export class PdvService {
               grossCents: item.grossCents,
               discountCents: item.discountCents,
               profile: profiles.get(row?.fiscal_profile_id ?? '') ?? null,
+              stNetLoadClass: stNetLoadClasses[item.productId] ?? null,
             };
           }),
           payments: sale.payments.map((p) => ({

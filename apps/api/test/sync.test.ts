@@ -583,12 +583,17 @@ describe('dados fiscais no caixa (F3-06.d2)', () => {
 
     const caixa = await terminalDevice(dono, 'Caixa fiscal', 'web');
     // Caixa novo, antes de sincronizar: não sabe nada e não inventa.
-    expect((await caixa.pdv.fiscalContext()).company).toEqual({ uf: null, taxRegime: null });
+    expect((await caixa.pdv.fiscalContext()).company).toEqual({
+      uf: null,
+      taxRegime: null,
+      cnae: null,
+    });
 
     await caixa.sync.sync();
     expect(caixa.net.fiscalSnapshots).toBe(1);
     const contexto = await caixa.pdv.fiscalContext();
-    expect(contexto.company).toEqual({ uf: 'SP', taxRegime: 'real' });
+    expect(contexto.company).toEqual({ uf: 'SP', taxRegime: 'real', cnae: null });
+    expect(contexto.stNetLoadClasses).toEqual({});
     expect(contexto.profiles.get(perfil.id)).toEqual({
       cfopInterna: '5102',
       cfopInterestadual: '6102',
@@ -630,6 +635,28 @@ describe('dados fiscais no caixa (F3-06.d2)', () => {
       cfopInterna: '5405',
       cstIcms: '60',
     });
+
+    // Carga líquida do Ceará (F3-26.d.CE.d): a CNAE e a classe do produto chegam ao caixa, para a
+    // NFC-e em contingência levar a expressão do decreto.
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      uf: 'CE',
+      taxRegime: 'presumido',
+      cnae: '4741500',
+    });
+    const cimento = (
+      await admin.post('/products', {
+        name: 'Cimento 50 kg',
+        priceCents: 3900,
+        barcodes: ['7891000100110'],
+        stNetLoadClass: 'rate-20',
+      })
+    ).json();
+    await caixa.sync.sync();
+    expect(caixa.net.fiscalSnapshots).toBe(4);
+    const ceara = await caixa.pdv.fiscalContext();
+    expect(ceara.company).toEqual({ uf: 'CE', taxRegime: 'presumido', cnae: '4741500' });
+    expect(ceara.stNetLoadClasses).toEqual({ [cimento.id]: 'rate-20' });
   });
 
   it('recusa CST de PIS/COFINS que não existe', async () => {

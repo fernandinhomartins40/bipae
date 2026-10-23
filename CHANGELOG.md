@@ -1,5 +1,17 @@
 # Changelog
 
+## [F3-26.d.CE.d Carga líquida do Ceará: RET, transferências, indústria e NFC-e] — 23/10/2026
+
+### Adicionado
+- **Transferência entre estabelecimentos** na compra, com a margem do texto de cada decreto: autopeças, base acrescida de 80% (30.519, art. 2º, § 4º); vestuário, 60% na interna e 100% na interestadual (34.256, art. 4º, § 5º); farmacêuticos, 49,08% na vinda de outra UF (36.617, art. 2º, § 1º). Em construção e móveis a transferência interna segue o cálculo comum, porque o parágrafo só fala da vinda de outra UF.
+- **Regime Especial de Tributação (RET)** na compra: autopeças, informática, construção e móveis aplicam a carga do Anexo III, como manda o artigo do RET, com o aviso de que o termo pode ajustar a carga e o momento do recolhimento. Farmacêuticos com RET usam as cargas próprias do art. 6º (1,37% e 2,16%, transferência 1,49% e 2,38%, complemento do Simples), sem margem; o importado a 4% não paga na entrada (art. 12).
+- **Retenção da indústria nas saídas internas (art. 2º)** no rascunho da NF-e, como observação com base e valor: informática 4,11% + 30% (4,34% para o produto fora do ato do Secretário) e construção 7,64% + 45% para o produto de 20%. As tabelas de saída do RET dos farmacêuticos (Canal Hospitalar, Canal Farma e centro de distribuição) também aparecem com o valor de cada canal.
+- **NFC-e do caixa** com "ICMS retido por substituição tributária" e o número do decreto nas informações complementares, quando o produto está no regime do vendedor. Vale na emissão do servidor e na contingência do caixa: a CNAE da empresa e a classe dos produtos chegam ao caixa no retrato fiscal.
+- **Lista de produtos de informática** do Ceará, do Diário Oficial: IN SEFAZ 148/2024 (efeitos desde 01/03/2025, revogou a IN 04/2013) com a IN 135/2025. A compra avisa quando a classe "produtos de informática" do produto não bate com a NCM na lista.
+
+### Falta configurar (dúvida D-042)
+- Transferência em informática, construção e móveis vinda de outra UF ("a base definida no caput, acrescida de X%", com o caput já tendo margem), retenção da indústria de móveis (o texto não diz a linha do Anexo III), ajuste proporcional da construção para produto fora de 20%, a opção do art. 2º-A da cerâmica, RET do vestuário (o decreto não traz carga) e a retenção nos campos da ST do XML.
+
 ## [F8-16 Retaguarda com o visual novo] — 23/10/2026
 
 ### Alterado

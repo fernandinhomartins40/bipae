@@ -11,7 +11,7 @@ import {
 import { findCompanyRegime } from '../regimes';
 import { calculateSaleItemTaxes, type SaleFiscalProfile, type TaxOutcome } from '../sale';
 import { DEMONSTRATION, type DemonstrationNote } from '../tables/demonstration';
-import { stNetLoadOutputNote } from '../tables/st-net-loads';
+import { stNetLoadExit, stNetLoadExitMessage, stNetLoadOutputNote } from '../tables/st-net-loads';
 import { findStPautaItem } from '../tables/st-pautas';
 import { findCfop } from '../tables/cfop';
 import { isImportedOrigin } from '../tables/icms-uf';
@@ -62,8 +62,6 @@ export interface NfeDraftItem extends SaleNfceItem {
   cfop?: string | null;
   /** Item da pauta da ST ligado ao produto (F3-26.f): UF, anexo e número na portaria. */
   stPauta?: { uf: string; annex: string; item: string } | null;
-  /** Classe da mercadoria na carga líquida (F3-26.d.CE.c), escolhida no produto. */
-  stNetLoadClass?: string | null;
   /** Na devolução (NT 2025.002, regra VC02-14): a chave da nota devolvida e o número do item nela. */
   reference?: { key: string; item: number } | null;
 }
@@ -72,8 +70,8 @@ export interface NfeDraftInput {
   /** Id do rascunho: dele sai o cNF, para a nota ter sempre a mesma chave nas novas tentativas. */
   draftId: string;
   company: SaleNfceCompany & {
-    /** CNAE-Fiscal principal: decide a carga líquida (F3-26.d.CE.c). */
-    cnae?: string | null;
+    /** Regime Especial de Tributação (RET) com a SEFAZ: retenção na saída (F3-26.d.CE.d). */
+    stSpecialRegime?: boolean;
   };
   series: number;
   number: number;
@@ -355,6 +353,21 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
           `${label}: ST recolhida na entrada pela carga líquida (${output.regime.act}); a nota leva "${output.note}" nas informações complementares.`,
         );
       }
+      // Retenção na saída (F3-26.d.CE.d): indústria do art. 2º e atacadista de farmacêuticos com
+      // RET. Só o cálculo, nas observações do rascunho.
+      const exit = stNetLoadExit({
+        uf,
+        sellerCnae: c.cnae,
+        sellerSimples: regime?.taxRegime === 'simples',
+        specialRegime: c.stSpecialRegime ?? false,
+        destinationUf: ufDestino,
+        date,
+        goodsClass: item.stNetLoadClass,
+        cest: item.cest ?? null,
+        ncm: item.ncm,
+        operationCents,
+      });
+      if (exit) notes.push(`${label}: ${stNetLoadExitMessage(exit)}`);
     }
     const taxes = calculateSaleItemTaxes({
       company: { uf: c.uf, regime: regime?.id ?? null },

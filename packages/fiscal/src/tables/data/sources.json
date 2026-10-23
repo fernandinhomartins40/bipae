@@ -973,6 +973,24 @@
   "downloadedAt": "2026-10-23",
   "sha256": "a7dbc556b5b8aee3073cd2765896184c6827e114df8f1acef8f948cdd22c79a1"
  },
+ "stCeInformaticaIn148": {
+  "file": "DOE-CE_2025-01-15_caderno1_IN_SEFAZ_148-2024_informatica_2026-10-23.pdf",
+  "title": "Diário Oficial do Estado do Ceará de 15/01/2025, série 3, nº 010, caderno 1: Instrução Normativa SEFAZ 148/2024 (republicada por incorreção), lista dos produtos de informática do Decreto 31.066/2012, efeitos a partir de 01/03/2025",
+  "publisher": "Governo do Estado do Ceará (Diário Oficial do Estado)",
+  "page": "https://imagens.seplag.ce.gov.br/PDF/20250115/do20250115p01.pdf",
+  "publishedAt": "2025-01-15",
+  "downloadedAt": "2026-10-23",
+  "sha256": "7cf909dd1d315d58e15ca1b3f67e7594ccd4959ade8bacaacd7a4f85475e341b"
+ },
+ "stCeInformaticaIn135": {
+  "file": "DOE-CE_2025-10-28_caderno2_IN_SEFAZ_135-2025_informatica_2026-10-23.pdf",
+  "title": "Diário Oficial do Estado do Ceará de 28/10/2025, caderno 2: Instrução Normativa SEFAZ 135/2025, que altera o Anexo Único da IN 148/2024 (alto-falantes e módulos de tela)",
+  "publisher": "Governo do Estado do Ceará (Diário Oficial do Estado)",
+  "page": "https://imagens.seplag.ce.gov.br/PDF/20251028/do20251028p02.pdf",
+  "publishedAt": "2025-10-28",
+  "downloadedAt": "2026-10-23",
+  "sha256": "7ad0ead4415e096124bd0d579835c58c35db0f078d2d8ea66fe0464b7667fdc8"
+ },
  "cbenefPr": {
   "file": "SEFA-PR_Tabela_cBenef_por_CST_V27_2026-07-17.pdf",
   "title": "Tabela de Códigos de Benefício Fiscal por CST - Paraná (versão 27, atualizada em 17/07/2026)",

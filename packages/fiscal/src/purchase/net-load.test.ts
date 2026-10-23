@@ -139,11 +139,12 @@ describe('carga líquida na entrada da compra', () => {
     });
   });
 
-  it('transferência (mesma raiz de CNPJ) fica como falta configurar', () => {
+  it('transferência (mesma raiz de CNPJ): margem própria do decreto (34.256, art. 4º, § 5º, II)', () => {
     const filial = fornecedor('SP', { cnpj: '11222333000262' });
     const r = calc({ supplier: filial });
-    expect(r?.status).toBe('missing');
-    expect(r?.message).toMatch(/transferência/);
+    // Interestadual: margem de 100% no lugar dos 50% do caput.
+    expect(r).toMatchObject({ status: 'applies', mva: '100', totalPercent: '15.60' });
+    expect(r?.warnings.join(' ')).toMatch(/Transferência: margem de 100%/);
     // Empresa com CPF não tem raiz de CNPJ: não é transferência.
     expect(calc({ company: { taxId: '123.456.789-09' } })?.status).toBe('applies');
   });

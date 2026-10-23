@@ -3,6 +3,7 @@ import type { NfeItem, NfePayment } from '../nfe/groups';
 import { findCompanyRegime } from '../regimes';
 import { calculateSaleItemTaxes, type SaleFiscalProfile, type TaxOutcome } from '../sale';
 import { findFcp } from '../tables/rates';
+import { stNetLoadOutputNote } from '../tables/st-net-loads';
 import { PdvPaymentError, pdvPaymentRule } from '../tables/pdv-payments';
 import { buildNfce, NfceBuildError, type NfceDocument, type NfceInput } from './build';
 import { nfceNumbering } from './numbering';
@@ -24,6 +25,8 @@ export interface SaleNfceCompany {
   ie: string | null;
   uf: string | null;
   regime: string | null;
+  /** CNAE-Fiscal principal: decide a carga líquida (F3-26.d.CE.c) e a expressão da nota. */
+  cnae?: string | null;
   address: {
     street: string | null;
     number: string | null;
@@ -51,6 +54,8 @@ export interface SaleNfceItem {
   discountCents: number;
   /** Perfil fiscal do produto com a origem da mercadoria. */
   profile: (SaleFiscalProfile & { origem?: number }) | null;
+  /** Classe da mercadoria na carga líquida (F3-26.d.CE.c), escolhida no produto. */
+  stNetLoadClass?: string | null;
 }
 
 export interface SaleNfceInput {
@@ -195,9 +200,25 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
     input.delivery?.feeCents ?? 0,
     input.items.map((i) => i.grossCents - i.discountCents),
   );
+  // Carga líquida (F3-26.d.CE.d): a venda no caixa é saída interna; quando a ST do produto foi
+  // recolhida na entrada pelo decreto, a NFC-e leva a expressão dele nas informações
+  // complementares (art. 7º, § 1º, ou o equivalente). Só texto: nunca vira pendência.
+  const netLoadNotes = new Set<string>();
   const items: NfeItem[] = input.items.map((item, index) => {
     const label = `Item ${index + 1} (${item.description})`;
     if (!item.ncm) pending.push(`${label}: o produto não tem NCM.`);
+    if (c.uf) {
+      const output = stNetLoadOutputNote({
+        uf: c.uf,
+        sellerCnae: c.cnae,
+        destinationUf: c.uf,
+        date,
+        goodsClass: item.stNetLoadClass,
+        cest: item.cest ?? null,
+        sellerSimples: regime?.taxRegime === 'simples',
+      });
+      if (output) netLoadNotes.add(output.note);
+    }
     const settings = companyIcmsSettings(input.rules ?? [], item.ncm, date);
     const taxes = calculateSaleItemTaxes({
       company: { uf: c.uf, regime: regime?.id ?? null },
@@ -308,6 +329,7 @@ export function buildSaleNfce(input: SaleNfceInput): SaleNfceResult {
     items,
     payments,
     ...(changeCents > 0 && { changeCents }),
+    ...(netLoadNotes.size > 0 && { additionalInfo: [...netLoadNotes].join('. ') }),
     appVersion: input.appVersion,
     ...(input.contingency && { contingency: input.contingency }),
     ...(d &&

@@ -342,6 +342,302 @@ function simplesBuyerOf(text) {
   return m ? { rule: 'mva', mva: decimalText(m[1]) } : null;
 }
 
+/** A data de efeitos da última NOTA do texto antes da posição `at` (null quando não há). */
+function noteDateBefore(text, at) {
+  const before = text.slice(0, at);
+  const start = Math.max(before.lastIndexOf('NOTA'), before.lastIndexOf('Nota'));
+  // A nota precisa ser a do dispositivo: logo antes dele, sem outro texto longo no meio.
+  if (start < 0 || at - start > 400) return null;
+  return effectiveDate(before.slice(start));
+}
+
+/**
+ * Transferência (F3-26.d.CE.d): o parágrafo da "base de cálculo para o recolhimento do imposto
+ * pelo estabelecimento que receber em transferência". Três formas no texto:
+ * - "será o valor do documento fiscal ..., acrescida da MVA nos seguintes percentuais: I - nas
+ *   transferências internas, 60%; II - nas transferências interestaduais, 100%" (vestuário);
+ * - "oriundas de outras unidades da Federação, será acrescida de MVA no percentual de 49,08%"
+ *   (farmacêuticos);
+ * - "será a definida no caput deste artigo, acrescida do percentual de 80%" (os outros), que soma
+ *   à base do caput. Quando o caput já tem margem, não está claro se as duas se somam (D-042).
+ */
+function transferOf(text, label) {
+  const listed =
+    /receber,? em transferência,? mercadorias sujeitas à presente sistemática será o valor do documento fiscal.*?nos seguintes percentuais: I - nas transferências internas, (\d{1,3}(?:,\d{1,2})?)%.*?II - nas transferências interestaduais, (\d{1,3}(?:,\d{1,2})?)%/i.exec(
+      text,
+    );
+  if (listed) {
+    return {
+      basis: 'document',
+      interstateOnly: false,
+      internalMva: decimalText(listed[1]),
+      interstateMva: decimalText(listed[2]),
+    };
+  }
+  const farma =
+    /receber em transferência mercadorias sujeitas à presente sistemática, oriundas de outras unidades da Federação, será acrescida de MVA no percentual de (\d{1,3}(?:,\d{1,2})?)%/i.exec(
+      text,
+    );
+  if (farma) {
+    return {
+      basis: 'document',
+      interstateOnly: true,
+      internalMva: null,
+      interstateMva: decimalText(farma[1]),
+    };
+  }
+  const caput =
+    /receber,? em transferência,? mercadorias sujeitas? (?:a|à) (?:presente )?sistemática[^,.]*?(,? oriundas de outras? unidades? da Federação)?,? será a definida no caput deste artigo,? acrescida d[aoe] (?:percentual|margem de valor agregado(?: \(MVA\))? no percentual)(?: de)? (\d{1,3}(?:,\d{1,2})?)%/i.exec(
+      text,
+    );
+  if (!caput) throw new Error(`${label}: parágrafo da transferência não encontrado`);
+  const mva = decimalText(caput[2]);
+  return {
+    basis: 'caput',
+    interstateOnly: !!caput[1],
+    internalMva: caput[1] ? null : mva,
+    interstateMva: mva,
+  };
+}
+
+/**
+ * Regime Especial de Tributação do atacadista do Anexo I (arts. 4º/5º): "poderá aplicar, como
+ * carga líquida, aquela prevista no Anexo III" (autopeças, informática, construção e móveis; nos
+ * dois últimos a carga "poderá ser ajustada, proporcionalmente", no termo). Null quando o decreto
+ * não tem o artigo (vestuário).
+ */
+function specialRegimeOf(text) {
+  const m =
+    /Art\. ?(\d)\.?º O contribuinte que exercer a atividade (?:de comércio atacadista )?constante do Anexo I deste Decreto, mediante regime especial de tributação, nos termos previstos nos (?:arts\.|artigos) ?67 a 69 da Lei n\S* ?12\.670, de 27 de dezembro de 1996,(?: que dispõe sobre o ICMS,)? poderá aplicar, como carga líquida(?: tributária)?, aquela prevista no Anexo III deste Decreto(, que poderá ser ajustada, proporcionalmente)?/i.exec(
+      text,
+    );
+  if (!m) return null;
+  return { kind: 'annex-iii', article: `art. ${m[1]}º`, adjustable: !!m[2] };
+}
+
+const PERCENT_LINE = /^(\d{1,2}[.,]\d{2}) ?%$/;
+const pct = (raw) => decimalText(raw.replace('.', ','));
+
+/**
+ * Farmacêuticos com RET (Decreto 36.617, arts. 4º a 12): cargas próprias na entrada (art. 6º, só
+ * as colunas interestaduais), complemento do fornecedor do Simples, transferências, centro de
+ * distribuição (art. 7º) e as tabelas da saída por canal (Hospitalar, art. 8º; Farma, art. 9º;
+ * centro de distribuição, art. 10). A base é o valor do documento, sem margem.
+ */
+function farmaSpecialRegimeOf(lines, label) {
+  const at = (re, from = 0) => {
+    const i = lines.findIndex((l, n) => n >= from && re.test(l));
+    if (i < 0) throw new Error(`${label}, RET: "${re.source}" não encontrado`);
+    return i;
+  };
+  const art6 = at(/^Art\. 6\.º Para o cálculo do ICMS devido por substituição tributária/);
+  const art7 = at(/^Art\. 7\.º Para o cálculo/, art6);
+  const block = lines.slice(art6, art7);
+  const head = fold(joinLines(block));
+  // As colunas das tabelas do art. 6º: Norte...ES antes de Sul e Sudeste (e "Operações Internas"
+  // antes das duas no complemento do Simples).
+  const nne = head.indexOf('operacoes oriundas do norte');
+  const sse = head.indexOf('operacoes oriundas do sul');
+  if (nne < 0 || sse < nne) throw new Error(`${label}, RET: colunas do art. 6º fora da ordem`);
+  const percents = block
+    .filter((l) => PERCENT_LINE.test(l))
+    .map((l) => pct(PERCENT_LINE.exec(l)[1]));
+  const whole = block.filter((l) => /^\d{1,2}%$/.test(l)).map((l) => l.slice(0, -1));
+  if (percents.length !== 4 || whole.length !== 3) {
+    throw new Error(
+      `${label}, RET: art. 6º com ${percents.length} cargas e ${whole.length} complementos`,
+    );
+  }
+  const transferAt = block.findIndex((l) => /^OPERAÇÕES DE TRANSFERÊNCIAS/.test(l));
+  if (transferAt < 0) throw new Error(`${label}, RET: transferências do art. 6º não encontradas`);
+  const art7Text = joinLines(lines.slice(art7, at(/^§ 1\.º/, art7)));
+  const cd =
+    /I - (\d,\d{2})% \([^)]*\), quando das operações oriundas do Norte.*?II - (\d,\d{2})% \([^)]*\), quando das operações oriundas do Sul/.exec(
+      art7Text,
+    );
+  if (!cd) throw new Error(`${label}, RET: cargas do art. 7º não encontradas`);
+  const text = joinLines(lines);
+  const deferred =
+    /Nas operações internas entre contribuintes atacadistas sujeitos à sistemática de tributação deste Decreto, optantes pelo Regime Especial de Tributação, o ICMS devido fica diferido para a saída subsequente/.test(
+      text,
+    );
+  const importDeferred =
+    /as cargas tributárias previstas nos arts\. 6\.º e 7\.º não se aplicam aos produtos de origem estrangeira procedente de outras unidades da Federação, sujeitos à alíquota de 4%/.test(
+      text,
+    );
+  return {
+    kind: 'own-table',
+    article: 'arts. 4º a 12',
+    adjustable: true,
+    entry: { 'n-ne-co-es': percents[0], 's-se-except-es': percents[1] },
+    transfer: { 'n-ne-co-es': percents[2], 's-se-except-es': percents[3] },
+    simplesAddition: { internal: whole[0], 'n-ne-co-es': whole[1], 's-se-except-es': whole[2] },
+    distributionCenter: { 'n-ne-co-es': decimalText(cd[1]), 's-se-except-es': decimalText(cd[2]) },
+    internalBetweenWholesalersDeferred: deferred,
+    importedAt4Deferred: importDeferred,
+    exits: [
+      farmaExitTable(lines, at(/^Art\. 8\.º/), 'hospital', label),
+      farmaExitTable(lines, at(/^Art\. 9\.º/), 'pharma', label),
+      farmaExitTable(lines, at(/^Art\. 10\./), 'distribution-center', label),
+    ],
+  };
+}
+
+/** Uma tabela da saída do RET dos farmacêuticos (a redação atual, até a "Redação original"). */
+function farmaExitTable(lines, start, channel, label) {
+  const note = lines.findIndex((l, i) => i > start && /^Nota: a tabela com nova redação/.test(l));
+  const end = lines.findIndex((l, i) => i > note && /^Redação original/.test(l));
+  if (note < 0 || end < 0) throw new Error(`${label}, RET: tabela do canal ${channel} sem nota`);
+  let noteText = '';
+  let i = note;
+  while (!/^MERCADORIA/.test(lines[i])) noteText += ` ${lines[i++]}`;
+  const sections = { sale: { labels: [], values: [] } };
+  let section = 'sale';
+  let importAddition = null;
+  let interstateImportAddition = null;
+  for (; i < end; i++) {
+    const line = lines[i];
+    if (/^OPERAÇÕES DE TRANSFERÊNCIAS/.test(line)) {
+      section = 'transfer';
+      sections.transfer = { labels: [], values: [] };
+      continue;
+    }
+    if (/^ADICIONAIS/.test(line)) section = 'import';
+    if (/^(VENDA|SAÍDAS) INTERESTADUA/.test(line)) section = 'interstate';
+    const foreign = /^Produto Estrangeiro \(4%\)(?: (\d{1,2},\d{2}) ?%)?$/.exec(line);
+    if (foreign) {
+      const value = foreign[1] ?? PERCENT_LINE.exec(lines[i + 1] ?? '')?.[1];
+      if (!value) throw new Error(`${label}, RET: adicional do importado sem valor`);
+      if (section === 'interstate') interstateImportAddition = pct(value);
+      else importAddition = pct(value);
+      if (!foreign[1]) i++;
+      continue;
+    }
+    if (section !== 'sale' && section !== 'transfer') continue;
+    if (/^(\d{1,2}% - Cesta Básica|20%)$/.test(line)) sections[section].labels.push(line);
+    else if (PERCENT_LINE.test(line))
+      sections[section].values.push(pct(PERCENT_LINE.exec(line)[1]));
+  }
+  const rows = (s) => {
+    if (s.labels.length === 0 || s.labels.length !== s.values.length) {
+      throw new Error(
+        `${label}, RET: canal ${channel} com ${s.labels.length} linhas e ${s.values.length} valores`,
+      );
+    }
+    return s.labels.map((l, n) => ({
+      goodsClass: goodsClassOf(l),
+      label: l,
+      percent: s.values[n],
+    }));
+  };
+  const validFrom = effectiveDate(noteText);
+  if (!validFrom) throw new Error(`${label}, RET: tabela do canal ${channel} sem data de efeitos`);
+  return {
+    channel,
+    validFrom,
+    sale: rows(sections.sale),
+    transfer: sections.transfer ? rows(sections.transfer) : null,
+    importAddition,
+    interstateImportAddition,
+  };
+}
+
+/**
+ * Retenção da indústria nas saídas internas (art. 2º de informática, construção e móveis). Só a
+ * redação atual, com a data de efeitos da nota; antes dela a função responde "sem tabela".
+ * - informática: carga fixa sobre o valor da operação mais a margem; outra carga (§ 4º) para o
+ *   produto fora do ato do Secretário; sem margem "quando o contribuinte do imposto for o
+ *   estabelecimento matriz" (§ 3º, ambíguo: vira aviso);
+ * - construção: carga fixa e margem; "ajuste proporcional" quando a carga do produto não é a do
+ *   art. 2º-B; carga própria, opcional, para duas CNAE de cerâmica (art. 2º-A); fora a indústria
+ *   do Simples (§ 2º, II);
+ * - móveis: "a carga líquida de que trata o Anexo III" sem dizer a linha (atacadista ou varejista):
+ *   fica como "falta configurar".
+ */
+function industryOf(text, label) {
+  const info =
+    /estabelecimento industrial localizado neste Estado, fabricante de produtos de informática, deverá reter, nas operações internas, a carga líquida tributária de (\d{1,2},\d{2})% .*?margem de valor agregado no percentual de (\d{1,3})%/.exec(
+      text,
+    );
+  if (info) {
+    const unlisted =
+      /Na hipótese de os produtos de informática não estarem relacionados em ato do Secretário da Fazenda, a carga tributária líquida de que trata o caput deste artigo será de (\d{1,2},\d{2})%/.exec(
+        text,
+      );
+    if (!unlisted) throw new Error(`${label}: § 4º do art. 2º não encontrado`);
+    const dates = [noteDateBefore(text, info.index), noteDateBefore(text, unlisted.index)];
+    if (dates.some((d) => !d)) throw new Error(`${label}: art. 2º sem data de efeitos`);
+    return {
+      kind: 'fixed',
+      article: 'art. 2º',
+      validFrom: dates.sort().at(-1),
+      load: decimalText(info[1]),
+      unlistedLoad: decimalText(unlisted[1]),
+      mva: info[2],
+      referenceRate: null,
+      optional: null,
+      simplesExcluded: false,
+      headOfficeWithoutMva:
+        /margem de valor agregado de que trata o caput deste artigo não se aplica quando o contribuinte do imposto for o estabelecimento matriz/.test(
+          text,
+        ),
+    };
+  }
+  const build =
+    /estabelecimento industrial constante no Anexo I, fabricante de material de construção, ferragens e ferramentas, deverá reter, nas operações internas, a carga líquida tributária de (\d{1,2},\d{2})% .*?margem de valor agregado no percentual de (\d{1,3})%/.exec(
+      text,
+    );
+  if (build) {
+    const validFrom = noteDateBefore(text, build.index);
+    const reference =
+      /Nas hipóteses dos arts\. 2\.?º e 2\.?º-A, quando a carga tributária do ICMS relativa ao produto for diferente de (\d{1,2})%/.exec(
+        text,
+      );
+    const ceramics =
+      /CNAEs?[- ]*Fiscais (\d{4}-\d\/\d{2}) \(.*?\) e (\d{4}-\d\/\d{2}) \(.*?\) poderá reter, nas operações internas, a carga tributária líquida de (\d{1,2},\d{2})%/.exec(
+        text,
+      );
+    if (!validFrom || !reference || !ceramics) {
+      throw new Error(`${label}: arts. 2º, 2º-A ou 2º-B fora do formato`);
+    }
+    return {
+      kind: 'fixed',
+      article: 'art. 2º',
+      validFrom,
+      load: decimalText(build[1]),
+      unlistedLoad: null,
+      mva: build[2],
+      referenceRate: reference[1],
+      optional: {
+        article: 'art. 2º-A',
+        cnaes: [cnaeCode(ceramics[1]), cnaeCode(ceramics[2])],
+        load: decimalText(ceramics[3]),
+      },
+      simplesExcluded: /praticadas por indústria optante pelo Simples Nacional/.test(text),
+      headOfficeWithoutMva: false,
+    };
+  }
+  const furniture =
+    /estabelecimentos industriais constantes no Anexo I,.*?deverão reter, nas operações internas, a carga líquida de que trata o Anexo III deste Decreto aplicada sobre o valor da operação acrescido da margem de valor agregado no percentual de (\d{1,3})%/.exec(
+      text,
+    );
+  if (furniture) {
+    return {
+      kind: 'annex-iii',
+      article: 'art. 2º',
+      validFrom: noteDateBefore(text, furniture.index),
+      load: null,
+      unlistedLoad: null,
+      mva: furniture[1],
+      referenceRate: null,
+      optional: null,
+      simplesExcluded: false,
+      headOfficeWithoutMva: false,
+    };
+  }
+  return null;
+}
+
 /** Um decreto de carga líquida no modelo dos Anexos I, II e III (autopeças a vestuário). */
 export function parseCeNetLoadDecree(lines) {
   const decree = decreeOf(lines);
@@ -388,6 +684,9 @@ export function parseCeNetLoadDecree(lines) {
     outputNote: outputNoteOf(text, decree, where),
     simplesBuyer: simplesBuyerOf(text),
     cestSegments: null,
+    transfer: transferOf(text, where),
+    specialRegime: specialRegimeOf(text),
+    industry: hasIndustry ? industryOf(text, where) : null,
   };
 }
 
@@ -466,6 +765,163 @@ export function parseCeFarmaDecree(lines) {
     outputNote: outputNoteOf(text, decree, where),
     simplesBuyer: simplesBuyerOf(text),
     cestSegments: [cest[1]],
+    transfer: transferOf(text, where),
+    specialRegime: farmaSpecialRegimeOf(lines, where),
+    industry: null,
+  };
+}
+
+const NCM_CODE = String.raw`\d{4}(?:\.\d{1,2}(?:\.\d{2})?)?`;
+const MONTHS = [
+  'janeiro',
+  'fevereiro',
+  'marco',
+  'abril',
+  'maio',
+  'junho',
+  'julho',
+  'agosto',
+  'setembro',
+  'outubro',
+  'novembro',
+  'dezembro',
+];
+
+/** Data do cabeçalho do Diário Oficial ("FORTALEZA, 28 DE OUTUBRO DE 2025"). */
+function doeDateOf(lines) {
+  for (const line of lines) {
+    const m = /FORTALEZA, (\d{1,2}) DE (\p{L}+) DE (\d{4})/u.exec(line);
+    if (!m) continue;
+    const month = MONTHS.indexOf(fold(m[2]));
+    if (month < 0) continue;
+    return `${m[3]}-${String(month + 1).padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  }
+  throw new Error('Diário Oficial do Ceará: data do cabeçalho não encontrada');
+}
+
+/**
+ * Linhas "NCM DISCRIMINAÇÃO" de um anexo de IN no Diário Oficial. O PDF às vezes põe a NCM sozinha
+ * numa linha e a descrição na seguinte, ou cola a NCM no fim da descrição ("...dados8528.52.00"):
+ * várias NCM com a mesma descrição viram um item só.
+ */
+function parseNcmTable(lines) {
+  const items = [];
+  let pending = [];
+  let lastGroup = false;
+  const only = new RegExp(`^(${NCM_CODE})$`);
+  const leading = new RegExp(`^(${NCM_CODE}) (.+)$`);
+  const glued = /^(.*?\D)(\d{4}\.\d{2}\.\d{2})$/;
+  const skip = (line) => !line || /DIÁRIO OFICIAL DO ESTADO|^NCM DISCRIMINAÇÃO/.test(line);
+  const clean = lines.map((l) => l.trim()).filter((l) => !skip(l));
+  for (const [index, line] of clean.entries()) {
+    if (line === '(...)') {
+      lastGroup = false;
+      continue;
+    }
+    const alone = only.exec(line);
+    if (alone) {
+      // NCM sozinha depois de um grupo: é do grupo, a não ser que a linha seguinte seja a descrição
+      // de um item novo (sem NCM no começo).
+      const next = clean[index + 1] ?? '';
+      const startsNew = next !== '' && next !== '(...)' && !only.test(next) && !leading.test(next);
+      if (lastGroup && pending.length === 0 && !startsNew) items.at(-1).ncm.push(alone[1]);
+      else pending.push(alone[1]);
+      continue;
+    }
+    const lead = leading.exec(line);
+    if (lead && pending.length === 0) {
+      items.push({ ncm: [lead[1]], description: lead[2] });
+      lastGroup = false;
+      continue;
+    }
+    const tail = glued.exec(line);
+    const text = tail ? tail[1] : line;
+    if (pending.length > 0) {
+      items.push({ ncm: [...pending, ...(tail ? [tail[2]] : [])], description: text });
+      pending = [];
+      lastGroup = true;
+      continue;
+    }
+    const last = items.at(-1);
+    if (!last) throw new Error(`Lista de NCM: texto antes do primeiro item: "${line}"`);
+    last.description = joinLines([last.description, text]);
+    if (tail) last.ncm.push(tail[2]);
+  }
+  if (pending.length > 0) throw new Error(`Lista de NCM: NCM sem descrição: ${pending.join(', ')}`);
+  return items.map((item) => {
+    const description = item.description.replace(/\*/g, '').trim();
+    const except = [...description.matchAll(/exceto NCM (\d{4}\.\d{2}\.\d{2})/g)].map((m) => m[1]);
+    return { ncm: item.ncm, description, except };
+  });
+}
+
+/**
+ * Lista dos produtos de informática do "ato do Secretário da Fazenda" (Decreto 31.066/2012, art.
+ * 1º, parágrafo único, "b"): Instrução Normativa SEFAZ 148/2024 (DOE de 15/01/2025, efeitos a
+ * partir de 01/03/2025, revogou a IN 04/2013), alterada pela IN 135/2025 (DOE de 28/10/2025, em
+ * vigor na publicação). Cada versão é a lista inteira na data.
+ */
+export function parseCeInformaticsList(in148Lines, in135Lines) {
+  const start = in148Lines.findIndex((l) => /^INSTRUÇÃO NORMATIVA Nº ?148, de/.test(l));
+  if (start < 0) throw new Error('IN 148/2024 não encontrada no Diário Oficial');
+  const annex = in148Lines.findIndex(
+    (l, i) => i > start && /^INSTRUÇÃO NORMATIVA Nº ?148\/2024$/.test(l),
+  );
+  const end = in148Lines.findIndex((l, i) => i > annex && /^SECRETARIA |^\*\*\* \*\*\*/.test(l));
+  if (annex < 0 || end < 0) throw new Error('IN 148/2024: Anexo Único não encontrado');
+  const body = joinLines(in148Lines.slice(start, annex));
+  const effects = /produzindo efeitos a partir do dia (\d{1,2})\.?º de (\p{L}+) de (\d{4})/u.exec(
+    body,
+  );
+  if (
+    !effects ||
+    !/Fica revogada a Instrução Normativa n\.º 04, de 31 de janeiro de 2013/.test(body)
+  ) {
+    throw new Error('IN 148/2024: vigência ou revogação da IN 04/2013 fora do formato');
+  }
+  const validFrom = `${effects[3]}-${String(MONTHS.indexOf(fold(effects[2])) + 1).padStart(2, '0')}-${effects[1].padStart(2, '0')}`;
+  const base = parseNcmTable(in148Lines.slice(annex + 1, end));
+
+  const at135 = in135Lines.findIndex((l) => /^INSTRUÇÃO NORMATIVA Nº ?135, de/.test(l));
+  const art1 = in135Lines.findIndex(
+    (l, i) => i > at135 && /^Art\. 1\.º O Anexo Único da Instrução Normativa n\.º 148/.test(l),
+  );
+  const art2 = in135Lines.findIndex(
+    (l, i) =>
+      i > art1 &&
+      /^Art\. 2\.º Esta Instrução Normativa entra em vigor na data de sua publicação/.test(l),
+  );
+  if (at135 < 0 || art1 < 0 || art2 < 0) throw new Error('IN 135/2025 fora do formato');
+  const table = in135Lines.findIndex((l, i) => i > art1 && /^NCM DISCRIMINAÇÃO/.test(l));
+  const changes = parseNcmTable(in135Lines.slice(table + 1, art2));
+  const amended = base.map((item) => ({ ...item, ncm: [...item.ncm] }));
+  for (const change of changes) {
+    const same = amended.filter((item) => item.ncm.some((n) => change.ncm.includes(n)));
+    if (same.length === 0) {
+      amended.push(change);
+      continue;
+    }
+    // A nova redação vale para as NCM citadas: cada uma ganha a descrição nova.
+    for (const ncm of change.ncm) {
+      const item = amended.find((i) => i.ncm.includes(ncm));
+      if (!item) amended.push({ ...change, ncm: [ncm] });
+      else if (item.ncm.length === 1)
+        Object.assign(item, { description: change.description, except: change.except });
+      else {
+        item.ncm = item.ncm.filter((n) => n !== ncm);
+        amended.push({ ...change, ncm: [ncm] });
+      }
+    }
+  }
+  const in135Date = doeDateOf(in135Lines);
+  return {
+    act: 'Instrução Normativa SEFAZ 148/2024 (CE), alterada pela IN 135/2025',
+    decree: 'Decreto 31.066/2012 (CE)',
+    sources: ['stCeInformaticaIn148', 'stCeInformaticaIn135'],
+    versions: [
+      { validFrom: in135Date, validTo: null, amendedBy: 'IN SEFAZ 135/2025', items: amended },
+      { validFrom, validTo: dayBefore(in135Date), amendedBy: null, items: base },
+    ],
   };
 }
 
@@ -551,6 +1007,9 @@ export function ceNetLoadRegimes(decrees, { ufRegions }) {
     importAddition: byColumn(parsed.importAddition),
     outputNote: parsed.outputNote,
     simplesBuyer: parsed.simplesBuyer,
+    transfer: parsed.transfer,
+    specialRegime: parsed.specialRegime,
+    industry: parsed.industry,
     versions: parsed.versions.map((v) => ({
       validFrom: v.validFrom,
       validTo: v.validTo,

@@ -273,6 +273,18 @@
    "importAddition": null,
    "outputNote": "ICMS retido por substituição tributária - Decreto nº 30.519/2011",
    "simplesBuyer": null,
+   "transfer": {
+    "basis": "caput",
+    "interstateOnly": false,
+    "internalMva": "80",
+    "interstateMva": "80"
+   },
+   "specialRegime": {
+    "kind": "annex-iii",
+    "article": "art. 4º",
+    "adjustable": false
+   },
+   "industry": null,
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -609,6 +621,29 @@
    "importAddition": null,
    "outputNote": "ICMS retido por substituição tributária - Decreto nº 31.066/2012",
    "simplesBuyer": null,
+   "transfer": {
+    "basis": "caput",
+    "interstateOnly": false,
+    "internalMva": "30",
+    "interstateMva": "30"
+   },
+   "specialRegime": {
+    "kind": "annex-iii",
+    "article": "art. 5º",
+    "adjustable": false
+   },
+   "industry": {
+    "kind": "fixed",
+    "article": "art. 2º",
+    "validFrom": "2024-01-01",
+    "load": "4.11",
+    "unlistedLoad": "4.34",
+    "mva": "30",
+    "referenceRate": null,
+    "optional": null,
+    "simplesExcluded": false,
+    "headOfficeWithoutMva": true
+   },
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -1090,6 +1125,36 @@
    },
    "outputNote": "ICMS retido por substituição tributária - Decreto nº 31.270/2013",
    "simplesBuyer": null,
+   "transfer": {
+    "basis": "caput",
+    "interstateOnly": true,
+    "internalMva": null,
+    "interstateMva": "50"
+   },
+   "specialRegime": {
+    "kind": "annex-iii",
+    "article": "art. 5º",
+    "adjustable": true
+   },
+   "industry": {
+    "kind": "fixed",
+    "article": "art. 2º",
+    "validFrom": "2024-01-01",
+    "load": "7.64",
+    "unlistedLoad": null,
+    "mva": "45",
+    "referenceRate": "20",
+    "optional": {
+     "article": "art. 2º-A",
+     "cnaes": [
+      "2342702",
+      "2349499"
+     ],
+     "load": "4.49"
+    },
+    "simplesExcluded": true,
+    "headOfficeWithoutMva": false
+   },
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -1480,6 +1545,29 @@
     "rule": "mva",
     "mva": "27"
    },
+   "transfer": {
+    "basis": "caput",
+    "interstateOnly": true,
+    "internalMva": null,
+    "interstateMva": "40"
+   },
+   "specialRegime": {
+    "kind": "annex-iii",
+    "article": "art. 4º",
+    "adjustable": true
+   },
+   "industry": {
+    "kind": "annex-iii",
+    "article": "art. 2º",
+    "validFrom": "2019-01-01",
+    "load": null,
+    "unlistedLoad": null,
+    "mva": "40",
+    "referenceRate": null,
+    "optional": null,
+    "simplesExcluded": false,
+    "headOfficeWithoutMva": false
+   },
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -1806,6 +1894,14 @@
     "rule": "excluded",
     "mva": null
    },
+   "transfer": {
+    "basis": "document",
+    "interstateOnly": false,
+    "internalMva": "60",
+    "interstateMva": "100"
+   },
+   "specialRegime": null,
+   "industry": null,
    "versions": [
     {
      "validFrom": "2024-01-01",
@@ -2115,6 +2211,143 @@
    },
    "outputNote": "ICMS retido por substituição tributária - Decreto nº 36.617/2025",
    "simplesBuyer": null,
+   "transfer": {
+    "basis": "document",
+    "interstateOnly": true,
+    "internalMva": null,
+    "interstateMva": "49.08"
+   },
+   "specialRegime": {
+    "kind": "own-table",
+    "article": "arts. 4º a 12",
+    "adjustable": true,
+    "entry": {
+     "n-ne-co-es": "1.37",
+     "s-se-except-es": "2.16"
+    },
+    "transfer": {
+     "n-ne-co-es": "1.49",
+     "s-se-except-es": "2.38"
+    },
+    "simplesAddition": {
+     "internal": "3",
+     "n-ne-co-es": "6",
+     "s-se-except-es": "4"
+    },
+    "distributionCenter": {
+     "n-ne-co-es": "1.00",
+     "s-se-except-es": "1.33"
+    },
+    "internalBetweenWholesalersDeferred": true,
+    "importedAt4Deferred": true,
+    "exits": [
+     {
+      "channel": "hospital",
+      "validFrom": "2025-06-01",
+      "sale": [
+       {
+        "goodsClass": "basket-7",
+        "label": "7% - Cesta Básica",
+        "percent": "2.38"
+       },
+       {
+        "goodsClass": "basket-12",
+        "label": "12% - Cesta Básica",
+        "percent": "3.56"
+       },
+       {
+        "goodsClass": "rate-20",
+        "label": "20%",
+        "percent": "7.08"
+       }
+      ],
+      "transfer": [
+       {
+        "goodsClass": "basket-7",
+        "label": "7% - Cesta Básica",
+        "percent": "4.44"
+       },
+       {
+        "goodsClass": "basket-12",
+        "label": "12% - Cesta Básica",
+        "percent": "8.42"
+       },
+       {
+        "goodsClass": "rate-20",
+        "label": "20%",
+        "percent": "12.87"
+       }
+      ],
+      "importAddition": "2.52",
+      "interstateImportAddition": "0.87"
+     },
+     {
+      "channel": "pharma",
+      "validFrom": "2025-06-01",
+      "sale": [
+       {
+        "goodsClass": "basket-7",
+        "label": "7% - Cesta Básica",
+        "percent": "3.20"
+       },
+       {
+        "goodsClass": "basket-12",
+        "label": "12% - Cesta Básica",
+        "percent": "6.08"
+       },
+       {
+        "goodsClass": "rate-20",
+        "label": "20%",
+        "percent": "9.30"
+       }
+      ],
+      "transfer": [
+       {
+        "goodsClass": "basket-7",
+        "label": "7% - Cesta Básica",
+        "percent": "4.44"
+       },
+       {
+        "goodsClass": "basket-12",
+        "label": "12% - Cesta Básica",
+        "percent": "8.42"
+       },
+       {
+        "goodsClass": "rate-20",
+        "label": "20%",
+        "percent": "12.87"
+       }
+      ],
+      "importAddition": "2.52",
+      "interstateImportAddition": "0.87"
+     },
+     {
+      "channel": "distribution-center",
+      "validFrom": "2025-06-01",
+      "sale": [
+       {
+        "goodsClass": "basket-7",
+        "label": "7% - Cesta Básica",
+        "percent": "4.44"
+       },
+       {
+        "goodsClass": "basket-12",
+        "label": "12% - Cesta Básica",
+        "percent": "8.42"
+       },
+       {
+        "goodsClass": "rate-20",
+        "label": "20%",
+        "percent": "12.87"
+       }
+      ],
+      "transfer": null,
+      "importAddition": "2.52",
+      "interstateImportAddition": "0.87"
+     }
+    ]
+   },
+   "industry": null,
    "versions": [
     {
      "validFrom": "2025-06-01",
@@ -2176,5 +2409,848 @@
     }
    ]
   }
- ]
+ ],
+ "informaticsList": {
+  "act": "Instrução Normativa SEFAZ 148/2024 (CE), alterada pela IN 135/2025",
+  "decree": "Decreto 31.066/2012 (CE)",
+  "sources": [
+   "stCeInformaticaIn148",
+   "stCeInformaticaIn135"
+  ],
+  "versions": [
+   {
+    "validFrom": "2025-10-28",
+    "validTo": null,
+    "amendedBy": "IN SEFAZ 135/2025",
+    "items": [
+     {
+      "ncm": [
+       "3215.1"
+      ],
+      "description": "Tintas de impressão",
+      "except": []
+     },
+     {
+      "ncm": [
+       "3926.90.90"
+      ],
+      "description": "Peça para servidores RIC",
+      "except": []
+     },
+     {
+      "ncm": [
+       "7326.90.90"
+      ],
+      "description": "Caixa de metal de segurança para DVR com chave",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8414.59.10"
+      ],
+      "description": "Microventiladores com área de carcaça inferior a 90 cm2",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8414.59.90"
+      ],
+      "description": "Outros microventiladores",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8421.99.10",
+       "8414.90.40"
+      ],
+      "description": "Filtros de Ar para Gabinetes de computadores",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8443"
+      ],
+      "description": "Máquinas e aparelhos de impressão por meio de blocos, cilindros e outros elementos de impressão da posição 8442; outras impressoras, aparelhos de copiar e aparelhos de telecopiar (fax), mesmo combinados entre si, partes e acessórios.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8471"
+      ],
+      "description": "Máquinas automáticas para processamento de dados e suas unidades; leitores magnéticos ou ópticos, máquinas para registrar dados em suporte sob forma codificada, e máquinas para processamento desses dados não especificadas, nem compreendidas, em outras posições.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8473"
+      ],
+      "description": "Partes e acessórios (exceto estojos, capas e semelhantes) reconhecíveis como exclusivos ou principalmente destinados às máquinas ou aparelhos das posições 84.69 a 84.72",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.31.11"
+      ],
+      "description": "Transformadores de corrente",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.31.19"
+      ],
+      "description": "Outros transformadores eletr. port<=1KVA, P/FREQ<=60HZ",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.31.99"
+      ],
+      "description": "Outros transformadores elétricos, potência <=1KVA",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.10"
+      ],
+      "description": "Fonte para Notebook",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.21"
+      ],
+      "description": "Conversores estáticos retificadores, exceto carregadores de acumuladores, de cristal (semicondutores)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.29"
+      ],
+      "description": "Outros conversores estáticos, retificadores, exceto carregadores de acumuladores",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.30"
+      ],
+      "description": "Carregadores de Notebook/Tablet",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.40"
+      ],
+      "description": "Equipamento de alimentação ininterrupta de energia (UPS ou No-Break)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.90"
+      ],
+      "description": "Módulo isolador/Fonte de alimentação",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.90.90"
+      ],
+      "description": "Outras partes de outros transformadores, conversores, etc",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8506.50.10"
+      ],
+      "description": "Pilhas, baterias eletr. de lítio, vol<=300cm3",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8506.80.90"
+      ],
+      "description": "Outras pilhas/baterias eletr.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8507.60.00"
+      ],
+      "description": "Acumuladores elétricos e seus preparadores mesmo de forma quadrada ou retangular/ de íon de lítio",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8517.18.30"
+      ],
+      "description": "Telefone IP",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8517.6"
+      ],
+      "description": "Outros aparelhos para emissão, transmissão ou recepção de voz, imagens ou outros dados, incluindo os aparelhos para comunicação em redes por fio ou redes sem fio (tal como uma rede local (LAN) ou rede de área estendida (WAN)), exceto NCM 8517.62.73 (Interfone), e smartwatch (relógios inteligentes)",
+      "except": [
+       "8517.62.73"
+      ]
+     },
+     {
+      "ncm": [
+       "8517.71.90"
+      ],
+      "description": "Antena wireless",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8518.21.00"
+      ],
+      "description": "Alto-falante (altifalante) único montado no seu receptáculo, de pequeno e médio porte, para uso pessoal, doméstico ou de escritório, destinado a complementar equipamentos de informática e audiovisuais, limitado à potência máxima de 50 watts.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8518.22.00"
+      ],
+      "description": "Alto-falante (altifalante) único montado no seu receptáculo, de pequeno e médio porte, para uso pessoal, doméstico ou de escritório, destinado a complementar equipamentos de informática e audiovisuais, limitado à potência máxima de 50 watts.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8518.30.00"
+      ],
+      "description": "Fones de ouvido (auscultadores e auriculares), mesmo combinados com um microfone, e conjuntos ou sortidos constituídos por um microfone e um ou mais alto falantes (altifalantes)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8521.90.00"
+      ],
+      "description": "Gravador reprodutor e editor de imagem e som, em discos, por meio magnético, óptico ou optomagnético",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8523"
+      ],
+      "description": "Discos, fitas, dispositivos de armazenamento de dados, não volátil, à base de semicondutores, “cartões inteligentes” e outros suportes para gravação de som ou para gravações semelhantes, mesmo gravados, incluindo as matrizes e moldes galvânicos para fabricação de discos, exceto os produtos do Capítulo 37 da NCM/SH",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8525.89.19"
+      ],
+      "description": "Webcam, exceto CFTV",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8525.89.29"
+      ],
+      "description": "Outras câmeras de vídeo",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8527.13.00"
+      ],
+      "description": "Outros aparelhos combinados com aparelho de gravação ou de reprodução de som",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.42.00",
+       "8528.52.00",
+       "8528.59.00"
+      ],
+      "description": "Monitor policromático utilizado por máquinas de processamento de dados",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.6"
+      ],
+      "description": "Projetores de vídeo",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.62.00"
+      ],
+      "description": "Projetor multimídia utilizado por sistema de processamento de dados.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.69.10"
+      ],
+      "description": "Monitor e projetor com tecnologia digital de microespelhos.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.71.11"
+      ],
+      "description": "Receptor decodificador integrado (IRD) de sinais digitalizados de vídeo codificados.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.71.19"
+      ],
+      "description": "Receptor/decodificador integrado de sinais digitalizados de vídeo codificados.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.71.90"
+      ],
+      "description": "Receptor de TV mesmo que incorpore radiodifusão.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.72.00"
+      ],
+      "description": "Monitor TV para computadores até 43(quarenta e três) polegadas",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8529.90.11"
+      ],
+      "description": "Gabinetes, bastidores e armações",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8536.70.00"
+      ],
+      "description": "Conectores para fibras ópticas, feixes ou cabos de fibras ópticas.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8536.90.90"
+      ],
+      "description": "Conectores de rede local (BNC)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8537.10.90"
+      ],
+      "description": "Conversor de servidor torre para rack",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8539.32.20"
+      ],
+      "description": "Lâmpada para projetor multimídia",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8542.32.21",
+       "8542.32.91"
+      ],
+      "description": "Outras memórias ROM, PROM, ETC. TECNOLOGIA MOS, ACESSO,=25NS",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8542.31.20"
+      ],
+      "description": "Processadores montados, próprios para montagem em superfície (SMD - Surface Mounted Device)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8542.31.90"
+      ],
+      "description": "Outros processadores e controladores, mesmo combinados com memórias, conversores, circuitos lógicos, amplificadores, circuitos temporizadores e de sincronização, ou outros circuitos",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.20.00"
+      ],
+      "description": "Cabos coaxiais e outros condutores elétricos coaxiais",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.42.00"
+      ],
+      "description": "Cabos de rede em geral e Cabos Patch Cord",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.49.00"
+      ],
+      "description": "Outros tipos de cabos, condutores elétricos para tensão não superior a 80V",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.70.10"
+      ],
+      "description": "Cabos de fibra ópticas, com revestimento externo de material dielétrico",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.70.90"
+      ],
+      "description": "Cabos de fibra óptica",
+      "except": []
+     },
+     {
+      "ncm": [
+       "9001.10.20"
+      ],
+      "description": "Feixes e cabos de fibra ópticas",
+      "except": []
+     },
+     {
+      "ncm": [
+       "9032.89.11"
+      ],
+      "description": "Estabilizadores",
+      "except": []
+     },
+     {
+      "ncm": [
+       "9612.10.00"
+      ],
+      "description": "Fitas para impressoras",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8524.91.00",
+       "8524.92.00",
+       "8524.99.00"
+      ],
+      "description": "Módulos de visualização de tela (ecrã) plana, mesmo que incorporem telas sensíveis ao toque (ecrãs tácteis), sejam de cristais líquidos, de diodos emissores de luz orgânicos (OLED) ou outros.",
+      "except": []
+     }
+    ]
+   },
+   {
+    "validFrom": "2025-03-01",
+    "validTo": "2025-10-27",
+    "amendedBy": null,
+    "items": [
+     {
+      "ncm": [
+       "3215.1"
+      ],
+      "description": "Tintas de impressão",
+      "except": []
+     },
+     {
+      "ncm": [
+       "3926.90.90"
+      ],
+      "description": "Peça para servidores RIC",
+      "except": []
+     },
+     {
+      "ncm": [
+       "7326.90.90"
+      ],
+      "description": "Caixa de metal de segurança para DVR com chave",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8414.59.10"
+      ],
+      "description": "Microventiladores com área de carcaça inferior a 90 cm2",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8414.59.90"
+      ],
+      "description": "Outros microventiladores",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8421.99.10",
+       "8414.90.40"
+      ],
+      "description": "Filtros de Ar para Gabinetes de computadores",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8443"
+      ],
+      "description": "Máquinas e aparelhos de impressão por meio de blocos, cilindros e outros elementos de impressão da posição 8442; outras impressoras, aparelhos de copiar e aparelhos de telecopiar (fax), mesmo combinados entre si, partes e acessórios.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8471"
+      ],
+      "description": "Máquinas automáticas para processamento de dados e suas unidades; leitores magnéticos ou ópticos, máquinas para registrar dados em suporte sob forma codificada, e máquinas para processamento desses dados não especificadas, nem compreendidas, em outras posições.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8473"
+      ],
+      "description": "Partes e acessórios (exceto estojos, capas e semelhantes) reconhecíveis como exclusivos ou principalmente destinados às máquinas ou aparelhos das posições 84.69 a 84.72",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.31.11"
+      ],
+      "description": "Transformadores de corrente",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.31.19"
+      ],
+      "description": "Outros transformadores eletr. port<=1KVA, P/FREQ<=60HZ",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.31.99"
+      ],
+      "description": "Outros transformadores elétricos, potência <=1KVA",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.10"
+      ],
+      "description": "Fonte para Notebook",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.21"
+      ],
+      "description": "Conversores estáticos retificadores, exceto carregadores de acumuladores, de cristal (semicondutores)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.29"
+      ],
+      "description": "Outros conversores estáticos, retificadores, exceto carregadores de acumuladores",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.30"
+      ],
+      "description": "Carregadores de Notebook/Tablet",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.40"
+      ],
+      "description": "Equipamento de alimentação ininterrupta de energia (UPS ou No-Break)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.40.90"
+      ],
+      "description": "Módulo isolador/Fonte de alimentação",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8504.90.90"
+      ],
+      "description": "Outras partes de outros transformadores, conversores, etc",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8506.50.10"
+      ],
+      "description": "Pilhas, baterias eletr. de lítio, vol<=300cm3",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8506.80.90"
+      ],
+      "description": "Outras pilhas/baterias eletr.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8507.60.00"
+      ],
+      "description": "Acumuladores elétricos e seus preparadores mesmo de forma quadrada ou retangular/ de íon de lítio",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8517.18.30"
+      ],
+      "description": "Telefone IP",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8517.6"
+      ],
+      "description": "Outros aparelhos para emissão, transmissão ou recepção de voz, imagens ou outros dados, incluindo os aparelhos para comunicação em redes por fio ou redes sem fio (tal como uma rede local (LAN) ou rede de área estendida (WAN)), exceto NCM 8517.62.73 (Interfone), e smartwatch (relógios inteligentes)",
+      "except": [
+       "8517.62.73"
+      ]
+     },
+     {
+      "ncm": [
+       "8517.71.90"
+      ],
+      "description": "Antena wireless",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8518.21.00"
+      ],
+      "description": "Alto-falante (altifalante) único montado no seu receptáculo",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8518.22.00"
+      ],
+      "description": "Alto-falante (altifalante) múltiplos montados no seu receptáculo",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8518.30.00"
+      ],
+      "description": "Fones de ouvido (auscultadores e auriculares), mesmo combinados com um microfone, e conjuntos ou sortidos constituídos por um microfone e um ou mais alto falantes (altifalantes)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8521.90.00"
+      ],
+      "description": "Gravador reprodutor e editor de imagem e som, em discos, por meio magnético, óptico ou optomagnético",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8523"
+      ],
+      "description": "Discos, fitas, dispositivos de armazenamento de dados, não volátil, à base de semicondutores, “cartões inteligentes” e outros suportes para gravação de som ou para gravações semelhantes, mesmo gravados, incluindo as matrizes e moldes galvânicos para fabricação de discos, exceto os produtos do Capítulo 37 da NCM/SH",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8525.89.19"
+      ],
+      "description": "Webcam, exceto CFTV",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8525.89.29"
+      ],
+      "description": "Outras câmeras de vídeo",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8527.13.00"
+      ],
+      "description": "Outros aparelhos combinados com aparelho de gravação ou de reprodução de som",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.42.00",
+       "8528.52.00",
+       "8528.59.00"
+      ],
+      "description": "Monitor policromático utilizado por máquinas de processamento de dados",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.6"
+      ],
+      "description": "Projetores de vídeo",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.62.00"
+      ],
+      "description": "Projetor multimídia utilizado por sistema de processamento de dados.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.69.10"
+      ],
+      "description": "Monitor e projetor com tecnologia digital de microespelhos.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.71.11"
+      ],
+      "description": "Receptor decodificador integrado (IRD) de sinais digitalizados de vídeo codificados.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.71.19"
+      ],
+      "description": "Receptor/decodificador integrado de sinais digitalizados de vídeo codificados.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.71.90"
+      ],
+      "description": "Receptor de TV mesmo que incorpore radiodifusão.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8528.72.00"
+      ],
+      "description": "Monitor TV para computadores até 43(quarenta e três) polegadas",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8529.90.11"
+      ],
+      "description": "Gabinetes, bastidores e armações",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8536.70.00"
+      ],
+      "description": "Conectores para fibras ópticas, feixes ou cabos de fibras ópticas.",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8536.90.90"
+      ],
+      "description": "Conectores de rede local (BNC)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8537.10.90"
+      ],
+      "description": "Conversor de servidor torre para rack",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8539.32.20"
+      ],
+      "description": "Lâmpada para projetor multimídia",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8542.32.21",
+       "8542.32.91"
+      ],
+      "description": "Outras memórias ROM, PROM, ETC. TECNOLOGIA MOS, ACESSO,=25NS",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8542.31.20"
+      ],
+      "description": "Processadores montados, próprios para montagem em superfície (SMD - Surface Mounted Device)",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8542.31.90"
+      ],
+      "description": "Outros processadores e controladores, mesmo combinados com memórias, conversores, circuitos lógicos, amplificadores, circuitos temporizadores e de sincronização, ou outros circuitos",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.20.00"
+      ],
+      "description": "Cabos coaxiais e outros condutores elétricos coaxiais",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.42.00"
+      ],
+      "description": "Cabos de rede em geral e Cabos Patch Cord",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.49.00"
+      ],
+      "description": "Outros tipos de cabos, condutores elétricos para tensão não superior a 80V",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.70.10"
+      ],
+      "description": "Cabos de fibra ópticas, com revestimento externo de material dielétrico",
+      "except": []
+     },
+     {
+      "ncm": [
+       "8544.70.90"
+      ],
+      "description": "Cabos de fibra óptica",
+      "except": []
+     },
+     {
+      "ncm": [
+       "9001.10.20"
+      ],
+      "description": "Feixes e cabos de fibra ópticas",
+      "except": []
+     },
+     {
+      "ncm": [
+       "9032.89.11"
+      ],
+      "description": "Estabilizadores",
+      "except": []
+     },
+     {
+      "ncm": [
+       "9612.10.00"
+      ],
+      "description": "Fitas para impressoras",
+      "except": []
+     }
+    ]
+   }
+  ]
+ }
 }

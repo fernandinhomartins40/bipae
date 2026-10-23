@@ -317,19 +317,23 @@ describe('dados fiscais guardados no caixa (F3-06.d2)', () => {
 
   it('antes da primeira sincronização o caixa não sabe a UF nem o regime', async () => {
     const contexto = await pdv.fiscalContext();
-    expect(contexto.company).toEqual({ uf: null, taxRegime: null });
+    expect(contexto.company).toEqual({ uf: null, taxRegime: null, cnae: null });
     expect(contexto.profiles.size).toBe(0);
+    expect(contexto.stNetLoadClasses).toEqual({});
   });
 
   it('guarda a empresa e os perfis, e troca tudo quando chega um retrato novo', async () => {
     const id = uuidv7();
     await pdv.applyFiscal({
       version: 'v1',
-      company: { uf: 'SP', taxRegime: 'simples' },
+      company: { uf: 'CE', taxRegime: 'simples', cnae: '4741500' },
       profiles: [{ id, ...perfil }],
+      // Carga líquida do Ceará (F3-26.d.CE.d): a classe do produto, para a NFC-e em contingência.
+      stNetLoadClasses: { [id]: 'rate-20' },
     });
     const primeiro = await pdv.fiscalContext();
-    expect(primeiro.company).toEqual({ uf: 'SP', taxRegime: 'simples' });
+    expect(primeiro.company).toEqual({ uf: 'CE', taxRegime: 'simples', cnae: '4741500' });
+    expect(primeiro.stNetLoadClasses).toEqual({ [id]: 'rate-20' });
     expect(primeiro.profiles.get(id)).toEqual(perfil);
 
     // O retrato novo substitui o anterior por inteiro: perfil que saiu do servidor sai do caixa.
@@ -340,7 +344,8 @@ describe('dados fiscais guardados no caixa (F3-06.d2)', () => {
       profiles: [{ id: outro, ...perfil, csosn: '500' }],
     });
     const segundo = await pdv.fiscalContext();
-    expect(segundo.company).toEqual({ uf: null, taxRegime: null });
+    expect(segundo.company).toEqual({ uf: null, taxRegime: null, cnae: null });
+    expect(segundo.stNetLoadClasses).toEqual({});
     expect([...segundo.profiles.keys()]).toEqual([outro]);
     expect(segundo.profiles.get(outro)!.csosn).toBe('500');
   });

@@ -368,3 +368,34 @@ describe('NFC-e de entrega a domicílio (F5-10, dúvida D-032)', () => {
     expect(prorateFreight(100, [0, 0])).toEqual([0, 0]);
   });
 });
+
+describe('NFC-e com a carga líquida do Ceará (F3-26.d.CE.d)', () => {
+  const ceara = (classe: string | null, cnae: string | null = '4741-5/00') =>
+    venda({
+      company: {
+        ...venda().company,
+        uf: 'CE',
+        // Comércio varejista de material de construção: Anexo II do Decreto 31.270/2013.
+        cnae,
+        address: { ...venda().company.address, cityCode: '2304400', cityName: 'Fortaleza' },
+      },
+      items: venda().items.map((i) => ({ ...i, stNetLoadClass: classe })),
+    });
+
+  it('produto no regime do vendedor: a expressão do decreto vai no infCpl', async () => {
+    const r = buildSaleNfce(ceara('rate-20'));
+    if (!r.ok) throw new Error(r.pending.join('; '));
+    const texto = 'ICMS retido por substituição tributária - Decreto nº 31.270/2013';
+    expect(r.input.additionalInfo).toBe(texto);
+    expect(r.document.xml).toContain(`<infCpl>${texto}</infCpl>`);
+    expect(await validate(r.document.xml)).toEqual([]);
+  });
+
+  it('sem CNAE, sem classe ou fora do regime: nada muda e a venda segue', () => {
+    for (const draft of [ceara('rate-20', null), ceara(null), ceara('outside')]) {
+      const r = buildSaleNfce(draft);
+      expect(r.ok, r.ok ? '' : r.pending.join(' | ')).toBe(true);
+      expect(r.ok && r.input.additionalInfo).toBeFalsy();
+    }
+  });
+});

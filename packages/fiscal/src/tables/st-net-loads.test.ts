@@ -380,14 +380,11 @@ describe('o que não se aplica volta como situação, nunca como suposição (D-
     );
   });
 
-  it('RET e transferência: falta configurar, com o motivo', () => {
+  it('RET no vestuário: o decreto não traz carga própria, falta configurar', () => {
     const base = { uf: 'CE', buyerCnae: '4781400', originUf: 'SP', date: '2026-10-23' };
     const ret = stNetLoadFor({ ...base, goodsClass: 'rate-20', specialRegime: true });
     expect(ret).toMatchObject({ status: 'missing', topic: 'special-regime' });
     expect(stNetLoadMessage(ret)).toMatch(/Regime Especial de Tributação/);
-    const transfer = stNetLoadFor({ ...base, goodsClass: 'rate-20', transfer: true });
-    expect(transfer).toMatchObject({ status: 'missing', topic: 'transfer' });
-    expect(stNetLoadMessage(transfer)).toMatch(/transferência/);
   });
 
   it('cada situação tem mensagem em português', () => {
@@ -404,7 +401,7 @@ describe('o que não se aplica volta como situação, nunca como suposição (D-
     const messages = cases.map((c) => stNetLoadMessage(stNetLoadFor(c)));
     expect(messages[0]).toBe('Carga líquida de 15,60% (Decreto 34.256/2021 (CE), 20%).');
     expect(messages[1]).toMatch(/vale a ST comum/);
-    expect(messages[2]).toMatch(/retenção nas saídas internas \(art\. 2º\) ainda falta configurar/);
+    expect(messages[2]).toMatch(/retenção nas saídas internas \(art\. 2º\) aparece na nota/);
     expect(messages[3]).toMatch(/fora do Decreto 36\.617/);
     expect(messages[4]).toMatch(/não tem a tabela/);
     expect(messages[5]).toMatch(/Origem do fornecedor/);

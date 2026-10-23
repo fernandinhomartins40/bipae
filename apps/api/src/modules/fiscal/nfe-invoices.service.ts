@@ -202,6 +202,7 @@ export class NfeInvoicesService implements OnModuleInit {
         uf: company.uf,
         regime: company.taxRegime,
         cnae: company.cnae,
+        stSpecialRegime: company.stSpecialRegime,
         address: {
           street: company.street,
           number: company.streetNumber,

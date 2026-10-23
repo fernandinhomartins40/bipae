@@ -357,6 +357,19 @@ describe('carga líquida do Ceará no rascunho (F3-26.d.CE.c)', () => {
     expect(r.notes.join(' ')).toMatch(/ST recolhida na entrada pela carga líquida/);
   });
 
+  it('indústria de informática (F3-26.d.CE.d): o cálculo do art. 2º vai nas observações', () => {
+    const draft = ceara('informatics');
+    const r = buildDraftNfe({
+      ...draft,
+      // Fabricação de equipamentos de informática: Anexo I do Decreto 31.066/2012.
+      company: { ...draft.company, cnae: '2621-3/00' },
+    });
+    expect(r.ok, r.ok ? '' : r.pending.join(' | ')).toBe(true);
+    if (!r.ok) return;
+    expect(r.notes.join(' ')).toMatch(/Retenção na saída interna, art\. 2º.*ICMS retido R\$/);
+    expect(r.input.additionalInfo ?? '').not.toContain('ICMS retido');
+  });
+
   it('para outro estado, produto fora do regime ou sem classe: sem a expressão', () => {
     for (const draft of [ceara('rate-20', 'SP'), ceara('outside'), ceara(null)]) {
       const r = buildDraftNfe(draft);

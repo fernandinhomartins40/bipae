@@ -349,7 +349,13 @@ export interface TabOrderForTerminal {
  */
 export interface FiscalSnapshot {
   version: string;
-  company: { uf: string | null; taxRegime: string | null };
+  /** `cnae`: CNAE-Fiscal principal, para a expressão da carga líquida na NFC-e (F3-26.d.CE.d). */
+  company: { uf: string | null; taxRegime: string | null; cnae?: string | null };
+  /**
+   * Classe da mercadoria na carga líquida dos produtos que têm uma (F3-26.d.CE.d), por id: a NFC-e
+   * em contingência leva a expressão do decreto como a emitida pelo servidor.
+   */
+  stNetLoadClasses?: Record<string, string>;
   /**
    * Emitente da NFC-e e série do caixa (F3-15): o que o caixa sem internet precisa para montar
    * a nota em contingência. Ausente quando o caixa ainda não está ligado a uma empresa.

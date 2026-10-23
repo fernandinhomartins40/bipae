@@ -107,6 +107,7 @@ export function purchaseNetLoad(input: {
     buyerSimples: regime?.taxRegime === 'simples',
     transfer: supplierRoot !== null && supplierRoot === companyRoot,
     specialRegime: company.specialRegime,
+    ncm: item.ncm || null,
   });
   const base = {
     act: 'regime' in result ? result.regime.act : null,

@@ -11,7 +11,7 @@ import {
   type TerminalEvent,
 } from '@bipae/domain';
 import { saleTaxSummaries, sameTaxSummary, type SaleFiscalProfile } from '@bipae/fiscal';
-import { and, asc, eq, gt, inArray, or, sql } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray, isNotNull, or, sql } from 'drizzle-orm';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { assertStore } from '../../common/stores';
@@ -1083,6 +1083,16 @@ export class SyncService {
       .map((r) => `${r.id}@${r.updatedAt.toISOString()}`)
       .sort()
       .join(',');
+    // Classe da carga líquida dos produtos (F3-26.d.CE.d): só os que têm uma, para a NFC-e em
+    // contingência levar a expressão do decreto.
+    const netLoadClasses = await tx
+      .select({ id: products.id, goodsClass: products.stNetLoadClass })
+      .from(products)
+      .where(isNotNull(products.stNetLoadClass));
+    const classesStamp = netLoadClasses
+      .map((p) => `${p.id}=${p.goodsClass}`)
+      .sort()
+      .join(',');
     const version = createHash('sha256')
       .update(
         [
@@ -1094,6 +1104,8 @@ export class SyncService {
           profiles?.last,
           profiles?.n,
           rulesStamp,
+          company?.cnae ?? '',
+          classesStamp,
         ].join('|'),
       )
       .digest('hex')
@@ -1107,7 +1119,16 @@ export class SyncService {
     return {
       fiscal: {
         version,
-        company: { uf: company?.uf ?? null, taxRegime: company?.taxRegime ?? null },
+        company: {
+          uf: company?.uf ?? null,
+          taxRegime: company?.taxRegime ?? null,
+          cnae: company?.cnae ?? null,
+        },
+        ...(netLoadClasses.length > 0 && {
+          stNetLoadClasses: Object.fromEntries(
+            netLoadClasses.map((p) => [p.id, p.goodsClass as string]),
+          ),
+        }),
         profiles: rows.map((row) => {
           const data = row.data as Record<string, unknown>;
           return {

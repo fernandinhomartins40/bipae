@@ -48,7 +48,12 @@ import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI, roStReferences } from './st-ro.mjs';
 import { ceStReferences, parseCeVeiculos } from './st-ce.mjs';
 import { dfStReferences, parseDfAnexoIV } from './st-df.mjs';
-import { CE_NET_LOAD_SOURCES, ceNetLoadRegimes, parseCeNetLoadSource } from './st-ce-carga.mjs';
+import {
+  CE_NET_LOAD_SOURCES,
+  ceNetLoadRegimes,
+  parseCeInformaticsList,
+  parseCeNetLoadSource,
+} from './st-ce-carga.mjs';
 import { acStReferences, parseAcIn12023 } from './st-ac.mjs';
 import { amStReferences, parseAmLei6108 } from './st-am.mjs';
 import { parseRnAnexo007, rnStReferences } from './st-rn.mjs';
@@ -921,7 +926,14 @@ tables['st-references.json'] = await importStReferences(tables['cest.json']);
       parsed: parseCeNetLoadSource(source, lines),
     });
   }
-  tables['st-net-loads.json'] = ceNetLoadRegimes(decrees, { ufRegions });
+  tables['st-net-loads.json'] = {
+    ...ceNetLoadRegimes(decrees, { ufRegions }),
+    // Lista dos produtos de informática do ato do Secretário (F3-26.d.CE.d), do Diário Oficial.
+    informaticsList: parseCeInformaticsList(
+      await pdfLines(readFileSync(join(sourcesDir, manifest.stCeInformaticaIn148.file))),
+      await pdfLines(readFileSync(join(sourcesDir, manifest.stCeInformaticaIn135.file))),
+    ),
+  };
 }
 // Anexos I a V do Simples Nacional (LC 123/2006, redação da LC 155/2016): a alíquota efetiva
 // que vai na NFS-e (pTotTribSN) e que o dono não precisa saber de cabeça.
