@@ -125,6 +125,12 @@ export const LOCAL_MIGRATIONS: string[] = [
   /* 8 — F5-08: pedidos do garçom já juntados à comanda (cada um entra uma vez só) */ `
   CREATE TABLE applied_tab_orders (id TEXT PRIMARY KEY, applied_at TEXT NOT NULL);
   `,
+  /* 9 — F8-15: categoria do produto, para as abas da grade de produtos do caixa.
+     Zera o cursor do catálogo: a próxima sincronização baixa tudo de novo, já com a categoria. */ `
+  ALTER TABLE products ADD COLUMN category TEXT;
+  CREATE INDEX products_category ON products (category);
+  DELETE FROM meta WHERE key = 'catalog_cursor';
+  `,
 ];
 
 /**

@@ -47,7 +47,7 @@ test('venda cancelada não emite a nota, e os números sem nota são inutilizado
   const campo = page.getByLabel('Bipe o código ou digite o nome do produto');
   await campo.fill('7891000100103');
   await campo.press('Enter');
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

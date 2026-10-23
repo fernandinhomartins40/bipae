@@ -53,7 +53,7 @@ test('Pix com o QR da loja e cartão confirmado na maquininha', async ({ page })
 
   // Pix: o QR traz a chave e o valor da venda.
   await scan(page, '78912342');
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await expect(page.getByRole('img', { name: 'QR Code do Pix de R$ 18,90' })).toBeVisible();
@@ -67,7 +67,7 @@ test('Pix com o QR da loja e cartão confirmado na maquininha', async ({ page })
 
   // Cartão: cobra na maquininha e confirma, com o NSU se quiser; nada aprova sozinho.
   await scan(page, '78912342');
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Cartão de débito' }).click();
   await page.getByRole('button', { name: 'Adicionar cartão de débito' }).click();
   await expect(page.getByText('Cobre R$ 18,90 na maquininha.')).toBeVisible();

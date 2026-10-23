@@ -58,7 +58,7 @@ test('delivery: taxa do bairro somada no caixa e a entrega acompanhada', async (
   await page.getByRole('button', { name: /Confirmar entrega/ }).click();
   await expect(page.getByTestId('delivery-fee')).toHaveText('Taxa de entrega: R$ 6,50');
   await expect(page.getByTestId('pdv-total')).toHaveText('R$ 65,50');
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

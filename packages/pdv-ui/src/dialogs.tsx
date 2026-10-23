@@ -24,7 +24,17 @@ import {
 } from '@bipae/pdv-core';
 import { SimulatedTef } from '@bipae/platform/simulators';
 import { Alert, Badge, Button, cx, Modal, TextField } from '@bipae/ui';
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import {
+  Banknote,
+  Check,
+  CreditCard,
+  NotebookPen,
+  QrCode,
+  Ticket,
+  WalletCards,
+  type LucideIcon,
+} from 'lucide-react';
+import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import type { AuthorizablePermission, PosBackend } from './backend';
 
 export const brl = (c: number) => formatBRL(c as Cents);
@@ -380,14 +390,64 @@ export function CustomerDialog({
 
 // ---------------------------------------------------------------- payment
 
-const METHOD_KEYS: { method: PaymentMethod; key: string }[] = [
-  { method: 'cash', key: 'D' },
-  { method: 'pix', key: 'P' },
-  { method: 'debit', key: 'B' },
-  { method: 'credit', key: 'C' },
-  { method: 'voucher', key: 'V' },
-  { method: 'store_credit', key: 'R' },
+/**
+ * Formas de pagamento em cartões coloridos (F8-15), cada uma com a sua tecla: com o foco no
+ * valor, apertar a letra escolhe a forma.
+ */
+const METHOD_KEYS: {
+  method: PaymentMethod;
+  key: string;
+  icon: LucideIcon;
+  tone: { tile: string; circle: string };
+  /** Apelido que o cliente fala, ao lado do nome oficial. */
+  nickname?: string;
+}[] = [
+  {
+    method: 'cash',
+    key: 'D',
+    icon: Banknote,
+    tone: { tile: 'bg-tile-green', circle: 'bg-tile-green-strong' },
+  },
+  {
+    method: 'pix',
+    key: 'P',
+    icon: QrCode,
+    tone: { tile: 'bg-tile-blue', circle: 'bg-tile-blue-strong' },
+  },
+  {
+    method: 'debit',
+    key: 'B',
+    icon: CreditCard,
+    tone: { tile: 'bg-tile-purple', circle: 'bg-tile-purple-strong' },
+  },
+  {
+    method: 'credit',
+    key: 'C',
+    icon: WalletCards,
+    tone: { tile: 'bg-tile-orange', circle: 'bg-tile-orange-strong' },
+  },
+  {
+    method: 'voucher',
+    key: 'V',
+    icon: Ticket,
+    tone: { tile: 'bg-tile-yellow', circle: 'bg-tile-yellow-strong' },
+  },
+  {
+    method: 'store_credit',
+    key: 'R',
+    icon: NotebookPen,
+    tone: { tile: 'bg-surface-2', circle: 'bg-muted' },
+    nickname: 'fiado',
+  },
 ];
+
+/** Notas rápidas: o valor certo, os arredondamentos sugeridos e as notas de R$ 50 e R$ 100. */
+export function quickCash(dueCents: number): number[] {
+  return [...new Set([...cashSuggestions(dueCents), 5000, 10000])]
+    .filter((c) => c > 0)
+    .sort((a, b) => a - b)
+    .slice(0, 6);
+}
 
 const PIX_HINT: Record<TerminalPaymentSettings['pix'], string> = {
   manual: 'Receba pela chave Pix da loja e confirme quando cair.',
@@ -500,6 +560,7 @@ export function PaymentDialog({
   const [charge, setCharge] = useState<PixChargeView | null>(null);
   const [pixNotice, setPixNotice] = useState<string | null>(null);
   const [cardCharge, setCardCharge] = useState<CardChargeView | null>(null);
+  const amountRef = useRef<HTMLInputElement>(null);
 
   // Acompanha a maquininha: aprovou, o cartão entra sozinho (F8-10).
   useEffect(() => {
@@ -652,6 +713,21 @@ export function PaymentDialog({
   };
 
   const done = remaining === 0 && tenders.length > 0;
+  // Troco antes de confirmar (F8-15): conforme o operador digita o valor recebido.
+  const changePreview =
+    !done && method === 'cash' && amount.cents !== null && amount.cents > remaining
+      ? amount.cents - remaining
+      : 0;
+  /** A letra de cada forma (D, P, B, C, V, R) escolhe a forma, com o foco no valor ou fora dos campos. */
+  const onShortcut = (e: KeyboardEvent) => {
+    if (done || e.ctrlKey || e.altKey || e.metaKey || e.key.length !== 1) return;
+    const target = e.target as HTMLElement;
+    if (target instanceof HTMLInputElement && target !== amountRef.current) return;
+    const hit = allowed.find((m) => m.key === e.key.toUpperCase());
+    if (!hit) return;
+    e.preventDefault();
+    setMethod(hit.method);
+  };
   return (
     <Modal
       mobileFullscreen
@@ -660,25 +736,55 @@ export function PaymentDialog({
       title="Pagamento"
       wide
     >
-      <div className="grid gap-6 max-sm:gap-3 md:grid-cols-2">
-        <div className="flex flex-col gap-4 max-sm:gap-3">
-          <div
-            role="radiogroup"
-            aria-label="Forma de pagamento"
-            className="grid grid-cols-2 gap-2 max-sm:grid-cols-3 max-sm:[&>button]:px-1 max-sm:[&>button]:text-sm max-sm:[&>button]:leading-tight max-sm:[&>button]:hyphens-auto max-sm:[&>button]:[overflow-wrap:anywhere]"
-          >
-            {allowed.map(({ method: m, key }) => (
-              <Button
+      <div className="grid gap-6 max-sm:gap-2 md:grid-cols-[3fr_2fr]" onKeyDown={onShortcut}>
+        <div className="flex flex-col gap-4 max-sm:gap-2">
+          <div role="radiogroup" aria-label="Forma de pagamento" className="grid grid-cols-3 gap-2">
+            {allowed.map(({ method: m, key, icon: Icon, tone, nickname }) => (
+              <button
                 key={m}
+                type="button"
                 role="radio"
                 aria-checked={method === m}
                 aria-keyshortcuts={key}
-                variant={method === m ? 'primary' : 'secondary'}
-                onClick={() => setMethod(m)}
+                aria-label={PAYMENT_LABELS[m]}
+                onClick={() => {
+                  setMethod(m);
+                  amountRef.current?.focus();
+                }}
                 disabled={done}
+                className={cx(
+                  'relative flex min-h-20 flex-col items-start justify-between gap-1 rounded-2xl border-2 p-2 text-left text-sm font-bold leading-tight transition disabled:cursor-not-allowed disabled:opacity-50 max-sm:min-h-14 max-sm:gap-0.5 max-sm:p-1.5 max-sm:text-xs',
+                  tone.tile,
+                  method === m
+                    ? 'border-primary shadow-md ring-2 ring-primary'
+                    : 'border-transparent hover:border-border [[data-contrast=high]_&]:border-border',
+                )}
               >
-                {PAYMENT_LABELS[m]}
-              </Button>
+                <span
+                  aria-hidden
+                  className={cx(
+                    'flex size-9 shrink-0 items-center justify-center rounded-full text-tile-icon max-sm:size-6',
+                    tone.circle,
+                  )}
+                >
+                  {method === m ? (
+                    <Check className="size-5 max-sm:size-3.5" />
+                  ) : (
+                    <Icon className="size-5 max-sm:size-3.5" />
+                  )}
+                </span>
+                <span className="min-w-0">
+                  {/* Quebra depois da barra: "Vale-refeição/" e "alimentação" em linhas inteiras. */}
+                  {PAYMENT_LABELS[m].replace('/', `/${String.fromCharCode(0x200b)}`)}
+                  {nickname && <span className="font-normal"> ({nickname})</span>}
+                </span>
+                <kbd
+                  aria-hidden
+                  className="absolute right-2 top-2 rounded-md border border-border bg-surface px-1.5 font-mono text-xs font-semibold text-text max-sm:hidden"
+                >
+                  {key}
+                </kbd>
+              </button>
             ))}
           </div>
           {!done && (
@@ -687,18 +793,24 @@ export function PaymentDialog({
                 e.preventDefault();
                 void add(amount.cents);
               }}
-              className="flex flex-col gap-3"
+              className="flex flex-col gap-3 max-sm:gap-2"
             >
               <TextField
+                ref={amountRef}
                 label={method === 'cash' ? 'Valor recebido (R$)' : 'Valor (R$)'}
                 inputMode="decimal"
                 value={amount.text}
                 onChange={(e) => amount.setText(e.target.value)}
+                className="text-2xl font-bold tabular-nums max-sm:text-xl"
                 autoFocus
               />
               {method === 'cash' && (
-                <div className="flex flex-wrap gap-2 max-sm:grid max-sm:grid-cols-4 max-sm:[&>button]:whitespace-nowrap max-sm:[&>button]:px-1 max-sm:[&>button]:text-sm">
-                  {cashSuggestions(remaining).map((c) => (
+                <div
+                  className="grid grid-cols-3 gap-2 [&>button]:whitespace-nowrap [&>button]:px-1 max-sm:[&>button]:min-h-10 max-sm:[&>button]:text-sm"
+                  role="group"
+                  aria-label="Notas rápidas"
+                >
+                  {quickCash(remaining).map((c) => (
                     <Button key={c} variant="secondary" onClick={() => void add(c)}>
                       {brl(c)}
                     </Button>
@@ -901,7 +1013,7 @@ export function PaymentDialog({
           )}
           {error && <Alert>{error}</Alert>}
         </div>
-        <div className="flex flex-col gap-3 rounded-ui bg-surface-2 p-4 max-sm:gap-2 max-sm:p-3">
+        <div className="flex flex-col gap-3 rounded-2xl bg-surface-2 p-4 max-sm:gap-1.5 max-sm:p-3">
           <Row label="Total da venda" value={brl(totalCents)} strong />
           {summary?.payments.map((p, i) => (
             <Row
@@ -910,12 +1022,31 @@ export function PaymentDialog({
               value={brl(p.amountCents + p.changeCents)}
             />
           ))}
-          <Row label="Falta pagar" value={brl(remaining)} strong={remaining > 0} />
-          {(summary?.changeCents ?? 0) > 0 && (
-            <div className="rounded-ui bg-accent p-3 text-accent-contrast">
-              <Row label="Troco" value={brl(summary!.changeCents)} strong />
+          <div
+            className={cx(
+              'flex items-baseline justify-between gap-2 border-t border-border pt-2 max-sm:pt-1',
+              remaining > 0 ? 'text-text' : 'text-success',
+            )}
+          >
+            <span className="font-semibold">Falta pagar</span>
+            <span
+              className="text-3xl font-black tabular-nums max-sm:text-2xl"
+              data-testid="payment-remaining"
+            >
+              {brl(remaining)}
+            </span>
+          </div>
+          {(summary?.changeCents ?? 0) > 0 || changePreview > 0 ? (
+            <div
+              className="rounded-2xl bg-accent px-4 py-3 text-center text-accent-contrast shadow-md max-sm:py-1.5"
+              data-testid="payment-change"
+            >
+              <p className="text-sm font-bold uppercase tracking-widest">Troco</p>
+              <p className="whitespace-nowrap text-4xl font-black tabular-nums max-sm:text-3xl">
+                {brl((summary?.changeCents ?? 0) > 0 ? summary!.changeCents : changePreview)}
+              </p>
             </div>
-          )}
+          ) : null}
           {tenders.length > 0 && (
             <Button variant="ghost" onClick={() => setTenders([])} disabled={busy}>
               Refazer pagamentos

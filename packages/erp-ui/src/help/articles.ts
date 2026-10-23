@@ -131,7 +131,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
           'Clique em "Abrir o caixa". No primeiro uso, dê um nome ao caixa (por exemplo, "Caixa 1") e clique em "Criar e usar este caixa".',
           'Informe o "Dinheiro na gaveta para troco (R$)" e clique em "Abrir caixa".',
           'Bipe o código de barras ou digite o nome do produto e tecle Enter.',
-          'Clique em "Pagar (F10)", escolha a forma de pagamento e finalize a venda.',
+          'Clique em "Receber (F10)", escolha a forma de pagamento e finalize a venda.',
         ],
       },
       {
@@ -214,7 +214,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
         items: [
           'Em "Clientes", cadastre o cliente com o CPF ou CNPJ e preencha o "Limite do crediário (R$)".',
           'No caixa, tecle F6 e informe o CPF do cliente.',
-          'Em "Pagar (F10)", escolha "Crediário". O caixa mostra quanto ainda está disponível.',
+          'Em "Receber (F10)", escolha "Crediário". O caixa mostra quanto ainda está disponível.',
           'Para receber, abra o cliente em "Clientes" e registre o pagamento.',
         ],
       },

@@ -113,6 +113,8 @@ export interface CatalogProduct extends CatalogItem {
   sku: string | null;
   barcodes: string[];
   active: boolean;
+  /** Categoria do cadastro, para as abas da grade de produtos (F8-15). */
+  category?: string | null;
 }
 
 export interface CompleteSaleOptions {
@@ -140,6 +142,7 @@ function toProduct(row: Row): CatalogProduct {
     sku: (row.sku as string | null) ?? null,
     barcodes: row.barcodes ? String(row.barcodes).split(',') : [],
     active: Number(row.active) === 1,
+    category: (row.category as string | null | undefined) ?? null,
   };
 }
 
@@ -257,6 +260,31 @@ export class PdvService {
     const rows = await this.storage.query<Row>(
       `${this.productSelect} WHERE p.active = 1 AND NOT EXISTS (SELECT 1 FROM products v WHERE v.parent_id = p.id AND v.active = 1) AND ${where} ORDER BY p.search_name LIMIT ?`,
       [table, ...terms.map((t) => `%${t}%`), limit],
+    );
+    return rows.map(toProduct);
+  }
+
+  /** Categorias dos produtos à venda, em ordem alfabética: as abas da grade do caixa (F8-15). */
+  async categories(): Promise<string[]> {
+    const rows = await this.storage.query<{ category: string }>(
+      `SELECT DISTINCT p.category FROM products p WHERE p.active = 1 AND p.category IS NOT NULL AND trim(p.category) <> '' AND NOT EXISTS (SELECT 1 FROM products v WHERE v.parent_id = p.id AND v.active = 1) ORDER BY p.category`,
+    );
+    return rows.map((r) => r.category);
+  }
+
+  /**
+   * Produtos à venda para a grade do caixa (F8-15): de uma categoria ou de todas (null), em
+   * ordem alfabética e com o preço da tabela em vigor.
+   */
+  async browse(
+    category: string | null,
+    limit = 60,
+    customerTaxId?: string | null,
+  ): Promise<CatalogProduct[]> {
+    const table = (await this.activePriceTable(customerTaxId))?.id ?? null;
+    const rows = await this.storage.query<Row>(
+      `${this.productSelect} WHERE p.active = 1 AND NOT EXISTS (SELECT 1 FROM products v WHERE v.parent_id = p.id AND v.active = 1)${category === null ? '' : ' AND p.category = ?'} ORDER BY p.search_name LIMIT ?`,
+      [table, ...(category === null ? [] : [category]), limit],
     );
     return rows.map(toProduct);
   }
@@ -516,13 +544,13 @@ export class PdvService {
       for (let start = 0; start < products.length; start += CHUNK) {
         const chunk = products.slice(start, start + CHUNK);
         await tx.execute(
-          `INSERT INTO products (id, name, search_name, sku, unit, price_cents, is_weighable, active, ncm, cest, fiscal_profile_id, parent_id, updated_at)
-           VALUES ${chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ')}
+          `INSERT INTO products (id, name, search_name, sku, unit, price_cents, is_weighable, active, ncm, cest, fiscal_profile_id, parent_id, category, updated_at)
+           VALUES ${chunk.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ')}
            ON CONFLICT (id) DO UPDATE SET name = excluded.name, search_name = excluded.search_name,
              sku = excluded.sku, unit = excluded.unit, price_cents = excluded.price_cents,
              is_weighable = excluded.is_weighable, active = excluded.active, ncm = excluded.ncm,
              cest = excluded.cest, fiscal_profile_id = excluded.fiscal_profile_id, parent_id = excluded.parent_id,
-             updated_at = excluded.updated_at`,
+             category = excluded.category, updated_at = excluded.updated_at`,
           chunk.flatMap((p) => [
             p.id,
             p.name,
@@ -536,6 +564,7 @@ export class PdvService {
             p.cest,
             p.fiscalProfileId,
             p.parentId ?? null,
+            p.category?.trim() || null,
             p.updatedAt,
           ]),
         );

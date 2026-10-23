@@ -82,7 +82,7 @@ test('comandas: abre pela mesa, guarda, divide a conta e fecha; a retaguarda vê
   await expect(page.getByTestId('tab-split')).toContainText('R$ 29,50 cada');
   await page.getByRole('button', { name: 'Mais uma pessoa' }).click();
   await expect(page.getByTestId('tab-split')).toContainText('R$ 19,67');
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

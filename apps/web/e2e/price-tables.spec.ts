@@ -133,7 +133,7 @@ test('no caixa vale a tabela da loja e, com o CPF do cliente, a tabela dele', as
   await bipar.press('Enter');
   await expect(page.getByTestId('pdv-total')).toHaveText('R$ 50,00');
 
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

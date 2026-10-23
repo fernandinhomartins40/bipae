@@ -1,44 +1,64 @@
 import type { CatalogProduct } from '@bipae/pdv-core';
 import { describeLastSync, type SyncStatus } from '@bipae/sync';
-import { Alert, Button, cx, Sheet } from '@bipae/ui';
-import { CloudOff, LogOut, Menu, RefreshCw } from 'lucide-react';
+import { Alert, Button, cx, Logo, Sheet } from '@bipae/ui';
+import { ChevronRight, CloudOff, Ellipsis, LogOut, RefreshCw, type LucideIcon } from 'lucide-react';
 import { createContext, useContext, useEffect, useRef, type ReactNode } from 'react';
+import { brl } from './dialogs';
+import {
+  ActionTile,
+  EmptySale,
+  ModeSwitch,
+  PayButton,
+  ProductThumb,
+  SearchResults,
+  type SaleLineView,
+  type TileTone,
+} from './register-parts';
+import type { RegisterMode } from './register-prefs';
 
 /** Fecha a folha de ações antes de a ação rodar (a ação costuma abrir um diálogo). */
 const CloseSheet = createContext<() => void>(() => undefined);
-import { brl } from './dialogs';
 
 /** Uma linha da venda já formatada para a lista do celular. */
-export interface CompactLine {
-  line: number;
-  name: string;
-  quantity: string;
-  unitPrice: string;
-  total: string;
-  notes: string[];
-  promotion: string | null;
+export type CompactLine = SaleLineView;
+
+/** Ação frequente do rodapé do celular, em cartão colorido. */
+export interface QuickTile<A extends string> {
+  label: string;
+  icon: LucideIcon;
+  tone: TileTone;
+  action: A;
+  disabled?: boolean;
 }
 
 /**
- * O caixa no celular e no tablet em pé (F8-14), com cara de app: ocupa a altura visível
- * (`--app-vh`, que encolhe com o teclado), respeita as áreas seguras e a página nunca rola.
- * De cima para baixo: topo compacto, campo de bipar, lista de itens (a única parte que rola),
- * rodapé com o total e o Pagar. O resto fica na folha de ações, que sobe de baixo.
+ * O caixa no celular e no tablet em pé (F8-14, redesenhado na F8-15), com cara de app: ocupa a
+ * altura visível (`--app-vh`, que encolhe com o teclado), respeita as áreas seguras e a página
+ * nunca rola. De cima para baixo: topo com a logo, campo de bipar, o miolo (item em destaque e a
+ * lista, ou a grade de produtos; a única parte que rola) e o rodapé com as ações em cartões, o
+ * total e o Receber. O resto fica na folha de ações, que sobe de baixo.
  * Só apresentação: toda a regra do caixa continua no Register.
  */
-export function CompactRegister({
+export function CompactRegister<A extends string>({
   terminalName,
   operatorName,
   syncStatus,
   onSyncNow,
   onExit,
   selfMode,
+  mode,
+  onModeChange,
   notices,
   scanInput,
   camera,
+  tipScan,
+  tipPay,
   message,
   results,
   onPick,
+  spotlight,
+  grid,
+  success,
   lines,
   selected,
   onSelect,
@@ -46,6 +66,8 @@ export function CompactRegister({
   itemCount,
   tags,
   onPay,
+  quickTiles,
+  onTile,
   sheetOpen,
   onSheetOpenChange,
   details,
@@ -58,12 +80,22 @@ export function CompactRegister({
   onSyncNow: () => void;
   onExit: () => void;
   selfMode: boolean;
+  mode: RegisterMode;
+  onModeChange: (mode: RegisterMode) => void;
   notices: ReactNode;
   scanInput: ReactNode;
   camera: ReactNode;
+  tipScan: ReactNode;
+  tipPay: ReactNode;
   message: { tone: 'danger' | 'success' | 'warning'; text: string } | null;
   results: CatalogProduct[];
   onPick: (product: CatalogProduct) => void;
+  /** Item em destaque (modo "Venda em destaque"). */
+  spotlight: ReactNode;
+  /** Abas e grade de produtos (modo "Grade de produtos"). */
+  grid: ReactNode;
+  /** Venda concluída: ocupa o miolo até a próxima venda. */
+  success: ReactNode;
   lines: CompactLine[];
   selected: number | null;
   onSelect: (line: number | null) => void;
@@ -71,6 +103,9 @@ export function CompactRegister({
   itemCount: number;
   tags: string[];
   onPay: () => void;
+  /** Ações frequentes em cartões no rodapé (o "Mais" vem junto). */
+  quickTiles: QuickTile<A>[];
+  onTile: (action: A) => void;
   sheetOpen: boolean;
   onSheetOpenChange: (open: boolean) => void;
   details: ReactNode;
@@ -78,19 +113,16 @@ export function CompactRegister({
   overlays: ReactNode;
 }) {
   const items = itemCount === 1 ? '1 item' : `${itemCount} itens`;
-  // O item recém-bipado (selecionado) fica sempre à vista na lista.
-  const listRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (selected === null) return;
-    const row = listRef.current?.querySelector<HTMLElement>(`[data-line="${selected}"]`);
-    row?.scrollIntoView?.({ block: 'nearest' });
-  }, [selected, lines.length]);
+  const payLabel = selfMode ? 'Pagar' : 'Receber';
+  const lastLine = lines.find((l) => l.line === selected) ?? lines.at(-1) ?? null;
   return (
     <div
       className="fixed inset-x-0 top-[var(--app-vtop,0px)] flex h-[var(--app-vh,100dvh)] flex-col overflow-hidden bg-bg pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
       data-layout="compact"
+      data-mode={mode}
     >
       <header className="flex shrink-0 items-center gap-2 border-b border-border bg-surface pb-1 pl-3 pr-1 pt-[max(0.25rem,env(safe-area-inset-top))]">
+        <Logo variant="symbol" className="shrink-0 text-xl" />
         <div className="min-w-0 flex-1 leading-tight">
           <p className="truncate font-semibold">{terminalName}</p>
           <p className="truncate text-sm text-muted" data-testid="pdv-operator">
@@ -98,9 +130,11 @@ export function CompactRegister({
           </p>
         </div>
         <SyncPill status={syncStatus} onSync={onSyncNow} />
+        {!selfMode && <ModeSwitch mode={mode} onChange={onModeChange} compact />}
         {!selfMode && (
           <Button
             variant="ghost"
+            className="px-2"
             aria-label="Sair do caixa"
             icon={<LogOut className="size-5" aria-hidden />}
             onClick={onExit}
@@ -119,86 +153,30 @@ export function CompactRegister({
           {scanInput}
           {camera}
         </div>
-        {message && (
+        {tipScan}
+        {message && !success && (
           <div className="shrink-0 text-sm [&_[role=alert]]:px-3 [&_[role=alert]]:py-2 [&_[role=status]]:px-3 [&_[role=status]]:py-2">
             <Alert tone={message.tone}>{message.text}</Alert>
           </div>
         )}
-        {results.length > 0 && (
-          <ul
-            className="max-h-[45%] shrink-0 overflow-y-auto overscroll-contain rounded-ui border border-border bg-surface"
-            aria-label="Resultados da busca"
-          >
-            {results.map((p) => (
-              <li key={p.id} className="border-t border-border first:border-t-0">
-                <button
-                  type="button"
-                  className="flex min-h-12 w-full items-center justify-between gap-3 px-3 py-2 text-left hover:bg-surface-2"
-                  onClick={() => onPick(p)}
-                >
-                  <span className="min-w-0 flex-1">{p.name}</span>
-                  <span className="tabular-nums">
-                    {brl(p.priceCents)}
-                    {p.isWeighable ? '/kg' : ''}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+        <SearchResults results={results} onPick={onPick} compact />
+        {success ? (
+          <div className="min-h-0 flex-1 rounded-2xl border border-border bg-surface">
+            {success}
+          </div>
+        ) : mode === 'grid' ? (
+          grid
+        ) : (
+          <>
+            {spotlight}
+            <SaleList
+              lines={lines}
+              selected={selected}
+              onSelect={onSelect}
+              className="min-h-0 flex-1 rounded-2xl border border-border bg-surface"
+            />
+          </>
         )}
-        <div
-          className="min-h-0 flex-1 overflow-y-auto overscroll-contain rounded-ui border border-border bg-surface"
-          data-testid="pdv-items"
-          ref={listRef}
-        >
-          {lines.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center gap-1 p-6 text-center text-muted">
-              <p className="text-lg font-semibold text-text">Caixa livre</p>
-              <p>Bipe o primeiro produto. Bipou? Bipaê!</p>
-            </div>
-          ) : (
-            <ul>
-              {lines.map((item) => (
-                <li
-                  key={item.line}
-                  data-line={item.line}
-                  className="border-t border-border first:border-t-0"
-                >
-                  <button
-                    type="button"
-                    aria-pressed={selected === item.line}
-                    onClick={() => onSelect(selected === item.line ? null : item.line)}
-                    className={cx(
-                      'flex min-h-14 w-full items-center gap-3 px-3 py-2 text-left',
-                      selected === item.line && 'bg-warning-soft',
-                    )}
-                  >
-                    <span className="w-6 shrink-0 text-sm text-muted tabular-nums">
-                      {item.line}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate font-medium">{item.name}</span>
-                      <span className="block text-sm text-muted tabular-nums">
-                        {item.quantity} × {item.unitPrice}
-                      </span>
-                      {item.notes.map((note) => (
-                        <span key={note} className="block text-sm text-muted">
-                          {note}
-                        </span>
-                      ))}
-                      {item.promotion && (
-                        <span className="block text-sm font-semibold text-success">
-                          {item.promotion}
-                        </span>
-                      )}
-                    </span>
-                    <span className="shrink-0 font-semibold tabular-nums">{item.total}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
       </section>
 
       <div
@@ -223,50 +201,178 @@ export function CompactRegister({
             ))}
           </button>
         )}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            size="lg"
-            className="min-w-14 flex-col gap-0! px-2 text-xs"
-            aria-label="Mais ações"
-            aria-haspopup="dialog"
+        {mode === 'grid' && !success && lastLine && (
+          <button
+            type="button"
+            className="mb-2 flex min-h-11 w-full items-center gap-2 rounded-xl bg-surface-2 px-2 text-left"
             onClick={() => onSheetOpenChange(true)}
+            aria-haspopup="dialog"
+            data-testid="pdv-sale-summary"
           >
-            <Menu className="size-5" aria-hidden />
-            <span aria-hidden>Mais</span>
-          </Button>
+            <ProductThumb name={lastLine.name} size="sm" />
+            <span className="min-w-0 flex-1 leading-tight">
+              <span className="block truncate text-sm font-semibold">{lastLine.name}</span>
+              <span className="block text-xs text-muted">{items} na venda · toque para ver</span>
+            </span>
+            <ChevronRight className="size-5 shrink-0 text-muted" aria-hidden />
+          </button>
+        )}
+        <div className={cx('mb-2 grid gap-2', selfMode ? 'grid-cols-3' : 'grid-cols-4')}>
+          {quickTiles.map((tile) => (
+            <ActionTile
+              key={tile.label}
+              compact
+              label={tile.label}
+              ariaLabel={tile.label}
+              icon={tile.icon}
+              tone={tile.tone}
+              disabled={tile.disabled}
+              onClick={() => onTile(tile.action)}
+            />
+          ))}
+          <ActionTile
+            compact
+            label="Mais"
+            ariaLabel="Mais ações"
+            haspopup
+            icon={Ellipsis}
+            tone="neutral"
+            onClick={() => onSheetOpenChange(true)}
+          />
+        </div>
+        {tipPay && <div className="mb-2">{tipPay}</div>}
+        <div className="flex items-center gap-2">
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted">
               Total · {items}
             </p>
             <p
-              className="truncate text-2xl font-extrabold tabular-nums"
+              className="truncate text-3xl font-extrabold tabular-nums"
               aria-live="polite"
               data-testid="pdv-total-mobile"
             >
               {brl(totalCents)}
             </p>
           </div>
-          <Button size="lg" className="px-5" onClick={onPay} disabled={itemCount === 0}>
-            Pagar
-          </Button>
+          <PayButton label={payLabel} onClick={onPay} disabled={itemCount === 0} />
         </div>
       </div>
 
-      <Sheet
+      <ActionSheet
         open={sheetOpen}
         onOpenChange={onSheetOpenChange}
         title={selfMode ? 'Ajuda do atendente' : 'Ações do caixa'}
       >
-        <div className="flex flex-col gap-4">
-          {!selfMode && details && <div className="flex flex-col gap-3">{details}</div>}
-          <CloseSheet.Provider value={() => onSheetOpenChange(false)}>
-            {actions}
-          </CloseSheet.Provider>
-        </div>
-      </Sheet>
+        {mode === 'grid' && !selfMode && lines.length > 0 && (
+          <section className="flex flex-col gap-2" aria-label="Itens da venda">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">
+              Itens da venda
+            </h3>
+            <SaleList
+              lines={lines}
+              selected={selected}
+              onSelect={onSelect}
+              className="max-h-64 rounded-2xl border border-border"
+            />
+          </section>
+        )}
+        {!selfMode && details && <div className="flex flex-col gap-3">{details}</div>}
+        {actions}
+      </ActionSheet>
       {overlays}
     </div>
+  );
+}
+
+/** Lista da venda no celular e na coluna da grade: cada item é um botão que seleciona. */
+export function SaleList({
+  lines,
+  selected,
+  onSelect,
+  className,
+}: {
+  lines: CompactLine[];
+  selected: number | null;
+  onSelect: (line: number | null) => void;
+  className?: string;
+}) {
+  // O item recém-bipado (selecionado) fica sempre à vista na lista.
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (selected === null) return;
+    const row = listRef.current?.querySelector<HTMLElement>(`[data-line="${selected}"]`);
+    row?.scrollIntoView?.({ block: 'nearest' });
+  }, [selected, lines.length]);
+  return (
+    <div
+      className={cx('overflow-y-auto overscroll-contain bg-surface', className)}
+      data-testid="pdv-items"
+      ref={listRef}
+    >
+      {lines.length === 0 ? (
+        <EmptySale compact />
+      ) : (
+        <ul>
+          {lines.map((item) => (
+            <li
+              key={item.line}
+              data-line={item.line}
+              className="border-t border-border first:border-t-0"
+            >
+              <button
+                type="button"
+                aria-pressed={selected === item.line}
+                onClick={() => onSelect(selected === item.line ? null : item.line)}
+                className={cx(
+                  'flex min-h-14 w-full items-center gap-3 px-3 py-2 text-left',
+                  selected === item.line && 'bg-warning-soft',
+                )}
+              >
+                <span className="w-6 shrink-0 text-sm text-muted tabular-nums">{item.line}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-medium">{item.name}</span>
+                  <span className="block text-sm text-muted tabular-nums">
+                    {item.quantity} × {item.unitPrice}
+                  </span>
+                  {item.notes.map((note) => (
+                    <span key={note} className="block text-sm text-muted">
+                      {note}
+                    </span>
+                  ))}
+                  {item.promotion && (
+                    <span className="block text-sm font-semibold text-success">
+                      {item.promotion}
+                    </span>
+                  )}
+                </span>
+                <span className="shrink-0 font-semibold tabular-nums">{item.total}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Folha de ações que sobe de baixo; no celular e no "Mais" do computador. */
+export function ActionSheet({
+  open,
+  onOpenChange,
+  title,
+  children,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange} title={title}>
+      <div className="flex flex-col gap-4">
+        <CloseSheet.Provider value={() => onOpenChange(false)}>{children}</CloseSheet.Provider>
+      </div>
+    </Sheet>
   );
 }
 
@@ -286,27 +392,39 @@ export function SheetAction({
   onClick,
   disabled,
   tone,
+  shortcut,
 }: {
   children: ReactNode;
   onClick: () => void;
   disabled?: boolean;
   tone?: 'danger';
+  /** Tecla de atalho no computador (aparece só com teclado de verdade, do notebook para cima). */
+  shortcut?: string;
 }) {
   const close = useContext(CloseSheet);
   return (
     <Button
       variant="secondary"
       className={cx(
-        'min-h-12 whitespace-normal px-3 text-left leading-tight',
+        'min-h-12 justify-between whitespace-normal px-3 text-left leading-tight',
         tone === 'danger' && 'text-danger',
       )}
+      aria-keyshortcuts={shortcut}
       onClick={() => {
         close();
         onClick();
       }}
       disabled={disabled}
     >
-      {children}
+      <span className="flex-1">{children}</span>
+      {shortcut && (
+        <kbd
+          aria-hidden
+          className="shrink-0 rounded-md border border-border bg-surface-2 px-1.5 font-mono text-xs max-lg:hidden"
+        >
+          {shortcut}
+        </kbd>
+      )}
     </Button>
   );
 }
@@ -321,7 +439,7 @@ function SyncPill({ status, onSync }: { status: SyncStatus | null; onSync: () =>
       type="button"
       onClick={onSync}
       className={cx(
-        'flex min-h-11 max-w-[55%] shrink items-center gap-1.5 rounded-full px-3 text-sm font-semibold',
+        'flex min-h-11 min-w-11 max-w-[45%] shrink-0 items-center justify-center gap-1.5 rounded-full px-3 text-sm font-semibold',
         offline ? 'bg-warning-soft text-text' : 'bg-success-soft text-success',
       )}
       title={status.lastError ?? 'Sincronizar agora'}
@@ -336,7 +454,8 @@ function SyncPill({ status, onSync }: { status: SyncStatus | null; onSync: () =>
           aria-hidden
         />
       )}
-      <span className="truncate">{label}</span>
+      {/* Sincronizado: só o ícone verde (o texto fica para o leitor de tela); sem conexão, escrito. */}
+      <span className={offline ? 'truncate' : 'sr-only'}>{label}</span>
       {status.pending > 0 && (
         <span className="shrink-0 rounded-full bg-surface px-1.5 tabular-nums">
           {status.pending}

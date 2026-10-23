@@ -65,6 +65,28 @@ describe('catalog on the terminal', () => {
     expect(await pdv.findByCode('7891000315507')).toBeNull();
     expect((await pdv.findByCode('96385074'))?.id).toBe(coffee.id);
   });
+
+  it('lista as categorias e os produtos de cada uma para a grade do caixa (F8-15)', async () => {
+    const pao = { ...product({ name: 'Pão Francês' }), category: 'Padaria' };
+    const bolo = { ...product({ name: 'Bolo de Fubá' }), category: ' Padaria ' };
+    const suco = { ...product({ name: 'Suco de Laranja' }), category: 'Bebidas' };
+    const semCategoria = product({ name: 'Arroz Tipo 1 5kg' });
+    const inativo = { ...product({ name: 'Inativo', active: false }), category: 'Antigos' };
+    await pdv.applyCatalog([pao, bolo, suco, semCategoria, inativo]);
+    expect(await pdv.categories()).toEqual(['Bebidas', 'Padaria']);
+    expect((await pdv.browse('Padaria')).map((p) => p.name)).toEqual([
+      'Bolo de Fubá',
+      'Pão Francês',
+    ]);
+    expect((await pdv.browse('Padaria'))[0]?.category).toBe('Padaria');
+    expect((await pdv.browse(null)).map((p) => p.name)).toEqual([
+      'Arroz Tipo 1 5kg',
+      'Bolo de Fubá',
+      'Pão Francês',
+      'Suco de Laranja',
+    ]);
+    expect(await pdv.browse(null, 2)).toHaveLength(2);
+  });
 });
 
 describe('selling', () => {

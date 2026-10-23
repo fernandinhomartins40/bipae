@@ -109,7 +109,7 @@ test('sem internet, o caixa emite a NFC-e em contingência e ela sobe ao reconec
   const campo = page.getByLabel('Bipe o código ou digite o nome do produto');
   await campo.fill('7891000315507');
   await campo.press('Enter');
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

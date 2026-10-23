@@ -94,7 +94,7 @@ describe('caixa no celular (F8-14)', () => {
     document.documentElement.removeAttribute('style');
   });
 
-  it('usa o layout de app: topo compacto, total e Pagar embaixo, sem os atalhos do teclado', async () => {
+  it('usa o layout de app: topo compacto, total e Receber embaixo, sem os atalhos do teclado', async () => {
     setup();
     await openRegister();
     expect(document.querySelector('[data-layout="compact"]')).not.toBeNull();
@@ -146,21 +146,21 @@ describe('caixa no celular (F8-14)', () => {
     await waitFor(() =>
       expect(screen.getByTestId('pdv-total-mobile')).toHaveTextContent('R$ 0,00'),
     );
-    expect(screen.getByRole('button', { name: 'Pagar' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Receber' })).toBeDisabled();
 
     // Sair do caixa fica no topo, ao alcance.
     await userEvent.click(screen.getByRole('button', { name: 'Sair do caixa' }));
     expect(onExit).toHaveBeenCalled();
   });
 
-  it('paga pelo Pagar do rodapé', async () => {
+  it('recebe pelo Receber do rodapé', async () => {
     setup();
     await openRegister();
     await userEvent.type(
       screen.getByLabelText('Bipe o código ou digite o nome do produto'),
       '2*78912342{Enter}',
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Pagar' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Receber' }));
     await userEvent.click(await screen.findByRole('button', { name: 'R$ 10,00' }));
     await userEvent.click(screen.getByRole('button', { name: 'Finalizar venda' }));
     expect(

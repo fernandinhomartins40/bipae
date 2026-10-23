@@ -76,7 +76,7 @@ test('a venda mostra a NFC-e em "falta configurar" com o motivo, e o caixa avisa
   const campo = page.getByLabel('Bipe o código ou digite o nome do produto');
   await campo.fill('7891000315507');
   await campo.press('Enter');
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

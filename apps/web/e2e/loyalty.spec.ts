@@ -8,13 +8,13 @@ async function venderComCpf(page: Page) {
   const campo = page.getByLabel('Bipe o código ou digite o nome do produto');
   await campo.fill('7891000100103');
   await campo.press('Enter');
-  await page.getByRole('button', { name: 'CPF na nota (F6)' }).click();
+  await page.getByRole('button', { name: 'Cliente/CPF (F6)' }).click();
   await page.getByLabel('CPF ou CNPJ do cliente').fill('12345678909');
   await page.getByRole('button', { name: 'Confirmar' }).click();
 }
 
 async function pagarPix(page: Page) {
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

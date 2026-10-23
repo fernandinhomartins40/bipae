@@ -320,6 +320,8 @@ export interface SyncPullResult {
     fiscalProfileId: string | null;
     /** Modelo desta variação (F1-04); null para produtos comuns. */
     parentId: string | null;
+    /** Categoria livre do cadastro, para as abas da grade de produtos do caixa (F8-15). */
+    category?: string | null;
     barcodes: string[];
     updatedAt: string;
   }[];

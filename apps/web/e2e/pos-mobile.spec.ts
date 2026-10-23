@@ -1,11 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, request, test } from '@playwright/test';
 
-/** F8-06: o caixa no celular e no tablet, sem rolagem lateral, com o Pagar ao alcance. */
+/** F8-06: o caixa no celular e no tablet, sem rolagem lateral, com o Receber ao alcance. */
 test.skip(() => test.info().project.name !== 'web', 'A largura de celular é do navegador.');
 test.use({ viewport: { width: 390, height: 844 } });
 
-test('vende no celular pelo Pagar da barra de baixo, sem rolagem lateral', async ({ page }) => {
+test('vende no celular pelo Receber da barra de baixo, sem rolagem lateral', async ({ page }) => {
   const email = `lia-celular-${Date.now()}@exemplo.com.br`;
   const api = await request.newContext({ baseURL: 'http://localhost:3334/v1/' });
   const conta = await (
@@ -57,10 +57,10 @@ test('vende no celular pelo Pagar da barra de baixo, sem rolagem lateral', async
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();
   expect(axe.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
-  await barra.getByRole('button', { name: 'Pagar', exact: true }).click();
+  await barra.getByRole('button', { name: 'Receber', exact: true }).click();
   await page.getByLabel('Valor recebido (R$)').fill('60,00');
   await page.getByRole('button', { name: 'Adicionar dinheiro' }).click();
   await page.getByRole('button', { name: 'Finalizar venda' }).click();
   await expect(page.getByText('Bipaê! Venda nº 1 concluída. Troco: R$ 2,20.')).toBeVisible();
-  await expect(barra.getByRole('button', { name: 'Pagar', exact: true })).toBeDisabled();
+  await expect(barra.getByRole('button', { name: 'Receber', exact: true })).toBeDisabled();
 });

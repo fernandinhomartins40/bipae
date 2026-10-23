@@ -37,7 +37,22 @@ import {
 import type { Platform, UpdateInfo } from '@bipae/platform';
 import { describeLastSync, type SyncStatus } from '@bipae/sync';
 import { Alert, Button, cx, Logo, parseDisplayPreferences, playBeep } from '@bipae/ui';
-import { CloudOff, RefreshCw } from 'lucide-react';
+import {
+  CloudOff,
+  Ellipsis,
+  Hash,
+  History,
+  Percent,
+  RefreshCw,
+  ScanBarcode,
+  Trash2,
+  Truck,
+  UserRound,
+  Users,
+  UtensilsCrossed,
+  Wallet,
+  type LucideIcon,
+} from 'lucide-react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { AuthorizablePermission, PosBackend, PosUser } from './backend';
 import {
@@ -66,7 +81,38 @@ import {
   useFullscreenOnFirstTouch,
   useFullscreenState,
 } from './app-screen';
-import { CompactRegister, SheetAction, SheetSection } from './compact-register';
+import {
+  ActionSheet,
+  CompactRegister,
+  SaleList,
+  SheetAction,
+  SheetSection,
+} from './compact-register';
+import {
+  ActionTile,
+  CategoryTabs,
+  EmptySale,
+  GuideTip,
+  LastItem,
+  ModeSwitch,
+  PayButton,
+  ProductGrid,
+  ProductThumb,
+  SaleSuccess,
+  SearchResults,
+  type SaleLineView,
+  type TileTone,
+} from './register-parts';
+import {
+  layoutPrefKey,
+  playSuccessSound,
+  prefersReducedMotion,
+  REGISTER_MODES,
+  SUCCESS_SOUND_PREF,
+  TIPS_PREF,
+  usePreference,
+  type RegisterMode,
+} from './register-prefs';
 import {
   loadSelfCheckout,
   newSelfCheckout,
@@ -89,19 +135,13 @@ const FISCAL_NOTICE: Record<string, string> = {
 
 const DISCOUNT_LIMIT_PERCENT = 10;
 
-const SHORTCUTS = [
-  ['F2', 'Buscar'],
-  ['F3', 'Quantidade'],
-  ['F4', 'Desconto'],
-  ['F5', 'Salvar orçamento'],
-  ['F6', 'CPF na nota'],
-  ['F7', 'Orçamentos'],
-  ['F8', 'Remover item'],
-  ['F9', 'Caixa'],
-  ['F10', 'Pagar'],
-  ['F11', 'Vendas'],
-  ['F12', 'Limpar venda'],
-] as const;
+/** Quantos produtos a grade mostra de cada vez; o resto se acha pela busca. */
+const GRID_LIMIT = 60;
+/** Espera depois da última tecla antes de buscar pelo nome enquanto se digita. */
+const LIVE_SEARCH_MS = 180;
+
+const qty = (milli: number, unit: string) =>
+  `${(milli / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 3 })} ${unit}`;
 
 /** De quanto em quanto tempo o caixa pergunta se há versão nova (F2-09). */
 const UPDATE_CHECK_MS = 60_000;
@@ -149,9 +189,12 @@ export function Register({
   // Mirror updated synchronously on every change, so keyboard shortcuts always see the
   // latest cart even if React has not re-rendered yet (fast "scan + F-key").
   const cartRef = useRef<Cart>(EMPTY_CART);
+  // Venda concluída na tela (F8-15): some quando a próxima venda ganha o primeiro item.
+  const [celebrate, setCelebrate] = useState(false);
   const setCart = useCallback((next: Cart | ((c: Cart) => Cart)) => {
     cartRef.current = typeof next === 'function' ? next(cartRef.current) : next;
     setCartState(cartRef.current);
+    if (cartRef.current.lines.length > 0) setCelebrate(false);
   }, []);
   const [selected, setSelected] = useState<number | null>(null);
   const [input, setInput] = useState('');
@@ -221,6 +264,51 @@ export function Register({
   // Quem está operando agora (F2-03): começa com quem abriu o caixa e muda na troca de operador.
   const [operator, setOperator] = useState<Pick<PosUser, 'id' | 'name' | 'permissions'>>(user);
   const can = (p: string) => operator.permissions.includes(p);
+
+  // Preferências deste aparelho (F8-15): modo de tela por caixa, dicas vistas e o som.
+  const modePref = usePreference<RegisterMode>(
+    platform,
+    layoutPrefKey(context.terminal.id),
+    'spotlight',
+    ['spotlight', 'grid'],
+  );
+  const mode = modePref.value;
+  const tipsPref = usePreference(platform, TIPS_PREF, 'new', ['new', 'seen'] as const);
+  const soundPref = usePreference(platform, SUCCESS_SOUND_PREF, 'off', ['off', 'on'] as const);
+  const soundOn = soundPref.value === 'on';
+
+  // Grade de produtos (F8-15): abas das categorias e os produtos da aba, do banco do caixa.
+  const [category, setCategory] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [gridProducts, setGridProducts] = useState<CatalogProduct[]>([]);
+  useEffect(() => {
+    if (mode !== 'grid') return;
+    let alive = true;
+    void pdv.categories().then((list) => {
+      if (!alive) return;
+      setCategories(list);
+      setCategory((c) => (c !== null && !list.includes(c) ? null : c));
+    });
+    return () => {
+      alive = false;
+    };
+  }, [mode, pdv, syncStatus?.lastSyncAt]);
+  useEffect(() => {
+    if (mode !== 'grid') return;
+    let alive = true;
+    void pdv
+      .browse(category, GRID_LIMIT, cart.customerTaxId)
+      .then((list) => alive && setGridProducts(list));
+    return () => {
+      alive = false;
+    };
+  }, [mode, category, pdv, cart.customerTaxId, syncStatus?.lastSyncAt]);
+  const inCart = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const l of cart.lines)
+      map.set(l.productId, (map.get(l.productId) ?? 0) + l.quantityMilli / 1000);
+    return map;
+  }, [cart.lines]);
 
   const [caps, setCaps] = useState<Awaited<ReturnType<Platform['capabilities']>> | null>(null);
   useEffect(() => {
@@ -439,11 +527,61 @@ export function Register({
     return run;
   };
 
+  // Busca por nome enquanto se digita (F8-15): os produtos aparecem com foto para tocar. Só com
+  // letras: o leitor de código digita números e não pode disparar buscas no meio do código.
+  const searchSeq = useRef(0);
+  const liveResults = useRef(false);
+  useEffect(() => {
+    const seq = ++searchSeq.current;
+    const scan = parseScan(input);
+    if (!scan || scan.kind !== 'search' || !/\p{L}/u.test(scan.text) || scan.text.length < 2) {
+      if (liveResults.current) {
+        liveResults.current = false;
+        setResults([]);
+      }
+      return;
+    }
+    const timer = setTimeout(() => {
+      void pdv
+        .search(scan.text, 12, cartRef.current.customerTaxId)
+        .then((found) => {
+          if (searchSeq.current !== seq) return;
+          liveResults.current = true;
+          setResults(found);
+        })
+        .catch(() => undefined);
+    }, LIVE_SEARCH_MS);
+    return () => clearTimeout(timer);
+  }, [input, pdv]);
+
+  /** Tocar num produto (busca ou grade): entra na venda, com o "3*" digitado se houver. */
+  const pick = (product: CatalogProduct) => {
+    const typed = parseScan(input);
+    const explicit = typed?.kind === 'search' && /^\d+(?:[.,]\d{1,3})?\s*[*xX]/.test(input.trim());
+    searchSeq.current++;
+    liveResults.current = false;
+    setInput('');
+    if (product.isWeighable && !explicit) setDialog({ kind: 'weigh', product });
+    else add(product, explicit && typed?.kind === 'search' ? typed.quantityMilli : 1000);
+    focusInput();
+  };
+
+  /** Fecha a tela de venda concluída e deixa o caixa pronto para a próxima. */
+  const nextSale = () => {
+    setCelebrate(false);
+    setMessage(null);
+    focusInput();
+  };
+
   const handleScan = async (typed?: string) => {
     const text = typed ?? input;
     if (typed === undefined) setInput('');
+    // Nada digitado: o Enter fecha a venda concluída e segue para a próxima.
+    if (!text.trim() && celebrate) return nextSale();
     const scan = parseScan(text);
     if (!scan) return;
+    searchSeq.current++;
+    liveResults.current = false;
     const explicitQuantity = /^\d+(?:[.,]\d{1,3})?\s*[*xX]/.test(text.trim());
     try {
       if (scan.kind === 'scale-label') {
@@ -617,12 +755,17 @@ export function Register({
       discountAuthorizedBy,
       ...(signer && { contingencySigner: signer }),
     });
-    playBeep(beep);
+    // Som da venda concluída (F8-15), se ligado; senão, o bipe de sempre das preferências.
+    if (soundOn) playSuccessSound();
+    else playBeep(beep);
     setLastSale(sale);
     setCart(EMPTY_CART);
     setSelected(null);
     setDiscountAuthorizedBy(null);
     setDialog({ kind: 'none' });
+    setCelebrate(true);
+    // A primeira venda completa encerra as dicas.
+    if (tipsPref.value !== 'seen') tipsPref.set('seen');
     const change = sale.payments.reduce((a, p) => a + p.changeCents, 0);
     setMessage({
       tone: 'success',
@@ -691,7 +834,17 @@ export function Register({
         setSelected(cart.lines[Math.min(cart.lines.length - 1, i + 1)]?.line ?? null);
       },
     };
-    const allowedInSelf = ['F2', 'F6', 'F8', 'F10', 'ArrowUp', 'ArrowDown'];
+    // Venda concluída na tela: Esc (ou Enter fora de um botão) segue para a próxima venda.
+    if (celebrate) {
+      const active = document.activeElement;
+      const idle =
+        !active ||
+        active === document.body ||
+        (active === inputRef.current && inputRef.current.value.trim() === '');
+      actions.Escape = nextSale;
+      if (idle) actions.Enter = nextSale;
+    }
+    const allowedInSelf = ['F2', 'F6', 'F8', 'F10', 'ArrowUp', 'ArrowDown', 'Escape', 'Enter'];
     const action = selfMode && !allowedInSelf.includes(e.key) ? undefined : actions[e.key];
     if (action) {
       e.preventDefault();
@@ -726,13 +879,48 @@ export function Register({
     focusInput();
   };
 
-  // Folha de ações do celular (F8-14): o que no computador são botões e atalhos F.
+  // Ações do caixa: no celular, na folha que sobe de baixo; no computador, no "Mais…".
   const selectedLine = cart.lines.find((l) => l.line === selected) ?? null;
   const canFullscreen = typeof document !== 'undefined' && Boolean(document.fullscreenEnabled);
+  const openQuantity = () => {
+    if (!selectedLine) return;
+    setDialog({
+      kind: 'quantity',
+      line: selectedLine.line,
+      title: selectedLine.name,
+      unit: selectedLine.unit,
+      weighable: selectedLine.isWeighable,
+    });
+  };
+  const saveQuote = () =>
+    void pdv
+      .saveQuote(cartRef.current)
+      .then(() => {
+        setCart(EMPTY_CART);
+        setSelected(null);
+        setMessage({ tone: 'success', text: 'Orçamento salvo. Abra em Orçamentos (F7).' });
+      })
+      .catch(fail);
+  const clearSale = () => {
+    if (cartRef.current.lines.length > 0 && confirm('Limpar todos os itens desta venda?')) {
+      setCart(EMPTY_CART);
+      setSelected(null);
+    }
+  };
+  const changeMode = (next: RegisterMode) => {
+    modePref.set(next);
+    focusInput();
+  };
   const sheetActions = selfMode ? (
     <SheetSection title="Compra">
-      <SheetAction onClick={() => setDialog({ kind: 'customer' })}>CPF na nota</SheetAction>
-      <SheetAction onClick={() => void removeSelected()} disabled={selectedLine === null}>
+      <SheetAction shortcut="F6" onClick={() => setDialog({ kind: 'customer' })}>
+        CPF na nota
+      </SheetAction>
+      <SheetAction
+        shortcut="F8"
+        onClick={() => void removeSelected()}
+        disabled={selectedLine === null}
+      >
         Tirar item
       </SheetAction>
       {canFullscreen && (
@@ -746,23 +934,16 @@ export function Register({
     <>
       {selectedLine && (
         <SheetSection title={`Item ${selectedLine.line}: ${selectedLine.name}`}>
-          <SheetAction
-            onClick={() =>
-              setDialog({
-                kind: 'quantity',
-                line: selectedLine.line,
-                title: selectedLine.name,
-                unit: selectedLine.unit,
-                weighable: selectedLine.isWeighable,
-              })
-            }
-          >
+          <SheetAction shortcut="F3" onClick={openQuantity}>
             Quantidade
           </SheetAction>
-          <SheetAction onClick={() => setDialog({ kind: 'discount', line: selectedLine.line })}>
+          <SheetAction
+            shortcut="F4"
+            onClick={() => setDialog({ kind: 'discount', line: selectedLine.line })}
+          >
             Desconto no item
           </SheetAction>
-          <SheetAction tone="danger" onClick={() => void removeSelected()}>
+          <SheetAction shortcut="F8" tone="danger" onClick={() => void removeSelected()}>
             Tirar item
           </SheetAction>
         </SheetSection>
@@ -774,44 +955,36 @@ export function Register({
         >
           Desconto na venda
         </SheetAction>
-        <SheetAction onClick={() => setDialog({ kind: 'customer' })}>CPF na nota</SheetAction>
+        <SheetAction shortcut="F6" onClick={() => setDialog({ kind: 'customer' })}>
+          CPF na nota
+        </SheetAction>
         {sellers.length > 0 && (
           <SheetAction onClick={() => setDialog({ kind: 'seller' })}>Vendedor</SheetAction>
         )}
         <SheetAction onClick={() => setDialog({ kind: 'delivery' })}>Entrega</SheetAction>
         <SheetAction onClick={() => setDialog({ kind: 'tabs' })}>Comandas</SheetAction>
-        <SheetAction
-          disabled={cart.lines.length === 0}
-          onClick={() =>
-            void pdv
-              .saveQuote(cartRef.current)
-              .then(() => {
-                setCart(EMPTY_CART);
-                setSelected(null);
-                setMessage({ tone: 'success', text: 'Orçamento salvo. Abra em Orçamentos.' });
-              })
-              .catch(fail)
-          }
-        >
+        <SheetAction shortcut="F5" disabled={cart.lines.length === 0} onClick={saveQuote}>
           Salvar orçamento
         </SheetAction>
-        <SheetAction onClick={() => setDialog({ kind: 'quotes' })}>Orçamentos</SheetAction>
+        <SheetAction shortcut="F7" onClick={() => setDialog({ kind: 'quotes' })}>
+          Orçamentos
+        </SheetAction>
         <SheetAction
+          shortcut="F12"
           tone="danger"
           disabled={cart.lines.length === 0}
-          onClick={() => {
-            if (confirm('Limpar todos os itens desta venda?')) {
-              setCart(EMPTY_CART);
-              setSelected(null);
-            }
-          }}
+          onClick={clearSale}
         >
           Limpar venda
         </SheetAction>
       </SheetSection>
       <SheetSection title="Caixa">
-        <SheetAction onClick={() => setDialog({ kind: 'cash' })}>Sangria e fechamento</SheetAction>
-        <SheetAction onClick={() => setDialog({ kind: 'history' })}>Vendas do caixa</SheetAction>
+        <SheetAction shortcut="F9" onClick={() => setDialog({ kind: 'cash' })}>
+          Sangria e fechamento
+        </SheetAction>
+        <SheetAction shortcut="F11" onClick={() => setDialog({ kind: 'history' })}>
+          Vendas do caixa
+        </SheetAction>
         {lastSale && (
           <SheetAction onClick={() => void print(lastSale)}>
             Comprovante nº {lastSale.terminalSeq}
@@ -819,6 +992,15 @@ export function Register({
         )}
         <SheetAction onClick={() => setDialog({ kind: 'operator' })}>Trocar operador</SheetAction>
         <SheetAction onClick={startSelfCheckout}>Autoatendimento</SheetAction>
+        <SheetAction onClick={() => changeMode(mode === 'grid' ? 'spotlight' : 'grid')}>
+          Mudar para {REGISTER_MODES[mode === 'grid' ? 'spotlight' : 'grid'].toLowerCase()}
+        </SheetAction>
+        <SheetAction onClick={() => soundPref.set(soundOn ? 'off' : 'on')}>
+          {soundOn ? 'Desligar o som de venda concluída' : 'Ligar o som de venda concluída'}
+        </SheetAction>
+        {tipsPref.loaded && tipsPref.value === 'seen' && (
+          <SheetAction onClick={() => tipsPref.set('new')}>Ver as dicas de novo</SheetAction>
+        )}
         {canFullscreen && (
           <SheetAction onClick={() => void (fullscreen ? exitFullscreen() : enterFullscreen())}>
             {fullscreen ? 'Sair da tela cheia' : 'Tela cheia'}
@@ -876,7 +1058,7 @@ export function Register({
   const saleDetails = (
     <>
       {(priced.appliedPromotions?.length ?? 0) > 0 && (
-        <ul className="rounded-ui border border-success p-3 text-sm" aria-label="Promoções">
+        <ul className="rounded-2xl border border-success p-3 text-sm" aria-label="Promoções">
           {priced.appliedPromotions!.map((p) => (
             <li key={p.promotionId} className="flex justify-between gap-2">
               <span className="font-semibold">{p.name}</span>
@@ -889,7 +1071,7 @@ export function Register({
       )}
       {cart.delivery && (
         <div
-          className="flex flex-col gap-1 rounded-ui border border-primary p-3 text-sm"
+          className="flex flex-col gap-1 rounded-2xl border border-primary p-3 text-sm"
           aria-label="Entrega"
         >
           <p className="font-semibold">Entrega: {cart.delivery.zoneName}</p>
@@ -906,7 +1088,7 @@ export function Register({
       )}
       {cart.tabId && (
         <div
-          className="flex flex-col gap-2 rounded-ui border border-primary p-3"
+          className="flex flex-col gap-2 rounded-2xl border border-primary p-3"
           aria-label="Comanda"
         >
           <p className="font-semibold" data-testid="tab-label">
@@ -982,6 +1164,215 @@ export function Register({
         </p>
       )}
     </>
+  );
+
+  // Linhas da venda já formatadas, para a lista, o item em destaque e o celular.
+  const lineViews: SaleLineView[] = t.items.map((item) => {
+    const own = cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0;
+    const promo = priced.promotionDiscounts?.[item.line] ?? 0;
+    // Item lançado pelo celular (F8-03): mostra quem vendeu.
+    const sellerName = item.sellerId
+      ? (sellers.find((v) => v.id === item.sellerId)?.name ?? null)
+      : null;
+    return {
+      line: item.line,
+      name: item.name,
+      quantity: qty(item.quantityMilli, item.unit),
+      unitPrice: brl(item.unitPriceCents),
+      total: brl(item.totalCents),
+      notes: [
+        sellerName ? `Vendedor: ${sellerName}` : null,
+        own > 0 ? `Desconto no item: ${brl(own)}` : null,
+      ].filter((n): n is string => n !== null),
+      promotion: promo > 0 ? `Promoção: -${brl(promo)}` : null,
+    };
+  });
+  const spotlightLine = lineViews.find((l) => l.line === selected) ?? lineViews.at(-1) ?? null;
+
+  // Guia da primeira venda (F8-15): duas dicas curtas, uma de cada vez, até a primeira venda.
+  const showTips = tipsPref.loaded && tipsPref.value !== 'seen' && !selfMode;
+  const skipTips = () => {
+    tipsPref.set('seen');
+    focusInput();
+  };
+  const tipScan =
+    showTips && cart.lines.length === 0 && !celebrate ? (
+      <GuideTip onSkip={skipTips}>
+        Bipe ou digite aqui: código de barras ou o nome do produto.
+      </GuideTip>
+    ) : null;
+  const tipPay =
+    showTips && cart.lines.length > 0 ? (
+      <GuideTip onSkip={skipTips} arrow="down">
+        Toque para receber quando o cliente terminar.
+      </GuideTip>
+    ) : null;
+
+  // Venda concluída (F8-15): o troco gigante até a próxima venda.
+  const successChange = lastSale ? lastSale.payments.reduce((a, p) => a + p.changeCents, 0) : 0;
+  const successMessage = message?.tone === 'success' ? message.text : null;
+  const success =
+    celebrate && lastSale && cart.lines.length === 0 ? (
+      <SaleSuccess
+        seq={lastSale.terminalSeq}
+        changeCents={successChange}
+        paidCents={lastSale.totalCents}
+        message={successMessage}
+        motion={!prefersReducedMotion()}
+        soundOn={soundOn}
+        onToggleSound={() => soundPref.set(soundOn ? 'off' : 'on')}
+        onNext={nextSale}
+        onPrint={platform.printer ? () => void print(lastSale) : null}
+        compact={compact}
+      />
+    ) : null;
+  const alertMessage = success && successMessage ? null : message;
+
+  const payLabel = selfMode ? 'Pagar' : 'Receber';
+  const openPayment = () => setDialog({ kind: 'payment' });
+
+  /** Ações frequentes em cartões coloridos, com o nome e a tecla. */
+  type Tile = {
+    label: string;
+    shortcut?: string;
+    icon: LucideIcon;
+    tone: TileTone;
+    /** O que o cartão faz (ver `runTile`). */
+    action: TileAction;
+    disabled?: boolean;
+  };
+  type TileAction =
+    | 'quantity'
+    | 'discount'
+    | 'customer'
+    | 'remove'
+    | 'tabs'
+    | 'delivery'
+    | 'seller'
+    | 'cash'
+    | 'history';
+  const runTile = (action: TileAction) => {
+    if (action === 'quantity') return openQuantity();
+    if (action === 'discount') return setDialog({ kind: 'discount', line: selected });
+    if (action === 'remove') return void removeSelected();
+    setDialog({ kind: action });
+  };
+  const customerTile: Tile = {
+    label: selfMode ? 'CPF na nota' : 'Cliente/CPF',
+    shortcut: 'F6',
+    icon: UserRound,
+    tone: 'purple',
+    action: 'customer',
+  };
+  const removeTile: Tile = {
+    label: 'Tirar item',
+    shortcut: 'F8',
+    icon: Trash2,
+    tone: 'danger',
+    action: 'remove',
+    disabled: selected === null,
+  };
+  const discountTile: Tile = {
+    label: 'Desconto',
+    shortcut: 'F4',
+    icon: Percent,
+    tone: 'orange',
+    action: 'discount',
+    disabled: cart.lines.length === 0,
+  };
+  const desktopTiles: Tile[] = selfMode
+    ? [customerTile, removeTile]
+    : [
+        {
+          label: 'Quantidade',
+          shortcut: 'F3',
+          icon: Hash,
+          tone: 'blue',
+          action: 'quantity',
+          disabled: selectedLine === null,
+        },
+        discountTile,
+        customerTile,
+        removeTile,
+        {
+          label: 'Comandas',
+          icon: UtensilsCrossed,
+          tone: 'yellow',
+          action: 'tabs',
+        },
+        { label: 'Entrega', icon: Truck, tone: 'blue', action: 'delivery' },
+        ...(sellers.length > 0
+          ? [
+              {
+                label: 'Vendedor',
+                icon: Users,
+                tone: 'green',
+                action: 'seller',
+              } satisfies Tile,
+            ]
+          : []),
+        {
+          label: 'Caixa',
+          shortcut: 'F9',
+          icon: Wallet,
+          tone: 'green',
+          action: 'cash',
+        },
+        {
+          label: 'Vendas',
+          shortcut: 'F11',
+          icon: History,
+          tone: 'purple',
+          action: 'history',
+        },
+      ];
+
+  const compactTiles: Tile[] = selfMode
+    ? [customerTile, removeTile]
+    : [discountTile, customerTile, removeTile];
+
+  const scanField = (big: boolean) => (
+    <form
+      className="relative min-w-0 flex-1"
+      onSubmit={(e) => {
+        e.preventDefault();
+        void scanNow();
+      }}
+    >
+      <label htmlFor="pdv-input" className="sr-only">
+        Bipe o código ou digite o nome do produto
+      </label>
+      <ScanBarcode
+        aria-hidden
+        className={cx(
+          'pointer-events-none absolute top-1/2 -translate-y-1/2 text-muted',
+          big ? 'left-4 size-7' : 'left-3 size-5',
+        )}
+      />
+      <input
+        id="pdv-input"
+        ref={inputRef}
+        autoFocus
+        autoComplete="off"
+        enterKeyHint="go"
+        aria-keyshortcuts="F2"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder={big ? 'Bipe ou digite o produto (ex.: 3*arroz)' : 'Bipe ou digite o produto'}
+        className={cx(
+          'w-full rounded-2xl border-2 border-primary bg-surface shadow-sm',
+          big ? 'min-h-16 pl-14 pr-16 text-2xl' : 'min-h-12 pl-10 pr-3 text-lg',
+        )}
+      />
+      {big && (
+        <kbd
+          aria-hidden
+          className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 rounded-md border border-border bg-surface-2 px-1.5 font-mono text-sm text-muted"
+        >
+          F2
+        </kbd>
+      )}
+    </form>
   );
 
   const overlays = (
@@ -1220,6 +1611,25 @@ export function Register({
     </>
   );
 
+  const productGrid = (gridCompact: boolean) => (
+    <>
+      <CategoryTabs categories={categories} current={category} onChange={setCategory} />
+      <ProductGrid
+        products={gridProducts}
+        inCart={inCart}
+        onPick={pick}
+        compact={gridCompact}
+        hint={
+          gridProducts.length >= GRID_LIMIT
+            ? `Mostrando os primeiros ${GRID_LIMIT}. Para achar outro, digite o nome no campo de cima.`
+            : categories.length === 0
+              ? 'Para separar em abas, dê uma categoria aos produtos na retaguarda (Produtos).'
+              : null
+        }
+      />
+    </>
+  );
+
   if (compact) {
     return (
       <CompactRegister
@@ -1229,58 +1639,22 @@ export function Register({
         onSyncNow={() => void onSyncNow()}
         onExit={onExit}
         selfMode={selfMode}
+        mode={selfMode ? 'spotlight' : mode}
+        onModeChange={changeMode}
         notices={hasNotices ? notices : null}
-        scanInput={
-          <form
-            className="min-w-0 flex-1"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void scanNow();
-            }}
-          >
-            <label htmlFor="pdv-input" className="sr-only">
-              Bipe o código ou digite o nome do produto
-            </label>
-            <input
-              id="pdv-input"
-              ref={inputRef}
-              autoFocus
-              autoComplete="off"
-              enterKeyHint="go"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Bipe ou busque (ex.: 3*arroz)"
-              className="min-h-12 w-full rounded-ui border-2 border-primary bg-surface px-3 text-lg"
-            />
-          </form>
-        }
+        scanInput={scanField(false)}
         camera={
           <CameraScanButton platform={platform} onCode={(code) => void scanNow(code)} iconOnly />
         }
-        message={message}
+        tipScan={tipScan}
+        tipPay={tipPay}
+        message={alertMessage}
         results={results}
-        onPick={(p) => (p.isWeighable ? setDialog({ kind: 'weigh', product: p }) : add(p, 1000))}
-        lines={t.items.map((item) => ({
-          line: item.line,
-          name: item.name,
-          quantity: `${(item.quantityMilli / 1000).toLocaleString('pt-BR', {
-            maximumFractionDigits: 3,
-          })} ${item.unit}`,
-          unitPrice: brl(item.unitPriceCents),
-          total: brl(item.totalCents),
-          notes: [
-            item.sellerId && sellers.find((v) => v.id === item.sellerId)
-              ? `Vendedor: ${sellers.find((v) => v.id === item.sellerId)!.name}`
-              : null,
-            (cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0) > 0
-              ? `Desconto no item: ${brl(cart.lines.find((l) => l.line === item.line)!.discountCents)}`
-              : null,
-          ].filter((n): n is string => n !== null),
-          promotion:
-            (priced.promotionDiscounts?.[item.line] ?? 0) > 0
-              ? `Promoção: -${brl(priced.promotionDiscounts![item.line]!)}`
-              : null,
-        }))}
+        onPick={pick}
+        spotlight={spotlightLine ? <LastItem item={spotlightLine} compact /> : null}
+        grid={productGrid(true)}
+        success={success}
+        lines={lineViews}
         selected={selected}
         onSelect={setSelected}
         totalCents={t.totalCents}
@@ -1298,7 +1672,9 @@ export function Register({
           cart.loyalty ? `${cart.loyalty.points} pontos` : null,
           priceTable ? `Tabela ${priceTable}` : null,
         ].filter((tag): tag is string => tag !== null)}
-        onPay={() => setDialog({ kind: 'payment' })}
+        onPay={openPayment}
+        quickTiles={compactTiles}
+        onTile={runTile}
         sheetOpen={sheetOpen}
         onSheetOpenChange={setSheetOpen}
         details={saleDetails}
@@ -1308,24 +1684,51 @@ export function Register({
     );
   }
 
+  const viewMode: RegisterMode = selfMode ? 'spotlight' : mode;
+  const totalCard = (big: boolean) => (
+    <div className="shrink-0 rounded-3xl bg-primary p-5 text-primary-contrast shadow-md">
+      <p className="text-sm font-bold uppercase tracking-widest opacity-90">Total</p>
+      <p
+        className={cx(
+          'font-black leading-tight tabular-nums',
+          big ? 'text-6xl xl:text-7xl' : 'text-5xl',
+        )}
+        aria-live="polite"
+        data-testid="pdv-total"
+      >
+        {brl(t.totalCents)}
+      </p>
+      <p className="mt-1 text-base font-semibold opacity-90">
+        {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
+      </p>
+      {t.discountCents > 0 && <p className="mt-1">Descontos: {brl(t.discountCents)}</p>}
+      {t.deliveryFeeCents > 0 && (
+        <p className="mt-1" data-testid="delivery-fee">
+          Taxa de entrega: {brl(t.deliveryFeeCents)}
+        </p>
+      )}
+    </div>
+  );
+
   return (
-    // Do notebook para cima (lg), tudo cabe numa tela só, com o total e os atalhos ao lado.
-    // Abaixo disso o caixa usa o layout compacto, com cara de app (F8-14).
-    <div className="flex min-h-screen flex-col bg-bg lg:h-screen">
-      <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border bg-surface px-3 py-2 sm:px-4 [&_button]:whitespace-nowrap">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <Logo className="text-xl" />
-          <span className="font-semibold">{context.terminal.name}</span>
-          <span className="text-sm text-muted" data-testid="pdv-operator">
-            · {operator.name}
-          </span>
-          {!selfMode && (
-            <Button variant="ghost" onClick={() => setDialog({ kind: 'operator' })}>
-              Trocar operador
-            </Button>
-          )}
+    // Do notebook para cima (lg), tudo cabe numa tela só. Abaixo disso, o layout compacto (F8-14).
+    <div className="flex h-screen flex-col bg-bg" data-layout="desktop" data-mode={viewMode}>
+      <header className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1 border-b border-border bg-surface px-4 py-2 [&_button]:whitespace-nowrap">
+        <Logo className="text-2xl" />
+        <span aria-hidden className="h-8 w-px bg-border" />
+        <div className="leading-tight">
+          <p className="font-bold">{context.terminal.name}</p>
+          <p className="text-sm text-muted" data-testid="pdv-operator">
+            {operator.name}
+          </p>
         </div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        {!selfMode && (
+          <Button variant="ghost" onClick={() => setDialog({ kind: 'operator' })}>
+            Trocar operador
+          </Button>
+        )}
+        <div className="ml-auto flex flex-wrap items-center gap-x-3 gap-y-1">
+          {!selfMode && <ModeSwitch mode={mode} onChange={changeMode} />}
           <SyncBadge status={syncStatus} onSync={() => void onSyncNow()} />
           {selfMode ? (
             <Button variant="ghost" onClick={() => void stopSelfCheckout()}>
@@ -1343,272 +1746,204 @@ export function Register({
           )}
         </div>
       </header>
-      {notices}
+      {hasNotices && <div className="flex shrink-0 flex-col gap-2 px-4 pt-3">{notices}</div>}
 
-      <div className="grid flex-1 gap-4 p-3 pb-28 sm:p-4 sm:pb-28 lg:grid-cols-[1fr_380px] lg:overflow-hidden lg:pb-4">
-        <section className="flex min-h-0 flex-col gap-3" aria-label="Itens da venda">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void scanNow();
-            }}
-          >
-            <label htmlFor="pdv-input" className="sr-only">
-              Bipe o código ou digite o nome do produto
-            </label>
-            <input
-              id="pdv-input"
-              ref={inputRef}
-              autoFocus
-              autoComplete="off"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Bipe o código ou digite o nome (ex.: 3*arroz)"
-              className="min-h-16 w-full rounded-ui border-2 border-primary bg-surface px-4 text-2xl"
-            />
-          </form>
+      <div className="flex shrink-0 flex-col gap-2 px-4 pt-3">
+        <div className="flex items-center gap-3">
+          {scanField(true)}
           {/* No celular, a câmera faz de leitor (F8-05); cada leitura vira uma bipada. */}
           <CameraScanButton platform={platform} onCode={(code) => void scanNow(code)} />
-          {message && <Alert tone={message.tone}>{message.text}</Alert>}
-          {results.length > 0 && (
-            <ul
-              className="max-h-60 overflow-y-auto rounded-ui border border-border bg-surface"
-              aria-label="Resultados da busca"
-            >
-              {results.map((p) => (
-                <li key={p.id}>
-                  <button
-                    type="button"
-                    className="flex w-full justify-between gap-3 px-4 py-3 text-left hover:bg-surface-2"
-                    onClick={() =>
-                      p.isWeighable ? setDialog({ kind: 'weigh', product: p }) : add(p, 1000)
-                    }
-                  >
-                    <span>{p.name}</span>
-                    <span className="tabular-nums">
-                      {brl(p.priceCents)}
-                      {p.isWeighable ? '/kg' : ''}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-          <div className="min-h-40 flex-1 overflow-y-auto rounded-ui border border-border bg-surface lg:min-h-0">
-            {cart.lines.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center text-muted">
-                <p className="text-lg font-semibold text-text">Caixa livre</p>
-                <p>Bipe o primeiro produto. Bipou? Bipaê!</p>
-              </div>
-            ) : (
-              <table className="w-full text-left">
-                <caption className="sr-only">Itens da venda</caption>
-                <thead className="sticky top-0 bg-surface-2 text-sm text-muted">
-                  <tr>
-                    <th scope="col" className="px-3 py-2">
-                      #
-                    </th>
-                    <th scope="col" className="px-3 py-2">
-                      Produto
-                    </th>
-                    <th scope="col" className="px-3 py-2 text-right">
-                      Qtd.
-                    </th>
-                    <th scope="col" className="px-3 py-2 text-right">
-                      Preço
-                    </th>
-                    <th scope="col" className="px-3 py-2 text-right">
-                      Total
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {t.items.map((item) => (
-                    <tr
-                      key={item.line}
-                      aria-selected={selected === item.line}
-                      onClick={() => setSelected(item.line)}
-                      className={cx(
-                        'cursor-pointer border-t border-border',
-                        selected === item.line && 'bg-warning-soft',
-                      )}
-                    >
-                      <td className="px-3 py-2 text-muted">{item.line}</td>
-                      <td className="px-3 py-2 font-medium">
-                        {item.name}
-                        {(() => {
-                          const own =
-                            cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0;
-                          const promo = priced.promotionDiscounts?.[item.line] ?? 0;
-                          // Item lançado pelo celular (F8-03): mostra quem vendeu.
-                          const sellerName = item.sellerId
-                            ? (sellers.find((v) => v.id === item.sellerId)?.name ?? null)
-                            : null;
-                          return (
-                            <>
-                              {sellerName && (
-                                <span className="block text-sm font-normal text-muted">
-                                  Vendedor: {sellerName}
-                                </span>
-                              )}
-                              {own > 0 && (
-                                <span className="block text-sm font-normal text-muted">
-                                  Desconto no item: {brl(own)}
-                                </span>
-                              )}
-                              {promo > 0 && (
-                                <span className="block text-sm font-semibold text-success">
-                                  Promoção: -{brl(promo)}
-                                </span>
-                              )}
-                            </>
-                          );
-                        })()}
-                      </td>
-                      <td className="px-3 py-2 text-right tabular-nums">
-                        {(item.quantityMilli / 1000).toLocaleString('pt-BR', {
-                          maximumFractionDigits: 3,
-                        })}{' '}
-                        {item.unit}
-                      </td>
-                      <td className="px-3 py-2 text-right tabular-nums">
-                        {brl(item.unitPriceCents)}
-                      </td>
-                      <td className="px-3 py-2 text-right font-semibold tabular-nums">
-                        {brl(item.totalCents)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </section>
-
-        <aside className="flex flex-col gap-3" aria-label="Resumo">
-          <div className="hidden rounded-ui bg-primary p-5 text-primary-contrast lg:block">
-            <p className="text-sm font-semibold uppercase tracking-wide opacity-90">Total</p>
-            <p
-              className="text-5xl font-extrabold tabular-nums"
-              aria-live="polite"
-              data-testid="pdv-total"
-            >
-              {brl(t.totalCents)}
-            </p>
-            {t.discountCents > 0 && <p className="mt-1">Descontos: {brl(t.discountCents)}</p>}
-            {t.deliveryFeeCents > 0 && (
-              <p className="mt-1" data-testid="delivery-fee">
-                Taxa de entrega: {brl(t.deliveryFeeCents)}
-              </p>
-            )}
-            <p className="mt-1 text-sm opacity-90">
-              {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
-            </p>
-          </div>
-          {saleDetails}
-          <div className="hidden lg:grid">
-            <Button
-              size="lg"
-              onClick={() => setDialog({ kind: 'payment' })}
-              disabled={cart.lines.length === 0}
-              aria-keyshortcuts="F10"
-            >
-              Pagar (F10)
-            </Button>
-          </div>
-          {selfMode ? (
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
-                CPF na nota
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => void removeSelected()}
-                disabled={selected === null}
-              >
-                Tirar item
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setDialog({ kind: 'discount', line: selected })}
-                disabled={cart.lines.length === 0}
-              >
-                Desconto (F4)
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
-                CPF na nota (F6)
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'cash' })}>
-                Caixa (F9)
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'history' })}>
-                Vendas (F11)
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'tabs' })}>
-                Comandas
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'delivery' })}>
-                Entrega
-              </Button>
-              {sellers.length > 0 && (
-                <Button variant="secondary" onClick={() => setDialog({ kind: 'seller' })}>
-                  Vendedor
-                </Button>
-              )}
-            </div>
-          )}
-          {lastSale && (
-            <Button variant="ghost" onClick={() => void print(lastSale)}>
-              Imprimir comprovante da venda nº {lastSale.terminalSeq}
-            </Button>
-          )}
-        </aside>
-      </div>
-
-      {/* Celular e tablet: o total e o Pagar sempre à mão, no alcance do polegar. */}
-      <div
-        className="fixed inset-x-0 bottom-0 z-20 flex items-center gap-3 border-t border-border bg-surface p-3 shadow-lg lg:hidden"
-        aria-label="Total e pagamento"
-        role="region"
-      >
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-            Total · {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
-          </p>
-          <p
-            className="truncate text-2xl font-extrabold tabular-nums"
-            data-testid="pdv-total-mobile"
-          >
-            {brl(t.totalCents)}
-          </p>
         </div>
-        <Button
-          size="lg"
-          onClick={() => setDialog({ kind: 'payment' })}
-          disabled={cart.lines.length === 0}
-        >
-          Pagar
-        </Button>
+        {tipScan}
+        {alertMessage && <Alert tone={alertMessage.tone}>{alertMessage.text}</Alert>}
+        <SearchResults results={results} onPick={pick} />
       </div>
 
-      <footer
-        className="hidden flex-wrap gap-x-4 gap-y-1 border-t border-border bg-surface px-4 py-2 text-sm text-muted lg:flex"
-        aria-label="Atalhos do teclado"
-      >
-        {SHORTCUTS.map(([key, label]) => (
-          <span key={key}>
-            <kbd className="rounded border border-border bg-surface-2 px-1.5 font-mono text-text">
-              {key}
-            </kbd>{' '}
-            {label}
-          </span>
-        ))}
-      </footer>
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] gap-4 p-4">
+        {success ? (
+          <div className="col-span-2 min-h-0 rounded-3xl border border-border bg-surface shadow-sm">
+            {success}
+          </div>
+        ) : (
+          <>
+            {viewMode === 'spotlight' ? (
+              <section className="flex min-h-0 flex-col gap-3" aria-label="Itens da venda">
+                {cart.lines.length === 0 ? (
+                  <div className="min-h-0 flex-1 rounded-3xl border border-border bg-surface">
+                    <EmptySale />
+                  </div>
+                ) : (
+                  <>
+                    {spotlightLine && (
+                      <LastItem
+                        key={`${spotlightLine.line}-${spotlightLine.quantity}`}
+                        item={spotlightLine}
+                      />
+                    )}
+                    <SaleTable lines={lineViews} selected={selected} onSelect={setSelected} />
+                  </>
+                )}
+              </section>
+            ) : (
+              <section className="flex min-h-0 flex-col gap-3" aria-label="Produtos">
+                {productGrid(false)}
+              </section>
+            )}
 
+            <aside className="flex min-h-0 flex-col gap-3" aria-label="Resumo">
+              {totalCard(viewMode === 'spotlight')}
+              {viewMode === 'grid' && (
+                <SaleList
+                  lines={lineViews}
+                  selected={selected}
+                  onSelect={setSelected}
+                  className="min-h-24 flex-1 rounded-2xl border border-border"
+                />
+              )}
+              <div
+                className={cx(
+                  'flex min-h-0 flex-col gap-3 overflow-y-auto',
+                  viewMode === 'spotlight' ? 'flex-1' : 'max-h-48 shrink-0',
+                )}
+              >
+                {saleDetails}
+              </div>
+              {tipPay}
+              <PayButton
+                big
+                label={payLabel}
+                shortcut="F10"
+                onClick={openPayment}
+                disabled={cart.lines.length === 0}
+              />
+            </aside>
+          </>
+        )}
+      </div>
+
+      <nav
+        aria-label="Ações do caixa"
+        className="shrink-0 border-t border-border bg-surface px-4 py-3"
+      >
+        <ul className="grid auto-cols-fr grid-flow-col gap-2">
+          {desktopTiles.map((tile) => (
+            <li key={tile.label} className="grid">
+              <ActionTile
+                label={tile.label}
+                shortcut={tile.shortcut}
+                icon={tile.icon}
+                tone={tile.tone}
+                disabled={tile.disabled}
+                onClick={() => runTile(tile.action)}
+              />
+            </li>
+          ))}
+          {!selfMode && (
+            <li className="grid">
+              <ActionTile
+                label="Mais…"
+                ariaLabel="Mais ações"
+                haspopup
+                icon={Ellipsis}
+                tone="neutral"
+                onClick={() => setSheetOpen(true)}
+              />
+            </li>
+          )}
+        </ul>
+      </nav>
+
+      <ActionSheet open={sheetOpen} onOpenChange={setSheetOpen} title="Ações do caixa">
+        {sheetActions}
+      </ActionSheet>
       {overlays}
+    </div>
+  );
+}
+
+/** Lista da venda no computador: uma tabela, com a foto, para conferir item por item. */
+function SaleTable({
+  lines,
+  selected,
+  onSelect,
+}: {
+  lines: SaleLineView[];
+  selected: number | null;
+  onSelect: (line: number) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  // O item recém-bipado (selecionado) fica sempre à vista.
+  useEffect(() => {
+    if (selected === null) return;
+    ref.current
+      ?.querySelector<HTMLElement>(`[data-line="${selected}"]`)
+      ?.scrollIntoView?.({ block: 'nearest' });
+  }, [selected, lines.length]);
+  return (
+    <div
+      ref={ref}
+      className="min-h-0 flex-1 overflow-y-auto rounded-3xl border border-border bg-surface"
+      data-testid="pdv-items"
+    >
+      <table className="w-full text-left">
+        <caption className="sr-only">Itens da venda</caption>
+        <thead className="sticky top-0 z-10 bg-surface-2 text-sm text-muted">
+          <tr>
+            <th scope="col" className="w-12 px-3 py-2">
+              #
+            </th>
+            <th scope="col" className="px-3 py-2">
+              Produto
+            </th>
+            <th scope="col" className="px-3 py-2 text-right">
+              Qtd.
+            </th>
+            <th scope="col" className="px-3 py-2 text-right">
+              Preço
+            </th>
+            <th scope="col" className="px-3 py-2 text-right">
+              Total
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {lines.map((item) => (
+            <tr
+              key={item.line}
+              data-line={item.line}
+              aria-selected={selected === item.line}
+              onClick={() => onSelect(item.line)}
+              className={cx(
+                'cursor-pointer border-t border-border hover:bg-surface-2',
+                selected === item.line && 'bg-warning-soft hover:bg-warning-soft',
+              )}
+            >
+              <td className="px-3 py-2 text-muted tabular-nums">{item.line}</td>
+              <td className="px-3 py-2">
+                <span className="flex items-center gap-3">
+                  <ProductThumb name={item.name} size="sm" />
+                  <span className="min-w-0 font-medium">
+                    {item.name}
+                    {item.notes.map((note) => (
+                      <span key={note} className="block text-sm font-normal text-muted">
+                        {note}
+                      </span>
+                    ))}
+                    {item.promotion && (
+                      <span className="block text-sm font-semibold text-success">
+                        {item.promotion}
+                      </span>
+                    )}
+                  </span>
+                </span>
+              </td>
+              <td className="px-3 py-2 text-right tabular-nums">{item.quantity}</td>
+              <td className="px-3 py-2 text-right tabular-nums">{item.unitPrice}</td>
+              <td className="px-3 py-2 text-right font-semibold tabular-nums">{item.total}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -1621,7 +1956,7 @@ function SyncBadge({ status, onSync }: { status: SyncStatus | null; onSync: () =
       type="button"
       onClick={onSync}
       className={cx(
-        'flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold',
+        'flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold',
         offline ? 'bg-warning-soft text-text' : 'bg-success-soft text-success',
       )}
       title={status.lastError ?? 'Sincronizar agora'}

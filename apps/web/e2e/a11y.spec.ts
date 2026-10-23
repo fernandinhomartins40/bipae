@@ -106,7 +106,7 @@ test('telas sem violações de acessibilidade WCAG 2.2 AA', async ({ page }) => 
   await campo.press('Enter');
   await expect(page.getByTestId('pdv-total')).toHaveText('R$ 18,90');
   found.push(...(await violations(page, 'Caixa')));
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   found.push(...(await violations(page, 'Pagamento')));
 
   console.log(`F7-03: ${found.length} violação(ões)\n${found.join('\n')}`);

@@ -2,7 +2,7 @@ import { expect, request, test, type Page } from '@playwright/test';
 
 /**
  * F8-14: o caixa no celular com cara de app. Tela inteira, sem a página rolar: só a lista de
- * itens rola por dentro, e o total com o Pagar ficam sempre à vista. O pagamento também cabe.
+ * itens rola por dentro, e o total com o Receber ficam sempre à vista. O pagamento também cabe.
  */
 test.skip(() => test.info().project.name !== 'web', 'A largura de celular é do navegador.');
 
@@ -95,7 +95,7 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     const codigos = await abrirCaixa(page, tamanho);
 
-    // Layout de app: sem o rodapé de atalhos do teclado, com o rodapé do total e do Pagar.
+    // Layout de app: sem o rodapé de atalhos do teclado, com o rodapé do total e do Receber.
     await expect(page.locator('[data-layout="compact"]')).toBeVisible();
     await expect(page.getByRole('contentinfo', { name: 'Atalhos do teclado' })).toHaveCount(0);
 
@@ -115,10 +115,10 @@ for (const viewport of [
     // O último item bipado aparece (a lista acompanha a bipada).
     await expect(lista.getByText(PRODUTOS.at(-1)!)).toBeInViewport();
 
-    // O campo de bipar, o total e o Pagar estão inteiros na tela.
+    // O campo de bipar, o total e o Receber estão inteiros na tela.
     await expect(campo).toBeInViewport({ ratio: 1 });
     await expect(page.getByTestId('pdv-total-mobile')).toBeInViewport({ ratio: 1 });
-    const pagar = barra.getByRole('button', { name: 'Pagar', exact: true });
+    const pagar = barra.getByRole('button', { name: 'Receber', exact: true });
     await expect(pagar).toBeInViewport({ ratio: 1 });
     await expect(pagar).toBeEnabled();
     // Alvo de toque confortável (44px ou mais).

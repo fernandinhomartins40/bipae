@@ -1011,3 +1011,20 @@ describe('ficha técnica (F5-11)', () => {
     expect(await estoque(pizza.id)).toBe(0);
   });
 });
+
+describe('categoria no caixa (F8-15)', () => {
+  it('a categoria do cadastro chega ao caixa e vira aba da grade de produtos', async () => {
+    const owner = await signup(t.app);
+    const admin = api(t.app, owner.auth);
+    for (const [name, category] of [
+      ['Pão de Queijo', 'Padaria'],
+      ['Café Coado', 'Bebidas'],
+      ['Arroz 5kg', null],
+    ] as const)
+      await admin.post('/products', { name, priceCents: 500, category });
+    const device = await terminalDevice(owner, 'Balcão', 'web');
+    expect((await device.sync.sync()).lastError).toBeNull();
+    expect(await device.pdv.categories()).toEqual(['Bebidas', 'Padaria']);
+    expect((await device.pdv.browse('Padaria')).map((p) => p.name)).toEqual(['Pão de Queijo']);
+  });
+});

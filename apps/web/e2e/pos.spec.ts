@@ -81,7 +81,7 @@ test('sell online, keep selling offline, sync on reconnect, close blind', async 
   await page.keyboard.press('F6');
   await page.getByLabel('CPF ou CNPJ do cliente').fill('12345678909');
   await page.getByRole('button', { name: 'Confirmar' }).click();
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

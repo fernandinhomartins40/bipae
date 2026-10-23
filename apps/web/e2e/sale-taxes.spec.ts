@@ -74,7 +74,7 @@ test('configurar a empresa, vender sem internet e ver os impostos da venda na re
   await bipar('7891000315507');
   await bipar('78912342');
   await expect(page.getByTestId('pdv-total')).toHaveText('R$ 101,00');
-  await page.getByRole('button', { name: 'Pagar (F10)' }).click();
+  await page.getByRole('button', { name: 'Receber (F10)' }).click();
   await page.getByRole('radio', { name: 'Pix' }).click();
   await page.getByRole('button', { name: 'Adicionar pix' }).click();
   await page.getByRole('button', { name: 'Pagamento recebido' }).click();

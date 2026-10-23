@@ -107,10 +107,12 @@ try {
   const bipar = await field('Bipe o código ou digite o nome do produto');
   await bipar.sendKeys('7891000100103', Key.ENTER);
   await text('R$ 18,90');
-  await (await button('Pagar (F10)')).click();
+  await (await button('Receber (F10)')).click();
   const pix = await driver.wait(
     until.elementLocated(
-      By.xpath("//label[normalize-space(.)='Pix'] | //*[@role='radio'][normalize-space(.)='Pix']"),
+      By.xpath(
+        "//label[normalize-space(.)='Pix'] | //*[@role='radio'][@aria-label='Pix' or normalize-space(.)='Pix']",
+      ),
     ),
     TIMEOUT,
   );

@@ -1,5 +1,23 @@
 # Changelog
 
+## [F8-15 Caixa redesenhado] — 23/10/2026
+
+### Adicionado
+- **Dois modos de tela no caixa, com troca no topo.** "Venda em destaque" (o padrão): campo grande de bipar, o último produto bipado em destaque com a lista da venda embaixo, o TOTAL enorme e o botão gigante "Receber (F10)" ao lado. "Grade de produtos" (lanchonete, padaria): abas de categorias e os produtos em cartões para tocar, com a venda, o total e o "Receber" numa coluna. Cada caixa lembra o seu modo, guardado no próprio aparelho.
+- **Ações em cartões coloridos** embaixo, com o nome e a tecla: Quantidade (F3), Desconto (F4), Cliente/CPF (F6), Tirar item (F8), Comandas, Entrega, Vendedor, Caixa (F9), Vendas (F11) e "Mais…", que abre o resto (orçamentos, limpar venda, trocar operador, autoatendimento, som, tela cheia, sair) com as teclas à vista.
+- **Guia da primeira venda:** duas dicas curtas ("Bipe ou digite aqui" e "Toque para receber") que somem depois da primeira venda, com "Pular dicas". Dá para ver de novo em "Mais…".
+- **Busca por nome com foto:** ao digitar o nome, os produtos aparecem com a foto (por enquanto, as iniciais coloridas do produto) e o preço, para tocar. "3*pão" continua valendo. O leitor de código não dispara buscas.
+- **Pagamento visual:** formas de pagamento em cartões coloridos com a tecla (D, P, B, C, V, R, que agora escolhem a forma de verdade), "Crediário (fiado)", notas rápidas (o valor certo, os arredondamentos e as notas de R$ 50 e R$ 100) e o troco grande já enquanto se digita o valor recebido.
+- **Venda concluída:** tela com o check animado, o troco gigante, "Próxima venda" (Enter ou Esc também) e "Imprimir comprovante". Bipar o próximo produto já começa a venda seguinte. Som curto opcional, desligado por padrão; com "reduzir movimento" no sistema, nada se mexe.
+- No celular, o mesmo visual nos dois modos, sem rolar a página: cartões de Desconto, Cliente/CPF, Tirar item e Mais no rodapé, e na grade a venda vira um resumo que abre a folha com os itens.
+- A categoria do produto vai para o caixa na sincronização (o caixa baixa o catálogo de novo uma vez, sozinho, para pegar as categorias).
+
+### Alterado
+- O botão "Pagar" do caixa virou "Receber" (no autoatendimento, para o cliente, continua "Pagar"). "CPF na nota (F6)" virou "Cliente/CPF (F6)".
+
+### Sem mudança
+- Regras de venda, desconto, impostos, NFC-e, sincronização e todos os atalhos F2 a F12 continuam iguais.
+
 ## [Site: landing em notebooks] — 23/10/2026
 
 ### Corrigido
