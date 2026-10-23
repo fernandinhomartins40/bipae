@@ -144,12 +144,28 @@
   "downloadedAt": "2026-10-20"
  },
  "nfseXsdProdRest": {
-  "file": "NFSe_Esquemas_XSD_PRODREST_v1.01_2026-07-27.zip",
-  "title": "NFS-e Nacional: NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20260727 (esquemas da produção restrita)",
+  "file": "NFSe_Esquemas_XSD_PRODREST_v1.01_2026-10-20.zip",
+  "title": "NFS-e Nacional: NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20261020 (esquemas da produção restrita com os itens 2.2, 2.3 e 2.16 da NT 009: finNFSe no infDPS, vAjusteBC, CST e cClassTrib em IBSCBS/valores/trib)",
   "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
   "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita",
-  "publishedAt": "2026-07-27",
-  "downloadedAt": "2026-10-20"
+  "publishedAt": "2026-10-20",
+  "downloadedAt": "2026-10-23"
+ },
+ "nfseAnexoIProdRest": {
+  "file": "NFSe_Anexo_I_PRODREST_Leiaute_RN_DPS_v1.01_2026-10-20.xlsx",
+  "title": "NFS-e Nacional: ANEXO_I-SEFIN_ADN-DPS_NFSe-SNNFSe-PRODREST-v1.01-20261020 (leiaute e regras da DPS na produção restrita)",
+  "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita",
+  "publishedAt": "2026-10-20",
+  "downloadedAt": "2026-10-23"
+ },
+ "nfseImplantacoes": {
+  "file": "NFSe_Atualizacoes_e_Implantacoes_2026-10-23.html.gz",
+  "title": "NFS-e Nacional: Atualizações e Implantações (o que entrou em produção e em produção restrita, por data; em 20/10/2026 só a produção restrita recebeu os itens 2.3, 2.15 e 2.16 da NT 009)",
+  "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/atualizacoes-e-implantacoes",
+  "publishedAt": "2026-10-21",
+  "downloadedAt": "2026-10-23"
  },
  "nfseNt009": {
   "file": "NFSe_NT_009_v1.01_RTC_2026-09-11.pdf",

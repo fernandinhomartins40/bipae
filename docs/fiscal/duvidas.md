@@ -678,6 +678,11 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - **DANFSE:** o caminho `{ADN DANFSE}/{chave}`, que devolve o PDF (NT 008).
 - **Validação local:** os padrões dos esquemas trazem `^` e `$`. No XML Schema eles são literais; o validador da Sefin os trata como âncoras, e o teste do Bipaê valida do mesmo jeito.
 - **Próximo passo:** conferir tudo na primeira emissão em produção restrita, com o certificado da empresa (F5-13.f, item E1).
+- **Cronograma da NT 009 (23/10/2026, F5-13.j), lido nas páginas oficiais e guardado em `packages/fiscal/sources`:**
+  - **Produção restrita:** recebeu em 20/10/2026 os itens 2.3, 2.15 e 2.16 da NT 009 (página "Atualizações e Implantações"), com os esquemas `NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20261020`. Neles o finNFSe fica no infDPS e o xDescServ vai depois do cNBS. A DPS do Bipaê já segue esse leiaute.
+  - **Produção:** sem data. Na mesma página, a coluna da produção em 20/10/2026 traz "-", e a NT 009 diz só que o cronograma "será publicado no portal". O leiaute de 09/02/2026 continua valendo até sair a data, e a troca é uma linha nova na tabela `NFSE_DPS_LAYOUTS` (F5-13.m).
+  - **Ponto ambíguo 1:** a aba "LEIAUTE DPS_NFS-e 1.01" do Anexo I PRODREST de 20/10/2026 escreve o caminho do finNFSe como `infDPS/IBSCBS/`, mas o põe na linha entre o cMotivoEmisTI e o chNFSeRej. O esquema oficial o coloca no infDPS, e foi isso que a Sefin exigiu em 20/10/2026. O Bipaê segue o esquema; o caminho do anexo parece erro de digitação.
+  - **Ponto ambíguo 2:** o item 2.11 da NT 009 manda o indDest e o dest para o infDPS, mas o esquema de 20/10/2026 ainda os mantém no IBSCBS, e a Sefin recusou o indDest no infDPS (F5-13.i). Hoje isso não pesa, porque o Bipaê não manda o grupo IBSCBS (facultativo; para o Simples, obrigatório só a partir de 2027). Quando sair esquema com o item 2.11, o monitor avisa.
 
 ### D-037 — NF-e de devolução de venda: referência e imposto
 

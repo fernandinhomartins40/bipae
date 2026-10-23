@@ -1,5 +1,11 @@
 # Changelog
 
+## [F5-13.j NFS-e no leiaute novo da produção restrita] — 23/10/2026
+
+### Alterado
+- **A NFS-e segue o leiaute que a produção restrita passou a exigir em 20/10/2026** (NT 009, esquemas oficiais da mesma data): finalidade da nota no lugar certo e a descrição do serviço depois do código NBS. O leiaute vem de uma tabela por ambiente e data. A produção, que ainda não tem data para a NT 009, continua no leiaute de 09/02/2026 até a Receita publicar o cronograma.
+- **O monitor semanal das fontes agora confere as páginas da NFS-e Nacional** e avisa quando sai esquema novo ou data nova de implantação.
+
 ## [F4-14.b.7 Crédito do ativo (CIAP) no arquivo do SPED] — 23/10/2026
 
 ### Adicionado

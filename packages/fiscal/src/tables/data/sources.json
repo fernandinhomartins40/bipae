@@ -162,13 +162,31 @@
   "sha256": "a4ee797cbe26e0e02402e06cfac4e7b2611e9d64fa003998b69bee3326d080f4"
  },
  "nfseXsdProdRest": {
-  "file": "NFSe_Esquemas_XSD_PRODREST_v1.01_2026-07-27.zip",
-  "title": "NFS-e Nacional: NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20260727 (esquemas da produção restrita)",
+  "file": "NFSe_Esquemas_XSD_PRODREST_v1.01_2026-10-20.zip",
+  "title": "NFS-e Nacional: NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20261020 (esquemas da produção restrita com os itens 2.2, 2.3 e 2.16 da NT 009: finNFSe no infDPS, vAjusteBC, CST e cClassTrib em IBSCBS/valores/trib)",
   "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
   "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita",
-  "publishedAt": "2026-07-27",
-  "downloadedAt": "2026-10-20",
-  "sha256": "6c7e0510d3ecff4454f291f4e10b742d27a4818f23aab181494f96d0ea79f3dc"
+  "publishedAt": "2026-10-20",
+  "downloadedAt": "2026-10-23",
+  "sha256": "25fdcecc651a67a216496ab10d7566631e6ed10f721e37d62c7845dadb0ea267"
+ },
+ "nfseAnexoIProdRest": {
+  "file": "NFSe_Anexo_I_PRODREST_Leiaute_RN_DPS_v1.01_2026-10-20.xlsx",
+  "title": "NFS-e Nacional: ANEXO_I-SEFIN_ADN-DPS_NFSe-SNNFSe-PRODREST-v1.01-20261020 (leiaute e regras da DPS na produção restrita)",
+  "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita",
+  "publishedAt": "2026-10-20",
+  "downloadedAt": "2026-10-23",
+  "sha256": "72b05981c8882cdd807f3acf901b669465360f9cf1b9d9e235ac4363dacfb2d8"
+ },
+ "nfseImplantacoes": {
+  "file": "NFSe_Atualizacoes_e_Implantacoes_2026-10-23.html.gz",
+  "title": "NFS-e Nacional: Atualizações e Implantações (o que entrou em produção e em produção restrita, por data; em 20/10/2026 só a produção restrita recebeu os itens 2.3, 2.15 e 2.16 da NT 009)",
+  "publisher": "Receita Federal do Brasil / Sistema Nacional NFS-e (gov.br/nfse)",
+  "page": "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/atualizacoes-e-implantacoes",
+  "publishedAt": "2026-10-21",
+  "downloadedAt": "2026-10-23",
+  "sha256": "1e15d038ac1d2fd8eb8f817a471f73f2dbcb27531dcf6145ef6d67e949ad8d11"
  },
  "nfseNt009": {
   "file": "NFSe_NT_009_v1.01_RTC_2026-09-11.pdf",

@@ -572,6 +572,66 @@
       "Manual de Usuários da Sefaz Virtual - RS.",
       "Manual do Emissor de NF-e",
       "Manual de Contingência da NF-e - Versão 1.01"
+    ],
+    "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/producao-restrita": [
+      "Guia para Utilização do Módulo de Apuração Nacional (guia-utilizacao-do-man-v1-00-08abr2026.pdf)",
+      "Guia do Emissor Público Nacional Web (com formulário IBS/CBS) (guia_emissor_publico_nacional_web_snnfse-ern_versao_1-2-1.pdf)",
+      "Nota Técnica SE/CGNFS-e nº 009 (nota-tecnica-009-se-cgnfs-e-v-1-01.pdf)",
+      "ANEXO_I-SEFIN_ADN-DPS_NFSe-SNNFSe-PRODREST-v1.01-20261020 (anexo_i-sefin_adn-dps_nfse-snnfse_prodrest-v1-01-20261020.xlsx)",
+      "ANEXO_II-SEFIN_ADN-PEDREGEVT_EVT-SNNFSe-PRODREST-v1.01-20261020 (anexo_ii-sefin_adn-pedregevt_evt-snnfse_prodrest-v1-01-20261020.xlsx)",
+      "ANEXO_B-NBS2-LISTA_SERVICO_NACIONAL-SNNFSe-PRODREST-v1.01-20260122 (anexo_b-nbs2-lista_servico_nacional-snnfse-prodrest-v1-01-20260122.xlsx)",
+      "ANEXO_C-INDOP_IBSCBS-SNNFSe-PRODREST-v1.01-20260122 (anexo_c-indop_ibscbs-snnfse-prodrest-v1-01-20260122.xlsx)",
+      "NFSe-ESQUEMAS_XSD-PRODREST-v1.01-20261020 (esquemas_prod_restrita_20261020.zip)"
+    ],
+    "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/rtc": [
+      "Nota Técnica 010 SE/CGNFS-e nº 010 versão 1.00 (nt-010-se-cgnfse-leiaute-nfse-via-v-1.00.pdf)",
+      "Nota Técnica SE/CGNFS-e nº 009 versão 1.01 (01/10/2026) (nota-tecnica-009-se-cgnfs-e-v-1-01.pdf)",
+      "AnexoVI-LeiautesRN_RTC_IBSCBS-v1.04.01 - NT009 v1.01 (anexovi-leiautesrn_rtc_ibscbs-v1-04-01-nt009.xlsx)",
+      "AnexoVII-IndOp_IBSCBS_v1.03.00 - NT009 v1.01 (anexovii-indop_ibscbs_v1-03-00-nt009.xlsx)",
+      "Nota Técnica SE/CGNFS-e nº 008 (nt-008-se-cgnfse-danfse-20260714-v1-02.pdf)",
+      "AnexoVIII versão 1.01.00 - Correlação entre Item de Serv., NBS, cClassTrib e cIndOp (AnexoVII) (anexoviii-correlacaoitemnbsindopcclasstrib_ibscbs_v1-01-00.xlsx)",
+      "Nota Técnica SE/CGNFS-e nº 007 (nt-007-se-cgnfse-v1-0.pdf)",
+      "AnexoVI-LeiautesRN_RTC_IBSCBS-V1.03.00 – NT007 (anexovi-leiautesrn_rtc_ibscbs-v1-03-00-2013-nt007.xlsx)",
+      "AnexoVII-IndOp_IBSCBS_V1.01.00 (anexovii-indop_ibscbs_v1-01-00.xlsx)",
+      "Nota Técnica SE/CGNFS-e nº 006 (nt-006-se-cgnfse-leiaute-nfse-via.pdf)",
+      "AnexoVIII versão 1.00.00 - Correlação entre Item de Serv., NBS, cClassTrib e cIndOp (AnexoVII) (anexoviii-correlacaoitemnbsindopcclasstrib_ibscbs_v1-00-00.xlsx)",
+      "Nota Técnica SE/CGNFS-e nº 005 (nt-005-se-cgnfse-novo-layout-rtc.pdf)",
+      "AnexoVI-LeiautesRN_RTC_IBSCBS-V1.02.01 - NT005 (anexovi-leiautesrn_rtc_ibscbs-v1-02-00.xlsx)",
+      "Nota Técnica SE/CGNFS-e nº 004 (nt-004-se-cgnfse-novo-layout-rtc-v2-00-20251210.pdf)",
+      "AnexoVI-LeiautesRN_RTC_IBSCBS-V1.01.03 - NT004 (anexovi-leiautesrn_rtc_ibscbs-v1-01-03-nt004.xlsx)",
+      "AnexoVII-IndOp_IBSCBS_V1.00.00 (anexovii-indop_ibscbs_v1-00-00.xlsx)",
+      "Esquemas XSD - AnexoVI-LeiautesRN_RTC_IBSCBS-V1.01.03 - NT004 (nfse-esquemas_xsd-rtc-v1-00-20251210.zip)",
+      "Nota Técnica SE/CGNFS-e nº 003 (nt-003-1-2-se-cgnfse-novo-layout-rtc.pdf)",
+      "Nota Técnica SE/CGNFS-e nº 001 (nota-tecnica-001-se-cgnfse-novo-layout-rtc.pdf)",
+      "Nota Técnica SE/CGNFS-e nº 009 versão 1.01 (01/10/2026) Nota Técnica da Secretaria-Executiva do Comitê Gestor da NFS-e (SE/NFS-e) que dispõe sobre as adequações do layout da NFS-e, dado o contexto da Reforma Tributária do Consumo. AnexoVI-LeiautesRN_RTC_IBSCBS-v1.04.01 - NT009 v1.01 AnexoVII-IndOp_IBSCBS_v1.03.00 - NT009 v1.01"
+    ],
+    "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual": [
+      "Guia do Emissor Público Nacional Web (guia-emissorpubliconacionalweb_snnfse-ern-v12.pdf)",
+      "Guia do Painel Administrativo Municipal (guia-do-painel-administrativo-municipal-nfs-e-v1-2-out2025.pdf)",
+      "API - Manual de Contribuintes - Emissor Público (manual-contribuintes-emissor-publico-api-sistema-nacional-nfs-e-v1-2-out2025.pdf)",
+      "API - Manual de Municípios - ADN (Compartilhamento) (manual-municipios-apis-adn-sistema-nacional-nfs-e-v1-2-out21025.pdf)",
+      "API - Manual de Municípios - CNC (Cadastro Nacional de Contribuintes) (manual-municipios-cnc-api-sistema-nacional-nfs-e-v1-2-out21025.pdf)",
+      "API - Manual de Municípios - Emissor Público (manual-municipios-emissor-publico-api-sistema-nacional-nfs-e-v1-2-out21025.pdf)",
+      "API - Manual de Contribuintes - Guia de Utilização das APIs do ADN (manual-contribuintes-apis-adn-sistema-nacional-nfse.pdf)",
+      "API - Manual de Contribuintes - Emissor Público Nacional - Emissão por Decisão Administrativa ou Judicial (manual-contribuintes-emissor-publico-api-emissao-decisao-administrativa-e-judicial.pdf)",
+      "NFSe-ESQUEMAS_XSD-v1.01-20260209 (nfse-esquemas_xsd-v1-01-20260209.zip)",
+      "ANEXO_A-MUNICIPIO_IBGE-PAISES_ISO2-v1.00-SNNFSe-20251210 (anexo_a-municipio_ibge-paises_iso2-v1-00-snnfse-20251210.xlsx)",
+      "ANEXO_B-NBS2-LISTA_SERVICO_NACIONAL-SNNFSe-v1.01-20260122 (anexo_b-nbs2-lista_servico_nacional-snnfse-v1-01-20260122.xlsx)",
+      "ANEXO_C-INDOP_IBSCBS-SNNFSe-v1.01 (anexo-c-indop-ibscbs-snnfse-v1-01.xlsx)",
+      "ANEXO_I-SEFIN_ADN-DPS_NFSe-SNNFSe-v1.01-20260209 (anexo_i-sefin_adn-dps_nfse-snnfse-v1-01-20260209.xlsx)",
+      "ANEXO_II-SEFIN_ADN-PEDREGEVT_EVT-SNNFSe-v1.01-20260122 (anexo_ii-sefin_adn-pedregevt_evt-snnfse-v1-01-20260122.xlsx)",
+      "ANEXO_III-CNC-SNNFSe-v1.00-20251216 (anexo_iii-cnc-snnfse-v1-00-20251216.xlsx)",
+      "ANEXO_IV-ADN-SNNFSe-v1.00-20251216 (anexo_iv-adn-snnfse-v1-00-20251216.xlsx)",
+      "ANEXO_V-PAINEL_ADM_MUNICIPAL-SNNFSe-v1.00-20251216 (anexo_v-painel_adm_municipal-snnfse-v1-00-20251216.xlsx)"
+    ],
+    "https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/atualizacoes-e-implantacoes": [
+      "20/10/2026 | - | - Reposicionamento dos campos CST e cClassTrib na estrutura do XML da nota fiscal (item 2.16 da Nota Técnica 009); - Inclusão dos novos fatos geradores na API de emissão (códigos 99.02 a 99.04, itens 2.15 da Nota Técnica 009 e 2.1.3 da Nota Técnica 005); - Criação do grupo vAjusteBC a partir do merge dos grupos vDedRed e gReeRepRes (item 2.3 da Nota Técnica 009).",
+      "28/09/2026 | Nova funcionalidade no Painel Administrativo Municipal para permitir antecipar a adoção do Emissor Nacional para optantes pelo Simples Nacional | Nova funcionalidade no Painel Administrativo Municipal para permitir antecipar a adoção do Emissor Nacional para optantes pelo Simples Nacional",
+      "10/08/2026 | Evolução para tratamento do CNPJ alfanumérico; Emissor Nacional Web - Evolução para destaque de IBS/CBS - NT 004; Emissor Nacional Web para Decisões Administrativas e Judiciais com grupos IBS/CBS; Emissor Nacional Web - Ajustes na Consulta e Ordenação por Datas (Notas emitidas e recebidas); Ajuste no enquadramento e desenquadramento do Simples Nacional na funcionalidade de Substituição de Notas; SEFIN Nacional - Tratamento de casos de enquadramento e desenquadramento de emitente no Simples Nacional; e Evolução no Controle de Acesso ao Portal do Contribuinte. | ",
+      "03/08/2026 | Consulta Pública com exibição dos grupos IBS/CBS; Geração do DANFSe atualizada em conformidade com a Nota Técnica 008 (NT008), por meio da Consulta Pública, do Portal do Contribuinte e do Painel Administrativo Municipal; Evolução do DANFSE e da Consulta Pública: Novos grupos IBS/CBS; Evolução Sefin - Endereço no Exterior do Prestador/Fornecedor; e Desativação da API do DANFSe do ADN (versão 1.0). | ",
+      "01/07/2026 | Ajustes nas regras E1577, E1549 e E1554 com o objetivo de permitir o correto compartilhamento ao ADN , pelos Municípios, dos documentos fiscais que possuem os grupos IBSCBS preenchidos. Havia divergência no cálculo e validação dos valores dos campos pAliqEfetUF , pAliqEfetMun e pAliqEfetCBS . Em resumo, esses campos são obrigatórios e devem ser iguais às alíquotas ( pIBSUF, pIBSMun e pCBS , respectivamente) quando não houver redutores. | ",
+      "24/04/2026 | Correção de códigos de mensagens, conforme abaixo e criação da regra E1000 para retornar erros da Calculadora RTC. - RNG6110 mudou para E1235 - Falha Schema XML; - E6151 mudou para E1634 - Certificado Digital fora do padrão estabelecido; - E6152 mudou para E1200 - Certificado Digital da transmissao inválido; - E6154 mudou para E1229 - Xml não está utilizando codificação UTF-8; - E6155 mudou para E1228 - Xml declarado com prefixo de namespace; e - E6157 mudou para E1225 - Falha ao descompactar XML Zip B64. | ",
+      "13/03/2026 | - Desligamento da regras E1543, E1547 e E1552 que causavam conflito com demais regras existentes; - Desligamento da regra E0675 e os respectivos reflexos nos emissores nacionais para permitir a informação de tributos federais por prestador/fornecedor pessoa física (CPF); - Melhoria no tratamento da integração com a Calculadora de Tributos para retornar ao usuário a mensagem de erro real que foi lançada pela própria integração; - Ajuste no compartilhamento ADN para tratar corretamente o local de incidência de ISSQN em casos de serviço do subitem 14.14; - Correção do Emissor Nacional Web para aceitar a faixa de série correta (entre 80000 e 89999) quando emissão indicar transcrição manual de número e série de DPS; - Melhoria no tratamento de falhas de esquema para não retornar 999 em alguns casos (exemplo: quando o arquivo não possui o atributo xmlns); - Ajuste na API de consulta NFS-e da Sefin Nacional para considerar codificação UTF-8 no retorno da chamada. | "
     ]
   }
 }

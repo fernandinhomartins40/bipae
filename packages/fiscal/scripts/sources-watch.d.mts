@@ -1,5 +1,6 @@
 /** Tipos da comparação das fontes oficiais (F3-31), usados nos testes. */
 export function listingTitles(html: string): string[];
+export function nfsePageEntries(html: string): string[];
 export function diffTitles(
   saved: string[],
   current: string[],

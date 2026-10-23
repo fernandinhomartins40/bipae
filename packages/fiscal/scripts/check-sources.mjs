@@ -51,7 +51,13 @@ import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
-import { diffRows, diffTitles, listingTitles, reportMarkdown } from './sources-watch.mjs';
+import {
+  diffRows,
+  diffTitles,
+  listingTitles,
+  nfsePageEntries,
+  reportMarkdown,
+} from './sources-watch.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sourcesDir = join(root, 'sources');
@@ -318,10 +324,31 @@ const listingUrls = [
   ),
 ];
 
+/**
+ * Páginas da documentação técnica da NFS-e Nacional (F5-13.j): esquemas e anexos publicados e o
+ * quadro de implantações em produção e em produção restrita. Esquema novo da produção restrita ou
+ * data nova de implantação da NT 009 aparecem como "mudou".
+ */
+const nfsePageUrls = [
+  ...new Set(
+    Object.values(manifest)
+      .map((s) => s.page)
+      .filter((p) =>
+        /gov\.br\/nfse\/.*\/documentacao-tecnica\/(producao-restrita|rtc|documentacao-atual|atualizacoes-e-implantacoes)$/.test(
+          p,
+        ),
+      ),
+  ),
+];
+const isNfsePage = (url) => nfsePageUrls.includes(url);
+
 async function currentListings() {
   return Object.fromEntries(
     await Promise.all(
-      listingUrls.map(async (url) => [url, listingTitles(text(await download(url)))]),
+      [...listingUrls, ...nfsePageUrls].map(async (url) => {
+        const html = text(await download(url));
+        return [url, isNfsePage(url) ? nfsePageEntries(html) : listingTitles(html)];
+      }),
     ),
   );
 }
@@ -329,14 +356,16 @@ async function currentListings() {
 async function checkListings() {
   const before = JSON.parse(readFileSync(listingsPath, 'utf8'));
   const now = await currentListings();
-  return listingUrls.map((url) => {
+  return [...listingUrls, ...nfsePageUrls].map((url) => {
     const { added, removed } = diffTitles(before.listings[url] ?? [], now[url]);
     const changed = added.length > 0 || removed.length > 0;
+    const kind = isNfsePage(url) ? 'Página da NFS-e Nacional' : 'Lista do Portal da NF-e';
+    const keys = Object.entries(manifest)
+      .filter(([, s]) => s.page === url)
+      .map(([k]) => k)
+      .join(', ');
     return {
-      title: `Lista do Portal da NF-e (${Object.entries(manifest)
-        .filter(([, s]) => s.page === url)
-        .map(([k]) => k)
-        .join(', ')})`,
+      title: `${kind} (${keys})`,
       page: url,
       status: changed ? 'mudou' : 'igual',
       details: [...added.map((t) => `novo: ${t}`), ...removed.map((t) => `saiu: ${t}`)],
@@ -1389,9 +1418,11 @@ if (process.argv.includes('--save-listings')) {
       manifest.ajusteSinief0218.page,
       checkDemonstration,
     ),
-    ...(await safe('Listas do Portal da NF-e', listingUrls.join(' '), checkListings).then((r) =>
-      Array.isArray(r) ? r : [r],
-    )),
+    ...(await safe(
+      'Listas do Portal da NF-e e páginas da NFS-e Nacional',
+      [...listingUrls, ...nfsePageUrls].join(' '),
+      checkListings,
+    ).then((r) => (Array.isArray(r) ? r : [r]))),
   ];
   const report = reportMarkdown(results, today);
   console.log(report);

@@ -8,6 +8,42 @@ export function listingTitles(html) {
     .filter(Boolean);
 }
 
+const plainText = (html) =>
+  html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_m, code) => String.fromCharCode(Number(code)))
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/**
+ * O que uma página da documentação técnica da NFS-e Nacional (gov.br/nfse) publica (F5-13.j): os
+ * documentos (esquemas, anexos e notas técnicas, com o nome do arquivo) e as linhas datadas das
+ * tabelas, como a de "Atualizações e Implantações", que diz o que entrou em produção e em produção
+ * restrita. Esquema novo ou data nova aparecem como título novo.
+ */
+export function nfsePageEntries(html) {
+  const start = html.indexOf('id="parent-fieldname-text"');
+  if (start < 0) return [];
+  const end = html.indexOf('id="viewlet-below-content-body"', start);
+  const body = html.slice(start, end < 0 ? undefined : end);
+  const documents = [
+    ...body.matchAll(/<a\s[^>]*href="([^"]+\.(?:zip|xlsx|xls|pdf))"[^>]*>([\s\S]*?)<\/a>/gi),
+  ].map((m) => `${plainText(m[2])} (${m[1].split('/').pop()})`);
+  const rows = [...body.matchAll(/<tr[\s>][\s\S]*?<\/tr>/gi)]
+    .map((row) =>
+      [...row[0].matchAll(/<t[dh][\s>][\s\S]*?<\/t[dh]>/gi)]
+        .map((cell) => plainText(cell[0]))
+        .join(' | '),
+    )
+    .filter((row) => /\b\d{2}\/\d{2}\/\d{4}\b/.test(row));
+  return [...new Set([...documents, ...rows])];
+}
+
 /** O que entrou e o que saiu de uma lista de títulos. */
 export function diffTitles(saved, current) {
   const before = new Set(saved);

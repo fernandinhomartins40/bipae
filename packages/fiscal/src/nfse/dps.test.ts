@@ -2,8 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { validateNfseXml } from '../../test/schema';
 import { signFiscalXml, type WebCryptoKey } from '../nfce/sign';
 import { buildDps, dpsId, type DpsInput } from './dps';
+import { NFSE_DPS_LAYOUTS, nfseDpsLayout } from './layouts';
 
-/** F5-13.b: DPS da NFS-e Nacional, assinada e válida nos esquemas oficiais v1.01. */
+/**
+ * F5-13.b: DPS da NFS-e Nacional, assinada e válida nos esquemas oficiais v1.01; F5-13.j: no
+ * leiaute de cada ambiente (por padrão, o da produção restrita de 20/10/2026).
+ */
 
 async function chave() {
   const par = (await crypto.subtle.generateKey(
@@ -87,6 +91,52 @@ describe('DPS da NFS-e Nacional (F5-13.b)', () => {
     expect(ok(dps()).xml).toContain(
       '<tpEmit>1</tpEmit><finNFSe>0</finNFSe><cLocEmi>3550308</cLocEmi>',
     );
+  });
+
+  it('leiaute por ambiente e data (F5-13.j): a produção restrita de 20/10/2026 e a produção ainda sem a NT 009', () => {
+    expect(nfseDpsLayout('producao-restrita', '2026-10-20')?.id).toBe(
+      'producao-restrita-v1.01-20261020',
+    );
+    expect(nfseDpsLayout('producao-restrita', '2026-10-19')).toBeNull();
+    // A produção não tem data para a NT 009: continua no leiaute de 09/02/2026.
+    expect(nfseDpsLayout('producao', '2027-06-01')?.id).toBe('producao-v1.01-20260209');
+    // Linha nova na tabela vale a partir da data dela, e a antiga até a véspera.
+    const novo = { ...nfseDpsLayout('producao', '2026-12-31')!, id: 'novo', since: '2027-01-04' };
+    const tabela = [...NFSE_DPS_LAYOUTS, novo];
+    expect(nfseDpsLayout('producao', '2027-01-03', tabela)?.id).toBe('producao-v1.01-20260209');
+    expect(nfseDpsLayout('producao', '2027-01-04', tabela)?.id).toBe('novo');
+    // Sem leiaute para a data da emissão, a DPS não sai.
+    const antes = buildDps(dps({ issuedAt: '2026-10-19T12:00:00.000Z', competence: '2026-10-19' }));
+    expect(antes.ok || antes.pending).toContain(
+      'Não há leiaute da NFS-e publicado para a data da emissão.',
+    );
+  });
+
+  it('produção restrita de 20/10/2026: xDescServ depois do cNBS, válida no esquema novo', async () => {
+    const r = ok(dps({ service: { ...dps().service, nbs: '1.1405.22.00' } }));
+    expect(r.layout).toBe('producao-restrita-v1.01-20261020');
+    expect(r.xml).toContain(
+      '<cTribNac>140101</cTribNac><cNBS>114052200</cNBS><xDescServ>Revisão e troca de óleo do motor &amp; filtro</xDescServ>',
+    );
+    const assinada = await signFiscalXml(r.xml, 'DPS', 'infDPS', await chave());
+    expect(await validateNfseXml(assinada)).toEqual([]);
+    // O mesmo XML não passa no esquema da produção, que não conhece o finNFSe nem a ordem nova.
+    const producao = nfseDpsLayout('producao', '2026-11-03')!;
+    expect(await validateNfseXml(assinada, 'DPS_v1.01.xsd', producao)).not.toEqual([]);
+  });
+
+  it('leiaute da produção (09/02/2026): sem finNFSe e com xDescServ antes do cNBS, válida no esquema dela', async () => {
+    const producao = nfseDpsLayout('producao', '2026-11-03')!;
+    const r = buildDps(dps({ service: { ...dps().service, nbs: '114052200' } }), {
+      layout: producao,
+    });
+    if (!r.ok) throw new Error(r.pending.join('\n'));
+    expect(r.layout).toBe('producao-v1.01-20260209');
+    expect(r.xml).not.toContain('<finNFSe>');
+    expect(r.xml).toContain('<tpEmit>1</tpEmit><cLocEmi>3550308</cLocEmi>');
+    expect(r.xml).toContain('</xDescServ><cNBS>114052200</cNBS>');
+    const assinada = await signFiscalXml(r.xml, 'DPS', 'infDPS', await chave());
+    expect(await validateNfseXml(assinada, 'DPS_v1.01.xsd', producao)).toEqual([]);
   });
 
   it('município que não emite pelo cadastro da Receita exige a inscrição municipal (E0084)', () => {

@@ -2,6 +2,7 @@ import { el, opt, text } from '../nfce/xml';
 import { brasiliaDateTime } from '../nfce/sale';
 import { findCompanyRegime } from '../regimes';
 import { findNfseService } from '../tables/nfse-services';
+import { nfseDpsLayout, type NfseDpsLayout } from './layouts';
 
 /**
  * DPS da NFS-e Nacional (F5-13.b): a Declaração de Prestação de Serviço que a empresa assina e
@@ -12,6 +13,9 @@ import { findNfseService } from '../tables/nfse-services';
  * O grupo do IBS e da CBS fica de fora: para o Simples ele só é obrigatório a partir de 2027
  * (nota do Anexo I) e, para os demais, é facultativo no leiaute em produção (regra E0850; o
  * leiaute da NT 009 entra conforme o cronograma da Receita, dúvida D-036).
+ *
+ * A ordem e os campos que mudam com a NT 009 vêm da tabela de leiautes por ambiente e data
+ * (`NFSE_DPS_LAYOUTS`, F5-13.j). Como o Bipaê só emite na produção restrita, vale o leiaute dela.
  */
 export const NFSE_NS = 'http://www.sped.fazenda.gov.br/nfse';
 const TP_AMB = '2';
@@ -115,7 +119,11 @@ export interface DpsInput {
 }
 
 export type DpsResult =
-  { ok: true; xml: string; id: string; notes: string[] } | { ok: false; pending: string[] };
+  | { ok: true; xml: string; id: string; notes: string[]; layout: string }
+  | { ok: false; pending: string[] };
+
+/** Ambiente em que o Bipaê emite (tpAmb 2, regra 4 do projeto). */
+const ENVIRONMENT = 'producao-restrita';
 
 const onlyDigits = (text: string | null | undefined) => (text ?? '').replace(/\D/g, '');
 const money = (cents: number) => (cents / 100).toFixed(2);
@@ -154,7 +162,13 @@ const complete = (a: DpsAddress | null | undefined) =>
     a.district?.trim(),
   );
 
-export function buildDps(input: DpsInput): DpsResult {
+export function buildDps(
+  input: DpsInput,
+  options: {
+    /** Leiaute a usar; sem ele, vale o da tabela para o ambiente na data da emissão. */
+    layout?: NfseDpsLayout | null;
+  } = {},
+): DpsResult {
   const pending: string[] = [];
   const notes: string[] = [];
   const i = input.issuer;
@@ -172,6 +186,13 @@ export function buildDps(input: DpsInput): DpsResult {
   // A competência é a data da prestação e não pode ser depois da emissão (E0015).
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.competence) || input.competence > issuedAt.slice(0, 10)) {
     pending.push('A data da prestação do serviço não pode ser depois da emissão da nota.');
+  }
+  const layout =
+    options.layout === undefined
+      ? nfseDpsLayout(ENVIRONMENT, issuedAt.slice(0, 10))
+      : options.layout;
+  if (!layout) {
+    pending.push('Não há leiaute da NFS-e publicado para a data da emissão.');
   }
 
   // ---------------------------------------------------------------- serviço
@@ -293,6 +314,7 @@ export function buildDps(input: DpsInput): DpsResult {
 
   const id = dpsId({ cityCode: i.cityCode!, taxId, series: input.series, number: input.number });
   const imRegistration = onlyDigits(i.municipalRegistration);
+  const descriptionXml = el('xDescServ', text(description.slice(0, 2000)));
   const xml = el(
     'DPS',
     el(
@@ -305,8 +327,8 @@ export function buildDps(input: DpsInput): DpsResult {
         el('nDPS', String(input.number)),
         el('dCompet', input.competence),
         el('tpEmit', '1'),
-        // NT 009: a finalidade passa para o infDPS; o Bipaê emite só a NFS-e regular.
-        el('finNFSe', '0'),
+        // NT 009, item 2.2: a finalidade passa para o infDPS; o Bipaê emite só a NFS-e regular.
+        layout!.finNFSe ? el('finNFSe', '0') : '',
         el('cLocEmi', i.cityCode!),
         // O prestador que emite não informa o próprio nome nem o endereço (E0121, E0129).
         el('prest', [
@@ -333,8 +355,9 @@ export function buildDps(input: DpsInput): DpsResult {
           el('locPrest', el('cLocPrestacao', place!)),
           el('cServ', [
             el('cTribNac', service!.code),
-            el('xDescServ', text(description.slice(0, 2000))),
+            layout!.descriptionAfterNbs ? '' : descriptionXml,
             opt('cNBS', onlyDigits(input.service.nbs) || undefined),
+            layout!.descriptionAfterNbs ? descriptionXml : '',
           ]),
         ]),
         el('valores', [
@@ -355,5 +378,5 @@ export function buildDps(input: DpsInput): DpsResult {
     { xmlns: NFSE_NS, versao: '1.01' },
   );
   if (!t) notes.push('NFS-e sem tomador identificado.');
-  return { ok: true, xml, id, notes };
+  return { ok: true, xml, id, notes, layout: layout!.id };
 }
