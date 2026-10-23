@@ -25,6 +25,18 @@
   --success-soft: #e3f6ec;
   --warning-soft: #fff4d6;
   --focus: #1d4ed8;
+  /* Cartões de atalho do Início: fundo suave e cor forte do círculo do ícone. */
+  --tile-green: #e3f6ec;
+  --tile-green-strong: #007a4d;
+  --tile-orange: #ffeedd;
+  --tile-orange-strong: #c2410c;
+  --tile-blue: #e6efff;
+  --tile-blue-strong: #1d5bd8;
+  --tile-purple: #f1e8ff;
+  --tile-purple-strong: #7c3aed;
+  --tile-yellow: #fff4d6;
+  --tile-yellow-strong: #a16207;
+  --tile-icon: #ffffff;
   --radius: 12px;
   color-scheme: light;
 }
@@ -47,6 +59,17 @@
     --success-soft: #11291e;
     --warning-soft: #33290f;
     --focus: #93b4ff;
+    --tile-green: #12291f;
+    --tile-green-strong: #2ecc8a;
+    --tile-orange: #33200f;
+    --tile-orange-strong: #fb923c;
+    --tile-blue: #121f38;
+    --tile-blue-strong: #7aa7ff;
+    --tile-purple: #24173a;
+    --tile-purple-strong: #b794ff;
+    --tile-yellow: #33290f;
+    --tile-yellow-strong: #f5c542;
+    --tile-icon: #0e1411;
     color-scheme: dark;
   }
 }
@@ -68,6 +91,17 @@
   --success-soft: #11291e;
   --warning-soft: #33290f;
   --focus: #93b4ff;
+  --tile-green: #12291f;
+  --tile-green-strong: #2ecc8a;
+  --tile-orange: #33200f;
+  --tile-orange-strong: #fb923c;
+  --tile-blue: #121f38;
+  --tile-blue-strong: #7aa7ff;
+  --tile-purple: #24173a;
+  --tile-purple-strong: #b794ff;
+  --tile-yellow: #33290f;
+  --tile-yellow-strong: #f5c542;
+  --tile-icon: #0e1411;
   color-scheme: dark;
 }
 
@@ -83,6 +117,17 @@
   --primary-hover: #00331f;
   --primary-contrast: #ffffff;
   --focus: #0000ee;
+  --tile-green: var(--surface);
+  --tile-green-strong: #000000;
+  --tile-orange: var(--surface);
+  --tile-orange-strong: #000000;
+  --tile-blue: var(--surface);
+  --tile-blue-strong: #000000;
+  --tile-purple: var(--surface);
+  --tile-purple-strong: #000000;
+  --tile-yellow: var(--surface);
+  --tile-yellow-strong: #000000;
+  --tile-icon: #ffffff;
 }
 :root[data-contrast='high'][data-theme='dark'] {
   --bg: #000000;
@@ -96,6 +141,17 @@
   --primary-hover: #8fffcb;
   --primary-contrast: #000000;
   --focus: #ffff00;
+  --tile-green: var(--surface);
+  --tile-green-strong: #ffffff;
+  --tile-orange: var(--surface);
+  --tile-orange-strong: #ffffff;
+  --tile-blue: var(--surface);
+  --tile-blue-strong: #ffffff;
+  --tile-purple: var(--surface);
+  --tile-purple-strong: #ffffff;
+  --tile-yellow: var(--surface);
+  --tile-yellow-strong: #ffffff;
+  --tile-icon: #000000;
 }
 
 :root[data-font='large'] {
@@ -120,6 +176,17 @@
   --color-success-soft: var(--success-soft);
   --color-warning-soft: var(--warning-soft);
   --color-focus: var(--focus);
+  --color-tile-green: var(--tile-green);
+  --color-tile-green-strong: var(--tile-green-strong);
+  --color-tile-orange: var(--tile-orange);
+  --color-tile-orange-strong: var(--tile-orange-strong);
+  --color-tile-blue: var(--tile-blue);
+  --color-tile-blue-strong: var(--tile-blue-strong);
+  --color-tile-purple: var(--tile-purple);
+  --color-tile-purple-strong: var(--tile-purple-strong);
+  --color-tile-yellow: var(--tile-yellow);
+  --color-tile-yellow-strong: var(--tile-yellow-strong);
+  --color-tile-icon: var(--tile-icon);
   --radius-ui: var(--radius);
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }

@@ -88,43 +88,58 @@ interface QuickAction {
   text: string;
   icon: LucideIcon;
   permission: string;
+  /** Classes do fundo suave e do círculo do ícone (tokens --tile-* do tema). */
+  tone: { tile: string; circle: string };
 }
+
+const TONES = {
+  green: { tile: 'bg-tile-green', circle: 'bg-tile-green-strong' },
+  orange: { tile: 'bg-tile-orange', circle: 'bg-tile-orange-strong' },
+  blue: { tile: 'bg-tile-blue', circle: 'bg-tile-blue-strong' },
+  purple: { tile: 'bg-tile-purple', circle: 'bg-tile-purple-strong' },
+  yellow: { tile: 'bg-tile-yellow', circle: 'bg-tile-yellow-strong' },
+};
 
 const QUICK_ACTIONS: QuickAction[] = [
   {
     to: '/caixa',
     title: 'Vender',
-    text: 'Vai para a tela do caixa: bipe, receba e pronto.',
+    text: 'Bipe, receba e pronto.',
     icon: ScanBarcode,
     permission: 'pos.sell',
+    tone: TONES.green,
   },
   {
     to: '/garcom',
     title: 'Lançar pedido',
-    text: 'Mesa, comanda ou cliente da loja; o cliente paga no caixa.',
+    text: 'Mesa, comanda ou balcão.',
     icon: HandPlatter,
     permission: 'pos.order',
+    tone: TONES.orange,
   },
   {
     to: '/produtos?novo=1',
     title: 'Cadastrar produto',
-    text: 'Abre o cadastro já pronto para preencher.',
+    text: 'O cadastro já abre pronto.',
     icon: Plus,
     permission: 'catalog.write',
+    tone: TONES.blue,
   },
   {
     to: '/compras',
-    title: 'Dar entrada em mercadoria',
-    text: 'Pelo XML da nota: produtos, custo e estoque de uma vez.',
+    title: 'Entrada de mercadoria',
+    text: 'Pelo XML da nota, de uma vez.',
     icon: PackagePlus,
     permission: 'catalog.write',
+    tone: TONES.purple,
   },
   {
     to: '/financeiro',
-    title: 'Pagar ou receber conta',
-    text: 'Veja o que vence e dê baixa no que foi pago.',
+    title: 'Pagar ou receber',
+    text: 'O que vence e o que foi pago.',
     icon: Wallet,
     permission: 'finance.read',
+    tone: TONES.yellow,
   },
 ];
 
@@ -138,17 +153,28 @@ function QuickActions() {
       <h2 id="atalhos-titulo" className="mb-3 text-lg font-bold">
         O que você quer fazer?
       </h2>
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {actions.map(({ to, title, text, icon: Icon }) => (
+      {/* Cartões quadrados: 2 por linha no celular, 5 lado a lado na tela larga. */}
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+        {actions.map(({ to, title, text, icon: Icon, tone }) => (
           <li key={to}>
             <Link
               to={to}
-              className="flex h-full items-start gap-3 rounded-ui border border-border bg-surface p-4 shadow-sm hover:border-primary hover:bg-surface-2"
+              className={cx(
+                'flex aspect-square h-full flex-col justify-between gap-3 rounded-2xl border border-transparent p-4 transition hover:-translate-y-0.5 hover:border-border hover:shadow-md [[data-contrast=high]_&]:border-border',
+                tone.tile,
+              )}
             >
-              <Icon className="mt-0.5 size-6 shrink-0 text-primary" aria-hidden />
+              <span
+                className={cx(
+                  'flex size-12 items-center justify-center rounded-full text-tile-icon shadow-sm',
+                  tone.circle,
+                )}
+              >
+                <Icon className="size-6" aria-hidden />
+              </span>
               <span className="flex flex-col gap-1">
-                <span className="font-bold">{title}</span>
-                <span className="text-sm text-muted">{text}</span>
+                <span className="text-base leading-tight font-bold">{title}</span>
+                <span className="text-sm leading-snug text-muted">{text}</span>
               </span>
             </Link>
           </li>

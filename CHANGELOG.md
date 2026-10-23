@@ -1,5 +1,10 @@
 # Changelog
 
+## [Início com cartões coloridos] — 23/10/2026
+
+### Alterado
+- Os atalhos de "O que você quer fazer?" no Início viraram cartões quadrados coloridos (verde, laranja, azul, roxo e amarelo), com o ícone num círculo e textos curtos: 2 por linha no celular, 5 lado a lado no computador. As cores têm versão própria para o tema escuro e para o alto contraste.
+
 ## [Logo oficial] — 23/10/2026
 
 ### Alterado
