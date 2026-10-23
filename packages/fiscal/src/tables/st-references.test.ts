@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { rnDate, rnMvaQuadros } from '../../scripts/st-rn.mjs';
 import { CESTS } from './cest';
 import {
   ST_REFERENCES,
@@ -688,6 +689,136 @@ describe('Amazonas: Anexos III a XXVI da Lei 6.108/2022 (F3-26.d.AM)', () => {
   it('porta a porta: "Capítulos 13 e 15 a 23" vira a lista de capítulos', () => {
     const porta = am.flatMap((r) => r.items).find((i) => i.cest === '2806200')!;
     expect(porta.ncms).toEqual(['13', '15', '16', '17', '18', '19', '20', '21', '22', '23']);
+  });
+});
+
+describe('Rio Grande do Norte: Anexo 007 do RICMS/RN (F3-26.d.RN)', () => {
+  const rn = ST_REFERENCES.filter((r) => r.uf === 'RN');
+  const linesOf = (cest: string) => rn.flatMap((r) => r.items).filter((i) => i.cest === cest);
+  const annexOf = (code: string) =>
+    ST_SEGMENTS.find((s) => s.uf === 'RN')!.annexes.find((a) => a.annex === code)!;
+
+  it('a MVA escrita no texto de cada seção vale para o quadro de itens dela', () => {
+    expect(ST_REFERENCE_UFS).toContain('RN');
+    expect(rn.flatMap((r) => r.items).length).toBeGreaterThan(240);
+    // Cimento: "§ 5º A MVA-ST original é de 20%" (art. 8º).
+    expect(linesOf('0500100').map((i) => i.mva)).toEqual(['20']);
+    // Cigarros: "(MVA) de 50%" na falta da lista de preço sugerido (art. 7º, § 2º).
+    expect(stReferencesFor('RN', '24022000', '2026-10-23')[0]).toMatchObject({
+      cest: '0400100',
+      mva: '50',
+    });
+    // Veículos: 30% para o Anexo XXIV do Convênio (art. 21, § 5º); motos: 34% (art. 22, § 4º).
+    expect(linesOf('2500100').map((i) => i.mva)).toEqual(['30']);
+    expect(linesOf('2600101').map((i) => i.mva)).toEqual(['34']);
+    // Porta a porta: 40%, com "Capítulos 13 e 15 a 23" virando a lista de capítulos.
+    const porta = linesOf('2806200')[0]!;
+    expect(porta).toMatchObject({ mva: '40' });
+    expect(porta.ncms).toEqual(['13', '15', '16', '17', '18', '19', '20', '21', '22', '23']);
+  });
+
+  it('quadros de MVA ajustada: a original de cada CEST, inclusive nas faixas "a"', () => {
+    // Medicamentos (art. 12, § 5º): lista negativa 33,05%, positiva 38,24%, neutra 41,34%.
+    expect(linesOf('1300101').map((i) => i.mva)).toEqual(['33.05']);
+    expect(linesOf('1300100').map((i) => i.mva)).toEqual(['38.24']);
+    expect(linesOf('1300600').map((i) => i.mva)).toEqual(['41.34']);
+    // Perfumaria (art. 16, § 2º): lâminas 30%, escova de dentes 33,05%, e o fio dental, que só
+    // aparece dentro da faixa "20.023.00 a 20.025.00", 41,34%.
+    expect(linesOf('2006400').map((i) => i.mva)).toEqual(['30']);
+    expect(linesOf('2005800').map((i) => i.mva)).toEqual(['33.05']);
+    expect(linesOf('2002400').map((i) => i.mva)).toEqual(['41.34']);
+    // Tintas (art. 20, § 2º): 35% e 50% nos corantes.
+    expect(linesOf('2400100').map((i) => i.mva)).toEqual(['35']);
+    expect(linesOf('2400300').map((i) => i.mva)).toEqual(['50']);
+    // Pneus: a coluna "MVA ORIGINAL" do quadro de itens (art. 14, § 7º).
+    expect(linesOf('1600100').map((i) => i.mva)).toEqual(['42']);
+    expect(linesOf('1600300').map((i) => i.mva)).toEqual(['60']);
+  });
+
+  it('alimentícios: MVA pela origem do Protocolo ICMS 53/2017 e a data da redação de cada quadro', () => {
+    // Massa instantânea (inciso I, "a"): 20% de UF signatária e 35% de não signatária.
+    expect(linesOf('1704700').map((i) => i.mva)).toEqual(['20', '35']);
+    expect(linesOf('1704700')[1]!.description).toMatch(/não signatária/);
+    // Biscoito (inciso I, "b"): 30% e 45%.
+    expect(linesOf('1705300').map((i) => i.mva)).toEqual(['30', '45']);
+    // Inciso III: biscoito de polvilho vai pela alínea "b"; massa não derivada do trigo, pela "a".
+    expect(linesOf('1703102').map((i) => i.mva)).toEqual(['30', '45']);
+    expect(linesOf('1704900').map((i) => i.mva)).toEqual(['20', '35']);
+    // Inciso IV: 30% em qualquer caso (misturas para bolo).
+    expect(linesOf('1704600').map((i) => i.mva)).toEqual(['30']);
+    // Massas recheadas saíram do inciso IV (30%, tachado) para o I, "a", pelo Decreto 32.785/2023.
+    expect(linesOf('1704800').map((i) => i.mva)).toEqual(['20', '35']);
+    const quadroA = rn.find((r) => r.items.some((i) => i.cest === '1704800'))!;
+    expect(quadroA.validFrom).toBe('2023-06-29');
+    const quadroIV = rn.find((r) => r.items.some((i) => i.cest === '1704600'))!;
+    expect(quadroIV.validFrom).toBe('2023-11-18');
+    const antes = stReferencesFor('RN', '19012000', '2023-11-17');
+    expect(antes.filter((m) => m.cest === '1704600')).toEqual([]);
+  });
+
+  it('sorvetes: MVA-ST original e a da operação interna do fabricante', () => {
+    expect(linesOf('2300100').map((i) => i.mva)).toEqual(['70', '30']);
+    expect(linesOf('2300200').map((i) => i.mva)).toEqual(['328', '141']);
+    expect(linesOf('2300200')[1]!.description).toMatch(/operação interna do fabricante$/);
+  });
+
+  it('texto tachado (redação anterior) fica de fora; segmentos que saíram da ST, com a data', () => {
+    // Bebidas quentes (art. 5º, revogado) não estão mais na lista do RN.
+    expect(annexOf('02')).toBeUndefined();
+    const uisque = stReferencesFor('RN', '22083020', '2026-10-23');
+    expect(uisque.filter((m) => m.cest.startsWith('02'))).toEqual([]);
+    // Lâmpadas e rações saíram em 01/11/2023 (Art. 2º na redação do Decreto 33.028/2023).
+    expect(annexOf('09')).toMatchObject({
+      excludedFrom: '2023-11-01',
+      excludedBy: 'Decreto 33.028/2023',
+    });
+    expect(annexOf('09').cests.map((c) => c.cest)).toContain('0900500');
+    expect(annexOf('22').cests).toEqual([{ cest: '2200100', ncms: ['2309'] }]);
+    const lampada = stStatusFor('RN', '85395200', '2026-10-23', () => []).find(
+      (s) => s.cest === '0900500',
+    );
+    expect(lampada).toMatchObject({ inSt: false, excludedFrom: '2023-11-01' });
+  });
+
+  it('segmentos na ST sem MVA ficam na lista, sem linha de MVA', () => {
+    // Bebidas frias: base no PMPF, MVA por produto e remetente sem ligação com o CEST.
+    expect(annexOf('03').cests.some((c) => c.cest === '0302103')).toBe(true);
+    expect(linesOf('0302103')).toEqual([]);
+    // Eletrônicos: percentual sobre a base; o item 7.0 do Anexo XIII (condutores) entra junto.
+    expect(annexOf('21').cests.some((c) => c.cest === '1200700')).toBe(true);
+    expect(linesOf('2102800')).toEqual([]);
+    // Combustíveis: os CEST do Anexo VII do Convênio (art. 9º).
+    expect(annexOf('06').cests.length).toBeGreaterThan(30);
+  });
+});
+
+describe('leitor do Anexo 007 do RICMS/RN (F3-26.d.RN)', () => {
+  it('lê as datas do texto', () => {
+    expect(rnDate('vigência a partir de 1º de novembro de 2023')).toBe('2023-11-01');
+    expect(rnDate('com efeitos a partir de 1º/05/2026')).toBe('2026-05-01');
+    expect(rnDate('vigência a partir de 20/03/25')).toBe('2025-03-20');
+    expect(rnDate('sem data')).toBeNull();
+  });
+
+  it('quadro de MVA: confere a original pela ajustada e aceita um erro de digitação', () => {
+    const quadro =
+      'CEST ALÍQUOTA INTERESTADUAL MVA AJUSTADA (Alíquota Interna 20%) MVA ORIGINAL ' +
+      'CEST 24.001.00 e 24.002.00/24.002.0 1 4,00% 62,00% 35,00%7,00% 56,94% 12,00% 48,50% ' +
+      'CEST 24.003.00 4,00% 80,00% 50,00%7,00% 74,34% 12,00% 65,00%';
+    const mvas = rnMvaQuadros(quadro, ['2400100', '2400200', '2400201', '2400300']);
+    expect(Object.fromEntries(mvas)).toEqual({
+      '2400100': '35',
+      '2400200': '35',
+      '2400201': '35',
+      '2400300': '50',
+    });
+    // Original que não explica as ajustadas: o leitor para, em vez de inventar.
+    expect(() =>
+      rnMvaQuadros(quadro.replace('35,00%', '36,00%'), ['2400100', '2400200', '2400201']),
+    ).toThrow(/não bate/);
+    expect(() => rnMvaQuadros('ALÍQUOTA INTERESTADUAL MVA ORIGINAL 05.001.00', [])).toThrow(
+      /alíquota interna/,
+    );
   });
 });
 

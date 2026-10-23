@@ -50,6 +50,7 @@ import { DF_ANEXO_IV_REQUEST, DF_LEGISLATION_API, parseDfAnexoIV } from './st-df
 import { CE_NET_LOAD_SOURCES, parseCeNetLoadSource } from './st-ce-carga.mjs';
 import { parseAcIn12023 } from './st-ac.mjs';
 import { parseAmLei6108 } from './st-am.mjs';
+import { parseRnAnexo007 } from './st-rn.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -1143,6 +1144,54 @@ async function checkAm() {
   };
 }
 
+/**
+ * Rio Grande do Norte: o PDF do Anexo 007 que a SEFAZ-RN publica hoje na pasta do RICMS vigente.
+ * Compara as linhas com MVA, os CEST de cada segmento e os segmentos que saíram da ST; um decreto
+ * novo que mude só o texto também aparece pela data de atualização.
+ */
+async function checkRn() {
+  const cest = JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8'));
+  const rowsOf = async (bytes) => {
+    const parsed = parseRnAnexo007(
+      await pdfLines(bytes, { withoutStruck: true }),
+      await pdfLines(bytes),
+      { segments: cest.segments, cests: cest.items },
+    );
+    return [
+      ['atualizado até', parsed.updatedBy, parsed.updatedAt],
+      ...parsed.sections.flatMap((s) => [
+        ...s.items.map((i) => [s.roman, s.segment, i.item, i.cest, i.ncms.join(' ')]),
+        ...s.groups.flatMap((g) => g.items.map((i) => [s.roman, 'MVA', i.item, i.cest, i.mva])),
+      ]),
+      ...parsed.removed.flatMap((r) =>
+        r.items.map((i) => ['fora da ST', r.segment, i.cest, r.excludedFrom, r.excludedBy]),
+      ),
+    ];
+  };
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.stRnAnexo007.file)));
+  const title = 'ST no Rio Grande do Norte (RICMS/RN, Anexo 007)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.stRnAnexo007.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stRnAnexo007.page,
+      status: 'mudou',
+      details: [`o arquivo novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stRnAnexo007.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Rondônia: o Anexo VI de hoje, pela API do portal de legislação da SEFIN-RO. */
 async function checkRo() {
   const known = new Set(
@@ -1545,6 +1594,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Distrito Federal', manifest.stDfAnexoIV.page, checkDf),
     await safe('ST no Acre', manifest.stAcIn12023.page, checkAc),
     await safe('ST no Amazonas', manifest.stAmLei6108.page, checkAm),
+    await safe('ST no Rio Grande do Norte', manifest.stRnAnexo007.page, checkRn),
     await safe('ST no Ceará (carga líquida)', manifest.stCeCargaAutopecas.page, checkCeNetLoads),
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),

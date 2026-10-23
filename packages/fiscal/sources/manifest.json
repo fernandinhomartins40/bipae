@@ -633,6 +633,14 @@
   "publishedAt": "2022-12-23",
   "downloadedAt": "2026-10-23"
  },
+ "stRnAnexo007": {
+  "file": "SEFAZ-RN_RICMS_Anexo_007_ate_Decreto_35865-2026_2026-10-23.pdf",
+  "title": "RICMS/RN (Decreto 31.825/2022), Anexo 007, substituição tributária: texto consolidado atualizado até o Decreto 35.865, de 02/09/2026, com a redação anterior tachada (pasta \"Anexos do RICMS - Decreto 31.825 2022 (Vigente)\" do portal da SEFAZ-RN)",
+  "publisher": "Secretaria de Estado da Fazenda do Rio Grande do Norte",
+  "page": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+  "publishedAt": "2026-09-03",
+  "downloadedAt": "2026-10-23"
+ },
  "stRoAnexoVI": {
   "file": "SEFIN-RO_RICMS_Anexo_VI_2026-10-17.json.gz",
   "title": "RICMS/RO (Decreto 22.721/2018), Anexo VI, da substituição tributária: texto consolidado até o Decreto 31.963/2026 (resposta da API do portal de legislação da SEFIN-RO)",

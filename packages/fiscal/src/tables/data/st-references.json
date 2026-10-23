@@ -73932,6 +73932,1993 @@
    ]
   },
   {
+   "uf": "RN",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "annexes": [
+    {
+     "annex": "03",
+     "name": "Cervejas, chopes, refrigerantes, águas e outras bebidas",
+     "cests": [
+      {
+       "cest": "0300300",
+       "ncms": [
+        "22011000",
+        "22019000"
+       ]
+      },
+      {
+       "cest": "0300301",
+       "ncms": [
+        "22011000",
+        "22019000"
+       ]
+      },
+      {
+       "cest": "0300500",
+       "ncms": [
+        "22011000",
+        "22019000"
+       ]
+      },
+      {
+       "cest": "0300501",
+       "ncms": [
+        "22011000",
+        "22019000"
+       ]
+      },
+      {
+       "cest": "0300502",
+       "ncms": [
+        "22011000",
+        "22019000"
+       ]
+      },
+      {
+       "cest": "0300503",
+       "ncms": [
+        "22011000",
+        "22019000"
+       ]
+      },
+      {
+       "cest": "0300504",
+       "ncms": [
+        "22011000",
+        "22019000"
+       ]
+      },
+      {
+       "cest": "0300505",
+       "ncms": [
+        "22011000",
+        "22019000"
+       ]
+      },
+      {
+       "cest": "0300600",
+       "ncms": [
+        "2201"
+       ]
+      },
+      {
+       "cest": "0300700",
+       "ncms": [
+        "22021000"
+       ]
+      },
+      {
+       "cest": "0300800",
+       "ncms": [
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0301000",
+       "ncms": [
+        "22021000",
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0301001",
+       "ncms": [
+        "22021000",
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0301002",
+       "ncms": [
+        "22021000",
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0301100",
+       "ncms": [
+        "22021000",
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0301101",
+       "ncms": [
+        "2202"
+       ]
+      },
+      {
+       "cest": "0301200",
+       "ncms": [
+        "21069010"
+       ]
+      },
+      {
+       "cest": "0301201",
+       "ncms": [
+        "21069010"
+       ]
+      },
+      {
+       "cest": "0301300",
+       "ncms": [
+        "210690",
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0301301",
+       "ncms": [
+        "210690",
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0301302",
+       "ncms": [
+        "210690",
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0301500",
+       "ncms": [
+        "210690",
+        "22029900"
+       ]
+      },
+      {
+       "cest": "0302100",
+       "ncms": [
+        "22030000"
+       ]
+      },
+      {
+       "cest": "0302101",
+       "ncms": [
+        "22030000"
+       ]
+      },
+      {
+       "cest": "0302102",
+       "ncms": [
+        "22030000"
+       ]
+      },
+      {
+       "cest": "0302103",
+       "ncms": [
+        "22030000"
+       ]
+      },
+      {
+       "cest": "0302104",
+       "ncms": [
+        "22030000"
+       ]
+      },
+      {
+       "cest": "0302105",
+       "ncms": [
+        "22030000"
+       ]
+      },
+      {
+       "cest": "0302106",
+       "ncms": [
+        "22030000"
+       ]
+      },
+      {
+       "cest": "0302200",
+       "ncms": [
+        "22029100"
+       ]
+      },
+      {
+       "cest": "0302201",
+       "ncms": [
+        "22029100"
+       ]
+      },
+      {
+       "cest": "0302202",
+       "ncms": [
+        "22029100"
+       ]
+      },
+      {
+       "cest": "0302203",
+       "ncms": [
+        "22029100"
+       ]
+      },
+      {
+       "cest": "0302204",
+       "ncms": [
+        "22029100"
+       ]
+      },
+      {
+       "cest": "0302205",
+       "ncms": [
+        "22029100"
+       ]
+      },
+      {
+       "cest": "0302206",
+       "ncms": [
+        "22029100"
+       ]
+      },
+      {
+       "cest": "0302300",
+       "ncms": [
+        "22030000"
+       ]
+      },
+      {
+       "cest": "0302400",
+       "ncms": [
+        "22011000"
+       ]
+      },
+      {
+       "cest": "0302500",
+       "ncms": [
+        "22011000"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "04",
+     "name": "Cigarros e outros produtos derivados do fumo",
+     "cests": [
+      {
+       "cest": "0400100",
+       "ncms": [
+        "2402"
+       ]
+      },
+      {
+       "cest": "0400200",
+       "ncms": [
+        "24031"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "05",
+     "name": "Cimentos",
+     "cests": [
+      {
+       "cest": "0500100",
+       "ncms": [
+        "2523"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "06",
+     "name": "Combustíveis e lubrificantes",
+     "cests": [
+      {
+       "cest": "0600100"
+      },
+      {
+       "cest": "0600101"
+      },
+      {
+       "cest": "0600200"
+      },
+      {
+       "cest": "0600201"
+      },
+      {
+       "cest": "0600202"
+      },
+      {
+       "cest": "0600203"
+      },
+      {
+       "cest": "0600300"
+      },
+      {
+       "cest": "0600400"
+      },
+      {
+       "cest": "0600500"
+      },
+      {
+       "cest": "0600600"
+      },
+      {
+       "cest": "0600601"
+      },
+      {
+       "cest": "0600602"
+      },
+      {
+       "cest": "0600603"
+      },
+      {
+       "cest": "0600604"
+      },
+      {
+       "cest": "0600605"
+      },
+      {
+       "cest": "0600606"
+      },
+      {
+       "cest": "0600607"
+      },
+      {
+       "cest": "0600608"
+      },
+      {
+       "cest": "0600609"
+      },
+      {
+       "cest": "0600610"
+      },
+      {
+       "cest": "0600611"
+      },
+      {
+       "cest": "0600700"
+      },
+      {
+       "cest": "0600800"
+      },
+      {
+       "cest": "0600801"
+      },
+      {
+       "cest": "0600900"
+      },
+      {
+       "cest": "0601000"
+      },
+      {
+       "cest": "0601100"
+      },
+      {
+       "cest": "0601101"
+      },
+      {
+       "cest": "0601102"
+      },
+      {
+       "cest": "0601103"
+      },
+      {
+       "cest": "0601104"
+      },
+      {
+       "cest": "0601105"
+      },
+      {
+       "cest": "0601106"
+      },
+      {
+       "cest": "0601107"
+      },
+      {
+       "cest": "0601200"
+      },
+      {
+       "cest": "0601300"
+      },
+      {
+       "cest": "0601400"
+      },
+      {
+       "cest": "0601500"
+      },
+      {
+       "cest": "0601600"
+      },
+      {
+       "cest": "0601700"
+      },
+      {
+       "cest": "0601800"
+      },
+      {
+       "cest": "0601900"
+      }
+     ]
+    },
+    {
+     "annex": "07",
+     "name": "Energia elétrica",
+     "cests": [
+      {
+       "cest": "0700100",
+       "ncms": [
+        "27160000"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "13",
+     "name": "Medicamentos de uso humano e outros produtos farmacêuticos para uso humano ou veterinário",
+     "cests": [
+      {
+       "cest": "1300100",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300101",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300102",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300200",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300201",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300202",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300300",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300301",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300302",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300400",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300401",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300402",
+       "ncms": [
+        "3003",
+        "3004"
+       ]
+      },
+      {
+       "cest": "1300500",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300501",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300502",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300503",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300504",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300505",
+       "ncms": [
+        "30066000"
+       ]
+      },
+      {
+       "cest": "1300600",
+       "ncms": [
+        "2936"
+       ]
+      },
+      {
+       "cest": "1300700",
+       "ncms": [
+        "300630"
+       ]
+      },
+      {
+       "cest": "1300701",
+       "ncms": [
+        "300630"
+       ]
+      },
+      {
+       "cest": "1300800",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300801",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300900",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1300901",
+       "ncms": [
+        "3002"
+       ]
+      },
+      {
+       "cest": "1301000",
+       "ncms": [
+        "30051010"
+       ]
+      },
+      {
+       "cest": "1301001",
+       "ncms": [
+        "30051010"
+       ]
+      },
+      {
+       "cest": "1301100",
+       "ncms": [
+        "3005"
+       ]
+      },
+      {
+       "cest": "1301400",
+       "ncms": [
+        "901831"
+       ]
+      },
+      {
+       "cest": "1301500",
+       "ncms": [
+        "9018321"
+       ]
+      },
+      {
+       "cest": "1301600",
+       "ncms": [
+        "39269090",
+        "90189099"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "16",
+     "name": "Pneumáticos, câmaras de ar e protetores de borracha",
+     "cests": [
+      {
+       "cest": "1600100",
+       "ncms": [
+        "40111000"
+       ]
+      },
+      {
+       "cest": "1600200",
+       "ncms": [
+        "4011"
+       ]
+      },
+      {
+       "cest": "1600300",
+       "ncms": [
+        "40114000"
+       ]
+      },
+      {
+       "cest": "1600400",
+       "ncms": [
+        "4011"
+       ]
+      },
+      {
+       "cest": "1600700",
+       "ncms": [
+        "401290"
+       ]
+      },
+      {
+       "cest": "1600800",
+       "ncms": [
+        "4013"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "17",
+     "name": "Produtos alimentícios",
+     "cests": [
+      {
+       "cest": "1704700",
+       "ncms": [
+        "19023000"
+       ]
+      },
+      {
+       "cest": "1704701",
+       "ncms": [
+        "19023000"
+       ]
+      },
+      {
+       "cest": "1704800",
+       "ncms": [
+        "1902"
+       ]
+      },
+      {
+       "cest": "1704802",
+       "ncms": [
+        "19022000"
+       ]
+      },
+      {
+       "cest": "1704902",
+       "ncms": [
+        "19021100"
+       ]
+      },
+      {
+       "cest": "1704903",
+       "ncms": [
+        "19021900"
+       ]
+      },
+      {
+       "cest": "1704904",
+       "ncms": [
+        "19021900"
+       ]
+      },
+      {
+       "cest": "1704905",
+       "ncms": [
+        "19021900"
+       ]
+      },
+      {
+       "cest": "1704906",
+       "ncms": [
+        "19021100"
+       ]
+      },
+      {
+       "cest": "1704907",
+       "ncms": [
+        "19021100"
+       ]
+      },
+      {
+       "cest": "1705000",
+       "ncms": [
+        "190520"
+       ]
+      },
+      {
+       "cest": "1706000",
+       "ncms": [
+        "19059010"
+       ]
+      },
+      {
+       "cest": "1706200",
+       "ncms": [
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1706203",
+       "ncms": [
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1706300",
+       "ncms": [
+        "19051000"
+       ]
+      },
+      {
+       "cest": "1706400",
+       "ncms": [
+        "190590"
+       ]
+      },
+      {
+       "cest": "1703101",
+       "ncms": [
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1705100",
+       "ncms": [
+        "19052090"
+       ]
+      },
+      {
+       "cest": "1705200",
+       "ncms": [
+        "19052010"
+       ]
+      },
+      {
+       "cest": "1705300",
+       "ncms": [
+        "19053100"
+       ]
+      },
+      {
+       "cest": "1705301",
+       "ncms": [
+        "19053100"
+       ]
+      },
+      {
+       "cest": "1705302",
+       "ncms": [
+        "19053100"
+       ]
+      },
+      {
+       "cest": "1705600",
+       "ncms": [
+        "19059020"
+       ]
+      },
+      {
+       "cest": "1705602",
+       "ncms": [
+        "19059020"
+       ]
+      },
+      {
+       "cest": "1705700",
+       "ncms": [
+        "19053200"
+       ]
+      },
+      {
+       "cest": "1705800",
+       "ncms": [
+        "19053200"
+       ]
+      },
+      {
+       "cest": "1705900",
+       "ncms": [
+        "19054000"
+       ]
+      },
+      {
+       "cest": "1706201",
+       "ncms": [
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1706202",
+       "ncms": [
+        "19059020",
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1703102",
+       "ncms": [
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1704900",
+       "ncms": [
+        "19021"
+       ]
+      },
+      {
+       "cest": "1704901",
+       "ncms": [
+        "19021"
+       ]
+      },
+      {
+       "cest": "1705400",
+       "ncms": [
+        "19053100"
+       ]
+      },
+      {
+       "cest": "1705401",
+       "ncms": [
+        "19053100"
+       ]
+      },
+      {
+       "cest": "1705402",
+       "ncms": [
+        "19053100"
+       ]
+      },
+      {
+       "cest": "1705601",
+       "ncms": [
+        "19059020"
+       ]
+      },
+      {
+       "cest": "1703100",
+       "ncms": [
+        "19059090"
+       ]
+      },
+      {
+       "cest": "1704600",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704601",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704602",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704603",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704604",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704605",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704606",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704607",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704608",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704609",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      },
+      {
+       "cest": "1704615",
+       "ncms": [
+        "190120",
+        "19019090"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "20",
+     "name": "Produtos de perfumaria e de higiene pessoal e cosméticos",
+     "cests": [
+      {
+       "cest": "2002300",
+       "ncms": [
+        "33061000"
+       ]
+      },
+      {
+       "cest": "2002400",
+       "ncms": [
+        "33062000"
+       ]
+      },
+      {
+       "cest": "2002500",
+       "ncms": [
+        "33069000"
+       ]
+      },
+      {
+       "cest": "2003900",
+       "ncms": [
+        "40149090"
+       ]
+      },
+      {
+       "cest": "2004000",
+       "ncms": [
+        "39249000",
+        "39269040",
+        "39269090"
+       ]
+      },
+      {
+       "cest": "2004800",
+       "ncms": [
+        "96190000"
+       ]
+      },
+      {
+       "cest": "2004801",
+       "ncms": [
+        "96190000"
+       ]
+      },
+      {
+       "cest": "2004900",
+       "ncms": [
+        "96190000"
+       ]
+      },
+      {
+       "cest": "2005000",
+       "ncms": [
+        "96190000"
+       ]
+      },
+      {
+       "cest": "2005100",
+       "ncms": [
+        "56012190"
+       ]
+      },
+      {
+       "cest": "2005800",
+       "ncms": [
+        "96032100"
+       ]
+      },
+      {
+       "cest": "2006300",
+       "ncms": [
+        "39233090",
+        "39241000",
+        "39249000",
+        "40149090",
+        "7013"
+       ]
+      },
+      {
+       "cest": "2006400",
+       "ncms": [
+        "82121020",
+        "82122010"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "21",
+     "name": "Produtos eletrônicos, eletroeletrônicos e eletrodomésticos",
+     "cests": [
+      {
+       "cest": "2101600",
+       "ncms": [
+        "844331"
+       ]
+      },
+      {
+       "cest": "2101700",
+       "ncms": [
+        "844332"
+       ]
+      },
+      {
+       "cest": "2101800",
+       "ncms": [
+        "84439"
+       ]
+      },
+      {
+       "cest": "2102800",
+       "ncms": [
+        "847130"
+       ]
+      },
+      {
+       "cest": "2102900",
+       "ncms": [
+        "84714"
+       ]
+      },
+      {
+       "cest": "2103000",
+       "ncms": [
+        "84715010"
+       ]
+      },
+      {
+       "cest": "2103100",
+       "ncms": [
+        "8471605"
+       ]
+      },
+      {
+       "cest": "2103200",
+       "ncms": [
+        "84716090"
+       ]
+      },
+      {
+       "cest": "2103300",
+       "ncms": [
+        "847170"
+       ]
+      },
+      {
+       "cest": "2103400",
+       "ncms": [
+        "847190"
+       ]
+      },
+      {
+       "cest": "2103500",
+       "ncms": [
+        "847330"
+       ]
+      },
+      {
+       "cest": "2106200",
+       "ncms": [
+        "85235110"
+       ]
+      },
+      {
+       "cest": "2106700",
+       "ncms": [
+        "85284990",
+        "85285900",
+        "852869"
+       ]
+      },
+      {
+       "cest": "2106701",
+       "ncms": [
+        "85286200"
+       ]
+      },
+      {
+       "cest": "2106800",
+       "ncms": [
+        "85285200"
+       ]
+      },
+      {
+       "cest": "2108000",
+       "ncms": [
+        "8517621"
+       ]
+      },
+      {
+       "cest": "2108100",
+       "ncms": [
+        "85176229"
+       ]
+      },
+      {
+       "cest": "2108200",
+       "ncms": [
+        "85176239"
+       ]
+      },
+      {
+       "cest": "2108300",
+       "ncms": [
+        "8517624"
+       ]
+      },
+      {
+       "cest": "2108400",
+       "ncms": [
+        "85176262"
+       ]
+      },
+      {
+       "cest": "2108500",
+       "ncms": [
+        "8517629"
+       ]
+      },
+      {
+       "cest": "2108801",
+       "ncms": [
+        "84145910"
+       ]
+      },
+      {
+       "cest": "1200700",
+       "ncms": [
+        "85444200"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "23",
+     "name": "Sorvetes e preparados para fabricação de sorvetes em máquinas",
+     "cests": [
+      {
+       "cest": "2300100",
+       "ncms": [
+        "210500"
+       ]
+      },
+      {
+       "cest": "2300200",
+       "ncms": [
+        "1806",
+        "1901",
+        "2106",
+        "0404"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "24",
+     "name": "Tintas e vernizes",
+     "cests": [
+      {
+       "cest": "2400100",
+       "ncms": [
+        "3208",
+        "3209",
+        "3210"
+       ]
+      },
+      {
+       "cest": "2400200",
+       "ncms": [
+        "2821",
+        "32041700",
+        "3206"
+       ]
+      },
+      {
+       "cest": "2400201",
+       "ncms": [
+        "2821",
+        "32041700",
+        "3206"
+       ]
+      },
+      {
+       "cest": "2400300",
+       "ncms": [
+        "3204",
+        "32050000",
+        "3206",
+        "3212"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "25",
+     "name": "Veículos automotores",
+     "cests": [
+      {
+       "cest": "2500100"
+      },
+      {
+       "cest": "2500200"
+      },
+      {
+       "cest": "2500300"
+      },
+      {
+       "cest": "2500400"
+      },
+      {
+       "cest": "2500500"
+      },
+      {
+       "cest": "2500600"
+      },
+      {
+       "cest": "2500700"
+      },
+      {
+       "cest": "2500800"
+      },
+      {
+       "cest": "2500900"
+      },
+      {
+       "cest": "2501000"
+      },
+      {
+       "cest": "2501100"
+      },
+      {
+       "cest": "2501200"
+      },
+      {
+       "cest": "2501300"
+      },
+      {
+       "cest": "2501400"
+      },
+      {
+       "cest": "2501500"
+      },
+      {
+       "cest": "2501600"
+      },
+      {
+       "cest": "2501700"
+      },
+      {
+       "cest": "2501800"
+      },
+      {
+       "cest": "2501900"
+      },
+      {
+       "cest": "2502000"
+      },
+      {
+       "cest": "2502100"
+      },
+      {
+       "cest": "2502200"
+      },
+      {
+       "cest": "2502300"
+      },
+      {
+       "cest": "2502400"
+      },
+      {
+       "cest": "2502500"
+      },
+      {
+       "cest": "2502600"
+      },
+      {
+       "cest": "2502700"
+      },
+      {
+       "cest": "2502800"
+      },
+      {
+       "cest": "2502900"
+      },
+      {
+       "cest": "2503000"
+      },
+      {
+       "cest": "2503100"
+      },
+      {
+       "cest": "2503200"
+      }
+     ]
+    },
+    {
+     "annex": "26",
+     "name": "Veículos de duas e três rodas motorizados",
+     "cests": [
+      {
+       "cest": "2600100",
+       "ncms": [
+        "8711"
+       ]
+      },
+      {
+       "cest": "2600101",
+       "ncms": [
+        "8711"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "28",
+     "name": "Venda de mercadorias pelo sistema porta a porta",
+     "cests": [
+      {
+       "cest": "2800100",
+       "ncms": [
+        "33030010"
+       ]
+      },
+      {
+       "cest": "2800200",
+       "ncms": [
+        "33030020"
+       ]
+      },
+      {
+       "cest": "2800300",
+       "ncms": [
+        "33041000"
+       ]
+      },
+      {
+       "cest": "2800400",
+       "ncms": [
+        "33042010"
+       ]
+      },
+      {
+       "cest": "2800500",
+       "ncms": [
+        "33042090"
+       ]
+      },
+      {
+       "cest": "2800600",
+       "ncms": [
+        "33043000"
+       ]
+      },
+      {
+       "cest": "2800700",
+       "ncms": [
+        "33049100"
+       ]
+      },
+      {
+       "cest": "2800800",
+       "ncms": [
+        "33049910"
+       ]
+      },
+      {
+       "cest": "2800900",
+       "ncms": [
+        "33049990"
+       ]
+      },
+      {
+       "cest": "2801000",
+       "ncms": [
+        "33049990"
+       ]
+      },
+      {
+       "cest": "2801100",
+       "ncms": [
+        "33051000"
+       ]
+      },
+      {
+       "cest": "2801200",
+       "ncms": [
+        "33052000"
+       ]
+      },
+      {
+       "cest": "2801300",
+       "ncms": [
+        "33059000"
+       ]
+      },
+      {
+       "cest": "2801400",
+       "ncms": [
+        "33059000"
+       ]
+      },
+      {
+       "cest": "2801500",
+       "ncms": [
+        "33071000"
+       ]
+      },
+      {
+       "cest": "2801600",
+       "ncms": [
+        "33072010"
+       ]
+      },
+      {
+       "cest": "2801601",
+       "ncms": [
+        "33072010"
+       ]
+      },
+      {
+       "cest": "2801602",
+       "ncms": [
+        "33072010"
+       ]
+      },
+      {
+       "cest": "2801700",
+       "ncms": [
+        "33072090"
+       ]
+      },
+      {
+       "cest": "2801701",
+       "ncms": [
+        "33072090"
+       ]
+      },
+      {
+       "cest": "2801702",
+       "ncms": [
+        "33072090"
+       ]
+      },
+      {
+       "cest": "2801800",
+       "ncms": [
+        "33079000"
+       ]
+      },
+      {
+       "cest": "2801900",
+       "ncms": [
+        "33079000"
+       ]
+      },
+      {
+       "cest": "2802000",
+       "ncms": [
+        "34011190"
+       ]
+      },
+      {
+       "cest": "2802001",
+       "ncms": [
+        "34011190"
+       ]
+      },
+      {
+       "cest": "2802100",
+       "ncms": [
+        "34011900"
+       ]
+      },
+      {
+       "cest": "2802200",
+       "ncms": [
+        "34012010"
+       ]
+      },
+      {
+       "cest": "2802300",
+       "ncms": [
+        "34013000"
+       ]
+      },
+      {
+       "cest": "2802400",
+       "ncms": [
+        "48182000"
+       ]
+      },
+      {
+       "cest": "2802401",
+       "ncms": [
+        "48182000"
+       ]
+      },
+      {
+       "cest": "2802500",
+       "ncms": [
+        "82141000"
+       ]
+      },
+      {
+       "cest": "2802501",
+       "ncms": [
+        "82141000"
+       ]
+      },
+      {
+       "cest": "2802502",
+       "ncms": [
+        "82141000"
+       ]
+      },
+      {
+       "cest": "2802600",
+       "ncms": [
+        "82142000"
+       ]
+      },
+      {
+       "cest": "2802700",
+       "ncms": [
+        "96032900"
+       ]
+      },
+      {
+       "cest": "2802701",
+       "ncms": [
+        "96032900"
+       ]
+      },
+      {
+       "cest": "2802800",
+       "ncms": [
+        "96033000"
+       ]
+      },
+      {
+       "cest": "2802801",
+       "ncms": [
+        "96033000"
+       ]
+      },
+      {
+       "cest": "2802900",
+       "ncms": [
+        "96161000"
+       ]
+      },
+      {
+       "cest": "2803000",
+       "ncms": [
+        "96162000"
+       ]
+      },
+      {
+       "cest": "2803100",
+       "ncms": [
+        "42021"
+       ]
+      },
+      {
+       "cest": "2803200",
+       "ncms": [
+        "9615"
+       ]
+      },
+      {
+       "cest": "2803300",
+       "ncms": [
+        "39233090",
+        "39241000",
+        "39249000",
+        "40149090",
+        "7013"
+       ]
+      },
+      {
+       "cest": "2803400",
+       "ncms": [
+        "40149090"
+       ]
+      },
+      {
+       "cest": "2803500",
+       "ncms": [
+        "12119090"
+       ]
+      },
+      {
+       "cest": "2803600",
+       "ncms": [
+        "39262000"
+       ]
+      },
+      {
+       "cest": "2803700",
+       "ncms": [
+        "39264000"
+       ]
+      },
+      {
+       "cest": "2803800",
+       "ncms": [
+        "39269090"
+       ]
+      },
+      {
+       "cest": "2803900",
+       "ncms": [
+        "42022210"
+       ]
+      },
+      {
+       "cest": "2804000",
+       "ncms": [
+        "42022220"
+       ]
+      },
+      {
+       "cest": "2804100",
+       "ncms": [
+        "42022900"
+       ]
+      },
+      {
+       "cest": "2804200",
+       "ncms": [
+        "42023900"
+       ]
+      },
+      {
+       "cest": "2804300",
+       "ncms": [
+        "42029200"
+       ]
+      },
+      {
+       "cest": "2804400",
+       "ncms": [
+        "42029900"
+       ]
+      },
+      {
+       "cest": "2804500",
+       "ncms": [
+        "48192000"
+       ]
+      },
+      {
+       "cest": "2804600",
+       "ncms": [
+        "48194000"
+       ]
+      },
+      {
+       "cest": "2804700",
+       "ncms": [
+        "48211000"
+       ]
+      },
+      {
+       "cest": "2804800",
+       "ncms": [
+        "49111090"
+       ]
+      },
+      {
+       "cest": "2804900",
+       "ncms": [
+        "61159900"
+       ]
+      },
+      {
+       "cest": "2805000",
+       "ncms": [
+        "62171000"
+       ]
+      },
+      {
+       "cest": "2805100",
+       "ncms": [
+        "63026000"
+       ]
+      },
+      {
+       "cest": "2805200",
+       "ncms": [
+        "63079090"
+       ]
+      },
+      {
+       "cest": "2805300",
+       "ncms": [
+        "65069900"
+       ]
+      },
+      {
+       "cest": "2805400",
+       "ncms": [
+        "95059000"
+       ]
+      },
+      {
+       "cest": "2805500",
+       "ncms": [
+        "33"
+       ]
+      },
+      {
+       "cest": "2805600",
+       "ncms": [
+        "33",
+        "34"
+       ]
+      },
+      {
+       "cest": "2805700",
+       "ncms": [
+        "14",
+        "39",
+        "40",
+        "44",
+        "48",
+        "63",
+        "64",
+        "65",
+        "67",
+        "70",
+        "82",
+        "90",
+        "96"
+       ]
+      },
+      {
+       "cest": "2805800",
+       "ncms": [
+        "39",
+        "42",
+        "48",
+        "52",
+        "61",
+        "71",
+        "83",
+        "90",
+        "91"
+       ]
+      },
+      {
+       "cest": "2805900",
+       "ncms": [
+        "61",
+        "62",
+        "64"
+       ]
+      },
+      {
+       "cest": "2806000",
+       "ncms": [
+        "42",
+        "52",
+        "55",
+        "58",
+        "63",
+        "65"
+       ]
+      },
+      {
+       "cest": "2806100",
+       "ncms": [
+        "39",
+        "40",
+        "52",
+        "56",
+        "62",
+        "63",
+        "66",
+        "69",
+        "70",
+        "73",
+        "76",
+        "82",
+        "83",
+        "84",
+        "91",
+        "94",
+        "96"
+       ]
+      },
+      {
+       "cest": "2806200",
+       "ncms": [
+        "13",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23"
+       ]
+      },
+      {
+       "cest": "2806300",
+       "ncms": [
+        "22",
+        "27",
+        "28",
+        "29",
+        "33",
+        "34",
+        "35",
+        "38",
+        "39",
+        "63",
+        "68",
+        "73",
+        "84",
+        "85",
+        "96"
+       ]
+      },
+      {
+       "cest": "2806400",
+       "ncms": [
+        "39",
+        "49",
+        "95",
+        "96"
+       ]
+      },
+      {
+       "cest": "2899900"
+      }
+     ]
+    },
+    {
+     "annex": "09",
+     "name": "Lâmpadas, reatores e “starter”",
+     "excludedFrom": "2023-11-01",
+     "excludedBy": "Decreto 33.028/2023",
+     "cests": [
+      {
+       "cest": "0900100",
+       "ncms": [
+        "8539"
+       ]
+      },
+      {
+       "cest": "0900200",
+       "ncms": [
+        "8540"
+       ]
+      },
+      {
+       "cest": "0900300",
+       "ncms": [
+        "85041000"
+       ]
+      },
+      {
+       "cest": "0900400",
+       "ncms": [
+        "853650"
+       ]
+      },
+      {
+       "cest": "0900500",
+       "ncms": [
+        "85395200"
+       ]
+      }
+     ]
+    },
+    {
+     "annex": "22",
+     "name": "Rações para animais domésticos",
+     "excludedFrom": "2023-11-01",
+     "excludedBy": "Decreto 33.028/2023",
+     "cests": [
+      {
+       "cest": "2200100",
+       "ncms": [
+        "2309"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
    "uf": "PA",
    "act": "Portal Nacional da Substituição Tributária (CONFAZ), planilha de PA",
    "source": "stConfazPa",
@@ -202110,6 +204097,2587 @@
      ],
      "description": "Artigos infantis",
      "mva": "50"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "04",
+   "segmentName": "Cigarros e outros produtos derivados do fumo",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção III, art. 7º, § 2º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "0400100",
+     "ncms": [
+      "2402"
+     ],
+     "description": "Charutos, cigarrilhas e cigarros, de tabaco ou dos seus sucedâneos",
+     "mva": "50"
+    },
+    {
+     "item": "2.0",
+     "cest": "0400200",
+     "ncms": [
+      "24031"
+     ],
+     "description": "Tabaco para fumar, mesmo contendo sucedâneos de tabaco em qualquer proporção",
+     "mva": "50"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "05",
+   "segmentName": "Cimentos",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção IV, art. 8º, § 5º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "0500100",
+     "ncms": [
+      "2523"
+     ],
+     "description": "Cimento",
+     "mva": "20"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "13",
+   "segmentName": "Medicamentos de uso humano e outros produtos farmacêuticos para uso humano ou veterinário",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção VIII, art. 12, § 5º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "1300100",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos de referência – positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "1.1",
+     "cest": "1300101",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos de referência – negativa, exceto para uso veterinário",
+     "mva": "33.05"
+    },
+    {
+     "item": "1.2",
+     "cest": "1300102",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos de referência – neutra, exceto para uso veterinário",
+     "mva": "41.34"
+    },
+    {
+     "item": "2.0",
+     "cest": "1300200",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos genérico – positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "2.1",
+     "cest": "1300201",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos genérico – negativa, exceto para uso veterinário",
+     "mva": "33.05"
+    },
+    {
+     "item": "2.2",
+     "cest": "1300202",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos genérico – neutra, exceto para uso veterinário",
+     "mva": "41.34"
+    },
+    {
+     "item": "3.0",
+     "cest": "1300300",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos similar – positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "3.1",
+     "cest": "1300301",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos similar – negativa, exceto para uso veterinário",
+     "mva": "33.05"
+    },
+    {
+     "item": "3.2",
+     "cest": "1300302",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Medicamentos similar – neutra, exceto para uso veterinário",
+     "mva": "41.34"
+    },
+    {
+     "item": "4.0",
+     "cest": "1300400",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Outros tipos de medicamentos – positiva, exceto para uso veterinário",
+     "mva": "38.24"
+    },
+    {
+     "item": "4.1",
+     "cest": "1300401",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Outros tipos de medicamentos - negativa, exceto para uso veterinário",
+     "mva": "33.05"
+    },
+    {
+     "item": "4.2",
+     "cest": "1300402",
+     "ncms": [
+      "3003",
+      "3004"
+     ],
+     "description": "Outros tipos de medicamentos – neutra, exceto para uso veterinário",
+     "mva": "41.34"
+    },
+    {
+     "item": "5.0",
+     "cest": "1300500",
+     "ncms": [
+      "30066000"
+     ],
+     "description": "Preparações químicas contraceptivas de referência, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "5.1",
+     "cest": "1300501",
+     "ncms": [
+      "30066000"
+     ],
+     "description": "Preparações químicas contraceptivas de referência, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas - negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "5.2",
+     "cest": "1300502",
+     "ncms": [
+      "30066000"
+     ],
+     "description": "Preparações químicas contraceptivas genérico, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "5.3",
+     "cest": "1300503",
+     "ncms": [
+      "30066000"
+     ],
+     "description": "Preparações químicas contraceptivas genérico, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "5.4",
+     "cest": "1300504",
+     "ncms": [
+      "30066000"
+     ],
+     "description": "Preparações químicas contraceptivas similar, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "5.5",
+     "cest": "1300505",
+     "ncms": [
+      "30066000"
+     ],
+     "description": "Preparações químicas contraceptivas similar, à base de hormônios, de outros produtos da posição 29.37 ou de espermicidas – negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "6.0",
+     "cest": "1300600",
+     "ncms": [
+      "2936"
+     ],
+     "description": "Provitaminas e vitaminas, naturais ou reproduzidas por síntese (incluídos os concentrados naturais), bem como os seus derivados utilizados principalmente como vitaminas, misturados ou não entre si, mesmo em quaisquer soluções – neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "7.0",
+     "cest": "1300700",
+     "ncms": [
+      "300630"
+     ],
+     "description": "Preparações opacificantes (contrastantes) para exames radiográficos e reagentes de diagnóstico concebidos para serem administrados ao paciente - positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "7.1",
+     "cest": "1300701",
+     "ncms": [
+      "300630"
+     ],
+     "description": "Preparações opacificantes (contrastantes) para exames radiográficos e reagentes de diagnóstico concebidos para serem administrados ao paciente - negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "8.0",
+     "cest": "1300800",
+     "ncms": [
+      "3002"
+     ],
+     "description": "Antissoro, outras frações do sangue, produtos imunológicos modificados, mesmo obtidos por via biotecnológica, exceto para uso veterinário - positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "8.1",
+     "cest": "1300801",
+     "ncms": [
+      "3002"
+     ],
+     "description": "Antissoro, outras frações do sangue, produtos imunológicos modificados, mesmo obtidos por via biotecnológica, exceto para uso veterinário - negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "9.0",
+     "cest": "1300900",
+     "ncms": [
+      "3002"
+     ],
+     "description": "Vacinas e produtos semelhantes, exceto para uso veterinário - positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "9.1",
+     "cest": "1300901",
+     "ncms": [
+      "3002"
+     ],
+     "description": "Vacinas e produtos semelhantes, exceto para uso veterinário - negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "10.0",
+     "cest": "1301000",
+     "ncms": [
+      "30051010"
+     ],
+     "description": "Curativos (pensos) adesivos e outros artigos com uma camada adesiva, impregnados ou recobertos de substâncias farmacêuticas - Lista Positiva",
+     "mva": "38.24"
+    },
+    {
+     "item": "10.1",
+     "cest": "1301001",
+     "ncms": [
+      "30051010"
+     ],
+     "description": "Curativos (pensos) adesivos e outros artigos com uma camada adesiva, impregnados ou recobertos de substâncias farmacêuticas - Lista Negativa",
+     "mva": "33.05"
+    },
+    {
+     "item": "11.0",
+     "cest": "1301100",
+     "ncms": [
+      "3005"
+     ],
+     "description": "Algodão, atadura, esparadrapo, gazes, pensos, sinapismos, e outros, acondicionados para venda a retalho para usos medicinais, cirúrgicos ou dentários, não impregnados ou recobertos de substâncias farmacêuticas – Lista Neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "14.0",
+     "cest": "1301400",
+     "ncms": [
+      "901831"
+     ],
+     "description": "Seringas, mesmo com agulhas - neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "15.0",
+     "cest": "1301500",
+     "ncms": [
+      "9018321"
+     ],
+     "description": "Agulhas para seringas - neutra",
+     "mva": "41.34"
+    },
+    {
+     "item": "16.0",
+     "cest": "1301600",
+     "ncms": [
+      "39269090",
+      "90189099"
+     ],
+     "description": "Contraceptivos (dispositivos intrauterinos - DIU) - neutra",
+     "mva": "41.34"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "16",
+   "segmentName": "Pneumáticos, câmaras de ar e protetores de borracha",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção IX, art. 14, § 7º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "1600100",
+     "ncms": [
+      "40111000"
+     ],
+     "description": "Pneus novos, dos tipos utilizados em automóveis de passageiros (incluídos os veículos de uso misto - camionetas e os automóveis de corrida)",
+     "mva": "42"
+    },
+    {
+     "item": "2.0",
+     "cest": "1600200",
+     "ncms": [
+      "4011"
+     ],
+     "description": "Pneus novos, dos tipos utilizados em caminhões (inclusive para os fora-de-estrada), ônibus, aviões, máquinas de terraplenagem, de construção e conservação de estradas, máquinas e tratores agrícolas, pá-carregadeira",
+     "mva": "32"
+    },
+    {
+     "item": "3.0",
+     "cest": "1600300",
+     "ncms": [
+      "40114000"
+     ],
+     "description": "Pneus novos para motocicletas",
+     "mva": "60"
+    },
+    {
+     "item": "4.0",
+     "cest": "1600400",
+     "ncms": [
+      "4011"
+     ],
+     "description": "Outros tipos de pneus novos, exceto os itens classificados no CEST 16.005.00",
+     "mva": "45"
+    },
+    {
+     "item": "7.0",
+     "cest": "1600700",
+     "ncms": [
+      "401290"
+     ],
+     "description": "Protetores de borracha, exceto os itens classificados no CEST 16.007.01",
+     "mva": "45"
+    },
+    {
+     "item": "8.0",
+     "cest": "1600800",
+     "ncms": [
+      "4013"
+     ],
+     "description": "Câmaras de ar de borracha, exceto os itens classificados no CEST 16.009.00",
+     "mva": "45"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "17",
+   "segmentName": "Produtos alimentícios",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção X, art. 15, § 2º, I, \"a\", e II, \"a\"",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2023-06-29",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele. Nos alimentícios a MVA depende da origem: UF signatária do Protocolo ICMS 53/2017 (ou exterior) e não signatária.",
+   "items": [
+    {
+     "item": "1.0/1",
+     "cest": "1704700",
+     "ncms": [
+      "19023000"
+     ],
+     "description": "Massas alimentícias tipo instantânea, exceto as descritas no CEST 17047.01 — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "1.0/2",
+     "cest": "1704700",
+     "ncms": [
+      "19023000"
+     ],
+     "description": "Massas alimentícias tipo instantânea, exceto as descritas no CEST 17047.01 — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "1.1/1",
+     "cest": "1704701",
+     "ncms": [
+      "19023000"
+     ],
+     "description": "Massas alimentícias tipo instantânea, derivadas de farinha de trigo — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "1.1/2",
+     "cest": "1704701",
+     "ncms": [
+      "19023000"
+     ],
+     "description": "Massas alimentícias tipo instantânea, derivadas de farinha de trigo — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "2.0/1",
+     "cest": "1704800",
+     "ncms": [
+      "1902"
+     ],
+     "description": "Massas alimentícias, cozidas ou recheadas (de carne ou de outras substâncias) ou preparadas de outro modo, exceto as descritas nos CEST 17.047.00, 17.048.01 (NCM/SH 1902.40.00-Cuscuz) e 17.048.02 — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "2.0/2",
+     "cest": "1704800",
+     "ncms": [
+      "1902"
+     ],
+     "description": "Massas alimentícias, cozidas ou recheadas (de carne ou de outras substâncias) ou preparadas de outro modo, exceto as descritas nos CEST 17.047.00, 17.048.01 (NCM/SH 1902.40.00-Cuscuz) e 17.048.02 — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "2.1/1",
+     "cest": "1704802",
+     "ncms": [
+      "19022000"
+     ],
+     "description": "Massas alimentícias recheadas (mesmo cozidas ou preparadas de outro modo) — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "2.1/2",
+     "cest": "1704802",
+     "ncms": [
+      "19022000"
+     ],
+     "description": "Massas alimentícias recheadas (mesmo cozidas ou preparadas de outro modo) — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "3.0/1",
+     "cest": "1704902",
+     "ncms": [
+      "19021100"
+     ],
+     "description": "Massas alimentícias do tipo grano duro, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "3.0/2",
+     "cest": "1704902",
+     "ncms": [
+      "19021100"
+     ],
+     "description": "Massas alimentícias do tipo grano duro, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "3.1/1",
+     "cest": "1704903",
+     "ncms": [
+      "19021900"
+     ],
+     "description": "Outras massas alimentícias do tipo comum, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham ovos, derivadas de farinha de trigo — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "3.1/2",
+     "cest": "1704903",
+     "ncms": [
+      "19021900"
+     ],
+     "description": "Outras massas alimentícias do tipo comum, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham ovos, derivadas de farinha de trigo — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "3.2/1",
+     "cest": "1704904",
+     "ncms": [
+      "19021900"
+     ],
+     "description": "Outras massas alimentícias do tipo sêmola, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham ovos, derivadas do trigo — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "3.2/2",
+     "cest": "1704904",
+     "ncms": [
+      "19021900"
+     ],
+     "description": "Outras massas alimentícias do tipo sêmola, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham ovos, derivadas do trigo — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "3.3/1",
+     "cest": "1704905",
+     "ncms": [
+      "19021900"
+     ],
+     "description": "Outras massas alimentícias do tipo grano duro, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham ovos — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "3.3/2",
+     "cest": "1704905",
+     "ncms": [
+      "19021900"
+     ],
+     "description": "Outras massas alimentícias do tipo grano duro, não cozidas, nem recheadas, nem preparadas de outro modo, que não contenham ovos — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "3.4/1",
+     "cest": "1704906",
+     "ncms": [
+      "19021100"
+     ],
+     "description": "Massas alimentícias do tipo comum, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos, derivadas de farinha de trigo — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "3.4/2",
+     "cest": "1704906",
+     "ncms": [
+      "19021100"
+     ],
+     "description": "Massas alimentícias do tipo comum, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos, derivadas de farinha de trigo — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "3.5/1",
+     "cest": "1704907",
+     "ncms": [
+      "19021100"
+     ],
+     "description": "Massas alimentícias do tipo sêmola, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos, derivadas do trigo — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "3.5/2",
+     "cest": "1704907",
+     "ncms": [
+      "19021100"
+     ],
+     "description": "Massas alimentícias do tipo sêmola, não cozidas, nem recheadas, nem preparadas de outro modo, que contenham ovos, derivadas do trigo — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "4.0/1",
+     "cest": "1705000",
+     "ncms": [
+      "190520"
+     ],
+     "description": "Pães industrializados, inclusive de especiarias, exceto panetones e bolo de forma — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "4.0/2",
+     "cest": "1705000",
+     "ncms": [
+      "190520"
+     ],
+     "description": "Pães industrializados, inclusive de especiarias, exceto panetones e bolo de forma — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "5.0/1",
+     "cest": "1706000",
+     "ncms": [
+      "19059010"
+     ],
+     "description": "Outros pães de forma — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "5.0/2",
+     "cest": "1706000",
+     "ncms": [
+      "19059010"
+     ],
+     "description": "Outros pães de forma — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "6.0/1",
+     "cest": "1706200",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Outros pães, exceto o classificado no CEST 17.062.03 — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "6.0/2",
+     "cest": "1706200",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Outros pães, exceto o classificado no CEST 17.062.03 — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "6.1/1",
+     "cest": "1706203",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Pão francês até 200g — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "6.1/2",
+     "cest": "1706203",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Pão francês até 200g — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "7.0/1",
+     "cest": "1706300",
+     "ncms": [
+      "19051000"
+     ],
+     "description": "Pão denominado knackebrot — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "7.0/2",
+     "cest": "1706300",
+     "ncms": [
+      "19051000"
+     ],
+     "description": "Pão denominado knackebrot — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "8.0/1",
+     "cest": "1706400",
+     "ncms": [
+      "190590"
+     ],
+     "description": "Demais pães industrializados — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "8.0/2",
+     "cest": "1706400",
+     "ncms": [
+      "190590"
+     ],
+     "description": "Demais pães industrializados — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "17",
+   "segmentName": "Produtos alimentícios",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção X, art. 15, § 2º, I, \"b\", e II, \"b\"",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele. Nos alimentícios a MVA depende da origem: UF signatária do Protocolo ICMS 53/2017 (ou exterior) e não signatária.",
+   "items": [
+    {
+     "item": "1.0/1",
+     "cest": "1703101",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Salgadinhos diversos, derivados de farinha de trigo — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "1.0/2",
+     "cest": "1703101",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Salgadinhos diversos, derivados de farinha de trigo — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "2.0/1",
+     "cest": "1705100",
+     "ncms": [
+      "19052090"
+     ],
+     "description": "Bolo de forma, inclusive de especiarias — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "2.0/2",
+     "cest": "1705100",
+     "ncms": [
+      "19052090"
+     ],
+     "description": "Bolo de forma, inclusive de especiarias — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "3.0/1",
+     "cest": "1705200",
+     "ncms": [
+      "19052010"
+     ],
+     "description": "Panetones — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "3.0/2",
+     "cest": "1705200",
+     "ncms": [
+      "19052010"
+     ],
+     "description": "Panetones — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "4.0/1",
+     "cest": "1705300",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas derivados de farinha de trigo; (exceto dos tipos “cream cracker”, “água e sal”, “maisena”, “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial) — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "4.0/2",
+     "cest": "1705300",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas derivados de farinha de trigo; (exceto dos tipos “cream cracker”, “água e sal”, “maisena”, “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial) — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "4.1/1",
+     "cest": "1705301",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas derivados de farinha de trigo dos tipos “maisena” e “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial, exceto o CEST 17.053.02 — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "4.1/2",
+     "cest": "1705301",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas derivados de farinha de trigo dos tipos “maisena” e “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial, exceto o CEST 17.053.02 — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "4.2/1",
+     "cest": "1705302",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas derivados de farinha de trigo dos tipos \"cream cracker\" e \"água e sal\" de consumo popular — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "4.2/2",
+     "cest": "1705302",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas derivados de farinha de trigo dos tipos \"cream cracker\" e \"água e sal\" de consumo popular — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "5.0/1",
+     "cest": "1705600",
+     "ncms": [
+      "19059020"
+     ],
+     "description": "Biscoitos e bolachas derivados de farinha de trigo dos tipos “cream cracker” e “água e sal” — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "5.0/2",
+     "cest": "1705600",
+     "ncms": [
+      "19059020"
+     ],
+     "description": "Biscoitos e bolachas derivados de farinha de trigo dos tipos “cream cracker” e “água e sal” — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "5.1/1",
+     "cest": "1705602",
+     "ncms": [
+      "19059020"
+     ],
+     "description": "Outras bolachas, exceto casquinhas para sorvete e os biscoitos e bolachas relacionados nos CEST 17.056.00 e 17.056.01 — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "5.1/2",
+     "cest": "1705602",
+     "ncms": [
+      "19059020"
+     ],
+     "description": "Outras bolachas, exceto casquinhas para sorvete e os biscoitos e bolachas relacionados nos CEST 17.056.00 e 17.056.01 — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "6.0/1",
+     "cest": "1705700",
+     "ncms": [
+      "19053200"
+     ],
+     "description": "“Waffles” e “wafers” - sem cobertura — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "6.0/2",
+     "cest": "1705700",
+     "ncms": [
+      "19053200"
+     ],
+     "description": "“Waffles” e “wafers” - sem cobertura — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "7.0/1",
+     "cest": "1705800",
+     "ncms": [
+      "19053200"
+     ],
+     "description": "“Waffles” e “wafers” - com cobertura — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "7.0/2",
+     "cest": "1705800",
+     "ncms": [
+      "19053200"
+     ],
+     "description": "“Waffles” e “wafers” - com cobertura — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "8.0/1",
+     "cest": "1705900",
+     "ncms": [
+      "19054000"
+     ],
+     "description": "Torradas, pão torrado e produtos semelhantes torrados — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "8.0/2",
+     "cest": "1705900",
+     "ncms": [
+      "19054000"
+     ],
+     "description": "Torradas, pão torrado e produtos semelhantes torrados — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "9.0/1",
+     "cest": "1706201",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Outros bolos industrializados e produtos de panificação não especificados anteriormente, incluindo as pizzas; exceto os classificados nos CEST 17.062.02 e 17.062.03 — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "9.0/2",
+     "cest": "1706201",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Outros bolos industrializados e produtos de panificação não especificados anteriormente, incluindo as pizzas; exceto os classificados nos CEST 17.062.02 e 17.062.03 — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "9.1/1",
+     "cest": "1706202",
+     "ncms": [
+      "19059020",
+      "19059090"
+     ],
+     "description": "Casquinhas para sorvete — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "9.1/2",
+     "cest": "1706202",
+     "ncms": [
+      "19059020",
+      "19059090"
+     ],
+     "description": "Casquinhas para sorvete — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "17",
+   "segmentName": "Produtos alimentícios",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção X, art. 15, § 2º, III",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele. Nos alimentícios a MVA depende da origem: UF signatária do Protocolo ICMS 53/2017 (ou exterior) e não signatária.",
+   "items": [
+    {
+     "item": "1.0/1",
+     "cest": "1703102",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Biscoitos de polvilho — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "1.0/2",
+     "cest": "1703102",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Biscoitos de polvilho — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "2.0/1",
+     "cest": "1704900",
+     "ncms": [
+      "19021"
+     ],
+     "description": "Massas alimentícias do tipo comum, não cozidas, nem recheadas, nem preparadas de outro modo, não derivadas do trigo — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "2.0/2",
+     "cest": "1704900",
+     "ncms": [
+      "19021"
+     ],
+     "description": "Massas alimentícias do tipo comum, não cozidas, nem recheadas, nem preparadas de outro modo, não derivadas do trigo — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "2.1/1",
+     "cest": "1704901",
+     "ncms": [
+      "19021"
+     ],
+     "description": "Massas alimentícias do tipo sêmola, não cozidas, nem recheadas, nem preparadas de outro modo, não derivadas do trigo — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "20"
+    },
+    {
+     "item": "2.1/2",
+     "cest": "1704901",
+     "ncms": [
+      "19021"
+     ],
+     "description": "Massas alimentícias do tipo sêmola, não cozidas, nem recheadas, nem preparadas de outro modo, não derivadas do trigo — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "35"
+    },
+    {
+     "item": "3.0/1",
+     "cest": "1705400",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo; (exceto dos tipos “cream cracker”, “água e sal”, “maisena” e “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial) — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "3.0/2",
+     "cest": "1705400",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo; (exceto dos tipos “cream cracker”, “água e sal”, “maisena” e “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial) — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "3.1/1",
+     "cest": "1705401",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo dos tipos “maisena” e “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial, exceto o CEST 17.054.02 — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "3.1/2",
+     "cest": "1705401",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo dos tipos “maisena” e “maria” e outros de consumo popular que não sejam adicionados de cacau, nem recheados, cobertos ou amanteigados, independentemente de sua denominação comercial, exceto o CEST 17.054.02 — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "3.2/1",
+     "cest": "1705402",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo dos tipos \"cream cracker\" e \"água e sal\" de consumo popular — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "3.2/2",
+     "cest": "1705402",
+     "ncms": [
+      "19053100"
+     ],
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo dos tipos \"cream cracker\" e \"água e sal\" de consumo popular — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    },
+    {
+     "item": "4.0/1",
+     "cest": "1705601",
+     "ncms": [
+      "19059020"
+     ],
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo dos tipos \"cream cracker\" e \"água e sal\" — procedente do exterior ou de UF signatária do Protocolo ICMS 53/2017",
+     "mva": "30"
+    },
+    {
+     "item": "4.0/2",
+     "cest": "1705601",
+     "ncms": [
+      "19059020"
+     ],
+     "description": "Biscoitos e bolachas não derivados de farinha de trigo dos tipos \"cream cracker\" e \"água e sal\" — procedente de UF não signatária do Protocolo ICMS 53/2017",
+     "mva": "45"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "17",
+   "segmentName": "Produtos alimentícios",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção X, art. 15, § 2º, IV",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2023-11-18",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele. Nos alimentícios a MVA depende da origem: UF signatária do Protocolo ICMS 53/2017 (ou exterior) e não signatária.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "1703100",
+     "ncms": [
+      "19059090"
+     ],
+     "description": "Salgadinhos diversos, exceto os classificados no CEST 17.031.01 e 17.031.02",
+     "mva": "30"
+    },
+    {
+     "item": "2.0",
+     "cest": "1704600",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para bolos, em embalagem inferior a 5 kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.1",
+     "cest": "1704601",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para bolos, em embalagem igual a 5 kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.2",
+     "cest": "1704602",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para bolos, em embalagem superior a 5 kg e inferior ou igual a 25 Kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.3",
+     "cest": "1704603",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para bolos, em embalagem superior a 25 kg e inferior ou igual a 50 Kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.4",
+     "cest": "1704604",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para bolos, em embalagem superior a 50 Kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.5",
+     "cest": "1704605",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em embalagem inferior a 5 kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.6",
+     "cest": "1704606",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em embalagem igual a 5 kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.7",
+     "cest": "1704607",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em embalagem superior a 5 kg e inferior ou igual a 25 Kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.8",
+     "cest": "1704608",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em embalagem superior a 25 kg e inferior ou igual a 50 Kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.9",
+     "cest": "1704609",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e preparações para pães com menos de 80% de farinha de trigo na sua composição final, em embalagem superior a 50 Kg",
+     "mva": "30"
+    },
+    {
+     "item": "2.10",
+     "cest": "1704615",
+     "ncms": [
+      "190120",
+      "19019090"
+     ],
+     "description": "Misturas e pastas para a preparação de produtos de padaria, pastelaria e da indústria de bolachas e biscoitos, da posição 19.05, exceto os previstos nos CEST 17.046.00 a 17.046.14 e 17.046.16",
+     "mva": "30"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "20",
+   "segmentName": "Produtos de perfumaria e de higiene pessoal e cosméticos",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção XI, art. 16, § 2º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "23.0",
+     "cest": "2002300",
+     "ncms": [
+      "33061000"
+     ],
+     "description": "Dentifrícios",
+     "mva": "41.34"
+    },
+    {
+     "item": "24.0",
+     "cest": "2002400",
+     "ncms": [
+      "33062000"
+     ],
+     "description": "Fios utilizados para limpar os espaços interdentais (fios dentais)",
+     "mva": "41.34"
+    },
+    {
+     "item": "25.0",
+     "cest": "2002500",
+     "ncms": [
+      "33069000"
+     ],
+     "description": "Outras preparações para higiene bucal ou dentária",
+     "mva": "41.34"
+    },
+    {
+     "item": "39.0",
+     "cest": "2003900",
+     "ncms": [
+      "40149090"
+     ],
+     "description": "Chupetas e bicos para mamadeiras e para chupetas, de borracha",
+     "mva": "41.34"
+    },
+    {
+     "item": "40.0",
+     "cest": "2004000",
+     "ncms": [
+      "39249000",
+      "39269040",
+      "39269090"
+     ],
+     "description": "Chupetas e bicos para mamadeiras e para chupetas, de silicone",
+     "mva": "41.34"
+    },
+    {
+     "item": "48.0",
+     "cest": "2004800",
+     "ncms": [
+      "96190000"
+     ],
+     "description": "Fraldas, exceto os descritos no CEST 20.048.01",
+     "mva": "41.34"
+    },
+    {
+     "item": "48.1",
+     "cest": "2004801",
+     "ncms": [
+      "96190000"
+     ],
+     "description": "Fraldas de fibras têxteis",
+     "mva": "41.34"
+    },
+    {
+     "item": "49.0",
+     "cest": "2004900",
+     "ncms": [
+      "96190000"
+     ],
+     "description": "Tampões higiênicos",
+     "mva": "41.34"
+    },
+    {
+     "item": "50.0",
+     "cest": "2005000",
+     "ncms": [
+      "96190000"
+     ],
+     "description": "Absorventes higiênicos externos",
+     "mva": "41.34"
+    },
+    {
+     "item": "51.0",
+     "cest": "2005100",
+     "ncms": [
+      "56012190"
+     ],
+     "description": "Hastes flexíveis (uso não medicinal)",
+     "mva": "41.34"
+    },
+    {
+     "item": "58.0",
+     "cest": "2005800",
+     "ncms": [
+      "96032100"
+     ],
+     "description": "Escovas de dentes, incluídas as escovas para dentaduras",
+     "mva": "33.05"
+    },
+    {
+     "item": "63.0",
+     "cest": "2006300",
+     "ncms": [
+      "39233090",
+      "39241000",
+      "39249000",
+      "40149090",
+      "7013"
+     ],
+     "description": "Mamadeiras",
+     "mva": "41.34"
+    },
+    {
+     "item": "64.0",
+     "cest": "2006400",
+     "ncms": [
+      "82121020",
+      "82122010"
+     ],
+     "description": "Aparelhos e lâminas de barbear",
+     "mva": "30"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "23",
+   "segmentName": "Sorvetes e preparados para fabricação de sorvetes em máquinas",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção XIV, art. 19, §§ 3º e 6º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0/1",
+     "cest": "2300100",
+     "ncms": [
+      "210500"
+     ],
+     "description": "Sorvetes de qualquer espécie — MVA-ST original (nas entradas de outra UF, ajustada à alíquota interestadual)",
+     "mva": "70"
+    },
+    {
+     "item": "1.0/2",
+     "cest": "2300100",
+     "ncms": [
+      "210500"
+     ],
+     "description": "Sorvetes de qualquer espécie — operação interna do fabricante",
+     "mva": "30"
+    },
+    {
+     "item": "2.0/1",
+     "cest": "2300200",
+     "ncms": [
+      "1806",
+      "1901",
+      "2106",
+      "0404"
+     ],
+     "description": "Preparados para fabricação de sorvete em máquina — MVA-ST original (nas entradas de outra UF, ajustada à alíquota interestadual)",
+     "mva": "328"
+    },
+    {
+     "item": "2.0/2",
+     "cest": "2300200",
+     "ncms": [
+      "1806",
+      "1901",
+      "2106",
+      "0404"
+     ],
+     "description": "Preparados para fabricação de sorvete em máquina — operação interna do fabricante",
+     "mva": "141"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "24",
+   "segmentName": "Tintas e vernizes",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção XV, art. 20, § 2º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2400100",
+     "ncms": [
+      "3208",
+      "3209",
+      "3210"
+     ],
+     "description": "Tintas, vernizes",
+     "mva": "35"
+    },
+    {
+     "item": "2.0",
+     "cest": "2400200",
+     "ncms": [
+      "2821",
+      "32041700",
+      "3206"
+     ],
+     "description": "Xadrez e pós assemelhados, em embalagem de conteúdo inferior ou igual a 1 kg, exceto pigmentos à base de dióxido de titânio classificados no código 3206.11.10",
+     "mva": "35"
+    },
+    {
+     "item": "2.1",
+     "cest": "2400201",
+     "ncms": [
+      "2821",
+      "32041700",
+      "3206"
+     ],
+     "description": "Xadrez e pós assemelhados, em embalagem de conteúdo superior a 1 kg, exceto pigmentos à base de dióxido de titânio classificados no código 3206.11.10",
+     "mva": "35"
+    },
+    {
+     "item": "3.0",
+     "cest": "2400300",
+     "ncms": [
+      "3204",
+      "32050000",
+      "3206",
+      "3212"
+     ],
+     "description": "Corantes para aplicação em bases, tintas e vernizes",
+     "mva": "50"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "25",
+   "segmentName": "Veículos automotores",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção XVI, art. 21, § 5º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2500100",
+     "ncms": [
+      "87021000"
+     ],
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, unicamente com motor de pistão, de ignição por compressão (diesel ou semidiesel), com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "2.0",
+     "cest": "2500200",
+     "ncms": [
+      "87024090"
+     ],
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, unicamente com motor elétrico para propulsão, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "3.0",
+     "cest": "2500300",
+     "ncms": [
+      "87032100"
+     ],
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada não superior a 1000 cm³",
+     "mva": "30"
+    },
+    {
+     "item": "4.0",
+     "cest": "2500400",
+     "ncms": [
+      "87032210"
+     ],
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1000 cm³, mas não superior a 1500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular",
+     "mva": "30"
+    },
+    {
+     "item": "5.0",
+     "cest": "2500500",
+     "ncms": [
+      "87032290"
+     ],
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1000 cm³, mas não superior a 1500 cm³, exceto carro celular",
+     "mva": "30"
+    },
+    {
+     "item": "6.0",
+     "cest": "2500600",
+     "ncms": [
+      "87032310"
+     ],
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1500 cm³, mas não superior a 3000 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "7.0",
+     "cest": "2500700",
+     "ncms": [
+      "87032390"
+     ],
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1500 cm³, mas não superior a 3000 cm³, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "8.0",
+     "cest": "2500800",
+     "ncms": [
+      "87032410"
+     ],
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 3000 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "9.0",
+     "cest": "2500900",
+     "ncms": [
+      "87032490"
+     ],
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 3000 cm³, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "10.0",
+     "cest": "2501000",
+     "ncms": [
+      "87033210"
+     ],
+     "description": "Automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 1500 cm³, mas não superior a 2500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto ambulância, carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "11.0",
+     "cest": "2501100",
+     "ncms": [
+      "87033290"
+     ],
+     "description": "Outros automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 1500 cm³, mas não superior a 2500 cm³, exceto ambulância, carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "12.0",
+     "cest": "2501200",
+     "ncms": [
+      "87033310"
+     ],
+     "description": "Automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 2500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "13.0",
+     "cest": "2501300",
+     "ncms": [
+      "87033390"
+     ],
+     "description": "Outros automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 2500 cm³, exceto carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "14.0",
+     "cest": "2501400",
+     "ncms": [
+      "87042110"
+     ],
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, chassis com motor diesel ou semidiesel e cabina, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "15.0",
+     "cest": "2501500",
+     "ncms": [
+      "87042120"
+     ],
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor diesel ou semidiesel, com caixa basculante, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "16.0",
+     "cest": "2501600",
+     "ncms": [
+      "87042130"
+     ],
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, frigoríficos ou isotérmicos, com motor diesel ou semidiesel, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.0",
+     "cest": "2501700",
+     "ncms": [
+      "87042190"
+     ],
+     "description": "Outros veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor diesel ou semidiesel, exceto carro-forte para transporte de valores e caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "18.0",
+     "cest": "2501800",
+     "ncms": [
+      "87043110"
+     ],
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor a explosão, chassis e cabina, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "19.0",
+     "cest": "2501900",
+     "ncms": [
+      "87043120"
+     ],
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor explosão com caixa basculante, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "20.0",
+     "cest": "2502000",
+     "ncms": [
+      "87043130"
+     ],
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, frigoríficos ou isotérmicos com motor explosão, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "21.0",
+     "cest": "2502100",
+     "ncms": [
+      "87043190"
+     ],
+     "description": "Outros veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor a explosão, exceto carro-forte para transporte de valores e caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "22.0",
+     "cest": "2502200",
+     "ncms": [
+      "87022000"
+     ],
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com motor de pistão, de ignição por compressão (diesel ou semidiesel) e um motor elétrico, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "23.0",
+     "cest": "2502300",
+     "ncms": [
+      "87023000"
+     ],
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com motor de pistão alternativo, de ignição por centelha (faísca) e um motor elétrico, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "24.0",
+     "cest": "2502400",
+     "ncms": [
+      "87029000"
+     ],
+     "description": "Outros veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "25.0",
+     "cest": "2502500",
+     "ncms": [
+      "87034000"
+     ],
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão alternativo de ignição por centelha (faísca*) e um motor elétrico, exceto os suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "26.0",
+     "cest": "2502600",
+     "ncms": [
+      "87035000"
+     ],
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão por compressão (diesel ou semidiesel) e um motor elétrico, exceto os suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "27.0",
+     "cest": "2502700",
+     "ncms": [
+      "87036000"
+     ],
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão alternativo de ignição por centelha (faísca*) e um motor elétrico, suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "28.0",
+     "cest": "2502800",
+     "ncms": [
+      "87037000"
+     ],
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão por compressão (diesel ou semidiesel) e um motor elétrico, suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "29.0",
+     "cest": "2502900",
+     "ncms": [
+      "87038000"
+     ],
+     "description": "Outros veículos, equipados unicamente com motor elétrico para propulsão",
+     "mva": "30"
+    },
+    {
+     "item": "30.0",
+     "cest": "2503000",
+     "ncms": [
+      "87044100"
+     ],
+     "description": "Outros veículos para transportes de mercadorias equipados para propulsão, simultaneamente, com motor de pistão de ignição por compressão (diesel ou semidiesel) e motor elétrico de peso em carga máxima (bruto) não superior a 5 toneladas, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "31.0",
+     "cest": "2503100",
+     "ncms": [
+      "87045100"
+     ],
+     "description": "Outros veículos para transportes de mercadorias equipados para propulsão, simultaneamente, com motor de pistão de ignição por centelha (faísca) e motor elétrico de peso em carga máxima (bruto) não superior a 5 toneladas, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "32.0",
+     "cest": "2503200",
+     "ncms": [
+      "87046000"
+     ],
+     "description": "Outros veículos para transporte de mercadorias, unicamente com motor elétrico para propulsão, exceto veículo de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "26",
+   "segmentName": "Veículos de duas e três rodas motorizados",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção XVII, art. 22, § 4º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2600100",
+     "ncms": [
+      "8711"
+     ],
+     "description": "Motocicletas (incluídos os ciclomotores) e outros ciclos equipados com motor auxiliar, mesmo com carro lateral, exceto os classificados no CEST 26.001.01; carros laterais",
+     "mva": "34"
+    },
+    {
+     "item": "1.1",
+     "cest": "2600101",
+     "ncms": [
+      "8711"
+     ],
+     "description": "Bicicletas e outros ciclos (incluindos os triciclos) com propulsão de motor elétrico auxilias assistido pela força humana",
+     "mva": "34"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "segment": "28",
+   "segmentName": "Venda de mercadorias pelo sistema porta a porta",
+   "act": "RICMS/RN (Decreto 31.825/2022), Anexo 007, atualizado até o Decreto 35.865/2026, Seção XVIII, art. 23, § 2º",
+   "source": "stRnAnexo007",
+   "url": "https://www.sefaz.rn.gov.br/wp-json/nextcloud/v1/download?filePath=SEFAZ-GOVRN%2FImpostos%2FLegisla%C3%A7%C3%A3o%2FICMS%2FRegulamentos%2FAnexos%20do%20RICMS%2FAnexos%20do%20RICMS%20-%20Decreto%2031.825%202022%20%28Vigente%29%2FAnexo%2007%20do%20Regulamento%20ICMS%20RN.pdf",
+   "validFrom": "2022-11-07",
+   "validTo": null,
+   "note": "MVA-ST original. Nas entradas de outra UF, a MVA é ajustada à alíquota interestadual (Anexo 007, art. 3º, § 6º). Quando o segmento tem preço máximo, preço sugerido pelo fabricante, PMC ou PMPF, a base é esse preço e a MVA só vale na falta dele.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2800100",
+     "ncms": [
+      "33030010"
+     ],
+     "description": "Perfumes (extratos)",
+     "mva": "40"
+    },
+    {
+     "item": "2.0",
+     "cest": "2800200",
+     "ncms": [
+      "33030020"
+     ],
+     "description": "Águas de colônia",
+     "mva": "40"
+    },
+    {
+     "item": "3.0",
+     "cest": "2800300",
+     "ncms": [
+      "33041000"
+     ],
+     "description": "Produtos de maquiagem para os lábios",
+     "mva": "40"
+    },
+    {
+     "item": "4.0",
+     "cest": "2800400",
+     "ncms": [
+      "33042010"
+     ],
+     "description": "Sombra, delineador, lápis para sobrancelhas e rímel",
+     "mva": "40"
+    },
+    {
+     "item": "5.0",
+     "cest": "2800500",
+     "ncms": [
+      "33042090"
+     ],
+     "description": "Outros produtos de maquiagem para os olhos",
+     "mva": "40"
+    },
+    {
+     "item": "6.0",
+     "cest": "2800600",
+     "ncms": [
+      "33043000"
+     ],
+     "description": "Preparações para manicuros e pedicuros",
+     "mva": "40"
+    },
+    {
+     "item": "7.0",
+     "cest": "2800700",
+     "ncms": [
+      "33049100"
+     ],
+     "description": "Pós para maquiagem, incluindo os compactos",
+     "mva": "40"
+    },
+    {
+     "item": "8.0",
+     "cest": "2800800",
+     "ncms": [
+      "33049910"
+     ],
+     "description": "Cremes de beleza, cremes nutritivos e loções tônicas",
+     "mva": "40"
+    },
+    {
+     "item": "9.0",
+     "cest": "2800900",
+     "ncms": [
+      "33049990"
+     ],
+     "description": "Outros produtos de beleza ou de maquiagem preparados e preparações para conservação ou cuidados da pele, exceto as preparações antissolares e os bronzeadores",
+     "mva": "40"
+    },
+    {
+     "item": "10.0",
+     "cest": "2801000",
+     "ncms": [
+      "33049990"
+     ],
+     "description": "Preparações antissolares e os bronzeadores",
+     "mva": "40"
+    },
+    {
+     "item": "11.0",
+     "cest": "2801100",
+     "ncms": [
+      "33051000"
+     ],
+     "description": "Xampus para o cabelo",
+     "mva": "40"
+    },
+    {
+     "item": "12.0",
+     "cest": "2801200",
+     "ncms": [
+      "33052000"
+     ],
+     "description": "Preparações para ondulação ou alisamento, permanentes, dos cabelos",
+     "mva": "40"
+    },
+    {
+     "item": "13.0",
+     "cest": "2801300",
+     "ncms": [
+      "33059000"
+     ],
+     "description": "Outras preparações capilares",
+     "mva": "40"
+    },
+    {
+     "item": "14.0",
+     "cest": "2801400",
+     "ncms": [
+      "33059000"
+     ],
+     "description": "Tintura para o cabelo",
+     "mva": "40"
+    },
+    {
+     "item": "15.0",
+     "cest": "2801500",
+     "ncms": [
+      "33071000"
+     ],
+     "description": "Preparações para barbear (antes, durante ou após)",
+     "mva": "40"
+    },
+    {
+     "item": "16.0",
+     "cest": "2801600",
+     "ncms": [
+      "33072010"
+     ],
+     "description": "Desodorantes (desodorizantes) corporais líquidos, exceto os classificados no CEST 28.016.01",
+     "mva": "40"
+    },
+    {
+     "item": "16.1",
+     "cest": "2801601",
+     "ncms": [
+      "33072010"
+     ],
+     "description": "Loções e óleos desodorantes hidratantes líquidos",
+     "mva": "40"
+    },
+    {
+     "item": "16.2",
+     "cest": "2801602",
+     "ncms": [
+      "33072010"
+     ],
+     "description": "Antiperspirantes líquidos",
+     "mva": "40"
+    },
+    {
+     "item": "17.0",
+     "cest": "2801700",
+     "ncms": [
+      "33072090"
+     ],
+     "description": "Outros desodorantes (desodorizantes) corporais, exceto os classificados no CEST 28.017.01",
+     "mva": "40"
+    },
+    {
+     "item": "17.1",
+     "cest": "2801701",
+     "ncms": [
+      "33072090"
+     ],
+     "description": "Outras loções e óleos desodorantes hidratantes",
+     "mva": "40"
+    },
+    {
+     "item": "17.2",
+     "cest": "2801702",
+     "ncms": [
+      "33072090"
+     ],
+     "description": "Outros antiperspirantes",
+     "mva": "40"
+    },
+    {
+     "item": "18.0",
+     "cest": "2801800",
+     "ncms": [
+      "33079000"
+     ],
+     "description": "Outros produtos de perfumaria ou de toucador preparados",
+     "mva": "40"
+    },
+    {
+     "item": "19.0",
+     "cest": "2801900",
+     "ncms": [
+      "33079000"
+     ],
+     "description": "Outras preparações cosméticas",
+     "mva": "40"
+    },
+    {
+     "item": "20.0",
+     "cest": "2802000",
+     "ncms": [
+      "34011190"
+     ],
+     "description": "Sabões de toucador em barras, pedaços ou figuras moldadas, exceto CEST 28.020.01",
+     "mva": "40"
+    },
+    {
+     "item": "20.1",
+     "cest": "2802001",
+     "ncms": [
+      "34011190"
+     ],
+     "description": "Lenços umedecidos",
+     "mva": "40"
+    },
+    {
+     "item": "21.0",
+     "cest": "2802100",
+     "ncms": [
+      "34011900"
+     ],
+     "description": "Outros sabões, produtos e preparações orgânicos tensoativos, inclusive papel, pastas (ouates), feltros e falsos tecidos, impregnados, revestidos ou recobertos de sabão ou de detergentes",
+     "mva": "40"
+    },
+    {
+     "item": "22.0",
+     "cest": "2802200",
+     "ncms": [
+      "34012010"
+     ],
+     "description": "Sabões de toucador sob outras formas",
+     "mva": "40"
+    },
+    {
+     "item": "23.0",
+     "cest": "2802300",
+     "ncms": [
+      "34013000"
+     ],
+     "description": "Produtos e preparações orgânicos tensoativos para lavagem da pele, em forma de líquido ou de creme, acondicionados para venda a retalho, mesmo contendo sabão",
+     "mva": "40"
+    },
+    {
+     "item": "24.0",
+     "cest": "2802400",
+     "ncms": [
+      "48182000"
+     ],
+     "description": "Lenços de papel, incluindo os de desmaquiar",
+     "mva": "40"
+    },
+    {
+     "item": "24.1",
+     "cest": "2802401",
+     "ncms": [
+      "48182000"
+     ],
+     "description": "Toalhas de mão",
+     "mva": "40"
+    },
+    {
+     "item": "25.0",
+     "cest": "2802500",
+     "ncms": [
+      "82141000"
+     ],
+     "description": "Apontadores de lápis para maquiagem",
+     "mva": "40"
+    },
+    {
+     "item": "25.1",
+     "cest": "2802501",
+     "ncms": [
+      "82141000"
+     ],
+     "description": "Espátulas, abre-cartas e raspadeiras",
+     "mva": "40"
+    },
+    {
+     "item": "25.2",
+     "cest": "2802502",
+     "ncms": [
+      "82141000"
+     ],
+     "description": "Lâminas de espátulas, de abre-cartas, de raspadeiras e de apontadores de lápis",
+     "mva": "40"
+    },
+    {
+     "item": "26.0",
+     "cest": "2802600",
+     "ncms": [
+      "82142000"
+     ],
+     "description": "Utensílios e sortidos de utensílios de manicuros ou de pedicuros (incluindo as limas para unhas)",
+     "mva": "40"
+    },
+    {
+     "item": "27.0",
+     "cest": "2802700",
+     "ncms": [
+      "96032900"
+     ],
+     "description": "Escovas e pincéis de barba, escovas para cabelos, para cílios ou para unhas e outras escovas de toucador de pessoas",
+     "mva": "40"
+    },
+    {
+     "item": "27.1",
+     "cest": "2802701",
+     "ncms": [
+      "96032900"
+     ],
+     "description": "Vassouras e escovas, mesmo constituindo partes de máquinas, de aparelhos ou de veículos, vassouras mecânicas de uso manual não motorizadas, pincéis e espanadores; cabeças preparadas para escovas, pincéis e artigos semelhantes; bonecas e rolos para pintura; rodos de borracha ou de matérias flexíveis semelhantes, outros",
+     "mva": "40"
+    },
+    {
+     "item": "28.0",
+     "cest": "2802800",
+     "ncms": [
+      "96033000"
+     ],
+     "description": "Pincéis para aplicação de produtos cosméticos",
+     "mva": "40"
+    },
+    {
+     "item": "28.1",
+     "cest": "2802801",
+     "ncms": [
+      "96033000"
+     ],
+     "description": "Pincéis e escovas, para artistas e pincéis de escrever",
+     "mva": "40"
+    },
+    {
+     "item": "29.0",
+     "cest": "2802900",
+     "ncms": [
+      "96161000"
+     ],
+     "description": "Vaporizadores de toucador, suas armações e cabeças de armações",
+     "mva": "40"
+    },
+    {
+     "item": "30.0",
+     "cest": "2803000",
+     "ncms": [
+      "96162000"
+     ],
+     "description": "Borlas ou esponjas para pós ou para aplicação de outros cosméticos ou de produtos de toucador",
+     "mva": "40"
+    },
+    {
+     "item": "31.0",
+     "cest": "2803100",
+     "ncms": [
+      "42021"
+     ],
+     "description": "Malas e maletas de toucador",
+     "mva": "40"
+    },
+    {
+     "item": "32.0",
+     "cest": "2803200",
+     "ncms": [
+      "9615"
+     ],
+     "description": "Pentes, travessas para cabelo e artigos semelhantes; grampos (alfinetes) para cabelo; pinças (“pinceguiches”), onduladores, bobs (rolos) e artefatos semelhantes para penteados, e suas partes",
+     "mva": "40"
+    },
+    {
+     "item": "33.0",
+     "cest": "2803300",
+     "ncms": [
+      "39233090",
+      "39241000",
+      "39249000",
+      "40149090",
+      "7013"
+     ],
+     "description": "Mamadeiras",
+     "mva": "40"
+    },
+    {
+     "item": "34.0",
+     "cest": "2803400",
+     "ncms": [
+      "40149090"
+     ],
+     "description": "Chupetas e bicos para mamadeiras e para chupetas",
+     "mva": "40"
+    },
+    {
+     "item": "35.0",
+     "cest": "2803500",
+     "ncms": [
+      "12119090"
+     ],
+     "description": "Outras plantas e partes, para perfumaria, medicina e semelhantes",
+     "mva": "40"
+    },
+    {
+     "item": "36.0",
+     "cest": "2803600",
+     "ncms": [
+      "39262000"
+     ],
+     "description": "Vestuário e seus acessórios, de plásticos, inclusive luvas",
+     "mva": "40"
+    },
+    {
+     "item": "37.0",
+     "cest": "2803700",
+     "ncms": [
+      "39264000"
+     ],
+     "description": "Estatuetas e outros objetos de ornamentação, de plásticos",
+     "mva": "40"
+    },
+    {
+     "item": "38.0",
+     "cest": "2803800",
+     "ncms": [
+      "39269090"
+     ],
+     "description": "Outras obras de plásticos",
+     "mva": "40"
+    },
+    {
+     "item": "39.0",
+     "cest": "2803900",
+     "ncms": [
+      "42022210"
+     ],
+     "description": "Bolsas de folhas de plástico",
+     "mva": "40"
+    },
+    {
+     "item": "40.0",
+     "cest": "2804000",
+     "ncms": [
+      "42022220"
+     ],
+     "description": "Bolsas de matérias têxteis",
+     "mva": "40"
+    },
+    {
+     "item": "41.0",
+     "cest": "2804100",
+     "ncms": [
+      "42022900"
+     ],
+     "description": "Bolsas de outras matérias",
+     "mva": "40"
+    },
+    {
+     "item": "42.0",
+     "cest": "2804200",
+     "ncms": [
+      "42023900"
+     ],
+     "description": "Artigos de bolsos/bolsas, de outras matérias",
+     "mva": "40"
+    },
+    {
+     "item": "43.0",
+     "cest": "2804300",
+     "ncms": [
+      "42029200"
+     ],
+     "description": "Outros artefatos, de folhas de plásticos ou matérias têxteis",
+     "mva": "40"
+    },
+    {
+     "item": "44.0",
+     "cest": "2804400",
+     "ncms": [
+      "42029900"
+     ],
+     "description": "Outros artefatos, de outras matérias",
+     "mva": "40"
+    },
+    {
+     "item": "45.0",
+     "cest": "2804500",
+     "ncms": [
+      "48192000"
+     ],
+     "description": "Caixas e cartonagens, dobráveis, de papel/cartão, não ondulados",
+     "mva": "40"
+    },
+    {
+     "item": "46.0",
+     "cest": "2804600",
+     "ncms": [
+      "48194000"
+     ],
+     "description": "Outros sacos, bolsas e cartuchos, de papel ou cartão",
+     "mva": "40"
+    },
+    {
+     "item": "47.0",
+     "cest": "2804700",
+     "ncms": [
+      "48211000"
+     ],
+     "description": "Etiquetas de papel ou cartão, impressas",
+     "mva": "40"
+    },
+    {
+     "item": "48.0",
+     "cest": "2804800",
+     "ncms": [
+      "49111090"
+     ],
+     "description": "Outros impressos publicitários, catálogos comerciais e semelhantes",
+     "mva": "40"
+    },
+    {
+     "item": "49.0",
+     "cest": "2804900",
+     "ncms": [
+      "61159900"
+     ],
+     "description": "Outras meias de malha de outras matérias têxteis",
+     "mva": "40"
+    },
+    {
+     "item": "50.0",
+     "cest": "2805000",
+     "ncms": [
+      "62171000"
+     ],
+     "description": "Outros acessórios confeccionados, de vestuário",
+     "mva": "40"
+    },
+    {
+     "item": "51.0",
+     "cest": "2805100",
+     "ncms": [
+      "63026000"
+     ],
+     "description": "Roupas de toucador/cozinha, de tecidos atoalhados de algodão",
+     "mva": "40"
+    },
+    {
+     "item": "52.0",
+     "cest": "2805200",
+     "ncms": [
+      "63079090"
+     ],
+     "description": "Outros artefatos têxteis confeccionados",
+     "mva": "40"
+    },
+    {
+     "item": "53.0",
+     "cest": "2805300",
+     "ncms": [
+      "65069900"
+     ],
+     "description": "Chapéus e outros artefatos de outras matérias, exceto de malha",
+     "mva": "40"
+    },
+    {
+     "item": "54.0",
+     "cest": "2805400",
+     "ncms": [
+      "95059000"
+     ],
+     "description": "Artigos para outras festas, carnaval ou outros divertimentos",
+     "mva": "40"
+    },
+    {
+     "item": "55.0",
+     "cest": "2805500",
+     "ncms": [
+      "33"
+     ],
+     "description": "Produtos destinados à higiene bucal",
+     "mva": "40"
+    },
+    {
+     "item": "56.0",
+     "cest": "2805600",
+     "ncms": [
+      "33",
+      "34"
+     ],
+     "description": "Outros produtos cosméticos e de higiene pessoal não relacionados em outros itens deste anexo",
+     "mva": "40"
+    },
+    {
+     "item": "57.0",
+     "cest": "2805700",
+     "ncms": [
+      "14",
+      "39",
+      "40",
+      "44",
+      "48",
+      "63",
+      "64",
+      "65",
+      "67",
+      "70",
+      "82",
+      "90",
+      "96"
+     ],
+     "description": "Outros artigos destinados a cuidados pessoais não relacionados em outros itens deste anexo",
+     "mva": "40"
+    },
+    {
+     "item": "58.0",
+     "cest": "2805800",
+     "ncms": [
+      "39",
+      "42",
+      "48",
+      "52",
+      "61",
+      "71",
+      "83",
+      "90",
+      "91"
+     ],
+     "description": "Acessórios (por exemplo, bijuterias, relógios, óculos de sol, bolsas, mochilas, frasqueiras, carteiras, porta-cartões, porta-documentos, porta-celulares e embalagens presenteáveis (por exemplo, caixinhas de papel), entre outros itens assemelhados)",
+     "mva": "40"
+    },
+    {
+     "item": "59.0",
+     "cest": "2805900",
+     "ncms": [
+      "61",
+      "62",
+      "64"
+     ],
+     "description": "Vestuário e seus acessórios; calçados, polainas e artefatos semelhantes, e suas partes",
+     "mva": "40"
+    },
+    {
+     "item": "60.0",
+     "cest": "2806000",
+     "ncms": [
+      "42",
+      "52",
+      "55",
+      "58",
+      "63",
+      "65"
+     ],
+     "description": "Outros artigos de vestuário em geral, exceto os relacionados no item anterior",
+     "mva": "40"
+    },
+    {
+     "item": "61.0",
+     "cest": "2806100",
+     "ncms": [
+      "39",
+      "40",
+      "52",
+      "56",
+      "62",
+      "63",
+      "66",
+      "69",
+      "70",
+      "73",
+      "76",
+      "82",
+      "83",
+      "84",
+      "91",
+      "94",
+      "96"
+     ],
+     "description": "Artigos de casa",
+     "mva": "40"
+    },
+    {
+     "item": "62.0",
+     "cest": "2806200",
+     "ncms": [
+      "13",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23"
+     ],
+     "description": "Produtos das indústrias alimentares e bebidas",
+     "mva": "40"
+    },
+    {
+     "item": "63.0",
+     "cest": "2806300",
+     "ncms": [
+      "22",
+      "27",
+      "28",
+      "29",
+      "33",
+      "34",
+      "35",
+      "38",
+      "39",
+      "63",
+      "68",
+      "73",
+      "84",
+      "85",
+      "96"
+     ],
+     "description": "Produtos de limpeza e conservação doméstica",
+     "mva": "40"
+    },
+    {
+     "item": "64.0",
+     "cest": "2806400",
+     "ncms": [
+      "39",
+      "49",
+      "95",
+      "96"
+     ],
+     "description": "Artigos infantis",
+     "mva": "40"
     }
    ]
   },

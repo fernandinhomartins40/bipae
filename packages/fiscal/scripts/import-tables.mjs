@@ -51,6 +51,7 @@ import { dfStReferences, parseDfAnexoIV } from './st-df.mjs';
 import { CE_NET_LOAD_SOURCES, ceNetLoadRegimes, parseCeNetLoadSource } from './st-ce-carga.mjs';
 import { acStReferences, parseAcIn12023 } from './st-ac.mjs';
 import { amStReferences, parseAmLei6108 } from './st-am.mjs';
+import { parseRnAnexo007, rnStReferences } from './st-rn.mjs';
 import { docText } from './doc-text.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
@@ -757,6 +758,18 @@ async function importStReferences(cest) {
     url: manifest.stAmLei6108.page,
     segmentName: (code) => acNames.get(code),
   });
+  // Rio Grande do Norte (F3-26.d.RN): Anexo 007 do RICMS/RN; a redação anterior vem tachada no
+  // PDF e fica de fora, menos para achar os segmentos que saíram da ST.
+  const rnBytes = readFileSync(join(sourcesDir, manifest.stRnAnexo007.file));
+  const rnParsed = parseRnAnexo007(
+    await pdfLines(rnBytes, { withoutStruck: true }),
+    await pdfLines(rnBytes),
+    { segments: cest.segments, cests: cest.items },
+  );
+  if (rnParsed.unknown.length > 0) {
+    throw new Error(`Anexo 007 do RICMS/RN: CEST fora do Convênio: ${rnParsed.unknown.join(', ')}`);
+  }
+  const rn = rnStReferences(rnParsed, { url: manifest.stRnAnexo007.page });
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -791,6 +804,7 @@ async function importStReferences(cest) {
       ce.segment,
       ac.segment,
       am.segment,
+      rn.segment,
       ...confaz.map((c) => c.segment),
     ],
     references: [
@@ -824,6 +838,7 @@ async function importStReferences(cest) {
       ...ce.references,
       ...ac.references,
       ...am.references,
+      ...rn.references,
       ...confaz.flatMap((c) => c.references),
     ],
   };

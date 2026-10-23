@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.d.RN ST do Rio Grande do Norte] — 23/10/2026
+
+### Adicionado
+- **Substituição tributária do Rio Grande do Norte:** a lista de mercadorias do Anexo 007 do RICMS/RN, no PDF que a SEFAZ-RN mantém atualizado (até o Decreto 35.865/2026), com CEST, NCM e a MVA de cigarros, cimento, medicamentos, pneus, alimentícios, perfumaria, sorvetes, tintas, veículos, motos e venda porta a porta. Nos alimentícios vêm as duas MVAs (de estado que assinou o Protocolo ICMS 53/2017 e de estado que não assinou); nos sorvetes, a MVA geral e a da venda interna do fabricante.
+- Lâmpadas e rações aparecem como "saiu da ST" desde 01/11/2023. Bebidas frias, combustíveis, energia e eletrônicos estão na lista, mas sem MVA sugerida (base por preço médio ou por percentual); a aguardente e as bebidas frias têm as perguntas registradas na dúvida D-043.
+- O leitor de PDF passou a reconhecer o texto tachado: a redação antiga que a SEFAZ deixa riscada no texto consolidado não entra na tabela.
+- Monitor semanal da fonte.
+
 ## [F3-26.d.CE.c Carga líquida do Ceará na compra e na nota] — 23/10/2026
 
 ### Adicionado
