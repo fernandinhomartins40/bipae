@@ -19,13 +19,14 @@ import {
   encodeEfdLatin1,
   readEfdDocument,
   EFD_YEAR_END_INVENTORY,
+  type EfdCiap,
   type EfdEntry,
   type EfdInventory,
   type EfdProduct,
   type EfdPurchase,
   type EfdResult,
 } from '@bipae/fiscal';
-import { and, asc, eq, gte, inArray, lt, sql } from 'drizzle-orm';
+import { and, asc, eq, gte, inArray, lte, lt, sql } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
@@ -33,6 +34,7 @@ import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import {
+  ciapAssets,
   companies,
   efdSettings,
   fiscalDocuments,
@@ -51,6 +53,12 @@ const brasiliaDay = (date: Date) =>
   new Date(date.getTime() - 3 * 3600_000).toISOString().slice(0, 10);
 
 const companyQuery = z.object({ companyId: z.string().uuid('Escolha a empresa') });
+
+/** Último dia do mês (AAAA-MM-DD). */
+function lastDayOf(month: string): string {
+  const [year, m] = month.split('-').map(Number) as [number, number];
+  return `${month}-${String(new Date(Date.UTC(year, m, 0)).getUTCDate()).padStart(2, '0')}`;
+}
 
 /** Dia do vencimento no mês seguinte ao da escrituração, sem passar do último dia. */
 function dueDate(month: string, day: number): string {
@@ -73,6 +81,11 @@ const emptySettings = (companyId: string): EfdSettings => ({
   accountantCityCode: null,
   icmsDueDay: null,
   icmsRevenueCode: null,
+  ciapAccountCode: null,
+  ciapAccountName: null,
+  ciapAccountLevel: null,
+  ciapAdjustmentCode: null,
+  ciapStOutputsTaxed: null,
 });
 
 /**
@@ -198,6 +211,58 @@ export class EfdService {
       return undefined;
     }
     return { date, reason: EFD_YEAR_END_INVENTORY.reason, items };
+  }
+
+  /**
+   * Bens do ativo no CIAP (F4-14.b.7) que já tinham entrado até o fim do mês, com a configuração
+   * da empresa (conta do ativo, código do ajuste do E111 e saídas com CST 60, dúvida D-041).
+   */
+  private async loadCiap(
+    tx: Tx,
+    companyId: string,
+    lastDay: string,
+    settings: EfdSettings,
+  ): Promise<EfdCiap | undefined> {
+    const rows = await tx
+      .select()
+      .from(ciapAssets)
+      .where(and(eq(ciapAssets.companyId, companyId), lte(ciapAssets.enteredOn, lastDay)));
+    if (rows.length === 0) return undefined;
+    const keys = await tx
+      .select({ id: purchaseInvoices.id, accessKey: purchaseInvoices.accessKey })
+      .from(purchaseInvoices)
+      .where(inArray(purchaseInvoices.id, [...new Set(rows.map((r) => r.purchaseInvoiceId))]));
+    const keyOf = new Map(keys.map((k) => [k.id, k.accessKey]));
+    return {
+      assets: rows.map((r) => ({
+        code: r.code,
+        description: r.description,
+        enteredOn: r.enteredOn,
+        installments: r.installments,
+        icms: {
+          ownCents: r.icmsOwnCents,
+          stCents: r.icmsStCents,
+          freightCents: r.icmsFreightCents,
+          difalCents: r.icmsDifalCents,
+        },
+        costCenter: r.costCenter,
+        ...(r.usage && { usage: r.usage }),
+        ...(r.writtenOffOn &&
+          r.writeOffType && { disposal: { on: r.writtenOffOn, type: r.writeOffType } }),
+        source: { accessKey: keyOf.get(r.purchaseInvoiceId) ?? '', line: r.itemLine },
+      })),
+      ...(settings.ciapAccountCode &&
+        settings.ciapAccountName &&
+        settings.ciapAccountLevel && {
+          account: {
+            code: settings.ciapAccountCode,
+            name: settings.ciapAccountName,
+            level: settings.ciapAccountLevel,
+          },
+        }),
+      ...(settings.ciapAdjustmentCode && { adjustmentCode: settings.ciapAdjustmentCode }),
+      stOutputsTaxed: settings.ciapStOutputsTaxed,
+    };
   }
 
   /** Monta o arquivo do mês; a tela usa o resumo e o download usa o texto. */
@@ -329,6 +394,16 @@ export class EfdService {
       const inventory = inventoryOn
         ? await this.loadInventory(tx, companyId, inventoryOn, warnings)
         : undefined;
+      // CIAP (F4-14.b.7): bens do ativo até o fim do mês.
+      const ciap = await this.loadCiap(tx, companyId, lastDayOf(month), settings);
+      const interstateAsset = purchases.some(
+        (p) => p.purpose === 'fixed_asset' && p.document.items.some((i) => i.cfop.startsWith('6')),
+      );
+      if (interstateAsset) {
+        warnings.push(
+          'Há compra de outra UF para o ativo: o diferencial de alíquota pago na guia ainda não entra no crédito do CIAP pelo Bipaê. Confira com o contador.',
+        );
+      }
       let result: EfdResult;
       try {
         result = buildEfdIcmsIpi({
@@ -365,6 +440,7 @@ export class EfdService {
           entries,
           purchases,
           ...(inventory && { inventory }),
+          ...(ciap && { ciap }),
           simples: company.taxRegime === 'simples' || company.taxRegime === 'mei',
           previousCreditCents,
           ...(settings.icmsDueDay && { icmsDueDate: dueDate(month, settings.icmsDueDay) }),
@@ -399,14 +475,29 @@ export class EfdService {
   async file(ctx: RequestContext, raw: unknown) {
     const { result, documents } = await this.build(ctx, raw);
     const { companyId, month } = parse(efdRequest, raw);
-    await withTenant(this.db, ctx, (tx) =>
-      this.audit.record(tx, ctx, {
+    await withTenant(this.db, ctx, async (tx) => {
+      // Controle dos bens (CIAP): até qual parcela cada bem já foi num arquivo baixado.
+      for (const { code, installment } of result.ciap?.installments ?? []) {
+        await tx
+          .update(ciapAssets)
+          .set({
+            appropriatedInstallments: sql`greatest(${ciapAssets.appropriatedInstallments}, ${installment})`,
+          })
+          .where(and(eq(ciapAssets.companyId, companyId), eq(ciapAssets.code, code)));
+      }
+      await this.audit.record(tx, ctx, {
         action: 'fiscal.efd_export',
         entity: 'company',
         entityId: companyId,
-        data: { month, documents, lines: result.lineCount, dueCents: result.settlement.dueCents },
-      }),
-    );
+        data: {
+          month,
+          documents,
+          lines: result.lineCount,
+          dueCents: result.settlement.dueCents,
+          ...(result.ciap && { ciapCreditCents: result.ciap.appropriationCents }),
+        },
+      });
+    });
     return { fileName: result.fileName, bytes: encodeEfdLatin1(result.text) };
   }
 }

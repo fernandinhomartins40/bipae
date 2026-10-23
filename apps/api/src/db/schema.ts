@@ -1684,4 +1684,33 @@ export const efdSettings = pgTable('efd_settings', {
   icmsDueDay: smallint('icms_due_day'),
   icmsRevenueCode: text('icms_revenue_code'),
   updatedAt: ts('updated_at').notNull().defaultNow(),
+  /** CIAP (0078, dúvida D-041): conta do ativo, código do E111 e as saídas com CST 60. */
+  ciapAccountCode: text('ciap_account_code'),
+  ciapAccountName: text('ciap_account_name'),
+  ciapAccountLevel: smallint('ciap_account_level'),
+  ciapAdjustmentCode: char('ciap_adjustment_code', { length: 8 }),
+  ciapStOutputsTaxed: boolean('ciap_st_outputs_taxed'),
+});
+
+/** Bens do ativo no CIAP (0078, F4-14.b.7): um por item de compra para o ativo imobilizado. */
+export const ciapAssets = pgTable('ciap_assets', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  companyId: uuid('company_id').notNull(),
+  purchaseInvoiceId: uuid('purchase_invoice_id').notNull(),
+  itemLine: integer('item_line').notNull(),
+  code: text('code').notNull(),
+  description: text('description').notNull(),
+  enteredOn: date('entered_on', { mode: 'string' }).notNull(),
+  icmsOwnCents: money('icms_own_cents').notNull().default(0),
+  icmsStCents: money('icms_st_cents').notNull().default(0),
+  icmsFreightCents: money('icms_freight_cents').notNull().default(0),
+  icmsDifalCents: money('icms_difal_cents').notNull().default(0),
+  installments: smallint('installments').notNull().default(48),
+  appropriatedInstallments: smallint('appropriated_installments').notNull().default(0),
+  costCenter: text('cost_center', { enum: ['1', '2'] }).notNull().default('1'),
+  usage: text('usage'),
+  writtenOffOn: date('written_off_on', { mode: 'string' }),
+  writeOffType: text('write_off_type', { enum: ['PE', 'OT'] }),
+  createdAt: ts('created_at').notNull().defaultNow(),
 });

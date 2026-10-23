@@ -245,6 +245,55 @@ function EfdForm({
           onChange={(e) => set({ icmsRevenueCode: text(e.target.value) })}
         />
       </div>
+      <p className="text-sm text-muted">
+        Crédito do ativo imobilizado (CIAP): as compras marcadas como ativo viram bens e o crédito
+        entra em 48 parcelas. O arquivo precisa da conta contábil do ativo e do código de ajuste da
+        sua UF; peça ao contador.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <TextField
+          label="Conta do ativo imobilizado (código)"
+          value={form.ciapAccountCode ?? ''}
+          onChange={(e) => set({ ciapAccountCode: text(e.target.value) })}
+        />
+        <TextField
+          label="Nome da conta do ativo"
+          value={form.ciapAccountName ?? ''}
+          onChange={(e) => set({ ciapAccountName: text(e.target.value) })}
+        />
+        <TextField
+          label="Nível da conta"
+          hint="Como no plano de contas"
+          inputMode="numeric"
+          value={form.ciapAccountLevel ? String(form.ciapAccountLevel) : ''}
+          onChange={(e) => {
+            const level = Number(e.target.value.replace(/\D/g, ''));
+            set({ ciapAccountLevel: level >= 1 ? level : null });
+          }}
+        />
+        <TextField
+          label="Código de ajuste do CIAP (E111)"
+          hint="Tabela 5.1.1 da sua UF, 8 caracteres"
+          value={form.ciapAdjustmentCode ?? ''}
+          onChange={(e) => set({ ciapAdjustmentCode: text(e.target.value.toUpperCase()) })}
+        />
+      </div>
+      <SelectField
+        label="Saídas com ICMS já cobrado por ST (CST 60) no índice do CIAP"
+        value={
+          form.ciapStOutputsTaxed === null ? '' : form.ciapStOutputsTaxed ? 'taxed' : 'untaxed'
+        }
+        onChange={(e) =>
+          set({
+            ciapStOutputsTaxed: e.target.value === '' ? null : e.target.value === 'taxed',
+          })
+        }
+        options={[
+          { value: '', label: 'Ainda não sei (não contam, com aviso)' },
+          { value: 'taxed', label: 'Contam como tributadas' },
+          { value: 'untaxed', label: 'Não contam como tributadas' },
+        ]}
+      />
       <div>
         <Button variant="secondary" loading={busy === 'save'} onClick={() => void saveSettings()}>
           Salvar configuração
@@ -281,6 +330,8 @@ function EfdForm({
           <p>
             {summary.documents} nota(s) no arquivo. ICMS das saídas{' '}
             {brl(summary.settlement.debitsCents)}, créditos {brl(summary.settlement.creditsCents)}.{' '}
+            {summary.settlement.adjustmentCreditsCents > 0 &&
+              `Crédito do ativo (CIAP): ${brl(summary.settlement.adjustmentCreditsCents)}. `}
             {summary.settlement.dueCents > 0
               ? `A recolher: ${brl(summary.settlement.dueCents)}.`
               : `Saldo credor para o mês seguinte: ${brl(summary.settlement.creditCarriedCents)}.`}

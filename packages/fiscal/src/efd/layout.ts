@@ -17,10 +17,20 @@
  * - rate: percentual decimal com vírgula e duas casas ("18,00");
  * - quantity: quantidade com vírgula e cinco casas ('12,00000'), do texto decimal do XML;
  * - quantity3: quantidade com vírgula e três casas ('12,500'), a do inventário (H010);
- * - factor: fator de conversão ou valor unitário com vírgula e seis casas ('12,000000').
+ * - factor: fator de conversão ou valor unitário com vírgula e seis casas ('12,000000');
+ * - index: índice com vírgula e oito casas ('0,75000000'), o IND_PER_SAI do CIAP (G110 e G126).
  */
 export type EfdFieldType =
-  'text' | 'code' | 'date' | 'monthYear' | 'money' | 'rate' | 'quantity' | 'quantity3' | 'factor';
+  | 'text'
+  | 'code'
+  | 'date'
+  | 'monthYear'
+  | 'money'
+  | 'rate'
+  | 'quantity'
+  | 'quantity3'
+  | 'factor'
+  | 'index';
 
 type Fields = readonly (readonly [string, EfdFieldType])[];
 
@@ -108,6 +118,32 @@ export const EFD_REGISTERS = {
     ['UNID_CONV', 'text'],
     ['FAT_CONV', 'factor'],
     ['COD_BARRA', 'text'],
+  ],
+  '0300': [
+    ['COD_IND_BEM', 'text'],
+    ['IDENT_MERC', 'code'],
+    ['DESCR_ITEM', 'text'],
+    ['COD_PRNC', 'text'],
+    ['COD_CTA', 'text'],
+    ['NR_PARC', 'code'],
+  ],
+  '0305': [
+    ['COD_CCUS', 'text'],
+    ['FUNC', 'text'],
+    ['VIDA_UTIL', 'code'],
+  ],
+  '0500': [
+    ['DT_ALT', 'date'],
+    ['COD_NAT_CC', 'code'],
+    ['IND_CTA', 'text'],
+    ['NIVEL', 'code'],
+    ['COD_CTA', 'text'],
+    ['NOME_CTA', 'text'],
+  ],
+  '0600': [
+    ['DT_ALT', 'date'],
+    ['COD_CCUS', 'text'],
+    ['CCUS', 'text'],
   ],
   '0990': closing('QTD_LIN_0'),
   B001: [['IND_DAD', 'code']],
@@ -219,6 +255,11 @@ export const EFD_REGISTERS = {
     ['VL_SLD_CREDOR_TRANSPORTAR', 'money'],
     ['DEB_ESP', 'money'],
   ],
+  E111: [
+    ['COD_AJ_APUR', 'text'],
+    ['DESCR_COMPL_AJ', 'text'],
+    ['VL_AJ_APUR', 'money'],
+  ],
   E116: [
     ['COD_OR', 'code'],
     ['VL_OR', 'money'],
@@ -232,6 +273,58 @@ export const EFD_REGISTERS = {
   ],
   E990: closing('QTD_LIN_E'),
   G001: movement,
+  G110: [
+    ['DT_INI', 'date'],
+    ['DT_FIN', 'date'],
+    ['SALDO_IN_ICMS', 'money'],
+    ['SOM_PARC', 'money'],
+    ['VL_TRIB_EXP', 'money'],
+    ['VL_TOTAL', 'money'],
+    ['IND_PER_SAI', 'index'],
+    ['ICMS_APROP', 'money'],
+    ['SOM_ICMS_OC', 'money'],
+  ],
+  G125: [
+    ['COD_IND_BEM', 'text'],
+    ['DT_MOV', 'date'],
+    ['TIPO_MOV', 'text'],
+    ['VL_IMOB_ICMS_OP', 'money'],
+    ['VL_IMOB_ICMS_ST', 'money'],
+    ['VL_IMOB_ICMS_FRT', 'money'],
+    ['VL_IMOB_ICMS_DIF', 'money'],
+    ['NUM_PARC', 'code'],
+    ['VL_PARC_PASS', 'money'],
+  ],
+  G126: [
+    ['DT_INI', 'date'],
+    ['DT_FIM', 'date'],
+    ['NUM_PARC', 'code'],
+    ['VL_PARC_PASS', 'money'],
+    ['VL_TRIB_OC', 'money'],
+    ['VL_TOTAL', 'money'],
+    ['IND_PER_SAI', 'index'],
+    ['VL_PARC_APROP', 'money'],
+  ],
+  G130: [
+    ['IND_EMIT', 'code'],
+    ['COD_PART', 'text'],
+    ['COD_MOD', 'text'],
+    ['SERIE', 'text'],
+    ['NUM_DOC', 'code'],
+    ['CHV_NFE_CTE', 'code'],
+    ['DT_DOC', 'date'],
+    ['NUM_DA', 'text'],
+  ],
+  G140: [
+    ['NUM_ITEM', 'code'],
+    ['COD_ITEM', 'text'],
+    ['QTDE', 'quantity'],
+    ['UNID', 'text'],
+    ['VL_ICMS_OP_APLICADO', 'money'],
+    ['VL_ICMS_ST_APLICADO', 'money'],
+    ['VL_ICMS_FRT_APLICADO', 'money'],
+    ['VL_ICMS_DIF_APLICADO', 'money'],
+  ],
   G990: closing('QTD_LIN_G'),
   H001: movement,
   H005: [
@@ -382,9 +475,10 @@ export type EfdBlock = (typeof EFD_BLOCK_ORDER)[number];
 /**
  * Blocos sem movimento no arquivo do Bipaê: só a abertura (indicador "1") e o encerramento. O B
  * é o ISS do Distrito Federal (os demais estados informam só B001 e B990); D é transporte e
- * comunicação; G é o CIAP; H é o inventário; K é produção e estoque.
+ * comunicação; K é produção e estoque. O G (CIAP, `ciap.ts`) e o H (inventário) têm montagem
+ * própria e ficam sem movimento quando não há dados.
  */
-export const EFD_EMPTY_BLOCKS: readonly EfdBlock[] = ['B', 'D', 'G', 'K'];
+export const EFD_EMPTY_BLOCKS: readonly EfdBlock[] = ['B', 'D', 'K'];
 
 /**
  * Bloco H, H005 campo 04 (MOT_INV): `h020` diz se o motivo exige o H020 em cada item (motivos 02

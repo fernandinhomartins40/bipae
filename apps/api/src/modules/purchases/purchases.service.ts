@@ -9,9 +9,11 @@ import {
   type purchaseImportInput,
 } from '@bipae/domain';
 import {
+  fixedAssetCredit,
   purchaseLotMilli,
   purchaseStockMilli,
   purchaseUnitCostCents,
+  readEfdDocument,
   readPurchaseNfe,
   PurchaseXmlError,
   type PurchaseNfe,
@@ -19,7 +21,7 @@ import {
 import { ICP_BRASIL_CERTIFICATES } from '@bipae/fiscal/icp-brasil';
 import { recoverableTaxes } from '@bipae/fiscal/tables';
 import { DOMParser } from '@xmldom/xmldom';
-import { desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray } from 'drizzle-orm';
 import { SignedXml } from 'xml-crypto';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
@@ -28,6 +30,7 @@ import { DB } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import {
+  ciapAssets,
   companies,
   productBarcodes,
   productPacks,
@@ -592,21 +595,90 @@ export class PurchasesService {
   async setPurpose(ctx: RequestContext, id: string, purpose: PurchasePurpose) {
     return withTenant(this.db, ctx, async (tx) => {
       const [row] = await tx
-        .select({ storeId: purchaseInvoices.storeId, purpose: purchaseInvoices.purpose })
+        .select({
+          storeId: purchaseInvoices.storeId,
+          companyId: purchaseInvoices.companyId,
+          purpose: purchaseInvoices.purpose,
+          xml: purchaseInvoices.xml,
+          createdAt: purchaseInvoices.createdAt,
+        })
         .from(purchaseInvoices)
         .where(eq(purchaseInvoices.id, id));
       if (!row) throw notFound('Nota de compra');
       assertStore(ctx, row.storeId);
       if (row.purpose !== purpose) {
+        if (row.purpose === 'fixed_asset') await this.dropAssets(tx, id);
         await tx.update(purchaseInvoices).set({ purpose }).where(eq(purchaseInvoices.id, id));
+        const assets =
+          purpose === 'fixed_asset' ? await this.createAssets(tx, ctx, { id, ...row }) : 0;
         await this.audit.record(tx, ctx, {
           action: 'purchase.purpose',
           entity: 'purchase_invoice',
           entityId: id,
-          data: { from: row.purpose, to: purpose },
+          data: { from: row.purpose, to: purpose, ...(assets > 0 && { ciapAssets: assets }) },
         });
       }
       return { id, purpose };
     });
+  }
+
+  /**
+   * Compra para o ativo (F4-14.b.7): cada item vira um bem no CIAP, com o ICMS que dá crédito em
+   * 48 parcelas (`fixedAssetCredit`, LC 87/1996, art. 20, § 5º). A entrada é o dia em que a nota
+   * entrou na empresa (Brasília), o mesmo que decide o mês da compra no arquivo da EFD.
+   */
+  private async createAssets(
+    tx: Tx,
+    ctx: RequestContext,
+    invoice: { id: string; companyId: string; xml: string; createdAt: Date },
+  ): Promise<number> {
+    const [company] = await tx
+      .select({ taxRegime: companies.taxRegime })
+      .from(companies)
+      .where(eq(companies.id, invoice.companyId));
+    const simples = company?.taxRegime === 'simples' || company?.taxRegime === 'mei';
+    const document = readEfdDocument(invoice.xml);
+    const enteredOn = new Date(invoice.createdAt.getTime() - 3 * 3600_000)
+      .toISOString()
+      .slice(0, 10);
+    const rows = document.items
+      .map((item) => ({ item, icms: fixedAssetCredit(item, simples) }))
+      .filter(({ icms }) => icms.ownCents + icms.stCents > 0)
+      .map(({ item, icms }) => ({
+        id: uuidv7(),
+        tenantId: ctx.tenantId,
+        companyId: invoice.companyId,
+        purchaseInvoiceId: invoice.id,
+        itemLine: item.line,
+        code: `${document.accessKey}-${item.line}`,
+        description: item.description || `Item ${item.line} da nota ${document.number}`,
+        enteredOn,
+        icmsOwnCents: icms.ownCents,
+        icmsStCents: icms.stCents,
+      }));
+    if (rows.length > 0) await tx.insert(ciapAssets).values(rows).onConflictDoNothing();
+    return rows.length;
+  }
+
+  /** Desfaz os bens da compra; bem que já teve parcela num arquivo baixado não sai assim. */
+  private async dropAssets(tx: Tx, invoiceId: string) {
+    const [used] = await tx
+      .select({ id: ciapAssets.id })
+      .from(ciapAssets)
+      .where(
+        and(
+          eq(ciapAssets.purchaseInvoiceId, invoiceId),
+          gt(ciapAssets.appropriatedInstallments, 0),
+        ),
+      )
+      .limit(1);
+    if (used) {
+      throw new AppError(
+        422,
+        'ciap_in_use',
+        'Esta compra já tem crédito do ativo (CIAP) em arquivo do SPED baixado, então a finalidade não muda mais. A baixa do bem pela tela chega em breve; até lá, combine com o contador.',
+      );
+    }
+    await tx.delete(ciapAssets).where(eq(ciapAssets.purchaseInvoiceId, invoiceId));
   }
 }

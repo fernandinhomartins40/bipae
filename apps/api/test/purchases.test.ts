@@ -1,4 +1,7 @@
+import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { withTenant } from '../src/db/client';
+import { rowsOf } from '../src/db/migrate';
 import { api, createTestApp, signup, type TestApp } from './helpers';
 import { readPurchaseNfe } from '@bipae/fiscal';
 import { notaDoFornecedor } from './support/supplier-nfe';
@@ -324,5 +327,112 @@ describe('finalidade da compra e o arquivo da EFD (F4-14.b.2)', () => {
     expect(JSON.stringify((await admin.get('/audit?limit=10')).json())).toContain(
       'purchase.purpose',
     );
+  });
+});
+
+describe('compra para o ativo e o CIAP no arquivo da EFD (F4-14.b.7)', () => {
+  it('cada item vira um bem; março leva IM com G130 e abril leva SI com a parcela 2', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [empresa] = (await admin.get('/companies')).json();
+    const [loja] = (await admin.get('/stores')).json();
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      taxId: '11.222.333/0001-81',
+      uf: 'SP',
+      taxRegime: 'presumido',
+      ie: '110042490114',
+      cityCode: '3550308',
+    });
+    const entrada = await admin.post('/purchases', {
+      xml: await notaDoFornecedor(2003),
+      storeId: loja.id,
+      items: [
+        { line: 1, productId: null, factor: '6', unit: 'UN', priceCents: 899 },
+        { line: 2, productId: null, factor: 1, priceCents: 300 },
+      ],
+    });
+    expect(entrada.statusCode).toBe(201);
+    const [compra] = (await admin.get('/purchases')).json();
+    const ativo = await admin.put(`/purchases/${compra.id}/purpose`, { purpose: 'fixed_asset' });
+    expect(ativo.statusCode).toBe(200);
+
+    // A compra e os bens vão para 10/03/2026, para o teste não depender do mês de hoje.
+    const escopo = { tenantId: dono.me.tenant.id };
+    const bens = await withTenant(t.database.db, escopo, async (tx) => {
+      await tx.execute(
+        sql`update purchase_invoices set created_at = '2026-03-10T12:00:00-03:00' where id = ${compra.id}`,
+      );
+      await tx.execute(sql`update ciap_assets set entered_on = '2026-03-10'`);
+      return rowsOf<{ code: string; own: number }>(
+        await tx.execute(
+          sql`select code, icms_own_cents::int as own from ciap_assets order by item_line`,
+        ),
+      );
+    });
+    // ICMS destacado de 18% em R$ 300,00 e em R$ 36,00.
+    expect(bens.map((b) => b.own)).toEqual([5400, 648]);
+
+    const salvar = await admin.put('/fiscal/efd/settings', {
+      companyId: empresa.id,
+      ciapAccountCode: '1.2.3.01',
+      ciapAccountName: 'Máquinas e equipamentos',
+      ciapAccountLevel: 4,
+      ciapAdjustmentCode: 'SP020001',
+    });
+    expect(salvar.statusCode).toBe(200);
+
+    const arquivo = async (mes: string) => {
+      const res = await admin.get(`/fiscal/efd/file?companyId=${empresa.id}&month=${mes}`);
+      expect(res.statusCode, res.body).toBe(200);
+      const linhas = res.rawPayload
+        .toString('latin1')
+        .split('\r\n')
+        .filter(Boolean)
+        .map((l) => l.slice(1, -1).split('|'));
+      return (reg: string) => linhas.filter((l) => l[0] === reg);
+    };
+    const parcelas = (g125: string[][]) =>
+      g125.reduce((s, l) => s + Number((l[9] || '0').replace(',', '')), 0);
+
+    const marco = await arquivo('2026-03');
+    expect(marco('G001')[0]![1]).toBe('0');
+    expect(marco('G125').map((l) => [l[1], l[3], l[8], l[9]])).toEqual([
+      [bens[0]!.code, 'IM', '1', '1,12'], // 54,00 / 48 = 1,125: trunca em 1,12
+      [bens[1]!.code, 'IM', '1', '0,13'],
+    ]);
+    const g110 = marco('G110')[0]!;
+    expect(Number(g110[4]!.replace(',', ''))).toBe(parcelas(marco('G125')));
+    expect(g110[3]).toBe('0,00'); // sem saldo inicial no mês da entrada
+    expect(marco('G130')).toHaveLength(2);
+    expect(marco('G140').map((l) => l[1])).toEqual(['1', '2']);
+    expect(marco('0300').map((l) => [l[1], l[5], l[6]])).toEqual([
+      [bens[0]!.code, '1.2.3.01', '48'],
+      [bens[1]!.code, '1.2.3.01', '48'],
+    ]);
+    expect(marco('9900').find((l) => l[1] === 'G125')![2]).toBe('2');
+    // Sem vendas no mês, o índice é zero e nada vai ao E111.
+    expect(g110[7]).toBe('0,00000000');
+    expect(marco('E111')).toHaveLength(0);
+
+    const abril = await arquivo('2026-04');
+    expect(abril('G125').map((l) => [l[3], l[2], l[8], l[9]])).toEqual([
+      ['SI', '01042026', '2', '1,12'],
+      ['SI', '01042026', '2', '0,13'],
+    ]);
+    expect(abril('G110')[0]![3]).toBe('60,48'); // saldo inicial: 54,00 + 6,48
+    expect(abril('G130')).toHaveLength(0);
+
+    // Com parcela em arquivo baixado, a finalidade não muda mais.
+    const trocar = await admin.put(`/purchases/${compra.id}/purpose`, { purpose: 'resale' });
+    expect(trocar.statusCode).toBe(422);
+    const controle = await withTenant(t.database.db, escopo, async (tx) =>
+      rowsOf<{ n: number }>(
+        await tx.execute(
+          sql`select appropriated_installments::int as n from ciap_assets order by item_line`,
+        ),
+      ).map((r) => r.n),
+    );
+    expect(controle).toEqual([2, 2]);
   });
 });

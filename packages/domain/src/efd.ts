@@ -37,6 +37,30 @@ export const efdSettingsInput = z
       .transform((v) => v ?? null),
     /** Código de receita do ICMS na UF (como a guia de recolhimento pede). */
     icmsRevenueCode: optionalText(20),
+    /** CIAP (F4-14.b.7): conta contábil do ativo imobilizado (registros 0300 e 0500). */
+    ciapAccountCode: optionalText(60),
+    ciapAccountName: optionalText(60),
+    ciapAccountLevel: z
+      .number()
+      .int()
+      .min(1)
+      .max(99999)
+      .nullish()
+      .transform((v) => v ?? null),
+    /**
+     * Código do ajuste do crédito do ativo no E111, da tabela 5.1.1 da UF (dúvida D-041): 8
+     * caracteres, a UF, "0" (ICMS próprio), "2" (outros créditos) e o número.
+     */
+    ciapAdjustmentCode: optionalText(8)
+      .transform((v) => (v ? v.toUpperCase() : null))
+      .refine((v) => !v || /^[A-Z]{2}02\d{4}$/.test(v), {
+        message: 'Use o código da tabela 5.1.1 da sua UF (ex.: SP020000), com 8 caracteres',
+      }),
+    /** As saídas com CST 60 contam como tributadas no índice do CIAP? Sem resposta, não contam. */
+    ciapStOutputsTaxed: z
+      .boolean()
+      .nullish()
+      .transform((v) => v ?? null),
   })
   .superRefine((v, ctx) => {
     if (v.accountantCpf && !isValidCpf(v.accountantCpf)) {
@@ -55,6 +79,15 @@ export const efdSettingsInput = z
     // O 0100 pede o nome e o CPF do contabilista quando ele é informado.
     if ((v.accountantCpf || v.accountantCrc) && !v.accountantName) {
       ctx.addIssue({ code: 'custom', path: ['accountantName'], message: 'Informe o nome' });
+    }
+    // O 0500 pede o código, o nome e o nível da conta juntos.
+    const account = [v.ciapAccountCode, v.ciapAccountName, v.ciapAccountLevel];
+    if (account.some((x) => x !== null) && account.some((x) => x === null)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['ciapAccountCode'],
+        message: 'Informe o código, o nome e o nível da conta do ativo',
+      });
     }
   });
 export type EfdSettingsInput = z.input<typeof efdSettingsInput>;
@@ -84,6 +117,8 @@ export interface EfdSummaryView {
   settlement: {
     debitsCents: number;
     creditsCents: number;
+    /** Ajustes a crédito (E111): o crédito do ativo pelo CIAP. */
+    adjustmentCreditsCents: number;
     previousCreditCents: number;
     dueCents: number;
     creditCarriedCents: number;

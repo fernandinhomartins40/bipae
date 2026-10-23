@@ -237,6 +237,8 @@ describe('compras no arquivo da EFD (F4-14.b.2)', () => {
     expect(() => build(purchase({ document: { ...nota, issuer: undefined } as never }))).toThrow(
       'não traz o fornecedor',
     );
-    expect(build(purchase({ purpose: 'fixed_asset' })).warnings.join(' ')).toMatch(/CIAP, bloco G/);
+    expect(build(purchase({ purpose: 'fixed_asset' })).warnings.join(' ')).toMatch(
+      /controle dos bens \(CIAP\) não foi informado/,
+    );
   });
 });

@@ -44,6 +44,7 @@ Cada dúvida vira **configuração** no sistema até ser respondida: nada é dec
 | D-038 | 🟡 parcial | EFD ICMS/IPI: CSOSN do Simples no C190 (resolvida) e Simples e registro 1601 por UF (11 UFs confirmadas no Simples e 14 no 1601, RO só para 2022 e 2023; o resto em aberto) |
 | D-039 | ✅ resolvida | EFD ICMS/IPI: finalidade da compra, CFOP de entrada e crédito do ICMS nas notas de compra (C170) |
 | D-040 | 🟡 configurável | EFD ICMS/IPI: inventário (bloco H) exigido em fevereiro, sem estoque conhecido na data |
+| D-041 | 🟡 configurável | EFD ICMS/IPI: CIAP (bloco G), código do ajuste do E111 por UF e o que conta como saída tributada no índice |
 
 ---
 
@@ -742,6 +743,7 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
   - o crédito segue a lei: entrada para comercialização dá crédito do ICMS destacado (LC 87/1996, art. 20); uso e consumo só a partir de 01/01/2033 (LC 87/1996, art. 33, I); com ST, sem crédito (CST 60); fornecedor do Simples só dá crédito no valor do pCredSN (LC 123/2006, art. 23); empresa do Simples não credita.
 - **Antes de construir:** conferir no texto oficial a redação atual do art. 33, I, da LC 87/1996 e montar a tabela de CFOP de entrada a partir de `cfop.json`.
 - **Resolução (22/10/2026, F4-14.b.2):** construído como planejado. A redação atual do art. 33, I, da LC 87/1996 foi conferida no Planalto (LC 171/2019: uso e consumo só dá crédito a partir de 01/01/2033), assim como o art. 23 da LC 123/2006. CST do declarante: 60 quando a mercadoria veio com ST (exemplo 2 do Guia), o CST do fornecedor quando há crédito do ICMS destacado, e 90 quando não há crédito ou quando o crédito é o do Simples (pCredSN). As regras ficam em `packages/fiscal/src/efd/entry.ts`, como dados com a fonte.
+- **Atualização (23/10/2026, F4-14.b.7):** a compra para o ativo imobilizado continua no C170 com CFOP 1551/2551 e CST 90, sem crédito na nota; o crédito do ICMS dela agora sai pelo CIAP (bloco G), em 1/48 por mês, e entra na apuração pelo E111. Detalhes e o que ficou como configuração na D-041.
 
 ### D-040 — EFD ICMS/IPI: inventário (bloco H) em fevereiro
 
@@ -749,3 +751,22 @@ Documentos baixados do Portal Nacional da NF-e (www.nfe.fazenda.gov.br) nesta da
 - **Ambiguidade:** o Guia exige o bloco com dados em fevereiro, mas o Bipaê só conhece o estoque pelos movimentos que registrou. Se não houver estoque valorizado na data (loja que começou no Bipaê depois de 31/12, ou produtos sem custo), gerar H005 com valor 0 afirmaria "sem estoque" ao fisco, o que o Bipaê não sabe.
 - **Como o Bipaê faz (F4-14.b.5):** o estoque na data (soma de `stock_movements` das lojas da empresa até o fim do dia, em Brasília) é valorizado pelo custo do produto (`products.cost_cents`, o último custo de compra gravado), em centavos inteiros, com o motivo 01. Em fevereiro vai o de 31/12 do ano anterior; em outro mês, só com o parâmetro `inventoryDate`. Produto sem custo ou com saldo negativo fica de fora e aparece como aviso. Sem nenhum item, o bloco continua com IND_MOV "1" e o arquivo avisa, em vez de afirmar estoque zero. Os motivos 02 a 05 (com H020) existem no gerador, mas a API só pede o 01; o 06 (H030, ICMS ST médio) não é gerado.
 - **Em aberto:** o custo gravado no produto é o do último recebimento, não um custo médio ponderado; para o inventário do IR (VL_ITEM_IR) e para o critério de valoração da UF, confirmar com o contador se serve.
+
+### D-041 — EFD ICMS/IPI: CIAP (bloco G), ajuste do E111 e índice das saídas
+
+- **Fontes:** LC 87/1996, art. 20, § 5º (redação da LC 102/2000; inciso III na redação da LC 120/2005), lido no Planalto: "a apropriação será feita à razão de um quarenta e oito avos por mês, devendo a primeira fração ser apropriada no mês em que ocorrer a entrada no estabelecimento" (I); o crédito do mês é "o valor total do respectivo crédito pelo fator igual a 1/48 (um quarenta e oito avos) da relação entre o valor das operações de saídas e prestações tributadas e o total das operações de saídas e prestações do período, equiparando-se às tributadas, para fins deste inciso, as saídas e prestações com destino ao exterior ou as saídas de papel destinado à impressão de livros, jornais e periódicos" (III); na alienação antes de quatro anos não se credita "a fração que corresponderia ao restante do quadriênio" (V); ao fim do 48º mês o saldo é cancelado (VII). Guia Prático da EFD ICMS/IPI 3.2.2, registros 0300, 0305, 0500, 0600, G110, G125, G130, G140 e E111.
+- **Como o Bipaê faz (F4-14.b.7):**
+  - cada item da compra com finalidade "ativo imobilizado" vira um bem (`ciap_assets`), com o ICMS destacado pelo fornecedor do regime normal (o do Simples não dá crédito ao ativo, LC 123/2006, art. 23, § 1º) e o ICMS-ST do item; empresa do Simples não tem CIAP;
+  - parcela = ICMS total ÷ NR_PARC (48), truncada nos centavos, porque o Guia exige que seja "igual ou menor" (G125, campo 10); índice = saídas tributadas e exportações ÷ total das saídas, com 8 casas truncadas; crédito = soma das parcelas × índice, meio para cima (G110, campo 09);
+  - o índice sai dos C190 das saídas do próprio arquivo (VL_OPR), pelos dois últimos dígitos do CST: 00, 10, 20 e 70 tributadas; 30, 40, 41 e 50 não; 51 e 90 só com ICMS destacado; CFOP iniciado por 7 (exportação) conta como tributada. Sem nenhuma saída no mês, o índice é zero;
+  - mês da entrada: G125 "IM" com G130 e G140 da nota de compra; meses seguintes: "SI" com a parcela; na 48ª parcela, "SI" e "BA".
+- **Ficou como configuração da empresa (Arquivos para o contador), nunca suposição:**
+  - **código do ajuste do E111:** depende da tabela 5.1.1 de cada UF, que não está no Bipaê. O Guia só fixa a forma (UF, "0" para ICMS próprio, "2" para outros créditos e o número). Sem o código, o bloco G é gerado, mas o crédito não entra no E110, e o arquivo avisa;
+  - **conta contábil do ativo** (0300, COD_CTA, e 0500): código, nome e nível vêm do plano de contas da empresa. Sem ela, o bloco G não é gerado e o arquivo avisa;
+  - **saídas com CST 60** (ICMS já cobrado por substituição tributária): a LC não diz se contam como tributadas, e a interpretação varia por UF. Sem resposta, não contam, e o arquivo avisa quando houve saída assim.
+- **Padrões visíveis que a empresa pode trocar no bem:** centro de custo "1" (área operacional; o Guia manda usar "1" ou "2" no comércio sem centro de custo próprio) e a função "Uso nas atividades do estabelecimento" (0305).
+- **Em aberto:**
+  - parcela do mês da saída do bem (perecimento ou outras saídas): o Guia diz que pode ser apropriada "desde que a legislação da unidade federada interprete pela possibilidade" (G125, regra 1.6); o gerador tem a opção e o padrão é não apropriar. A alienação (AT) pede o G130 da nota de saída e ainda não é gerada; a baixa pela tela também não;
+  - quais saídas entram no total "observada a legislação da unidade federada" (G110, campos 06 e 07): hoje entram todas as saídas do arquivo, inclusive remessas que não são venda;
+  - diferencial de alíquota pago na compra de outra UF e ICMS do frete por CT-e: as colunas existem, mas o Bipaê ainda não conhece esses valores (o arquivo avisa na compra interestadual);
+  - número de parcelas diferente de 48 em alguma UF (Guia, 0300, campo 07): a coluna existe, o padrão é 48.

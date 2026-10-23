@@ -1,5 +1,13 @@
 # Changelog
 
+## [F4-14.b.7 Crédito do ativo (CIAP) no arquivo do SPED] — 23/10/2026
+
+### Adicionado
+- **Crédito do ICMS do ativo imobilizado (CIAP, bloco G).** Ao marcar uma compra como "ativo imobilizado", cada item vira um bem com o ICMS que dá crédito. Todo mês o arquivo do SPED leva 1/48 desse ICMS, multiplicado pela parte das vendas tributadas e exportações no total das vendas do mês (LC 87/1996, art. 20, § 5º). O índice sai das próprias notas de venda do arquivo.
+- O arquivo traz os registros G110, G125, G130 e G140 e os cadastros 0300, 0305, 0500 e 0600. O crédito entra na apuração do ICMS (E111) quando a empresa informa o código de ajuste da sua UF.
+- Em Arquivos para o contador, novos campos: conta contábil do ativo, código de ajuste do CIAP e como contam as vendas com ICMS já cobrado por ST. Sem a conta, o bloco G não é gerado e o arquivo avisa. Sem o código de ajuste, o crédito fica fora da apuração, também com aviso (dúvida D-041).
+- Ainda não: baixa do bem pela tela (venda, perda), diferencial de alíquota e frete de CT-e no crédito, e bens que entraram antes de usar o Bipaê.
+
 ## [F4-14.b.4 Regras da EFD por mais UFs] — 23/10/2026
 
 ### Adicionado

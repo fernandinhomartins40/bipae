@@ -24,6 +24,17 @@ import {
   type EfdRegister,
 } from './layout';
 import {
+  EFD_CIAP_ACCOUNT,
+  EFD_CIAP_ADJUSTMENT_CODE,
+  EFD_CIAP_COST_CENTERS,
+  EFD_CIAP_DEFAULT_COST_CENTER,
+  EFD_CIAP_RULES,
+  planCiap,
+  type CiapOutput,
+  type CiapPlan,
+  type EfdCiap,
+} from './ciap';
+import {
   EFD_ENTRY_RULES,
   purchaseLines,
   type EfdPurchasePurpose,
@@ -155,6 +166,8 @@ export interface EfdInput {
   simples?: boolean;
   /** Inventário (bloco H); sem ele o bloco vai sem movimento. */
   inventory?: EfdInventory;
+  /** Bens do ativo no CIAP (bloco G, F4-14.b.7); sem eles o bloco vai sem movimento. */
+  ciap?: EfdCiap;
   /** Saldo credor do período anterior, em centavos (E110, campo 10). */
   previousCreditCents?: number;
   /** Vencimento do ICMS a recolher (AAAA-MM-DD) e código de receita da UF (E116). */
@@ -167,6 +180,8 @@ export interface EfdInput {
 export interface EfdSettlement {
   debitsCents: number;
   creditsCents: number;
+  /** Ajustes a crédito do E111 (hoje, o crédito do ativo pelo CIAP). */
+  adjustmentCreditsCents: number;
   previousCreditCents: number;
   balanceCents: number;
   dueCents: number;
@@ -181,6 +196,11 @@ export interface EfdResult {
   /** Quantas linhas de cada registro (o mesmo que vai nos 9900). */
   registerCounts: Record<string, number>;
   settlement: EfdSettlement;
+  /** O CIAP do mês: o crédito apropriado e a parcela de cada bem (para o controle dos bens). */
+  ciap?: {
+    appropriationCents: number;
+    installments: { code: string; installment: number }[];
+  };
   /** O que o arquivo ainda não cobre ou falta configurar, em português para o usuário. */
   warnings: string[];
 }
@@ -225,6 +245,8 @@ function formatField(type: string, value: Value, name: string): string {
       return dec(text).toFixed(6).replace('.', ',');
     case 'quantity3':
       return dec(text).toFixed(3).replace('.', ',');
+    case 'index':
+      return dec(text).toFixed(8).replace('.', ',');
     default:
       return text;
   }
@@ -512,6 +534,140 @@ function inventoryBlock(inventory: PreparedInventory): Line[] {
   ];
 }
 
+interface CiapLines {
+  plan: CiapPlan;
+  /** 0300 e 0305 de cada bem, 0500 da conta e 0600 dos centros de custo (bloco 0). */
+  registry: Line[];
+  /** G001, G110, G125 e, no mês da entrada, G130 e G140. */
+  block: Line[];
+}
+
+/**
+ * Bloco G e cadastros do bloco 0 do CIAP (Guia 3.2.2). O G130 e o G140 vão no mês da entrada do
+ * bem (IM), com a nota de compra do próprio arquivo; nos meses seguintes o bem vai como SI.
+ */
+function ciapLines(
+  plan: CiapPlan,
+  ciap: EfdCiap,
+  purchasesByKey: Map<string, { purchase: EfdPurchase; lines: PurchaseLine[] }>,
+  start: string,
+  end: string,
+): CiapLines {
+  const account = ciap.account!;
+  if (!account.code || account.code.length > 60 || !account.name) {
+    throw new EfdError('Conta contábil do ativo inválida (código até 60 caracteres e nome).');
+  }
+  if (!Number.isInteger(account.level) || account.level < 1) {
+    throw new EfdError('Informe o nível da conta contábil do ativo (1 ou mais).');
+  }
+  const assets = new Map(plan.movements.map((m) => [m.asset.code, m.asset]));
+  const costCenters = new Set<string>();
+  const registry: Line[] = [];
+  for (const asset of assets.values()) {
+    const center = asset.costCenter ?? EFD_CIAP_DEFAULT_COST_CENTER;
+    if (!EFD_CIAP_COST_CENTERS[center]) {
+      throw new EfdError(`Centro de custo inválido no bem ${asset.code}: ${center}.`);
+    }
+    costCenters.add(center);
+    registry.push(
+      record('0300', {
+        COD_IND_BEM: asset.code,
+        // 1 = bem: o Bipaê não controla componentes de bem em construção.
+        IDENT_MERC: '1',
+        DESCR_ITEM: asset.description,
+        COD_CTA: account.code,
+        NR_PARC: asset.installments ?? EFD_CIAP_RULES.installments,
+      }),
+      record('0305', {
+        COD_CCUS: center,
+        FUNC: asset.usage || 'Uso nas atividades do estabelecimento',
+      }),
+    );
+  }
+  // DT_ALT não pode passar do fim do período (Guia, 0500 e 0600).
+  const since = account.since && account.since <= end ? account.since : start;
+  registry.push(
+    record('0500', {
+      DT_ALT: since,
+      COD_NAT_CC: EFD_CIAP_ACCOUNT.nature,
+      IND_CTA: EFD_CIAP_ACCOUNT.kind,
+      NIVEL: account.level,
+      COD_CTA: account.code,
+      NOME_CTA: account.name,
+    }),
+    ...[...costCenters]
+      .sort()
+      .map((center) =>
+        record('0600', { DT_ALT: since, COD_CCUS: center, CCUS: EFD_CIAP_COST_CENTERS[center] }),
+      ),
+  );
+
+  const block: Line[] = [
+    record('G001', { IND_MOV: '0' }),
+    record('G110', {
+      DT_INI: start,
+      DT_FIN: end,
+      SALDO_IN_ICMS: plan.openingCents,
+      SOM_PARC: plan.parcelsCents,
+      VL_TRIB_EXP: plan.index.taxedCents,
+      VL_TOTAL: plan.index.totalCents,
+      IND_PER_SAI: plan.index.index,
+      ICMS_APROP: plan.appropriationCents,
+      SOM_ICMS_OC: 0,
+    }),
+  ];
+  for (const m of plan.movements) {
+    const icms = m.asset.icms;
+    block.push(
+      record('G125', {
+        COD_IND_BEM: m.asset.code,
+        DT_MOV: m.date,
+        TIPO_MOV: m.type,
+        VL_IMOB_ICMS_OP: m.withValues ? icms.ownCents : undefined,
+        VL_IMOB_ICMS_ST: m.withValues ? icms.stCents : undefined,
+        VL_IMOB_ICMS_FRT: m.withValues ? icms.freightCents : undefined,
+        VL_IMOB_ICMS_DIF: m.withValues ? icms.difalCents : undefined,
+        NUM_PARC: m.installment,
+        VL_PARC_PASS: m.parcelCents,
+      }),
+    );
+    if (m.type !== 'IM') continue;
+    // IM: o G130 é obrigatório (Guia, G130), com a nota de compra que trouxe o bem.
+    const source = m.asset.source;
+    const found = source && purchasesByKey.get(source.accessKey);
+    const line = found && found.lines.find((l) => l.item.line === source.line);
+    if (!found || !line || !found.purchase.document.issuer) {
+      throw new EfdError(
+        `O bem ${m.asset.description} entrou no mês e a nota de compra dele não está no arquivo (G130).`,
+      );
+    }
+    const d = found.purchase.document;
+    const product = found.purchase.products[line.item.line]!;
+    block.push(
+      record('G130', {
+        IND_EMIT: '1',
+        COD_PART: partyCode(d.issuer!),
+        COD_MOD: d.model,
+        SERIE: String(d.series).padStart(3, '0'),
+        NUM_DOC: d.number,
+        CHV_NFE_CTE: d.accessKey,
+        DT_DOC: d.issuedOn,
+      }),
+      record('G140', {
+        NUM_ITEM: line.item.line,
+        COD_ITEM: product.code,
+        QTDE: line.item.quantity,
+        UNID: line.item.unit,
+        VL_ICMS_OP_APLICADO: icms.ownCents,
+        VL_ICMS_ST_APLICADO: icms.stCents,
+        VL_ICMS_FRT_APLICADO: icms.freightCents,
+        VL_ICMS_DIF_APLICADO: icms.difalCents,
+      }),
+    );
+  }
+  return { plan, registry, block };
+}
+
 /** Monta o arquivo da EFD ICMS/IPI do mês. */
 export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(input.month)) throw new EfdError('Mês inválido (AAAA-MM).');
@@ -539,6 +695,7 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
   const participants = new Map<string, EfdParty>();
   let debits = 0;
   let credits = 0;
+  const outputs: CiapOutput[] = [];
   for (const entry of entries) {
     const d = entry.document;
     const sit = situation(entry);
@@ -599,6 +756,15 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
         }),
       );
       if (!E110_SITUATIONS.includes(sit)) continue;
+      // Índice do CIAP: as saídas do mês, pelos próprios C190 (G110, campos 06 e 07).
+      if (d.direction === 'out') {
+        outputs.push({
+          cst: g.cst,
+          cfop: g.cfop,
+          operationCents: g.operationCents,
+          icmsCents: g.icmsCents,
+        });
+      }
       const side = E110_CFOP_SIDE[g.cfop] ?? (d.direction === 'out' ? 'debit' : 'credit');
       if (side === 'debit') debits += g.icmsCents;
       else credits += g.icmsCents;
@@ -615,6 +781,7 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
       a.document.series - b.document.series ||
       a.document.number - b.document.number,
   );
+  const purchasesByKey = new Map<string, { purchase: EfdPurchase; lines: PurchaseLine[] }>();
   for (const purchase of purchases) {
     const d = purchase.document;
     if (purchase.enteredOn < start || purchase.enteredOn > end) {
@@ -712,9 +879,10 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
       );
       credits += g.icmsCents;
     }
-    if (purchase.purpose === 'fixed_asset') {
+    purchasesByKey.set(d.accessKey, { purchase, lines });
+    if (purchase.purpose === 'fixed_asset' && !input.ciap) {
       warnings.push(
-        `A compra ${d.number} é para o ativo imobilizado: o crédito em 48 parcelas (CIAP, bloco G) ainda não é gerado pelo Bipaê (${EFD_ENTRY_RULES.fixed_asset.source}).`,
+        `A compra ${d.number} é para o ativo imobilizado e o controle dos bens (CIAP) não foi informado: o crédito em 48 parcelas não entrou no arquivo (${EFD_ENTRY_RULES.fixed_asset.source}).`,
       );
     }
   }
@@ -748,12 +916,49 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
     if (item.party) participants.set(partyCode(item.party), item.party);
   }
 
-  // Apuração (E110): sem ajustes nem deduções, que o Bipaê ainda não registra.
+  // CIAP (bloco G, F4-14.b.7): a empresa do Simples não se credita do ICMS do ativo.
+  let ciap: CiapLines | undefined;
+  if (input.ciap && input.ciap.assets.length > 0 && !input.simples) {
+    const plan = planCiap(input.ciap, input.month, start, end, outputs);
+    warnings.push(...plan.skipped);
+    if (plan.movements.length > 0) {
+      if (!input.ciap.account) {
+        warnings.push(
+          'Há bens do ativo no CIAP, mas falta a conta contábil do ativo imobilizado (registros 0300 e 0500). Cadastre em Arquivos para o contador: sem ela o bloco G e o crédito do ativo não entram no arquivo.',
+        );
+      } else {
+        ciap = ciapLines(plan, input.ciap, purchasesByKey, start, end);
+        if (plan.appropriationCents > 0 && !input.ciap.adjustmentCode) {
+          warnings.push(
+            'Falta o código de ajuste do crédito do ativo (E111, tabela 5.1.1 da sua UF). O bloco G foi gerado, mas o crédito do CIAP não entrou na apuração do ICMS. Cadastre em Arquivos para o contador.',
+          );
+        }
+        if (plan.index.stUndecided) {
+          warnings.push(
+            'Houve saídas com ICMS cobrado antes por substituição tributária (CST 60). Elas não contaram como tributadas no índice do CIAP; se a legislação da sua UF manda contar, ajuste em Arquivos para o contador.',
+          );
+        }
+      }
+    }
+  }
+  const adjustmentCode = input.ciap?.adjustmentCode;
+  if (adjustmentCode) {
+    const match = EFD_CIAP_ADJUSTMENT_CODE.exec(adjustmentCode);
+    if (!match || match[1] !== company.uf) {
+      throw new EfdError(
+        `Código de ajuste do CIAP inválido: ${adjustmentCode}. Use o da tabela 5.1.1 da UF ${company.uf}, com 8 caracteres (UF, "0", "2" e o número).`,
+      );
+    }
+  }
+  const adjustmentCredits = ciap && adjustmentCode ? ciap.plan.appropriationCents : 0;
+
+  // Apuração (E110): o único ajuste é o crédito do ativo (E111); deduções o Bipaê não registra.
   const previousCredit = input.previousCreditCents ?? 0;
-  const balance = debits - credits - previousCredit;
+  const balance = debits - credits - adjustmentCredits - previousCredit;
   const settlement: EfdSettlement = {
     debitsCents: debits,
     creditsCents: credits,
+    adjustmentCreditsCents: adjustmentCredits,
     previousCreditCents: previousCredit,
     balanceCents: Math.max(balance, 0),
     dueCents: Math.max(balance, 0),
@@ -842,6 +1047,7 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([unit, factor]) => record('0220', { UNID_CONV: unit, FAT_CONV: factor })),
       ]),
+    ...(ciap?.registry ?? []),
   ]);
   blocks.set('C', [record('C001', { IND_MOV: blockC.length > 0 ? '0' : '1' }), ...blockC]);
   blocks.set('E', [
@@ -854,7 +1060,7 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
       VL_ESTORNOS_CRED: 0,
       VL_TOT_CREDITOS: credits,
       VL_AJ_CREDITOS: 0,
-      VL_TOT_AJ_CREDITOS: 0,
+      VL_TOT_AJ_CREDITOS: adjustmentCredits,
       VL_ESTORNOS_DEB: 0,
       VL_SLD_CREDOR_ANT: previousCredit,
       VL_SLD_APURADO: settlement.balanceCents,
@@ -863,6 +1069,16 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
       VL_SLD_CREDOR_TRANSPORTAR: settlement.creditCarriedCents,
       DEB_ESP: 0,
     }),
+    // E111: o crédito do ativo (G110, ICMS_APROP) entra como ajuste da apuração (Guia, G110).
+    ...(adjustmentCredits > 0
+      ? [
+          record('E111', {
+            COD_AJ_APUR: adjustmentCode,
+            DESCR_COMPL_AJ: 'Crédito do ICMS do ativo permanente (CIAP, bloco G)',
+            VL_AJ_APUR: adjustmentCredits,
+          }),
+        ]
+      : []),
     ...(settlement.dueCents > 0
       ? [
           record('E116', {
@@ -875,6 +1091,7 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
         ]
       : []),
   ]);
+  blocks.set('G', ciap ? ciap.block : [record('G001', { IND_MOV: '1' })]);
   blocks.set('H', inventory ? inventoryBlock(inventory) : [record('H001', { IND_MOV: '1' })]);
   for (const block of EFD_EMPTY_BLOCKS) {
     const open = `${block}001` as EfdRegister;
@@ -946,6 +1163,12 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
     lineCount: lines.length,
     registerCounts: Object.fromEntries(counts),
     settlement,
+    ...(ciap && {
+      ciap: {
+        appropriationCents: ciap.plan.appropriationCents,
+        installments: ciap.plan.installments,
+      },
+    }),
     warnings,
   };
 }
