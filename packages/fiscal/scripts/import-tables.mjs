@@ -49,6 +49,8 @@ import { parseRoAnexoVI, roStReferences } from './st-ro.mjs';
 import { ceStReferences, parseCeVeiculos } from './st-ce.mjs';
 import { dfStReferences, parseDfAnexoIV } from './st-df.mjs';
 import { CE_NET_LOAD_SOURCES, ceNetLoadRegimes, parseCeNetLoadSource } from './st-ce-carga.mjs';
+import { acStReferences, parseAcIn12023 } from './st-ac.mjs';
+import { amStReferences, parseAmLei6108 } from './st-am.mjs';
 import { docText } from './doc-text.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
@@ -730,6 +732,31 @@ async function importStReferences(cest) {
     parseCeVeiculos(await pdfLines(readFileSync(join(sourcesDir, manifest.stCeRicms97.file)))),
     { url: manifest.stCeRicms97.page, cests: cest.items, segments: cest.segments },
   );
+  // Acre (F3-26.d.AC): Tabela I do Anexo I do RICMS/AC, no Anexo I da IN DIAT 1/2023.
+  const acNames = new Map(cest.segments.map((s) => [s.code, s.name]));
+  const acParsed = parseAcIn12023(
+    await pdfLines(readFileSync(join(sourcesDir, manifest.stAcIn12023.file))),
+    known,
+  );
+  if (acParsed.unknown.length > 10) {
+    throw new Error(`IN DIAT 1/2023 (AC): ${acParsed.unknown.length} CEST fora do Convênio`);
+  }
+  const ac = acStReferences(acParsed, {
+    url: manifest.stAcIn12023.page,
+    segmentName: (code) => acNames.get(code),
+  });
+  // Amazonas (F3-26.d.AM): Anexos III a XXVI da Lei 6.108/2022, versão vigente do SILT.
+  const amParsed = parseAmLei6108(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stAmLei6108.file))).toString('latin1'),
+    known,
+  );
+  if (amParsed.unknown.length > 10) {
+    throw new Error(`Lei 6.108/2022 (AM): ${amParsed.unknown.length} CEST fora do Convênio`);
+  }
+  const am = amStReferences(amParsed, {
+    url: manifest.stAmLei6108.page,
+    segmentName: (code) => acNames.get(code),
+  });
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -762,6 +789,8 @@ async function importStReferences(cest) {
       pb.segment,
       mt.segment,
       ce.segment,
+      ac.segment,
+      am.segment,
       ...confaz.map((c) => c.segment),
     ],
     references: [
@@ -793,6 +822,8 @@ async function importStReferences(cest) {
       ...pb.references,
       ...mt.references,
       ...ce.references,
+      ...ac.references,
+      ...am.references,
       ...confaz.flatMap((c) => c.references),
     ],
   };

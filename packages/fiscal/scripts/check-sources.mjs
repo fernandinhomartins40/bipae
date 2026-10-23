@@ -48,6 +48,8 @@ import { parseRoAnexoVI } from './st-ro.mjs';
 import { parseCeVeiculos } from './st-ce.mjs';
 import { DF_ANEXO_IV_REQUEST, DF_LEGISLATION_API, parseDfAnexoIV } from './st-df.mjs';
 import { CE_NET_LOAD_SOURCES, parseCeNetLoadSource } from './st-ce-carga.mjs';
+import { parseAcIn12023 } from './st-ac.mjs';
+import { parseAmLei6108 } from './st-am.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -1064,6 +1066,83 @@ async function checkCeNetLoads() {
   };
 }
 
+/**
+ * Acre: o PDF anexado hoje à página da IN DIAT 1/2023 no portal da SEFAZ-AC (link "mdocs-file").
+ * Se a SEFAZ-AC publicar outra instrução normativa, a lista da página de legislação do ICMS
+ * também precisa ser olhada: o aviso diz quando o anexo some ou muda.
+ */
+async function checkAc() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = async (bytes) =>
+    parseAcIn12023(await pdfLines(bytes), known).segments.flatMap((s) =>
+      s.items.map((i) => [s.code, i.item, i.cest, i.ncms.join(' '), i.mva ?? '']),
+    );
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.stAcIn12023.file)));
+  const title = 'ST no Acre (IN DIAT 1/2023, Anexo I)';
+  let now;
+  try {
+    const page = (await download(manifest.stAcIn12023.page)).body.toString('utf8');
+    const link = /href="(https:\/\/sefaz\.ac\.gov\.br\/2021\/\?mdocs-file=\d+)"/.exec(page);
+    if (!link) throw new Error('a página não traz mais o link do anexo');
+    now = await rowsOf((await download(link[1])).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stAcIn12023.page,
+      status: 'mudou',
+      details: [`o arquivo novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stAcIn12023.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
+/** Amazonas: a Lei 6.108/2022 de hoje no SILT (o documento sai pelo identificador da norma). */
+async function checkAm() {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (html) =>
+    parseAmLei6108(html, known).annexes.flatMap((a) =>
+      a.items.map((i) => [a.annex, i.item, i.cest, i.ncms.join(' '), i.mvas.join(' ')]),
+    );
+  const old = rowsOf(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stAmLei6108.file))).toString('latin1'),
+  );
+  const uuid = /\/lei\/([0-9a-f-]{36})\//.exec(manifest.stAmLei6108.page)[1];
+  const title = 'ST no Amazonas (Lei 6.108/2022)';
+  let now;
+  try {
+    const doc = `https://sistemas.sefaz.am.gov.br/get/Normas.do?metodo=viewDoc&uuidDoc=${uuid}`;
+    now = rowsOf((await download(doc)).body.toString('latin1'));
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stAmLei6108.page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stAmLei6108.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Rondônia: o Anexo VI de hoje, pela API do portal de legislação da SEFIN-RO. */
 async function checkRo() {
   const known = new Set(
@@ -1464,6 +1543,8 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST em Rondônia', manifest.stRoAnexoVI.page, checkRo),
     await safe('ST no Ceará', manifest.stCeRicms97.page, checkCe),
     await safe('ST no Distrito Federal', manifest.stDfAnexoIV.page, checkDf),
+    await safe('ST no Acre', manifest.stAcIn12023.page, checkAc),
+    await safe('ST no Amazonas', manifest.stAmLei6108.page, checkAm),
     await safe('ST no Ceará (carga líquida)', manifest.stCeCargaAutopecas.page, checkCeNetLoads),
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),

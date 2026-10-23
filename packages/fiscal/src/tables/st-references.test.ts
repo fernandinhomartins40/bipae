@@ -32,7 +32,8 @@ describe('substituição tributária por UF (F3-26)', () => {
     expect(stReferencesFor('sp', '04039000', '2026-10-16').map((m) => m.mva)).toContain('70.10');
     expect(stReferencesFor('SP', '04011010', '2026-04-30')).toEqual([]);
     expect(stReferencesFor('SP', '04011010', '2029-02-01')).toEqual([]);
-    expect(stReferencesFor('AC', '04011010', '2026-10-16')).toEqual([]);
+    // O Acre tem tabela desde 01/04/2023 (IN DIAT 1/2023); antes disso, nada.
+    expect(stReferencesFor('AC', '04011010', '2023-03-31')).toEqual([]);
     expect(stReferencesFor('SP', '22030000', '2026-10-16')).toEqual([]);
   });
 
@@ -620,6 +621,73 @@ describe('Distrito Federal: Caderno I do Anexo IV do RICMS/DF (F3-26.d.DF)', () 
   it('a tabela de óleos repetida depois do texto do item 42 não entra no item 42', () => {
     expect(annexOf('42').cests.some((c) => c.cest.startsWith('17'))).toBe(false);
     expect(annexOf('40-VIII').cests.some((c) => c.cest === '1706500')).toBe(true);
+  });
+});
+
+describe('Acre: Tabela I do Anexo I do RICMS/AC na IN DIAT 1/2023 (F3-26.d.AC)', () => {
+  const ac = ST_REFERENCES.filter((r) => r.uf === 'AC');
+
+  it('os segmentos com a MVA original, lida antes dos três multiplicadores', () => {
+    expect(ST_REFERENCE_UFS).toContain('AC');
+    expect(ac.flatMap((r) => r.items).length).toBeGreaterThan(800);
+    expect(ac.every((r) => r.validFrom === '2023-04-01')).toBe(true);
+    const lata = stReferencesFor('AC', '22021000', '2026-10-22').find((m) => m.cest === '0301002');
+    expect(lata).toMatchObject({ mva: '75' });
+    // "45% 15,55% 20,55% 23,55%": a MVA é 45, e não o multiplicador.
+    const achocolatado = stReferencesFor('AC', '18069000', '2026-10-22').find(
+      (m) => m.cest === '1700600',
+    );
+    expect(achocolatado).toMatchObject({ mva: '45' });
+    const lampada = stReferencesFor('AC', '8539', '2026-10-22').find((m) => m.cest === '0900100');
+    expect(lampada).toMatchObject({ mva: '60.03' });
+  });
+
+  it('autopeças: as duas MVAs do quadro do segmento (índice de fidelidade e demais casos)', () => {
+    const autopecas = ac.find((r) => r.segment === '01')!;
+    const catalisador = autopecas.items.filter((i) => i.cest === '0100100');
+    expect(catalisador.map((i) => i.mva)).toEqual(['36.56', '71.78']);
+    expect(catalisador[0]!.ncms).toEqual(['38151210', '38151290']);
+  });
+
+  it('a redação anterior fica de fora e o item revogado sai da ST com a data', () => {
+    const bebidas = ac.find((r) => r.segment === '03')!;
+    expect(bebidas.items.filter((i) => i.cest === '0301201')).toHaveLength(1);
+    const segmento = ST_SEGMENTS.find((s) => s.uf === 'AC')!.annexes.find((a) => a.annex === '03')!;
+    expect(segmento.cests.find((c) => c.cest === '0301003')).toMatchObject({
+      excludedFrom: '2023-04-01',
+      excludedBy: 'Instrução Normativa DIAT 2/2023',
+    });
+  });
+});
+
+describe('Amazonas: Anexos III a XXVI da Lei 6.108/2022 (F3-26.d.AM)', () => {
+  const am = ST_REFERENCES.filter((r) => r.uf === 'AM');
+
+  it('um anexo por segmento, lido da versão vigente do SILT', () => {
+    expect(ST_REFERENCE_UFS).toContain('AM');
+    expect(am.flatMap((r) => r.items).length).toBeGreaterThan(900);
+    const refrigerante = stReferencesFor('AM', '22021000', '2026-10-23').find(
+      (m) => m.cest === '0301000',
+    );
+    expect(refrigerante).toMatchObject({ mva: '50' });
+    const achocolatado = stReferencesFor('AM', '18069000', '2026-10-23').find(
+      (m) => m.cest === '1700600',
+    );
+    expect(achocolatado).toMatchObject({ mva: '40' });
+    const sabao = stReferencesFor('AM', '34012090', '2026-10-23').find((m) => m.cest === '1100200');
+    expect(sabao).toMatchObject({ mva: '21' });
+  });
+
+  it('autopeças: MVA com e sem índice de fidelidade, desde a Lei 6.222/2023', () => {
+    const autopecas = am.find((r) => r.segment === '01')!;
+    expect(autopecas.validFrom).toBe('2023-01-01');
+    const catalisador = autopecas.items.filter((i) => i.cest === '0100100');
+    expect(catalisador.map((i) => i.mva)).toEqual(['36.56', '71.78']);
+  });
+
+  it('porta a porta: "Capítulos 13 e 15 a 23" vira a lista de capítulos', () => {
+    const porta = am.flatMap((r) => r.items).find((i) => i.cest === '2806200')!;
+    expect(porta.ncms).toEqual(['13', '15', '16', '17', '18', '19', '20', '21', '22', '23']);
   });
 });
 

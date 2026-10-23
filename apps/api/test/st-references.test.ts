@@ -46,8 +46,9 @@ describe('referências de ST por UF (F3-26)', () => {
         }),
       ]),
     );
-    const outra = (await admin.get('/fiscal/st-references?uf=AC&ncm=04011010')).json();
-    expect(outra).toEqual({ uf: 'AC', covered: false, items: [], listed: false, status: [] });
+    // Roraima não publica lista própria de CEST e MVA (segue os convênios e protocolos).
+    const outra = (await admin.get('/fiscal/st-references?uf=RR&ncm=04011010')).json();
+    expect(outra).toEqual({ uf: 'RR', covered: false, items: [], listed: false, status: [] });
     // Paraná (F3-26.c): leite UHT com a MVA da Resolução SEFA 571/2019.
     const pr = (await admin.get('/fiscal/st-references?uf=PR&ncm=04011010&date=2026-10-17')).json();
     expect(pr).toMatchObject({ uf: 'PR', covered: true, listed: true });

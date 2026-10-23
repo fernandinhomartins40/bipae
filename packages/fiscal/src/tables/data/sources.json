@@ -694,6 +694,24 @@
   "downloadedAt": "2026-10-17",
   "sha256": "2c9e3bf8f234ad00e58ed7f5aa42c9cf5929318b835720c970c600cccd4a4815"
  },
+ "stAcIn12023": {
+  "file": "SEFAZ-AC_IN_DIAT_1-2023_Tabela_Multiplicadores_2023-04-27.pdf",
+  "title": "Instrução Normativa DIAT 1/2023 (AC), Tabela de Multiplicadores, alterada pela IN DIAT 2/2023: Anexo I com a Tabela I do Anexo I do RICMS/AC (Decreto 008/1998), mercadorias em substituição tributária com CEST, NCM e MVA",
+  "publisher": "Secretaria de Estado da Fazenda do Acre",
+  "page": "https://sefaz.ac.gov.br/2021/?p=16417",
+  "publishedAt": "2023-04-27",
+  "downloadedAt": "2026-10-22",
+  "sha256": "b1afa88eda6c79283f6905248790dd85ce580ae261cbc5f1779c7adfe49bde42"
+ },
+ "stAmLei6108": {
+  "file": "SEFAZ-AM_Lei_6108-2022_SILT_2026-10-23.html.gz",
+  "title": "Lei 6.108/2022 (AM), alterada pela Lei 6.222/2023: mercadorias em substituição tributária e antecipação com encerramento, Anexos III a XXVI com CEST, NCM e MVA (texto do SILT, portal de legislação da SEFAZ-AM, com as versões multivigente, vigente e original)",
+  "publisher": "Secretaria de Estado da Fazenda do Amazonas",
+  "page": "https://sistemas.sefaz.am.gov.br/silt/norma/lei/84be7172-451e-4ca0-802e-1a0303e5f0b2/lei-n-6108-de-23-de-dezembro-de-2022",
+  "publishedAt": "2022-12-23",
+  "downloadedAt": "2026-10-23",
+  "sha256": "766610cb6d2cd61ae4077a62b3e878245613ddbe0b079c2710285c4732e2e377"
+ },
  "stRoAnexoVI": {
   "file": "SEFIN-RO_RICMS_Anexo_VI_2026-10-17.json.gz",
   "title": "RICMS/RO (Decreto 22.721/2018), Anexo VI, da substituição tributária: texto consolidado até o Decreto 31.963/2026 (resposta da API do portal de legislação da SEFIN-RO)",

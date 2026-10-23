@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.d.AC e F3-26.d.AM ST do Acre e do Amazonas] — 23/10/2026
+
+### Adicionado
+- **Substituição tributária do Acre:** a lista de mercadorias da Tabela I do Anexo I do RICMS/AC, como a SEFAZ-AC publica no Anexo I da Instrução Normativa DIAT 1/2023 (com a IN DIAT 2/2023), com CEST, NCM e MVA original de mais de 1.000 linhas. Nas autopeças vêm as duas MVAs (com índice de fidelidade e demais casos). O item revogado (cápsula de refrigerante 03.010.03) aparece como "saiu da ST" desde 01/04/2023.
+- **Substituição tributária do Amazonas:** os Anexos III a XXVI da Lei 6.108/2022 (alterada pela Lei 6.222/2023), lidos da versão vigente do portal de legislação da SEFAZ-AM, com CEST, NCM e MVA de cada segmento; nas autopeças, MVA com e sem índice de fidelidade.
+- Monitor semanal das duas fontes.
+- RN, MA, TO, AP e RR continuam sem tabela: o backlog registra, UF por UF, o que foi achado e por quê.
+
 ## [F4-14.b.4 Regras da EFD em mais seis estados] — 23/10/2026
 
 ### Adicionado
