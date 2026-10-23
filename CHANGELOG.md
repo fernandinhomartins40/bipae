@@ -1,5 +1,10 @@
 # Changelog
 
+## [F4-14.b.4 Regras da EFD em mais seis estados] — 23/10/2026
+
+### Adicionado
+- **Arquivo do SPED: avisos para RS, RN, AL, AC, TO, SE e ES.** Empresa do Simples no RN e em AL agora é avisada de que o estado a obriga a entregar a EFD; no RS, AC, TO e SE, de que é dispensada. O registro de vendas com cartão e Pix (1601) aparece como exigido em AL e no RN (desde 2025), facultativo no ES, dispensado no RS e, em SE, exigido só de quem tem atividades mistas (ICMS e ISS). Tudo conferido no texto oficial de cada estado.
+
 ## [F3-26.d.CE.b Carga líquida do Ceará] — 23/10/2026
 
 ### Adicionado

@@ -70,6 +70,32 @@ describe('EFD por UF', () => {
     expect(efdUfRule(EFD_1601_BY_UF, 'PE', '2026-10-31')?.note).toMatch(/3514-0\/00/);
   });
 
+  it('terceira rodada: Simples dispensado em RS, AC, TO e SE; obrigado em RN e AL', () => {
+    for (const uf of ['RS', 'AC', 'TO', 'SE']) {
+      expect(efdUfRule(EFD_SIMPLES_BY_UF, uf, '2026-10-31')?.status, uf).toBe('exempt');
+    }
+    for (const uf of ['RN', 'AL']) {
+      expect(efdUfRule(EFD_SIMPLES_BY_UF, uf, '2026-10-31')?.status, uf).toBe('required');
+    }
+    // RN dispensou o Simples só até 31/12/2013 (Decreto 24.120/2013).
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'RN', '2013-12-31')).toBeNull();
+    // AL obriga o Simples desde 01/01/2016.
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'AL', '2015-12-31')).toBeNull();
+  });
+
+  it('terceira rodada: 1601 em RS, RN, ES, AL e SE', () => {
+    expect(efdUfRule(EFD_1601_BY_UF, 'RS', '2026-10-31')?.status).toBe('exempt');
+    expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2024-06-30')?.status).toBe('optional');
+    expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2025-01-31')?.status).toBe('required');
+    expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2023-06-30')).toBeNull();
+    expect(efdUfRule(EFD_1601_BY_UF, 'ES', '2026-10-31')?.status).toBe('optional');
+    expect(efdUfRule(EFD_1601_BY_UF, 'AL', '2023-01-31')).toBeNull();
+    expect(efdUfRule(EFD_1601_BY_UF, 'AL', '2023-02-28')?.status).toBe('required');
+    // Sergipe: só atividades mistas (ICMS e ISS), desde 2025; 2023 e 2024 não estão confirmados.
+    expect(efdUfRule(EFD_1601_BY_UF, 'SE', '2026-10-31')?.note).toMatch(/ISS/);
+    expect(efdUfRule(EFD_1601_BY_UF, 'SE', '2024-06-30')).toBeNull();
+  });
+
   it('registro 1601 com vigência fechada: PB facultativo em 2023 e RO dispensado em 2022 e 2023', () => {
     expect(efdUfRule(EFD_1601_BY_UF, 'PB', '2023-12-31')?.status).toBe('optional');
     expect(efdUfRule(EFD_1601_BY_UF, 'PB', '2024-01-31')?.status).toBe('required');
