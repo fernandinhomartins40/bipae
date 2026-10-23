@@ -12,10 +12,13 @@ export function CameraScanButton({
   platform,
   onCode,
   label = 'Ler com a câmera',
+  iconOnly,
 }: {
   platform: Platform;
   onCode: (code: string) => void;
   label?: string;
+  /** Só o ícone, com o rótulo para leitores de tela (caixa no celular, F8-14). */
+  iconOnly?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   if (!platform.barcodeCamera) return null;
@@ -25,8 +28,13 @@ export function CameraScanButton({
         variant="secondary"
         icon={<Camera className="size-5" aria-hidden />}
         onClick={() => setOpen(true)}
+        {...(iconOnly && {
+          'aria-label': label,
+          title: label,
+          className: 'min-h-12 min-w-12 px-3',
+        })}
       >
-        {label}
+        {iconOnly ? null : label}
       </Button>
       {open && (
         <CameraScanDialog platform={platform} onCode={onCode} onClose={() => setOpen(false)} />
@@ -80,7 +88,12 @@ function CameraScanDialog({
   }, [platform, video]);
 
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Ler código com a câmera">
+    <Modal
+      mobileFullscreen
+      open
+      onOpenChange={(o) => !o && onClose()}
+      title="Ler código com a câmera"
+    >
       <div className="flex flex-col gap-3">
         {error && <Alert>{error}</Alert>}
         <video

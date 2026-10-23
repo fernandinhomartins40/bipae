@@ -1,5 +1,17 @@
 # Changelog
 
+## [F8-14 Caixa no celular com cara de app] — 23/10/2026
+
+### Adicionado
+- **Caixa em tela inteira no celular e no tablet em pé.** Abaixo de 1024 px o caixa ocupa a altura visível da tela, respeita o entalhe e a barra de gestos e a página não rola mais: topo compacto (caixa, operador e rede), campo de bipar sempre à mão, lista de itens que rola só por dentro e rodapé fixo com o total e o botão grande de Pagar.
+- **Folha de ações:** o botão "Mais" abre, de baixo para cima, o que no computador são botões e atalhos: quantidade, desconto e tirar item; desconto na venda, CPF na nota, vendedor, entrega, comandas, orçamentos e limpar venda; sangria e fechamento, vendas do caixa, trocar operador, autoatendimento, tela cheia e sair.
+- O teclado do celular não esconde o campo nem o total: a tela do caixa encolhe junto com ele. "Puxar para atualizar" fica travado no caixa, para não recarregar a página no meio da venda.
+- No navegador do celular, o primeiro toque no caixa pede tela cheia (onde o aparelho não deixa, nada muda); o app instalado já abre sem a barra do navegador.
+- Pagamento, troco e os outros diálogos do caixa abrem em tela cheia no celular e cabem numa tela de 360 x 640 sem rolar.
+
+### Sem mudança
+- No computador (a partir de 1024 px) o caixa continua igual, com os atalhos F2 a F12.
+
 ## [Início com cartões coloridos] — 23/10/2026
 
 ### Alterado

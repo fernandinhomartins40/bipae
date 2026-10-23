@@ -81,7 +81,12 @@ export function AuthorizeDialog({
     }
   };
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Autorização do gerente">
+    <Modal
+      mobileFullscreen
+      open
+      onOpenChange={(o) => !o && onClose()}
+      title="Autorização do gerente"
+    >
       <form onSubmit={submit} className="flex flex-col gap-4">
         <p className="text-muted">
           Peça a um gerente para entrar com os dados dele e {PERMISSION_TEXT[permission]}.
@@ -140,7 +145,7 @@ export function OperatorDialog({
     }
   };
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Trocar operador">
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="Trocar operador">
       <form onSubmit={submit} className="flex flex-col gap-4">
         <p className="text-muted">
           O caixa continua aberto. As próximas vendas saem no nome de quem entrar.
@@ -197,7 +202,7 @@ export function QuantityDialog({
     onConfirm(milli);
   };
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title={title}>
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title={title}>
       <form onSubmit={submit} className="flex flex-col gap-4">
         <TextField
           label={weighable ? `Peso (${unit})` : 'Quantidade'}
@@ -276,6 +281,7 @@ export function DiscountDialog({
   };
   return (
     <Modal
+      mobileFullscreen
       open
       onOpenChange={(o) => !o && onClose()}
       title={scope === 'item' ? 'Desconto no item' : 'Desconto na venda'}
@@ -349,7 +355,7 @@ export function CustomerDialog({
     onConfirm(parsed.value);
   };
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="CPF/CNPJ na nota">
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="CPF/CNPJ na nota">
       <form onSubmit={submit} className="flex flex-col gap-4">
         <TextField
           label="CPF ou CNPJ do cliente"
@@ -647,10 +653,20 @@ export function PaymentDialog({
 
   const done = remaining === 0 && tenders.length > 0;
   return (
-    <Modal open onOpenChange={(o) => !o && !busy && onClose()} title="Pagamento" wide>
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <div role="radiogroup" aria-label="Forma de pagamento" className="grid grid-cols-2 gap-2">
+    <Modal
+      mobileFullscreen
+      open
+      onOpenChange={(o) => !o && !busy && onClose()}
+      title="Pagamento"
+      wide
+    >
+      <div className="grid gap-6 max-sm:gap-3 md:grid-cols-2">
+        <div className="flex flex-col gap-4 max-sm:gap-3">
+          <div
+            role="radiogroup"
+            aria-label="Forma de pagamento"
+            className="grid grid-cols-2 gap-2 max-sm:grid-cols-3 max-sm:[&>button]:px-1 max-sm:[&>button]:text-sm max-sm:[&>button]:leading-tight max-sm:[&>button]:hyphens-auto max-sm:[&>button]:[overflow-wrap:anywhere]"
+          >
             {allowed.map(({ method: m, key }) => (
               <Button
                 key={m}
@@ -681,7 +697,7 @@ export function PaymentDialog({
                 autoFocus
               />
               {method === 'cash' && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 max-sm:grid max-sm:grid-cols-4 max-sm:[&>button]:whitespace-nowrap max-sm:[&>button]:px-1 max-sm:[&>button]:text-sm">
                   {cashSuggestions(remaining).map((c) => (
                     <Button key={c} variant="secondary" onClick={() => void add(c)}>
                       {brl(c)}
@@ -885,7 +901,7 @@ export function PaymentDialog({
           )}
           {error && <Alert>{error}</Alert>}
         </div>
-        <div className="flex flex-col gap-3 rounded-ui bg-surface-2 p-4">
+        <div className="flex flex-col gap-3 rounded-ui bg-surface-2 p-4 max-sm:gap-2 max-sm:p-3">
           <Row label="Total da venda" value={brl(totalCents)} strong />
           {summary?.payments.map((p, i) => (
             <Row
@@ -998,7 +1014,7 @@ export function CashDialog({
   };
 
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Caixa">
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="Caixa">
       {message && <Alert tone="success">{message}</Alert>}
       {error && <Alert>{error}</Alert>}
       {view === 'menu' && (
@@ -1044,15 +1060,18 @@ export function CashDialog({
             Conte o que está no caixa e informe abaixo. O sistema só mostra se sobrou ou faltou
             depois que você confirmar (fechamento cego).
           </p>
-          {(['cash', 'pix', 'debit', 'credit', 'voucher'] as PaymentMethod[]).map((m) => (
-            <TextField
-              key={m}
-              label={`${PAYMENT_LABELS[m]} (R$)`}
-              inputMode="decimal"
-              value={declared[m] ?? ''}
-              onChange={(e) => setDeclared((d) => ({ ...d, [m]: e.target.value }))}
-            />
-          ))}
+          {/* No celular, duas colunas para o fechamento caber na tela (F8-14). */}
+          <div className="flex flex-col gap-4 max-sm:grid max-sm:grid-cols-2 max-sm:gap-3">
+            {(['cash', 'pix', 'debit', 'credit', 'voucher'] as PaymentMethod[]).map((m) => (
+              <TextField
+                key={m}
+                label={`${PAYMENT_LABELS[m]} (R$)`}
+                inputMode="decimal"
+                value={declared[m] ?? ''}
+                onChange={(e) => setDeclared((d) => ({ ...d, [m]: e.target.value }))}
+              />
+            ))}
+          </div>
           <Button type="submit" variant="danger">
             Confirmar fechamento
           </Button>
@@ -1073,7 +1092,7 @@ export function CloseResultDialog({
     (m) => result.expected[m] !== 0 || result.declared[m] !== 0,
   );
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Caixa fechado">
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="Caixa fechado">
       <table className="w-full text-left">
         <thead className="text-sm text-muted">
           <tr>
@@ -1168,7 +1187,13 @@ export function HistoryDialog({
   };
 
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Vendas deste caixa" wide>
+    <Modal
+      mobileFullscreen
+      open
+      onOpenChange={(o) => !o && onClose()}
+      title="Vendas deste caixa"
+      wide
+    >
       {message && <Alert tone="success">{message}</Alert>}
       {error && <Alert>{error}</Alert>}
       {!selected ? (
@@ -1318,7 +1343,7 @@ export function QuotesDialog({
     void pdv.listQuotes().then(setQuotes);
   }, [pdv]);
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Orçamentos">
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="Orçamentos">
       {quotes.length === 0 ? (
         <p className="text-muted">Nenhum orçamento aberto. Para criar, monte a venda e use F5.</p>
       ) : (

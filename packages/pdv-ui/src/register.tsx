@@ -59,6 +59,15 @@ import { DeliveryDialog } from './delivery';
 import { SellerDialog } from './seller';
 import { CameraScanButton } from './camera-scan';
 import {
+  enterFullscreen,
+  exitFullscreen,
+  useAppViewport,
+  useCompactLayout,
+  useFullscreenOnFirstTouch,
+  useFullscreenState,
+} from './app-screen';
+import { CompactRegister, SheetAction, SheetSection } from './compact-register';
+import {
   loadSelfCheckout,
   newSelfCheckout,
   PinDialog,
@@ -152,6 +161,12 @@ export function Register({
     text: string;
   } | null>(null);
   const [dialog, setDialog] = useState<Dialog>({ kind: 'none' });
+  // Celular e tablet em pé (F8-14): tela inteira, sem rolar a página, ações numa folha.
+  const compact = useCompactLayout();
+  useAppViewport(compact);
+  useFullscreenOnFirstTouch(compact);
+  const fullscreen = useFullscreenState();
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [discountAuthorizedBy, setDiscountAuthorizedBy] = useState<string | null>(null);
   const [lastSale, setLastSale] = useState<StoredSale | null>(null);
   const [auth, setAuth] = useState<{
@@ -634,7 +649,7 @@ export function Register({
 
   const onKeyDown = (e: globalThis.KeyboardEvent) => {
     const cart = cartRef.current;
-    if (dialog.kind !== 'none' || auth || pinRequest) return;
+    if (dialog.kind !== 'none' || auth || pinRequest || sheetOpen) return;
     const actions: Record<string, () => void> = {
       F2: () => inputRef.current?.focus(),
       F3: () => {
@@ -711,41 +726,113 @@ export function Register({
     focusInput();
   };
 
-  return (
-    // Celular e tablet (F8-06): a página rola e o total com o Pagar ficam fixos embaixo; do
-    // notebook para cima, tudo cabe numa tela só.
-    <div className="flex min-h-screen flex-col bg-bg lg:h-screen">
-      <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border bg-surface px-3 py-2 sm:px-4 [&_button]:whitespace-nowrap">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <Logo className="text-xl" />
-          <span className="font-semibold">{context.terminal.name}</span>
-          <span className="text-sm text-muted" data-testid="pdv-operator">
-            · {operator.name}
-          </span>
-          {!selfMode && (
-            <Button variant="ghost" onClick={() => setDialog({ kind: 'operator' })}>
-              Trocar operador
-            </Button>
-          )}
-        </div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <SyncBadge status={syncStatus} onSync={() => void onSyncNow()} />
-          {selfMode ? (
-            <Button variant="ghost" onClick={() => void stopSelfCheckout()}>
-              Desligar autoatendimento
-            </Button>
-          ) : (
-            <>
-              <Button variant="ghost" onClick={startSelfCheckout}>
-                Autoatendimento
-              </Button>
-              <Button variant="ghost" onClick={onExit}>
-                Sair do caixa
-              </Button>
-            </>
-          )}
-        </div>
-      </header>
+  // Folha de ações do celular (F8-14): o que no computador são botões e atalhos F.
+  const selectedLine = cart.lines.find((l) => l.line === selected) ?? null;
+  const canFullscreen = typeof document !== 'undefined' && Boolean(document.fullscreenEnabled);
+  const sheetActions = selfMode ? (
+    <SheetSection title="Compra">
+      <SheetAction onClick={() => setDialog({ kind: 'customer' })}>CPF na nota</SheetAction>
+      <SheetAction onClick={() => void removeSelected()} disabled={selectedLine === null}>
+        Tirar item
+      </SheetAction>
+      {canFullscreen && (
+        <SheetAction onClick={() => void (fullscreen ? exitFullscreen() : enterFullscreen())}>
+          {fullscreen ? 'Sair da tela cheia' : 'Tela cheia'}
+        </SheetAction>
+      )}
+      <SheetAction onClick={() => void stopSelfCheckout()}>Desligar autoatendimento</SheetAction>
+    </SheetSection>
+  ) : (
+    <>
+      {selectedLine && (
+        <SheetSection title={`Item ${selectedLine.line}: ${selectedLine.name}`}>
+          <SheetAction
+            onClick={() =>
+              setDialog({
+                kind: 'quantity',
+                line: selectedLine.line,
+                title: selectedLine.name,
+                unit: selectedLine.unit,
+                weighable: selectedLine.isWeighable,
+              })
+            }
+          >
+            Quantidade
+          </SheetAction>
+          <SheetAction onClick={() => setDialog({ kind: 'discount', line: selectedLine.line })}>
+            Desconto no item
+          </SheetAction>
+          <SheetAction tone="danger" onClick={() => void removeSelected()}>
+            Tirar item
+          </SheetAction>
+        </SheetSection>
+      )}
+      <SheetSection title="Venda">
+        <SheetAction
+          onClick={() => setDialog({ kind: 'discount', line: null })}
+          disabled={cart.lines.length === 0}
+        >
+          Desconto na venda
+        </SheetAction>
+        <SheetAction onClick={() => setDialog({ kind: 'customer' })}>CPF na nota</SheetAction>
+        {sellers.length > 0 && (
+          <SheetAction onClick={() => setDialog({ kind: 'seller' })}>Vendedor</SheetAction>
+        )}
+        <SheetAction onClick={() => setDialog({ kind: 'delivery' })}>Entrega</SheetAction>
+        <SheetAction onClick={() => setDialog({ kind: 'tabs' })}>Comandas</SheetAction>
+        <SheetAction
+          disabled={cart.lines.length === 0}
+          onClick={() =>
+            void pdv
+              .saveQuote(cartRef.current)
+              .then(() => {
+                setCart(EMPTY_CART);
+                setSelected(null);
+                setMessage({ tone: 'success', text: 'Orçamento salvo. Abra em Orçamentos.' });
+              })
+              .catch(fail)
+          }
+        >
+          Salvar orçamento
+        </SheetAction>
+        <SheetAction onClick={() => setDialog({ kind: 'quotes' })}>Orçamentos</SheetAction>
+        <SheetAction
+          tone="danger"
+          disabled={cart.lines.length === 0}
+          onClick={() => {
+            if (confirm('Limpar todos os itens desta venda?')) {
+              setCart(EMPTY_CART);
+              setSelected(null);
+            }
+          }}
+        >
+          Limpar venda
+        </SheetAction>
+      </SheetSection>
+      <SheetSection title="Caixa">
+        <SheetAction onClick={() => setDialog({ kind: 'cash' })}>Sangria e fechamento</SheetAction>
+        <SheetAction onClick={() => setDialog({ kind: 'history' })}>Vendas do caixa</SheetAction>
+        {lastSale && (
+          <SheetAction onClick={() => void print(lastSale)}>
+            Comprovante nº {lastSale.terminalSeq}
+          </SheetAction>
+        )}
+        <SheetAction onClick={() => setDialog({ kind: 'operator' })}>Trocar operador</SheetAction>
+        <SheetAction onClick={startSelfCheckout}>Autoatendimento</SheetAction>
+        {canFullscreen && (
+          <SheetAction onClick={() => void (fullscreen ? exitFullscreen() : enterFullscreen())}>
+            {fullscreen ? 'Sair da tela cheia' : 'Tela cheia'}
+          </SheetAction>
+        )}
+        <SheetAction onClick={onExit}>Sair do caixa</SheetAction>
+      </SheetSection>
+    </>
+  );
+
+  const hasNotices = Boolean((update && cart.lines.length === 0) || selfMode || !handle.persistent);
+  // Avisos do caixa (versão nova, autoatendimento, navegador sem armazenamento).
+  const notices = (
+    <>
       {update && cart.lines.length === 0 && (
         <Alert tone="success" title="Nova versão do Bipaê pronta">
           <div className="flex flex-wrap items-center gap-3">
@@ -781,380 +868,124 @@ export function Register({
           a página fechar. Use o Chrome ou o Edge atualizados, ou o Bipaê Desktop.
         </Alert>
       )}
+    </>
+  );
 
-      <div className="grid flex-1 gap-4 p-3 pb-28 sm:p-4 sm:pb-28 lg:grid-cols-[1fr_380px] lg:overflow-hidden lg:pb-4">
-        <section className="flex min-h-0 flex-col gap-3" aria-label="Itens da venda">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void scanNow();
-            }}
-          >
-            <label htmlFor="pdv-input" className="sr-only">
-              Bipe o código ou digite o nome do produto
-            </label>
-            <input
-              id="pdv-input"
-              ref={inputRef}
-              autoFocus
-              autoComplete="off"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Bipe o código ou digite o nome (ex.: 3*arroz)"
-              className="min-h-16 w-full rounded-ui border-2 border-primary bg-surface px-4 text-2xl"
-            />
-          </form>
-          {/* No celular, a câmera faz de leitor (F8-05); cada leitura vira uma bipada. */}
-          <CameraScanButton platform={platform} onCode={(code) => void scanNow(code)} />
-          {message && <Alert tone={message.tone}>{message.text}</Alert>}
-          {results.length > 0 && (
-            <ul
-              className="max-h-60 overflow-y-auto rounded-ui border border-border bg-surface"
-              aria-label="Resultados da busca"
-            >
-              {results.map((p) => (
-                <li key={p.id}>
-                  <button
-                    type="button"
-                    className="flex w-full justify-between gap-3 px-4 py-3 text-left hover:bg-surface-2"
-                    onClick={() =>
-                      p.isWeighable ? setDialog({ kind: 'weigh', product: p }) : add(p, 1000)
-                    }
-                  >
-                    <span>{p.name}</span>
-                    <span className="tabular-nums">
-                      {brl(p.priceCents)}
-                      {p.isWeighable ? '/kg' : ''}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-          <div className="min-h-40 flex-1 overflow-y-auto rounded-ui border border-border bg-surface lg:min-h-0">
-            {cart.lines.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center text-muted">
-                <p className="text-lg font-semibold text-text">Caixa livre</p>
-                <p>Bipe o primeiro produto. Bipou? Bipaê!</p>
-              </div>
-            ) : (
-              <table className="w-full text-left">
-                <caption className="sr-only">Itens da venda</caption>
-                <thead className="sticky top-0 bg-surface-2 text-sm text-muted">
-                  <tr>
-                    <th scope="col" className="px-3 py-2">
-                      #
-                    </th>
-                    <th scope="col" className="px-3 py-2">
-                      Produto
-                    </th>
-                    <th scope="col" className="px-3 py-2 text-right">
-                      Qtd.
-                    </th>
-                    <th scope="col" className="px-3 py-2 text-right">
-                      Preço
-                    </th>
-                    <th scope="col" className="px-3 py-2 text-right">
-                      Total
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {t.items.map((item) => (
-                    <tr
-                      key={item.line}
-                      aria-selected={selected === item.line}
-                      onClick={() => setSelected(item.line)}
-                      className={cx(
-                        'cursor-pointer border-t border-border',
-                        selected === item.line && 'bg-warning-soft',
-                      )}
-                    >
-                      <td className="px-3 py-2 text-muted">{item.line}</td>
-                      <td className="px-3 py-2 font-medium">
-                        {item.name}
-                        {(() => {
-                          const own =
-                            cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0;
-                          const promo = priced.promotionDiscounts?.[item.line] ?? 0;
-                          // Item lançado pelo celular (F8-03): mostra quem vendeu.
-                          const sellerName = item.sellerId
-                            ? (sellers.find((v) => v.id === item.sellerId)?.name ?? null)
-                            : null;
-                          return (
-                            <>
-                              {sellerName && (
-                                <span className="block text-sm font-normal text-muted">
-                                  Vendedor: {sellerName}
-                                </span>
-                              )}
-                              {own > 0 && (
-                                <span className="block text-sm font-normal text-muted">
-                                  Desconto no item: {brl(own)}
-                                </span>
-                              )}
-                              {promo > 0 && (
-                                <span className="block text-sm font-semibold text-success">
-                                  Promoção: -{brl(promo)}
-                                </span>
-                              )}
-                            </>
-                          );
-                        })()}
-                      </td>
-                      <td className="px-3 py-2 text-right tabular-nums">
-                        {(item.quantityMilli / 1000).toLocaleString('pt-BR', {
-                          maximumFractionDigits: 3,
-                        })}{' '}
-                        {item.unit}
-                      </td>
-                      <td className="px-3 py-2 text-right tabular-nums">
-                        {brl(item.unitPriceCents)}
-                      </td>
-                      <td className="px-3 py-2 text-right font-semibold tabular-nums">
-                        {brl(item.totalCents)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </section>
-
-        <aside className="flex flex-col gap-3" aria-label="Resumo">
-          <div className="hidden rounded-ui bg-primary p-5 text-primary-contrast lg:block">
-            <p className="text-sm font-semibold uppercase tracking-wide opacity-90">Total</p>
-            <p
-              className="text-5xl font-extrabold tabular-nums"
-              aria-live="polite"
-              data-testid="pdv-total"
-            >
-              {brl(t.totalCents)}
-            </p>
-            {t.discountCents > 0 && <p className="mt-1">Descontos: {brl(t.discountCents)}</p>}
-            {t.deliveryFeeCents > 0 && (
-              <p className="mt-1" data-testid="delivery-fee">
-                Taxa de entrega: {brl(t.deliveryFeeCents)}
-              </p>
-            )}
-            <p className="mt-1 text-sm opacity-90">
-              {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
-            </p>
-          </div>
-          {(priced.appliedPromotions?.length ?? 0) > 0 && (
-            <ul className="rounded-ui border border-success p-3 text-sm" aria-label="Promoções">
-              {priced.appliedPromotions!.map((p) => (
-                <li key={p.promotionId} className="flex justify-between gap-2">
-                  <span className="font-semibold">{p.name}</span>
-                  <span className="tabular-nums" data-testid="promotion-discount">
-                    -{brl(p.discountCents)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {cart.delivery && (
-            <div
-              className="flex flex-col gap-1 rounded-ui border border-primary p-3 text-sm"
-              aria-label="Entrega"
-            >
-              <p className="font-semibold">Entrega: {cart.delivery.zoneName}</p>
-              <p>
-                {cart.delivery.address.street}, {cart.delivery.address.number}
-                {cart.delivery.address.complement
-                  ? ` - ${cart.delivery.address.complement}`
-                  : ''} · {cart.delivery.name}
-              </p>
-              <Button variant="ghost" onClick={() => setDialog({ kind: 'delivery' })}>
-                Mudar entrega
-              </Button>
-            </div>
-          )}
-          {cart.tabId && (
-            <div
-              className="flex flex-col gap-2 rounded-ui border border-primary p-3"
-              aria-label="Comanda"
-            >
-              <p className="font-semibold" data-testid="tab-label">
-                Comanda {cart.tabLabel}
-              </p>
-              <Button variant="secondary" onClick={() => void saveTabNow()}>
-                Guardar na comanda
-              </Button>
-              {t.totalCents > 0 && (
-                <div className="flex flex-wrap items-center gap-2 text-sm">
-                  <span>Dividir por</span>
-                  <Button
-                    variant="ghost"
-                    aria-label="Menos uma pessoa"
-                    onClick={() => setPeople((n) => Math.max(1, n - 1))}
-                  >
-                    −
-                  </Button>
-                  <span className="font-semibold tabular-nums" data-testid="tab-people">
-                    {people}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    aria-label="Mais uma pessoa"
-                    onClick={() => setPeople((n) => Math.min(50, n + 1))}
-                  >
-                    +
-                  </Button>
-                  <span data-testid="tab-split">
-                    {people === 1 ? 'pessoa' : 'pessoas'}:{' '}
-                    {brl(splitBill(t.totalCents, people)[0]!)}
-                    {splitBill(t.totalCents, people).some((v, _, all) => v !== all[0])
-                      ? ' (alguns centavos a mais na primeira)'
-                      : ' cada'}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-          {cart.customerTaxId && (
-            <p className="text-sm">CPF/CNPJ na nota: {formatTaxId(cart.customerTaxId)}</p>
-          )}
-          {cart.seller && (
-            <p className="text-sm" data-testid="cart-seller">
-              Vendedor: {cart.seller.name} ({cart.seller.code})
-            </p>
-          )}
-          {cart.loyalty ? (
-            <div className="flex items-center justify-between gap-2 text-sm">
-              <span data-testid="loyalty-used">
-                Usando {cart.loyalty.points} pontos: −{brl(t.loyaltyDiscountCents)}
+  // Detalhes da venda (promoções, entrega, comanda, cliente, pontos): ao lado no computador,
+  // na folha de ações no celular.
+  const saleDetails = (
+    <>
+      {(priced.appliedPromotions?.length ?? 0) > 0 && (
+        <ul className="rounded-ui border border-success p-3 text-sm" aria-label="Promoções">
+          {priced.appliedPromotions!.map((p) => (
+            <li key={p.promotionId} className="flex justify-between gap-2">
+              <span className="font-semibold">{p.name}</span>
+              <span className="tabular-nums" data-testid="promotion-discount">
+                -{brl(p.discountCents)}
               </span>
-              <Button variant="ghost" onClick={() => setCart((c) => ({ ...c, loyalty: null }))}>
-                Não usar pontos
+            </li>
+          ))}
+        </ul>
+      )}
+      {cart.delivery && (
+        <div
+          className="flex flex-col gap-1 rounded-ui border border-primary p-3 text-sm"
+          aria-label="Entrega"
+        >
+          <p className="font-semibold">Entrega: {cart.delivery.zoneName}</p>
+          <p>
+            {cart.delivery.address.street}, {cart.delivery.address.number}
+            {cart.delivery.address.complement
+              ? ` - ${cart.delivery.address.complement}`
+              : ''} · {cart.delivery.name}
+          </p>
+          <Button variant="ghost" onClick={() => setDialog({ kind: 'delivery' })}>
+            Mudar entrega
+          </Button>
+        </div>
+      )}
+      {cart.tabId && (
+        <div
+          className="flex flex-col gap-2 rounded-ui border border-primary p-3"
+          aria-label="Comanda"
+        >
+          <p className="font-semibold" data-testid="tab-label">
+            Comanda {cart.tabLabel}
+          </p>
+          <Button variant="secondary" onClick={() => void saveTabNow()}>
+            Guardar na comanda
+          </Button>
+          {t.totalCents > 0 && (
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <span>Dividir por</span>
+              <Button
+                variant="ghost"
+                aria-label="Menos uma pessoa"
+                onClick={() => setPeople((n) => Math.max(1, n - 1))}
+              >
+                −
               </Button>
+              <span className="font-semibold tabular-nums" data-testid="tab-people">
+                {people}
+              </span>
+              <Button
+                variant="ghost"
+                aria-label="Mais uma pessoa"
+                onClick={() => setPeople((n) => Math.min(50, n + 1))}
+              >
+                +
+              </Button>
+              <span data-testid="tab-split">
+                {people === 1 ? 'pessoa' : 'pessoas'}: {brl(splitBill(t.totalCents, people)[0]!)}
+                {splitBill(t.totalCents, people).some((v, _, all) => v !== all[0])
+                  ? ' (alguns centavos a mais na primeira)'
+                  : ' cada'}
+              </span>
             </div>
-          ) : (
-            loyalty?.program?.active &&
-            loyalty.points > 0 && (
-              <div className="flex items-center justify-between gap-2 text-sm">
-                <span data-testid="loyalty-points">
-                  {loyalty.points} pontos (valem{' '}
-                  {brl(loyalty.points * loyalty.program.pointValueCents)})
-                </span>
-                <Button
-                  variant="secondary"
-                  onClick={applyLoyalty}
-                  disabled={cart.lines.length === 0}
-                >
-                  Usar pontos
-                </Button>
-              </div>
-            )
           )}
-          {priceTable && (
-            <p className="text-sm font-semibold text-primary" data-testid="price-table">
-              Preços da tabela {priceTable}
-            </p>
-          )}
-          <div className="hidden lg:grid">
-            <Button
-              size="lg"
-              onClick={() => setDialog({ kind: 'payment' })}
-              disabled={cart.lines.length === 0}
-              aria-keyshortcuts="F10"
-            >
-              Pagar (F10)
+        </div>
+      )}
+      {cart.customerTaxId && (
+        <p className="text-sm">CPF/CNPJ na nota: {formatTaxId(cart.customerTaxId)}</p>
+      )}
+      {cart.seller && (
+        <p className="text-sm" data-testid="cart-seller">
+          Vendedor: {cart.seller.name} ({cart.seller.code})
+        </p>
+      )}
+      {cart.loyalty ? (
+        <div className="flex items-center justify-between gap-2 text-sm">
+          <span data-testid="loyalty-used">
+            Usando {cart.loyalty.points} pontos: −{brl(t.loyaltyDiscountCents)}
+          </span>
+          <Button variant="ghost" onClick={() => setCart((c) => ({ ...c, loyalty: null }))}>
+            Não usar pontos
+          </Button>
+        </div>
+      ) : (
+        loyalty?.program?.active &&
+        loyalty.points > 0 && (
+          <div className="flex items-center justify-between gap-2 text-sm">
+            <span data-testid="loyalty-points">
+              {loyalty.points} pontos (valem {brl(loyalty.points * loyalty.program.pointValueCents)}
+              )
+            </span>
+            <Button variant="secondary" onClick={applyLoyalty} disabled={cart.lines.length === 0}>
+              Usar pontos
             </Button>
           </div>
-          {selfMode ? (
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
-                CPF na nota
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => void removeSelected()}
-                disabled={selected === null}
-              >
-                Tirar item
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setDialog({ kind: 'discount', line: selected })}
-                disabled={cart.lines.length === 0}
-              >
-                Desconto (F4)
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
-                CPF na nota (F6)
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'cash' })}>
-                Caixa (F9)
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'history' })}>
-                Vendas (F11)
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'tabs' })}>
-                Comandas
-              </Button>
-              <Button variant="secondary" onClick={() => setDialog({ kind: 'delivery' })}>
-                Entrega
-              </Button>
-              {sellers.length > 0 && (
-                <Button variant="secondary" onClick={() => setDialog({ kind: 'seller' })}>
-                  Vendedor
-                </Button>
-              )}
-            </div>
-          )}
-          {lastSale && (
-            <Button variant="ghost" onClick={() => void print(lastSale)}>
-              Imprimir comprovante da venda nº {lastSale.terminalSeq}
-            </Button>
-          )}
-        </aside>
-      </div>
+        )
+      )}
+      {priceTable && (
+        <p className="text-sm font-semibold text-primary" data-testid="price-table">
+          Preços da tabela {priceTable}
+        </p>
+      )}
+    </>
+  );
 
-      {/* Celular e tablet: o total e o Pagar sempre à mão, no alcance do polegar. */}
-      <div
-        className="fixed inset-x-0 bottom-0 z-20 flex items-center gap-3 border-t border-border bg-surface p-3 shadow-lg lg:hidden"
-        aria-label="Total e pagamento"
-        role="region"
-      >
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-            Total · {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
-          </p>
-          <p
-            className="truncate text-2xl font-extrabold tabular-nums"
-            data-testid="pdv-total-mobile"
-          >
-            {brl(t.totalCents)}
-          </p>
-        </div>
-        <Button
-          size="lg"
-          onClick={() => setDialog({ kind: 'payment' })}
-          disabled={cart.lines.length === 0}
-        >
-          Pagar
-        </Button>
-      </div>
-
-      <footer
-        className="hidden flex-wrap gap-x-4 gap-y-1 border-t border-border bg-surface px-4 py-2 text-sm text-muted lg:flex"
-        aria-label="Atalhos do teclado"
-      >
-        {SHORTCUTS.map(([key, label]) => (
-          <span key={key}>
-            <kbd className="rounded border border-border bg-surface-2 px-1.5 font-mono text-text">
-              {key}
-            </kbd>{' '}
-            {label}
-          </span>
-        ))}
-      </footer>
-
+  const overlays = (
+    <>
       {dialog.kind === 'quick-product' && (
         <QuickProductDialog
           code={dialog.code}
@@ -1386,6 +1217,398 @@ export function Register({
           }}
         />
       )}
+    </>
+  );
+
+  if (compact) {
+    return (
+      <CompactRegister
+        terminalName={context.terminal.name}
+        operatorName={operator.name}
+        syncStatus={syncStatus}
+        onSyncNow={() => void onSyncNow()}
+        onExit={onExit}
+        selfMode={selfMode}
+        notices={hasNotices ? notices : null}
+        scanInput={
+          <form
+            className="min-w-0 flex-1"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void scanNow();
+            }}
+          >
+            <label htmlFor="pdv-input" className="sr-only">
+              Bipe o código ou digite o nome do produto
+            </label>
+            <input
+              id="pdv-input"
+              ref={inputRef}
+              autoFocus
+              autoComplete="off"
+              enterKeyHint="go"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Bipe ou busque (ex.: 3*arroz)"
+              className="min-h-12 w-full rounded-ui border-2 border-primary bg-surface px-3 text-lg"
+            />
+          </form>
+        }
+        camera={
+          <CameraScanButton platform={platform} onCode={(code) => void scanNow(code)} iconOnly />
+        }
+        message={message}
+        results={results}
+        onPick={(p) => (p.isWeighable ? setDialog({ kind: 'weigh', product: p }) : add(p, 1000))}
+        lines={t.items.map((item) => ({
+          line: item.line,
+          name: item.name,
+          quantity: `${(item.quantityMilli / 1000).toLocaleString('pt-BR', {
+            maximumFractionDigits: 3,
+          })} ${item.unit}`,
+          unitPrice: brl(item.unitPriceCents),
+          total: brl(item.totalCents),
+          notes: [
+            item.sellerId && sellers.find((v) => v.id === item.sellerId)
+              ? `Vendedor: ${sellers.find((v) => v.id === item.sellerId)!.name}`
+              : null,
+            (cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0) > 0
+              ? `Desconto no item: ${brl(cart.lines.find((l) => l.line === item.line)!.discountCents)}`
+              : null,
+          ].filter((n): n is string => n !== null),
+          promotion:
+            (priced.promotionDiscounts?.[item.line] ?? 0) > 0
+              ? `Promoção: -${brl(priced.promotionDiscounts![item.line]!)}`
+              : null,
+        }))}
+        selected={selected}
+        onSelect={setSelected}
+        totalCents={t.totalCents}
+        itemCount={cart.lines.length}
+        tags={[
+          cart.customerTaxId ? `CPF/CNPJ ${formatTaxId(cart.customerTaxId)}` : null,
+          cart.tabId ? `Comanda ${cart.tabLabel}` : null,
+          cart.delivery ? `Entrega: ${cart.delivery.zoneName}` : null,
+          cart.seller ? `Vendedor: ${cart.seller.name}` : null,
+          (priced.appliedPromotions?.length ?? 0) > 0
+            ? priced.appliedPromotions!.length === 1
+              ? '1 promoção'
+              : `${priced.appliedPromotions!.length} promoções`
+            : null,
+          cart.loyalty ? `${cart.loyalty.points} pontos` : null,
+          priceTable ? `Tabela ${priceTable}` : null,
+        ].filter((tag): tag is string => tag !== null)}
+        onPay={() => setDialog({ kind: 'payment' })}
+        sheetOpen={sheetOpen}
+        onSheetOpenChange={setSheetOpen}
+        details={saleDetails}
+        actions={sheetActions}
+        overlays={overlays}
+      />
+    );
+  }
+
+  return (
+    // Do notebook para cima (lg), tudo cabe numa tela só, com o total e os atalhos ao lado.
+    // Abaixo disso o caixa usa o layout compacto, com cara de app (F8-14).
+    <div className="flex min-h-screen flex-col bg-bg lg:h-screen">
+      <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border bg-surface px-3 py-2 sm:px-4 [&_button]:whitespace-nowrap">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <Logo className="text-xl" />
+          <span className="font-semibold">{context.terminal.name}</span>
+          <span className="text-sm text-muted" data-testid="pdv-operator">
+            · {operator.name}
+          </span>
+          {!selfMode && (
+            <Button variant="ghost" onClick={() => setDialog({ kind: 'operator' })}>
+              Trocar operador
+            </Button>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <SyncBadge status={syncStatus} onSync={() => void onSyncNow()} />
+          {selfMode ? (
+            <Button variant="ghost" onClick={() => void stopSelfCheckout()}>
+              Desligar autoatendimento
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" onClick={startSelfCheckout}>
+                Autoatendimento
+              </Button>
+              <Button variant="ghost" onClick={onExit}>
+                Sair do caixa
+              </Button>
+            </>
+          )}
+        </div>
+      </header>
+      {notices}
+
+      <div className="grid flex-1 gap-4 p-3 pb-28 sm:p-4 sm:pb-28 lg:grid-cols-[1fr_380px] lg:overflow-hidden lg:pb-4">
+        <section className="flex min-h-0 flex-col gap-3" aria-label="Itens da venda">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void scanNow();
+            }}
+          >
+            <label htmlFor="pdv-input" className="sr-only">
+              Bipe o código ou digite o nome do produto
+            </label>
+            <input
+              id="pdv-input"
+              ref={inputRef}
+              autoFocus
+              autoComplete="off"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Bipe o código ou digite o nome (ex.: 3*arroz)"
+              className="min-h-16 w-full rounded-ui border-2 border-primary bg-surface px-4 text-2xl"
+            />
+          </form>
+          {/* No celular, a câmera faz de leitor (F8-05); cada leitura vira uma bipada. */}
+          <CameraScanButton platform={platform} onCode={(code) => void scanNow(code)} />
+          {message && <Alert tone={message.tone}>{message.text}</Alert>}
+          {results.length > 0 && (
+            <ul
+              className="max-h-60 overflow-y-auto rounded-ui border border-border bg-surface"
+              aria-label="Resultados da busca"
+            >
+              {results.map((p) => (
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    className="flex w-full justify-between gap-3 px-4 py-3 text-left hover:bg-surface-2"
+                    onClick={() =>
+                      p.isWeighable ? setDialog({ kind: 'weigh', product: p }) : add(p, 1000)
+                    }
+                  >
+                    <span>{p.name}</span>
+                    <span className="tabular-nums">
+                      {brl(p.priceCents)}
+                      {p.isWeighable ? '/kg' : ''}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="min-h-40 flex-1 overflow-y-auto rounded-ui border border-border bg-surface lg:min-h-0">
+            {cart.lines.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center text-muted">
+                <p className="text-lg font-semibold text-text">Caixa livre</p>
+                <p>Bipe o primeiro produto. Bipou? Bipaê!</p>
+              </div>
+            ) : (
+              <table className="w-full text-left">
+                <caption className="sr-only">Itens da venda</caption>
+                <thead className="sticky top-0 bg-surface-2 text-sm text-muted">
+                  <tr>
+                    <th scope="col" className="px-3 py-2">
+                      #
+                    </th>
+                    <th scope="col" className="px-3 py-2">
+                      Produto
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Qtd.
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Preço
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {t.items.map((item) => (
+                    <tr
+                      key={item.line}
+                      aria-selected={selected === item.line}
+                      onClick={() => setSelected(item.line)}
+                      className={cx(
+                        'cursor-pointer border-t border-border',
+                        selected === item.line && 'bg-warning-soft',
+                      )}
+                    >
+                      <td className="px-3 py-2 text-muted">{item.line}</td>
+                      <td className="px-3 py-2 font-medium">
+                        {item.name}
+                        {(() => {
+                          const own =
+                            cart.lines.find((l) => l.line === item.line)?.discountCents ?? 0;
+                          const promo = priced.promotionDiscounts?.[item.line] ?? 0;
+                          // Item lançado pelo celular (F8-03): mostra quem vendeu.
+                          const sellerName = item.sellerId
+                            ? (sellers.find((v) => v.id === item.sellerId)?.name ?? null)
+                            : null;
+                          return (
+                            <>
+                              {sellerName && (
+                                <span className="block text-sm font-normal text-muted">
+                                  Vendedor: {sellerName}
+                                </span>
+                              )}
+                              {own > 0 && (
+                                <span className="block text-sm font-normal text-muted">
+                                  Desconto no item: {brl(own)}
+                                </span>
+                              )}
+                              {promo > 0 && (
+                                <span className="block text-sm font-semibold text-success">
+                                  Promoção: -{brl(promo)}
+                                </span>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </td>
+                      <td className="px-3 py-2 text-right tabular-nums">
+                        {(item.quantityMilli / 1000).toLocaleString('pt-BR', {
+                          maximumFractionDigits: 3,
+                        })}{' '}
+                        {item.unit}
+                      </td>
+                      <td className="px-3 py-2 text-right tabular-nums">
+                        {brl(item.unitPriceCents)}
+                      </td>
+                      <td className="px-3 py-2 text-right font-semibold tabular-nums">
+                        {brl(item.totalCents)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </section>
+
+        <aside className="flex flex-col gap-3" aria-label="Resumo">
+          <div className="hidden rounded-ui bg-primary p-5 text-primary-contrast lg:block">
+            <p className="text-sm font-semibold uppercase tracking-wide opacity-90">Total</p>
+            <p
+              className="text-5xl font-extrabold tabular-nums"
+              aria-live="polite"
+              data-testid="pdv-total"
+            >
+              {brl(t.totalCents)}
+            </p>
+            {t.discountCents > 0 && <p className="mt-1">Descontos: {brl(t.discountCents)}</p>}
+            {t.deliveryFeeCents > 0 && (
+              <p className="mt-1" data-testid="delivery-fee">
+                Taxa de entrega: {brl(t.deliveryFeeCents)}
+              </p>
+            )}
+            <p className="mt-1 text-sm opacity-90">
+              {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
+            </p>
+          </div>
+          {saleDetails}
+          <div className="hidden lg:grid">
+            <Button
+              size="lg"
+              onClick={() => setDialog({ kind: 'payment' })}
+              disabled={cart.lines.length === 0}
+              aria-keyshortcuts="F10"
+            >
+              Pagar (F10)
+            </Button>
+          </div>
+          {selfMode ? (
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
+                CPF na nota
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => void removeSelected()}
+                disabled={selected === null}
+              >
+                Tirar item
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => setDialog({ kind: 'discount', line: selected })}
+                disabled={cart.lines.length === 0}
+              >
+                Desconto (F4)
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'customer' })}>
+                CPF na nota (F6)
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'cash' })}>
+                Caixa (F9)
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'history' })}>
+                Vendas (F11)
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'tabs' })}>
+                Comandas
+              </Button>
+              <Button variant="secondary" onClick={() => setDialog({ kind: 'delivery' })}>
+                Entrega
+              </Button>
+              {sellers.length > 0 && (
+                <Button variant="secondary" onClick={() => setDialog({ kind: 'seller' })}>
+                  Vendedor
+                </Button>
+              )}
+            </div>
+          )}
+          {lastSale && (
+            <Button variant="ghost" onClick={() => void print(lastSale)}>
+              Imprimir comprovante da venda nº {lastSale.terminalSeq}
+            </Button>
+          )}
+        </aside>
+      </div>
+
+      {/* Celular e tablet: o total e o Pagar sempre à mão, no alcance do polegar. */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-20 flex items-center gap-3 border-t border-border bg-surface p-3 shadow-lg lg:hidden"
+        aria-label="Total e pagamento"
+        role="region"
+      >
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+            Total · {cart.lines.length === 1 ? '1 item' : `${cart.lines.length} itens`}
+          </p>
+          <p
+            className="truncate text-2xl font-extrabold tabular-nums"
+            data-testid="pdv-total-mobile"
+          >
+            {brl(t.totalCents)}
+          </p>
+        </div>
+        <Button
+          size="lg"
+          onClick={() => setDialog({ kind: 'payment' })}
+          disabled={cart.lines.length === 0}
+        >
+          Pagar
+        </Button>
+      </div>
+
+      <footer
+        className="hidden flex-wrap gap-x-4 gap-y-1 border-t border-border bg-surface px-4 py-2 text-sm text-muted lg:flex"
+        aria-label="Atalhos do teclado"
+      >
+        {SHORTCUTS.map(([key, label]) => (
+          <span key={key}>
+            <kbd className="rounded border border-border bg-surface-2 px-1.5 font-mono text-text">
+              {key}
+            </kbd>{' '}
+            {label}
+          </span>
+        ))}
+      </footer>
+
+      {overlays}
     </div>
   );
 }

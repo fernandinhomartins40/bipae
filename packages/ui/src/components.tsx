@@ -477,18 +477,72 @@ export function Drawer({
   );
 }
 
+/** Janela de tela inteira no celular: cobre a altura visível e respeita entalhe e barra de gestos. */
+const MOBILE_FULLSCREEN = cx(
+  'max-sm:left-0 max-sm:top-[var(--app-vtop,0px)] max-sm:h-[var(--app-vh,100dvh)] max-sm:max-h-none',
+  'max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none max-sm:shadow-none',
+  'max-sm:px-[max(1rem,env(safe-area-inset-left))] max-sm:pb-[max(1rem,env(safe-area-inset-bottom))] max-sm:pt-[max(0.75rem,env(safe-area-inset-top))]',
+  'max-sm:overscroll-contain',
+);
+
+/**
+ * Folha que sobe de baixo (como nos apps): ações secundárias ao alcance do polegar. Ocupa no
+ * máximo 85% da altura visível e rola por dentro quando precisa.
+ */
+export function Sheet({
+  open,
+  onOpenChange,
+  title,
+  children,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  children: ReactNode;
+}) {
+  useReturnFocus(open);
+  return (
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/50" />
+        <DialogPrimitive.Content
+          aria-describedby={undefined}
+          className="fixed inset-x-0 bottom-[max(0px,calc(100%-var(--app-vtop,0px)-var(--app-vh,100dvh)))] z-50 mx-auto flex max-h-[calc(var(--app-vh,100dvh)*0.85)] w-full max-w-lg flex-col rounded-t-2xl bg-surface shadow-2xl"
+        >
+          <div className="mx-auto mt-2 h-1.5 w-12 shrink-0 rounded-full bg-border" aria-hidden />
+          <div className="flex shrink-0 items-center justify-between gap-4 px-4 pb-1 pt-1">
+            <DialogPrimitive.Title className="text-lg font-bold">{title}</DialogPrimitive.Title>
+            <DialogPrimitive.Close asChild>
+              <Button variant="ghost" aria-label="Fechar" icon={<X className="size-5" />} />
+            </DialogPrimitive.Close>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            {children}
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
+  );
+}
+
 export function Modal({
   open,
   onOpenChange,
   title,
   children,
   wide,
+  mobileFullscreen,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
   children: ReactNode;
   wide?: boolean;
+  /**
+   * No celular (abaixo de 640px), a janela ocupa a tela inteira, com as áreas seguras e a altura
+   * visível (`--app-vh`, que encolhe com o teclado). Do tablet para cima, nada muda.
+   */
+  mobileFullscreen?: boolean;
 }) {
   useReturnFocus(open);
   return (
@@ -500,9 +554,15 @@ export function Modal({
           className={cx(
             'fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-ui bg-surface p-6 shadow-2xl',
             wide ? 'max-w-3xl' : 'max-w-lg',
+            mobileFullscreen && MOBILE_FULLSCREEN,
           )}
         >
-          <div className="mb-4 flex items-center justify-between gap-4">
+          <div
+            className={cx(
+              'mb-4 flex items-center justify-between gap-4',
+              mobileFullscreen && 'max-sm:mb-2',
+            )}
+          >
             <DialogPrimitive.Title className="text-xl font-bold">{title}</DialogPrimitive.Title>
             <DialogPrimitive.Close asChild>
               <Button variant="ghost" aria-label="Fechar" icon={<X className="size-5" />} />

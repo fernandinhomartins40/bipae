@@ -103,7 +103,7 @@ export function DeliveryDialog({
   };
 
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Entrega" wide>
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="Entrega" wide>
       {zones && zones.length === 0 ? (
         <Alert tone="warning" title="Falta configurar">
           Cadastre os bairros atendidos e as taxas em Delivery, na retaguarda. Depois da próxima

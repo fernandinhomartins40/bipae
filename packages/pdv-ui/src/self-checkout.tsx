@@ -82,7 +82,7 @@ export function PinDialog({
     onDone(pin);
   };
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title={title}>
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title={title}>
       <form onSubmit={(e) => void submit(e)} className="flex flex-col gap-4">
         <p className="text-muted">{description}</p>
         {error && <Alert>{error}</Alert>}

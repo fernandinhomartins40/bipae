@@ -65,7 +65,7 @@ export function TabsDialog({
   };
 
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Comandas" wide>
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="Comandas" wide>
       <div className="flex flex-col gap-4">
         <form onSubmit={create} className="flex flex-wrap items-end gap-2">
           <div className="min-w-48 flex-1">

@@ -60,7 +60,7 @@ export function QuickProductDialog({
   };
 
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Cadastrar produto">
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="Cadastrar produto">
       <form onSubmit={submit} className="flex flex-col gap-4">
         <p className="text-muted">
           O código {code} não está cadastrado.

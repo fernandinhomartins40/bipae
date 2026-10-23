@@ -42,7 +42,7 @@ export function SellerDialog({
     );
   };
   return (
-    <Modal open onOpenChange={(o) => !o && onClose()} title="Vendedor da venda">
+    <Modal mobileFullscreen open onOpenChange={(o) => !o && onClose()} title="Vendedor da venda">
       <form onSubmit={submit} className="flex flex-col gap-4">
         <TextField
           label="Código ou nome do vendedor"
