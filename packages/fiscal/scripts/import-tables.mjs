@@ -46,6 +46,7 @@ import { msStReferences, parseMsSubanexoI } from './st-ms.mjs';
 import { esStReferences, parseEsPortaria16R } from './st-es.mjs';
 import { alStReferences, parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI, roStReferences } from './st-ro.mjs';
+import { ceStReferences, parseCeVeiculos } from './st-ce.mjs';
 import { docText } from './doc-text.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
@@ -713,6 +714,11 @@ async function importStReferences(cest) {
     ),
     { url: manifest.stPeRicms.page },
   );
+  // Ceará (F3-26.d.CE): veículos novos da Seção XXVI do RICMS/CE de 1997 (a única com CEST e MVA).
+  const ce = ceStReferences(
+    parseCeVeiculos(await pdfLines(readFileSync(join(sourcesDir, manifest.stCeRicms97.file)))),
+    { url: manifest.stCeRicms97.page, cests: cest.items, segments: cest.segments },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -743,6 +749,7 @@ async function importStReferences(cest) {
       pe.segment,
       pb.segment,
       mt.segment,
+      ce.segment,
       ...confaz.map((c) => c.segment),
     ],
     references: [
@@ -772,6 +779,7 @@ async function importStReferences(cest) {
       ...pe.references,
       ...pb.references,
       ...mt.references,
+      ...ce.references,
       ...confaz.flatMap((c) => c.references),
     ],
   };

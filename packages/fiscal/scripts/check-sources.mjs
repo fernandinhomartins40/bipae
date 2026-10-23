@@ -45,6 +45,7 @@ import { parseMsSubanexoI } from './st-ms.mjs';
 import { parseEsPortaria16R } from './st-es.mjs';
 import { parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI } from './st-ro.mjs';
+import { parseCeVeiculos } from './st-ce.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -143,6 +144,8 @@ function fetchOnce(url, jar, hops, ca) {
           ...(/fazenda\.rj\.gov\.br/.test(url)
             ? BROWSER
             : { 'user-agent': 'Mozilla/5.0 (Bipae fontes)' }),
+          // O SefazLegis (CE) só entrega o arquivo com este cabeçalho; qualquer valor serve.
+          ...(/sefazlegis\.sefaz\.ce\.gov\.br/.test(url) && { captchaToken: 'bipae' }),
           ...(cookie && { cookie }),
         },
       },
@@ -944,6 +947,34 @@ async function checkAl() {
   };
 }
 
+/** Ceará: o RICMS/CE de 1997 de hoje, pelo SefazLegis (veículos novos, arts. 561 e 562). */
+async function checkCe() {
+  const rowsOf = async (bytes) =>
+    parseCeVeiculos(await pdfLines(bytes)).items.map((i) => [i.cest, i.mva, i.validFrom]);
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.stCeRicms97.file)));
+  const title = 'ST no Ceará (RICMS/CE de 1997, veículos novos)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.stCeRicms97.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stCeRicms97.page,
+      status: 'mudou',
+      details: [`o PDF novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stCeRicms97.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
 /** Rondônia: o Anexo VI de hoje, pela API do portal de legislação da SEFIN-RO. */
 async function checkRo() {
   const known = new Set(
@@ -1292,6 +1323,7 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Espírito Santo', manifest.stEsPortaria16R.page, checkEs),
     await safe('ST em Alagoas', manifest.stAlDecreto90309.page, checkAl),
     await safe('ST em Rondônia', manifest.stRoAnexoVI.page, checkRo),
+    await safe('ST no Ceará', manifest.stCeRicms97.page, checkCe),
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),
     await safe('cBenef do Rio Grande do Sul', manifest.cbenefRs.page, checkCbenefRs),

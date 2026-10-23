@@ -674,6 +674,40 @@ describe('Pernambuco: Anexo 37 do RICMS/PE (F3-26.d.PE)', () => {
   });
 });
 
+describe('Ceará: veículos novos do RICMS/CE de 1997 (F3-26.d.CE)', () => {
+  const ce = ST_REFERENCES.filter((r) => r.uf === 'CE');
+  const itemOf = (cest: string) => ce.flatMap((r) => r.items).find((i) => i.cest === cest);
+
+  it('os CEST do caput do art. 561 com a MVA-ST original do art. 562', () => {
+    expect(ST_REFERENCE_UFS).toContain('CE');
+    expect(ST_SEGMENT_UFS).toContain('CE');
+    // 25.001.00 a 25.029.00 e 26.001.00 e 26.001.01: 31 CEST.
+    expect(ce.flatMap((r) => r.items)).toHaveLength(31);
+    // § 3º: veículos do caput, menos as motos, 30%.
+    expect(itemOf('2500100')?.mva).toBe('30');
+    expect(itemOf('2502900')?.mva).toBe('30');
+    // § 4º: CEST 26.001.00 e 26.001.01, 34%.
+    expect(itemOf('2600100')?.mva).toBe('34');
+    expect(itemOf('2600101')?.mva).toBe('34');
+    // O que não está no caput (25.030.00 em diante) fica de fora.
+    expect(itemOf('2503000')).toBeUndefined();
+  });
+
+  it('o CEST 26.001.01 só entra com o Decreto 35.579 (DOE de 19/10/2026)', () => {
+    const since = (cest: string) => ce.find((r) => r.items.some((i) => i.cest === cest))?.validFrom;
+    expect(since('2500100')).toBe('2018-01-01');
+    expect(since('2600100')).toBe('2018-01-01');
+    expect(since('2600101')).toBe('2026-10-19');
+    expect(stReferencesFor('CE', '87032100', '2026-10-22').map((m) => m.mva)).toEqual(['30']);
+  });
+
+  it('o resto da ST do Ceará não vira sugestão (carga líquida por CNAE, MVA só por segmento)', () => {
+    // Medicamentos (Decreto 36.617/2025, carga líquida) e lâmpadas (IN 43/2017, sem CEST).
+    expect(stReferencesFor('CE', '30049099', '2026-10-22')).toEqual([]);
+    expect(stReferencesFor('CE', '85395200', '2026-10-22')).toEqual([]);
+  });
+});
+
 describe('Mato Grosso: Portaria 195/2019-SEFAZ/MT (F3-26.d.MT)', () => {
   const mt = ST_REFERENCES.filter((r) => r.uf === 'MT');
   const linesOf = (cest: string) => mt.flatMap((r) => r.items).filter((i) => i.cest === cest);

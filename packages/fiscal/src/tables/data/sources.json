@@ -685,6 +685,15 @@
   "downloadedAt": "2026-10-17",
   "sha256": "1ffddf618ba31c69e608a16e105a2771cdf53f37ab495f0219a77c84ab0b118a"
  },
+ "stCeRicms97": {
+  "file": "SEFAZ-CE_RICMS_Decreto_24569-1997_consolidado_v60_2026-10-20.pdf",
+  "title": "RICMS/CE (Decreto 24.569/1997), texto consolidado do SefazLegis (versão 60.0, alterado até o Decreto 35.579 do DOE de 19/10/2026): Livro Terceiro, Seção XXVI, veículos novos em ST com CEST (art. 561) e MVA-ST original (art. 562, §§ 3º e 4º)",
+  "publisher": "Secretaria da Fazenda do Estado do Ceará (SefazLegis)",
+  "page": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=dcde66a4-5d46-4f71-80a9-b57997bbd22d",
+  "publishedAt": "2026-10-20",
+  "downloadedAt": "2026-10-22",
+  "sha256": "8230578c4d97d82ac2c00ba5452b372b70c245b14d1c8f33d9eed7c57b05958e"
+ },
  "cbenefPr": {
   "file": "SEFA-PR_Tabela_cBenef_por_CST_V27_2026-07-17.pdf",
   "title": "Tabela de Códigos de Benefício Fiscal por CST - Paraná (versão 27, atualizada em 17/07/2026)",

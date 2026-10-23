@@ -1,5 +1,11 @@
 # Changelog
 
+## [F3-26.d.CE Substituição tributária do Ceará] — 22/10/2026
+
+### Adicionado
+- **MVA oficial do Ceará para veículos novos.** A regra de ICMS sugere a MVA-ST original dos 31 CEST de veículos do RICMS/CE (arts. 561 e 562 do Decreto 24.569/1997): 30% nos automóveis e 34% nas motos. O texto vem do SefazLegis, consolidado até 19/10/2026, e a moto do CEST 26.001.01 vale desde essa data. O monitor semanal confere o texto.
+- O resto da ST do Ceará aparece como "falta configurar". Lá a MVA é publicada só por segmento, sem CEST (IN 43/2017), e vários setores usam carga líquida pela CNAE do comprador. Esse caso fica para a F3-26.d.CE.b.
+
 ## [F4-14.b.5 Inventário no arquivo do SPED] — 22/10/2026
 
 ### Adicionado

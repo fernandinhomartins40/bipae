@@ -57984,6 +57984,119 @@
    ]
   },
   {
+   "uf": "CE",
+   "act": "RICMS/CE (Decreto 24.569/1997), Livro Terceiro, Seção XXVI (texto consolidado do SefazLegis)",
+   "source": "stCeRicms97",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=dcde66a4-5d46-4f71-80a9-b57997bbd22d",
+   "annexes": [
+    {
+     "annex": "25",
+     "name": "Veículos automotores",
+     "cests": [
+      {
+       "cest": "2500100"
+      },
+      {
+       "cest": "2500200"
+      },
+      {
+       "cest": "2500300"
+      },
+      {
+       "cest": "2500400"
+      },
+      {
+       "cest": "2500500"
+      },
+      {
+       "cest": "2500600"
+      },
+      {
+       "cest": "2500700"
+      },
+      {
+       "cest": "2500800"
+      },
+      {
+       "cest": "2500900"
+      },
+      {
+       "cest": "2501000"
+      },
+      {
+       "cest": "2501100"
+      },
+      {
+       "cest": "2501200"
+      },
+      {
+       "cest": "2501300"
+      },
+      {
+       "cest": "2501400"
+      },
+      {
+       "cest": "2501500"
+      },
+      {
+       "cest": "2501600"
+      },
+      {
+       "cest": "2501700"
+      },
+      {
+       "cest": "2501800"
+      },
+      {
+       "cest": "2501900"
+      },
+      {
+       "cest": "2502000"
+      },
+      {
+       "cest": "2502100"
+      },
+      {
+       "cest": "2502200"
+      },
+      {
+       "cest": "2502300"
+      },
+      {
+       "cest": "2502400"
+      },
+      {
+       "cest": "2502500"
+      },
+      {
+       "cest": "2502600"
+      },
+      {
+       "cest": "2502700"
+      },
+      {
+       "cest": "2502800"
+      },
+      {
+       "cest": "2502900"
+      }
+     ]
+    },
+    {
+     "annex": "26",
+     "name": "Veículos de duas e três rodas motorizados",
+     "cests": [
+      {
+       "cest": "2600100"
+      },
+      {
+       "cest": "2600101"
+      }
+     ]
+    }
+   ]
+  },
+  {
    "uf": "PA",
    "act": "Portal Nacional da Substituição Tributária (CONFAZ), planilha de PA",
    "source": "stConfazPa",
@@ -157051,6 +157164,355 @@
      "item": "64.0/1",
      "description": "Artigos infantis — destinatário optante pelo crédito outorgado (Anexo Único)",
      "mva": "47,17"
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "act": "RICMS/CE (Decreto 24.569/1997), Livro Terceiro, Seção XXVI (arts. 561 e 562)",
+   "source": "stCeRicms97",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=dcde66a4-5d46-4f71-80a9-b57997bbd22d",
+   "validTo": null,
+   "note": "MVA-ST original dos veículos novos (art. 562, §§ 3º e 4º). A base é o preço de venda da tabela do fabricante ou importador; a MVA só vale na falta dela. Na entrada de outra UF, usar as MVAs ajustadas do art. 562, § 1º. A retenção só se faz para o contribuinte que optou pela ST, exceto no ativo permanente (art. 561, § 1º); faturamento direto ao consumidor segue o Convênio ICMS 51/00. Vale a redação atual.",
+   "segment": "25",
+   "segmentName": "Veículos automotores",
+   "validFrom": "2018-01-01",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2500100",
+     "ncms": [
+      "87021000"
+     ],
+     "ncmText": "87021000",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, unicamente com motor de pistão, de ignição por compressão (diesel ou semidiesel), com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "2.0",
+     "cest": "2500200",
+     "ncms": [
+      "87024090"
+     ],
+     "ncmText": "87024090",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, unicamente com motor elétrico para propulsão, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "3.0",
+     "cest": "2500300",
+     "ncms": [
+      "87032100"
+     ],
+     "ncmText": "87032100",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada não superior a 1000 cm³",
+     "mva": "30"
+    },
+    {
+     "item": "4.0",
+     "cest": "2500400",
+     "ncms": [
+      "87032210"
+     ],
+     "ncmText": "87032210",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1000 cm³, mas não superior a 1500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular",
+     "mva": "30"
+    },
+    {
+     "item": "5.0",
+     "cest": "2500500",
+     "ncms": [
+      "87032290"
+     ],
+     "ncmText": "87032290",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1000 cm³, mas não superior a 1500 cm³, exceto carro celular",
+     "mva": "30"
+    },
+    {
+     "item": "6.0",
+     "cest": "2500600",
+     "ncms": [
+      "87032310"
+     ],
+     "ncmText": "87032310",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1500 cm³, mas não superior a 3000 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "7.0",
+     "cest": "2500700",
+     "ncms": [
+      "87032390"
+     ],
+     "ncmText": "87032390",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 1500 cm³, mas não superior a 3000 cm³, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "8.0",
+     "cest": "2500800",
+     "ncms": [
+      "87032410"
+     ],
+     "ncmText": "87032410",
+     "description": "Automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 3000 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "9.0",
+     "cest": "2500900",
+     "ncms": [
+      "87032490"
+     ],
+     "ncmText": "87032490",
+     "description": "Outros automóveis unicamente com motor de pistão alternativo de ignição por centelha (faísca*), de cilindrada superior a 3000 cm³, exceto carro celular, carro funerário e automóveis de corrida",
+     "mva": "30"
+    },
+    {
+     "item": "10.0",
+     "cest": "2501000",
+     "ncms": [
+      "87033210"
+     ],
+     "ncmText": "87033210",
+     "description": "Automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 1500 cm³, mas não superior a 2500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto ambulância, carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "11.0",
+     "cest": "2501100",
+     "ncms": [
+      "87033290"
+     ],
+     "ncmText": "87033290",
+     "description": "Outros automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 1500 cm³, mas não superior a 2500 cm³, exceto ambulância, carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "12.0",
+     "cest": "2501200",
+     "ncms": [
+      "87033310"
+     ],
+     "ncmText": "87033310",
+     "description": "Automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 2500 cm³, com capacidade de transporte de pessoas sentadas inferior ou igual a 6, incluído o condutor, exceto carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "13.0",
+     "cest": "2501300",
+     "ncms": [
+      "87033390"
+     ],
+     "ncmText": "87033390",
+     "description": "Outros automóveis unicamente com motor diesel ou semidiesel, de cilindrada superior a 2500 cm³, exceto carro celular e carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "14.0",
+     "cest": "2501400",
+     "ncms": [
+      "87042110"
+     ],
+     "ncmText": "87042110",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, chassis com motor diesel ou semidiesel e cabina, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "15.0",
+     "cest": "2501500",
+     "ncms": [
+      "87042120"
+     ],
+     "ncmText": "87042120",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor diesel ou semidiesel, com caixa basculante, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "16.0",
+     "cest": "2501600",
+     "ncms": [
+      "87042130"
+     ],
+     "ncmText": "87042130",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, frigoríficos ou isotérmicos, com motor diesel ou semidiesel, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "17.0",
+     "cest": "2501700",
+     "ncms": [
+      "87042190"
+     ],
+     "ncmText": "87042190",
+     "description": "Outros veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor diesel ou semidiesel, exceto carro-forte para transporte de valores e caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "18.0",
+     "cest": "2501800",
+     "ncms": [
+      "87043110"
+     ],
+     "ncmText": "87043110",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor a explosão, chassis e cabina, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "19.0",
+     "cest": "2501900",
+     "ncms": [
+      "87043120"
+     ],
+     "ncmText": "87043120",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor explosão com caixa basculante, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "20.0",
+     "cest": "2502000",
+     "ncms": [
+      "87043130"
+     ],
+     "ncmText": "87043130",
+     "description": "Veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, frigoríficos ou isotérmicos com motor explosão, exceto caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "21.0",
+     "cest": "2502100",
+     "ncms": [
+      "87043190"
+     ],
+     "ncmText": "87043190",
+     "description": "Outros veículos automóveis para transporte de mercadorias, de peso em carga máxima não superior a 5 toneladas, com motor a explosão, exceto carro-forte para transporte de valores e caminhão de peso em carga máxima superior a 3,9 toneladas",
+     "mva": "30"
+    },
+    {
+     "item": "22.0",
+     "cest": "2502200",
+     "ncms": [
+      "87022000"
+     ],
+     "ncmText": "87022000",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com motor de pistão, de ignição por compressão (diesel ou semidiesel) e um motor elétrico, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "23.0",
+     "cest": "2502300",
+     "ncms": [
+      "87023000"
+     ],
+     "ncmText": "87023000",
+     "description": "Veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com motor de pistão alternativo, de ignição por centelha (faísca) e um motor elétrico, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "24.0",
+     "cest": "2502400",
+     "ncms": [
+      "87029000"
+     ],
+     "ncmText": "87029000",
+     "description": "Outros veículos automóveis para transporte de 10 pessoas ou mais, incluindo o motorista, com volume interno de habitáculo, destinado a passageiros e motorista, superior a 6 m³, mas inferior a 9 m³",
+     "mva": "30"
+    },
+    {
+     "item": "25.0",
+     "cest": "2502500",
+     "ncms": [
+      "87034000"
+     ],
+     "ncmText": "87034000",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão alternativo de ignição por centelha (faísca*) e um motor elétrico, exceto os suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "26.0",
+     "cest": "2502600",
+     "ncms": [
+      "87035000"
+     ],
+     "ncmText": "87035000",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão por compressão (diesel ou semidiesel) e um motor elétrico, exceto os suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "27.0",
+     "cest": "2502700",
+     "ncms": [
+      "87036000"
+     ],
+     "ncmText": "87036000",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão alternativo de ignição por centelha (faísca*) e um motor elétrico, suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "28.0",
+     "cest": "2502800",
+     "ncms": [
+      "87037000"
+     ],
+     "ncmText": "87037000",
+     "description": "Automóveis equipados para propulsão, simultaneamente, com um motor de pistão por compressão (diesel ou semidiesel) e um motor elétrico, suscetíveis de serem carregados por conexão a uma fonte externa de energia elétrica, exceto o carro celular e o carro funerário",
+     "mva": "30"
+    },
+    {
+     "item": "29.0",
+     "cest": "2502900",
+     "ncms": [
+      "87038000"
+     ],
+     "ncmText": "87038000",
+     "description": "Outros veículos, equipados unicamente com motor elétrico para propulsão",
+     "mva": "30"
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "act": "RICMS/CE (Decreto 24.569/1997), Livro Terceiro, Seção XXVI (arts. 561 e 562)",
+   "source": "stCeRicms97",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=dcde66a4-5d46-4f71-80a9-b57997bbd22d",
+   "validTo": null,
+   "note": "MVA-ST original dos veículos novos (art. 562, §§ 3º e 4º). A base é o preço de venda da tabela do fabricante ou importador; a MVA só vale na falta dela. Na entrada de outra UF, usar as MVAs ajustadas do art. 562, § 1º. A retenção só se faz para o contribuinte que optou pela ST, exceto no ativo permanente (art. 561, § 1º); faturamento direto ao consumidor segue o Convênio ICMS 51/00. Vale a redação atual.",
+   "segment": "26",
+   "segmentName": "Veículos de duas e três rodas motorizados",
+   "validFrom": "2018-01-01",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2600100",
+     "ncms": [
+      "8711"
+     ],
+     "ncmText": "8711",
+     "description": "Motocicletas (incluídos os ciclomotores) e outros ciclos equipados com motor auxiliar, mesmo com carro lateral, exceto os classificados no CEST 26.001.01; carros laterais.",
+     "mva": "34"
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "act": "RICMS/CE (Decreto 24.569/1997), Livro Terceiro, Seção XXVI (arts. 561 e 562)",
+   "source": "stCeRicms97",
+   "url": "https://sefazlegis.sefaz.ce.gov.br/api/openFile?id=dcde66a4-5d46-4f71-80a9-b57997bbd22d",
+   "validTo": null,
+   "note": "MVA-ST original dos veículos novos (art. 562, §§ 3º e 4º). A base é o preço de venda da tabela do fabricante ou importador; a MVA só vale na falta dela. Na entrada de outra UF, usar as MVAs ajustadas do art. 562, § 1º. A retenção só se faz para o contribuinte que optou pela ST, exceto no ativo permanente (art. 561, § 1º); faturamento direto ao consumidor segue o Convênio ICMS 51/00. Vale a redação atual.",
+   "segment": "26",
+   "segmentName": "Veículos de duas e três rodas motorizados",
+   "validFrom": "2026-10-19",
+   "items": [
+    {
+     "item": "1.1",
+     "cest": "2600101",
+     "ncms": [
+      "8711"
+     ],
+     "ncmText": "8711",
+     "description": "Bicicletas e outros ciclos (incluídos os triciclos) com propulsão de motor elétrico auxiliar assistido pela força humana.",
+     "mva": "34"
     }
    ]
   },
