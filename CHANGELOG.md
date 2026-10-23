@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.d.MA.b ST do Maranhão: demais anexos] — 23/10/2026
+
+### Adicionado
+- **Mais seis anexos de ST do Maranhão na regra de ICMS** (97 linhas novas, 521 no total do MA): açúcar de cana (20%), cimento (20%), lâminas e aparelhos de barbear (30%), venda porta a porta (50%, só para o remetente credenciado), acumuladores (40%) e rações "pet" (46%). Esses anexos não têm tabela de CEST: o CEST vem do Convênio ICMS 142/18 só quando a correspondência com a NCM do anexo é clara; o acumulador 8507.30.11 aparece com "CEST não confirmado".
+- Pilhas (desde 01/07/2017) e isqueiros saíram da ST no MA (RA 06/2017) e não aparecem mais.
+- O monitor semanal confere também esses seis arquivos no portal da SEFAZ-MA.
+- Carnes (carga fixa), combustíveis (PMPF) e nafta (MVA por fórmula) ficam como "falta configurar" (dúvida D-045). A lista do que está e do que saiu da ST no MA ficou para a F3-26.d.MA.c, porque ainda não dá para fazê-la completa e comprovada.
+
 ## [F8-15 Caixa redesenhado] — 23/10/2026
 
 ### Adicionado

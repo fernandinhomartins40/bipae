@@ -13,6 +13,11 @@
 // - 4.2 (bebidas frias): só a MVA por descrição e embalagem, sem NCM por linha e sem CEST. A linha
 //   vira CEST do Convênio ICMS 142/2018 só quando a correspondência é clara (a mesma MVA vale para
 //   todas as embalagens do produto); senão fica sem CEST ("não confirmado").
+// - Anexos só com texto, sem tabela de CEST (F3-26.d.MA.b): 4.1 açúcar de cana (sem NCM; CEST do
+//   açúcar no Convênio), 4.6 cimento, 4.12 lâminas e aparelhos de barbear, 4.15 acumuladores e
+//   4.28 rações "pet", com a NCM no artigo ou no adendo; 4.14 venda porta a porta, que remete ao
+//   Anexo XXVI do Convênio ICMS 142/2018. A linha vira CEST quando todas as NCM de um CEST do
+//   segmento estão na lista do anexo (correspondência clara); a NCM que sobra fica sem CEST.
 //
 // Nos textos consolidados a redação anterior aparece junto da nova ("(NR – RA 38/22)"): quando o
 // mesmo CEST aparece mais de uma vez na tabela, vale a última redação, que reproduz o item do
@@ -49,14 +54,20 @@ export async function maPortalLogin(get, post) {
 
 /** Anexos lidos e a chave de cada PDF no sources/manifest.json. */
 export const MA_ANNEX_SOURCES = [
+  { annex: '4.1', key: 'stMaAnexo4_1' },
   { annex: '4.2', key: 'stMaAnexo4_2' },
   { annex: '4.5', key: 'stMaAnexo4_5' },
+  { annex: '4.6', key: 'stMaAnexo4_6' },
+  { annex: '4.12', key: 'stMaAnexo4_12' },
   { annex: '4.13', key: 'stMaAnexo4_13' },
+  { annex: '4.14', key: 'stMaAnexo4_14' },
+  { annex: '4.15', key: 'stMaAnexo4_15' },
   { annex: '4.16', key: 'stMaAnexo4_16' },
   { annex: '4.17', key: 'stMaAnexo4_17' },
   { annex: '4.19', key: 'stMaAnexo4_19' },
   { annex: '4.21', key: 'stMaAnexo4_21' },
   { annex: '4.22', key: 'stMaAnexo4_22' },
+  { annex: '4.28', key: 'stMaAnexo4_28' },
   { annex: '4.33', key: 'stMaAnexo4_33' },
   { annex: '4.38', key: 'stMaAnexo4_38' },
   { annex: '4.41', key: 'stMaAnexo4_41' },
@@ -94,10 +105,23 @@ const ACT_DATES = new Map([
   ['Dec 20.407/04', '2004-04-07'],
   // Decreto 20.914, de 25/11/2004 (bebidas frias: art. 4º-A)
   ['Dec 20.914/04', '2004-11-25'],
+  // Decreto 23.237, DOE de 27/07/2007, em vigor na publicação (açúcar: MVA de 20%)
+  ['Dec 23.237/07', '2007-07-27'],
+  // RA 50/2013 e RA 52/2013, DOE de 25/09/2013, em vigor na publicação (lâminas; pilhas)
+  ['RA 50/13', '2013-09-25'],
+  ['RA 52/13', '2013-09-25'],
+  // RA 11/2014, DOE de 04/04/2014: efeitos do § 1º do art. 4º (MVA do cimento) em 1º/04/2014
+  ['RA 11/14', '2014-04-01'],
+  // RA 06/2017, DOE de 27/06/2017: exclui pilhas e isqueiros da ST a partir de 1º/07/2017
+  ['RA 06/17', '2017-07-01'],
+  // RA 38/2020, art. 3º: efeitos a partir de 1º/01/2021 (cimento, lâminas, rações)
+  ['RA 38/20', '2021-01-01'],
   // RA 39/2020, art. 4º: efeitos a partir de 1º/01/2021 (bebidas quentes)
   ['RA 39/20', '2021-01-01'],
   // RA 12/2021 (DOE de 09/04/2021), retroagindo a 1º/01/2021 (tintas)
   ['RA 12/21', '2021-01-01'],
+  // RA 08/2022, art. 2º: em vigor em 1º/03/2022 (nova redação da venda porta a porta)
+  ['RA 08/22', '2022-03-01'],
   // RA 09/2022: em vigor em 1º/03/2022 (motos)
   ['RA 09/22', '2022-03-01'],
   // RA 38/2022, DOE de 26/05/2022, em vigor na publicação (lâmpadas, farmacêuticos, tintas, celulares)
@@ -108,7 +132,17 @@ const ACT_DATES = new Map([
   ['RA 01/23', '2023-02-01'],
   // RA 32/2023, DOE de 18/07/2023, em vigor na publicação (sorvetes)
   ['RA 32/23', '2023-07-18'],
+  // RA 19/2024, DOE de 27/08/2024, em vigor na publicação (venda porta a porta: MVA só com
+  // credenciamento)
+  ['RA 19/24', '2024-08-27'],
 ]);
+
+/**
+ * RA 06/2017, art. 1º, II: as pilhas e baterias de pilha da posição 8506 saíram da ST em
+ * 1º/07/2017. O Anexo 4.15 consolidado ainda lista a posição no art. 1º e só remete à RA ("Ver
+ * alteração, conforme RA 06/17"); o leitor confere que a remissão continua lá.
+ */
+const MA_415_EXCLUDED = ['8506'];
 
 const MONTHS = [
   'janeiro',
@@ -591,6 +625,211 @@ function parseBebidasFrias(lines, cests) {
   return { annex: '4.2', validFrom, unknownActs, doubts: [], items, unconfirmed };
 }
 
+/** A última ocorrência no texto do anexo: a redação em vigor vem depois da anterior. */
+function lastOf(annex, text, re, what) {
+  const all = [...text.matchAll(re)];
+  if (all.length === 0) throw new Error(`RICMS/MA, Anexo ${annex}: não achei ${what}`);
+  return all.at(-1);
+}
+
+/**
+ * Linhas de um anexo com a NCM no texto e sem CEST. Vira CEST o item do Convênio ICMS 142/2018, no
+ * segmento do anexo, cujas NCM estão todas na lista do anexo (correspondência clara); a NCM do anexo
+ * que nenhum CEST cobre fica numa linha sem CEST ("não confirmado").
+ * @param rows linhas do anexo ({ item, ncm, description }), NCM só com dígitos
+ */
+function itemsByNcm(rows, cests, segment, mva) {
+  const codes = new Set(rows.map((r) => r.ncm));
+  const matched = cests.filter(
+    (c) => c.segment === segment && c.ncm.length > 0 && c.ncm.every((n) => codes.has(n)),
+  );
+  const covered = new Set(matched.flatMap((c) => c.ncm));
+  const loose = rows.filter((r) => !covered.has(r.ncm));
+  return {
+    unconfirmed: loose.length,
+    items: [
+      ...matched.map((c) => ({
+        item: c.item,
+        cest: c.cest,
+        ncms: c.ncm,
+        description: c.description,
+        mva,
+      })),
+      ...loose.map((r) => ({
+        item: r.item,
+        cest: '',
+        ncms: [r.ncm],
+        description: r.description,
+        mva,
+      })),
+    ],
+  };
+}
+
+/** Vigência e itens de um anexo só com texto. */
+function textAnnex(annex, lines, text, { items, unconfirmed = 0 }) {
+  const { validFrom, unknownActs } = validFromOf(headerOf(lines), text);
+  return { annex, validFrom, unknownActs, doubts: [], items, unconfirmed };
+}
+
+/**
+ * Anexo 4.1: açúcar de cana (Protocolos ICMS 33/91 e 41/91). O anexo não traz NCM: valem os CEST do
+ * açúcar no Convênio ICMS 142/2018 (refinado, cristal e outros tipos, com ou sem aromatizante ou
+ * corante, em qualquer embalagem), todos com a mesma MVA. "Outros açúcares" (posição 1702) não é
+ * açúcar de cana e fica de fora.
+ */
+function parseAcucar(lines, cests) {
+  const text = clean(lines.join(' '));
+  if (!/açúcar-de-cana/i.test(text))
+    throw new Error('RICMS/MA, Anexo 4.1: não é o anexo do açúcar');
+  const mva = percent(
+    lastOf('4.1', text, /acrescido do percentual de (\d+(?:,\d+)?)\s?%/g, 'a MVA do art. 3º')[1],
+  );
+  const items = cests
+    .filter(
+      (c) =>
+        c.segment === '17' &&
+        /^(Açúcar (refinado|cristal)|Outros tipos de açúcar)/.test(c.description),
+    )
+    .map((c) => ({ item: c.item, cest: c.cest, ncms: c.ncm, description: c.description, mva }));
+  return textAnnex('4.1', lines, text, { items });
+}
+
+/** Anexo 4.6: cimento da posição 2523 (Protocolo ICMS 11/85), MVA do inciso II do § 1º do art. 4º. */
+function parseCimento(lines, cests) {
+  const text = clean(lines.join(' '));
+  const ncm = lastOf(
+    '4.6',
+    text,
+    /cimento de qualquer espécie,\s*classificado na posição (\d{4})/g,
+    'a posição do cimento',
+  )[1];
+  const mva = percent(
+    lastOf(
+      '4.6',
+      text,
+      /II - de (\d+(?:,\d+)?)%\s*\([^)]*\),\s*nas operações destinadas aos demais Estados/g,
+      'a MVA do § 1º do art. 4º',
+    )[1],
+  );
+  const rows = [{ item: '1', ncm, description: 'Cimento de qualquer espécie' }];
+  return textAnnex('4.6', lines, text, itemsByNcm(rows, cests, '05', mva));
+}
+
+/**
+ * Anexo 4.12: lâminas e aparelhos de barbear (Protocolo ICMS 16/85), pela última tabela do anexo; o
+ * item que a própria tabela diz "Excluído" (isqueiros, RA 06/2017) sai.
+ */
+function parseLaminas(lines, cests) {
+  const text = clean(lines.join(' '));
+  const start = lines.findLastIndex((l) => /^TABELA$/i.test(l.trim()));
+  if (start < 0) throw new Error('RICMS/MA, Anexo 4.12: não achei a tabela');
+  const table = lines.slice(start + 1);
+  const excluded = new Set(
+    [...table.join(' ').matchAll(/Excluído o item ([IVX]+)/gi)].map((m) => m[1]),
+  );
+  const rows = [];
+  for (const line of table) {
+    const m = /^([IVX]+)\s+(.+?)\s+(\d{4}\.\d{2}\.\d{2})$/.exec(line.trim());
+    if (m && !excluded.has(m[1])) {
+      rows.push({ item: m[1], ncm: ncmCode(m[3]), description: sentence(m[2]) });
+    }
+  }
+  if (rows.length === 0) throw new Error('RICMS/MA, Anexo 4.12: tabela sem itens');
+  const mva = percent(
+    lastOf(
+      '4.12',
+      text,
+      /MVA - ST original é de (\d+(?:,\d+)?)\s?%/g,
+      'a MVA do § 2º do art. 3º',
+    )[1],
+  );
+  return textAnnex('4.12', lines, text, itemsByNcm(rows, cests, '20', mva));
+}
+
+/**
+ * Anexo 4.14: venda porta a porta (Convênio ICMS 45/99). Desde a RA 08/2022 vale para as mercadorias
+ * do Anexo XXVI do Convênio ICMS 142/2018 (segmento 28), com o CEST desse anexo mesmo que o produto
+ * esteja em outro segmento. O item 999.0 ("outros produtos") não tem NCM e fica de fora.
+ */
+function parsePortaAPorta(lines, cests) {
+  const text = clean(lines.join(' '));
+  if (!/relacionadas no Anexo XXVI do Convênio ICMS nº 142/.test(text)) {
+    throw new Error('RICMS/MA, Anexo 4.14: o art. 1º não remete mais ao Anexo XXVI do Convênio');
+  }
+  const mva = percent(
+    lastOf(
+      '4.14',
+      text,
+      /MVA-ST original[”"]? é a margem de valor agregado para operação interna,?\s*no\s+percentual de (\d+(?:,\d+)?)\s?%/g,
+      'a MVA do § 1º do art. 3º',
+    )[1],
+  );
+  const items = cests
+    .filter((c) => c.segment === '28' && c.ncm.length > 0)
+    .map((c) => ({ item: c.item, cest: c.cest, ncms: c.ncm, description: c.description, mva }));
+  return textAnnex('4.14', lines, text, { items });
+}
+
+/**
+ * Anexo 4.15: pilhas, baterias e acumuladores (Protocolo ICMS 18/85), pela redação em vigor do art.
+ * 1º, menos a posição 8506, que saiu da ST pela RA 06/2017.
+ */
+function parsePilhas(lines, cests) {
+  const text = clean(lines.join(' '));
+  if (!/RA\s*06\/17/.test(text)) {
+    throw new Error(
+      'RICMS/MA, Anexo 4.15: o anexo não remete mais à RA 06/17 (exclusão das pilhas)',
+    );
+  }
+  const m = lastOf(
+    '4.15',
+    text,
+    /pilhas e baterias de pilha,\s*elétricas,\s*classificadas na posição (\d{4}),\s*acumuladores elétricos,\s*classificados nas posições ([\d.]+) e ([\d.]+)/g,
+    'as posições do art. 1º',
+  );
+  const rows = [
+    { item: m[1], ncm: ncmCode(m[1]), description: 'Pilhas e baterias de pilha, elétricas' },
+    ...[m[2], m[3]].map((code) => ({
+      item: code,
+      ncm: ncmCode(code),
+      description: `Acumuladores elétricos da posição ${code} da NCM`,
+    })),
+  ].filter((r) => !MA_415_EXCLUDED.includes(r.ncm));
+  const mva = percent(
+    lastOf('4.15', text, /MVA-ST original é de (\d+(?:,\d+)?)\s?%/g, 'a MVA do § 2º do art. 3º')[1],
+  );
+  return textAnnex('4.15', lines, text, itemsByNcm(rows, cests, '21', mva));
+}
+
+/** Anexo 4.28: rações tipo "pet" da posição 2309 (Protocolo ICMS 26/04). */
+function parseRacoes(lines, cests) {
+  const text = clean(lines.join(' '));
+  const ncm = lastOf(
+    '4.28',
+    text,
+    /rações do tipo [“"]pet[”"] para animais domésticos,\s*classificadas na Posição (\d{4})/g,
+    'a posição das rações',
+  )[1];
+  const mva = percent(
+    lastOf('4.28', text, /MVA ST original é (\d+(?:,\d+)?)\s?%/g, 'a MVA do § 2º do art. 2º')[1],
+  );
+  const rows = [{ item: '1', ncm, description: 'Rações tipo "pet" para animais domésticos' }];
+  return textAnnex('4.28', lines, text, itemsByNcm(rows, cests, '22', mva));
+}
+
+/** Leitores dos anexos que não têm a tabela de CEST no formato comum. */
+const READERS = new Map([
+  ['4.1', parseAcucar],
+  ['4.2', parseBebidasFrias],
+  ['4.6', parseCimento],
+  ['4.12', parseLaminas],
+  ['4.14', parsePortaAPorta],
+  ['4.15', parsePilhas],
+  ['4.28', parseRacoes],
+  ['4.41', parseAutopecas],
+]);
+
 /**
  * Lê um anexo do RICMS/MA.
  * @param annex número do anexo ("4.2")
@@ -600,8 +839,7 @@ function parseBebidasFrias(lines, cests) {
 export function parseMaAnnex(annex, lines, cests) {
   const cestByCode = new Map(cests.map((c) => [c.cest, c]));
   let parsed;
-  if (annex === '4.2') parsed = parseBebidasFrias(lines, cests);
-  else if (annex === '4.41') parsed = parseAutopecas(lines, cests);
+  if (READERS.has(annex)) parsed = READERS.get(annex)(lines, cests);
   else if (annex === '4.45') parsed = parseSorvetes(lines, cestByCode);
   else parsed = parseTableAnnex(annex, lines, cestByCode);
   if (parsed.items.length === 0) throw new Error(`RICMS/MA, Anexo ${annex}: nenhum item`);
@@ -616,6 +854,12 @@ export function parseMaAnnex(annex, lines, cests) {
 
 /** Observação de cada anexo (de onde vem a base antes da MVA). */
 const NOTES = {
+  4.1: 'Açúcar de cana (Protocolo ICMS 33/91); o de beterraba (NCM 1701.12) não entra. Base: preço máximo de venda a varejo fixado pela autoridade; sem ele, valor da operação mais a MVA (art. 3º, parágrafo único). O anexo não traz NCM nem CEST: os CEST são os do açúcar refinado, cristal e outros tipos no Convênio ICMS 142/18.',
+  4.6: 'Base: preço máximo de venda a varejo fixado pela autoridade federal; sem ele, preço praticado mais a MVA (ajustada na entrada interestadual). O anexo não traz CEST: a posição 2523 é o CEST 05.001.00.',
+  4.12: 'Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual). Os isqueiros saíram da ST em 01/07/2017 (RA 06/2017).',
+  4.14: 'Venda porta a porta, marketing multinível ou em banca de jornal (Anexo XXVI do Convênio ICMS 142/18), com o CEST desse anexo mesmo que o produto esteja em outro segmento. Base: PMPF ou preço do catálogo ou lista do remetente; a MVA (ajustada na entrada interestadual) só vale para o remetente credenciado (§ 1º do art. 3º, RA 19/2024). O item 28.999.00 ("outros produtos") não tem NCM no Convênio e fica de fora.',
+  4.15: 'Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual). As pilhas e baterias de pilha (posição 8506) saíram da ST em 01/07/2017 (RA 06/2017); ficam os acumuladores 8507.30.11 e 8507.80.00. O 8507.30.11 não tem CEST próprio no Convênio ICMS 142/18 fora das autopeças: "CEST não confirmado".',
+  4.28: 'Rações tipo "pet" para animais domésticos (posição 2309, CEST 22.001.00). Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual).',
   4.2: 'Base: preço máximo de venda a varejo fixado pela autoridade; sem ele, preço praticado mais a MVA do art. 4º (§ 1º para o distribuidor, depósito ou atacadista; § 2º para o industrial, importador, arrematante ou engarrafador). A Receita Estadual pode fixar a média ponderada de preços a consumidor (art. 4º-A). As linhas sem CEST têm a MVA por capacidade ou embalagem, que o CEST não separa: confira a embalagem do produto.',
   4.5: 'Base: preço final a consumidor sugerido pelo fabricante ou importador; a MVA de 50% vale para os produtos sem esse preço.',
   4.13: 'Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual).',

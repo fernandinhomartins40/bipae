@@ -771,9 +771,10 @@ async function importStReferences(cest) {
     throw new Error(`Anexo 007 do RICMS/RN: CEST fora do Convênio: ${rnParsed.unknown.join(', ')}`);
   }
   const rn = rnStReferences(rnParsed, { url: manifest.stRnAnexo007.page });
-  // Maranhão (F3-26.d.MA): um anexo 4.x do RICMS/MA por segmento, cada um no seu formato. Só
-  // entram nas referências (sem lista de segmentos): os anexos que ainda não foram lidos não podem
-  // passar por "fora da ST".
+  // Maranhão (F3-26.d.MA e F3-26.d.MA.b): um anexo 4.x do RICMS/MA por segmento, cada um no seu
+  // formato. Só entram nas referências (sem lista de segmentos): carnes (carga fixa), combustíveis
+  // (PMPF) e nafta (MVA por fórmula) não têm MVA para ler, e os anexos revogados não têm CEST, então
+  // a lista do que está e do que saiu da ST não fica completa (F3-26.d.MA.c).
   const maParsed = [];
   for (const { annex, key } of MA_ANNEX_SOURCES) {
     maParsed.push(

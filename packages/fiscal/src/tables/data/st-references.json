@@ -206683,6 +206683,208 @@
   },
   {
    "uf": "MA",
+   "segment": "17",
+   "segmentName": "Produtos alimentícios",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.1",
+   "source": "stMaAnexo4_1",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=274eab95-189c-4dc1-a646-afab27fd3fef",
+   "validFrom": "2007-07-27",
+   "validTo": null,
+   "note": "Açúcar de cana (Protocolo ICMS 33/91); o de beterraba (NCM 1701.12) não entra. Base: preço máximo de venda a varejo fixado pela autoridade; sem ele, valor da operação mais a MVA (art. 3º, parágrafo único). O anexo não traz NCM nem CEST: os CEST são os do açúcar refinado, cristal e outros tipos no Convênio ICMS 142/18.",
+   "items": [
+    {
+     "item": "99.0",
+     "cest": "1709900",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Açúcar refinado, em embalagens de conteúdo inferior ou igual a 2 kg, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "20"
+    },
+    {
+     "item": "99.1",
+     "cest": "1709901",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Açúcar refinado, em embalagens de conteúdo superior a 2 kg e inferior ou igual a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "99.2",
+     "cest": "1709902",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Açúcar refinado, em embalagens de conteúdo superior a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "100.0",
+     "cest": "1710000",
+     "ncms": [
+      "17019100"
+     ],
+     "ncmText": "17019100",
+     "description": "Açúcar refinado adicionado de aromatizante ou de corante em embalagens de conteúdo inferior ou igual a 2 kg, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "20"
+    },
+    {
+     "item": "100.1",
+     "cest": "1710001",
+     "ncms": [
+      "17019100"
+     ],
+     "ncmText": "17019100",
+     "description": "Açúcar refinado adicionado de aromatizante ou de corante em embalagens de conteúdo superior a 2 kg e inferior ou igual a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "100.2",
+     "cest": "1710002",
+     "ncms": [
+      "17019100"
+     ],
+     "ncmText": "17019100",
+     "description": "Açúcar refinado adicionado de aromatizante ou de corante em embalagens de conteúdo superior a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "101.0",
+     "cest": "1710100",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Açúcar cristal, em embalagens de conteúdo inferior ou igual a 2 kg, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "20"
+    },
+    {
+     "item": "101.1",
+     "cest": "1710101",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Açúcar cristal, em embalagens de conteúdo superior a 2 kg e inferior ou igual a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "101.2",
+     "cest": "1710102",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Açúcar cristal, em embalagens de conteúdo superior a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "102.0",
+     "cest": "1710200",
+     "ncms": [
+      "17019100"
+     ],
+     "ncmText": "17019100",
+     "description": "Açúcar cristal adicionado de aromatizante ou de corante, em embalagens de conteúdo inferior ou igual a 2 kg, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "20"
+    },
+    {
+     "item": "102.1",
+     "cest": "1710201",
+     "ncms": [
+      "17019100"
+     ],
+     "ncmText": "17019100",
+     "description": "Açúcar cristal adicionado de aromatizante ou de corante, em embalagens de conteúdo superior a 2 kg e inferior ou igual a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "102.2",
+     "cest": "1710202",
+     "ncms": [
+      "170191"
+     ],
+     "ncmText": "170191",
+     "description": "Açúcar cristal adicionado de aromatizante ou de corante, em embalagens de conteúdo superior a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "103.0",
+     "cest": "1710300",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Outros tipos de açúcar, em embalagens de conteúdo inferior ou igual a 2 kg, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "20"
+    },
+    {
+     "item": "103.1",
+     "cest": "1710301",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Outros tipos de açúcar, em embalagens de conteúdo superior a 2 kg e inferior ou igual a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "103.2",
+     "cest": "1710302",
+     "ncms": [
+      "17011",
+      "17019900"
+     ],
+     "ncmText": "17011 17019900",
+     "description": "Outros tipos de açúcar, em embalagens de conteúdo superior a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "104.0",
+     "cest": "1710400",
+     "ncms": [
+      "17019100"
+     ],
+     "ncmText": "17019100",
+     "description": "Outros tipos de açúcar adicionado de aromatizante ou de corante, em embalagens de conteúdo inferior ou igual a 2 kg, exceto as embalagens contendo envelopes individualizados (sachês) de conteúdo inferior ou igual a 10 g",
+     "mva": "20"
+    },
+    {
+     "item": "104.1",
+     "cest": "1710401",
+     "ncms": [
+      "17019100"
+     ],
+     "ncmText": "17019100",
+     "description": "Outros tipos de açúcar adicionado de aromatizante ou de corante, em embalagens de conteúdo superior a 2 kg e inferior ou igual a 5 kg",
+     "mva": "20"
+    },
+    {
+     "item": "104.2",
+     "cest": "1710402",
+     "ncms": [
+      "17019100"
+     ],
+     "ncmText": "17019100",
+     "description": "Outros tipos de açúcar adicionado de aromatizante ou de corante, em embalagens de conteúdo superior a 5 kg",
+     "mva": "20"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
    "segment": "03",
    "segmentName": "Cervejas, chopes, refrigerantes, águas e outras bebidas",
    "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.2",
@@ -207149,6 +207351,53 @@
   },
   {
    "uf": "MA",
+   "segment": "05",
+   "segmentName": "Cimentos",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.6",
+   "source": "stMaAnexo4_6",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=f49ea10d-9c54-4322-b450-e99f5e861715",
+   "validFrom": "2021-01-01",
+   "validTo": null,
+   "note": "Base: preço máximo de venda a varejo fixado pela autoridade federal; sem ele, preço praticado mais a MVA (ajustada na entrada interestadual). O anexo não traz CEST: a posição 2523 é o CEST 05.001.00.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "0500100",
+     "ncms": [
+      "2523"
+     ],
+     "ncmText": "2523",
+     "description": "Cimento",
+     "mva": "20"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "20",
+   "segmentName": "Produtos de perfumaria e de higiene pessoal e cosméticos",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.12",
+   "source": "stMaAnexo4_12",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=e554e1bf-c553-4444-9a19-37a94f7d16ca",
+   "validFrom": "2021-01-01",
+   "validTo": null,
+   "note": "Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual). Os isqueiros saíram da ST em 01/07/2017 (RA 06/2017).",
+   "items": [
+    {
+     "item": "64.0",
+     "cest": "2006400",
+     "ncms": [
+      "82121020",
+      "82122010"
+     ],
+     "ncmText": "82121020 82122010",
+     "description": "Aparelhos e lâminas de barbear",
+     "mva": "30"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
    "segment": "09",
    "segmentName": "Lâmpadas, reatores e “starter”",
    "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.13",
@@ -207207,6 +207456,859 @@
      "ncmText": "85395200",
      "description": "Lâmpadas de LED (diodos emissores de luz)",
      "mva": "63.67"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "28",
+   "segmentName": "Venda de mercadorias pelo sistema porta a porta",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.14",
+   "source": "stMaAnexo4_14",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=f346c7b5-97e2-4203-8121-807c11e0f0cf",
+   "validFrom": "2024-08-27",
+   "validTo": null,
+   "note": "Venda porta a porta, marketing multinível ou em banca de jornal (Anexo XXVI do Convênio ICMS 142/18), com o CEST desse anexo mesmo que o produto esteja em outro segmento. Base: PMPF ou preço do catálogo ou lista do remetente; a MVA (ajustada na entrada interestadual) só vale para o remetente credenciado (§ 1º do art. 3º, RA 19/2024). O item 28.999.00 (\"outros produtos\") não tem NCM no Convênio e fica de fora.",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2800100",
+     "ncms": [
+      "33030010"
+     ],
+     "ncmText": "33030010",
+     "description": "Perfumes (extratos)",
+     "mva": "50"
+    },
+    {
+     "item": "2.0",
+     "cest": "2800200",
+     "ncms": [
+      "33030020"
+     ],
+     "ncmText": "33030020",
+     "description": "Águas-de-colônia",
+     "mva": "50"
+    },
+    {
+     "item": "3.0",
+     "cest": "2800300",
+     "ncms": [
+      "33041000"
+     ],
+     "ncmText": "33041000",
+     "description": "Produtos de maquiagem para os lábios",
+     "mva": "50"
+    },
+    {
+     "item": "4.0",
+     "cest": "2800400",
+     "ncms": [
+      "33042010"
+     ],
+     "ncmText": "33042010",
+     "description": "Sombra, delineador, lápis para sobrancelhas e rímel",
+     "mva": "50"
+    },
+    {
+     "item": "5.0",
+     "cest": "2800500",
+     "ncms": [
+      "33042090"
+     ],
+     "ncmText": "33042090",
+     "description": "Outros produtos de maquiagem para os olhos",
+     "mva": "50"
+    },
+    {
+     "item": "6.0",
+     "cest": "2800600",
+     "ncms": [
+      "33043000"
+     ],
+     "ncmText": "33043000",
+     "description": "Preparações para manicuros e pedicuros",
+     "mva": "50"
+    },
+    {
+     "item": "7.0",
+     "cest": "2800700",
+     "ncms": [
+      "33049100"
+     ],
+     "ncmText": "33049100",
+     "description": "Pós para maquiagem, incluindo os compactos",
+     "mva": "50"
+    },
+    {
+     "item": "8.0",
+     "cest": "2800800",
+     "ncms": [
+      "33049910"
+     ],
+     "ncmText": "33049910",
+     "description": "Cremes de beleza, cremes nutritivos e loções tônicas",
+     "mva": "50"
+    },
+    {
+     "item": "9.0",
+     "cest": "2800900",
+     "ncms": [
+      "33049990"
+     ],
+     "ncmText": "33049990",
+     "description": "Outros produtos de beleza ou de maquiagem preparados e preparações para conservação ou cuidados da pele, exceto as preparações antissolares e os bronzeadores",
+     "mva": "50"
+    },
+    {
+     "item": "10.0",
+     "cest": "2801000",
+     "ncms": [
+      "33049990"
+     ],
+     "ncmText": "33049990",
+     "description": "Preparações antissolares e os bronzeadores",
+     "mva": "50"
+    },
+    {
+     "item": "11.0",
+     "cest": "2801100",
+     "ncms": [
+      "33051000"
+     ],
+     "ncmText": "33051000",
+     "description": "Xampus para o cabelo",
+     "mva": "50"
+    },
+    {
+     "item": "12.0",
+     "cest": "2801200",
+     "ncms": [
+      "33052000"
+     ],
+     "ncmText": "33052000",
+     "description": "Preparações para ondulação ou alisamento, permanentes, dos cabelos",
+     "mva": "50"
+    },
+    {
+     "item": "13.0",
+     "cest": "2801300",
+     "ncms": [
+      "33059000"
+     ],
+     "ncmText": "33059000",
+     "description": "Outras preparações capilares",
+     "mva": "50"
+    },
+    {
+     "item": "14.0",
+     "cest": "2801400",
+     "ncms": [
+      "33059000"
+     ],
+     "ncmText": "33059000",
+     "description": "Tintura para o cabelo",
+     "mva": "50"
+    },
+    {
+     "item": "15.0",
+     "cest": "2801500",
+     "ncms": [
+      "33071000"
+     ],
+     "ncmText": "33071000",
+     "description": "Preparações para barbear (antes, durante ou após)",
+     "mva": "50"
+    },
+    {
+     "item": "16.0",
+     "cest": "2801600",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "33072010",
+     "description": "Desodorantes (desodorizantes) corporais líquidos, exceto os classificados no CEST 28.016.01",
+     "mva": "50"
+    },
+    {
+     "item": "16.1",
+     "cest": "2801601",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "33072010",
+     "description": "Loções e óleos desodorantes hidratantes líquidos",
+     "mva": "50"
+    },
+    {
+     "item": "16.2",
+     "cest": "2801602",
+     "ncms": [
+      "33072010"
+     ],
+     "ncmText": "33072010",
+     "description": "Antiperspirantes líquidos",
+     "mva": "50"
+    },
+    {
+     "item": "17.0",
+     "cest": "2801700",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "33072090",
+     "description": "Outros desodorantes (desodorizantes) corporais, exceto os classificados no CEST 28.017.01",
+     "mva": "50"
+    },
+    {
+     "item": "17.1",
+     "cest": "2801701",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "33072090",
+     "description": "Outras loções e óleos desodorantes hidratantes",
+     "mva": "50"
+    },
+    {
+     "item": "17.2",
+     "cest": "2801702",
+     "ncms": [
+      "33072090"
+     ],
+     "ncmText": "33072090",
+     "description": "Outros antiperspirantes",
+     "mva": "50"
+    },
+    {
+     "item": "18.0",
+     "cest": "2801800",
+     "ncms": [
+      "33079000"
+     ],
+     "ncmText": "33079000",
+     "description": "Outros produtos de perfumaria ou de toucador preparados",
+     "mva": "50"
+    },
+    {
+     "item": "19.0",
+     "cest": "2801900",
+     "ncms": [
+      "33079000"
+     ],
+     "ncmText": "33079000",
+     "description": "Outras preparações cosméticas",
+     "mva": "50"
+    },
+    {
+     "item": "20.0",
+     "cest": "2802000",
+     "ncms": [
+      "34011190"
+     ],
+     "ncmText": "34011190",
+     "description": "Sabões de toucador em barras, pedaços ou figuras moldados, exceto CEST 28.020.01",
+     "mva": "50"
+    },
+    {
+     "item": "20.1",
+     "cest": "2802001",
+     "ncms": [
+      "34011190"
+     ],
+     "ncmText": "34011190",
+     "description": "Lenços umedecidos",
+     "mva": "50"
+    },
+    {
+     "item": "21.0",
+     "cest": "2802100",
+     "ncms": [
+      "34011900"
+     ],
+     "ncmText": "34011900",
+     "description": "Outros sabões, produtos e preparações orgânicos tensoativos, inclusive papel, pastas (ouates), feltros e falsos tecidos, impregnados, revestidos ou recobertos de sabão ou de detergentes",
+     "mva": "50"
+    },
+    {
+     "item": "22.0",
+     "cest": "2802200",
+     "ncms": [
+      "34012010"
+     ],
+     "ncmText": "34012010",
+     "description": "Sabões de toucador sob outras formas",
+     "mva": "50"
+    },
+    {
+     "item": "23.0",
+     "cest": "2802300",
+     "ncms": [
+      "34013000"
+     ],
+     "ncmText": "34013000",
+     "description": "Produtos e preparações orgânicos tensoativos para lavagem da pele, em forma de líquido ou de creme, acondicionados para venda a retalho, mesmo contendo sabão",
+     "mva": "50"
+    },
+    {
+     "item": "24.0",
+     "cest": "2802400",
+     "ncms": [
+      "48182000"
+     ],
+     "ncmText": "48182000",
+     "description": "Lenços de papel, incluindo os de desmaquiar",
+     "mva": "50"
+    },
+    {
+     "item": "24.1",
+     "cest": "2802401",
+     "ncms": [
+      "48182000"
+     ],
+     "ncmText": "48182000",
+     "description": "Toalhas de mão",
+     "mva": "50"
+    },
+    {
+     "item": "25.0",
+     "cest": "2802500",
+     "ncms": [
+      "82141000"
+     ],
+     "ncmText": "82141000",
+     "description": "Apontadores de lápis para maquiagem",
+     "mva": "50"
+    },
+    {
+     "item": "25.1",
+     "cest": "2802501",
+     "ncms": [
+      "82141000"
+     ],
+     "ncmText": "82141000",
+     "description": "Espátulas, abre-cartas e raspadeiras",
+     "mva": "50"
+    },
+    {
+     "item": "25.2",
+     "cest": "2802502",
+     "ncms": [
+      "82141000"
+     ],
+     "ncmText": "82141000",
+     "description": "Lâminas de espátulas, de abre-cartas, de raspadeiras e de apontadores de lápis",
+     "mva": "50"
+    },
+    {
+     "item": "26.0",
+     "cest": "2802600",
+     "ncms": [
+      "82142000"
+     ],
+     "ncmText": "82142000",
+     "description": "Utensílios e sortidos de utensílios de manicuros ou de pedicuros (incluindo as limas para unhas)",
+     "mva": "50"
+    },
+    {
+     "item": "27.0",
+     "cest": "2802700",
+     "ncms": [
+      "96032900"
+     ],
+     "ncmText": "96032900",
+     "description": "Escovas e pincéis de barba, escovas para cabelos, para cílios ou para unhas e outras escovas de toucador de pessoas",
+     "mva": "50"
+    },
+    {
+     "item": "27.1",
+     "cest": "2802701",
+     "ncms": [
+      "96032900"
+     ],
+     "ncmText": "96032900",
+     "description": "Vassouras e escovas, mesmo constituindo partes de máquinas, de aparelhos ou de veículos, vassouras mecânicas de uso manual não motorizadas, pincéis e espanadores; cabeças preparadas para escovas, pincéis e artigos semelhantes; bonecas e rolos para pintura; rodos de borracha ou de matérias flexíveis semelhantes, outros",
+     "mva": "50"
+    },
+    {
+     "item": "28.0",
+     "cest": "2802800",
+     "ncms": [
+      "96033000"
+     ],
+     "ncmText": "96033000",
+     "description": "Pincéis para aplicação de produtos cosméticos",
+     "mva": "50"
+    },
+    {
+     "item": "28.1",
+     "cest": "2802801",
+     "ncms": [
+      "96033000"
+     ],
+     "ncmText": "96033000",
+     "description": "Pincéis e escovas, para artistas e pincéis de escrever",
+     "mva": "50"
+    },
+    {
+     "item": "29.0",
+     "cest": "2802900",
+     "ncms": [
+      "96161000"
+     ],
+     "ncmText": "96161000",
+     "description": "Vaporizadores de toucador, suas armações e cabeças de armações",
+     "mva": "50"
+    },
+    {
+     "item": "30.0",
+     "cest": "2803000",
+     "ncms": [
+      "96162000"
+     ],
+     "ncmText": "96162000",
+     "description": "Borlas ou esponjas para pós ou para aplicação de outros cosméticos ou de produtos de toucador",
+     "mva": "50"
+    },
+    {
+     "item": "31.0",
+     "cest": "2803100",
+     "ncms": [
+      "42021"
+     ],
+     "ncmText": "42021",
+     "description": "Malas e maletas de toucador",
+     "mva": "50"
+    },
+    {
+     "item": "32.0",
+     "cest": "2803200",
+     "ncms": [
+      "9615"
+     ],
+     "ncmText": "9615",
+     "description": "Pentes, travessas para cabelo e artigos semelhantes; grampos (alfinetes) para cabelo; pinças (“pinceguiches”), onduladores, bobs (rolos) e artefatos semelhantes para penteados, e suas partes",
+     "mva": "50"
+    },
+    {
+     "item": "33.0",
+     "cest": "2803300",
+     "ncms": [
+      "39233090",
+      "39241000",
+      "39249000",
+      "40149090",
+      "7013"
+     ],
+     "ncmText": "39233090 39241000 39249000 40149090 7013",
+     "description": "Mamadeiras",
+     "mva": "50"
+    },
+    {
+     "item": "34.0",
+     "cest": "2803400",
+     "ncms": [
+      "40149090"
+     ],
+     "ncmText": "40149090",
+     "description": "Chupetas e bicos para mamadeiras e para chupetas",
+     "mva": "50"
+    },
+    {
+     "item": "35.0",
+     "cest": "2803500",
+     "ncms": [
+      "12119090"
+     ],
+     "ncmText": "12119090",
+     "description": "Outras plantas e partes, para perfumaria, medicina e semelhantes",
+     "mva": "50"
+    },
+    {
+     "item": "36.0",
+     "cest": "2803600",
+     "ncms": [
+      "39262000"
+     ],
+     "ncmText": "39262000",
+     "description": "Vestuário e seus acessórios, de plásticos, inclusive luvas",
+     "mva": "50"
+    },
+    {
+     "item": "37.0",
+     "cest": "2803700",
+     "ncms": [
+      "39264000"
+     ],
+     "ncmText": "39264000",
+     "description": "Estatuetas e outros objetos de ornamentação, de plásticos",
+     "mva": "50"
+    },
+    {
+     "item": "38.0",
+     "cest": "2803800",
+     "ncms": [
+      "39269090"
+     ],
+     "ncmText": "39269090",
+     "description": "Outras obras de plásticos",
+     "mva": "50"
+    },
+    {
+     "item": "39.0",
+     "cest": "2803900",
+     "ncms": [
+      "42022210"
+     ],
+     "ncmText": "42022210",
+     "description": "Bolsas de folhas de plástico",
+     "mva": "50"
+    },
+    {
+     "item": "40.0",
+     "cest": "2804000",
+     "ncms": [
+      "42022220"
+     ],
+     "ncmText": "42022220",
+     "description": "Bolsas de matérias têxteis",
+     "mva": "50"
+    },
+    {
+     "item": "41.0",
+     "cest": "2804100",
+     "ncms": [
+      "42022900"
+     ],
+     "ncmText": "42022900",
+     "description": "Bolsas de outras matérias",
+     "mva": "50"
+    },
+    {
+     "item": "42.0",
+     "cest": "2804200",
+     "ncms": [
+      "42023900"
+     ],
+     "ncmText": "42023900",
+     "description": "Artigos de bolsos/bolsas, de outras matérias",
+     "mva": "50"
+    },
+    {
+     "item": "43.0",
+     "cest": "2804300",
+     "ncms": [
+      "42029200"
+     ],
+     "ncmText": "42029200",
+     "description": "Outros artefatos, de folhas de plásticos ou matérias têxteis",
+     "mva": "50"
+    },
+    {
+     "item": "44.0",
+     "cest": "2804400",
+     "ncms": [
+      "42029900"
+     ],
+     "ncmText": "42029900",
+     "description": "Outros artefatos, de outras matérias",
+     "mva": "50"
+    },
+    {
+     "item": "45.0",
+     "cest": "2804500",
+     "ncms": [
+      "48192000"
+     ],
+     "ncmText": "48192000",
+     "description": "Caixas e cartonagens, dobráveis, de papel/cartão, não ondulados",
+     "mva": "50"
+    },
+    {
+     "item": "46.0",
+     "cest": "2804600",
+     "ncms": [
+      "48194000"
+     ],
+     "ncmText": "48194000",
+     "description": "Outros sacos, bolsas e cartuchos, de papel ou cartão",
+     "mva": "50"
+    },
+    {
+     "item": "47.0",
+     "cest": "2804700",
+     "ncms": [
+      "48211000"
+     ],
+     "ncmText": "48211000",
+     "description": "Etiquetas de papel ou cartão, impressas",
+     "mva": "50"
+    },
+    {
+     "item": "48.0",
+     "cest": "2804800",
+     "ncms": [
+      "49111090"
+     ],
+     "ncmText": "49111090",
+     "description": "Outros impressos publicitários, catálogos comerciais e semelhantes",
+     "mva": "50"
+    },
+    {
+     "item": "49.0",
+     "cest": "2804900",
+     "ncms": [
+      "61159900"
+     ],
+     "ncmText": "61159900",
+     "description": "Outras meias de malha de outras matérias têxteis",
+     "mva": "50"
+    },
+    {
+     "item": "50.0",
+     "cest": "2805000",
+     "ncms": [
+      "62171000"
+     ],
+     "ncmText": "62171000",
+     "description": "Outros acessórios confeccionados, de vestuário",
+     "mva": "50"
+    },
+    {
+     "item": "51.0",
+     "cest": "2805100",
+     "ncms": [
+      "63026000"
+     ],
+     "ncmText": "63026000",
+     "description": "Roupas de toucador/cozinha, de tecidos atoalhados de algodão",
+     "mva": "50"
+    },
+    {
+     "item": "52.0",
+     "cest": "2805200",
+     "ncms": [
+      "63079090"
+     ],
+     "ncmText": "63079090",
+     "description": "Outros artefatos têxteis confeccionados",
+     "mva": "50"
+    },
+    {
+     "item": "53.0",
+     "cest": "2805300",
+     "ncms": [
+      "65069900"
+     ],
+     "ncmText": "65069900",
+     "description": "Chapéus e outros artefatos de outras matérias, exceto de malha",
+     "mva": "50"
+    },
+    {
+     "item": "54.0",
+     "cest": "2805400",
+     "ncms": [
+      "95059000"
+     ],
+     "ncmText": "95059000",
+     "description": "Artigos para outras festas, carnaval ou outros divertimentos",
+     "mva": "50"
+    },
+    {
+     "item": "55.0",
+     "cest": "2805500",
+     "ncms": [
+      "33"
+     ],
+     "ncmText": "33",
+     "description": "Produtos destinados à higiene bucal",
+     "mva": "50"
+    },
+    {
+     "item": "56.0",
+     "cest": "2805600",
+     "ncms": [
+      "33",
+      "34"
+     ],
+     "ncmText": "33 34",
+     "description": "Outros produtos cosméticos e de higiene pessoal não relacionados em outros itens deste anexo",
+     "mva": "50"
+    },
+    {
+     "item": "57.0",
+     "cest": "2805700",
+     "ncms": [
+      "14",
+      "39",
+      "40",
+      "44",
+      "48",
+      "63",
+      "64",
+      "65",
+      "67",
+      "70",
+      "82",
+      "90",
+      "96"
+     ],
+     "ncmText": "14 39 40 44 48 63 64 65 67 70 82 90 96",
+     "description": "Outros artigos destinados a cuidados pessoais não relacionados em outros itens deste anexo",
+     "mva": "50"
+    },
+    {
+     "item": "58.0",
+     "cest": "2805800",
+     "ncms": [
+      "39",
+      "42",
+      "48",
+      "52",
+      "61",
+      "71",
+      "83",
+      "90",
+      "91"
+     ],
+     "ncmText": "39 42 48 52 61 71 83 90 91",
+     "description": "Acessórios (por exemplo, bijuterias, relógios, óculos de sol, bolsas, mochilas, frasqueiras, carteiras, porta-cartões, porta-documentos, porta-celulares e embalagens presenteáveis (por exemplo, caixinhas de papel), entre outros itens assemelhados)",
+     "mva": "50"
+    },
+    {
+     "item": "59.0",
+     "cest": "2805900",
+     "ncms": [
+      "61",
+      "62",
+      "64"
+     ],
+     "ncmText": "61 62 64",
+     "description": "Vestuário e seus acessórios; calçados, polainas e artefatos semelhantes, e suas partes",
+     "mva": "50"
+    },
+    {
+     "item": "60.0",
+     "cest": "2806000",
+     "ncms": [
+      "42",
+      "52",
+      "55",
+      "58",
+      "63",
+      "65"
+     ],
+     "ncmText": "42 52 55 58 63 65",
+     "description": "Outros artigos de vestuário em geral, exceto os relacionados no item anterior",
+     "mva": "50"
+    },
+    {
+     "item": "61.0",
+     "cest": "2806100",
+     "ncms": [
+      "39",
+      "40",
+      "52",
+      "56",
+      "62",
+      "63",
+      "66",
+      "69",
+      "70",
+      "73",
+      "76",
+      "82",
+      "83",
+      "84",
+      "91",
+      "94",
+      "96"
+     ],
+     "ncmText": "39 40 52 56 62 63 66 69 70 73 76 82 83 84 91 94 96",
+     "description": "Artigos de casa",
+     "mva": "50"
+    },
+    {
+     "item": "62.0",
+     "cest": "2806200",
+     "ncms": [
+      "13",
+      "15",
+      "23"
+     ],
+     "ncmText": "13 15 23",
+     "description": "Produtos das indústrias alimentares e bebidas",
+     "mva": "50"
+    },
+    {
+     "item": "63.0",
+     "cest": "2806300",
+     "ncms": [
+      "22",
+      "27",
+      "28",
+      "29",
+      "33",
+      "34",
+      "35",
+      "38",
+      "39",
+      "63",
+      "68",
+      "73",
+      "84",
+      "85",
+      "96"
+     ],
+     "ncmText": "22 27 28 29 33 34 35 38 39 63 68 73 84 85 96",
+     "description": "Produtos de limpeza e conservação doméstica",
+     "mva": "50"
+    },
+    {
+     "item": "64.0",
+     "cest": "2806400",
+     "ncms": [
+      "39",
+      "49",
+      "95",
+      "96"
+     ],
+     "ncmText": "39 49 95 96",
+     "description": "Artigos infantis",
+     "mva": "50"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "21",
+   "segmentName": "Produtos eletrônicos, eletroeletrônicos e eletrodomésticos",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.15",
+   "source": "stMaAnexo4_15",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=96163b71-45b9-473e-8954-d2b0aa5dcf6a",
+   "validFrom": "2017-07-01",
+   "validTo": null,
+   "note": "Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual). As pilhas e baterias de pilha (posição 8506) saíram da ST em 01/07/2017 (RA 06/2017); ficam os acumuladores 8507.30.11 e 8507.80.00. O 8507.30.11 não tem CEST próprio no Convênio ICMS 142/18 fora das autopeças: \"CEST não confirmado\".",
+   "items": [
+    {
+     "item": "39.0",
+     "cest": "2103900",
+     "ncms": [
+      "85078000"
+     ],
+     "ncmText": "85078000",
+     "description": "Outros acumuladores",
+     "mva": "40"
+    },
+    {
+     "item": "8507.30.11",
+     "cest": "",
+     "ncms": [
+      "85073011"
+     ],
+     "ncmText": "85073011",
+     "description": "Acumuladores elétricos da posição 8507.30.11 da NCM",
+     "mva": "40"
     }
    ]
   },
@@ -208023,6 +209125,29 @@
      "ncmText": "8711",
      "description": "Bicicletas e outros ciclos (incluídos os triciclos) com propulsão de motor elétrico auxiliar assistido pela força humana.",
      "mva": "34"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "segment": "22",
+   "segmentName": "Rações para animais domésticos",
+   "act": "RICMS/MA (Decreto 19.714/2003), Anexo 4.28",
+   "source": "stMaAnexo4_28",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=7759c531-004c-4874-8276-351e6f600c77",
+   "validFrom": "2021-01-01",
+   "validTo": null,
+   "note": "Rações tipo \"pet\" para animais domésticos (posição 2309, CEST 22.001.00). Base: preço máximo de venda a varejo ou preço sugerido pelo fabricante; sem eles, preço praticado mais a MVA (ajustada na entrada interestadual).",
+   "items": [
+    {
+     "item": "1.0",
+     "cest": "2200100",
+     "ncms": [
+      "2309"
+     ],
+     "ncmText": "2309",
+     "description": "Ração tipo “pet” para animais domésticos",
+     "mva": "46"
     }
    ]
   },

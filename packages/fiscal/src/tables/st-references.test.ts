@@ -831,15 +831,61 @@ describe('Maranhão: Anexos 4.x do RICMS/MA (F3-26.d.MA)', () => {
       .map((i) => i.mva);
   const hoje = '2026-10-23';
 
-  it('treze anexos, cada um com o segmento do CEST e a vigência da redação em vigor', () => {
+  it('dezenove anexos, cada um com o segmento do CEST e a vigência da redação em vigor', () => {
     expect(ST_REFERENCE_UFS).toContain('MA');
-    expect(ma).toHaveLength(13);
-    expect(ma.flatMap((r) => r.items).length).toBe(424);
+    expect(ma).toHaveLength(19);
+    expect(ma.flatMap((r) => r.items).length).toBe(521);
     expect(anexo('4.33')).toMatchObject({ segment: '02', validFrom: '2021-01-01' });
     expect(anexo('4.46')).toMatchObject({ segment: '20', validFrom: '2022-10-24' });
     expect(anexo('4.41')).toMatchObject({ segment: '01', validFrom: '2023-02-01' });
-    // A lista do MA está incompleta (faltam anexos por ler): não entra como "lista de ST".
+    // Carnes (carga fixa), combustíveis (PMPF), nafta (MVA por fórmula) e os anexos revogados sem
+    // CEST não cabem na lista: o MA não entra como "lista de ST" (F3-26.d.MA.c).
     expect(ST_SEGMENT_UFS).not.toContain('MA');
+  });
+
+  it('anexos só com texto: açúcar 20%, cimento 20%, lâminas 30%, rações 46%', () => {
+    // Açúcar de cana (Decreto 23.237/2007): os CEST do açúcar refinado, cristal e outros tipos.
+    expect(anexo('4.1')).toMatchObject({ segment: '17', validFrom: '2007-07-27' });
+    expect(anexo('4.1').items).toHaveLength(18);
+    expect(mvas('4.1', '1709900')).toEqual(['20']);
+    expect(mvas('4.1', '1710500')).toEqual([]);
+    // Cimento: posição 2523 = CEST 05.001.00; vigência pela RA 38/2020 (efeitos em 01/01/2021).
+    expect(anexo('4.6')).toMatchObject({ segment: '05', validFrom: '2021-01-01' });
+    expect(stReferencesFor('MA', '25232910', hoje).map((m) => [m.cest, m.mva])).toEqual([
+      ['0500100', '20'],
+    ]);
+    // Lâminas e aparelhos de barbear: 8212.10.20 e 8212.20.10 = CEST 20.064.00; isqueiro excluído.
+    expect(mvas('4.12', '2006400')).toEqual(['30']);
+    expect(anexo('4.12').items.flatMap((i) => i.ncms)).toEqual(['82121020', '82122010']);
+    // Rações "pet": posição 2309 = CEST 22.001.00.
+    expect(mvas('4.28', '2200100')).toEqual(['46']);
+  });
+
+  it('pilhas: a posição 8506 saiu em 01/07/2017 (RA 06/2017); acumuladores ficam a 40%', () => {
+    expect(anexo('4.15').validFrom).toBe('2017-07-01');
+    expect(anexo('4.15').items.flatMap((i) => i.ncms)).toEqual(['85078000', '85073011']);
+    // Fora a venda porta a porta, a pilha comum não tem mais MVA no MA.
+    expect(stReferencesFor('MA', '85061020', hoje).filter((m) => !m.act.endsWith('4.14'))).toEqual(
+      [],
+    );
+    expect(mvas('4.15', '2103900')).toEqual(['40']);
+    // 8507.30.11 sem CEST fora das autopeças: "não confirmado".
+    expect(anexo('4.15').items.find((i) => i.cest === '')).toMatchObject({
+      ncms: ['85073011'],
+      mva: '40',
+    });
+  });
+
+  it('venda porta a porta: Anexo XXVI do Convênio ICMS 142/18 a 50%, desde a RA 19/2024', () => {
+    expect(anexo('4.14')).toMatchObject({ segment: '28', validFrom: '2024-08-27' });
+    expect(anexo('4.14').items).toHaveLength(74);
+    expect(mvas('4.14', '2800100')).toEqual(['50']);
+    // O 28.999.00 ("outros produtos") não tem NCM e fica de fora.
+    expect(mvas('4.14', '2899900')).toEqual([]);
+    // A fralda vendida porta a porta tem as duas referências: higiene (41,38%) e porta a porta.
+    expect(stReferencesFor('MA', '96190000', hoje).map((m) => m.mva)).toEqual(
+      expect.arrayContaining(['41.38', '50']),
+    );
   });
 
   it('MVA única do artigo: bebidas quentes 29,04%, higiene 41,38%, celulares 9%, motos 34%', () => {

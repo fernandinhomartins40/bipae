@@ -745,6 +745,54 @@
   "publishedAt": "2026-08-03",
   "downloadedAt": "2026-10-23"
  },
+ "stMaAnexo4_1": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.1_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.1: substituição tributária das operações com açúcar de cana (Protocolos ICMS 33/91 e 41/91; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=274eab95-189c-4dc1-a646-afab27fd3fef",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23"
+ },
+ "stMaAnexo4_6": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.6_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.6: substituição tributária das operações com cimento (Protocolo ICMS 11/85; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=f49ea10d-9c54-4322-b450-e99f5e861715",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23"
+ },
+ "stMaAnexo4_12": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.12_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.12: substituição tributária das operações com lâmina de barbear, aparelho de barbear descartável e isqueiro (Protocolo ICMS 16/85; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=e554e1bf-c553-4444-9a19-37a94f7d16ca",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23"
+ },
+ "stMaAnexo4_14": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.14_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.14: substituição tributária nas operações que destinem mercadorias a revendedores que efetuem venda porta a porta (Convênio ICMS 45/99; Anexo XXVI do Convênio ICMS 142/18; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=f346c7b5-97e2-4203-8121-807c11e0f0cf",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23"
+ },
+ "stMaAnexo4_15": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.15_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.15: substituição tributária das operações com pilhas e baterias (Protocolo ICMS 18/85; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=96163b71-45b9-473e-8954-d2b0aa5dcf6a",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23"
+ },
+ "stMaAnexo4_28": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.28_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.28: substituição tributária nas operações com rações para animais domésticos (Protocolo ICMS 26/04; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=7759c531-004c-4874-8276-351e6f600c77",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-23"
+ },
  "stRoAnexoVI": {
   "file": "SEFIN-RO_RICMS_Anexo_VI_2026-10-17.json.gz",
   "title": "RICMS/RO (Decreto 22.721/2018), Anexo VI, da substituição tributária: texto consolidado até o Decreto 31.963/2026 (resposta da API do portal de legislação da SEFIN-RO)",
