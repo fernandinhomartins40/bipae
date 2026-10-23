@@ -1,5 +1,10 @@
 # Changelog
 
+## [F3-26.d.TO, F3-26.d.AP, F3-26.d.RR Substituição tributária de Tocantins, Amapá e Roraima] — 23/10/2026
+
+### Documentação
+- **Nova busca de fonte oficial, sem tabela nova.** As três UFs continuam com a ST como "falta configurar" e a razão de cada uma está no backlog: no **TO**, o Anexo XXI do RICMS/TO consolidado saiu do ar com o site da Diretoria de Tributação (sem DNS nem nos servidores do governo do TO), o Portal Nacional da ST do CONFAZ está "em construção" e as alterações (de 2015 a 2026) só saem em decretos esparsos no Diário Oficial; no **AP**, o SIGDoc ainda só tem o RICMS de julho de 2021 e o Portal Nacional da ST, a planilha de 2018, e há decretos de 2025 que mudaram os Apêndices do Anexo III depois disso; em **RR**, o RICMS atualizado até outubro de 2026 traz a MVA no texto de cada seção, mas as mercadorias pela NBM/SH antiga, sem CEST (os anexos com CEST do Decreto 22.349/2016 foram revogados pelo Decreto 24.914/2018).
+
 ## [F2-14 Foto do produto] — 23/10/2026
 
 ### Adicionado
