@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, request, test, type Page } from '@playwright/test';
+import { settleAnimations } from './animations';
 
 /**
  * F8-15: o caixa redesenhado. Uma venda em cada modo de tela ("Venda em destaque" e "Grade de
@@ -9,6 +10,7 @@ test.skip(() => test.info().project.name !== 'web', 'As telas são as mesmas nas
 
 /** WCAG 2.2 AA pelo axe, como nas outras telas do caixa (F7-03). */
 async function semViolacoes(page: Page, onde: string) {
+  await settleAnimations(page);
   const axe = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();

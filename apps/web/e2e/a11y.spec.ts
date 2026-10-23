@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, request, test, type Page } from '@playwright/test';
+import { settleAnimations } from './animations';
 
 /**
  * F7-03: acessibilidade (WCAG 2.2 AA) das telas principais, conferida pelo axe-core. Qualquer
@@ -10,6 +11,7 @@ test.skip(() => test.info().project.name !== 'web', 'As telas são as mesmas nas
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
 async function violations(page: Page, where: string) {
+  await settleAnimations(page);
   const result = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   return result.violations.map(
     (v) =>

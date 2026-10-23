@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, request, test } from '@playwright/test';
+import { settleAnimations } from './animations';
 
 /** F8-06: o caixa no celular e no tablet, sem rolagem lateral, com o Receber ao alcance. */
 test.skip(() => test.info().project.name !== 'web', 'A largura de celular é do navegador.');
@@ -53,6 +54,7 @@ test('vende no celular pelo Receber da barra de baixo, sem rolagem lateral', asy
 
   await page.setViewportSize({ width: 390, height: 844 });
   // WCAG 2.2 AA no caixa do celular, como nas outras telas (F7-03).
+  await settleAnimations(page);
   const axe = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();
