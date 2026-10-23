@@ -168,7 +168,7 @@ function AdminShell({ children, onLogout }: { children: ReactNode; onLogout: () 
     <div className="flex min-h-screen flex-col md:flex-row">
       <aside className="border-b border-border bg-text text-bg md:w-64 md:border-b-0">
         <div className="flex items-center justify-between p-4">
-          <Logo className="text-xl text-bg" />
+          <Logo className="text-xl text-bg" inverted />
           <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-accent-contrast">
             Admin
           </span>

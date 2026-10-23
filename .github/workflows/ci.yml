@@ -244,6 +244,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Projeto Android
         run: pnpm --filter @bipae/desktop tauri android init --ci
+      # Ícone oficial (gerado por `tauri icon` em src-tauri/icons/android) no lugar do padrão do init.
+      - name: Ícone do app Android
+        run: cp -r apps/desktop/src-tauri/icons/android/. apps/desktop/src-tauri/gen/android/app/src/main/res/
       # Câmera como leitor de código (F8-05): o WebView só pede a câmera se o manifesto declarar.
       - name: Permissão da câmera no Android
         run: |

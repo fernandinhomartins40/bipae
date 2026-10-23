@@ -1,6 +1,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { formatBRL, formatTaxId, parseBRL, type Cents } from '@bipae/domain';
 import { X } from 'lucide-react';
+import { BRAND_SYMBOL, BRAND_WORDMARK } from './brand-paths';
 import {
   forwardRef,
   useEffect,
@@ -514,23 +515,38 @@ export function Modal({
   );
 }
 
-export function Logo({ className }: { className?: string }) {
+/**
+ * Logo oficial do Bipaê: o nome inteiro ou só o símbolo "b". O tamanho segue a fonte
+ * (`text-xl`, `text-3xl`...). `inverted` pinta o verde com a cor do texto, para fundos escuros.
+ */
+export function Logo({
+  className,
+  variant = 'wordmark',
+  inverted = false,
+}: {
+  className?: string;
+  variant?: 'wordmark' | 'symbol';
+  inverted?: boolean;
+}) {
+  const art = variant === 'symbol' ? BRAND_SYMBOL : BRAND_WORDMARK;
+  const ink = inverted ? 'currentColor' : 'var(--logo-ink)';
   return (
-    <span className={cx('inline-flex items-center gap-2 font-extrabold tracking-tight', className)}>
-      <svg viewBox="0 0 32 32" aria-hidden className="size-8">
-        <rect width="32" height="32" rx="8" fill="var(--primary)" />
-        <g fill="var(--primary-contrast)">
-          <rect x="7" y="8" width="2" height="16" />
-          <rect x="11" y="8" width="1" height="16" />
-          <rect x="14" y="8" width="3" height="16" />
-          <rect x="19" y="8" width="1" height="16" />
-          <rect x="22" y="8" width="3" height="16" />
-        </g>
-        <circle cx="26" cy="7" r="4" fill="var(--accent)" />
+    <span className={cx('inline-flex items-center', className)}>
+      <svg
+        viewBox={art.viewBox}
+        role="img"
+        aria-label="Bipaê"
+        className={variant === 'symbol' ? 'h-[1.6em] w-auto' : 'h-[1.4em] w-auto'}
+      >
+        {art.paths.map((p, i) => (
+          <path
+            key={i}
+            transform={p.transform}
+            d={p.d}
+            fill={p.tone === 'accent' ? 'var(--logo-accent)' : ink}
+          />
+        ))}
       </svg>
-      <span>
-        Bipa<span className="text-primary">ê</span>
-      </span>
     </span>
   );
 }

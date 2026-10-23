@@ -16,6 +16,9 @@
   --primary-contrast: #ffffff;
   --accent: #ffc83d;
   --accent-contrast: #2a1f00;
+  /* Logo oficial: verde da marca e amarelo do chapéu do "ê". */
+  --logo-ink: #092d22;
+  --logo-accent: #f8b118;
   --danger: #b42318;
   --danger-soft: #fdecea;
   --success: #067647;
@@ -32,6 +35,7 @@
     --surface: #161e1a;
     --surface-2: #1f2924;
     --text: #eef3ef;
+    --logo-ink: #eef3ef;
     --muted: #a3b2a9;
     --border: #2e3a34;
     --primary: #2ecc8a;
@@ -52,6 +56,7 @@
   --surface: #161e1a;
   --surface-2: #1f2924;
   --text: #eef3ef;
+  --logo-ink: #eef3ef;
   --muted: #a3b2a9;
   --border: #2e3a34;
   --primary: #2ecc8a;
@@ -84,6 +89,7 @@
   --surface: #000000;
   --surface-2: #000000;
   --text: #ffffff;
+  --logo-ink: #ffffff;
   --muted: #f0f0f0;
   --border: #ffffff;
   --primary: #5cffb5;

@@ -1,5 +1,11 @@
 # Changelog
 
+## [Logo oficial] — 23/10/2026
+
+### Alterado
+- O app passa a usar a logo oficial do Bipaê (nome "bipaê" verde com o chapéu amarelo), tirada do arquivo vetorial do dono: na retaguarda, nas telas de entrada, nos downloads, nos convites e no painel admin (versão clara sobre o fundo escuro). No tema escuro o verde vira claro para continuar legível.
+- Ícones com o símbolo oficial "b": favicon do app e do site, ícones do PWA (192, 512 e maskable), ícone da tela inicial do iPhone, ícones do desktop (Windows, macOS) e do app Android.
+
 ## [F3-26.d.AC e F3-26.d.AM ST do Acre e do Amazonas] — 23/10/2026
 
 ### Adicionado
