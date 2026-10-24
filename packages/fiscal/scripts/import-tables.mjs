@@ -929,9 +929,21 @@ tables['st-references.json'] = await importStReferences(tables['cest.json']);
   tables['st-net-loads.json'] = {
     ...ceNetLoadRegimes(decrees, { ufRegions }),
     // Lista dos produtos de informática do ato do Secretário (F3-26.d.CE.d), do Diário Oficial.
+    // As alterações em ordem de publicação: IN 135/2025 e IN 20/2026 (F3-26.d.CE.f).
     informaticsList: parseCeInformaticsList(
       await pdfLines(readFileSync(join(sourcesDir, manifest.stCeInformaticaIn148.file))),
-      await pdfLines(readFileSync(join(sourcesDir, manifest.stCeInformaticaIn135.file))),
+      {
+        lines: await pdfLines(readFileSync(join(sourcesDir, manifest.stCeInformaticaIn135.file))),
+        number: '135',
+        year: '2025',
+        source: 'stCeInformaticaIn135',
+      },
+      {
+        lines: await pdfLines(readFileSync(join(sourcesDir, manifest.stCeInformaticaIn20.file))),
+        number: '20',
+        year: '2026',
+        source: 'stCeInformaticaIn20',
+      },
     ),
   };
 }

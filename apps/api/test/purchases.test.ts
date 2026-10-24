@@ -532,4 +532,69 @@ describe('ST de entrada pela carga líquida do Ceará (F3-26.d.CE.c)', () => {
     // Sem a carga, o custo é o de sempre: 39,60 / 24 = 1,65.
     expect((await admin.get(`/products/${agua.id}`)).json().costCents).toBe(165);
   });
+
+  it('transferência de outra UF na construção: falta configurar até a empresa escolher a leitura (F3-26.d.CE.e)', async () => {
+    const { admin, empresa } = await mercado();
+    const base = {
+      legalName: empresa.legalName,
+      taxId: '11.222.333/0001-81',
+      uf: 'CE',
+      // Comércio varejista de material de construção (Anexo II do Decreto 31.270/2013).
+      cnae: '4741-5/00',
+    };
+    expect((await admin.patch(`/companies/${empresa.id}`, base)).statusCode).toBe(200);
+    const classes = (await admin.get('/fiscal/st-net-load-classes?uf=CE&cnae=4741500')).json();
+    expect(classes.choices).toMatchObject({
+      transferMargin: { caputMva: '35', transferMva: '50', interstateOnly: true },
+    });
+    await admin.post('/products', {
+      name: 'Água 500 ml',
+      priceCents: 300,
+      barcodes: ['7891000100103'],
+      stNetLoadClass: 'rate-20',
+    });
+    // A filial de SP manda para a matriz no Ceará: mesma raiz do CNPJ (11.222.333), transferência.
+    const xml = await notaDoFornecedor(3003, {
+      issuer: {
+        cnpj: '11222333000262',
+        name: 'Mercadinho Bipaê LTDA - filial SP',
+        ie: '110042490114',
+        crt: 3,
+        address: {
+          street: 'Av. Industrial',
+          number: '500',
+          district: 'Distrito',
+          cityCode: '3550308',
+          cityName: 'São Paulo',
+          uf: 'SP',
+          cep: '01001000',
+        },
+      },
+    });
+    const sem = (await admin.post('/purchases/preview', { xml })).json();
+    expect(sem.items[1].netLoad).toMatchObject({ status: 'missing', stCents: 0 });
+    expect(sem.items[1].netLoad.message).toMatch(/Empresas e lojas/);
+
+    expect(
+      (
+        await admin.patch(`/companies/${empresa.id}`, {
+          ...base,
+          stNetLoadOptions: { transferMargin: 'talvez' },
+        })
+      ).statusCode,
+    ).toBe(400);
+    const salva = await admin.patch(`/companies/${empresa.id}`, {
+      ...base,
+      stNetLoadOptions: { transferMargin: 'compound' },
+    });
+    expect(salva.json().stNetLoadOptions).toMatchObject({ transferMargin: 'compound' });
+    const com = (await admin.post('/purchases/preview', { xml })).json();
+    // (36,00 + 3,60 de IPI) × 1,35 × 1,50 = 80,19; × 21% = 16,84.
+    expect(com.items[1].netLoad).toMatchObject({
+      status: 'applies',
+      mva: '102.5',
+      baseCents: 8_019,
+      stCents: 1_684,
+    });
+  });
 });

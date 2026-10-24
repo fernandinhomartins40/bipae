@@ -47,7 +47,12 @@ import { parseAlDecreto90309 } from './st-al.mjs';
 import { parseRoAnexoVI } from './st-ro.mjs';
 import { parseCeVeiculos } from './st-ce.mjs';
 import { DF_ANEXO_IV_REQUEST, DF_LEGISLATION_API, parseDfAnexoIV } from './st-df.mjs';
-import { CE_NET_LOAD_SOURCES, parseCeNetLoadSource } from './st-ce-carga.mjs';
+import {
+  CE_NET_LOAD_SOURCES,
+  ceDoeUrl,
+  ceIn148Mentions,
+  parseCeNetLoadSource,
+} from './st-ce-carga.mjs';
 import { parseAcIn12023 } from './st-ac.mjs';
 import { parseAmLei6108 } from './st-am.mjs';
 import { parseRnAnexo007 } from './st-rn.mjs';
@@ -1075,6 +1080,66 @@ async function checkCeNetLoads() {
 }
 
 /**
+ * Ceará, F3-26.d.CE.f: instruções normativas que alteram a IN SEFAZ 148/2024 (lista de produtos de
+ * informática). O Diário Oficial não tem busca por ato e a busca do SefazLegis pede captcha; os
+ * cadernos saem por endereço fixo pela data. O monitor lê os cadernos dos últimos 8 dias (a rodada
+ * é semanal, com um dia de folga) e avisa quando um ato novo cita a IN 148/2024.
+ */
+async function checkCeIn148() {
+  const days = Array.from({ length: 8 }, (_, n) =>
+    new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(
+      new Date(Date.now() - n * 86_400_000),
+    ),
+  );
+  const found = [];
+  const failed = [];
+  let read = 0;
+  // Caderno que não existe responde HTTP 300 (o dia acabou, ou não teve Diário); erro de rede é
+  // tentado de novo e, se persistir, entra no relatório para ninguém achar que o dia foi lido.
+  const fetchPart = async (url) => {
+    for (let tries = 1; ; tries++) {
+      try {
+        return (await download(url)).body;
+      } catch (error) {
+        if (/^HTTP \d/.test(error.message)) return null;
+        if (tries === 3) throw error;
+      }
+    }
+  };
+  for (const day of days) {
+    for (let part = 1; part <= 9; part++) {
+      const url = ceDoeUrl(day, part);
+      let body;
+      try {
+        body = await fetchPart(url);
+      } catch (error) {
+        failed.push(`${url}: ${error.message}`);
+        break;
+      }
+      if (!body || body.subarray(0, 4).toString() !== '%PDF') break;
+      read++;
+      for (const m of ceIn148Mentions(await pdfLines(body))) {
+        found.push(`${url}: ${m.act ?? 'ato sem título de instrução normativa'} — "${m.excerpt}"`);
+      }
+    }
+  }
+  if (read === 0) throw new Error('nenhum caderno do Diário Oficial abriu nos últimos 8 dias');
+  const unread = failed.map((f) => `Não abriu (confira à mão): ${f}`);
+  return {
+    title: 'Lista de informática do Ceará (IN SEFAZ 148/2024)',
+    page: ceDoeUrl(days[0], 1),
+    status: found.length ? 'mudou' : failed.length ? 'erro' : 'igual',
+    details: found.length
+      ? [
+          `${read} caderno(s) lido(s); ato(s) citando a IN 148/2024 (guarde o caderno em sources/, acrescente a IN em CE_INFORMATICS_ACTS e no import-tables e regere):`,
+          ...found,
+          ...unread,
+        ]
+      : unread,
+  };
+}
+
+/**
  * Acre: o PDF anexado hoje à página da IN DIAT 1/2023 no portal da SEFAZ-AC (link "mdocs-file").
  * Se a SEFAZ-AC publicar outra instrução normativa, a lista da página de legislação do ICMS
  * também precisa ser olhada: o aviso diz quando o anexo some ou muda.
@@ -1667,6 +1732,11 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Rio Grande do Norte', manifest.stRnAnexo007.page, checkRn),
     await safe('ST no Maranhão', manifest.stMaAnexo4_2.page, checkMa),
     await safe('ST no Ceará (carga líquida)', manifest.stCeCargaAutopecas.page, checkCeNetLoads),
+    await safe(
+      'Lista de informática do Ceará (IN SEFAZ 148/2024)',
+      manifest.stCeInformaticaIn148.page,
+      checkCeIn148,
+    ),
     await safe('cBenef do Paraná', manifest.cbenefPr.page, checkCbenefPr),
     await safe('cBenef de Santa Catarina', manifest.cbenefSc.page, checkCbenefSc),
     await safe('cBenef do Rio Grande do Sul', manifest.cbenefRs.page, checkCbenefRs),

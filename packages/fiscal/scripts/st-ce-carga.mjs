@@ -551,10 +551,14 @@ function farmaExitTable(lines, start, channel, label) {
  * - construção: carga fixa e margem; "ajuste proporcional" quando a carga do produto não é a do
  *   art. 2º-B; carga própria, opcional, para duas CNAE de cerâmica (art. 2º-A); fora a indústria
  *   do Simples (§ 2º, II);
- * - móveis: "a carga líquida de que trata o Anexo III" sem dizer a linha (atacadista ou varejista):
- *   fica como "falta configurar".
+ * - móveis: "a carga líquida de que trata o Anexo III" (redação do Decreto 32.984, desde 2019). A
+ *   linha é a do "ATACADISTA (Anexo I)", porque o Anexo I é "Indústria e Comércio Atacadista"
+ *   (art. 1º), e a coluna é a do "Próprio Estado", porque a retenção é "nas operações internas"
+ *   (F3-26.d.CE.e). A redação original do art. 2º dava a carga fixa de 6,93%, que é exatamente a
+ *   célula atacadista / 18% / próprio Estado do Anexo III de 2019: o gerador confere. O § 5º manda o
+ *   "ajuste proporcional" quando a carga do produto não é 20%, sem dizer a conta.
  */
-function industryOf(text, label) {
+function industryOf(text, label, versions) {
   const info =
     /estabelecimento industrial localizado neste Estado, fabricante de produtos de informática, deverá reter, nas operações internas, a carga líquida tributária de (\d{1,2},\d{2})% .*?margem de valor agregado no percentual de (\d{1,3})%/.exec(
       text,
@@ -581,6 +585,8 @@ function industryOf(text, label) {
         /margem de valor agregado de que trata o caput deste artigo não se aplica quando o contribuinte do imposto for o estabelecimento matriz/.test(
           text,
         ),
+      annexRow: null,
+      simplesRecipientExcluded: false,
     };
   }
   const build =
@@ -615,6 +621,8 @@ function industryOf(text, label) {
       },
       simplesExcluded: /praticadas por indústria optante pelo Simples Nacional/.test(text),
       headOfficeWithoutMva: false,
+      annexRow: null,
+      simplesRecipientExcluded: false,
     };
   }
   const furniture =
@@ -622,17 +630,49 @@ function industryOf(text, label) {
       text,
     );
   if (furniture) {
+    const reference =
+      /§ ?5\.?º Caso se trate de operações de circulação de mercadorias cuja carga tributária do ICMS for diferente de (\d{1,2})%.*?será feito o ajuste proporcional na carga tributária líquida de que trata o caput deste artigo/.exec(
+        text,
+      );
+    const original =
+      /Redação original do caput do art\. 2\.º: Art\. 2\.º Sem prejuízo .*?deverá reter, nas operações internas, a carga líquida tributária de (\d{1,2},\d{2})%/.exec(
+        text,
+      );
+    const dates = [
+      noteDateBefore(text, furniture.index),
+      reference && noteDateBefore(text, reference.index),
+    ];
+    if (!reference || !original || dates.some((d) => !d)) {
+      throw new Error(`${label}: art. 2º ou § 5º fora do formato`);
+    }
+    // A carga fixa da redação original tem de ser a célula atacadista / próprio Estado da tabela
+    // mais antiga lida (a que entrou junto com a redação "carga do Anexo III"): é a prova da linha
+    // e da coluna. A primeira coluna é a do próprio Estado (`checkOriginColumns`).
+    const oldest = versions.at(-1);
+    const cell = oldest?.rows.find(
+      (r) => r.group === 'wholesale' && r.values[0] === decimalText(original[1]),
+    );
+    if (!cell) {
+      throw new Error(
+        `${label}: a carga original do art. 2º (${original[1]}%) não está na linha do atacadista, próprio Estado, do Anexo III de ${oldest?.validFrom}`,
+      );
+    }
     return {
       kind: 'annex-iii',
       article: 'art. 2º',
-      validFrom: noteDateBefore(text, furniture.index),
+      validFrom: dates.sort().at(-1),
       load: null,
       unlistedLoad: null,
       mva: furniture[1],
-      referenceRate: null,
+      referenceRate: reference[1],
       optional: null,
       simplesExcluded: false,
       headOfficeWithoutMva: false,
+      annexRow: { group: 'wholesale', origin: 'internal', formerLoad: decimalText(original[1]) },
+      simplesRecipientExcluded:
+        /O disposto no caput deste artigo não se aplica às operações destinadas a: I [–-] comerciante atacadista signatário de Regime Especial de Tributação.*?II [–-] empresas optantes pelo Simples Nacional/.test(
+          text,
+        ),
     };
   }
   return null;
@@ -686,7 +726,7 @@ export function parseCeNetLoadDecree(lines) {
     cestSegments: null,
     transfer: transferOf(text, where),
     specialRegime: specialRegimeOf(text),
-    industry: hasIndustry ? industryOf(text, where) : null,
+    industry: hasIndustry ? industryOf(text, where, versions) : null,
   };
 }
 
@@ -858,10 +898,11 @@ function parseNcmTable(lines) {
 /**
  * Lista dos produtos de informática do "ato do Secretário da Fazenda" (Decreto 31.066/2012, art.
  * 1º, parágrafo único, "b"): Instrução Normativa SEFAZ 148/2024 (DOE de 15/01/2025, efeitos a
- * partir de 01/03/2025, revogou a IN 04/2013), alterada pela IN 135/2025 (DOE de 28/10/2025, em
- * vigor na publicação). Cada versão é a lista inteira na data.
+ * partir de 01/03/2025, revogou a IN 04/2013), alterada pela IN 135/2025 (DOE de 28/10/2025) e
+ * pela IN 20/2026 (DOE de 12/02/2026), em vigor na publicação. Cada versão é a lista inteira na
+ * data. `amendments`: `{ lines, number, year, source }` de cada IN que altera, em ordem.
  */
-export function parseCeInformaticsList(in148Lines, in135Lines) {
+export function parseCeInformaticsList(in148Lines, ...amendments) {
   const start = in148Lines.findIndex((l) => /^INSTRUÇÃO NORMATIVA Nº ?148, de/.test(l));
   if (start < 0) throw new Error('IN 148/2024 não encontrada no Diário Oficial');
   const annex = in148Lines.findIndex(
@@ -882,18 +923,49 @@ export function parseCeInformaticsList(in148Lines, in135Lines) {
   const validFrom = `${effects[3]}-${String(MONTHS.indexOf(fold(effects[2])) + 1).padStart(2, '0')}-${effects[1].padStart(2, '0')}`;
   const base = parseNcmTable(in148Lines.slice(annex + 1, end));
 
-  const at135 = in135Lines.findIndex((l) => /^INSTRUÇÃO NORMATIVA Nº ?135, de/.test(l));
-  const art1 = in135Lines.findIndex(
-    (l, i) => i > at135 && /^Art\. 1\.º O Anexo Único da Instrução Normativa n\.º 148/.test(l),
+  // Cada alteração (em ordem de publicação) gera a lista inteira a partir da anterior.
+  const versions = [{ validFrom, validTo: null, amendedBy: null, items: base }];
+  for (const { lines, number, year } of amendments) {
+    const previous = versions[0];
+    const items = amendList(previous.items, lines, number, year);
+    const date = doeDateOf(lines);
+    if (date <= previous.validFrom) throw new Error(`IN ${number}/${year}: data fora da ordem`);
+    previous.validTo = dayBefore(date);
+    versions.unshift({
+      validFrom: date,
+      validTo: null,
+      amendedBy: `IN SEFAZ ${number}/${year}`,
+      items,
+    });
+  }
+  const names = amendments.map((a) => `${a.number}/${a.year}`);
+  return {
+    act: `Instrução Normativa SEFAZ 148/2024 (CE)${names.length ? `, alterada pelas INs ${names.join(' e ')}` : ''}`,
+    decree: 'Decreto 31.066/2012 (CE)',
+    sources: ['stCeInformaticaIn148', ...amendments.map((a) => a.source)],
+    versions,
+  };
+}
+
+/**
+ * Uma instrução normativa que altera o Anexo Único da IN 148/2024 ("passa a vigorar com nova
+ * redação ... e acréscimo das NCMs"): a tabela do art. 1º troca a descrição das NCM citadas e
+ * acrescenta as que não estavam. Vigora na publicação (art. 2º).
+ */
+function amendList(base, lines, number, year) {
+  const at = lines.findIndex((l) => new RegExp(`^INSTRUÇÃO NORMATIVA Nº ?${number}, de`).test(l));
+  const art1 = lines.findIndex(
+    (l, i) => i > at && /^Art\. 1\.º O Anexo Único da Instrução Normativa n\.º 148/.test(l),
   );
-  const art2 = in135Lines.findIndex(
+  const art2 = lines.findIndex(
     (l, i) =>
       i > art1 &&
       /^Art\. 2\.º Esta Instrução Normativa entra em vigor na data de sua publicação/.test(l),
   );
-  if (at135 < 0 || art1 < 0 || art2 < 0) throw new Error('IN 135/2025 fora do formato');
-  const table = in135Lines.findIndex((l, i) => i > art1 && /^NCM DISCRIMINAÇÃO/.test(l));
-  const changes = parseNcmTable(in135Lines.slice(table + 1, art2));
+  if (at < 0 || art1 < 0 || art2 < 0) throw new Error(`IN ${number}/${year} fora do formato`);
+  const table = lines.findIndex((l, i) => i > art1 && /^NCM DISCRIMINAÇÃO/.test(l));
+  if (table < 0 || table > art2) throw new Error(`IN ${number}/${year}: tabela não encontrada`);
+  const changes = parseNcmTable(lines.slice(table + 1, art2));
   const amended = base.map((item) => ({ ...item, ncm: [...item.ncm] }));
   for (const change of changes) {
     const same = amended.filter((item) => item.ncm.some((n) => change.ncm.includes(n)));
@@ -913,16 +985,48 @@ export function parseCeInformaticsList(in148Lines, in135Lines) {
       }
     }
   }
-  const in135Date = doeDateOf(in135Lines);
-  return {
-    act: 'Instrução Normativa SEFAZ 148/2024 (CE), alterada pela IN 135/2025',
-    decree: 'Decreto 31.066/2012 (CE)',
-    sources: ['stCeInformaticaIn148', 'stCeInformaticaIn135'],
-    versions: [
-      { validFrom: in135Date, validTo: null, amendedBy: 'IN SEFAZ 135/2025', items: amended },
-      { validFrom, validTo: dayBefore(in135Date), amendedBy: null, items: base },
-    ],
-  };
+  return amended;
+}
+
+/**
+ * Endereço de um caderno do Diário Oficial do Ceará pela data (AAAA-MM-DD) e o número do caderno.
+ * É o mesmo endereço das INs 148/2024 e 135/2025 guardadas em sources/; não tem captcha.
+ */
+export const ceDoeUrl = (date, part) => {
+  const day = date.replaceAll('-', '');
+  return `https://imagens.seplag.ce.gov.br/PDF/${day}/do${day}p${String(part).padStart(2, '0')}.pdf`;
+};
+
+const IN148_CITED =
+  /Instru[çc][ãa]o Normativa (?:SEFAZ )?n?\.? ?[º°]? ?148,? de 0?2 de dezembro de 2024|Instru[çc][ãa]o Normativa (?:SEFAZ )?n?\.? ?[º°]? ?148\/2024|\bIN (?:SEFAZ )?n?\.? ?[º°]? ?148\/2024/i;
+const IN_HEADING =
+  /^INSTRU[ÇC][ÃA]O NORMATIVA N[º°.]* ?(\d+)(?:,? de \d{1,2}\.?º? de \p{L}+ de (\d{4})|\/(\d{4}))?/iu;
+
+/** As INs da lista de informática já lidas pelo Bipaê (número/ano). */
+export const CE_INFORMATICS_ACTS = ['148/2024', '135/2025', '20/2026'];
+
+/**
+ * F3-26.d.CE.f: atos de um caderno do Diário Oficial que citam a IN SEFAZ 148/2024 (lista de
+ * produtos de informática do Decreto 31.066/2012). Devolve o título da instrução normativa em que
+ * a citação aparece e o trecho; `known` são as INs já lidas pelo Bipaê (número/ano), que não
+ * contam. O Diário não tem busca por ato e a busca do SefazLegis pede captcha: por isso o monitor
+ * lê os cadernos da semana.
+ */
+export function ceIn148Mentions(lines, known = CE_INFORMATICS_ACTS) {
+  const found = [];
+  let heading = null;
+  for (let i = 0; i < lines.length; i++) {
+    const head = IN_HEADING.exec(lines[i]);
+    if (head) heading = { number: `${head[1]}/${head[2] ?? head[3] ?? '?'}`, line: lines[i] };
+    // A citação pode quebrar a linha: confere a linha junto com a seguinte.
+    const window = joinLines([lines[i], lines[i + 1] ?? '']);
+    if (!IN148_CITED.test(window)) continue;
+    // Citação inteira na linha seguinte: ela é contada na vez dela.
+    if (!IN148_CITED.test(lines[i]) && IN148_CITED.test(lines[i + 1] ?? '')) continue;
+    if (heading && known.includes(heading.number)) continue;
+    found.push({ act: heading?.line ?? null, excerpt: window.slice(0, 240) });
+  }
+  return found;
 }
 
 const ORIGIN_KEYS = ['internal', 'n-ne-co-es', 's-se-except-es'];

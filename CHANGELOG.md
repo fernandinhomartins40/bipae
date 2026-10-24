@@ -1,5 +1,17 @@
 # Changelog
 
+## [F3-26.d.CE.e, CE.f e MA.c Carga líquida do Ceará: o que o texto deixa para a empresa; monitor da lista de informática; reavaliação do Maranhão] — 24/10/2026
+
+### Adicionado
+- **Indústria de móveis retém na saída interna** (Decreto 32.900, art. 2º): carga do Anexo III na linha "ATACADISTA (Anexo I)", coluna do próprio Estado, sobre o valor da operação + 40% (hoje 7,70% no produto de 20%). A linha e a coluna saem do próprio texto: a redação original do artigo dava a carga fixa de 6,93%, a mesma célula da tabela de 2019, e o gerador confere isso a cada atualização. A nota avisa que não vale na venda ao atacadista com RET nem a empresa do Simples (§ 2º).
+- **Escolhas da empresa em Empresas e lojas** (migração 0081), só onde o texto do decreto deixa margem e só para a CNAE em que valem: a leitura da margem na transferência de informática, construção e móveis ("a base definida no caput, acrescida de X%": no lugar da margem do caput ou uma sobre a outra), a carga opcional da cerâmica (Decreto 31.270, art. 2º-A, 4,49%) e o centro de distribuição do RET dos farmacêuticos (Decreto 36.617, art. 7º, 1,00% e 1,33% na entrada). Sem escolha, continua "falta configurar".
+- **RET dos farmacêuticos na NF-e:** venda a pessoa física do Ceará calcula só o Canal Farma (art. 4º, § 4º-A); venda para a mesma raiz de CNPJ usa a tabela de transferências.
+- **Monitor semanal da lista de informática do Ceará:** lê os cadernos do Diário Oficial dos últimos 8 dias (endereço fixo pela data, sem captcha) e avisa quando um ato cita a IN SEFAZ 148/2024. A primeira passada, de 29/10/2025 a 18/10/2026, achou a **IN SEFAZ 20/2026** (DOE de 12/02/2026): os alto-falantes 8518.21.00 e 8518.22.00 passam a valer até 180 W. A lista ganhou essa versão.
+
+### Falta configurar
+- Ceará (D-042, F3-26.d.CE.g): "ajuste proporcional" da indústria de construção e de móveis fora de 20%, carga do RET do vestuário, entrada interna do RET dos farmacêuticos, canal da venda a empresa no RET dos farmacêuticos e a carga líquida nos campos da ST do XML. Não há parecer, nota ou manual da SEFAZ-CE que explique.
+- Maranhão (D-045): a lista de segmentos continua desligada. Carnes por carga fixa (Anexo 4.4) cabem no modelo da carga líquida, mas o anexo não tem NCM nem CEST e depende de credenciamento: nova tarefa F3-26.d.MA.d.
+
 ## [F4-14.b.4 EFD ICMS/IPI por UF, quarta rodada] — 24/10/2026
 
 ### Adicionado

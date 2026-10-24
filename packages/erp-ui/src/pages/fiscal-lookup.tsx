@@ -245,6 +245,18 @@ export interface StNetLoadClassesView {
   regime: { act: string; segmentName: string; url: string; cestSegments: string[] | null } | null;
   classes: { goodsClass: string; label: string }[];
   message: string;
+  /** Escolhas que o texto do decreto deixa para a empresa (F3-26.d.CE.e). */
+  choices?: {
+    act: string;
+    transferMargin: { caputMva: string; transferMva: string; interstateOnly: boolean } | null;
+    industryLoad: {
+      article: string;
+      load: string;
+      standardArticle: string;
+      standardLoad: string;
+    } | null;
+    distributionCenter: { article: string } | null;
+  } | null;
 }
 
 /** Valor que diz "o produto está fora do regime" (exclusões do decreto). */

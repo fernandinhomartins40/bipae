@@ -500,6 +500,21 @@ export const companyInput = z.object({
     .nullish(),
   /** Regime Especial de Tributação (RET) com a SEFAZ, que muda a carga líquida (D-042). */
   stSpecialRegime: z.boolean().optional(),
+  /**
+   * Escolhas da empresa onde o texto dos decretos de carga líquida deixa margem (F3-26.d.CE.e,
+   * D-042). Campo vazio ou nulo é "não escolheu": o cálculo mostra "falta configurar".
+   */
+  stNetLoadOptions: z
+    .object({
+      transferMargin: z
+        .enum(['replace', 'compound'], { message: 'Leitura da transferência inválida' })
+        .nullish(),
+      industryLoad: z
+        .enum(['standard', 'optional'], { message: 'Carga da indústria inválida' })
+        .nullish(),
+      distributionCenter: z.boolean().optional(),
+    })
+    .optional(),
   // Dados do emitente da NFC-e e da NF-e (F3-14.b).
   ie: z
     .string()

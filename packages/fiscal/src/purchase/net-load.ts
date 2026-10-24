@@ -4,6 +4,7 @@ import {
   stNetLoadAmount,
   stNetLoadFor,
   stNetLoadMessage,
+  type StNetLoadOptions,
   type StNetLoadResult,
 } from '../tables/st-net-loads';
 import type { PurchaseItem, PurchaseNfe } from './read';
@@ -25,6 +26,8 @@ export interface PurchaseNetLoadCompany {
   specialRegime: boolean;
   /** CNPJ ou CPF da empresa, para reconhecer a transferência entre estabelecimentos. */
   taxId: string | null;
+  /** Escolhas da empresa onde o texto dos decretos deixa margem (F3-26.d.CE.e, D-042). */
+  options?: StNetLoadOptions | null;
 }
 
 export interface PurchaseNetLoad {
@@ -108,6 +111,7 @@ export function purchaseNetLoad(input: {
     transfer: supplierRoot !== null && supplierRoot === companyRoot,
     specialRegime: company.specialRegime,
     ncm: item.ncm || null,
+    options: company.options ?? null,
   });
   const base = {
     act: 'regime' in result ? result.regime.act : null,

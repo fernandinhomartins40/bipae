@@ -36,6 +36,11 @@ interface Company {
   ibsCbsRegular?: boolean;
   cnae?: string | null;
   stSpecialRegime?: boolean;
+  stNetLoadOptions?: {
+    transferMargin?: 'replace' | 'compound' | null;
+    industryLoad?: 'standard' | 'optional' | null;
+    distributionCenter?: boolean;
+  };
   ie?: string | null;
   street?: string | null;
   streetNumber?: string | null;
@@ -340,6 +345,9 @@ function CompanyForm({
     ibsCbsRegular: company?.ibsCbsRegular ?? false,
     cnae: formatCnae(company?.cnae ?? ''),
     stSpecialRegime: company?.stSpecialRegime ?? false,
+    transferMargin: company?.stNetLoadOptions?.transferMargin ?? '',
+    industryLoad: company?.stNetLoadOptions?.industryLoad ?? '',
+    distributionCenter: company?.stNetLoadOptions?.distributionCenter ?? false,
     ie: company?.ie ?? '',
     street: company?.street ?? '',
     streetNumber: company?.streetNumber ?? '',
@@ -380,6 +388,11 @@ function CompanyForm({
       ibsCbsRegular: v.ibsCbsRegular,
       cnae: v.cnae || null,
       stSpecialRegime: v.stSpecialRegime,
+      stNetLoadOptions: {
+        transferMargin: v.transferMargin || null,
+        industryLoad: v.industryLoad || null,
+        distributionCenter: v.distributionCenter,
+      },
       ie: v.ie || null,
       street: v.street || null,
       streetNumber: v.streetNumber || null,
@@ -479,7 +492,55 @@ function CompanyForm({
             label="Tem Regime Especial de Tributação (RET) com a SEFAZ"
             checked={v.stSpecialRegime}
             onChange={(stSpecialRegime) => setV({ ...v, stSpecialRegime })}
-            hint="Com RET, a carga vem do termo do regime: o Bipaê ainda não calcula e a compra mostra 'falta configurar'."
+            hint="Com RET, a carga sai do decreto quando ele traz (Anexo III ou a tabela dos farmacêuticos); quando não traz, vem do termo do regime e a compra mostra 'falta configurar'."
+          />
+        )}
+        {netLoad?.choices?.transferMargin && (
+          <SelectField
+            label="Margem na transferência recebida"
+            value={v.transferMargin}
+            onChange={(e) =>
+              setV({ ...v, transferMargin: e.target.value as typeof v.transferMargin })
+            }
+            options={[
+              { value: '', label: 'Ainda não escolhi' },
+              {
+                value: 'replace',
+                label: `${formatRate(netLoad.choices.transferMargin.transferMva)} no lugar da margem do caput`,
+              },
+              {
+                value: 'compound',
+                label: `Margem do caput (${formatRate(netLoad.choices.transferMargin.caputMva)}) e mais ${formatRate(netLoad.choices.transferMargin.transferMva)} sobre ela`,
+              },
+            ]}
+            hint={`O ${netLoad.choices.act} diz que a base da transferência${netLoad.choices.transferMargin.interstateOnly ? ' vinda de outra UF' : ''} é "a definida no caput, acrescida de ${formatRate(netLoad.choices.transferMargin.transferMva)}", e o caput já tem margem. A SEFAZ-CE não publicou a conta: escolha com o contador. Sem escolha, a compra mostra "falta configurar".`}
+          />
+        )}
+        {netLoad?.choices?.industryLoad && (
+          <SelectField
+            label="Carga da retenção da indústria"
+            value={v.industryLoad}
+            onChange={(e) => setV({ ...v, industryLoad: e.target.value as typeof v.industryLoad })}
+            options={[
+              { value: '', label: 'Ainda não escolhi' },
+              {
+                value: 'standard',
+                label: `${netLoad.choices.industryLoad.standardArticle}: ${formatRate(netLoad.choices.industryLoad.standardLoad)}`,
+              },
+              {
+                value: 'optional',
+                label: `${netLoad.choices.industryLoad.article}: ${formatRate(netLoad.choices.industryLoad.load)}`,
+              },
+            ]}
+            hint={`A CNAE desta empresa "poderá reter" pela carga do ${netLoad.choices.industryLoad.article} do ${netLoad.choices.act}, no lugar da do ${netLoad.choices.industryLoad.standardArticle}. Sem escolha, a nota de venda mostra "falta configurar".`}
+          />
+        )}
+        {netLoad?.choices?.distributionCenter && v.stSpecialRegime && (
+          <Checkbox
+            label="Centro de distribuição que transferiu 50% das compras para outras UFs"
+            checked={v.distributionCenter}
+            onChange={(distributionCenter) => setV({ ...v, distributionCenter })}
+            hint={`Só se a empresa comprovou à SEFAZ (${netLoad.choices.distributionCenter.article} do ${netLoad.choices.act}) que, no ano anterior, transferiu ao menos 50% do que comprou para estabelecimentos dela em outras UFs. Muda a carga da entrada.`}
           />
         )}
         <fieldset className="flex flex-col gap-4 rounded-ui border border-border p-4">

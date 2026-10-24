@@ -107,6 +107,15 @@ export const companies = pgTable('companies', {
   cnae: char('cnae', { length: 7 }),
   /** Regime Especial de Tributação (RET) com a SEFAZ (0079): a carga vem do termo do regime. */
   stSpecialRegime: boolean('st_special_regime').notNull().default(false),
+  /** Escolhas da empresa na carga líquida onde o texto deixa margem (0081, F3-26.d.CE.e). */
+  stNetLoadOptions: jsonb('st_net_load_options')
+    .$type<{
+      transferMargin?: 'replace' | 'compound' | null;
+      industryLoad?: 'standard' | 'optional' | null;
+      distributionCenter?: boolean;
+    }>()
+    .notNull()
+    .default({}),
   /** Dados do emitente da nota (F3-14.b). */
   ie: text('ie'),
   street: text('street'),

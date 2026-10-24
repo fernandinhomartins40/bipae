@@ -234,6 +234,7 @@ export class PurchasesService {
           regime: company.taxRegime,
           specialRegime: company.stSpecialRegime,
           taxId: company.taxId,
+          options: company.stNetLoadOptions,
         },
         nfe,
         item,

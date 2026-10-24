@@ -167,6 +167,38 @@ export interface NetLoadIndustryRule {
   simplesExcluded: boolean;
   /** A margem "não se aplica quando o contribuinte do imposto for o estabelecimento matriz". */
   headOfficeWithoutMva: boolean;
+  /**
+   * `annex-iii` (móveis): a linha e a coluna do Anexo III que valem para a indústria. A linha é a do
+   * Anexo I ("Indústria e Comércio Atacadista") e a coluna a do próprio Estado (operações
+   * internas); `formerLoad` é a carga fixa da redação original, igual a essa célula na tabela de
+   * 2019 (o gerador confere).
+   */
+  annexRow: { group: NetLoadBuyerGroup; origin: NetLoadOriginKey; formerLoad: string } | null;
+  /** Não se aplica na venda a empresa do Simples Nacional (móveis, art. 2º, § 2º, II). */
+  simplesRecipientExcluded: boolean;
+}
+
+/**
+ * Escolhas da empresa onde o texto dos decretos deixa margem (F3-26.d.CE.e, dúvida D-042). Vazio
+ * quer dizer "não escolheu": o cálculo volta como "falta configurar", nunca com uma suposição.
+ */
+export interface StNetLoadOptions {
+  /**
+   * Transferência quando o decreto diz "a base definida no caput, acrescida de X%" e o caput já tem
+   * margem (informática, construção, móveis): `replace` usa X% no lugar da margem do caput;
+   * `compound` aplica as duas, uma sobre a outra.
+   */
+  transferMargin?: 'replace' | 'compound' | null;
+  /**
+   * Indústria com carga própria e opcional (construção, art. 2º-A, cerâmica): `optional` retém por
+   * ela; `standard`, pela do art. 2º.
+   */
+  industryLoad?: 'standard' | 'optional' | null;
+  /**
+   * Centro de distribuição do RET dos farmacêuticos que comprovou ter transferido 50% das compras
+   * do ano anterior para outras UFs (Decreto 36.617, art. 7º): cargas próprias na entrada.
+   */
+  distributionCenter?: boolean;
 }
 
 /** Lista dos produtos de informática do ato do Secretário da Fazenda (IN SEFAZ 148/2024). */
@@ -289,6 +321,8 @@ export interface StNetLoadInput {
   specialRegime?: boolean;
   /** NCM do produto: confere a classe "produtos de informática" com a lista do ato do Secretário. */
   ncm?: string | null;
+  /** Escolhas da empresa onde o texto deixa margem (D-042). */
+  options?: StNetLoadOptions | null;
 }
 
 /** Classe que a empresa escolhe quando o produto está fora do regime de carga líquida. */
@@ -340,6 +374,7 @@ export type StNetLoadResult =
     };
 
 const sum = (values: string[]) => values.reduce((acc, v) => acc.plus(dec(v)), dec(0)).toString();
+const pctText = (value: string) => `${value.replace('.', ',')}%`;
 
 /**
  * A carga líquida que vale para o comprador, a origem e a classe da mercadoria na data. Nada é
@@ -398,10 +433,32 @@ export function stNetLoadFor(input: StNetLoadInput): StNetLoadResult {
         `Transferência interna: o ${regime.act} só dá margem própria para a transferência vinda de outra UF; vale a margem do cálculo comum.`,
       );
     } else if (rule.basis === 'caput' && regime.mva !== null) {
-      return missing(
-        'transfer',
-        `Falta configurar: na transferência, o ${regime.act} manda usar "a base definida no caput, acrescida de ${mva.replace('.', ',')}%", e o caput já tem margem de ${regime.mva.replace('.', ',')}%. Não está claro se a margem passa a ser ${mva.replace('.', ',')}% ou se as duas se somam (dúvida D-042).`,
-      );
+      // "A base definida no caput, acrescida de X%", com margem no caput: a leitura é da empresa
+      // (F3-26.d.CE.e, dúvida D-042). Sem escolha, falta configurar.
+      const caputMva = (simplesRule?.rule === 'mva' && simplesRule.mva) || regime.mva;
+      const reading = input.options?.transferMargin ?? null;
+      if (reading === null) {
+        return missing(
+          'transfer',
+          `Falta configurar: na transferência, o ${regime.act} manda usar "a base definida no caput, acrescida de ${pctText(mva)}", e o caput já tem margem de ${pctText(caputMva)}. A SEFAZ-CE não publicou se a margem passa a ser ${pctText(mva)} ou se as duas se aplicam uma sobre a outra: escolha a leitura em Empresas e lojas, com o contador (dúvida D-042).`,
+        );
+      }
+      if (reading === 'replace') {
+        transferMva = mva;
+        warnings.push(
+          `Transferência: margem de ${pctText(mva)} no lugar da do caput (leitura escolhida pela empresa; ${regime.act}).`,
+        );
+      } else {
+        transferMva = dec(1)
+          .plus(percent(caputMva))
+          .mul(dec(1).plus(percent(mva)))
+          .minus(1)
+          .mul(100)
+          .toString();
+        warnings.push(
+          `Transferência: margem do caput (${pctText(caputMva)}) e mais ${pctText(mva)} sobre ela, ${pctText(transferMva)} no total (leitura escolhida pela empresa; ${regime.act}).`,
+        );
+      }
     } else {
       transferMva = mva;
       warnings.push(`Transferência: margem de ${mva.replace('.', ',')}% (${regime.act}).`);
@@ -499,7 +556,14 @@ function specialRegimeEntry(
       message: `RET (${regime.act}, art. 12): o importado a 4% não paga a carga na entrada; o adicional vai junto com a saída interna.`,
     };
   }
-  const table = input.transfer ? ret.transfer : ret.entry;
+  // Centro de distribuição que comprovou 50% de transferências (art. 7º): a empresa informa; as
+  // cargas dele "substituem" as do art. 6º na entrada (não nas transferências recebidas).
+  const distributionCenter = !input.transfer && input.options?.distributionCenter === true;
+  const table = input.transfer
+    ? ret.transfer
+    : distributionCenter
+      ? ret.distributionCenter
+      : ret.entry;
   const loadPercent = table[origin.key];
   if (loadPercent === undefined) {
     return {
@@ -515,10 +579,9 @@ function specialRegimeEntry(
     const extra = ret.simplesAddition[origin.key];
     if (extra) additions.push({ kind: 'simples', percent: extra });
   }
-  const cd = ret.distributionCenter[origin.key];
-  if (cd && !input.transfer) {
+  if (distributionCenter) {
     warnings.push(
-      `Centro de distribuição que comprovou 50% de transferências no ano anterior (art. 7º): a carga é ${cd.replace('.', ',')}%, no lugar desta.`,
+      `Centro de distribuição do Canal Farma que comprovou 50% de transferências para outras UFs no ano anterior (art. 7º, informado em Empresas e lojas).`,
     );
   }
   warnings.push(
@@ -527,7 +590,11 @@ function specialRegimeEntry(
   const row: NetLoadRow = {
     group: buyer.group,
     goodsClass: input.goodsClass ?? '',
-    label: input.transfer ? 'RET, transferência (art. 6º)' : 'RET, entrada (art. 6º)',
+    label: input.transfer
+      ? 'RET, transferência (art. 6º)'
+      : distributionCenter
+        ? 'RET, centro de distribuição (art. 7º)'
+        : 'RET, entrada (art. 6º)',
     percents: table,
   };
   return {
@@ -631,22 +698,22 @@ export interface NetLoadExitOption {
 }
 
 export type StNetLoadExitResult =
-  /** A indústria retém pelo art. 2º (informática e construção). */
+  /** A indústria retém pelo art. 2º, ou o RET dos farmacêuticos vende a pessoa física (Farma). */
   | { status: 'retains'; regime: NetLoadRegime; option: NetLoadExitOption; warnings: string[] }
   /** RET dos farmacêuticos: a carga depende do canal, que sai do destino da venda. */
   | { status: 'channels'; regime: NetLoadRegime; options: NetLoadExitOption[]; warnings: string[] }
   | { status: 'missing'; regime: NetLoadRegime; message: string };
 
-const pctText = (value: string) => `${value.replace('.', ',')}%`;
-
 /**
  * Retenção na saída interna pela carga líquida (F3-26.d.CE.d), só cálculo e texto, nunca impede a
  * nota:
  * - indústria do Anexo I (art. 2º): carga do artigo sobre o valor da operação mais a margem;
- *   na informática, a carga do § 4º quando a NCM não está no ato do Secretário; na construção, só
- *   a carga do art. 2º-B (20%) tem regra completa; em móveis o texto não diz a linha do Anexo III;
+ *   na informática, a carga do § 4º quando a NCM não está no ato do Secretário; na construção e em
+ *   móveis, só o produto de 20% tem regra completa ("ajuste proporcional" sem conta nos outros); em
+ *   móveis a carga é a do Anexo III, linha do Anexo I, coluna do próprio Estado (F3-26.d.CE.e); a
+ *   carga opcional da cerâmica (art. 2º-A) é escolha da empresa;
  * - atacadista de farmacêuticos com RET (arts. 8º a 10): a carga de cada canal sobre o valor da
- *   saída, sem margem.
+ *   saída, sem margem; a pessoa física do Estado vai no Canal Farma (§ 4º-A).
  * Null quando nada é retido (saída interestadual, vendedor fora dos decretos, produto fora).
  */
 export function stNetLoadExit(input: {
@@ -662,6 +729,10 @@ export function stNetLoadExit(input: {
   /** Valor da operação do item (produto menos desconto mais frete), em centavos. */
   operationCents: number;
   transfer?: boolean;
+  /** O destinatário é pessoa física (CPF): no RET dos farmacêuticos, Canal Farma (§ 4º-A). */
+  recipientIndividual?: boolean;
+  /** Escolhas da empresa onde o texto deixa margem (D-042). */
+  options?: StNetLoadOptions | null;
 }): StNetLoadExitResult | null {
   const cnae = (input.sellerCnae ?? '').replace(/\D/g, '');
   if (!cnae || input.destinationUf.toUpperCase() !== input.uf.toUpperCase()) return null;
@@ -694,14 +765,12 @@ export function stNetLoadExit(input: {
     if (rule.validFrom === null || input.date < rule.validFrom) {
       return missing(`O Bipaê não tem a redação do ${rule.article} do ${regime.act} nesta data.`);
     }
-    if (rule.kind === 'annex-iii' || rule.load === null) {
+    // Carga opcional (construção, art. 2º-A): a empresa escolhe em Empresas e lojas.
+    const optional = rule.optional?.cnaes.includes(cnae) ? rule.optional : null;
+    const choice = optional ? (input.options?.industryLoad ?? null) : null;
+    if (optional && choice === null) {
       return missing(
-        `Falta configurar: o ${rule.article} do ${regime.act} manda a indústria reter "a carga líquida de que trata o Anexo III" com margem de ${pctText(rule.mva)}, sem dizer a linha da tabela (atacadista ou varejista) nem a origem (dúvida D-042).`,
-      );
-    }
-    if (rule.optional?.cnaes.includes(cnae)) {
-      return missing(
-        `Falta configurar: a CNAE ${cnae} pode reter pelo ${rule.optional.article} (${pctText(rule.optional.load)}) no lugar do ${rule.article} (${pctText(rule.load)}) do ${regime.act}; a escolha é da empresa, com o contador (dúvida D-042).`,
+        `Falta configurar: a CNAE ${cnae} pode reter pelo ${optional.article} (${pctText(optional.load)}) no lugar do ${rule.article}${rule.load ? ` (${pctText(rule.load)})` : ''} do ${regime.act}; a escolha é da empresa, em Empresas e lojas, com o contador (dúvida D-042).`,
       );
     }
     if (rule.referenceRate !== null && input.goodsClass !== `rate-${rule.referenceRate}`) {
@@ -711,20 +780,48 @@ export function stNetLoadExit(input: {
         );
       }
       return missing(
-        `Falta configurar: o ${regime.act} manda o "ajuste proporcional" da carga quando o ICMS do produto não é ${rule.referenceRate}% (art. 2º-B), sem dizer a conta (dúvida D-042).`,
+        `Falta configurar: o ${regime.act} manda o "ajuste proporcional" da carga quando o ICMS do produto não é ${rule.referenceRate}%, sem dizer a conta (dúvida D-042).`,
       );
     }
+    // Móveis: a carga é a da linha do Anexo I, coluna do próprio Estado, na tabela da data.
+    let load = rule.load;
+    let label = `${rule.article} do ${regime.act}`;
+    if (rule.kind === 'annex-iii') {
+      const version = netLoadVersionOn(regime, input.date);
+      const annexRow = rule.annexRow;
+      const cell =
+        annexRow &&
+        version?.loads.find((l) => l.group === annexRow.group && l.goodsClass === input.goodsClass)
+          ?.percents[annexRow.origin];
+      if (!cell) {
+        return missing(
+          `O Bipaê não tem a linha do Anexo III do ${regime.act} para a indústria nesta data.`,
+        );
+      }
+      load = cell;
+      label = `${rule.article} do ${regime.act} (Anexo III, linha do Anexo I, próprio Estado)`;
+    }
+    if (load === null) {
+      return missing(`O Bipaê não tem a carga do ${rule.article} do ${regime.act}.`);
+    }
+    if (optional && choice === 'optional') {
+      load = optional.load;
+      label = `${optional.article} do ${regime.act} (opção da empresa)`;
+    }
     const warnings = [
-      `Recolha em DAE específico (${rule.article}, § 1º). A nota ainda não leva esse valor nos campos da ST (dúvida D-042).`,
+      `Recolha em DAE específico (${rule.article}, § 1º). Fica nas observações: os decretos não dizem como lançar a carga líquida nos campos da ST da nota (dúvida D-042).`,
       `Não vale na venda ao atacadista com RET que recolhe o imposto (${rule.article}, § 2º).`,
     ];
+    if (rule.simplesRecipientExcluded) {
+      warnings.push(
+        `Não vale na venda a empresa optante pelo Simples Nacional (${rule.article}, § 2º, II).`,
+      );
+    }
     if (rule.headOfficeWithoutMva) {
       warnings.push(
         `O ${rule.article}, § 3º, tira a margem "quando o contribuinte do imposto for o estabelecimento matriz": confira com o contador.`,
       );
     }
-    let load = rule.load;
-    let label = `${rule.article} do ${regime.act}`;
     if (rule.unlistedLoad !== null) {
       const found = ceInformaticsListed(input.ncm, input.date);
       const inList =
@@ -753,8 +850,10 @@ export function stNetLoadExit(input: {
     pharma: 'Canal Farma (art. 9º)',
     'distribution-center': 'Centro de distribuição para as filiais (art. 10)',
   };
+  // Venda direta a pessoa física deste Estado: Canal Farma (art. 4º, § 4º-A), sem escolha.
+  const individual = input.recipientIndividual === true && !input.transfer;
   const options: NetLoadExitOption[] = [];
-  for (const t of tables) {
+  for (const t of individual ? tables.filter((x) => x.channel === 'pharma') : tables) {
     const rows = input.transfer ? (t.transfer ?? t.sale) : t.sale;
     const row = rows.find((r) => r.goodsClass === input.goodsClass);
     if (!row) {
@@ -765,6 +864,16 @@ export function stNetLoadExit(input: {
     options.push(
       option(`${names[t.channel]}${input.transfer ? ', transferência' : ''}`, row.percent, null),
     );
+  }
+  if (individual && options.length === 1) {
+    return {
+      status: 'retains',
+      regime,
+      option: options[0]!,
+      warnings: [
+        `Venda direta a pessoa física do Estado: Canal Farma (art. 4º, § 4º-A). Fica nas observações: o decreto não diz como lançar a carga líquida nos campos da ST da nota (dúvida D-042).`,
+      ],
+    };
   }
   return {
     status: 'channels',
@@ -793,4 +902,60 @@ export function stNetLoadExitMessage(result: StNetLoadExitResult): string {
     case 'missing':
       return result.message;
   }
+}
+
+/** As escolhas da empresa que valem para a CNAE principal (para a tela de Empresas e lojas). */
+export interface StNetLoadChoices {
+  act: string;
+  /** "A base definida no caput, acrescida de X%" com margem no caput. */
+  transferMargin: { caputMva: string; transferMva: string; interstateOnly: boolean } | null;
+  /** Carga opcional da indústria (construção, art. 2º-A). */
+  industryLoad: {
+    article: string;
+    load: string;
+    standardArticle: string;
+    standardLoad: string;
+  } | null;
+  /** Centro de distribuição do RET (farmacêuticos, art. 7º). */
+  distributionCenter: { article: string } | null;
+}
+
+/**
+ * Quais escolhas do texto dos decretos valem para a CNAE na data (F3-26.d.CE.e). Null quando a
+ * CNAE não está em um decreto só.
+ */
+export function stNetLoadChoicesFor(
+  uf: string,
+  buyerCnae: string,
+  date: string,
+): StNetLoadChoices | null {
+  const cnae = buyerCnae.replace(/\D/g, '');
+  const listed = ST_NET_LOAD_REGIMES.filter((r) => r.uf === uf.toUpperCase()).flatMap((regime) =>
+    regime.buyers
+      .filter((b) => b.cnae === cnae && (b.validFrom === null || date >= b.validFrom))
+      .map((buyer) => ({ regime, buyer })),
+  );
+  if (listed.length !== 1) return null;
+  const { regime, buyer } = listed[0]!;
+  const transfer = regime.transfer;
+  const transferMva = transfer.interstateMva ?? transfer.internalMva;
+  const industry = regime.industry;
+  const optional = buyer.group === 'industry' ? industry?.optional : null;
+  return {
+    act: regime.act,
+    transferMargin:
+      buyer.group !== 'industry' && transfer.basis === 'caput' && regime.mva !== null && transferMva
+        ? { caputMva: regime.mva, transferMva, interstateOnly: transfer.interstateOnly }
+        : null,
+    industryLoad:
+      optional?.cnaes.includes(cnae) && industry?.load
+        ? {
+            article: optional.article,
+            load: optional.load,
+            standardArticle: industry.article,
+            standardLoad: industry.load,
+          }
+        : null,
+    distributionCenter: regime.specialRegime?.kind === 'own-table' ? { article: 'art. 7º' } : null,
+  };
 }

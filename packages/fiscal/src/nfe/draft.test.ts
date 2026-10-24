@@ -370,6 +370,30 @@ describe('carga líquida do Ceará no rascunho (F3-26.d.CE.c)', () => {
     expect(r.input.additionalInfo ?? '').not.toContain('ICMS retido');
   });
 
+  it('RET dos farmacêuticos (F3-26.d.CE.e): pessoa física no Canal Farma; mesma raiz é transferência', () => {
+    const draft = ceara('rate-20');
+    const farma = {
+      ...draft,
+      // Comércio atacadista de medicamentos (Decreto 36.617/2025), com RET.
+      company: { ...draft.company, cnae: '4644-3/01', stSpecialRegime: true },
+      items: draft.items.map((i) => ({ ...i, cest: '1300100' })),
+    };
+    const pf = buildDraftNfe({
+      ...farma,
+      recipient: { ...farma.recipient, taxId: '52998224725', ieIndicator: 9, ie: null },
+    });
+    expect(pf.ok, pf.ok ? '' : pf.pending.join(' | ')).toBe(true);
+    if (!pf.ok) return;
+    expect(pf.notes.join(' ')).toMatch(/Canal Farma \(art\. 9º\).*§ 4º-A/);
+    expect(pf.notes.join(' ')).not.toMatch(/Canal Hospitalar/);
+    const cnpj = (draft.company.cnpj ?? '').replace(/\D/g, '');
+    const filial = buildDraftNfe({
+      ...farma,
+      recipient: { ...farma.recipient, taxId: `${cnpj.slice(0, 8)}000291` },
+    });
+    expect(filial.ok && filial.notes.join(' ')).toMatch(/Canal Farma \(art\. 9º\), transferência/);
+  });
+
   it('para outro estado, produto fora do regime ou sem classe: sem a expressão', () => {
     for (const draft of [ceara('rate-20', 'SP'), ceara('outside'), ceara(null)]) {
       const r = buildDraftNfe(draft);

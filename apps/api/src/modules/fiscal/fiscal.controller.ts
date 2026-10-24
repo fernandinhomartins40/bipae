@@ -48,6 +48,7 @@ import {
   ST_NET_LOAD_ORIGINS,
   ST_NET_LOAD_UFS,
   stNetLoadFor,
+  stNetLoadChoicesFor,
   stNetLoadMessage,
   stNetLoadRegimesFor,
 } from '@bipae/fiscal/tables';
@@ -420,6 +421,8 @@ export class FiscalController {
       },
       classes: result.status === 'choose-class' ? result.classes : [],
       message: stNetLoadMessage(result),
+      // Escolhas que o texto do decreto deixa para a empresa (F3-26.d.CE.e).
+      choices: stNetLoadChoicesFor(uf, cnae, day),
     };
   }
 

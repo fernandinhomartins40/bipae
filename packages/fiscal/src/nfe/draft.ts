@@ -11,7 +11,12 @@ import {
 import { findCompanyRegime } from '../regimes';
 import { calculateSaleItemTaxes, type SaleFiscalProfile, type TaxOutcome } from '../sale';
 import { DEMONSTRATION, type DemonstrationNote } from '../tables/demonstration';
-import { stNetLoadExit, stNetLoadExitMessage, stNetLoadOutputNote } from '../tables/st-net-loads';
+import {
+  stNetLoadExit,
+  stNetLoadExitMessage,
+  stNetLoadOutputNote,
+  type StNetLoadOptions,
+} from '../tables/st-net-loads';
 import { findStPautaItem } from '../tables/st-pautas';
 import { findCfop } from '../tables/cfop';
 import { isImportedOrigin } from '../tables/icms-uf';
@@ -72,6 +77,8 @@ export interface NfeDraftInput {
   company: SaleNfceCompany & {
     /** Regime Especial de Tributação (RET) com a SEFAZ: retenção na saída (F3-26.d.CE.d). */
     stSpecialRegime?: boolean;
+    /** Escolhas da empresa onde o texto dos decretos de carga líquida deixa margem (D-042). */
+    stNetLoadOptions?: StNetLoadOptions | null;
   };
   series: number;
   number: number;
@@ -192,6 +199,14 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
   const taxId = onlyDigits(r.taxId);
   if (taxId.length !== 11 && taxId.length !== 14)
     pending.push('Falta o CPF ou o CNPJ do destinatário.');
+  // Carga líquida na saída (F3-26.d.CE.e): pessoa física (Canal Farma do RET) e transferência
+  // (mesma raiz de CNPJ, como na compra).
+  const recipientIndividual = taxId.length === 11;
+  const recipientCnpj = (r.taxId ?? '').replace(/[^0-9A-Z]/gi, '').toUpperCase();
+  const netLoadTransfer =
+    recipientCnpj.length === 14 &&
+    cnpj.length === 14 &&
+    recipientCnpj.slice(0, 8) === cnpj.slice(0, 8);
   want(r.name, 'o nome');
   if (r.ieIndicator === null) {
     pending.push('Diga se o destinatário é contribuinte do ICMS (com inscrição estadual) ou não.');
@@ -366,6 +381,9 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
         cest: item.cest ?? null,
         ncm: item.ncm,
         operationCents,
+        transfer: netLoadTransfer,
+        recipientIndividual,
+        options: c.stNetLoadOptions ?? null,
       });
       if (exit) notes.push(`${label}: ${stNetLoadExitMessage(exit)}`);
     }

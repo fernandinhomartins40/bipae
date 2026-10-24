@@ -98,10 +98,15 @@ describe('dados lidos dos decretos', () => {
       optional: { article: 'art. 2º-A', cnaes: ['2342702', '2349499'], load: '4.49' },
       simplesExcluded: true,
     });
+    // Móveis (F3-26.d.CE.e): linha do Anexo I, coluna do próprio Estado; a redação original do
+    // art. 2º dava 6,93%, a célula atacadista / 18% / próprio Estado da tabela de 2019.
     expect(regime('Decreto 32.900/2018 (CE)').industry).toMatchObject({
       kind: 'annex-iii',
-      validFrom: '2019-01-01',
+      validFrom: '2024-01-01',
       mva: '40',
+      referenceRate: '20',
+      annexRow: { group: 'wholesale', origin: 'internal', formerLoad: '6.93' },
+      simplesRecipientExcluded: true,
     });
     expect(regime('Decreto 30.519/2011 (CE)').industry).toBeNull();
   });
@@ -211,9 +216,18 @@ describe('RET na entrada', () => {
 describe('lista de produtos de informática (IN SEFAZ 148/2024 e IN 135/2025)', () => {
   it('versões com a data de efeitos de cada ato', () => {
     expect(CE_INFORMATICS_LIST.versions.map((v) => [v.validFrom, v.validTo])).toEqual([
-      ['2025-10-28', null],
+      ['2026-02-12', null],
+      ['2025-10-28', '2026-02-11'],
       ['2025-03-01', '2025-10-27'],
     ]);
+  });
+
+  it('a IN 20/2026 (DOE de 12/02/2026, achada pelo monitor) leva os alto-falantes a 180 watts', () => {
+    const antes = ceInformaticsListed('85182200', '2026-02-11');
+    const depois = ceInformaticsListed('85182200', '2026-02-12');
+    expect(antes.status === 'listed' && antes.item.description).toMatch(/50 watts/);
+    expect(depois.status === 'listed' && depois.item.description).toMatch(/180 watts/);
+    expect(CE_INFORMATICS_LIST.versions[0]!.amendedBy).toBe('IN SEFAZ 20/2026');
   });
 
   it('posição e subposição abrangem as NCM abaixo; a exceção do item fica de fora', () => {
@@ -229,7 +243,7 @@ describe('lista de produtos de informática (IN SEFAZ 148/2024 e IN 135/2025)', 
     expect(ceInformaticsListed('85249100', '2025-10-01').status).toBe('not-listed');
     expect(ceInformaticsListed('85249100', '2025-10-28').status).toBe('listed');
     const antes = ceInformaticsListed('85182100', '2025-10-01');
-    const depois = ceInformaticsListed('85182100', '2026-10-23');
+    const depois = ceInformaticsListed('85182100', '2025-11-01');
     expect(antes.status === 'listed' && antes.item.description).not.toMatch(/50 watts/);
     expect(depois.status === 'listed' && depois.item.description).toMatch(/50 watts/);
   });
@@ -309,10 +323,21 @@ describe('retenção na saída interna', () => {
     expect(ceramica && stNetLoadExitMessage(ceramica)).toMatch(/art\. 2º-A \(4,49%\)/);
   });
 
-  it('indústria de móveis: o texto não diz a linha do Anexo III, falta configurar', () => {
+  it('indústria de móveis: Anexo III, linha do Anexo I e próprio Estado (7,70% + 40%)', () => {
     const r = exit({ sellerCnae: '3101200' });
-    expect(r).toMatchObject({ status: 'missing' });
-    expect(r && stNetLoadExitMessage(r)).toMatch(/sem dizer a linha da tabela/);
+    // R$ 10.000,00 × 1,40 = R$ 14.000,00; × 7,70% = R$ 1.078,00.
+    expect(r).toMatchObject({
+      status: 'retains',
+      option: { loadPercent: '7.70', mva: '40', baseCents: 1_400_000, stCents: 107_800 },
+    });
+    expect(r && stNetLoadExitMessage(r)).toMatch(/linha do Anexo I, próprio Estado/);
+    expect(r && stNetLoadExitMessage(r)).toMatch(/Simples Nacional \(art\. 2º, § 2º, II\)/);
+    const outra = exit({ sellerCnae: '3101200', goodsClass: 'basket-7' });
+    expect(outra && stNetLoadExitMessage(outra)).toMatch(/ajuste proporcional.*não é 20%/);
+    // Antes da redação de 2024 do § 5º, o Bipaê não tem a regra.
+    expect(exit({ sellerCnae: '3101200', date: '2023-06-01' })).toMatchObject({
+      status: 'missing',
+    });
   });
 
   it('atacadista de farmacêuticos com RET: a carga de cada canal, sobre o valor da saída', () => {
