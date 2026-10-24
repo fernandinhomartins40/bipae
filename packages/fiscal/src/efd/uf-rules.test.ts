@@ -87,20 +87,65 @@ describe('EFD por UF', () => {
     expect(efdUfRule(EFD_1601_BY_UF, 'RS', '2026-10-31')?.status).toBe('exempt');
     expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2024-06-30')?.status).toBe('optional');
     expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2025-01-31')?.status).toBe('required');
-    expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2023-06-30')).toBeNull();
+    // 2023: redação original do § 15, II (Decreto 32.137/2022), confirmada na quarta rodada.
+    expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2023-06-30')?.status).toBe('required');
+    expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2022-12-31')).toBeNull();
     expect(efdUfRule(EFD_1601_BY_UF, 'ES', '2026-10-31')?.status).toBe('optional');
     expect(efdUfRule(EFD_1601_BY_UF, 'AL', '2023-01-31')).toBeNull();
     expect(efdUfRule(EFD_1601_BY_UF, 'AL', '2023-02-28')?.status).toBe('required');
-    // Sergipe: só atividades mistas (ICMS e ISS), desde 2025; 2023 e 2024 não estão confirmados.
+    // Sergipe: hoje só atividades mistas (ICMS e ISS); 2024 segue sem confirmação (D-050).
     expect(efdUfRule(EFD_1601_BY_UF, 'SE', '2026-10-31')?.note).toMatch(/ISS/);
     expect(efdUfRule(EFD_1601_BY_UF, 'SE', '2024-06-30')).toBeNull();
   });
 
-  it('registro 1601 com vigência fechada: PB facultativo em 2023 e RO dispensado em 2022 e 2023', () => {
+  it('registro 1601 com vigência fechada: PB facultativo em 2023 e exigido desde 2024', () => {
     expect(efdUfRule(EFD_1601_BY_UF, 'PB', '2023-12-31')?.status).toBe('optional');
     expect(efdUfRule(EFD_1601_BY_UF, 'PB', '2024-01-31')?.status).toBe('required');
-    expect(efdUfRule(EFD_1601_BY_UF, 'RO', '2023-06-30')?.status).toBe('exempt');
-    // Depois de 2023 a regra de Rondônia não está confirmada (D-038).
-    expect(efdUfRule(EFD_1601_BY_UF, 'RO', '2024-01-31')).toBeNull();
+  });
+
+  it('quarta rodada: Simples dispensado em GO, CE, PR e RO; o DF obriga com exceções', () => {
+    for (const uf of ['GO', 'CE', 'PR', 'RO']) {
+      expect(efdUfRule(EFD_SIMPLES_BY_UF, uf, '2026-10-31')?.status, uf).toBe('exempt');
+    }
+    // Goiás: "não alcança o estabelecimento ... ME e EPP optantes pelo Simples Nacional, salvo o que
+    // estiver impedido de recolher o ICMS por este regime" (art. 356-D, § 4º, Decreto 8.117/2013).
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'GO', '2026-10-31')?.note).toMatch(/impedidas/);
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'GO', '2012-06-30')?.act).toMatch(/7\.402\/2011/);
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'GO', '2011-06-30')).toBeNull();
+    // Distrito Federal: "A obrigatoriedade de que trata o caput não se aplica aos contribuintes
+    // enquadrados no ... Simples Nacional: I - como Microempreendedor Individual ..." (Portaria 192/2019).
+    const df = efdUfRule(EFD_SIMPLES_BY_UF, 'DF', '2026-10-31');
+    expect(df?.status).toBe('partial');
+    expect(df?.note).toMatch(/MEI/);
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'DF', '2019-06-30')).toBeNull();
+    // Ceará: "ficam desobrigados da entrega da EFD ICMS/IPI ... os contribuintes ME e EPP, optantes
+    // do Simples Nacional ... todos a partir de janeiro de 2017" (SEFAZ-CE, Comunicado COATE 27/2022).
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'CE', '2016-12-31')).toBeNull();
+    // Paraná: "exceto os estabelecimentos de MEI ..., de ME ... e de EPP ... optantes ... Simples
+    // Nacional ... para o período em que estiver enquadrado neste regime" (NPF 056/2015, item 9).
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'PR', '2026-10-31')?.note).toMatch(/desenquadramento/);
+    // Rondônia: "exceto produtor rural pessoa física, MEI e aos optantes pelo Simples Nacional"
+    // (Anexo XIII do RICMS-RO, art. 107, parágrafo único), desde 01/05/2018.
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'RO', '2018-04-30')).toBeNull();
+  });
+
+  it('quarta rodada: 1601 dispensado em RO desde 2022 e em MT desde 2023; RN e SE exigiam em 2023', () => {
+    // Rondônia: item 9 do Manual da EFD lista o 1601 entre os registros "que não precisam ser
+    // apresentados"; a IN 75/2023 revogou a volta da exigência em 2024.
+    for (const d of ['2022-01-31', '2024-01-31', '2026-10-31']) {
+      expect(efdUfRule(EFD_1601_BY_UF, 'RO', d)?.status, d).toBe('exempt');
+    }
+    expect(efdUfRule(EFD_1601_BY_UF, 'RO', '2021-12-31')).toBeNull();
+    // Mato Grosso: Portaria 089/2023 "retroagindo seus efeitos a 1° de janeiro de 2023" adiou a
+    // exigência para 2024, e a Portaria 236/2023 a revogou.
+    expect(efdUfRule(EFD_1601_BY_UF, 'MT', '2023-06-30')?.act).toMatch(/089\/2023/);
+    expect(efdUfRule(EFD_1601_BY_UF, 'MT', '2024-06-30')?.act).toMatch(/236\/2023/);
+    // Rio Grande do Norte: "II - é obrigatório a partir de 1º de janeiro de 2023" (redação original).
+    expect(efdUfRule(EFD_1601_BY_UF, 'RN', '2023-12-31')?.act).toMatch(/32\.137\/2022/);
+    // Sergipe: § 10 original exigia de todos em 2023; § 10-A exigiu de todos em 2025 até a revogação
+    // de 07/11/2025; depois, só atividades mistas.
+    expect(efdUfRule(EFD_1601_BY_UF, 'SE', '2023-06-30')?.status).toBe('required');
+    expect(efdUfRule(EFD_1601_BY_UF, 'SE', '2025-10-31')?.status).toBe('required');
+    expect(efdUfRule(EFD_1601_BY_UF, 'SE', '2025-11-30')?.status).toBe('partial');
   });
 });

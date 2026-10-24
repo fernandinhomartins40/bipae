@@ -1,5 +1,17 @@
 # Changelog
 
+## [F4-14.b.4 EFD ICMS/IPI por UF, quarta rodada] — 24/10/2026
+
+### Adicionado
+- **Simples Nacional na EFD**, com a fonte oficial na tabela por UF: dispensado em **GO** (RCTE, art. 356-D, § 4º; desde 10/2013, menos as impedidas de recolher pelo Simples), **CE** (desde 01/2017, IN 42/2020), **PR** (desde 2014, NPF 056/2015) e **RO** (desde 05/2018, Anexo XIII do RICMS, art. 107); o **DF** obriga desde 07/2019, menos o MEI, quem faturou até o limite do MEI no ano anterior e quem começou no ano (Portaria 192/2019). São 22 UFs confirmadas.
+- **Registro 1601:** RO dispensa desde 2022, sem data de fim (IN 75/2023); MT dispensou também em 2023 (Portaria 089/2023, retroativa); RN exigia em 2023 (redação original do RICMS); SE exigia de todos em 2023.
+
+### Corrigido
+- **Sergipe, 1601 em 2025:** de janeiro a 06/11/2025 todos os declarantes informavam o 1601 (§ 10-A do RICMS-SE, revogado pelo Decreto 1.283/2025); só depois vale a regra das atividades mistas. 2024 continua "não confirmado" (dúvida D-050).
+
+### Falta
+- Simples: AP, MA, PI, RJ e RR. Registro 1601: AC, AM, AP, MA, PI, RJ, RR e TO. Os motivos (sites bloqueados, API com autenticação, sem norma expressa) estão no backlog.
+
 ## [F3-26.d.TO, F3-26.d.AP, F3-26.d.RR Substituição tributária de Tocantins, Amapá e Roraima] — 23/10/2026
 
 ### Documentação
