@@ -16,32 +16,55 @@ import {
   Drawer,
   SelectField,
   EmptyState,
+  FormSection,
   PageHeader,
+  SearchBox,
   TaxIdField,
   TextField,
+  type TileTone,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
-import { useDeferredValue, useState, type FormEvent } from 'react';
+import { Plus, SearchX, Truck, UserRound } from 'lucide-react';
+import { useDeferredValue, useState, type FormEvent, type ReactNode } from 'react';
 import { useApp, useCan } from '../context';
 import { CustomerSummaryPanel, LoyaltyPanel } from './crm';
 import { useForm } from '../forms';
 
 type Kind = 'customer' | 'supplier';
 
-const TEXT = {
+const TEXT: Record<
+  Kind,
+  {
+    title: string;
+    one: string;
+    many: string;
+    path: string;
+    description: string;
+    empty: string;
+    icon: ReactNode;
+    tone: TileTone;
+  }
+> = {
   customer: {
     title: 'Clientes',
     one: 'cliente',
+    many: 'clientes',
     path: '/customers',
+    description: 'Quem compra com você: contato, crediário, tabela de preço e histórico.',
     empty: 'Cadastre clientes para vender no crediário, dar CPF na nota mais rápido e fidelizar.',
+    icon: <UserRound />,
+    tone: 'purple',
   },
   supplier: {
     title: 'Fornecedores',
     one: 'fornecedor',
+    many: 'fornecedores',
     path: '/suppliers',
+    description: 'De quem você compra. Também entram sozinhos quando você importa o XML da nota.',
     empty:
       'Fornecedores também são criados automaticamente quando você importa o XML de uma nota de compra.',
+    icon: <Truck />,
+    tone: 'orange',
   },
 };
 
@@ -62,47 +85,95 @@ export function PartiesPage({ kind }: { kind: Kind }) {
     queryFn: () => api.get<Page<Party>>(`${text.path}?limit=100&q=${encodeURIComponent(deferred)}`),
   });
 
+  const newButton = (label: string) => (
+    <Button
+      size="lg"
+      icon={<Plus className="size-5" aria-hidden />}
+      onClick={() => setEditing('new')}
+    >
+      {label}
+    </Button>
+  );
+  const total = list.data?.total ?? 0;
+
   return (
     <>
       <PageHeader
         title={text.title}
-        actions={
-          canWrite && (
-            <Button
-              icon={<Plus className="size-5" aria-hidden />}
-              onClick={() => setEditing('new')}
-            >
-              Novo {text.one}
-            </Button>
-          )
-        }
+        description={text.description}
+        icon={text.icon}
+        tone={text.tone}
+        actions={canWrite && newButton(`Novo ${text.one}`)}
       />
-      <input
-        type="search"
-        aria-label={`Buscar ${text.title.toLowerCase()}`}
+      <SearchBox
+        label={`Buscar ${text.title.toLowerCase()}`}
         placeholder="Nome, CPF/CNPJ ou telefone"
-        className="mb-4 min-h-11 w-full max-w-xl rounded-ui border border-border bg-surface px-3"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={setQuery}
       />
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
       {list.data && list.data.items.length === 0 ? (
-        <EmptyState title={deferred ? 'Nada encontrado' : `Nenhum ${text.one} ainda`}>
-          {!deferred && text.empty}
-        </EmptyState>
+        deferred ? (
+          <EmptyState
+            title="Nada encontrado"
+            icon={<SearchX />}
+            tone="yellow"
+            action={
+              <Button variant="secondary" onClick={() => setQuery('')}>
+                Limpar a busca
+              </Button>
+            }
+          >
+            Confira o que foi digitado: dá para buscar pelo nome, CPF/CNPJ ou telefone.
+          </EmptyState>
+        ) : (
+          <EmptyState
+            title={`Nenhum ${text.one} ainda`}
+            icon={text.icon}
+            tone={text.tone}
+            action={canWrite && newButton(`Cadastrar o primeiro ${text.one}`)}
+          >
+            {text.empty}
+          </EmptyState>
+        )
       ) : (
         list.data && (
           <DataTable
             caption={`Lista de ${text.title.toLowerCase()}`}
             rows={list.data.items}
             onRowClick={canWrite ? setEditing : undefined}
+            card={(p) => (
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="font-bold">{p.name}</span>
+                <span className="text-sm text-muted">
+                  {[p.taxId && formatTaxId(p.taxId), formatPhone(p.phone)]
+                    .filter(Boolean)
+                    .join(' · ') || 'Sem documento nem telefone'}
+                </span>
+                {p.email && <span className="truncate text-sm text-muted">{p.email}</span>}
+              </span>
+            )}
             columns={[
-              { header: 'Nome', cell: (p) => <span className="font-semibold">{p.name}</span> },
+              {
+                header: 'Nome',
+                cell: (p) => (
+                  <span>
+                    <span className="font-bold">{p.name}</span>
+                    {p.email && <span className="block text-sm text-muted">{p.email}</span>}
+                  </span>
+                ),
+              },
               { header: 'CPF/CNPJ', cell: (p) => (p.taxId ? formatTaxId(p.taxId) : '—') },
               { header: 'Telefone', cell: (p) => formatPhone(p.phone) || '—' },
             ]}
           />
         )
+      )}
+      {list.data && list.data.items.length > 0 && (
+        <p className="mt-3 text-sm text-muted">
+          {total} {total === 1 ? text.one : text.many}
+          {total > list.data.items.length && ` (mostrando os ${list.data.items.length} primeiros)`}
+        </p>
       )}
       {editing && (
         <PartyForm
@@ -181,77 +252,80 @@ function PartyForm({
     >
       <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
         {form.formError && <Alert>{form.formError}</Alert>}
-        <TextField
-          label="Nome"
-          value={form.values.name}
-          onChange={(e) => form.set('name', e.target.value)}
-          error={form.errors.name}
-          autoFocus
-        />
-        <TaxIdField
-          value={form.values.taxId}
-          onChange={(v) => form.set('taxId', v)}
-          error={form.errors.taxId}
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <FormSection title="Dados e contato">
           <TextField
-            label="Telefone / WhatsApp"
-            inputMode="tel"
-            value={form.values.phone}
-            onChange={(e) => form.set('phone', e.target.value)}
-            error={form.errors.phone}
+            label="Nome"
+            value={form.values.name}
+            onChange={(e) => form.set('name', e.target.value)}
+            error={form.errors.name}
+            autoFocus
           />
+          <TaxIdField
+            value={form.values.taxId}
+            onChange={(v) => form.set('taxId', v)}
+            error={form.errors.taxId}
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField
+              label="Telefone / WhatsApp"
+              inputMode="tel"
+              value={form.values.phone}
+              onChange={(e) => form.set('phone', e.target.value)}
+              error={form.errors.phone}
+            />
+            <TextField
+              label="E-mail"
+              type="email"
+              value={form.values.email}
+              onChange={(e) => form.set('email', e.target.value)}
+              error={form.errors.email}
+            />
+          </div>
           <TextField
-            label="E-mail"
-            type="email"
-            value={form.values.email}
-            onChange={(e) => form.set('email', e.target.value)}
-            error={form.errors.email}
+            label="Observações"
+            value={form.values.notes}
+            onChange={(e) => form.set('notes', e.target.value)}
+            error={form.errors.notes}
           />
-        </div>
-        <TextField
-          label="Observações"
-          value={form.values.notes}
-          onChange={(e) => form.set('notes', e.target.value)}
-          error={form.errors.notes}
-        />
+        </FormSection>
         {kind === 'customer' && (
-          <SelectField
-            label="Tabela de preço"
-            hint="Preços especiais para este cliente no caixa (ex.: atacado)."
-            value={form.values.priceTableId}
-            onChange={(e) => form.set('priceTableId', e.target.value)}
-            options={[
-              { value: '', label: 'Preço normal (tabela da loja)' },
-              ...(tables.data ?? []).map((t) => ({ value: t.id, label: t.name })),
-            ]}
-          />
-        )}
-        {kind === 'customer' && (
-          <TextField
-            label="Limite do crediário (R$)"
-            hint={
-              canCredit
-                ? 'Deixe em branco para não vender no crediário. Precisa do CPF ou CNPJ.'
-                : 'Só quem pode liberar crediário muda o limite.'
-            }
-            inputMode="decimal"
-            value={form.values.creditLimit}
-            onChange={(e) => form.set('creditLimit', e.target.value)}
-            disabled={!canCredit}
-          />
+          <FormSection
+            title="No caixa"
+            description="Preço especial, crediário e permissão para ofertas."
+          >
+            <SelectField
+              label="Tabela de preço"
+              hint="Preços especiais para este cliente no caixa (ex.: atacado)."
+              value={form.values.priceTableId}
+              onChange={(e) => form.set('priceTableId', e.target.value)}
+              options={[
+                { value: '', label: 'Preço normal (tabela da loja)' },
+                ...(tables.data ?? []).map((t) => ({ value: t.id, label: t.name })),
+              ]}
+            />
+            <TextField
+              label="Limite do crediário (R$)"
+              hint={
+                canCredit
+                  ? 'Deixe em branco para não vender no crediário. Precisa do CPF ou CNPJ.'
+                  : 'Só quem pode liberar crediário muda o limite.'
+              }
+              inputMode="decimal"
+              value={form.values.creditLimit}
+              onChange={(e) => form.set('creditLimit', e.target.value)}
+              disabled={!canCredit}
+            />
+            <Checkbox
+              label="Aceita receber ofertas por WhatsApp ou e-mail"
+              hint="Marque só se o cliente autorizou. Fica registrado (LGPD)."
+              checked={form.values.marketingConsent}
+              onChange={(v) => form.set('marketingConsent', v)}
+            />
+          </FormSection>
         )}
         {kind === 'customer' && party && <CustomerSummaryPanel customerId={party.id} />}
         {kind === 'customer' && party && <LoyaltyPanel customerId={party.id} />}
         {kind === 'customer' && party?.taxId && <CreditPanel customerId={party.id} />}
-        {kind === 'customer' && (
-          <Checkbox
-            label="Aceita receber ofertas por WhatsApp ou e-mail"
-            hint="Marque só se o cliente autorizou. Fica registrado (LGPD)."
-            checked={form.values.marketingConsent}
-            onChange={(v) => form.set('marketingConsent', v)}
-          />
-        )}
         <div className="flex gap-2 pt-2">
           <Button type="submit" loading={form.submitting}>
             Salvar

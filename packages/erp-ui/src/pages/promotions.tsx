@@ -14,13 +14,14 @@ import {
   DataTable,
   Drawer,
   EmptyState,
+  FilterChips,
+  FormSection,
   MoneyField,
   PageHeader,
-  SelectField,
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, X } from 'lucide-react';
+import { BadgePercent, Plus, X } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useApp, useCan } from '../context';
 import { parseQuantity } from './purchase-orders';
@@ -35,6 +36,12 @@ const KINDS: Record<PromotionRule['kind'], string> = {
   buy_x_pay_y: 'Leve X pague Y',
   quantity_tier: 'Preço por quantidade',
   combo: 'Combo',
+};
+
+const RULE_HINT: Record<PromotionRule['kind'], string> = {
+  buy_x_pay_y: 'Quantas unidades o cliente leva e por quantas paga.',
+  quantity_tier: 'O preço de cada unidade a partir de cada quantidade.',
+  combo: 'O preço dos produtos juntos.',
 };
 
 /** Resumo da regra para a lista ("Leve 3 pague 2", "A partir de 6: R$ 7,99"...). */
@@ -66,22 +73,30 @@ export function PromotionsPage() {
   const [open, setOpen] = useState<PromotionView | 'new' | null>(null);
   const now = today();
   const rows = list.data ?? [];
+  const newButton = (label: string) => (
+    <Button size="lg" icon={<Plus className="size-5" aria-hidden />} onClick={() => setOpen('new')}>
+      {label}
+    </Button>
+  );
+  const period = (r: PromotionView) =>
+    r.endsOn ? `${day(r.startsOn)} a ${day(r.endsOn)}` : `Desde ${day(r.startsOn)}`;
   return (
     <>
       <PageHeader
         title="Promoções"
         description="Leve X pague Y, preço por quantidade e combos. O caixa aplica sozinho, mesmo sem internet; promoções não se somam no mesmo item."
-        actions={
-          canWrite && (
-            <Button icon={<Plus className="size-4" aria-hidden />} onClick={() => setOpen('new')}>
-              Nova promoção
-            </Button>
-          )
-        }
+        icon={<BadgePercent />}
+        tone="red"
+        actions={canWrite && newButton('Nova promoção')}
       />
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
       {list.data && rows.length === 0 ? (
-        <EmptyState title="Nenhuma promoção ainda">
+        <EmptyState
+          title="Nenhuma promoção ainda"
+          icon={<BadgePercent />}
+          tone="red"
+          action={canWrite && newButton('Criar a primeira promoção')}
+        >
           Crie a primeira: ela chega aos caixas na próxima sincronização.
         </EmptyState>
       ) : (
@@ -90,28 +105,30 @@ export function PromotionsPage() {
             caption="Promoções"
             rows={rows}
             onRowClick={canWrite ? (r) => setOpen(r) : undefined}
+            card={(r) => (
+              <>
+                <span className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="font-bold">{r.name}</span>
+                  <span className="text-sm">{describeRule(r.rule)}</span>
+                  <span className="text-sm text-muted">
+                    {period(r)} ·{' '}
+                    {storeName(r.storeId) === 'Todas' ? 'todas as lojas' : storeName(r.storeId)}
+                  </span>
+                </span>
+                <span className="shrink-0">
+                  <PromotionStatus promotion={r} today={now} />
+                </span>
+              </>
+            )}
             columns={[
-              { header: 'Nome', cell: (r) => <span className="font-semibold">{r.name}</span> },
+              { header: 'Nome', cell: (r) => <span className="font-bold">{r.name}</span> },
               { header: 'Tipo', cell: (r) => KINDS[r.rule.kind] },
               { header: 'Regra', cell: (r) => describeRule(r.rule) },
               { header: 'Loja', cell: (r) => storeName(r.storeId) },
-              {
-                header: 'Vigência',
-                cell: (r) =>
-                  r.endsOn ? `${day(r.startsOn)} a ${day(r.endsOn)}` : `Desde ${day(r.startsOn)}`,
-              },
+              { header: 'Vigência', cell: period },
               {
                 header: 'Situação',
-                cell: (r) =>
-                  !r.active ? (
-                    <Badge>Desligada</Badge>
-                  ) : r.endsOn && r.endsOn < now ? (
-                    <Badge>Encerrada</Badge>
-                  ) : r.startsOn > now ? (
-                    <Badge tone="warning">Agendada</Badge>
-                  ) : (
-                    <Badge tone="success">Valendo</Badge>
-                  ),
+                cell: (r) => <PromotionStatus promotion={r} today={now} />,
               },
             ]}
           />
@@ -122,6 +139,19 @@ export function PromotionsPage() {
       )}
     </>
   );
+}
+
+function PromotionStatus({
+  promotion: r,
+  today: now,
+}: {
+  promotion: PromotionView;
+  today: string;
+}) {
+  if (!r.active) return <Badge>Desligada</Badge>;
+  if (r.endsOn && r.endsOn < now) return <Badge>Encerrada</Badge>;
+  if (r.startsOn > now) return <Badge tone="warning">Agendada</Badge>;
+  return <Badge tone="success">Valendo</Badge>;
 }
 
 interface Picked {
@@ -239,93 +269,100 @@ function PromotionDrawer({
     >
       <div className="flex flex-col gap-4">
         {error && <Alert>{error}</Alert>}
-        <TextField
-          label="Nome da promoção"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <SelectField
-          label="Tipo"
-          value={kind}
-          onChange={(e) => setKind(e.target.value as PromotionRule['kind'])}
-          options={Object.entries(KINDS).map(([value, label]) => ({ value, label }))}
-        />
-        <div className="grid grid-cols-2 gap-3">
+        <FormSection title="O básico">
           <TextField
-            label="Começa em"
-            type="date"
-            value={startsOn}
-            onChange={(e) => setStartsOn(e.target.value)}
+            label="Nome da promoção"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
-          <TextField
-            label="Termina em"
-            type="date"
-            value={endsOn}
-            hint="Em branco: sem data para acabar."
-            onChange={(e) => setEndsOn(e.target.value)}
+          <FilterChips
+            label="Tipo"
+            value={kind}
+            onChange={setKind}
+            options={(Object.keys(KINDS) as PromotionRule['kind'][]).map((value) => ({
+              value,
+              label: KINDS[value],
+            }))}
           />
-        </div>
-
-        {kind === 'buy_x_pay_y' && (
           <div className="grid grid-cols-2 gap-3">
             <TextField
-              label="Leve"
-              inputMode="numeric"
-              value={buy}
-              onChange={(e) => setBuy(e.target.value)}
+              label="Começa em"
+              type="date"
+              value={startsOn}
+              onChange={(e) => setStartsOn(e.target.value)}
             />
             <TextField
-              label="Pague"
-              inputMode="numeric"
-              value={pay}
-              onChange={(e) => setPay(e.target.value)}
+              label="Termina em"
+              type="date"
+              value={endsOn}
+              hint="Em branco: sem data para acabar."
+              onChange={(e) => setEndsOn(e.target.value)}
             />
           </div>
-        )}
-        {kind === 'quantity_tier' && (
-          <div className="flex flex-col gap-2">
-            {tiers.map((t, n) => (
-              <div key={n} className="grid grid-cols-[1fr_1fr_auto] items-end gap-2">
-                <TextField
-                  label={`Faixa ${n + 1}: a partir de`}
-                  inputMode="decimal"
-                  value={t.quantity}
-                  onChange={(e) =>
-                    setTiers((list) =>
-                      list.map((x, i) => (i === n ? { ...x, quantity: e.target.value } : x)),
-                    )
-                  }
-                />
-                <MoneyField
-                  label={`Faixa ${n + 1}: preço de cada`}
-                  value={t.priceCents}
-                  onChange={(priceCents) =>
-                    setTiers((list) => list.map((x, i) => (i === n ? { ...x, priceCents } : x)))
-                  }
-                />
-                <Button
-                  variant="ghost"
-                  aria-label={`Tirar a faixa ${n + 1}`}
-                  icon={<X className="size-4" aria-hidden />}
-                  disabled={tiers.length === 1}
-                  onClick={() => setTiers((list) => list.filter((_, i) => i !== n))}
-                />
-              </div>
-            ))}
-            <Button
-              variant="secondary"
-              onClick={() => setTiers((list) => [...list, { quantity: '', priceCents: null }])}
-              disabled={tiers.length >= 10}
-            >
-              Adicionar faixa
-            </Button>
-          </div>
-        )}
-        {kind === 'combo' && (
-          <MoneyField label="Preço do combo" value={comboPrice} onChange={setComboPrice} />
-        )}
+        </FormSection>
 
-        <div className="flex flex-col gap-2">
+        <FormSection title="A regra" description={RULE_HINT[kind]}>
+          {kind === 'buy_x_pay_y' && (
+            <div className="grid grid-cols-2 gap-3">
+              <TextField
+                label="Leve"
+                inputMode="numeric"
+                value={buy}
+                onChange={(e) => setBuy(e.target.value)}
+              />
+              <TextField
+                label="Pague"
+                inputMode="numeric"
+                value={pay}
+                onChange={(e) => setPay(e.target.value)}
+              />
+            </div>
+          )}
+          {kind === 'quantity_tier' && (
+            <div className="flex flex-col gap-2">
+              {tiers.map((t, n) => (
+                <div key={n} className="grid grid-cols-[1fr_1fr_auto] items-end gap-2">
+                  <TextField
+                    label={`Faixa ${n + 1}: a partir de`}
+                    inputMode="decimal"
+                    value={t.quantity}
+                    onChange={(e) =>
+                      setTiers((list) =>
+                        list.map((x, i) => (i === n ? { ...x, quantity: e.target.value } : x)),
+                      )
+                    }
+                  />
+                  <MoneyField
+                    label={`Faixa ${n + 1}: preço de cada`}
+                    value={t.priceCents}
+                    onChange={(priceCents) =>
+                      setTiers((list) => list.map((x, i) => (i === n ? { ...x, priceCents } : x)))
+                    }
+                  />
+                  <Button
+                    variant="ghost"
+                    aria-label={`Tirar a faixa ${n + 1}`}
+                    icon={<X className="size-4" aria-hidden />}
+                    disabled={tiers.length === 1}
+                    onClick={() => setTiers((list) => list.filter((_, i) => i !== n))}
+                  />
+                </div>
+              ))}
+              <Button
+                variant="secondary"
+                onClick={() => setTiers((list) => [...list, { quantity: '', priceCents: null }])}
+                disabled={tiers.length >= 10}
+              >
+                Adicionar faixa
+              </Button>
+            </div>
+          )}
+          {kind === 'combo' && (
+            <MoneyField label="Preço do combo" value={comboPrice} onChange={setComboPrice} />
+          )}
+        </FormSection>
+
+        <FormSection title="Produtos">
           <TextField
             label="Adicionar produto"
             placeholder="Digite o nome ou o código"
@@ -365,7 +402,7 @@ function PromotionDrawer({
               {items.map((item, n) => (
                 <li
                   key={item.id}
-                  className="flex items-end justify-between gap-3 rounded-ui border border-border p-3"
+                  className="flex items-end justify-between gap-3 rounded-2xl border border-border bg-surface-2 p-3"
                 >
                   <span className="font-semibold">{item.name}</span>
                   {kind === 'combo' && (
@@ -391,7 +428,7 @@ function PromotionDrawer({
               ))}
             </ul>
           )}
-        </div>
+        </FormSection>
         <Checkbox
           label="Promoção ligada"
           checked={active}

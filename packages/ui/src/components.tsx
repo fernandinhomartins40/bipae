@@ -1,6 +1,6 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { formatBRL, formatTaxId, parseBRL, type Cents } from '@bipae/domain';
-import { X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { BRAND_SYMBOL, BRAND_WORDMARK } from './brand-paths';
 import {
   forwardRef,
@@ -520,6 +520,42 @@ export function FilterChips<T extends string>({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Busca grande da lista, com a lupa à esquerda: o mesmo campo em Produtos, Clientes e
+ * Fornecedores. O rótulo vai para o leitor de tela; o exemplo fica no `placeholder`.
+ */
+export function SearchBox({
+  label,
+  value,
+  onChange,
+  placeholder,
+  autoFocus,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  autoFocus?: boolean;
+}) {
+  return (
+    <div className="relative mb-5 max-w-2xl">
+      <Search
+        className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted"
+        aria-hidden
+      />
+      <input
+        type="search"
+        aria-label={label}
+        placeholder={placeholder}
+        className="min-h-12 w-full rounded-2xl border border-border bg-surface pl-12 pr-4 text-base shadow-sm"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoFocus={autoFocus}
+      />
     </div>
   );
 }

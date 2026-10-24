@@ -5,6 +5,7 @@ import {
   Card,
   Checkbox,
   Drawer,
+  FormSection,
   MoneyField,
   PageHeader,
   SelectField,
@@ -101,9 +102,12 @@ export function CompaniesPage() {
       <PageHeader
         title="Empresas e lojas"
         description="Cada empresa é um CNPJ. Cada loja pertence a uma empresa e tem seus próprios caixas."
+        icon={<Building2 />}
+        tone="blue"
         actions={
           canManage && (
             <Button
+              size="lg"
               icon={<Plus className="size-5" aria-hidden />}
               onClick={() => setEditing('new')}
             >
@@ -119,10 +123,15 @@ export function CompaniesPage() {
         {companies.data?.map((c) => (
           <Card key={c.id}>
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="flex gap-3">
-                <Building2 className="mt-1 size-6 text-primary" aria-hidden />
-                <div>
-                  <p className="text-lg font-semibold">{c.tradeName ?? c.legalName}</p>
+              <div className="flex min-w-0 gap-4">
+                <span
+                  aria-hidden
+                  className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-tile-blue-strong text-tile-icon"
+                >
+                  <Building2 className="size-6" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-lg font-bold">{c.tradeName ?? c.legalName}</p>
                   <p className="text-sm text-muted">
                     {c.tradeName && `${c.legalName} · `}
                     {c.taxId ? formatTaxId(c.taxId) : 'CNPJ não informado'}
@@ -146,7 +155,7 @@ export function CompaniesPage() {
                 </div>
               </div>
               {canManage && (
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2 max-sm:w-full max-sm:[&>*]:flex-1">
                   <Button variant="secondary" onClick={() => setEditing(c)}>
                     Editar
                   </Button>
@@ -160,7 +169,11 @@ export function CompaniesPage() {
                 </div>
               )}
             </div>
-            <ul className="mt-4 flex flex-wrap gap-2">
+            <p className="mt-4 mb-2 text-sm font-semibold text-muted">Lojas</p>
+            <ul
+              className="flex flex-wrap gap-2"
+              aria-label={`Lojas de ${c.tradeName ?? c.legalName}`}
+            >
               {stores.data
                 ?.filter((s) => s.companyId === c.id)
                 .map((s) => (
@@ -170,7 +183,7 @@ export function CompaniesPage() {
                       disabled={!canManage}
                       onClick={() => setEditingStore({ company: c, store: s })}
                       aria-label={canManage ? `Editar a loja ${s.name}` : undefined}
-                      className="inline-flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1 text-sm font-medium enabled:hover:bg-border"
+                      className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface-2 px-4 text-sm font-semibold enabled:hover:bg-border"
                     >
                       <Store className="size-4" aria-hidden /> {s.name}
                       {tableName(s.priceTableId) && (
@@ -428,123 +441,134 @@ function CompanyForm({
     >
       <form onSubmit={submit} className="flex flex-col gap-4">
         {error && <Alert>{error}</Alert>}
-        <TextField
-          label="Razão social"
-          value={v.legalName}
-          onChange={(e) => setV({ ...v, legalName: e.target.value })}
-          autoFocus
-        />
-        <TextField
-          label="Nome fantasia"
-          value={v.tradeName}
-          onChange={(e) => setV({ ...v, tradeName: e.target.value })}
-        />
-        <TaxIdField label="CNPJ" value={v.taxId} onChange={(taxId) => setV({ ...v, taxId })} />
-        <SelectField
-          label="UF"
-          value={v.uf}
-          onChange={(e) => setV({ ...v, uf: e.target.value })}
-          options={[{ value: '', label: 'Selecione' }, ...UFS.map((u) => ({ value: u, label: u }))]}
-          hint={
-            !ufRate
-              ? 'O estado onde a empresa está inscrita.'
-              : ufRate.rate
-                ? `ICMS geral de ${ufRate.uf}: ${formatRate(ufRate.rate)} (${ufRate.law}).`
-                : `A alíquota geral de ICMS de ${ufRate.uf} ainda não foi confirmada em fonte oficial: o cálculo vai pedir a alíquota ao seu contador.`
-          }
-        />
-        <SelectField
-          label="Regime tributário"
-          value={v.taxRegime}
-          onChange={(e) => setV({ ...v, taxRegime: e.target.value })}
-          options={[
-            { value: '', label: 'Selecione' },
-            ...(fiscal?.regimes ?? []).map((r) => ({ value: r.id, label: r.label })),
-          ]}
-          hint={
-            regime
-              ? `${regime.hint} Na nota: CRT ${regime.crt}, ICMS com ${regime.icmsCode === 'csosn' ? 'CSOSN' : 'CST'}.`
-              : 'Não é o tipo da empresa (MEI, LTDA...), é como ela paga imposto. Na dúvida, pergunte ao contador.'
-          }
-        />
-        {regime?.ibsCbsRegularOption && (
-          <Checkbox
-            label="Apura o IBS e a CBS pelo regime regular"
-            checked={v.ibsCbsRegular}
-            onChange={(ibsCbsRegular) => setV({ ...v, ibsCbsRegular })}
-            hint="Só se a empresa fez essa opção no Simples Nacional (LC 123/2006, art. 13, §§ 9º e 10). Ela vale por semestre (de janeiro ou de julho), é feita em setembro ou março e não pode ser desfeita no meio do semestre. Sem ela, o IBS e a CBS vão no DAS."
+        <FormSection title="A empresa">
+          <TextField
+            label="Razão social"
+            value={v.legalName}
+            onChange={(e) => setV({ ...v, legalName: e.target.value })}
+            autoFocus
           />
-        )}
-        <TextField
-          label="CNAE principal"
-          inputMode="numeric"
-          placeholder="0000-0/00"
-          value={v.cnae}
-          onChange={(e) => setV({ ...v, cnae: formatCnae(e.target.value) })}
-          hint={
-            netLoad?.regime
-              ? `ST com carga líquida do ${netLoad.regime.act} (${netLoad.regime.segmentName.toLowerCase()}): a compra calcula a ST de entrada pela classe da mercadoria de cada produto.`
-              : 'A atividade principal do cartão do CNPJ. No Ceará, ela decide a ST com carga líquida.'
-          }
-        />
-        {netLoad?.regime && (
-          <Checkbox
-            label="Tem Regime Especial de Tributação (RET) com a SEFAZ"
-            checked={v.stSpecialRegime}
-            onChange={(stSpecialRegime) => setV({ ...v, stSpecialRegime })}
-            hint="Com RET, a carga sai do decreto quando ele traz (Anexo III ou a tabela dos farmacêuticos); quando não traz, vem do termo do regime e a compra mostra 'falta configurar'."
+          <TextField
+            label="Nome fantasia"
+            value={v.tradeName}
+            onChange={(e) => setV({ ...v, tradeName: e.target.value })}
           />
-        )}
-        {netLoad?.choices?.transferMargin && (
+          <TaxIdField label="CNPJ" value={v.taxId} onChange={(taxId) => setV({ ...v, taxId })} />
+        </FormSection>
+        <FormSection
+          title="Impostos"
+          description="Onde a empresa está e como paga imposto: é a base do cálculo das notas."
+        >
           <SelectField
-            label="Margem na transferência recebida"
-            value={v.transferMargin}
-            onChange={(e) =>
-              setV({ ...v, transferMargin: e.target.value as typeof v.transferMargin })
+            label="UF"
+            value={v.uf}
+            onChange={(e) => setV({ ...v, uf: e.target.value })}
+            options={[
+              { value: '', label: 'Selecione' },
+              ...UFS.map((u) => ({ value: u, label: u })),
+            ]}
+            hint={
+              !ufRate
+                ? 'O estado onde a empresa está inscrita.'
+                : ufRate.rate
+                  ? `ICMS geral de ${ufRate.uf}: ${formatRate(ufRate.rate)} (${ufRate.law}).`
+                  : `A alíquota geral de ICMS de ${ufRate.uf} ainda não foi confirmada em fonte oficial: o cálculo vai pedir a alíquota ao seu contador.`
             }
-            options={[
-              { value: '', label: 'Ainda não escolhi' },
-              {
-                value: 'replace',
-                label: `${formatRate(netLoad.choices.transferMargin.transferMva)} no lugar da margem do caput`,
-              },
-              {
-                value: 'compound',
-                label: `Margem do caput (${formatRate(netLoad.choices.transferMargin.caputMva)}) e mais ${formatRate(netLoad.choices.transferMargin.transferMva)} sobre ela`,
-              },
-            ]}
-            hint={`O ${netLoad.choices.act} diz que a base da transferência${netLoad.choices.transferMargin.interstateOnly ? ' vinda de outra UF' : ''} é "a definida no caput, acrescida de ${formatRate(netLoad.choices.transferMargin.transferMva)}", e o caput já tem margem. A SEFAZ-CE não publicou a conta: escolha com o contador. Sem escolha, a compra mostra "falta configurar".`}
           />
-        )}
-        {netLoad?.choices?.industryLoad && (
           <SelectField
-            label="Carga da retenção da indústria"
-            value={v.industryLoad}
-            onChange={(e) => setV({ ...v, industryLoad: e.target.value as typeof v.industryLoad })}
+            label="Regime tributário"
+            value={v.taxRegime}
+            onChange={(e) => setV({ ...v, taxRegime: e.target.value })}
             options={[
-              { value: '', label: 'Ainda não escolhi' },
-              {
-                value: 'standard',
-                label: `${netLoad.choices.industryLoad.standardArticle}: ${formatRate(netLoad.choices.industryLoad.standardLoad)}`,
-              },
-              {
-                value: 'optional',
-                label: `${netLoad.choices.industryLoad.article}: ${formatRate(netLoad.choices.industryLoad.load)}`,
-              },
+              { value: '', label: 'Selecione' },
+              ...(fiscal?.regimes ?? []).map((r) => ({ value: r.id, label: r.label })),
             ]}
-            hint={`A CNAE desta empresa "poderá reter" pela carga do ${netLoad.choices.industryLoad.article} do ${netLoad.choices.act}, no lugar da do ${netLoad.choices.industryLoad.standardArticle}. Sem escolha, a nota de venda mostra "falta configurar".`}
+            hint={
+              regime
+                ? `${regime.hint} Na nota: CRT ${regime.crt}, ICMS com ${regime.icmsCode === 'csosn' ? 'CSOSN' : 'CST'}.`
+                : 'Não é o tipo da empresa (MEI, LTDA...), é como ela paga imposto. Na dúvida, pergunte ao contador.'
+            }
           />
-        )}
-        {netLoad?.choices?.distributionCenter && v.stSpecialRegime && (
-          <Checkbox
-            label="Centro de distribuição que transferiu 50% das compras para outras UFs"
-            checked={v.distributionCenter}
-            onChange={(distributionCenter) => setV({ ...v, distributionCenter })}
-            hint={`Só se a empresa comprovou à SEFAZ (${netLoad.choices.distributionCenter.article} do ${netLoad.choices.act}) que, no ano anterior, transferiu ao menos 50% do que comprou para estabelecimentos dela em outras UFs. Muda a carga da entrada.`}
+          {regime?.ibsCbsRegularOption && (
+            <Checkbox
+              label="Apura o IBS e a CBS pelo regime regular"
+              checked={v.ibsCbsRegular}
+              onChange={(ibsCbsRegular) => setV({ ...v, ibsCbsRegular })}
+              hint="Só se a empresa fez essa opção no Simples Nacional (LC 123/2006, art. 13, §§ 9º e 10). Ela vale por semestre (de janeiro ou de julho), é feita em setembro ou março e não pode ser desfeita no meio do semestre. Sem ela, o IBS e a CBS vão no DAS."
+            />
+          )}
+          <TextField
+            label="CNAE principal"
+            inputMode="numeric"
+            placeholder="0000-0/00"
+            value={v.cnae}
+            onChange={(e) => setV({ ...v, cnae: formatCnae(e.target.value) })}
+            hint={
+              netLoad?.regime
+                ? `ST com carga líquida do ${netLoad.regime.act} (${netLoad.regime.segmentName.toLowerCase()}): a compra calcula a ST de entrada pela classe da mercadoria de cada produto.`
+                : 'A atividade principal do cartão do CNPJ. No Ceará, ela decide a ST com carga líquida.'
+            }
           />
-        )}
-        <fieldset className="flex flex-col gap-4 rounded-ui border border-border p-4">
-          <legend className="px-1 font-semibold">Dados para a nota fiscal (NFC-e)</legend>
+          {netLoad?.regime && (
+            <Checkbox
+              label="Tem Regime Especial de Tributação (RET) com a SEFAZ"
+              checked={v.stSpecialRegime}
+              onChange={(stSpecialRegime) => setV({ ...v, stSpecialRegime })}
+              hint="Com RET, a carga sai do decreto quando ele traz (Anexo III ou a tabela dos farmacêuticos); quando não traz, vem do termo do regime e a compra mostra 'falta configurar'."
+            />
+          )}
+          {netLoad?.choices?.transferMargin && (
+            <SelectField
+              label="Margem na transferência recebida"
+              value={v.transferMargin}
+              onChange={(e) =>
+                setV({ ...v, transferMargin: e.target.value as typeof v.transferMargin })
+              }
+              options={[
+                { value: '', label: 'Ainda não escolhi' },
+                {
+                  value: 'replace',
+                  label: `${formatRate(netLoad.choices.transferMargin.transferMva)} no lugar da margem do caput`,
+                },
+                {
+                  value: 'compound',
+                  label: `Margem do caput (${formatRate(netLoad.choices.transferMargin.caputMva)}) e mais ${formatRate(netLoad.choices.transferMargin.transferMva)} sobre ela`,
+                },
+              ]}
+              hint={`O ${netLoad.choices.act} diz que a base da transferência${netLoad.choices.transferMargin.interstateOnly ? ' vinda de outra UF' : ''} é "a definida no caput, acrescida de ${formatRate(netLoad.choices.transferMargin.transferMva)}", e o caput já tem margem. A SEFAZ-CE não publicou a conta: escolha com o contador. Sem escolha, a compra mostra "falta configurar".`}
+            />
+          )}
+          {netLoad?.choices?.industryLoad && (
+            <SelectField
+              label="Carga da retenção da indústria"
+              value={v.industryLoad}
+              onChange={(e) =>
+                setV({ ...v, industryLoad: e.target.value as typeof v.industryLoad })
+              }
+              options={[
+                { value: '', label: 'Ainda não escolhi' },
+                {
+                  value: 'standard',
+                  label: `${netLoad.choices.industryLoad.standardArticle}: ${formatRate(netLoad.choices.industryLoad.standardLoad)}`,
+                },
+                {
+                  value: 'optional',
+                  label: `${netLoad.choices.industryLoad.article}: ${formatRate(netLoad.choices.industryLoad.load)}`,
+                },
+              ]}
+              hint={`A CNAE desta empresa "poderá reter" pela carga do ${netLoad.choices.industryLoad.article} do ${netLoad.choices.act}, no lugar da do ${netLoad.choices.industryLoad.standardArticle}. Sem escolha, a nota de venda mostra "falta configurar".`}
+            />
+          )}
+          {netLoad?.choices?.distributionCenter && v.stSpecialRegime && (
+            <Checkbox
+              label="Centro de distribuição que transferiu 50% das compras para outras UFs"
+              checked={v.distributionCenter}
+              onChange={(distributionCenter) => setV({ ...v, distributionCenter })}
+              hint={`Só se a empresa comprovou à SEFAZ (${netLoad.choices.distributionCenter.article} do ${netLoad.choices.act}) que, no ano anterior, transferiu ao menos 50% do que comprou para estabelecimentos dela em outras UFs. Muda a carga da entrada.`}
+            />
+          )}
+        </FormSection>
+        <FormSection title="Dados para a nota fiscal (NFC-e)">
           <TextField
             label="Inscrição estadual"
             inputMode="numeric"
@@ -611,9 +635,8 @@ function CompanyForm({
               ]}
             />
           </div>
-        </fieldset>
-        <fieldset className="flex flex-col gap-3">
-          <legend className="font-semibold">Venda condicional pela NF-e</legend>
+        </FormSection>
+        <FormSection title="Venda condicional pela NF-e">
           <p className="text-sm text-muted">
             Com um perfil escolhido, as notas do Ajuste SINIEF 02/18 saem pelo Bipaê: a remessa para
             demonstração junto com as peças e, na volta, o retorno e a entrada simbólica. O imposto
@@ -630,9 +653,8 @@ function CompanyForm({
               ...(profiles.data ?? []).map((f) => ({ value: f.id, label: f.name })),
             ]}
           />
-        </fieldset>
-        <fieldset className="flex flex-col gap-3">
-          <legend className="font-semibold">NFS-e Nacional (serviços)</legend>
+        </FormSection>
+        <FormSection title="NFS-e Nacional (serviços)">
           <p className="text-sm text-muted">
             Para a nota dos serviços das ordens de serviço. A nota mostra quanto de imposto há no
             preço (Lei 12.741/2012); os campos abaixo mudam conforme o regime escolhido acima.
@@ -692,8 +714,10 @@ function CompanyForm({
               Escolha o regime tributário acima para ver os percentuais pedidos.
             </p>
           )}
-        </fieldset>
-        <Button type="submit">Salvar empresa</Button>
+        </FormSection>
+        <Button type="submit" size="lg">
+          Salvar empresa
+        </Button>
       </form>
     </Drawer>
   );

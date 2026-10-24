@@ -18,12 +18,13 @@ import {
   FormSection,
   MoneyField,
   PageHeader,
+  SearchBox,
   SelectField,
   TextField,
 } from '@bipae/ui';
 import { ProductImageProvider, ProductThumb } from '@bipae/pdv-ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Package, Plus, Search, SearchX } from 'lucide-react';
+import { Package, Plus, SearchX } from 'lucide-react';
 import { useCallback, useDeferredValue, useEffect, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { parseQuantity } from './purchase-orders';
@@ -104,21 +105,13 @@ export function ProductsPage() {
         tone="blue"
         actions={canWrite && newButton('Novo produto')}
       />
-      <div className="relative mb-5 max-w-2xl">
-        <Search
-          className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted"
-          aria-hidden
-        />
-        <input
-          type="search"
-          aria-label="Buscar produtos"
-          placeholder="Buscar ou bipar…"
-          className="min-h-12 w-full rounded-2xl border border-border bg-surface pl-12 pr-4 text-base shadow-sm"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          autoFocus
-        />
-      </div>
+      <SearchBox
+        label="Buscar produtos"
+        placeholder="Buscar ou bipar…"
+        value={query}
+        onChange={setQuery}
+        autoFocus
+      />
 
       {products.error && <Alert>{(products.error as Error).message}</Alert>}
       {products.data && products.data.items.length === 0 ? (

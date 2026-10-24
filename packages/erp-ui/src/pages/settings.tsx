@@ -3,12 +3,13 @@ import {
   Button,
   Card,
   Checkbox,
+  FilterChips,
   PageHeader,
   parseDisplayPreferences,
   playBeep,
-  SelectField,
   type DisplayPreferences,
 } from '@bipae/ui';
+import { Palette, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useApp } from '../context';
@@ -40,14 +41,23 @@ export function SettingsPage() {
   if (!prefs) return null;
   return (
     <>
-      <PageHeader title="Configurações" />
+      <PageHeader
+        title="Configurações"
+        description="Como o Bipaê aparece para você neste aparelho e a segurança da sua conta."
+        icon={<Settings />}
+        tone="purple"
+      />
       <Card className="max-w-xl">
-        <h2 className="mb-4 text-lg font-bold">Aparência e acessibilidade</h2>
-        <div className="flex flex-col gap-4">
-          <SelectField
+        <h2 className="mb-1 flex items-center gap-2 text-lg font-bold">
+          <Palette className="size-5 text-primary" aria-hidden />
+          Aparência e acessibilidade
+        </h2>
+        <p className="mb-4 text-sm text-muted">Vale só para este aparelho.</p>
+        <div className="flex flex-col gap-5">
+          <FilterChips
             label="Tema"
             value={prefs.theme}
-            onChange={(e) => void update({ theme: e.target.value as DisplayPreferences['theme'] })}
+            onChange={(theme) => void update({ theme })}
             options={[
               { value: 'system', label: 'Igual ao sistema' },
               { value: 'light', label: 'Claro' },

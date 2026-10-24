@@ -16,13 +16,14 @@ import {
   DataTable,
   Drawer,
   EmptyState,
+  FilterChips,
   MoneyField,
   PageHeader,
   SelectField,
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, X } from 'lucide-react';
+import { Plus, Wrench, X } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useApp, useCan } from '../context';
 import { parseQuantity } from './purchase-orders';
@@ -43,6 +44,16 @@ const STATUS: Record<
   cancelled: { label: 'Cancelada', tone: 'neutral' },
 };
 
+type Show = 'active' | 'ready' | 'closed' | 'all';
+
+/** Filtro da lista: as que ainda dão trabalho, as prontas, as encerradas ou todas. */
+const SHOW: Record<Show, (o: ServiceOrderView) => boolean> = {
+  active: (o) => o.status === 'open' || o.status === 'in_progress',
+  ready: (o) => o.status === 'ready',
+  closed: (o) => o.status === 'delivered' || o.status === 'cancelled',
+  all: () => true,
+};
+
 /**
  * Ordens de serviço (F5-13.c): o cliente deixa o equipamento (ou pede o serviço), a loja anota o
  * defeito, os serviços e as peças, acompanha a situação e entrega. Na entrega, as peças saem do
@@ -56,25 +67,53 @@ export function ServiceOrdersPage() {
     queryFn: () => api.get<ServiceOrderView[]>('/service-orders'),
   });
   const [open, setOpen] = useState<string | 'new' | null>(null);
-  const rows = list.data ?? [];
-  const current = open && open !== 'new' ? (rows.find((r) => r.id === open) ?? null) : null;
+  const [show, setShow] = useState<Show>('all');
+  const all = list.data ?? [];
+  const rows = all.filter(SHOW[show]);
+  const current = open && open !== 'new' ? (all.find((r) => r.id === open) ?? null) : null;
+  const count = (key: Show) => all.filter(SHOW[key]).length;
+  const newButton = (label: string) => (
+    <Button size="lg" icon={<Plus className="size-5" aria-hidden />} onClick={() => setOpen('new')}>
+      {label}
+    </Button>
+  );
   return (
     <>
       <PageHeader
         title="Ordens de serviço"
         description="Anote o que o cliente trouxe, o defeito, os serviços e as peças. Na entrega, as peças saem do estoque e o valor vai para as contas a receber."
-        actions={
-          canWrite && (
-            <Button icon={<Plus className="size-4" aria-hidden />} onClick={() => setOpen('new')}>
-              Nova OS
-            </Button>
-          )
-        }
+        icon={<Wrench />}
+        tone="purple"
+        actions={canWrite && newButton('Nova OS')}
       />
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
-      {list.data && rows.length === 0 ? (
-        <EmptyState title="Nenhuma ordem de serviço ainda">
+      {all.length > 0 && (
+        <div className="mb-5">
+          <FilterChips
+            label="Mostrar"
+            value={show}
+            onChange={setShow}
+            options={[
+              { value: 'all', label: 'Todas', count: all.length },
+              { value: 'active', label: 'Em aberto', count: count('active') },
+              { value: 'ready', label: 'Prontas para retirar', count: count('ready') },
+              { value: 'closed', label: 'Entregues e canceladas', count: count('closed') },
+            ]}
+          />
+        </div>
+      )}
+      {list.data && all.length === 0 ? (
+        <EmptyState
+          title="Nenhuma ordem de serviço ainda"
+          icon={<Wrench />}
+          tone="purple"
+          action={canWrite && newButton('Abrir a primeira OS')}
+        >
           Quando um cliente trouxer algo para consertar ou pedir um serviço, abra uma OS aqui.
+        </EmptyState>
+      ) : all.length > 0 && rows.length === 0 ? (
+        <EmptyState title="Nada com esse filtro" tone="yellow">
+          Escolha outro filtro acima para ver as demais ordens de serviço.
         </EmptyState>
       ) : (
         rows.length > 0 && (
@@ -82,12 +121,35 @@ export function ServiceOrdersPage() {
             caption="Ordens de serviço"
             rows={rows}
             onRowClick={(r) => setOpen(r.id)}
+            card={(r) => (
+              <>
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="font-bold">
+                    OS {r.number} · {r.customerName}
+                  </span>
+                  <span className="text-sm text-muted">
+                    {r.equipment ? `${r.equipment} · ` : ''}aberta em {day(r.createdAt)}
+                  </span>
+                </span>
+                <span className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="text-lg font-extrabold tabular-nums">{money(r.totalCents)}</span>
+                  <Badge tone={STATUS[r.status].tone}>{STATUS[r.status].label}</Badge>
+                </span>
+              </>
+            )}
             columns={[
-              { header: 'Nº', cell: (r) => String(r.number) },
-              { header: 'Cliente', cell: (r) => r.customerName },
+              { header: 'Nº', cell: (r) => <span className="font-semibold">{r.number}</span> },
+              {
+                header: 'Cliente',
+                cell: (r) => <span className="font-bold">{r.customerName}</span>,
+              },
               { header: 'Equipamento', cell: (r) => r.equipment ?? '—' },
               { header: 'Aberta em', cell: (r) => day(r.createdAt) },
-              { header: 'Total', align: 'right', cell: (r) => money(r.totalCents) },
+              {
+                header: 'Total',
+                align: 'right',
+                cell: (r) => <span className="font-extrabold">{money(r.totalCents)}</span>,
+              },
               {
                 header: 'Situação',
                 cell: (r) => <Badge tone={STATUS[r.status].tone}>{STATUS[r.status].label}</Badge>,

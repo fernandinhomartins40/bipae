@@ -10,7 +10,7 @@ import {
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, X } from 'lucide-react';
+import { Plus, Tags, X } from 'lucide-react';
 import { useDeferredValue, useState, type FormEvent } from 'react';
 import { useApp, useCan } from '../context';
 import { useForm } from '../forms';
@@ -30,41 +30,57 @@ export function PriceTablesPage() {
   });
   const [editing, setEditing] = useState<PriceTable | 'new' | null>(null);
 
+  const newButton = (label: string) => (
+    <Button
+      size="lg"
+      icon={<Plus className="size-5" aria-hidden />}
+      onClick={() => setEditing('new')}
+    >
+      {label}
+    </Button>
+  );
+  const count = (t: PriceTable) =>
+    t.items.length === 1 ? '1 produto' : `${t.items.length} produtos`;
+
   return (
     <>
       <PageHeader
         title="Tabelas de preço"
         description="Preços especiais por loja ou por cliente. O que não está na tabela usa o preço do cadastro."
-        actions={
-          canWrite && (
-            <Button
-              icon={<Plus className="size-5" aria-hidden />}
-              onClick={() => setEditing('new')}
-            >
-              Nova tabela
-            </Button>
-          )
-        }
+        icon={<Tags />}
+        tone="yellow"
+        actions={canWrite && newButton('Nova tabela')}
       />
-      <p className="mb-4 text-muted">
+      <p className="mb-5 max-w-3xl text-muted">
         Escolha a tabela da loja em <strong>Empresas e lojas</strong> e a de um cliente no cadastro
         do cliente. No caixa vale primeiro a do cliente, depois a da loja.
       </p>
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
       {list.data &&
         (list.data.length === 0 ? (
-          <EmptyState title="Nenhuma tabela de preço ainda" />
+          <EmptyState
+            title="Nenhuma tabela de preço ainda"
+            icon={<Tags />}
+            tone="yellow"
+            action={canWrite && newButton('Criar a primeira tabela')}
+          >
+            Monte uma tabela de atacado, de funcionário ou de uma loja, com o preço especial de cada
+            produto.
+          </EmptyState>
         ) : (
           <DataTable
             caption="Lista de tabelas de preço"
             rows={list.data}
             onRowClick={canWrite ? setEditing : undefined}
+            card={(t) => (
+              <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
+                <span className="font-bold">{t.name}</span>
+                <span className="shrink-0 text-sm text-muted">{count(t)}</span>
+              </span>
+            )}
             columns={[
-              { header: 'Nome', cell: (t) => <span className="font-semibold">{t.name}</span> },
-              {
-                header: 'Produtos',
-                cell: (t) => (t.items.length === 1 ? '1 produto' : `${t.items.length} produtos`),
-              },
+              { header: 'Nome', cell: (t) => <span className="font-bold">{t.name}</span> },
+              { header: 'Produtos', cell: count },
             ]}
           />
         ))}

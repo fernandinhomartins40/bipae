@@ -84,7 +84,7 @@ export function ReceivedNotes({ onImport }: { onImport: (xml: string) => Promise
   return (
     <section aria-labelledby="notas-recebidas" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id="notas-recebidas" className="text-lg font-semibold">
+        <h2 id="notas-recebidas" className="text-lg font-bold">
           Notas emitidas para a sua empresa
         </h2>
         {canWrite && (
@@ -104,18 +104,41 @@ export function ReceivedNotes({ onImport }: { onImport: (xml: string) => Promise
       </p>
       {message && <Alert tone="success">{message}</Alert>}
       {error && <Alert>{error}</Alert>}
+      {notes.data && rows.length === 0 && (
+        <p className="rounded-2xl border border-dashed border-border bg-surface p-4 text-sm text-muted">
+          Nenhuma nota emitida para a sua empresa apareceu ainda.
+        </p>
+      )}
       {rows.length > 0 && (
         <DataTable
           caption="Notas emitidas para a sua empresa"
           rows={rows}
           onRowClick={(r) => setOpen(r)}
+          card={(r) => (
+            <>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="font-bold">{r.issuerName}</span>
+                <span className="text-sm text-muted">
+                  {formatTaxId(r.issuerTaxId)} · {date(r.issuedAt)}
+                </span>
+              </span>
+              <span className="flex shrink-0 flex-col items-end gap-1">
+                <span className="text-lg font-extrabold tabular-nums">{money(r.totalCents)}</span>
+                <Badge tone={status(r).tone}>{status(r).label}</Badge>
+              </span>
+            </>
+          )}
           columns={[
             { header: 'Emissão', cell: (r) => date(r.issuedAt) },
             {
               header: 'Fornecedor',
               cell: (r) => `${r.issuerName} · ${formatTaxId(r.issuerTaxId)}`,
             },
-            { header: 'Total', align: 'right', cell: (r) => money(r.totalCents) },
+            {
+              header: 'Total',
+              align: 'right',
+              cell: (r) => <span className="font-extrabold">{money(r.totalCents)}</span>,
+            },
             {
               header: 'Situação',
               cell: (r) => <Badge tone={status(r).tone}>{status(r).label}</Badge>,

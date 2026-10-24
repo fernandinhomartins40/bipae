@@ -14,13 +14,14 @@ import {
   DataTable,
   Drawer,
   EmptyState,
+  FilterChips,
   MoneyField,
   PageHeader,
   SelectField,
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Printer, X } from 'lucide-react';
+import { ClipboardList, Plus, Printer, X } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useApp, useCan } from '../context';
 
@@ -29,12 +30,12 @@ const dateOnly = (iso: string) => new Date(iso).toLocaleDateString('pt-BR', { ti
 
 const STATUS: Record<
   PurchaseOrderStatus,
-  { label: string; tone: 'neutral' | 'warning' | 'success' | 'danger' }
+  { label: string; plural: string; tone: 'neutral' | 'warning' | 'success' | 'danger' }
 > = {
-  draft: { label: 'Rascunho', tone: 'neutral' },
-  sent: { label: 'Enviado', tone: 'warning' },
-  received: { label: 'Recebido', tone: 'success' },
-  cancelled: { label: 'Cancelado', tone: 'danger' },
+  draft: { label: 'Rascunho', plural: 'Rascunhos', tone: 'neutral' },
+  sent: { label: 'Enviado', plural: 'Enviados', tone: 'warning' },
+  received: { label: 'Recebido', plural: 'Recebidos', tone: 'success' },
+  cancelled: { label: 'Cancelado', plural: 'Cancelados', tone: 'danger' },
 };
 
 /** "1,5" → 1500 milésimos, sem conta de ponto flutuante; null se inválido. */
@@ -69,50 +70,90 @@ export function PurchaseOrdersPage() {
     queryFn: () =>
       api.get<PurchaseOrderView[]>(`/purchase-orders${filter ? `?status=${filter}` : ''}`),
   });
+  const newButton = (label: string) => (
+    <Button
+      size="lg"
+      icon={<Plus className="size-5" aria-hidden />}
+      onClick={() => setEditing('new')}
+    >
+      {label}
+    </Button>
+  );
   return (
     <>
       <PageHeader
         title="Pedidos de compra"
         description="O que você pediu aos fornecedores, do rascunho à entrega."
-        actions={
-          canWrite && (
-            <Button
-              icon={<Plus className="size-5" aria-hidden />}
-              onClick={() => setEditing('new')}
-            >
-              Novo pedido
-            </Button>
-          )
-        }
+        icon={<ClipboardList />}
+        tone="orange"
+        actions={canWrite && newButton('Novo pedido')}
       />
-      <div className="mb-4 max-w-xs">
-        <SelectField
+      <div className="mb-5">
+        <FilterChips
           label="Situação"
           value={filter}
-          onChange={(e) => setFilter(e.target.value as PurchaseOrderStatus | '')}
+          onChange={setFilter}
           options={[
             { value: '', label: 'Todos' },
-            ...Object.entries(STATUS).map(([value, s]) => ({ value, label: s.label })),
+            ...(Object.keys(STATUS) as PurchaseOrderStatus[]).map((value) => ({
+              value,
+              label: STATUS[value].plural,
+            })),
           ]}
         />
       </div>
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
       {list.data && list.data.length === 0 ? (
-        <EmptyState title="Nenhum pedido ainda">
-          Monte o pedido com os produtos e as quantidades, envie ao fornecedor e acompanhe aqui.
-        </EmptyState>
+        filter ? (
+          <EmptyState title="Nenhum pedido nesta situação" tone="yellow">
+            Escolha outra situação acima para ver os demais pedidos.
+          </EmptyState>
+        ) : (
+          <EmptyState
+            title="Nenhum pedido ainda"
+            icon={<ClipboardList />}
+            tone="orange"
+            action={canWrite && newButton('Montar o primeiro pedido')}
+          >
+            Monte o pedido com os produtos e as quantidades, envie ao fornecedor e acompanhe aqui.
+          </EmptyState>
+        )
       ) : (
         list.data && (
           <DataTable
             caption="Pedidos de compra"
             rows={list.data}
             onRowClick={setEditing}
+            card={(o) => (
+              <>
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="font-bold">
+                    Nº {o.number} · {o.supplierName}
+                  </span>
+                  <span className="text-sm text-muted">
+                    {o.storeName}
+                    {o.expectedAt && ` · entrega em ${dateOnly(o.expectedAt)}`}
+                  </span>
+                </span>
+                <span className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="text-lg font-extrabold tabular-nums">{brl(o.totalCents)}</span>
+                  <Badge tone={STATUS[o.status].tone}>{STATUS[o.status].label}</Badge>
+                </span>
+              </>
+            )}
             columns={[
               { header: 'Nº', cell: (o) => <span className="font-semibold">{o.number}</span> },
-              { header: 'Fornecedor', cell: (o) => o.supplierName },
+              {
+                header: 'Fornecedor',
+                cell: (o) => <span className="font-bold">{o.supplierName}</span>,
+              },
               { header: 'Loja', cell: (o) => o.storeName },
               { header: 'Entrega', cell: (o) => (o.expectedAt ? dateOnly(o.expectedAt) : '—') },
-              { header: 'Total', cell: (o) => brl(o.totalCents) },
+              {
+                header: 'Total',
+                align: 'right',
+                cell: (o) => <span className="font-extrabold">{brl(o.totalCents)}</span>,
+              },
               {
                 header: 'Situação',
                 cell: (o) => <Badge tone={STATUS[o.status].tone}>{STATUS[o.status].label}</Badge>,

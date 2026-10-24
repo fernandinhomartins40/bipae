@@ -17,6 +17,7 @@ import {
   Drawer,
   EmptyState,
   Field,
+  FormSection,
   MoneyField,
   PageHeader,
   SelectField,
@@ -24,7 +25,7 @@ import {
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, X } from 'lucide-react';
+import { FileOutput, Plus, X } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useApp, useCan } from '../context';
@@ -210,22 +211,28 @@ export function NfePage() {
   const [params] = useSearchParams();
   const [open, setOpen] = useState<string | 'new' | null>(params.get('abrir'));
   const rows = list.data ?? [];
+  const newButton = (label: string) => (
+    <Button size="lg" icon={<Plus className="size-5" aria-hidden />} onClick={() => setOpen('new')}>
+      {label}
+    </Button>
+  );
   return (
     <>
       <PageHeader
         title="NF-e"
         description="Nota fiscal eletrônica de venda para empresas, para outros estados ou com entrega. Emitida em homologação, sem valor fiscal, enquanto o Bipaê não é liberado para produção."
-        actions={
-          canWrite && (
-            <Button icon={<Plus className="size-4" aria-hidden />} onClick={() => setOpen('new')}>
-              Nova NF-e
-            </Button>
-          )
-        }
+        icon={<FileOutput />}
+        tone="blue"
+        actions={canWrite && newButton('Nova NF-e')}
       />
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
       {list.data && rows.length === 0 ? (
-        <EmptyState title="Nenhuma NF-e ainda">
+        <EmptyState
+          title="Nenhuma NF-e ainda"
+          icon={<FileOutput />}
+          tone="blue"
+          action={canWrite && newButton('Preencher a primeira NF-e')}
+        >
           Preencha o destinatário e os itens: o Bipaê calcula os impostos, mostra o que falta e
           envia à SEFAZ.
         </EmptyState>
@@ -235,18 +242,44 @@ export function NfePage() {
             caption="Notas fiscais eletrônicas"
             rows={rows}
             onRowClick={(r) => setOpen(r.id)}
+            card={(r) => (
+              <>
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="font-bold">{r.recipient.name}</span>
+                  <span className="text-sm text-muted">
+                    {r.document?.number
+                      ? `Nº ${r.document.number} (série ${r.document.series})`
+                      : 'Sem número ainda'}{' '}
+                    · criada em {day(r.createdAt)}
+                  </span>
+                </span>
+                <span className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="text-lg font-extrabold tabular-nums">
+                    {money(r.check.totalCents ?? r.totalCents)}
+                  </span>
+                  <Badge tone={status(r).tone}>{status(r).label}</Badge>
+                </span>
+              </>
+            )}
             columns={[
               {
                 header: 'Nº',
                 cell: (r) =>
                   r.document?.number ? `${r.document.number} (série ${r.document.series})` : '—',
               },
-              { header: 'Destinatário', cell: (r) => r.recipient.name },
+              {
+                header: 'Destinatário',
+                cell: (r) => <span className="font-bold">{r.recipient.name}</span>,
+              },
               { header: 'Criada em', cell: (r) => day(r.createdAt) },
               {
                 header: 'Valor',
                 align: 'right',
-                cell: (r) => money(r.check.totalCents ?? r.totalCents),
+                cell: (r) => (
+                  <span className="font-extrabold">
+                    {money(r.check.totalCents ?? r.totalCents)}
+                  </span>
+                ),
               },
               {
                 header: 'Situação',
@@ -943,101 +976,102 @@ function DraftForm({
       {error && <Alert>{error}</Alert>}
       {n && <CheckResult n={n} />}
 
-      {(companies.data?.length ?? 0) > 1 && (
-        <SelectField
-          label="Empresa emitente"
-          value={company}
-          onChange={(e) => set('companyId', e.target.value)}
-          options={(companies.data ?? []).map((c) => ({ value: c.id, label: c.legalName }))}
-        />
-      )}
-      {(stores.data?.length ?? 0) > 1 && (
-        <SelectField
-          label="Loja"
-          value={store}
-          onChange={(e) => set('storeId', e.target.value)}
-          options={(stores.data ?? []).map((s) => ({ value: s.id, label: s.name }))}
-        />
-      )}
-      <TextField
-        label="Natureza da operação"
-        value={d.nature}
-        onChange={(e) => set('nature', e.target.value)}
-      />
-      <SelectField
-        label="Finalidade"
-        value={d.purpose}
-        onChange={(e) => set('purpose', e.target.value as Draft['purpose'])}
-        options={[
-          { value: 'normal', label: 'Venda (nota normal)' },
-          { value: 'devolucao', label: 'Devolução de compra (ao fornecedor)' },
-          { value: 'devolucao_venda', label: 'Devolução de venda (o cliente devolveu)' },
-        ]}
-      />
-      {d.purpose === 'devolucao_venda' && (
-        <SaleReturnPicker
-          onPicked={(sale) =>
-            setD((x) => ({
-              ...x,
-              companyId: sale.companyId,
-              nature: 'Devolução de venda',
-              references: sale.key,
-              ...(sale.recipient
-                ? {
-                    customerId: sale.recipient.customerId ?? null,
-                    taxId: sale.recipient.taxId,
-                    name: sale.recipient.name,
-                    ieIndicator: String(sale.recipient.ieIndicator),
-                    ie: sale.recipient.ie ?? '',
-                    email: sale.recipient.email ?? '',
-                    cep: sale.recipient.address.cep,
-                    street: sale.recipient.address.street,
-                    number: sale.recipient.address.number,
-                    complement: sale.recipient.address.complement ?? '',
-                    district: sale.recipient.address.district,
-                    uf: sale.recipient.address.uf,
-                    ibgeCode: sale.recipient.address.ibgeCode ?? '',
-                    city: sale.recipient.address.city,
-                  }
-                : { taxId: sale.customerTaxId ?? x.taxId, ieIndicator: '9' }),
-              lines: sale.items
-                .filter((i) => i.soldMilli > i.returnedMilli)
-                .map((i) => ({
-                  productId: i.productId,
-                  name: i.description,
-                  unit: 'UN',
-                  quantity: qtyText(i.soldMilli - i.returnedMilli),
-                  unitPriceCents: i.unitPriceCents,
-                  discountCents: 0,
-                  cfop: '',
-                  refKey: sale.key,
-                  refItem: String(i.item),
-                })),
-              freight: 'semFrete',
-              freightCents: 0,
-              installments: [],
-              paymentCode: '90',
-            }))
-          }
-        />
-      )}
-      {d.purpose === 'devolucao' && (
+      <FormSection title="A nota" description="Quem emite, o tipo da nota e como foi a venda.">
+        {(companies.data?.length ?? 0) > 1 && (
+          <SelectField
+            label="Empresa emitente"
+            value={company}
+            onChange={(e) => set('companyId', e.target.value)}
+            options={(companies.data ?? []).map((c) => ({ value: c.id, label: c.legalName }))}
+          />
+        )}
+        {(stores.data?.length ?? 0) > 1 && (
+          <SelectField
+            label="Loja"
+            value={store}
+            onChange={(e) => set('storeId', e.target.value)}
+            options={(stores.data ?? []).map((s) => ({ value: s.id, label: s.name }))}
+          />
+        )}
         <TextField
-          label="Chave da nota devolvida"
-          hint="44 números; mais de uma (do mesmo fornecedor), separe com espaço. Em cada produto, diga o item na nota."
-          value={d.references}
-          onChange={(e) => set('references', e.target.value)}
+          label="Natureza da operação"
+          value={d.nature}
+          onChange={(e) => set('nature', e.target.value)}
         />
-      )}
-      <SelectField
-        label="Como foi a venda"
-        value={d.presence}
-        onChange={(e) => set('presence', e.target.value)}
-        options={PRESENCE}
-      />
+        <SelectField
+          label="Finalidade"
+          value={d.purpose}
+          onChange={(e) => set('purpose', e.target.value as Draft['purpose'])}
+          options={[
+            { value: 'normal', label: 'Venda (nota normal)' },
+            { value: 'devolucao', label: 'Devolução de compra (ao fornecedor)' },
+            { value: 'devolucao_venda', label: 'Devolução de venda (o cliente devolveu)' },
+          ]}
+        />
+        {d.purpose === 'devolucao_venda' && (
+          <SaleReturnPicker
+            onPicked={(sale) =>
+              setD((x) => ({
+                ...x,
+                companyId: sale.companyId,
+                nature: 'Devolução de venda',
+                references: sale.key,
+                ...(sale.recipient
+                  ? {
+                      customerId: sale.recipient.customerId ?? null,
+                      taxId: sale.recipient.taxId,
+                      name: sale.recipient.name,
+                      ieIndicator: String(sale.recipient.ieIndicator),
+                      ie: sale.recipient.ie ?? '',
+                      email: sale.recipient.email ?? '',
+                      cep: sale.recipient.address.cep,
+                      street: sale.recipient.address.street,
+                      number: sale.recipient.address.number,
+                      complement: sale.recipient.address.complement ?? '',
+                      district: sale.recipient.address.district,
+                      uf: sale.recipient.address.uf,
+                      ibgeCode: sale.recipient.address.ibgeCode ?? '',
+                      city: sale.recipient.address.city,
+                    }
+                  : { taxId: sale.customerTaxId ?? x.taxId, ieIndicator: '9' }),
+                lines: sale.items
+                  .filter((i) => i.soldMilli > i.returnedMilli)
+                  .map((i) => ({
+                    productId: i.productId,
+                    name: i.description,
+                    unit: 'UN',
+                    quantity: qtyText(i.soldMilli - i.returnedMilli),
+                    unitPriceCents: i.unitPriceCents,
+                    discountCents: 0,
+                    cfop: '',
+                    refKey: sale.key,
+                    refItem: String(i.item),
+                  })),
+                freight: 'semFrete',
+                freightCents: 0,
+                installments: [],
+                paymentCode: '90',
+              }))
+            }
+          />
+        )}
+        {d.purpose === 'devolucao' && (
+          <TextField
+            label="Chave da nota devolvida"
+            hint="44 números; mais de uma (do mesmo fornecedor), separe com espaço. Em cada produto, diga o item na nota."
+            value={d.references}
+            onChange={(e) => set('references', e.target.value)}
+          />
+        )}
+        <SelectField
+          label="Como foi a venda"
+          value={d.presence}
+          onChange={(e) => set('presence', e.target.value)}
+          options={PRESENCE}
+        />
+      </FormSection>
 
-      <fieldset className="flex flex-col gap-3 rounded-ui border border-border p-3">
-        <legend className="px-1 font-semibold">Destinatário</legend>
+      <FormSection title="Destinatário" description="Para quem a nota sai.">
         <TextField
           label="Buscar no cadastro de clientes"
           placeholder="Nome ou CPF/CNPJ"
@@ -1147,10 +1181,9 @@ function DraftForm({
           value={d.ibgeCode}
           onChange={(code) => setD((x) => ({ ...x, ibgeCode: code }))}
         />
-      </fieldset>
+      </FormSection>
 
-      <fieldset className="flex flex-col gap-3 rounded-ui border border-border p-3">
-        <legend className="px-1 font-semibold">Itens</legend>
+      <FormSection title="Itens" description="Os produtos, com quantidade, preço e desconto.">
         <TextField
           label="Adicionar produto"
           placeholder="Digite o nome ou o código"
@@ -1198,7 +1231,7 @@ function DraftForm({
             {d.lines.map((line, index) => (
               <li
                 key={line.productId}
-                className="flex flex-col gap-2 rounded-ui border border-border p-3"
+                className="flex flex-col gap-2 rounded-2xl border border-border bg-surface-2 p-3"
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-semibold">{line.name}</span>
@@ -1262,10 +1295,9 @@ function DraftForm({
             ))}
           </ul>
         )}
-      </fieldset>
+      </FormSection>
 
-      <fieldset className="flex flex-col gap-3 rounded-ui border border-border p-3">
-        <legend className="px-1 font-semibold">Transporte e pagamento</legend>
+      <FormSection title="Transporte e pagamento">
         <SelectField
           label="Frete"
           value={d.freight}
@@ -1348,7 +1380,7 @@ function DraftForm({
           value={d.additionalInfo}
           onChange={(e) => set('additionalInfo', e.target.value)}
         />
-      </fieldset>
+      </FormSection>
 
       {canWrite && (
         <div className="flex flex-col gap-2">

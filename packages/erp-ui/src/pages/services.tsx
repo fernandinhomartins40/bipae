@@ -12,7 +12,7 @@ import {
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
+import { ClipboardList, Plus } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useApp, useCan } from '../context';
 
@@ -81,22 +81,29 @@ export function ServicesPage() {
   });
   const [open, setOpen] = useState<ServiceView | 'new' | null>(null);
   const rows = list.data ?? [];
+  const newButton = (label: string) => (
+    <Button size="lg" icon={<Plus className="size-5" aria-hidden />} onClick={() => setOpen('new')}>
+      {label}
+    </Button>
+  );
+  const issText = (r: ServiceView) => (r.issRate ? `${r.issRate.replace('.', ',')}%` : '—');
   return (
     <>
       <PageHeader
         title="Serviços"
         description="O que a sua empresa faz: cada serviço com o código da lista nacional, que vai na NFS-e, e a alíquota do ISS do município."
-        actions={
-          canWrite && (
-            <Button icon={<Plus className="size-4" aria-hidden />} onClick={() => setOpen('new')}>
-              Novo serviço
-            </Button>
-          )
-        }
+        icon={<ClipboardList />}
+        tone="blue"
+        actions={canWrite && newButton('Novo serviço')}
       />
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
       {list.data && rows.length === 0 ? (
-        <EmptyState title="Nenhum serviço cadastrado">
+        <EmptyState
+          title="Nenhum serviço cadastrado"
+          icon={<ClipboardList />}
+          tone="blue"
+          action={canWrite && newButton('Cadastrar o primeiro serviço')}
+        >
           Cadastre os serviços que você faz (troca de óleo, conserto, instalação...) para usar nas
           ordens de serviço.
         </EmptyState>
@@ -105,21 +112,31 @@ export function ServicesPage() {
           <DataTable
             caption="Serviços"
             rows={rows}
-            onRowClick={(r) => canWrite && setOpen(r)}
+            onRowClick={canWrite ? (r) => setOpen(r) : undefined}
+            card={(r) => (
+              <>
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="font-bold">{r.name}</span>
+                  <span className="text-sm text-muted">
+                    Código {dotted(r.code)} · ISS {issText(r)}
+                  </span>
+                </span>
+                <span className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="text-lg font-extrabold tabular-nums">{money(r.priceCents)}</span>
+                  <ServiceStatus active={r.active} />
+                </span>
+              </>
+            )}
             columns={[
-              { header: 'Serviço', cell: (r) => r.name },
+              { header: 'Serviço', cell: (r) => <span className="font-bold">{r.name}</span> },
               { header: 'Código nacional', cell: (r) => dotted(r.code) },
-              { header: 'ISS', cell: (r) => (r.issRate ? `${r.issRate.replace('.', ',')}%` : '—') },
-              { header: 'Preço', align: 'right', cell: (r) => money(r.priceCents) },
+              { header: 'ISS', cell: issText },
               {
-                header: 'Situação',
-                cell: (r) =>
-                  r.active ? (
-                    <Badge tone="success">Ativo</Badge>
-                  ) : (
-                    <Badge tone="neutral">Inativo</Badge>
-                  ),
+                header: 'Preço',
+                align: 'right',
+                cell: (r) => <span className="font-extrabold">{money(r.priceCents)}</span>,
               },
+              { header: 'Situação', cell: (r) => <ServiceStatus active={r.active} /> },
             ]}
           />
         )
@@ -129,6 +146,10 @@ export function ServicesPage() {
       )}
     </>
   );
+}
+
+function ServiceStatus({ active }: { active: boolean }) {
+  return active ? <Badge tone="success">Ativo</Badge> : <Badge tone="neutral">Inativo</Badge>;
 }
 
 function ServiceDrawer({ service, onClose }: { service: ServiceView | null; onClose: () => void }) {

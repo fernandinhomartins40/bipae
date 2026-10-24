@@ -23,7 +23,7 @@ import {
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { FileUp } from 'lucide-react';
+import { FileUp, PackagePlus } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useApp, useCan } from '../context';
 import { ReceivedNotes } from './received-notes';
@@ -105,10 +105,13 @@ export function PurchasesPage() {
       <PageHeader
         title="Compras"
         description="Dê entrada nas compras pelo XML da nota do fornecedor: fornecedor, produtos, custo e estoque de uma vez."
+        icon={<PackagePlus />}
+        tone="orange"
         actions={
           canImport && (
             <>
               <Button
+                size="lg"
                 icon={<FileUp className="size-5" aria-hidden />}
                 onClick={() => input.current?.click()}
               >
@@ -126,84 +129,110 @@ export function PurchasesPage() {
           )
         }
       />
-      {error && <Alert>{error}</Alert>}
-      {done && (
-        <Alert tone="success" title="Entrada feita">
-          {done}
-        </Alert>
-      )}
-      <ReceivedNotes
-        onImport={async (xml) => {
-          setDone(null);
-          await openXml(xml);
-        }}
-      />
-      <ReceivedServices />
-      {purchases.error && <Alert>{(purchases.error as Error).message}</Alert>}
-      {purchases.data && purchases.data.length === 0 ? (
-        <EmptyState title="Nenhuma compra importada ainda">
-          Peça ao fornecedor o XML da nota (ele vem por e-mail) e use "Importar XML".
-        </EmptyState>
-      ) : (
-        purchases.data && (
-          <DataTable
-            caption="Compras"
-            rows={purchases.data}
-            columns={[
-              { header: 'Emissão', cell: (p) => date(p.issuedAt) },
-              { header: 'Fornecedor', cell: (p) => p.supplierName },
-              { header: 'NF-e', cell: (p) => `nº ${p.number} · série ${p.series}` },
-              { header: 'Loja', cell: (p) => p.storeName },
-              { header: 'Itens', align: 'right', cell: (p) => String(p.itemCount) },
-              {
-                header: 'Situação',
-                cell: (p) =>
-                  p.authorized ? (
-                    <Badge tone="success">Autorizada</Badge>
-                  ) : (
-                    <Badge tone="warning">Sem protocolo</Badge>
-                  ),
-              },
-              { header: 'Total', align: 'right', cell: (p) => money(p.totalCents) },
-              {
-                header: 'Finalidade',
-                cell: (p) =>
-                  canFiscal ? (
-                    <select
-                      aria-label={`Finalidade (nota nº ${p.number})`}
-                      className="min-h-11 rounded-ui border border-border bg-surface px-3"
-                      value={p.purpose}
-                      onChange={(e) => void setPurpose(p, e.target.value as PurchasePurpose)}
-                    >
-                      {PURCHASE_PURPOSES.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    (PURCHASE_PURPOSES.find((o) => o.id === p.purpose)?.label ?? '—')
-                  ),
-              },
-              {
-                header: 'Uso pessoal',
-                cell: (p) =>
-                  canFiscal ? (
-                    <Checkbox
-                      label={`Uso pessoal (nota nº ${p.number})`}
-                      checked={p.personalUse}
-                      onChange={(value) => void setPersonalUse(p, value)}
-                    />
-                  ) : p.personalUse ? (
-                    <Badge tone="neutral">Uso pessoal</Badge>
-                  ) : (
-                    '—'
-                  ),
-              },
-            ]}
-          />
-        )
-      )}
+      <div className="flex flex-col gap-8">
+        {(error || done) && (
+          <div className="flex flex-col gap-3">
+            {error && <Alert>{error}</Alert>}
+            {done && (
+              <Alert tone="success" title="Entrada feita">
+                {done}
+              </Alert>
+            )}
+          </div>
+        )}
+        <ReceivedNotes
+          onImport={async (xml) => {
+            setDone(null);
+            await openXml(xml);
+          }}
+        />
+        <ReceivedServices />
+        <section aria-labelledby="compras-importadas" className="flex flex-col gap-3">
+          <h2 id="compras-importadas" className="text-lg font-bold">
+            Compras com entrada feita
+          </h2>
+          {purchases.error && <Alert>{(purchases.error as Error).message}</Alert>}
+          {purchases.data && purchases.data.length === 0 ? (
+            <EmptyState
+              title="Nenhuma compra importada ainda"
+              icon={<PackagePlus />}
+              tone="orange"
+              action={
+                canImport && (
+                  <Button
+                    icon={<FileUp className="size-5" aria-hidden />}
+                    onClick={() => input.current?.click()}
+                  >
+                    Importar o primeiro XML
+                  </Button>
+                )
+              }
+            >
+              Peça ao fornecedor o XML da nota (ele vem por e-mail) e use "Importar XML". Ou dê
+              entrada pelas notas emitidas para a sua empresa, logo acima.
+            </EmptyState>
+          ) : (
+            purchases.data && (
+              <DataTable
+                caption="Compras"
+                rows={purchases.data}
+                card={(p) => (
+                  <span className="flex min-w-0 flex-1 flex-col gap-2">
+                    <span className="flex items-start justify-between gap-3">
+                      <span className="flex min-w-0 flex-col gap-0.5">
+                        <span className="font-bold">{p.supplierName}</span>
+                        <span className="text-sm text-muted">
+                          NF-e nº {p.number} · série {p.series} · {date(p.issuedAt)}
+                        </span>
+                        <span className="text-sm text-muted">
+                          {p.storeName} · {p.itemCount} {p.itemCount === 1 ? 'item' : 'itens'}
+                        </span>
+                      </span>
+                      <span className="flex shrink-0 flex-col items-end gap-1">
+                        <span className="text-lg font-extrabold tabular-nums">
+                          {money(p.totalCents)}
+                        </span>
+                        <PurchaseStatus purchase={p} />
+                      </span>
+                    </span>
+                    <PurposeCell purchase={p} canFiscal={canFiscal} onChange={setPurpose} />
+                    <PersonalUseCell purchase={p} canFiscal={canFiscal} onChange={setPersonalUse} />
+                  </span>
+                )}
+                columns={[
+                  { header: 'Emissão', cell: (p) => date(p.issuedAt) },
+                  { header: 'Fornecedor', cell: (p) => p.supplierName },
+                  { header: 'NF-e', cell: (p) => `nº ${p.number} · série ${p.series}` },
+                  { header: 'Loja', cell: (p) => p.storeName },
+                  { header: 'Itens', align: 'right', cell: (p) => String(p.itemCount) },
+                  { header: 'Situação', cell: (p) => <PurchaseStatus purchase={p} /> },
+                  {
+                    header: 'Total',
+                    align: 'right',
+                    cell: (p) => <span className="font-extrabold">{money(p.totalCents)}</span>,
+                  },
+                  {
+                    header: 'Finalidade',
+                    cell: (p) => (
+                      <PurposeCell purchase={p} canFiscal={canFiscal} onChange={setPurpose} />
+                    ),
+                  },
+                  {
+                    header: 'Uso pessoal',
+                    cell: (p) => (
+                      <PersonalUseCell
+                        purchase={p}
+                        canFiscal={canFiscal}
+                        onChange={setPersonalUse}
+                      />
+                    ),
+                  },
+                ]}
+              />
+            )
+          )}
+        </section>
+      </div>
       {preview && (
         <ImportDrawer
           xml={preview.xml}
@@ -217,6 +246,62 @@ export function PurchasesPage() {
       )}
     </>
   );
+}
+
+function PurchaseStatus({ purchase: p }: { purchase: PurchaseSummary }) {
+  return p.authorized ? (
+    <Badge tone="success">Autorizada</Badge>
+  ) : (
+    <Badge tone="warning">Sem protocolo</Badge>
+  );
+}
+
+/** Finalidade da compra: lista para quem cuida do fiscal, texto para os demais. */
+function PurposeCell({
+  purchase: p,
+  canFiscal,
+  onChange,
+}: {
+  purchase: PurchaseSummary;
+  canFiscal: boolean;
+  onChange: (p: PurchaseSummary, purpose: PurchasePurpose) => Promise<void>;
+}) {
+  if (!canFiscal) return <>{PURCHASE_PURPOSES.find((o) => o.id === p.purpose)?.label ?? '—'}</>;
+  return (
+    <select
+      aria-label={`Finalidade (nota nº ${p.number})`}
+      className="min-h-11 w-full rounded-ui border border-border bg-surface px-3 md:w-auto"
+      value={p.purpose}
+      onChange={(e) => void onChange(p, e.target.value as PurchasePurpose)}
+    >
+      {PURCHASE_PURPOSES.map((o) => (
+        <option key={o.id} value={o.id}>
+          {o.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function PersonalUseCell({
+  purchase: p,
+  canFiscal,
+  onChange,
+}: {
+  purchase: PurchaseSummary;
+  canFiscal: boolean;
+  onChange: (p: PurchaseSummary, personalUse: boolean) => Promise<void>;
+}) {
+  if (canFiscal) {
+    return (
+      <Checkbox
+        label={`Uso pessoal (nota nº ${p.number})`}
+        checked={p.personalUse}
+        onChange={(value) => void onChange(p, value)}
+      />
+    );
+  }
+  return p.personalUse ? <Badge tone="neutral">Uso pessoal</Badge> : <>—</>;
 }
 
 interface Decision {

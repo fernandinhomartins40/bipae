@@ -1,5 +1,16 @@
 # Changelog
 
+## [F8-17 Resto da retaguarda com o visual novo] — 24/10/2026
+
+### Alterado
+- **Clientes, Fornecedores, Vendas, Compras, Pedidos de compra, NF-e, Serviços, Ordens de serviço, Relacionamento, Inadimplência, Fluxo de caixa, Promoções, Tabelas de preço, Empresas e lojas e Configurações** com o visual do Início e do caixa: cabeçalho com ícone colorido e a ação principal grande.
+- **Resumos em cartões** só com o que o sistema já devolve: Vendas, Faturamento e Ticket médio (das vendas listadas); Em atraso, Clientes em atraso e Bloqueados no caixa na Inadimplência; Entrou, Saiu e Resultado no Fluxo de caixa.
+- **Filtros à vista em chips:** tipo da venda, situação do pedido de compra e da OS, segmentos do Relacionamento (com a contagem), "Agrupar por" no Fluxo de caixa, tipo da promoção e tema nas Configurações.
+- **No celular, as listas viram cartões** sem rolar para o lado; no computador, a tabela destaca o nome e o valor. Busca com lupa em Clientes e Fornecedores.
+- **Estados vazios com o próximo passo** ("Cadastrar o primeiro cliente", "Montar o primeiro pedido", "Importar o primeiro XML"...).
+- **Formulários longos em blocos:** cliente, NF-e, promoção e empresa.
+- O detalhe da venda abre com a data e o total em destaque; as lojas em Empresas e lojas viraram botões de 44 px.
+
 ## [F3-26.d.CE.e, CE.f e MA.c Carga líquida do Ceará: o que o texto deixa para a empresa; monitor da lista de informática; reavaliação do Maranhão] — 24/10/2026
 
 ### Adicionado

@@ -44,6 +44,7 @@ const TAXES = [
 ] as const;
 
 const money = (cents: number) => formatBRL(cents as Cents);
+const dateTime = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 const quantity = (milli: number, unit: string) =>
   `${(milli / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 3 })} ${unit}`;
 
@@ -72,11 +73,23 @@ export function SaleDetailDrawer({ saleId, onClose }: { saleId: string; onClose:
       {sale.error && <Alert>{(sale.error as Error).message}</Alert>}
       {data && (
         <div className="flex flex-col gap-5">
+          <div className="flex flex-wrap items-end justify-between gap-2 rounded-2xl bg-tile-green p-4 [[data-contrast=high]_&]:border [[data-contrast=high]_&]:border-border">
+            <span className="flex flex-col">
+              <span className="text-sm font-semibold">
+                {dateTime.format(new Date(data.occurredAt))}
+              </span>
+              <span className="text-sm text-muted">
+                {data.items.length} {data.items.length === 1 ? 'item' : 'itens'}
+                {data.discountCents > 0 && ` · desconto de ${money(data.discountCents)}`}
+              </span>
+            </span>
+            <span className="text-3xl font-extrabold tabular-nums">{money(data.totalCents)}</span>
+          </div>
           <section aria-label="Itens da venda">
             <h3 className="mb-2 font-semibold">Itens</h3>
             <ul className="flex flex-col gap-2">
               {data.items.map((item) => (
-                <li key={item.line} className="rounded-ui border border-border p-3">
+                <li key={item.line} className="rounded-2xl border border-border p-3">
                   <div className="flex justify-between gap-3">
                     <span>
                       <span className="font-semibold">{item.name}</span>

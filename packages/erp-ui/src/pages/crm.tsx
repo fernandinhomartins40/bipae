@@ -20,12 +20,13 @@ import {
   DataTable,
   EmptyState,
   Field,
+  FilterChips,
   MoneyField,
   PageHeader,
   TextField,
 } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Download } from 'lucide-react';
+import { Download, HeartHandshake } from 'lucide-react';
 import { useState } from 'react';
 import { useApp, useCan } from '../context';
 
@@ -49,7 +50,10 @@ export function CustomerSummaryPanel({ customerId }: { customerId: string }) {
   });
   const s = summary.data;
   return (
-    <section className="rounded-ui border border-border p-4" aria-labelledby="historico-cliente">
+    <section
+      className="rounded-2xl border border-border bg-surface p-4"
+      aria-labelledby="historico-cliente"
+    >
       <h3 id="historico-cliente" className="mb-2 font-semibold">
         Histórico de compras
       </h3>
@@ -159,11 +163,13 @@ export function CrmPage() {
       <PageHeader
         title="Relacionamento"
         description="Quem compra com CPF ou CNPJ na nota, separado por comportamento. Use para chamar de volta quem sumiu e cuidar de quem é frequente."
+        icon={<HeartHandshake />}
+        tone="red"
         actions={
           canExport && (
             <Button
-              variant="secondary"
-              icon={<Download className="size-4" aria-hidden />}
+              size="lg"
+              icon={<Download className="size-5" aria-hidden />}
               onClick={() => void download()}
             >
               Lista para ofertas (CSV)
@@ -172,21 +178,20 @@ export function CrmPage() {
         }
       />
       {error && <Alert>{error}</Alert>}
-      <LoyaltyProgramCard />
-      {canExport && <CampaignsCard segment={segment} />}
-      <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Segmentos">
-        <Button variant={segment === null ? 'primary' : 'ghost'} onClick={() => setSegment(null)}>
-          Todos
-        </Button>
-        {CRM_SEGMENTS.map((s) => (
-          <Button
-            key={s}
-            variant={segment === s ? 'primary' : 'ghost'}
-            onClick={() => setSegment(s)}
-          >
-            {`${CRM_SEGMENT_LABELS[s].label}${counts ? ` (${counts[s]})` : ''}`}
-          </Button>
-        ))}
+      <div className="mb-4">
+        <FilterChips
+          label="Segmentos"
+          value={segment ?? 'todos'}
+          onChange={(v) => setSegment(v === 'todos' ? null : v)}
+          options={[
+            { value: 'todos' as const, label: 'Todos' },
+            ...CRM_SEGMENTS.map((s) => ({
+              value: s,
+              label: CRM_SEGMENT_LABELS[s].label,
+              ...(counts && { count: counts[s] }),
+            })),
+          ]}
+        />
       </div>
       {segment && <p className="mb-3 text-sm text-muted">{CRM_SEGMENT_LABELS[segment].rule}</p>}
       {canExport && (
@@ -197,7 +202,7 @@ export function CrmPage() {
       )}
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
       {list.data && rows.length === 0 ? (
-        <EmptyState title="Ninguém por aqui ainda">
+        <EmptyState title="Ninguém por aqui ainda" icon={<HeartHandshake />} tone="red">
           Os clientes aparecem quando compram com o CPF ou CNPJ na nota e estão cadastrados em
           Clientes.
         </EmptyState>
@@ -206,8 +211,28 @@ export function CrmPage() {
           <DataTable
             caption="Clientes"
             rows={rows}
+            card={(r) => (
+              <>
+                <span className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="font-bold">{r.name}</span>
+                  <span className="text-sm text-muted">
+                    {r.purchases} {r.purchases === 1 ? 'compra' : 'compras'} · última em{' '}
+                    {day(r.lastPurchaseAt)}
+                  </span>
+                  <span className="text-sm text-muted">
+                    Ofertas: {r.marketingConsent ? 'aceita' : 'não aceitou'}
+                  </span>
+                </span>
+                <span className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="text-lg font-extrabold tabular-nums">{money(r.totalCents)}</span>
+                  <Badge tone={SEGMENT_TONE[r.segment]}>
+                    {CRM_SEGMENT_LABELS[r.segment].label}
+                  </Badge>
+                </span>
+              </>
+            )}
             columns={[
-              { header: 'Cliente', cell: (r) => r.name },
+              { header: 'Cliente', cell: (r) => <span className="font-bold">{r.name}</span> },
               {
                 header: 'Segmento',
                 cell: (r) => (
@@ -217,7 +242,11 @@ export function CrmPage() {
                 ),
               },
               { header: 'Compras', align: 'right', cell: (r) => String(r.purchases) },
-              { header: 'Total', align: 'right', cell: (r) => money(r.totalCents) },
+              {
+                header: 'Total',
+                align: 'right',
+                cell: (r) => <span className="font-extrabold">{money(r.totalCents)}</span>,
+              },
               { header: 'Última compra', cell: (r) => day(r.lastPurchaseAt) },
               {
                 header: 'Ofertas',
@@ -227,6 +256,10 @@ export function CrmPage() {
           />
         )
       )}
+      <div className="mt-8 flex flex-col gap-6">
+        <LoyaltyProgramCard />
+        {canExport && <CampaignsCard segment={segment} />}
+      </div>
     </>
   );
 }
@@ -248,7 +281,10 @@ export function LoyaltyPanel({ customerId }: { customerId: string }) {
   const s = statement.data;
   if (!s?.hasTaxId || (s.points === 0 && s.entries.length === 0)) return null;
   return (
-    <section className="rounded-ui border border-border p-4 text-sm" aria-labelledby="pontos">
+    <section
+      className="rounded-2xl border border-border bg-surface p-4 text-sm"
+      aria-labelledby="pontos"
+    >
       <h3 id="pontos" className="mb-2 font-semibold">
         Pontos de fidelidade
       </h3>
@@ -315,7 +351,10 @@ export function LoyaltyProgramCard() {
 
   if (!current.data) return null;
   return (
-    <section className="mb-6 rounded-ui border border-border p-4" aria-labelledby="fidelidade">
+    <section
+      className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
+      aria-labelledby="fidelidade"
+    >
       <h2 id="fidelidade" className="mb-1 text-lg font-bold">
         Programa de fidelidade
       </h2>
@@ -405,7 +444,10 @@ export function CampaignsCard({ segment }: { segment: CrmSegment | null }) {
   if (!campaigns.data) return null;
   const items = campaigns.data.items;
   return (
-    <section className="mb-6 rounded-ui border border-border p-4" aria-labelledby="campanhas">
+    <section
+      className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
+      aria-labelledby="campanhas"
+    >
       <h2 id="campanhas" className="mb-1 text-lg font-bold">
         Campanhas por e-mail
       </h2>
@@ -464,6 +506,16 @@ export function CampaignsCard({ segment }: { segment: CrmSegment | null }) {
           <DataTable
             caption="Campanhas enviadas"
             rows={items}
+            card={(c) => (
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="font-bold">{c.name}</span>
+                <span className="text-sm text-muted">{c.subject}</span>
+                <span className="text-sm text-muted">
+                  {day(c.createdAt)} · {c.segment ? CRM_SEGMENT_LABELS[c.segment].label : 'Todos'} ·{' '}
+                  {c.recipients} enviados · {c.unsubscribed} descadastros
+                </span>
+              </span>
+            )}
             columns={[
               { header: 'Campanha', cell: (c) => c.name },
               { header: 'Assunto', cell: (c) => c.subject },

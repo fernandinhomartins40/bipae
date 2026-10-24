@@ -13,6 +13,7 @@ import {
   StatCard,
   StatGrid,
   parseDisplayPreferences,
+  SearchBox,
   TaxIdField,
   TextField,
 } from './index';
@@ -147,6 +148,13 @@ describe('visual da retaguarda (F8-16)', () => {
     );
     await userEvent.click(screen.getByRole('button', { name: 'Pagas' }));
     expect(onChange).toHaveBeenCalledWith('paid');
+  });
+
+  it('busca da lista tem rótulo para o leitor de tela e devolve o texto digitado (F8-17)', async () => {
+    const onChange = vi.fn();
+    render(<SearchBox label="Buscar clientes" placeholder="Nome" value="" onChange={onChange} />);
+    await userEvent.type(screen.getByRole('searchbox', { name: 'Buscar clientes' }), 'A');
+    expect(onChange).toHaveBeenCalledWith('A');
   });
 
   it('resumo em cartão e estado vazio com o próximo passo', () => {
