@@ -129,6 +129,39 @@ describe('EFD por UF', () => {
     expect(efdUfRule(EFD_SIMPLES_BY_UF, 'RO', '2018-04-30')).toBeNull();
   });
 
+  it('quinta rodada: Simples dispensado no MA desde 12/09/2017; obrigado no AP e em RR desde 2016', () => {
+    // Maranhão: "Ficam dispensados da obrigatoriedade da entrega da EFD: I - a Microempresa - ME e
+    // a Empresa de Pequeno Porte - EPP optantes pelo Simples Nacional, salvo a que estiver impedida
+    // de recolher o ICMS por este regime" (art. 321-D, § 5º, Decreto 33.623/2017, efeitos desde
+    // 12/09/2017).
+    const ma = efdUfRule(EFD_SIMPLES_BY_UF, 'MA', '2026-10-31');
+    expect(ma?.status).toBe('exempt');
+    expect(ma?.note).toMatch(/impedidas/);
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'MA', '2017-09-11')).toBeNull();
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'MA', '2017-09-12')?.act).toMatch(/33\.623\/2017/);
+    // Amapá e Roraima: "a dispensa prevista no caput encerrar-se-á em 1º de janeiro de 2016,
+    // quando estarão obrigados à Escrituração Fiscal Digital - EFD".
+    for (const uf of ['AP', 'RR']) {
+      const rule = efdUfRule(EFD_SIMPLES_BY_UF, uf, '2026-10-31');
+      expect(rule?.status, uf).toBe('required');
+      expect(rule?.note, uf).toMatch(/MEI/);
+      expect(efdUfRule(EFD_SIMPLES_BY_UF, uf, '2015-12-31'), uf).toBeNull();
+    }
+    // Seguem sem fonte oficial lida: PI e RJ.
+    for (const uf of ['PI', 'RJ']) {
+      expect(efdUfRule(EFD_SIMPLES_BY_UF, uf, '2026-10-31'), uf).toBeNull();
+    }
+  });
+
+  it('quinta rodada: 1601 exigido no MA desde 2023 (Solução de Consulta 12/2024); AP segue em dúvida', () => {
+    const ma = efdUfRule(EFD_1601_BY_UF, 'MA', '2026-10-31');
+    expect(ma?.status).toBe('required');
+    expect(ma?.act).toMatch(/Solução de Consulta/);
+    expect(efdUfRule(EFD_1601_BY_UF, 'MA', '2022-12-31')).toBeNull();
+    // Amapá: a Portaria (T) 002/2019 fala do "Registro 1600", não do 1601 (D-054).
+    expect(efdUfRule(EFD_1601_BY_UF, 'AP', '2026-10-31')).toBeNull();
+  });
+
   it('quarta rodada: 1601 dispensado em RO desde 2022 e em MT desde 2023; RN e SE exigiam em 2023', () => {
     // Rondônia: item 9 do Manual da EFD lista o 1601 entre os registros "que não precisam ser
     // apresentados"; a IN 75/2023 revogou a volta da exigência em 2024.

@@ -211,6 +211,42 @@ export const EFD_SIMPLES_BY_UF: readonly EfdUfRule[] = [
     act: 'RICMS-RO (Decreto 22.721/2018), Anexo XIII, art. 107, parágrafo único',
     url: 'https://legislacao.sefin.ro.gov.br/normas/117',
   },
+  {
+    // Quinta rodada (24/10/2026): texto do Decreto 33.623/2017 lido no Diário Oficial do MA,
+    // p. 35. "Art. 2º Este Decreto entra em vigor na data de sua publicação, retroagindo seus
+    // efeitos a 12 de setembro de 2017" (data em que o Decreto 33.322/2017 tinha reescrito o § 5º).
+    uf: 'MA',
+    status: 'exempt',
+    from: '2017-09-12',
+    note: 'O Maranhão dispensa da EFD o MEI e as ME e EPP do Simples Nacional, menos as impedidas de recolher o ICMS pelo Simples (acima do sublimite).',
+    act: 'RICMS-MA (Decreto 19.714/2003), art. 321-D, § 5º, I e II, redação do Decreto 33.623/2017 (DOE-MA de 10/11/2017)',
+    url: 'https://diariooficial.ma.gov.br/download.php?arq=EX20171110',
+  },
+  {
+    // Quinta rodada: RICMS-AP, Anexo I, art. 222-L, § 7º, II, e § 9º (Decreto 8.200/2013, DOE-AP
+    // de 27/12/2013): "a dispensa prevista no caput encerrar-se-á em 1º de janeiro de 2016, quando
+    // estarão obrigados à Escrituração Fiscal Digital - EFD". O texto consolidado mais novo do
+    // SIGDoc é de 13/07/2021; a busca no Diário Oficial do AP não achou alteração do art. 222-L
+    // depois disso.
+    uf: 'AP',
+    status: 'required',
+    from: '2016-01-01',
+    note: 'No Amapá, desde 01/01/2016, as ME e EPP do Simples Nacional entregam a EFD; o MEI (SIMEI) continua dispensado.',
+    act: 'RICMS-AP (Decreto 2.269/1998), Anexo I, art. 222-L, § 7º e § 9º (Decreto 8.200/2013)',
+    url: 'https://sigdoc.ap.gov.br/public/arquivo/35f6952d-3b86-4938-9976-4ac99906b297/download',
+  },
+  {
+    // Quinta rodada: RICMS-RR "atualizado até outubro 2026", art. 289-I, parágrafo único
+    // (Decreto 16.362-E/2013): "Para os estabelecimentos mencionados no inciso II, a dispensa
+    // prevista no caput encerrar-se-á em 1º de janeiro de 2016, quando estarão obrigados à
+    // Escrituração Fiscal Digital - EFD".
+    uf: 'RR',
+    status: 'required',
+    from: '2016-01-01',
+    note: 'Em Roraima, desde 01/01/2016, as ME e EPP do Simples Nacional entregam a EFD; o MEI (SIMEI) continua dispensado.',
+    act: 'RICMS-RR (Decreto 4.335-E/2001), art. 289-I, parágrafo único (Decreto 16.362-E/2013)',
+    url: 'https://www.sefaz.rr.gov.br/downloads/legislacao?file=02%20-%20LEGISLACAO%20ESTADUAL%2F03%20-%20REGULAMENTO%20DE%20ICMS%20-%20ATUALIZADO%20-%20DECRETO%204.335%202001%2FREGULAMENTO%20DE%20ICMS%20-%20DECRETO%204.335%20DE%2003.08.01%20-%20ATUALIZADO%20ATE%20OUTUBRO%202026.pdf',
+  },
 ];
 
 /**
@@ -424,6 +460,18 @@ export const EFD_1601_BY_UF: readonly EfdUfRule[] = [
     note: 'Em Sergipe, em 2023, todos os declarantes da EFD informavam o 1601.',
     act: 'RICMS-SE (Decreto 21.400/2002), art. 349-C, § 10 (redação original do Decreto 227/2022, vigente até 15/01/2024)',
     url: 'https://legislacaoonline.sefaz.se.gov.br/ICMS/Regulamento%20do%20ICMS-RICMS/Regulamento%20do%20ICMS%20vigente-2002-com-historico.pdf',
+  },
+  {
+    // Quinta rodada (24/10/2026): Solução de Consulta 12/2024 da SEFAZ-MA, publicada no Diário
+    // Oficial do MA de 07/06/2024, p. 25: "não havendo dispensa formal do Estado do Maranhão, a
+    // partir de 01/01/2023, é obrigatória a apresentação do Registro das Operações com Instrumentos
+    // de Pagamentos Eletrônicos REG 1601". A busca no Diário Oficial não achou dispensa posterior.
+    uf: 'MA',
+    status: 'required',
+    from: '2023-01-01',
+    note: 'O Maranhão exige o 1601 desde 01/01/2023 de quem recebe por cartão de crédito, débito, Pix ou outro meio eletrônico.',
+    act: 'Solução de Consulta SEFAZ-MA 12/2024, item II (DOE-MA de 07/06/2024)',
+    url: 'https://diariooficial.ma.gov.br/download.php?arq=EX20240607',
   },
 ];
 

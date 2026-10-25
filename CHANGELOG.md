@@ -1,5 +1,15 @@
 # Changelog
 
+## [F4-14.b.4 EFD ICMS/IPI por UF, quinta rodada] — 24/10/2026
+
+### Adicionado
+- **Simples Nacional na EFD**, com fonte oficial lida: o **MA** dispensa desde 12/09/2017, menos as empresas impedidas de recolher o ICMS pelo Simples (RICMS-MA, art. 321-D, § 5º, Decreto 33.623/2017, no Diário Oficial do MA); o **AP** (RICMS-AP, Anexo I, art. 222-L, § 9º) e **RR** (RICMS-RR, art. 289-I, parágrafo único) obrigam desde 01/01/2016, menos o MEI. São 25 UFs confirmadas.
+- **Registro 1601:** o **MA** exige desde 01/01/2023 de quem recebe por cartão ou Pix (Solução de Consulta SEFAZ-MA 12/2024, no Diário Oficial do MA de 07/06/2024). São 20 UFs confirmadas.
+
+### Falta configurar
+- Simples em PI e RJ e o 1601 em AC, AM, AP, PI, RJ, RR e TO seguem "não confirmado": os sites oficiais continuam bloqueados ou sem norma expressa. No AP, a Portaria (T) 002/2019 exige o "Registro 1600", não o 1601 (nova dúvida D-054).
+- ST de TO, AP e RR (F3-26.d.TO, AP e RR): nova busca sem lista oficial vigente; continuam como "falta configurar".
+
 ## [F3-26.d.MA.d Carnes do Maranhão por carga fixa] — 24/10/2026
 
 ### Adicionado
