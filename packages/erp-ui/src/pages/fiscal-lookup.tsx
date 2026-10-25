@@ -257,12 +257,25 @@ export interface StNetLoadClassesView {
     } | null;
     distributionCenter: { article: string } | null;
   } | null;
+  /** Carga fixa por produto (carnes do Maranhão, F3-26.d.MA.d): vale sem CNAE. */
+  product?: {
+    mva: string;
+    accreditation: { act: string; validFrom: string };
+    version: {
+      interstateEntry: string;
+      internalAccredited: string;
+      interstateExitAccredited: string;
+    } | null;
+  };
 }
 
 /** Valor que diz "o produto está fora do regime" (exclusões do decreto). */
 export const NET_LOAD_OUTSIDE = 'outside';
 
-/** O decreto de carga líquida da CNAE da empresa (F3-26.d.CE.c); nada quando falta UF ou CNAE. */
+/**
+ * O decreto de carga líquida da CNAE da empresa (F3-26.d.CE.c) ou o regime por produto da UF
+ * (carnes do Maranhão, F3-26.d.MA.d, que vale sem CNAE); nada quando falta a UF.
+ */
 export function useStNetLoadClasses(
   uf: string | null | undefined,
   cnae: string | null | undefined,
@@ -275,9 +288,9 @@ export function useStNetLoadClasses(
     queryKey: ['st-net-load-classes', uf, digits, code],
     queryFn: () =>
       api.get<StNetLoadClassesView>(
-        `/fiscal/st-net-load-classes?uf=${uf}&cnae=${digits}${code ? `&cest=${code}` : ''}`,
+        `/fiscal/st-net-load-classes?uf=${uf}${digits.length === 7 ? `&cnae=${digits}` : ''}${code ? `&cest=${code}` : ''}`,
       ),
-    enabled: Boolean(uf) && digits.length === 7,
+    enabled: Boolean(uf),
   });
 }
 
@@ -304,19 +317,30 @@ export function StNetLoadClassPicker({
   const known = found.classes.some((c) => c.goodsClass === value) || value === NET_LOAD_OUTSIDE;
   return (
     <SelectField
-      label="Classe da mercadoria (ST com carga líquida)"
+      label={
+        found.product
+          ? 'Carne ou gado bovino ou bubalino (ST por carga fixa)'
+          : 'Classe da mercadoria (ST com carga líquida)'
+      }
       value={value ?? ''}
       onChange={(e) => onChange(e.target.value || null)}
       options={[
         { value: '', label: 'Não informada (a compra avisa)' },
         ...found.classes.map((c) => ({ value: c.goodsClass, label: c.label })),
         ...(value && !known ? [{ value, label: `${value} (fora da tabela atual)` }] : []),
-        { value: NET_LOAD_OUTSIDE, label: 'Fora do regime (exclusões do decreto)' },
+        {
+          value: NET_LOAD_OUTSIDE,
+          label: found.product
+            ? 'Fora do regime (não é do anexo, como a carne ovina)'
+            : 'Fora do regime (exclusões do decreto)',
+        },
       ]}
       hint={
-        found.classes.length > 0
-          ? `${found.regime.act}: a carga da entrada depende da carga interna da mercadoria. Confira com o contador.`
-          : found.message
+        found.product
+          ? `${found.message} O anexo não traz NCM nem CEST: quem diz se o produto está nele é a empresa, com o contador.`
+          : found.classes.length > 0
+            ? `${found.regime.act}: a carga da entrada depende da carga interna da mercadoria. Confira com o contador.`
+            : found.message
       }
     />
   );

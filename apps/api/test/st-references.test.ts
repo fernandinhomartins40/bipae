@@ -105,7 +105,35 @@ describe('referências de ST por UF (F3-26)', () => {
     const fora = (await admin.get('/fiscal/st-net-load-classes?uf=CE&cnae=4711302')).json();
     expect(fora).toMatchObject({ status: 'not-listed', regime: null, classes: [] });
     expect(fora.message).toMatch(/vale a ST comum/);
-    expect((await admin.get('/fiscal/st-net-load-classes?uf=CE')).statusCode).toBe(400);
+    // Sem CNAE: nada a escolher, com o motivo (no Maranhão as carnes valem sem CNAE).
+    expect((await admin.get('/fiscal/st-net-load-classes?uf=CE')).json()).toMatchObject({
+      status: 'no-cnae',
+      classes: [],
+    });
+    expect((await admin.get('/fiscal/st-net-load-classes?uf=C')).statusCode).toBe(400);
+  });
+
+  it('MA: carnes por carga fixa (Anexo 4.4, F3-26.d.MA.d), classes sem CNAE', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const carnes = (await admin.get('/fiscal/st-net-load-classes?uf=MA')).json();
+    expect(carnes).toMatchObject({
+      status: 'choose-class',
+      regime: { act: 'RICMS/MA, Anexo 4.4' },
+      product: {
+        mva: '25',
+        accreditation: { act: 'Portaria 178/2025-GABIN' },
+        version: { interstateEntry: '3', internalAccredited: '0.75' },
+      },
+    });
+    expect(carnes.classes.map((c: { goodsClass: string }) => c.goodsClass)).toEqual([
+      'ma-cattle',
+      'ma-meat',
+    ]);
+    // Com CNAE do Ceará, a empresa do MA continua no regime por produto.
+    expect(
+      (await admin.get('/fiscal/st-net-load-classes?uf=MA&cnae=4781400')).json().regime.act,
+    ).toBe('RICMS/MA, Anexo 4.4');
   });
 
   it('MA: MVA dos Anexos 4.x do RICMS/MA (F3-26.d.MA), sem lista de "fora da ST"', async () => {

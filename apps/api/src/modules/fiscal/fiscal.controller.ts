@@ -51,6 +51,8 @@ import {
   stNetLoadChoicesFor,
   stNetLoadMessage,
   stNetLoadRegimesFor,
+  productLoadVersionOn,
+  stProductLoadRegimeOf,
 } from '@bipae/fiscal/tables';
 import { findMunicipio, searchMunicipios } from '@bipae/fiscal/tables/municipios';
 import { findNcm, isNcmValidOn, ncmPath, searchNcm, type Ncm } from '@bipae/fiscal/tables/ncm';
@@ -390,7 +392,7 @@ export class FiscalController {
     const { uf, cnae, cest } = parse(
       z.object({
         uf: z.string({ message: 'Informe a UF' }).trim().toUpperCase().length(2, 'Informe a UF'),
-        cnae: z.string({ message: 'Informe a CNAE' }).trim().min(1, 'Informe a CNAE'),
+        cnae: z.string().trim().optional(),
         cest: z
           .string()
           .trim()
@@ -402,6 +404,38 @@ export class FiscalController {
     const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(
       new Date(),
     );
+    // Carga fixa por produto (carnes do Maranhão, F3-26.d.MA.d): vale para qualquer empresa da UF,
+    // sem CNAE; as classes são as do anexo e as escolhas, a situação do frigorífico e o frete.
+    const product = stProductLoadRegimeOf(uf);
+    if (product) {
+      return {
+        status: 'choose-class',
+        regime: {
+          act: product.act,
+          segmentName: product.segmentName,
+          url: product.url,
+          cestSegments: null,
+        },
+        classes: product.classes,
+        message: `${product.act}: escolha a classe só nos produtos de gado ou da matança de gado bovino ou bubalino; nos outros, deixe em branco.`,
+        choices: null,
+        product: {
+          mva: product.mva,
+          accreditation: product.accreditation,
+          version: productLoadVersionOn(product, day),
+        },
+      };
+    }
+    if (!cnae) {
+      return {
+        status: 'no-cnae',
+        regime: null,
+        classes: [],
+        message:
+          'Informe a CNAE principal da empresa para saber se ela está num regime de carga líquida.',
+        choices: null,
+      };
+    }
     const result = stNetLoadFor({
       uf,
       buyerCnae: cnae,

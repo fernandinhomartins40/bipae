@@ -149,6 +149,74 @@ describe('carga líquida na entrada da compra', () => {
     expect(calc({ company: { taxId: '123.456.789-09' } })?.status).toBe('applies');
   });
 
+  describe('carnes do Maranhão por carga fixa (F3-26.d.MA.d)', () => {
+    const ma = (
+      over: {
+        item?: Partial<PurchaseItem>;
+        goodsClass?: string | null;
+        supplierUf?: string;
+        options?: PurchaseNetLoadCompany['options'];
+      } = {},
+    ) =>
+      purchaseNetLoad({
+        // Supermercado sem CNAE nos decretos do Ceará: o regime do MA vale para qualquer comprador.
+        company: { ...LOJA_CE, uf: 'MA', cnae: null, options: over.options ?? null },
+        nfe: { supplier: fornecedor(over.supplierUf ?? 'PA') },
+        item: item({ ncm: '02013000', description: 'Carne bovina desossada', ...over.item }),
+        goodsClass: over.goodsClass === undefined ? 'ma-meat' : over.goodsClass,
+        cest: null,
+        date: '2026-10-24',
+      });
+
+    it('entrada interestadual: R$ 1.000 + 25% × 3% = R$ 37,50, com seguro e outras despesas', () => {
+      expect(ma()).toMatchObject({
+        status: 'applies',
+        act: 'RICMS/MA, Anexo 4.4',
+        totalPercent: '3',
+        mva: '25',
+        documentCents: 100_000,
+        baseCents: 125_000,
+        stCents: 3_750,
+      });
+      expect(
+        ma({ item: { insuranceCents: 1_000, otherCents: 1_000, discountCents: 2_000 } }),
+      ).toMatchObject({ documentCents: 100_000, stCents: 3_750 });
+    });
+
+    it('frete e IPI: falta configurar sem a escolha; com ela, entram ou ficam de fora (D-051)', () => {
+      const frete = { freightCents: 4_000, ipiCents: 0 };
+      expect(ma({ item: frete })).toMatchObject({ status: 'missing', stCents: 0 });
+      expect(ma({ item: frete, options: { meatBaseCharges: 'include' } })).toMatchObject({
+        documentCents: 104_000,
+        baseCents: 130_000,
+        stCents: 3_900,
+      });
+      expect(ma({ item: frete, options: { meatBaseCharges: 'exclude' } })).toMatchObject({
+        documentCents: 100_000,
+      });
+    });
+
+    it('ST já retida, compra interna, sem classe e fora do regime', () => {
+      expect(ma({ item: { stCents: 2_000 } })).toMatchObject({
+        status: 'supplier-retained',
+        totalPercent: '3',
+        stCents: 0,
+      });
+      expect(ma({ supplierUf: 'MA' })).toMatchObject({ status: 'supplier-responsible' });
+      expect(ma({ supplierUf: 'MA', item: { stCents: 900 } })?.message).toMatch(
+        /já reteve a ST neste item \(RICMS\/MA, Anexo 4\.4, art\. 2º\)/,
+      );
+      expect(ma({ goodsClass: null })).toMatchObject({
+        status: 'choose-class',
+        act: 'RICMS/MA, Anexo 4.4',
+      });
+      expect(ma({ goodsClass: null, item: { ncm: '61091000' } })).toMatchObject({
+        status: 'not-listed',
+        act: null,
+      });
+    });
+  });
+
   it('ST já retida pelo fornecedor: não soma a carga líquida de novo', () => {
     const r = calc({ item: { stCents: 5_000 } });
     expect(r).toMatchObject({ status: 'supplier-retained', stCents: 0, totalPercent: '15.60' });

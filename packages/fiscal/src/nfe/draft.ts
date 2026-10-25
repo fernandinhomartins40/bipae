@@ -17,6 +17,11 @@ import {
   stNetLoadOutputNote,
   type StNetLoadOptions,
 } from '../tables/st-net-loads';
+import {
+  stProductLoadExit,
+  stProductLoadExitMessage,
+  stProductLoadOutputNote,
+} from '../tables/st-product-loads';
 import { findStPautaItem } from '../tables/st-pautas';
 import { findCfop } from '../tables/cfop';
 import { isImportedOrigin } from '../tables/icms-uf';
@@ -386,6 +391,33 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
         options: c.stNetLoadOptions ?? null,
       });
       if (exit) notes.push(`${label}: ${stNetLoadExitMessage(exit)}`);
+      // Carga fixa por produto (carnes do Maranhão, F3-26.d.MA.d): a expressão do art. 6º, §§ 1º
+      // e 2º, na venda interna a contribuinte e na transferência interna; e a retenção do
+      // frigorífico credenciado (art. 6º, II e III), só nas observações.
+      const productNote = stProductLoadOutputNote({
+        uf,
+        destinationUf: ufDestino,
+        date,
+        goodsClass: item.stNetLoadClass,
+        recipientContributor: r.ieIndicator === 1,
+        transfer: netLoadTransfer,
+      });
+      if (productNote) {
+        netLoadNotes.add(productNote.note);
+        notes.push(
+          `${label}: mercadoria do ${productNote.regime.act}; sem destaque do ICMS, a nota leva "${productNote.note}" nas informações complementares.`,
+        );
+      }
+      const productExit = stProductLoadExit({
+        uf,
+        destinationUf: ufDestino,
+        date,
+        goodsClass: item.stNetLoadClass,
+        operationCents,
+        freightCents: freight[index]!,
+        options: c.stNetLoadOptions ?? null,
+      });
+      if (productExit) notes.push(`${label}: ${stProductLoadExitMessage(productExit)}`);
     }
     const taxes = calculateSaleItemTaxes({
       company: { uf: c.uf, regime: regime?.id ?? null },

@@ -63,6 +63,7 @@ import {
   maPortalLogin,
   parseMaAnnex,
 } from './st-ma.mjs';
+import { MA_MEAT_SOURCES, parseMaMeatAnnex } from './st-ma-carnes.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -1322,6 +1323,50 @@ async function checkMa() {
       );
     } catch (error) {
       details.push(`Anexo ${annex}: o arquivo novo não passa no leitor do Bipaê: ${error.message}`);
+    }
+  }
+  // Anexo 4.4 (carnes por carga fixa, F3-26.d.MA.d): margem, cargas e expressão da nota.
+  {
+    const meat = manifest[MA_MEAT_SOURCES.annex];
+    const id = /identificador=([0-9a-f-]{36})/.exec(meat.page)[1];
+    const now = files.filter((f) => /^anexo 4\.4(\.pdf$|\s)/i.test(f.nomeArquivoOriginal));
+    if (now.length !== 1 || now[0].identificador !== id) {
+      changed = true;
+      const acts = async () => ({
+        entryDecree: await pdfLines(
+          readFileSync(join(sourcesDir, manifest[MA_MEAT_SOURCES.entryDecree].file)),
+        ),
+        internalDecree: await pdfLines(
+          readFileSync(join(sourcesDir, manifest[MA_MEAT_SOURCES.internalDecree].file)),
+        ),
+        accreditation: await pdfLines(
+          readFileSync(join(sourcesDir, manifest[MA_MEAT_SOURCES.accreditation].file)),
+        ),
+      });
+      if (now.length !== 1) {
+        details.push(`Anexo 4.4: ${now.length} arquivo(s) com esse nome no portal`);
+      } else {
+        try {
+          const old = parseMaMeatAnnex(
+            await pdfLines(readFileSync(join(sourcesDir, meat.file))),
+            await acts(),
+          );
+          const bytes = (
+            await download(
+              `${MA_PORTAL_API}/portal/arquivos/public/identificador?identificador=${now[0].identificador}`,
+            )
+          ).body;
+          const next = parseMaMeatAnnex(await pdfLines(bytes), await acts());
+          const diffs = Object.keys(old).filter((k) => old[k] !== next[k]);
+          details.push(
+            `Anexo 4.4: arquivo novo (${now[0].identificador}); ${diffs.length === 0 ? 'margem, cargas e expressão iguais' : `mudou: ${diffs.map((k) => `${k} ${old[k]} → ${next[k]}`).join(', ')}`}`,
+          );
+        } catch (error) {
+          details.push(
+            `Anexo 4.4: o arquivo novo não passa no leitor do Bipaê (talvez um decreto novo no art. 6º): ${error.message}`,
+          );
+        }
+      }
     }
   }
   return { title, page, status: changed ? 'mudou' : 'igual', details };

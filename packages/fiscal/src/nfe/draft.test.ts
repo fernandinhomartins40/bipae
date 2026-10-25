@@ -402,3 +402,67 @@ describe('carga líquida do Ceará no rascunho (F3-26.d.CE.c)', () => {
     }
   });
 });
+
+describe('carnes do Maranhão no rascunho (F3-26.d.MA.d)', () => {
+  const maranhao = (
+    classe: string | null,
+    over: { ufDestino?: string; ieIndicator?: 1 | 2 | 9; options?: object } = {},
+  ) => {
+    const base = nota(ALIQUOTA_SP);
+    const ufDestino = over.ufDestino ?? 'MA';
+    return nota({
+      ...ALIQUOTA_SP,
+      company: {
+        ...base.company,
+        uf: 'MA',
+        address: { ...base.company.address, cityCode: '2111300', cityName: 'São Luís' },
+        stNetLoadOptions: over.options ?? null,
+      },
+      recipient: {
+        ...base.recipient,
+        ieIndicator: over.ieIndicator ?? 1,
+        ...(over.ieIndicator === 9 && { ie: null }),
+        address: {
+          ...base.recipient.address,
+          uf: ufDestino,
+          cityCode: ufDestino === 'MA' ? '2111300' : '3550308',
+          cityName: ufDestino === 'MA' ? 'São Luís' : 'São Paulo',
+        },
+      },
+      items: base.items.map((i) => ({ ...i, stNetLoadClass: classe })),
+    });
+  };
+
+  it('venda interna a contribuinte: a expressão do art. 6º, § 1º, vai nas informações complementares', () => {
+    const r = buildDraftNfe(maranhao('ma-meat'));
+    expect(r.ok, r.ok ? '' : r.pending.join(' | ')).toBe(true);
+    if (!r.ok) return;
+    expect(r.input.additionalInfo).toContain('ICMS retido por substituição tributária');
+    expect(r.notes.join(' ')).toMatch(/mercadoria do RICMS\/MA, Anexo 4\.4/);
+  });
+
+  it('não contribuinte, outro estado, fora do regime ou sem classe: sem a expressão', () => {
+    for (const draft of [
+      maranhao('ma-meat', { ieIndicator: 9 }),
+      maranhao('ma-meat', { ufDestino: 'SP' }),
+      maranhao('outside'),
+      maranhao(null),
+    ]) {
+      const r = buildDraftNfe(draft);
+      expect(r.ok, r.ok ? '' : r.pending.join(' | ')).toBe(true);
+      expect(r.ok && (r.input.additionalInfo ?? '')).not.toContain('ICMS retido');
+    }
+  });
+
+  it('frigorífico credenciado: a retenção de 0,75% sobre o valor + 25% vai nas observações', () => {
+    // Frete de R$ 10,00 fora da base (escolha da empresa): R$ 250,00 × 1,25 × 0,75% = R$ 2,34.
+    const r = buildDraftNfe(
+      maranhao('ma-meat', { options: { meatPlant: 'accredited', meatBaseCharges: 'exclude' } }),
+    );
+    expect(r.ok, r.ok ? '' : r.pending.join(' | ')).toBe(true);
+    if (!r.ok) return;
+    expect(r.notes.join(' ')).toMatch(
+      /art\. 6º, III do RICMS\/MA, Anexo 4\.4 \(frigorífico credenciado\): base R\$ 312,50 .*carga 0,75%, ICMS retido R\$ 2,34/,
+    );
+  });
+});

@@ -215,7 +215,8 @@ export class PurchasesService {
     item: PurchaseNfe['items'][number],
     productId: string | null | undefined,
   ): Promise<PurchaseNetLoad | null> {
-    if (!company.cnae || !company.uf) return null;
+    // Sem CNAE ainda pode valer a carga fixa por produto (carnes do Maranhão, F3-26.d.MA.d).
+    if (!company.uf) return null;
     try {
       let goodsClass: string | null = null;
       let cest = item.cest ?? null;

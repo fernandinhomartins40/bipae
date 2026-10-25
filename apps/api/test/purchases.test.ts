@@ -598,3 +598,64 @@ describe('ST de entrada pela carga líquida do Ceará (F3-26.d.CE.c)', () => {
     });
   });
 });
+
+describe('carnes do Maranhão por carga fixa na compra (F3-26.d.MA.d)', () => {
+  it('sem CNAE, classe no produto: 3% sobre o valor + 25%; IPI só entra com a escolha da empresa', async () => {
+    const { admin, empresa, loja } = await mercado();
+    const base = { legalName: empresa.legalName, taxId: '11.222.333/0001-81', uf: 'MA' };
+    expect((await admin.patch(`/companies/${empresa.id}`, base)).statusCode).toBe(200);
+    // O produto de teste faz o papel da carne: a classe é a da empresa, o anexo não tem NCM.
+    const carne = (
+      await admin.post('/products', {
+        name: 'Carne bovina (teste)',
+        priceCents: 300,
+        barcodes: ['7891000100103'],
+        stNetLoadClass: 'ma-meat',
+      })
+    ).json();
+    expect(carne.stNetLoadClass).toBe('ma-meat');
+    const xml = await notaDoFornecedor(3101);
+    const sem = (await admin.post('/purchases/preview', { xml })).json();
+    // O item tem IPI, que o art. 5º do Anexo 4.4 não cita: falta configurar (D-051).
+    expect(sem.items[1].netLoad).toMatchObject({ status: 'missing', stCents: 0 });
+    expect(sem.items[1].netLoad.message).toMatch(/D-051/);
+    // Refrigerante sem classe e fora dos NCM de carne: nada a dizer.
+    expect(sem.items[0].netLoad).toMatchObject({ status: 'not-listed' });
+
+    expect(
+      (
+        await admin.patch(`/companies/${empresa.id}`, {
+          ...base,
+          stNetLoadOptions: { meatPlant: 'talvez' },
+        })
+      ).statusCode,
+    ).toBe(400);
+    const salva = await admin.patch(`/companies/${empresa.id}`, {
+      ...base,
+      stNetLoadOptions: { meatPlant: 'none', meatBaseCharges: 'exclude' },
+    });
+    expect(salva.json().stNetLoadOptions).toMatchObject({
+      meatPlant: 'none',
+      meatBaseCharges: 'exclude',
+    });
+    const com = (await admin.post('/purchases/preview', { xml })).json();
+    // 36,00 × 1,25 = 45,00; × 3% = 1,35.
+    expect(com.items[1].netLoad).toMatchObject({
+      status: 'applies',
+      act: 'RICMS/MA, Anexo 4.4',
+      totalPercent: '3',
+      baseCents: 4_500,
+      stCents: 135,
+    });
+    const entrada = await admin.post('/purchases', {
+      xml,
+      storeId: loja.id,
+      items: [
+        { line: 1, productId: null, factor: '6', unit: 'UN', priceCents: 899 },
+        { line: 2, productId: carne.id, factor: 1 },
+      ],
+    });
+    expect(entrada.statusCode).toBe(201);
+    expect(entrada.json()).toMatchObject({ stNetLoadCents: 135 });
+  });
+});

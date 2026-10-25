@@ -1,5 +1,18 @@
 # Changelog
 
+## [F3-26.d.MA.d Carnes do Maranhão por carga fixa] — 24/10/2026
+
+### Adicionado
+- **Carnes e gado bovino e bubalino no Maranhão** (Anexo 4.4 do RICMS/MA): novo regime "por produto" na tabela de carga líquida, lido do anexo consolidado do portal da SEFAZ-MA, dos Decretos 39.823/2025 e 39.824/2025 e da Portaria 178/2025-GABIN (PDFs oficiais guardados no Bipaê). Vale para qualquer empresa do Maranhão, sem CNAE.
+- **No produto**, a empresa diz se ele é "gado bovino ou bubalino", "produto comestível da matança" ou "fora do regime" (o anexo não tem NCM nem CEST). A compra só pergunta quando o NCM é de carne ou de bovino vivo.
+- **Na compra de outro estado**, a ST de entrada é 3% sobre o valor com seguro e encargos + 25% (ex.: R$ 1.000,00 → base R$ 1.250,00 → R$ 37,50), somada ao custo como a carga líquida do Ceará. Gado para frigorífico regular fica diferido (art. 3º); na compra dentro do estado, o Bipaê avisa que a retenção é do fornecedor (art. 2º).
+- **Na NF-e**, venda interna a contribuinte e transferência interna levam "ICMS retido por substituição tributária" (art. 6º, §§ 1º e 2º). O frigorífico credenciado vê no rascunho a retenção de 0,75% (interna) ou 1% (interestadual).
+- **Em Empresas e lojas** (Maranhão): situação do frigorífico (não é, regular sem credenciamento, credenciado) e se frete e IPI entram na base.
+- O monitor semanal do Maranhão também confere o Anexo 4.4.
+
+### Falta configurar
+- Frete e IPI na base enquanto a empresa não escolhe (D-051); carga do frigorífico sem credenciamento, período antes da portaria, importação e a carga nos campos da ST do XML (D-052).
+
 ## [F8-17.b O que ficou de fora do visual novo da retaguarda] — 24/10/2026
 
 ### Alterado

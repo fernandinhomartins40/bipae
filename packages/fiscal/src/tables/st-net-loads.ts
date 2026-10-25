@@ -199,6 +199,17 @@ export interface StNetLoadOptions {
    * do ano anterior para outras UFs (Decreto 36.617, art. 7º): cargas próprias na entrada.
    */
   distributionCenter?: boolean;
+  /**
+   * Carnes no Maranhão (Anexo 4.4 do RICMS/MA, F3-26.d.MA.d): o que a empresa é. `none` não é
+   * frigorífico; `regular` é frigorífico em situação regular e sob inspeção sanitária (art. 3º), sem
+   * o credenciamento; `accredited` é frigorífico credenciado pela Portaria 178/2025-GABIN.
+   */
+  meatPlant?: 'none' | 'regular' | 'accredited' | null;
+  /**
+   * Frete e IPI na base das carnes do Maranhão: o art. 5º do Anexo 4.4 diz "incluídos, seguro e
+   * outros encargos transferidos ao destinatário" e não cita frete nem IPI (dúvida D-051).
+   */
+  meatBaseCharges?: 'include' | 'exclude' | null;
 }
 
 /** Lista dos produtos de informática do ato do Secretário da Fazenda (IN SEFAZ 148/2024). */
@@ -214,10 +225,12 @@ export interface InformaticsList {
   }[];
 }
 
-const table = data as {
+const table = data as unknown as {
   origins: NetLoadOrigin[];
   regimes: NetLoadRegime[];
   informaticsList: InformaticsList;
+  /** Regimes por produto (carnes do Maranhão, F3-26.d.MA.d), lidos em `st-product-loads.ts`. */
+  productRegimes: { classes: { goodsClass: string }[] }[];
 };
 
 export const CE_INFORMATICS_LIST: Readonly<InformaticsList> = table.informaticsList;
@@ -334,7 +347,8 @@ export function isNetLoadGoodsClass(goodsClass: string): boolean {
     goodsClass === NET_LOAD_OUTSIDE ||
     ST_NET_LOAD_REGIMES.some((r) =>
       r.versions.some((v) => v.loads.some((l) => l.goodsClass === goodsClass)),
-    )
+    ) ||
+    table.productRegimes.some((r) => r.classes.some((c) => c.goodsClass === goodsClass))
   );
 }
 

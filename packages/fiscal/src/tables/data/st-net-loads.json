@@ -2420,6 +2420,54 @@
    ]
   }
  ],
+ "productRegimes": [
+  {
+   "uf": "MA",
+   "id": "ma-carnes",
+   "act": "RICMS/MA, Anexo 4.4",
+   "source": "stMaAnexo4_4",
+   "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=6e188115-c346-47de-ac82-498fda7cde8f",
+   "segmentName": "Carne bovina e bubalina, gado bovino e bubalino",
+   "mva": "25",
+   "classes": [
+    {
+     "goodsClass": "ma-cattle",
+     "label": "Gado bovino ou bubalino (Anexo 4.4)"
+    },
+    {
+     "goodsClass": "ma-meat",
+     "label": "Produtos comestíveis da matança de gado bovino ou bubalino (Anexo 4.4)"
+    }
+   ],
+   "askNcm": [
+    "0102",
+    "0201",
+    "0202",
+    "0204",
+    "0206",
+    "02102000",
+    "02109900",
+    "1502"
+   ],
+   "outputNote": "ICMS retido por substituição tributária",
+   "accreditation": {
+    "act": "Portaria 178/2025-GABIN",
+    "source": "stMaPortaria178",
+    "url": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=0442282d-c3d5-49a6-b487-07586b34a5a9",
+    "validFrom": "2025-05-23"
+   },
+   "versions": [
+    {
+     "validFrom": "2025-03-18",
+     "validTo": null,
+     "amendedBy": "Decretos 39.823/2025 e 39.824/2025",
+     "interstateEntry": "3",
+     "interstateExitAccredited": "1",
+     "internalAccredited": "0.75"
+    }
+   ]
+  }
+ ],
  "informaticsList": {
   "act": "Instrução Normativa SEFAZ 148/2024 (CE), alterada pelas INs 135/2025 e 20/2026",
   "decree": "Decreto 31.066/2012 (CE)",

@@ -513,6 +513,14 @@ export const companyInput = z.object({
         .enum(['standard', 'optional'], { message: 'Carga da indústria inválida' })
         .nullish(),
       distributionCenter: z.boolean().optional(),
+      // Carnes do Maranhão (Anexo 4.4 do RICMS/MA, F3-26.d.MA.d): situação do frigorífico e frete
+      // e IPI na base (dúvida D-051).
+      meatPlant: z
+        .enum(['none', 'regular', 'accredited'], { message: 'Situação do frigorífico inválida' })
+        .nullish(),
+      meatBaseCharges: z
+        .enum(['include', 'exclude'], { message: 'Escolha do frete e do IPI inválida' })
+        .nullish(),
     })
     .optional(),
   // Dados do emitente da NFC-e e da NF-e (F3-14.b).

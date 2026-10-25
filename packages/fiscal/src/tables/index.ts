@@ -26,3 +26,4 @@ export * from './demonstration';
 export * from './nfse-services';
 export * from './st-pautas';
 export * from './st-net-loads';
+export * from './st-product-loads';

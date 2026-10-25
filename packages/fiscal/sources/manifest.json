@@ -753,6 +753,38 @@
   "publishedAt": "2026-08-03",
   "downloadedAt": "2026-10-23"
  },
+ "stMaAnexo4_4": {
+  "file": "SEFAZ-MA_RICMS_Anexo_4.4_2026-08-03.pdf",
+  "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.4: substituição tributária nas operações com carne bovina, bubalina e subproduto; gado bovino e bubalino (carga fixa do art. 6º; texto consolidado do portal da SEFAZ-MA)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=6e188115-c346-47de-ac82-498fda7cde8f",
+  "publishedAt": "2026-08-03",
+  "downloadedAt": "2026-10-24"
+ },
+ "stMaDecreto39823": {
+  "file": "SEFAZ-MA_Decreto_39823-2025_carnes_2026-10-24.pdf",
+  "title": "Decreto 39.823, de 18/03/2025 (DOE de 18/03/2025): nova redação do art. 6º, II, do Anexo 4.4 do RICMS/MA (1% na saída interestadual do frigorífico) e § 6º (credenciamento)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=97401b6c-fad0-4d5f-8dca-be795720fe2e",
+  "publishedAt": "2025-03-18",
+  "downloadedAt": "2026-10-24"
+ },
+ "stMaDecreto39824": {
+  "file": "SEFAZ-MA_Decreto_39824-2025_carnes_2026-10-24.pdf",
+  "title": "Decreto 39.824, de 18/03/2025 (DOE de 18/03/2025): nova redação do art. 6º, III, e do art. 11 do Anexo 4.4 do RICMS/MA (0,75% nas operações internas) e § 7º (credenciamento)",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=49b66245-6081-488e-a918-6540edcec50b",
+  "publishedAt": "2025-03-18",
+  "downloadedAt": "2026-10-24"
+ },
+ "stMaPortaria178": {
+  "file": "SEFAZ-MA_Portaria_GABIN_178-2025_credenciamento_frigorificos_2026-10-24.pdf",
+  "title": "Portaria 178/2025-GABIN, de 19/05/2025 (DOE de 23/05/2025): credenciamento de frigoríficos para os incisos II e III do art. 6º do Anexo 4.4 do RICMS/MA",
+  "publisher": "Secretaria de Estado da Fazenda do Maranhão",
+  "page": "https://portal.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=0442282d-c3d5-49a6-b487-07586b34a5a9",
+  "publishedAt": "2025-05-23",
+  "downloadedAt": "2026-10-24"
+ },
  "stMaAnexo4_6": {
   "file": "SEFAZ-MA_RICMS_Anexo_4.6_2026-08-03.pdf",
   "title": "RICMS/MA (Decreto 19.714/2003), Anexo 4.6: substituição tributária das operações com cimento (Protocolo ICMS 11/85; texto consolidado do portal da SEFAZ-MA)",

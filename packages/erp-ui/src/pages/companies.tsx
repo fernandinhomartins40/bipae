@@ -41,6 +41,8 @@ interface Company {
     transferMargin?: 'replace' | 'compound' | null;
     industryLoad?: 'standard' | 'optional' | null;
     distributionCenter?: boolean;
+    meatPlant?: 'none' | 'regular' | 'accredited' | null;
+    meatBaseCharges?: 'include' | 'exclude' | null;
   };
   ie?: string | null;
   street?: string | null;
@@ -361,6 +363,8 @@ function CompanyForm({
     transferMargin: company?.stNetLoadOptions?.transferMargin ?? '',
     industryLoad: company?.stNetLoadOptions?.industryLoad ?? '',
     distributionCenter: company?.stNetLoadOptions?.distributionCenter ?? false,
+    meatPlant: company?.stNetLoadOptions?.meatPlant ?? '',
+    meatBaseCharges: company?.stNetLoadOptions?.meatBaseCharges ?? '',
     ie: company?.ie ?? '',
     street: company?.street ?? '',
     streetNumber: company?.streetNumber ?? '',
@@ -405,6 +409,8 @@ function CompanyForm({
         transferMargin: v.transferMargin || null,
         industryLoad: v.industryLoad || null,
         distributionCenter: v.distributionCenter,
+        meatPlant: v.meatPlant || null,
+        meatBaseCharges: v.meatBaseCharges || null,
       },
       ie: v.ie || null,
       street: v.street || null,
@@ -504,12 +510,49 @@ function CompanyForm({
             value={v.cnae}
             onChange={(e) => setV({ ...v, cnae: formatCnae(e.target.value) })}
             hint={
-              netLoad?.regime
-                ? `ST com carga líquida do ${netLoad.regime.act} (${netLoad.regime.segmentName.toLowerCase()}): a compra calcula a ST de entrada pela classe da mercadoria de cada produto.`
-                : 'A atividade principal do cartão do CNPJ. No Ceará, ela decide a ST com carga líquida.'
+              netLoad?.product
+                ? 'A atividade principal do cartão do CNPJ.'
+                : netLoad?.regime
+                  ? `ST com carga líquida do ${netLoad.regime.act} (${netLoad.regime.segmentName.toLowerCase()}): a compra calcula a ST de entrada pela classe da mercadoria de cada produto.`
+                  : 'A atividade principal do cartão do CNPJ. No Ceará, ela decide a ST com carga líquida.'
             }
           />
-          {netLoad?.regime && (
+          {netLoad?.product && netLoad.regime && (
+            <>
+              <SelectField
+                label="Frigorífico (carnes do Maranhão)"
+                value={v.meatPlant}
+                onChange={(e) => setV({ ...v, meatPlant: e.target.value as typeof v.meatPlant })}
+                options={[
+                  { value: '', label: 'Ainda não informei' },
+                  { value: 'none', label: 'Não é frigorífico' },
+                  {
+                    value: 'regular',
+                    label: 'Frigorífico regular e sob inspeção sanitária, sem credenciamento',
+                  },
+                  {
+                    value: 'accredited',
+                    label: `Frigorífico credenciado (${netLoad.product.accreditation.act})`,
+                  },
+                ]}
+                hint={`No ${netLoad.regime.act}, gado para frigorífico regular fica com o imposto diferido (art. 3º), e as cargas de ${formatRate(netLoad.product.version?.internalAccredited ?? '')} nas operações internas e de ${formatRate(netLoad.product.version?.interstateExitAccredited ?? '')} na saída interestadual são do frigorífico credenciado. Sem a informação, a compra de gado e a nota do frigorífico mostram "falta configurar".`}
+              />
+              <SelectField
+                label="Frete e IPI na base das carnes"
+                value={v.meatBaseCharges}
+                onChange={(e) =>
+                  setV({ ...v, meatBaseCharges: e.target.value as typeof v.meatBaseCharges })
+                }
+                options={[
+                  { value: '', label: 'Ainda não escolhi' },
+                  { value: 'include', label: 'Entram na base' },
+                  { value: 'exclude', label: 'Ficam fora da base' },
+                ]}
+                hint={`O art. 5º do ${netLoad.regime.act} põe na base o valor da operação com "seguro e outros encargos transferidos ao destinatário", mais ${formatRate(netLoad.product.mva)}, e não cita frete nem IPI. Escolha com o contador; sem escolha, o item com frete ou IPI mostra "falta configurar".`}
+              />
+            </>
+          )}
+          {netLoad?.regime && !netLoad.product && (
             <Checkbox
               label="Tem Regime Especial de Tributação (RET) com a SEFAZ"
               checked={v.stSpecialRegime}

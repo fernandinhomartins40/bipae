@@ -58,6 +58,7 @@ import { acStReferences, parseAcIn12023 } from './st-ac.mjs';
 import { amStReferences, parseAmLei6108 } from './st-am.mjs';
 import { parseRnAnexo007, rnStReferences } from './st-rn.mjs';
 import { MA_ANNEX_SOURCES, maStReferences, parseMaAnnex } from './st-ma.mjs';
+import { MA_MEAT_SOURCES, maMeatRegime, parseMaMeatAnnex } from './st-ma-carnes.mjs';
 import { docText } from './doc-text.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
@@ -926,8 +927,28 @@ tables['st-references.json'] = await importStReferences(tables['cest.json']);
       parsed: parseCeNetLoadSource(source, lines),
     });
   }
+  // Maranhão (F3-26.d.MA.d): carnes por carga fixa (Anexo 4.4), regime "por produto": vale para
+  // qualquer adquirente do Estado, com a classe do produto escolhida pela empresa.
+  const maMeatLines = async (key) =>
+    pdfLines(readFileSync(join(sourcesDir, manifest[MA_MEAT_SOURCES[key]].file)));
+  const maMeat = maMeatRegime(
+    parseMaMeatAnnex(await maMeatLines('annex'), {
+      entryDecree: await maMeatLines('entryDecree'),
+      internalDecree: await maMeatLines('internalDecree'),
+      accreditation: await maMeatLines('accreditation'),
+    }),
+    {
+      urls: {
+        annex: manifest[MA_MEAT_SOURCES.annex].page,
+        accreditation: manifest[MA_MEAT_SOURCES.accreditation].page,
+      },
+      cests: tables['cest.json'].items,
+      ncms: tables['ncm.json'].items,
+    },
+  );
   tables['st-net-loads.json'] = {
     ...ceNetLoadRegimes(decrees, { ufRegions }),
+    productRegimes: [maMeat],
     // Lista dos produtos de informática do ato do Secretário (F3-26.d.CE.d), do Diário Oficial.
     // As alterações em ordem de publicação: IN 135/2025 e IN 20/2026 (F3-26.d.CE.f).
     informaticsList: parseCeInformaticsList(

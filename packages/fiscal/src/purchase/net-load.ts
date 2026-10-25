@@ -7,6 +7,11 @@ import {
   type StNetLoadOptions,
   type StNetLoadResult,
 } from '../tables/st-net-loads';
+import {
+  stProductLoadFor,
+  stProductLoadMessage,
+  stProductLoadRegimeOf,
+} from '../tables/st-product-loads';
 import type { PurchaseItem, PurchaseNfe } from './read';
 
 /**
@@ -31,7 +36,7 @@ export interface PurchaseNetLoadCompany {
 }
 
 export interface PurchaseNetLoad {
-  status: StNetLoadResult['status'] | 'supplier-retained';
+  status: StNetLoadResult['status'] | 'supplier-retained' | 'supplier-responsible';
   /** Decreto do regime, quando a CNAE está em um. */
   act: string | null;
   goodsClass: string | null;
@@ -90,7 +95,10 @@ export function purchaseNetLoad(input: {
   date: string;
 }): PurchaseNetLoad | null {
   const { company, nfe, item } = input;
-  if (!company.uf || !digits(company.cnae)) return null;
+  if (!company.uf) return null;
+  // Carga fixa por produto (carnes do Maranhão, F3-26.d.MA.d): vale para qualquer adquirente.
+  if (stProductLoadRegimeOf(company.uf)) return purchaseProductLoad(input);
+  if (!digits(company.cnae)) return null;
   const supplierUf = nfe.supplier.address?.uf || '';
   const interstate = supplierUf !== '' && supplierUf.toUpperCase() !== company.uf.toUpperCase();
   // Transferência: mesmo titular, ou seja, a mesma raiz (8 primeiros caracteres) do CNPJ.
@@ -156,6 +164,72 @@ export function purchaseNetLoad(input: {
     mva: result.mva,
     ...amount,
     message: stNetLoadMessage(result),
+    warnings: result.warnings,
+  };
+}
+
+/**
+ * Carga fixa por produto na compra (F3-26.d.MA.d, Anexo 4.4 do RICMS/MA): base é o valor da
+ * operação com seguro e outros encargos (frete e IPI só com a escolha da empresa, D-051) mais a
+ * margem, vezes a carga. O que não se calcula volta como situação, com a mensagem.
+ */
+function purchaseProductLoad(input: Parameters<typeof purchaseNetLoad>[0]): PurchaseNetLoad {
+  const { company, nfe, item } = input;
+  const extras = item.freightCents + item.ipiCents;
+  const result = stProductLoadFor({
+    uf: company.uf!,
+    originUf: nfe.supplier.address?.uf || company.uf!,
+    date: input.date,
+    goodsClass: input.goodsClass,
+    ncm: item.ncm || null,
+    hasFreightOrIpi: extras > 0,
+    options: company.options ?? null,
+  });
+  const documentCents =
+    item.totalCents - item.discountCents + item.insuranceCents + item.otherCents;
+  const base = {
+    act: 'regime' in result ? result.regime.act : null,
+    goodsClass: input.goodsClass,
+    documentCents,
+    totalPercent: null,
+    mva: null,
+    baseCents: 0,
+    stCents: 0,
+    message: stProductLoadMessage(result),
+    warnings: [] as string[],
+  };
+  if (result.status !== 'applies') {
+    if (result.status === 'supplier-responsible' && item.stCents > 0) {
+      return {
+        ...base,
+        status: 'supplier-retained',
+        message: `O fornecedor já reteve a ST neste item (${result.regime.act}, art. 2º).`,
+      };
+    }
+    return { ...base, status: result.status };
+  }
+  if (item.stCents > 0) {
+    return {
+      ...base,
+      status: 'supplier-retained',
+      totalPercent: result.loadPercent,
+      mva: result.mva,
+      message: `O fornecedor já reteve a ST neste item: a carga do ${result.regime.act} não é somada. Confira com o contador.`,
+      warnings: result.warnings,
+    };
+  }
+  const document = documentCents + (result.includeCharges ? extras : 0);
+  return {
+    ...base,
+    status: 'applies',
+    documentCents: document,
+    totalPercent: result.loadPercent,
+    mva: result.mva,
+    ...stNetLoadAmount({
+      documentCents: document,
+      mva: result.mva,
+      loadPercent: result.loadPercent,
+    }),
     warnings: result.warnings,
   };
 }

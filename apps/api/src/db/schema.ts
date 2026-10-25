@@ -113,6 +113,9 @@ export const companies = pgTable('companies', {
       transferMargin?: 'replace' | 'compound' | null;
       industryLoad?: 'standard' | 'optional' | null;
       distributionCenter?: boolean;
+      /** Carnes do Maranhão (F3-26.d.MA.d): situação do frigorífico e frete e IPI na base. */
+      meatPlant?: 'none' | 'regular' | 'accredited' | null;
+      meatBaseCharges?: 'include' | 'exclude' | null;
     }>()
     .notNull()
     .default({}),
