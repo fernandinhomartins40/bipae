@@ -1,5 +1,12 @@
 # Changelog
 
+## [F8-17.b O que ficou de fora do visual novo da retaguarda] — 24/10/2026
+
+### Alterado
+- **NFS-e recebidas (tela Compras) em cartões no celular:** prestador, CNPJ, data, papel da empresa, valor, situação e o botão do XML, sem rolar para o lado.
+- **Gavetas em blocos (`FormSection`):** pedido de compra ("Quem entrega e quando", "Produtos" e "Entrada conferida"), ordem de serviço ("O atendimento", "Serviços e peças" e "Andamento e entrega"), serviço ("O básico" e "Na nota de serviço (NFS-e)"), tabela de preço ("O básico" e "Produtos com preço especial") e loja ("A loja" e "Preços no caixa"). As observações do pedido de compra subiram para o primeiro bloco.
+- **Chips de situação em Promoções:** Todas, Valendo, Agendadas, Encerradas e Desligadas, com a contagem de cada uma, usando a mesma regra do selo da lista.
+
 ## [F8-17 Resto da retaguarda com o visual novo] — 24/10/2026
 
 ### Alterado

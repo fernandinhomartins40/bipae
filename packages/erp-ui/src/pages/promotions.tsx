@@ -72,7 +72,10 @@ export function PromotionsPage() {
     id ? (stores.data?.find((s) => s.id === id)?.name ?? 'Uma loja') : 'Todas';
   const [open, setOpen] = useState<PromotionView | 'new' | null>(null);
   const now = today();
-  const rows = list.data ?? [];
+  const [show, setShow] = useState<Show>('all');
+  const all = list.data ?? [];
+  const count = (key: Situation) => all.filter((r) => promotionSituation(r, now) === key).length;
+  const rows = show === 'all' ? all : all.filter((r) => promotionSituation(r, now) === show);
   const newButton = (label: string) => (
     <Button size="lg" icon={<Plus className="size-5" aria-hidden />} onClick={() => setOpen('new')}>
       {label}
@@ -90,7 +93,23 @@ export function PromotionsPage() {
         actions={canWrite && newButton('Nova promoção')}
       />
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
-      {list.data && rows.length === 0 ? (
+      {all.length > 0 && (
+        <div className="mb-5">
+          <FilterChips
+            label="Mostrar"
+            value={show}
+            onChange={setShow}
+            options={[
+              { value: 'all', label: 'Todas', count: all.length },
+              { value: 'running', label: 'Valendo', count: count('running') },
+              { value: 'scheduled', label: 'Agendadas', count: count('scheduled') },
+              { value: 'ended', label: 'Encerradas', count: count('ended') },
+              { value: 'off', label: 'Desligadas', count: count('off') },
+            ]}
+          />
+        </div>
+      )}
+      {list.data && all.length === 0 ? (
         <EmptyState
           title="Nenhuma promoção ainda"
           icon={<BadgePercent />}
@@ -98,6 +117,10 @@ export function PromotionsPage() {
           action={canWrite && newButton('Criar a primeira promoção')}
         >
           Crie a primeira: ela chega aos caixas na próxima sincronização.
+        </EmptyState>
+      ) : rows.length === 0 && all.length > 0 ? (
+        <EmptyState title="Nada com esse filtro" tone="yellow">
+          Escolha outro filtro acima para ver as demais.
         </EmptyState>
       ) : (
         rows.length > 0 && (
@@ -141,6 +164,17 @@ export function PromotionsPage() {
   );
 }
 
+type Situation = 'running' | 'scheduled' | 'ended' | 'off';
+type Show = 'all' | Situation;
+
+/** Situação da promoção no dia de hoje (mesma regra do selo da lista e dos chips). */
+export function promotionSituation(r: PromotionView, now: string): Situation {
+  if (!r.active) return 'off';
+  if (r.endsOn && r.endsOn < now) return 'ended';
+  if (r.startsOn > now) return 'scheduled';
+  return 'running';
+}
+
 function PromotionStatus({
   promotion: r,
   today: now,
@@ -148,9 +182,10 @@ function PromotionStatus({
   promotion: PromotionView;
   today: string;
 }) {
-  if (!r.active) return <Badge>Desligada</Badge>;
-  if (r.endsOn && r.endsOn < now) return <Badge>Encerrada</Badge>;
-  if (r.startsOn > now) return <Badge tone="warning">Agendada</Badge>;
+  const situation = promotionSituation(r, now);
+  if (situation === 'off') return <Badge>Desligada</Badge>;
+  if (situation === 'ended') return <Badge>Encerrada</Badge>;
+  if (situation === 'scheduled') return <Badge tone="warning">Agendada</Badge>;
   return <Badge tone="success">Valendo</Badge>;
 }
 

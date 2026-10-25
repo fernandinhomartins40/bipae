@@ -15,6 +15,7 @@ import {
   Drawer,
   EmptyState,
   FilterChips,
+  FormSection,
   MoneyField,
   PageHeader,
   SelectField,
@@ -274,136 +275,140 @@ function OrderDrawer({
           </p>
         )}
         {error && <Alert>{error}</Alert>}
-        <SelectField
-          label="Fornecedor"
-          value={supplierId}
-          disabled={!editable}
-          onChange={(e) => setSupplierId(e.target.value)}
-          options={[
-            { value: '', label: 'Escolha o fornecedor' },
-            ...(suppliers.data?.items ?? []).map((s) => ({ value: s.id, label: s.name })),
-          ]}
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <FormSection title="Quem entrega e quando">
           <SelectField
-            label="Loja que recebe"
-            value={store}
+            label="Fornecedor"
+            value={supplierId}
             disabled={!editable}
-            onChange={(e) => setStoreId(e.target.value)}
-            options={(stores.data ?? []).map((s) => ({ value: s.id, label: s.name }))}
+            onChange={(e) => setSupplierId(e.target.value)}
+            options={[
+              { value: '', label: 'Escolha o fornecedor' },
+              ...(suppliers.data?.items ?? []).map((s) => ({ value: s.id, label: s.name })),
+            ]}
           />
-          <TextField
-            label="Entrega prevista"
-            type="date"
-            value={expectedAt}
-            disabled={!editable}
-            onChange={(e) => setExpectedAt(e.target.value)}
-          />
-        </div>
-
-        {editable && (
-          <div className="flex flex-col gap-2">
-            <TextField
-              label="Adicionar produto"
-              placeholder="Digite o nome ou o código"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <SelectField
+              label="Loja que recebe"
+              value={store}
+              disabled={!editable}
+              onChange={(e) => setStoreId(e.target.value)}
+              options={(stores.data ?? []).map((s) => ({ value: s.id, label: s.name }))}
             />
-            {q.length >= 2 && found.data && (
-              <ul className="rounded-ui border border-border" aria-label="Produtos encontrados">
-                {found.data.items.length === 0 && (
-                  <li className="p-3 text-muted">Nenhum produto encontrado.</li>
-                )}
-                {found.data.items.map((p) => (
-                  <li key={p.id}>
-                    <button
-                      type="button"
-                      className="flex w-full justify-between gap-2 p-3 text-left hover:bg-surface-2"
-                      onClick={() => {
-                        if (!lines.some((l) => l.productId === p.id)) {
-                          setLines((list) => [
-                            ...list,
-                            {
-                              productId: p.id,
-                              name: p.name,
-                              unit: p.unit,
-                              quantity: '1',
-                              unitCostCents: p.costCents ?? 0,
-                            },
-                          ]);
-                        }
-                        setSearch('');
-                      }}
-                    >
-                      <span>{p.name}</span>
-                      <span className="text-muted">
-                        {p.costCents !== null ? `custo ${brl(p.costCents)}` : 'sem custo'}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <TextField
+              label="Entrega prevista"
+              type="date"
+              value={expectedAt}
+              disabled={!editable}
+              onChange={(e) => setExpectedAt(e.target.value)}
+            />
           </div>
-        )}
+          <TextField
+            label="Observações para o fornecedor"
+            value={notes}
+            disabled={!editable}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </FormSection>
 
-        {lines.length === 0 ? (
-          <p className="text-muted">Nenhum produto no pedido ainda.</p>
-        ) : (
-          <ul className="flex flex-col gap-3" aria-label="Produtos do pedido">
-            {lines.map((line, index) => {
-              const milli = parseQuantity(line.quantity);
-              const update = (patch: Partial<Line>) =>
-                setLines((list) => list.map((l, i) => (i === index ? { ...l, ...patch } : l)));
-              return (
-                <li key={line.productId} className="rounded-ui border border-border p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-semibold">{line.name}</p>
-                    {editable && (
-                      <Button
-                        variant="ghost"
-                        aria-label={`Tirar ${line.name} do pedido`}
-                        icon={<X className="size-4" aria-hidden />}
-                        onClick={() => setLines((list) => list.filter((_, i) => i !== index))}
+        <FormSection title="Produtos">
+          {editable && (
+            <div className="flex flex-col gap-2">
+              <TextField
+                label="Adicionar produto"
+                placeholder="Digite o nome ou o código"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              {q.length >= 2 && found.data && (
+                <ul className="rounded-ui border border-border" aria-label="Produtos encontrados">
+                  {found.data.items.length === 0 && (
+                    <li className="p-3 text-muted">Nenhum produto encontrado.</li>
+                  )}
+                  {found.data.items.map((p) => (
+                    <li key={p.id}>
+                      <button
+                        type="button"
+                        className="flex w-full justify-between gap-2 p-3 text-left hover:bg-surface-2"
+                        onClick={() => {
+                          if (!lines.some((l) => l.productId === p.id)) {
+                            setLines((list) => [
+                              ...list,
+                              {
+                                productId: p.id,
+                                name: p.name,
+                                unit: p.unit,
+                                quantity: '1',
+                                unitCostCents: p.costCents ?? 0,
+                              },
+                            ]);
+                          }
+                          setSearch('');
+                        }}
+                      >
+                        <span>{p.name}</span>
+                        <span className="text-muted">
+                          {p.costCents !== null ? `custo ${brl(p.costCents)}` : 'sem custo'}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {lines.length === 0 ? (
+            <p className="text-muted">Nenhum produto no pedido ainda.</p>
+          ) : (
+            <ul className="flex flex-col gap-3" aria-label="Produtos do pedido">
+              {lines.map((line, index) => {
+                const milli = parseQuantity(line.quantity);
+                const update = (patch: Partial<Line>) =>
+                  setLines((list) => list.map((l, i) => (i === index ? { ...l, ...patch } : l)));
+                return (
+                  <li key={line.productId} className="rounded-ui border border-border p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-semibold">{line.name}</p>
+                      {editable && (
+                        <Button
+                          variant="ghost"
+                          aria-label={`Tirar ${line.name} do pedido`}
+                          icon={<X className="size-4" aria-hidden />}
+                          onClick={() => setLines((list) => list.filter((_, i) => i !== index))}
+                        />
+                      )}
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      <TextField
+                        label={`Quantidade de ${line.name} (${line.unit})`}
+                        inputMode="decimal"
+                        value={line.quantity}
+                        disabled={!editable}
+                        error={milli ? null : 'Quantidade inválida'}
+                        onChange={(e) => update({ quantity: e.target.value })}
                       />
-                    )}
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <TextField
-                      label={`Quantidade de ${line.name} (${line.unit})`}
-                      inputMode="decimal"
-                      value={line.quantity}
-                      disabled={!editable}
-                      error={milli ? null : 'Quantidade inválida'}
-                      onChange={(e) => update({ quantity: e.target.value })}
-                    />
-                    {editable ? (
-                      <MoneyField
-                        label={`Custo de ${line.name}`}
-                        value={line.unitCostCents}
-                        onChange={(v) => update({ unitCostCents: v ?? 0 })}
-                      />
-                    ) : (
-                      <TextField label="Custo" value={brl(line.unitCostCents)} disabled />
-                    )}
-                    <p className="self-end pb-3 text-right font-semibold tabular-nums">
-                      {milli ? brl(lineTotal(line.unitCostCents, milli)) : '—'}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        <p className="text-right text-lg font-bold" data-testid="order-total">
-          Total: {brl(total)}
-        </p>
-        <TextField
-          label="Observações para o fornecedor"
-          value={notes}
-          disabled={!editable}
-          onChange={(e) => setNotes(e.target.value)}
-        />
+                      {editable ? (
+                        <MoneyField
+                          label={`Custo de ${line.name}`}
+                          value={line.unitCostCents}
+                          onChange={(v) => update({ unitCostCents: v ?? 0 })}
+                        />
+                      ) : (
+                        <TextField label="Custo" value={brl(line.unitCostCents)} disabled />
+                      )}
+                      <p className="self-end pb-3 text-right font-semibold tabular-nums">
+                        {milli ? brl(lineTotal(line.unitCostCents, milli)) : '—'}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <p className="text-right text-lg font-bold" data-testid="order-total">
+            Total: {brl(total)}
+          </p>
+        </FormSection>
 
         {order?.status === 'sent' && canWrite && (
           <ReceivePanel
@@ -414,17 +419,19 @@ function OrderDrawer({
           />
         )}
         {order?.status === 'received' && (
-          <ul className="flex flex-col gap-1 text-sm" aria-label="O que chegou">
-            {order.items.map((i) => (
-              <li
-                key={i.line}
-                className={i.receivedMilli !== i.quantityMilli ? 'font-semibold text-danger' : ''}
-              >
-                {i.productName}: chegou {quantityText(i.receivedMilli ?? 0)} de{' '}
-                {quantityText(i.quantityMilli)} {i.unit}
-              </li>
-            ))}
-          </ul>
+          <FormSection title="Entrada conferida">
+            <ul className="flex flex-col gap-1 text-sm" aria-label="O que chegou">
+              {order.items.map((i) => (
+                <li
+                  key={i.line}
+                  className={i.receivedMilli !== i.quantityMilli ? 'font-semibold text-danger' : ''}
+                >
+                  {i.productName}: chegou {quantityText(i.receivedMilli ?? 0)} de{' '}
+                  {quantityText(i.quantityMilli)} {i.unit}
+                </li>
+              ))}
+            </ul>
+          </FormSection>
         )}
 
         <div className="flex flex-wrap gap-2 pt-2">

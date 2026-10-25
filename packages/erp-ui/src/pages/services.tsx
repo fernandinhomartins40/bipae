@@ -7,6 +7,7 @@ import {
   DataTable,
   Drawer,
   EmptyState,
+  FormSection,
   MoneyField,
   PageHeader,
   TextField,
@@ -191,69 +192,77 @@ function ServiceDrawer({ service, onClose }: { service: ServiceView | null; onCl
     >
       <div className="flex flex-col gap-4">
         {error && <Alert>{error}</Alert>}
-        <TextField label="Nome do serviço" value={name} onChange={(e) => setName(e.target.value)} />
-        {code ? (
-          <div className="flex items-start justify-between gap-3 rounded-ui border border-border p-3">
-            <span className="text-sm">
-              <span className="font-semibold">Código nacional {dotted(code.code)}</span>
-              <span className="block text-muted">{code.description}</span>
-            </span>
-            <Button variant="ghost" onClick={() => setCode(null)}>
-              Trocar
-            </Button>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <TextField
-              label="Código na lista nacional de serviços"
-              placeholder="Ex.: 14.01 ou conserto de veículos"
-              hint="A lista oficial da NFS-e Nacional (LC 116/2003)."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            {q.length >= 2 && found.data && (
-              <ul
-                className="rounded-ui border border-border"
-                aria-label="Serviços da lista nacional"
-              >
-                {found.data.length === 0 && (
-                  <li className="p-3 text-muted">Nenhum serviço encontrado.</li>
-                )}
-                {found.data.map((s) => (
-                  <li key={s.code}>
-                    <button
-                      type="button"
-                      className="w-full p-3 text-left hover:bg-surface-2"
-                      onClick={() => {
-                        setCode(s);
-                        setSearch('');
-                      }}
-                    >
-                      {dotted(s.code)} · {s.description}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-        <TextField
-          label="NBS (opcional)"
-          hint="Nomenclatura Brasileira de Serviços, 9 dígitos."
-          value={nbs}
-          onChange={(e) => setNbs(e.target.value)}
-        />
-        <TextField
-          label="Alíquota do ISS no município (%)"
-          hint="De 0 a 5%. No Simples ela só vai na nota quando há retenção."
-          inputMode="decimal"
-          value={rate}
-          onChange={(e) => setRate(e.target.value)}
-        />
-        {code && (
-          <IssRateLookup code={code.code} onFound={(found) => setRate(found.replace('.', ','))} />
-        )}
-        <MoneyField label="Preço" value={price} onChange={(c) => setPrice(c ?? 0)} />
+        <FormSection title="O básico">
+          <TextField
+            label="Nome do serviço"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <MoneyField label="Preço" value={price} onChange={(c) => setPrice(c ?? 0)} />
+        </FormSection>
+        <FormSection title="Na nota de serviço (NFS-e)">
+          {code ? (
+            <div className="flex items-start justify-between gap-3 rounded-ui border border-border p-3">
+              <span className="text-sm">
+                <span className="font-semibold">Código nacional {dotted(code.code)}</span>
+                <span className="block text-muted">{code.description}</span>
+              </span>
+              <Button variant="ghost" onClick={() => setCode(null)}>
+                Trocar
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <TextField
+                label="Código na lista nacional de serviços"
+                placeholder="Ex.: 14.01 ou conserto de veículos"
+                hint="A lista oficial da NFS-e Nacional (LC 116/2003)."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              {q.length >= 2 && found.data && (
+                <ul
+                  className="rounded-ui border border-border"
+                  aria-label="Serviços da lista nacional"
+                >
+                  {found.data.length === 0 && (
+                    <li className="p-3 text-muted">Nenhum serviço encontrado.</li>
+                  )}
+                  {found.data.map((s) => (
+                    <li key={s.code}>
+                      <button
+                        type="button"
+                        className="w-full p-3 text-left hover:bg-surface-2"
+                        onClick={() => {
+                          setCode(s);
+                          setSearch('');
+                        }}
+                      >
+                        {dotted(s.code)} · {s.description}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+          <TextField
+            label="NBS (opcional)"
+            hint="Nomenclatura Brasileira de Serviços, 9 dígitos."
+            value={nbs}
+            onChange={(e) => setNbs(e.target.value)}
+          />
+          <TextField
+            label="Alíquota do ISS no município (%)"
+            hint="De 0 a 5%. No Simples ela só vai na nota quando há retenção."
+            inputMode="decimal"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+          />
+          {code && (
+            <IssRateLookup code={code.code} onFound={(found) => setRate(found.replace('.', ','))} />
+          )}
+        </FormSection>
         <Checkbox label="Serviço ativo" checked={active} onChange={setActive} />
         <Button disabled={!name.trim() || !code} onClick={() => void save()}>
           Salvar serviço

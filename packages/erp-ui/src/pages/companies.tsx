@@ -830,24 +830,28 @@ function StoreForm({
         }}
       >
         {error && <Alert>{error}</Alert>}
-        <TextField
-          label="Nome da loja"
-          placeholder="Ex.: Loja Centro"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          autoFocus
-        />
-        {store && (
-          <SelectField
-            label="Tabela de preço da loja"
-            hint="Os caixas desta loja usam estes preços. Clientes com tabela própria usam a deles."
-            value={priceTableId}
-            onChange={(e) => setPriceTableId(e.target.value)}
-            options={[
-              { value: '', label: 'Preço do cadastro do produto' },
-              ...tables.map((t) => ({ value: t.id, label: t.name })),
-            ]}
+        <FormSection title="A loja">
+          <TextField
+            label="Nome da loja"
+            placeholder="Ex.: Loja Centro"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
           />
+        </FormSection>
+        {store && (
+          <FormSection title="Preços no caixa">
+            <SelectField
+              label="Tabela de preço da loja"
+              hint="Os caixas desta loja usam estes preços. Clientes com tabela própria usam a deles."
+              value={priceTableId}
+              onChange={(e) => setPriceTableId(e.target.value)}
+              options={[
+                { value: '', label: 'Preço do cadastro do produto' },
+                ...tables.map((t) => ({ value: t.id, label: t.name })),
+              ]}
+            />
+          </FormSection>
         )}
         <Button type="submit">{store ? 'Salvar loja' : 'Criar loja'}</Button>
       </form>

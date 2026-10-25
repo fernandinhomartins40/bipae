@@ -17,6 +17,7 @@ import {
   Drawer,
   EmptyState,
   FilterChips,
+  FormSection,
   MoneyField,
   PageHeader,
   SelectField,
@@ -300,80 +301,81 @@ function OrderDrawer({
           </p>
         )}
         {error && <Alert>{error}</Alert>}
-        {!order && (stores.data?.length ?? 0) > 1 && (
-          <SelectField
-            label="Loja"
-            value={store}
-            onChange={(e) => setStoreId(e.target.value)}
-            options={(stores.data ?? []).map((s) => ({ value: s.id, label: s.name }))}
-          />
-        )}
-        {customer ? (
-          <div className="flex items-center justify-between gap-3 rounded-ui border border-border p-3">
-            <span>
-              Cliente: <span className="font-semibold">{customer.name}</span>
-            </span>
-            {!closed && (
-              <Button variant="ghost" onClick={() => setCustomer(null)}>
-                Trocar
-              </Button>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <TextField
-              label="Cliente"
-              placeholder="Nome ou CPF"
-              value={customerSearch}
-              onChange={(e) => setCustomerSearch(e.target.value)}
+        <FormSection title="O atendimento">
+          {!order && (stores.data?.length ?? 0) > 1 && (
+            <SelectField
+              label="Loja"
+              value={store}
+              onChange={(e) => setStoreId(e.target.value)}
+              options={(stores.data ?? []).map((s) => ({ value: s.id, label: s.name }))}
             />
-            {cq.length >= 2 && customers.data && (
-              <ul className="rounded-ui border border-border" aria-label="Clientes encontrados">
-                {customers.data.items.length === 0 && (
-                  <li className="p-3 text-muted">
-                    Nenhum cliente encontrado. Cadastre em Clientes antes.
-                  </li>
-                )}
-                {customers.data.items.map((p) => (
-                  <li key={p.id}>
-                    <button
-                      type="button"
-                      className="w-full p-3 text-left hover:bg-surface-2"
-                      onClick={() => {
-                        setCustomer({ id: p.id, name: p.name });
-                        setCustomerSearch('');
-                      }}
-                    >
-                      {p.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-        <TextField
-          label="Equipamento ou objeto"
-          placeholder="Ex.: Moto Honda CG 160, placa ABC1D23"
-          value={equipment}
-          disabled={closed}
-          onChange={(e) => setEquipment(e.target.value)}
-        />
-        <TextField
-          label="Defeito ou pedido do cliente"
-          value={problem}
-          disabled={closed}
-          onChange={(e) => setProblem(e.target.value)}
-        />
-        <TextField
-          label="Observações"
-          value={notes}
-          disabled={closed}
-          onChange={(e) => setNotes(e.target.value)}
-        />
+          )}
+          {customer ? (
+            <div className="flex items-center justify-between gap-3 rounded-ui border border-border p-3">
+              <span>
+                Cliente: <span className="font-semibold">{customer.name}</span>
+              </span>
+              {!closed && (
+                <Button variant="ghost" onClick={() => setCustomer(null)}>
+                  Trocar
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <TextField
+                label="Cliente"
+                placeholder="Nome ou CPF"
+                value={customerSearch}
+                onChange={(e) => setCustomerSearch(e.target.value)}
+              />
+              {cq.length >= 2 && customers.data && (
+                <ul className="rounded-ui border border-border" aria-label="Clientes encontrados">
+                  {customers.data.items.length === 0 && (
+                    <li className="p-3 text-muted">
+                      Nenhum cliente encontrado. Cadastre em Clientes antes.
+                    </li>
+                  )}
+                  {customers.data.items.map((p) => (
+                    <li key={p.id}>
+                      <button
+                        type="button"
+                        className="w-full p-3 text-left hover:bg-surface-2"
+                        onClick={() => {
+                          setCustomer({ id: p.id, name: p.name });
+                          setCustomerSearch('');
+                        }}
+                      >
+                        {p.name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+          <TextField
+            label="Equipamento ou objeto"
+            placeholder="Ex.: Moto Honda CG 160, placa ABC1D23"
+            value={equipment}
+            disabled={closed}
+            onChange={(e) => setEquipment(e.target.value)}
+          />
+          <TextField
+            label="Defeito ou pedido do cliente"
+            value={problem}
+            disabled={closed}
+            onChange={(e) => setProblem(e.target.value)}
+          />
+          <TextField
+            label="Observações"
+            value={notes}
+            disabled={closed}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </FormSection>
 
-        <fieldset className="flex flex-col gap-3 rounded-ui border border-border p-3">
-          <legend className="px-1 font-semibold">Serviços e peças</legend>
+        <FormSection title="Serviços e peças">
           {!closed && (
             <>
               <div className="flex items-end gap-2">
@@ -498,7 +500,7 @@ function OrderDrawer({
           <p className="text-sm">
             Total: <span className="font-semibold">{money(total)}</span>
           </p>
-        </fieldset>
+        </FormSection>
 
         {canWrite && !closed && (
           <div className="flex flex-col gap-2">
@@ -506,7 +508,7 @@ function OrderDrawer({
               {order ? 'Salvar a OS' : 'Abrir a OS'}
             </Button>
             {order && (
-              <>
+              <FormSection title="Andamento e entrega">
                 <SelectField
                   label="Situação"
                   value={order.status}
@@ -532,7 +534,7 @@ function OrderDrawer({
                 <Button variant="ghost" loading={busy} onClick={() => void setStatus('cancelled')}>
                   Cancelar a OS
                 </Button>
-              </>
+              </FormSection>
             )}
           </div>
         )}

@@ -64,6 +64,8 @@ export function ReceivedServices() {
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 10_000);
   };
+  const download = (n: NfseReceivedView) =>
+    void xml(n).catch((e) => setError((e as Error).message));
   const rows = notes.data ?? [];
   return (
     <section aria-labelledby="nfse-recebidas" className="flex flex-col gap-3">
@@ -92,6 +94,23 @@ export function ReceivedServices() {
         <DataTable
           caption="Notas de serviço da sua empresa"
           rows={rows}
+          // No celular, cada nota vira um cartão; o botão do XML fica no cartão (que não é botão).
+          card={(r) => (
+            <>
+              <span className="flex min-w-0 flex-1 flex-col gap-1">
+                <span className="font-bold break-words">{r.issuerName}</span>
+                <span className="text-sm text-muted">{formatTaxId(r.issuerTaxId)}</span>
+                <span className="text-sm text-muted">
+                  {date(r.issuedAt)} · {ROLE[r.role]}
+                </span>
+              </span>
+              <span className="flex shrink-0 flex-col items-end gap-1">
+                <span className="text-lg font-extrabold tabular-nums">{money(r.valueCents)}</span>
+                <NoteStatus note={r} />
+                <XmlButton note={r} onDownload={() => download(r)} />
+              </span>
+            </>
+          )}
           columns={[
             { header: 'Emissão', cell: (r) => date(r.issuedAt) },
             {
@@ -100,30 +119,31 @@ export function ReceivedServices() {
             },
             { header: 'Papel', cell: (r) => ROLE[r.role] },
             { header: 'Valor', align: 'right', cell: (r) => money(r.valueCents) },
-            {
-              header: 'Situação',
-              cell: (r) =>
-                r.cancelled ? (
-                  <Badge tone="neutral">Cancelada</Badge>
-                ) : (
-                  <Badge tone="success">Válida</Badge>
-                ),
-            },
-            {
-              header: 'XML',
-              cell: (r) => (
-                <Button
-                  variant="ghost"
-                  aria-label={`Baixar o XML da NFS-e ${r.number ?? r.accessKey}`}
-                  onClick={() => void xml(r).catch((e) => setError((e as Error).message))}
-                >
-                  Baixar
-                </Button>
-              ),
-            },
+            { header: 'Situação', cell: (r) => <NoteStatus note={r} /> },
+            { header: 'XML', cell: (r) => <XmlButton note={r} onDownload={() => download(r)} /> },
           ]}
         />
       )}
     </section>
+  );
+}
+
+function XmlButton({ note: r, onDownload }: { note: NfseReceivedView; onDownload: () => void }) {
+  return (
+    <Button
+      variant="ghost"
+      aria-label={`Baixar o XML da NFS-e ${r.number ?? r.accessKey}`}
+      onClick={onDownload}
+    >
+      Baixar
+    </Button>
+  );
+}
+
+function NoteStatus({ note }: { note: NfseReceivedView }) {
+  return note.cancelled ? (
+    <Badge tone="neutral">Cancelada</Badge>
+  ) : (
+    <Badge tone="success">Válida</Badge>
   );
 }

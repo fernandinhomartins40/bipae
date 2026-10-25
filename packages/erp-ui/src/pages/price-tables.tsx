@@ -5,6 +5,7 @@ import {
   DataTable,
   Drawer,
   EmptyState,
+  FormSection,
   MoneyField,
   PageHeader,
   TextField,
@@ -141,74 +142,81 @@ function PriceTableForm({ table, onClose }: { table: PriceTable | null; onClose:
     >
       <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
         {form.formError && <Alert>{form.formError}</Alert>}
-        <TextField
-          label="Nome da tabela"
-          placeholder="Ex.: Atacado, Funcionários, Loja Centro"
-          value={form.values.name}
-          onChange={(e) => form.set('name', e.target.value)}
-          error={form.errors.name}
-          autoFocus
-        />
-
-        <div className="flex flex-col gap-2">
+        <FormSection title="O básico">
           <TextField
-            label="Adicionar produto"
-            placeholder="Digite o nome ou o código"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            label="Nome da tabela"
+            placeholder="Ex.: Atacado, Funcionários, Loja Centro"
+            value={form.values.name}
+            onChange={(e) => form.set('name', e.target.value)}
+            error={form.errors.name}
+            autoFocus
           />
-          {q.length >= 2 && found.data && (
-            <ul className="rounded-ui border border-border" aria-label="Produtos encontrados">
-              {found.data.items.length === 0 && (
-                <li className="p-3 text-muted">Nenhum produto encontrado.</li>
-              )}
-              {found.data.items.map((p) => (
-                <li key={p.id}>
-                  <button
-                    type="button"
-                    className="flex w-full justify-between gap-2 p-3 text-left hover:bg-surface-2"
-                    onClick={() => add(p)}
-                  >
-                    <span>{p.name}</span>
-                    <span className="text-muted">{brl(p.priceCents)}</span>
-                  </button>
+        </FormSection>
+
+        <FormSection
+          title="Produtos com preço especial"
+          description="Os produtos que ficarem fora usam o preço do cadastro."
+        >
+          <div className="flex flex-col gap-2">
+            <TextField
+              label="Adicionar produto"
+              placeholder="Digite o nome ou o código"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {q.length >= 2 && found.data && (
+              <ul className="rounded-ui border border-border" aria-label="Produtos encontrados">
+                {found.data.items.length === 0 && (
+                  <li className="p-3 text-muted">Nenhum produto encontrado.</li>
+                )}
+                {found.data.items.map((p) => (
+                  <li key={p.id}>
+                    <button
+                      type="button"
+                      className="flex w-full justify-between gap-2 p-3 text-left hover:bg-surface-2"
+                      onClick={() => add(p)}
+                    >
+                      <span>{p.name}</span>
+                      <span className="text-muted">{brl(p.priceCents)}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {items.length === 0 ? (
+            <p className="text-muted">Nenhum produto na tabela ainda.</p>
+          ) : (
+            <ul className="flex flex-col gap-3" aria-label="Produtos da tabela">
+              {items.map((item, index) => (
+                <li key={item.productId} className="rounded-ui border border-border p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-semibold">{item.name}</p>
+                      <p className="text-sm text-muted">Preço normal: {brl(item.basePriceCents)}</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      aria-label={`Tirar ${item.name} da tabela`}
+                      icon={<X className="size-4" aria-hidden />}
+                      onClick={() => setItems((list) => list.filter((_, i) => i !== index))}
+                    />
+                  </div>
+                  <MoneyField
+                    label={`Preço de ${item.name} nesta tabela`}
+                    value={item.priceCents}
+                    onChange={(v) =>
+                      setItems((list) =>
+                        list.map((it, i) => (i === index ? { ...it, priceCents: v ?? 0 } : it)),
+                      )
+                    }
+                  />
                 </li>
               ))}
             </ul>
           )}
-        </div>
-
-        {items.length === 0 ? (
-          <p className="text-muted">Nenhum produto na tabela ainda.</p>
-        ) : (
-          <ul className="flex flex-col gap-3" aria-label="Produtos da tabela">
-            {items.map((item, index) => (
-              <li key={item.productId} className="rounded-ui border border-border p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="font-semibold">{item.name}</p>
-                    <p className="text-sm text-muted">Preço normal: {brl(item.basePriceCents)}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    aria-label={`Tirar ${item.name} da tabela`}
-                    icon={<X className="size-4" aria-hidden />}
-                    onClick={() => setItems((list) => list.filter((_, i) => i !== index))}
-                  />
-                </div>
-                <MoneyField
-                  label={`Preço de ${item.name} nesta tabela`}
-                  value={item.priceCents}
-                  onChange={(v) =>
-                    setItems((list) =>
-                      list.map((it, i) => (i === index ? { ...it, priceCents: v ?? 0 } : it)),
-                    )
-                  }
-                />
-              </li>
-            ))}
-          </ul>
-        )}
+        </FormSection>
 
         <div className="flex gap-2 pt-2">
           <Button type="submit" loading={form.submitting}>
