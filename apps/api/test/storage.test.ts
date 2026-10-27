@@ -1,8 +1,11 @@
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { assertSafeKey, createStorage, LocalDiskStorage, S3Storage } from '../src/common/storage';
+import { asPlatform } from '../src/db/client';
+import { MaintenanceService } from '../src/modules/maintenance/maintenance.service';
 import { api, createTestApp, signup, type TestApp } from './helpers';
 
 /** F1-08: porta de armazenamento de arquivos (disco, S3 compatível) e fotos fora do banco. */
@@ -192,5 +195,75 @@ describe('fotos de produto no disco (F1-08)', () => {
     });
     expect(r.statusCode).toBe(422);
     expect(await files()).toHaveLength(before);
+  });
+});
+
+describe('fotos antigas e exclusão da conta (F1-08.b)', () => {
+  let t: TestApp;
+  let dir: string;
+  beforeAll(async () => {
+    dir = await mkdtemp(join(tmpdir(), 'bipae-fotos-b-'));
+    t = await createTestApp({ STORAGE_DRIVER: 'disk', STORAGE_DIR: dir });
+  });
+  afterAll(async () => {
+    await t.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  const names = async () => {
+    const out: string[] = [];
+    const walk = async (d: string) => {
+      for (const e of await readdir(d, { withFileTypes: true })) {
+        if (e.isDirectory()) await walk(join(d, e.name));
+        else out.push(e.name);
+      }
+    };
+    await walk(dir);
+    return out;
+  };
+  const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, ...Array.from({ length: 100 }, (_, i) => i)]);
+
+  async function contaComFotoNoBanco() {
+    const owner = await signup(t.app);
+    const admin = api(t.app, owner.auth);
+    const product = (await admin.post('/products', { name: 'Bala', priceCents: 50 })).json();
+    await admin.put(`/products/${product.id}/image`, {
+      contentType: 'image/jpeg',
+      data: jpeg.toString('base64'),
+    });
+    // Volta a foto para o banco e tira o arquivo, como era antes de o driver ser ligado.
+    await t.database.db.execute(
+      sql`update product_images set bytes = decode(${jpeg.toString('hex')}, 'hex'), storage_key = null where product_id = ${product.id}`,
+    );
+    await rm(dir, { recursive: true, force: true });
+    await mkdir(dir, { recursive: true });
+    return { admin, product, tenantId: owner.me.tenant.id as string };
+  }
+
+  it('move as fotos que estavam no banco para o armazenamento e continua servindo a mesma foto', async () => {
+    const { admin, product } = await contaComFotoNoBanco();
+    expect(await names()).toHaveLength(0);
+    const manutencao = t.app.get(MaintenanceService);
+    expect(await manutencao.migrateImagesToStorage()).toBe(1);
+    expect(await names()).toHaveLength(1);
+    const read = await admin.get(`/products/${product.id}/image`);
+    expect(Buffer.from(read.rawPayload).equals(jpeg)).toBe(true);
+    // Segunda rodada não tem mais nada para mover.
+    expect(await manutencao.migrateImagesToStorage()).toBe(0);
+    expect(await names()).toHaveLength(1);
+  });
+
+  it('a exclusão definitiva da conta apaga os arquivos das fotos', async () => {
+    const { tenantId } = await contaComFotoNoBanco();
+    const manutencao = t.app.get(MaintenanceService);
+    await manutencao.migrateImagesToStorage();
+    expect(await names()).toHaveLength(1);
+    await asPlatform(t.database.db, (tx) =>
+      tx.execute(sql`
+        update tenants set status = 'cancelled', status_changed_at = now() - interval '200 days'
+        where id = ${tenantId}`),
+    );
+    expect(await manutencao.purgeCancelledAccounts()).toContain(tenantId);
+    expect(await names()).toHaveLength(0);
   });
 });

@@ -9,7 +9,8 @@ import { and, eq, isNull, lt, or, sql } from 'drizzle-orm';
 import type { Config } from '../../config';
 import { CONFIG, DB, QUEUE } from '../../common/di';
 import type { JobQueue } from '../../common/queue';
-import { asPlatform, type Db, type Tx } from '../../db/client';
+import { asPlatform, withTenant, type Db, type Tx } from '../../db/client';
+import { FILE_STORAGE, type FileStorage } from '../../common/storage';
 import { rowsOf } from '../../db/migrate';
 import {
   adminSessions,
@@ -19,6 +20,7 @@ import {
   fiscalDocuments,
   nfeInvoices,
   nfseDocuments,
+  productImages,
   sales,
   sessions,
   tenants,
@@ -44,6 +46,7 @@ export const ACCOUNT_PURGE = 'manutencao.excluir-contas-canceladas';
 export const NFCE_SWEEP = 'manutencao.reenviar-nfce';
 export const WEBHOOK_SWEEP = 'manutencao.reenviar-webhooks';
 export const DFE_SWEEP = 'manutencao.buscar-notas-recebidas';
+export const IMAGES_MIGRATE = 'manutencao.mover-fotos-para-arquivos';
 export const ACCOUNT_NOTICES = 'manutencao.avisos-da-conta';
 const UM_MINUTO = 60_000;
 const CINCO_MINUTOS = 5 * 60_000;
@@ -75,6 +78,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(NfseService) private readonly nfse: NfseService,
     @Inject(MailService) private readonly mail: MailService,
     @Inject(BillingService) private readonly billing: BillingService,
+    @Inject(FILE_STORAGE) private readonly storage: FileStorage | null,
   ) {}
 
   async onModuleInit() {
@@ -101,6 +105,10 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         const tenantId = (data as { tenantId?: string } | undefined)?.tenantId;
         await this.billingSweep(new Date(), tenantId);
         await this.billingNotices();
+      });
+      this.queue.process(IMAGES_MIGRATE, async () => {
+        const moved = await this.migrateImagesToStorage();
+        if (moved > 0) this.logger.log(`${moved} foto(s) movida(s) do banco para o armazenamento`);
       });
       this.queue.process(ACCOUNT_PURGE, async () => {
         const purged = await this.purgeCancelledAccounts();
@@ -144,6 +152,13 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .catch((error: Error) =>
           this.logger.warn('Não foi possível agendar a cobrança dos planos: ' + error.message),
         );
+      if (this.storage) {
+        void this.queue
+          .add(IMAGES_MIGRATE, {}, { repeatEveryMs: UMA_HORA })
+          .catch((error: Error) =>
+            this.logger.warn(`Não foi possível agendar a mudança das fotos: ${error.message}`),
+          );
+      }
       void this.queue
         .add(ACCOUNT_PURGE, {}, { repeatEveryMs: UM_DIA })
         .catch((error: Error) =>
@@ -569,13 +584,82 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     );
     const done: string[] = [];
     for (const { id } of due) {
-      await asPlatform(this.db, (tx) => this.purgeTenant(tx, id, now));
+      const keys: string[] = [];
+      await asPlatform(this.db, (tx) => this.purgeTenant(tx, id, now, keys));
+      // Os arquivos saem só depois de a transação confirmar: se ela falhar, a conta (e as fotos)
+      // ficam inteiras para a próxima rodada. Arquivo que não apagar não trava a exclusão.
+      await this.deleteStoredFiles(keys);
       done.push(id);
     }
     return done;
   }
 
-  private async purgeTenant(tx: Tx, tenantId: string, now: Date) {
+  /** Apaga arquivos do armazenamento; o que falhar é registrado e não interrompe os demais. */
+  private async deleteStoredFiles(keys: string[]) {
+    if (!this.storage) return;
+    for (const key of keys) {
+      try {
+        await this.storage.delete(key);
+      } catch (error) {
+        this.logger.warn(`Não foi possível apagar o arquivo ${key}: ${(error as Error).message}`);
+      }
+    }
+  }
+
+  /**
+   * F1-08.b: com um driver de armazenamento ligado, move as fotos que ainda estão como bytes no
+   * banco para arquivos, `limit` por rodada. O arquivo vai antes da linha (se o banco falhar,
+   * sobra um arquivo solto, nunca uma linha apontando para o nada) e rodar duas vezes não estraga.
+   * Devolve quantas fotos foram movidas.
+   */
+  async migrateImagesToStorage(limit = 200): Promise<number> {
+    const storage = this.storage;
+    if (!storage) return 0;
+    const tenantIds = await asPlatform(this.db, (tx) =>
+      tx
+        .selectDistinct({ id: productImages.tenantId })
+        .from(productImages)
+        .where(isNull(productImages.storageKey))
+        .limit(limit),
+    );
+    let moved = 0;
+    for (const { id: tenantId } of tenantIds) {
+      if (moved >= limit) break;
+      moved += await withTenant(this.db, { tenantId }, async (tx) => {
+        const rows = await tx
+          .select({
+            productId: productImages.productId,
+            contentType: productImages.contentType,
+            bytes: productImages.bytes,
+            sha256: productImages.sha256,
+          })
+          .from(productImages)
+          .where(isNull(productImages.storageKey))
+          .limit(limit - moved);
+        let n = 0;
+        for (const row of rows) {
+          if (!row.bytes) continue;
+          const key = `${tenantId}/products/${row.productId}.${row.sha256}`;
+          await storage.put(key, row.bytes, row.contentType);
+          await tx
+            .update(productImages)
+            .set({ bytes: null, storageKey: key })
+            .where(eq(productImages.productId, row.productId));
+          n++;
+        }
+        return n;
+      });
+    }
+    return moved;
+  }
+
+  private async purgeTenant(tx: Tx, tenantId: string, now: Date, fileKeys: string[] = []) {
+    const photos = rowsOf<{ storage_key: string }>(
+      await tx.execute(
+        sql`select storage_key from product_images where tenant_id = ${tenantId} and storage_key is not null`,
+      ),
+    );
+    fileKeys.push(...photos.map((r) => r.storage_key));
     // Libera a exclusão da trilha de auditoria só deste cliente, nesta transação.
     await tx.execute(sql`select set_config('bipae.purge_tenant', ${tenantId}, true)`);
     const tables = await tenantTables((q) => tx.execute(q));

@@ -1,5 +1,14 @@
 # Changelog
 
+## [F1-08.b Fotos no armazenamento e exclusão da conta] — 27/10/2026
+
+### Adicionado
+- **Fotos antigas para o armazenamento:** com `STORAGE_DRIVER` ligado, a manutenção move de hora em hora as fotos que ainda estavam como bytes no banco para arquivos (200 por rodada, sem estrago se rodar duas vezes).
+- **Exclusão definitiva (LGPD):** a exclusão da conta cancelada apaga também os arquivos das fotos, depois de a transação confirmar.
+
+### Falta configurar
+- Aprovar o volume ou bucket em produção e ligar `STORAGE_DRIVER` na VPS (E12).
+
 ## [F6-04.a e F8-11.a Cobrança dos planos e protocolo do TEF] — 27/10/2026
 
 ### Adicionado

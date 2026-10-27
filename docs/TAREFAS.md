@@ -78,7 +78,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Pronto quando: um job de exemplo roda com nova tentativa, o Redis está no compose da VPS e há teste.
 - [~] F1-08 · Fotos de produto — externo: E12
   - [x] F1-08.a · Porta de armazenamento de arquivos (`FileStorage`): driver em disco (`STORAGE_DRIVER=disk`), driver S3 compatível com assinatura SigV4 e fotos de produto fora do banco quando um driver está ligado; sem driver, continua no PostgreSQL (F2-14). Envio, redução na tela, exibição no cadastro e no caixa já existiam (F2-14)
-  - [ ] F1-08.b · Aprovar o volume (ou bucket) em produção, ligar `STORAGE_DRIVER`, mover as fotos já gravadas no banco e apagar os arquivos da conta na exclusão definitiva (LGPD) — depende: F1-08.a · externo: E12
+  - [x] F1-08.b · Mover as fotos já gravadas no banco para o armazenamento (rotina de manutenção) e apagar os arquivos da conta na exclusão definitiva (LGPD)
+  - [ ] F1-08.c · Aprovar o volume (ou bucket) em produção e ligar `STORAGE_DRIVER` na VPS — depende: F1-08.b · externo: E12
   - Pronto quando: enviar, redimensionar e mostrar na busca do caixa, com limite de tamanho e tipo.
 
 ## Fase 3 — Fiscal
