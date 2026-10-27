@@ -1,5 +1,6 @@
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { sql } from 'drizzle-orm';
+import pg from 'pg';
 import { createApp } from '../src/app';
 import { loadConfig } from '../src/config';
 import { DB } from '../src/common/di';
@@ -14,14 +15,15 @@ export interface TestApp {
 
 /**
  * Uses in-memory PGlite by default; set TEST_DATABASE_URL to run against real PostgreSQL
- * (CI does both). Each call gets a fresh schema.
+ * (CI does both). Cada chamada ganha um banco só dela, como no PGlite: antes, no PostgreSQL, todas
+ * dividiam o schema public e um segundo app no mesmo arquivo apagava os dados do primeiro (o preço
+ * dos planos sumia no meio de billing-methods.test.ts).
  */
 export async function createTestApp(env: Record<string, string> = {}): Promise<TestApp> {
-  const url = process.env.TEST_DATABASE_URL ?? 'pglite://memory';
+  const base = process.env.TEST_DATABASE_URL;
+  const fresh = base ? await createTestDatabase(base) : null;
+  const url = fresh?.url ?? 'pglite://memory';
   const database = await openDatabase(url);
-  if (database.kind === 'postgres') {
-    await database.db.execute(sql.raw('drop schema public cascade; create schema public;'));
-  }
   await migrate(database);
   const config = loadConfig({
     NODE_ENV: 'test',
@@ -36,7 +38,31 @@ export async function createTestApp(env: Record<string, string> = {}): Promise<T
     async close() {
       await app.close();
       await database.close();
+      await fresh?.drop();
     },
+  };
+}
+
+let databases = 0;
+
+/** Banco novo no mesmo servidor do TEST_DATABASE_URL, apagado quando o app de teste fecha. */
+async function createTestDatabase(baseUrl: string) {
+  const name = `bipae_test_${process.pid}_${++databases}_${Date.now().toString(36)}`;
+  const admin = async (statement: string) => {
+    const client = new pg.Client({ connectionString: baseUrl });
+    await client.connect();
+    try {
+      await client.query(statement);
+    } finally {
+      await client.end();
+    }
+  };
+  await admin(`create database ${name}`);
+  const url = new URL(baseUrl);
+  url.pathname = `/${name}`;
+  return {
+    url: url.toString(),
+    drop: () => admin(`drop database if exists ${name} with (force)`),
   };
 }
 
@@ -77,7 +103,11 @@ export async function signup(
 }
 
 export function api(app: NestFastifyApplication, auth: Record<string, string>) {
-  const call = (method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', url: string, payload?: unknown) =>
+  const call = (
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    url: string,
+    payload?: unknown,
+  ) =>
     app.inject({
       method,
       url: `/v1${url}`,
