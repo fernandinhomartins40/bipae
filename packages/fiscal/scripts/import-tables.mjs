@@ -58,6 +58,8 @@ import {
 } from './st-ce-carga.mjs';
 import { acStReferences, parseAcIn12023 } from './st-ac.mjs';
 import { amStReferences, parseAmLei6108 } from './st-am.mjs';
+import { apStReferences, parseApRicms } from './st-ap.mjs';
+import { parseToRicms, toStReferences } from './st-to.mjs';
 import { parseRnAnexo007, rnStReferences } from './st-rn.mjs';
 import { MA_ANNEX_SOURCES, maStReferences, parseMaAnnex } from './st-ma.mjs';
 import { MA_MEAT_SOURCES, maMeatRegime, parseMaMeatAnnex } from './st-ma-carnes.mjs';
@@ -767,6 +769,25 @@ async function importStReferences(cest) {
     url: manifest.stAmLei6108.page,
     segmentName: (code) => acNames.get(code),
   });
+  // Tocantins (F3-26.d.TO) e Amapá (F3-26.d.AP): o texto consolidado do RICMS no LegisWeb (cópia
+  // de terceiros aprovada pelo dono em 27/10/2026), porque o portal das duas SEFAZ não o publica
+  // atualizado. O que o texto não fecha vai para a lista de pendências e não vira regra.
+  const toParsed = parseToRicms(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stToRicms.file))),
+    known,
+  );
+  const to = toStReferences(toParsed, {
+    url: manifest.stToRicms.page,
+    segmentName: (code) => acNames.get(code),
+  });
+  const apParsed = parseApRicms(
+    gunzipSync(readFileSync(join(sourcesDir, manifest.stApRicms.file))),
+    known,
+  );
+  const ap = apStReferences(apParsed, {
+    url: manifest.stApRicms.page,
+    segmentName: (code) => acNames.get(code),
+  });
   // Rio Grande do Norte (F3-26.d.RN): Anexo 007 do RICMS/RN; a redação anterior vem tachada no
   // PDF e fica de fora, menos para achar os segmentos que saíram da ST.
   const rnBytes = readFileSync(join(sourcesDir, manifest.stRnAnexo007.file));
@@ -833,6 +854,8 @@ async function importStReferences(cest) {
       ce.segment,
       ac.segment,
       am.segment,
+      to.segment,
+      ap.segment,
       rn.segment,
       ...confaz.map((c) => c.segment),
     ],
@@ -867,6 +890,8 @@ async function importStReferences(cest) {
       ...ce.references,
       ...ac.references,
       ...am.references,
+      ...to.references,
+      ...ap.references,
       ...rn.references,
       ...ma,
       ...confaz.flatMap((c) => c.references),

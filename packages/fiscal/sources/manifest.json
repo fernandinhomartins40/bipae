@@ -1176,5 +1176,21 @@
   "page": "https://www.legisweb.com.br/legislacao/?id=473268",
   "publishedAt": "2024-06-10",
   "downloadedAt": "2026-10-27"
+ },
+ "stToRicms": {
+  "file": "LegisWeb_TO_RICMS_Decreto_2912-2006_Anexos_XXI_e_XXII_ate_Decreto_7219-2026_2026-10-27.html.gz",
+  "title": "RICMS/TO (Decreto 2.912/2006), Anexos XXI (produtos sujeitos à substituição tributária, NCM/SH, CEST e MVA por seção) e XXII (veículos), texto consolidado até o Decreto 7.219, de 14/08/2026 (cópia de terceiros: o portal da SEFAZ-TO não publica o RICMS consolidado)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=171145",
+  "publishedAt": "2026-08-14",
+  "downloadedAt": "2026-10-27"
+ },
+ "stApRicms": {
+  "file": "LegisWeb_AP_RICMS_Decreto_2269-1998_Anexo_III_ate_Decreto_5888-2026_2026-10-27.html.gz",
+  "title": "RICMS/AP (Decreto 2.269/1998), Anexo III (substituição tributária), Apêndices II a XXVI por segmento com CEST, NCM/SH e MVA original, texto consolidado até o Decreto 5.888, de 11/08/2026 (cópia de terceiros: a SEFAZ-AP só publica o RICMS de 13/07/2021)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=244693",
+  "publishedAt": "2026-08-11",
+  "downloadedAt": "2026-10-27"
  }
 }

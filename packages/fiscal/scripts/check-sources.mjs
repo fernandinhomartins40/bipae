@@ -55,6 +55,8 @@ import {
 } from './st-ce-carga.mjs';
 import { parseAcIn12023 } from './st-ac.mjs';
 import { parseAmLei6108 } from './st-am.mjs';
+import { parseApRicms } from './st-ap.mjs';
+import { parseToRicms } from './st-to.mjs';
 import { parseRnAnexo007 } from './st-rn.mjs';
 import {
   MA_ANNEX_REPOSITORY,
@@ -165,7 +167,7 @@ function fetchOnce(url, jar, hops, ca) {
         ...(client === https && { ca }),
         timeout: 60_000,
         headers: {
-          ...(/fazenda\.rj\.gov\.br/.test(url)
+          ...(/fazenda\.rj\.gov\.br|legisweb\.com\.br/.test(url)
             ? BROWSER
             : { 'user-agent': 'Mozilla/5.0 (Bipae fontes)' }),
           // O SefazLegis (CE) só entrega o arquivo com este cabeçalho; qualquer valor serve.
@@ -1218,6 +1220,44 @@ async function checkAm() {
 }
 
 /**
+ * Tocantins e Amapá: o texto do RICMS no LegisWeb (cópia de terceiros; as SEFAZ não publicam o
+ * consolidado). Compara as linhas lidas (anexo, item, CEST, NCM e MVA) e as revogadas.
+ */
+async function checkLegisWebSt(key, title, parse) {
+  const known = new Set(
+    JSON.parse(readFileSync(join(dataDir, 'cest.json'), 'utf8')).items.map((c) => c.cest),
+  );
+  const rowsOf = (buffer) => {
+    const { sections } = parse(buffer, known);
+    return sections.flatMap((s) => [
+      ...s.items.map((i) => [s.annex, i.item, i.cest, i.ncms.join(' '), i.mva ?? '', i.validFrom]),
+      ...s.revoked.map((r) => [s.annex, 'revogado', r.cest, r.from, r.by]),
+    ]);
+  };
+  const old = rowsOf(gunzipSync(readFileSync(join(sourcesDir, manifest[key].file))));
+  let now;
+  try {
+    now = rowsOf((await download(manifest[key].page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest[key].page,
+      status: 'mudou',
+      details: [`a página nova não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest[key].page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
+/**
  * Rio Grande do Norte: o PDF do Anexo 007 que a SEFAZ-RN publica hoje na pasta do RICMS vigente.
  * Compara as linhas com MVA, os CEST de cada segmento e os segmentos que saíram da ST; um decreto
  * novo que mude só o texto também aparece pela data de atualização.
@@ -1774,6 +1814,12 @@ if (process.argv.includes('--save-listings')) {
     await safe('ST no Distrito Federal', manifest.stDfAnexoIV.page, checkDf),
     await safe('ST no Acre', manifest.stAcIn12023.page, checkAc),
     await safe('ST no Amazonas', manifest.stAmLei6108.page, checkAm),
+    await safe('ST no Tocantins (LegisWeb)', manifest.stToRicms.page, () =>
+      checkLegisWebSt('stToRicms', 'ST no Tocantins (RICMS/TO, Anexos XXI e XXII)', parseToRicms),
+    ),
+    await safe('ST no Amapá (LegisWeb)', manifest.stApRicms.page, () =>
+      checkLegisWebSt('stApRicms', 'ST no Amapá (RICMS/AP, Anexo III)', parseApRicms),
+    ),
     await safe('ST no Rio Grande do Norte', manifest.stRnAnexo007.page, checkRn),
     await safe('ST no Maranhão', manifest.stMaAnexo4_2.page, checkMa),
     await safe('ST no Ceará (carga líquida)', manifest.stCeCargaAutopecas.page, checkCeNetLoads),

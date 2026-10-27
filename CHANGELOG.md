@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-26.d.TO e F3-26.d.AP ST do Tocantins e do Amapá] — 27/10/2026
+
+### Adicionado
+- **Tocantins (F3-26.d.TO):** Anexos XXI (16 seções) e XXII (veículos) do RICMS/TO (Decreto 2.912/2006) pelo texto consolidado do LegisWeb: 601 linhas com CEST do Convênio 142/18, NCM/SH e MVA original, a data de cada linha pelas notas de alteração (uma referência por seção, segmento e data de início) e 29 CEST que saíram da ST (Decreto 6.996/2025: sorvetes, perfumaria e higiene, inclusive as mamadeiras 16.12; a mamadeira 15.38 do Decreto 6.791/2024 segue na ST).
+- **Amapá (F3-26.d.AP):** Apêndices II a XXVI do Anexo III do RICMS/AP (Decreto 2.269/1998) até o Decreto 5.888/2026: 1.052 linhas com MVA original, vigência por linha, 44 CEST revogados com data e decreto; o texto já traz os Decretos 3.762/2025, 1.682/2024 e 9.332/2025 (nafta, sem MVA).
+- **Fonte:** o LegisWeb (www.legisweb.com.br) passa a ser fonte de texto de norma quando o site da SEFAZ não abre (aprovado pelo dono em 27/10/2026); o leitor comum está em `scripts/st-legisweb.mjs` e o monitor semanal compara as duas páginas.
+
+### Falta configurar
+- TO (D-055): autopeças com dois quadros de MVA sem dizer qual vale, farinha sem embalagem, conservas de carne na tabela da farinha, CEST fora do Convênio ou quebrado, NCM "204"; Decreto 7.103/2026 fora do texto. AP (D-056): Protocolo ICMS 11/2026 (CEST de alimentos que saem da ST desde 01/03/2026) não está no texto; combustíveis, energia e a maior parte dos veículos não têm MVA no apêndice.
+
 ## [F6-02 Conciliação automática do Pix recebido] — 27/10/2026
 
 ### Adicionado
