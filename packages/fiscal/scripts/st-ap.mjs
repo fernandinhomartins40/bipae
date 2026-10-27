@@ -163,7 +163,7 @@ export function apStReferences({ sections }, { url, segmentName }) {
     note: 'MVA original (MVA-ST original) do apêndice. A data de início é a da última alteração da linha pelas notas do texto consolidado do LegisWeb (cópia de terceiros): vale "efeitos a partir de" quando a nota traz e, sem ele, a data do decreto; a linha sem nota vale desde o Anexo III atual (Decreto 5.097, de 28/12/2017). Combustíveis, energia e veículos não têm MVA no apêndice.',
     annexNote: (s) =>
       s.annex === 'XVII'
-        ? 'Atenção: o Protocolo ICMS 11/2026 retira CEST de alimentos da ST nas entradas no Amapá desde 01/03/2026 e o texto consolidado lido não o incorpora; confira o CEST do produto.'
+        ? 'Atenção: o Protocolo ICMS 11/2026 (AP e SP) tira CEST de alimentos da retenção feita pelo remetente nas operações interestaduais destinadas ao Amapá desde 01/03/2026. Isso não altera esta lista do Anexo III, mas a nota de origem pode vir sem ST retida; confira o CEST do produto no protocolo.'
         : '',
   });
 }
