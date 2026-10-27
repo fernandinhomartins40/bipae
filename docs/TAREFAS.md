@@ -483,7 +483,11 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F6-01.c · Webhooks: URL, eventos e segredo selado; envio pela fila com assinatura HMAC, novas tentativas e histórico na tela — depende: F6-01.a
 - [ ] F6-02 · Pix real com conciliação automática (detalhado em F8-08) — depende: F8-08 · externo: E9
 - [ ] F6-03 · TEF real (maquininha integrada; detalhado em F8-09 a F8-11) — depende: F8-10 · externo: E10
-- [ ] F6-04 · Cobrança automática dos planos e troca de plano pelo cliente — depende: F6-02, P-02
+- [~] F6-04 · Cobrança automática dos planos e troca de plano pelo cliente — depende: F6-02, P-02
+  - [x] F6-04.a · Ciclo mensal sem preço fixo (vem da tabela de planos, E8 em aberto): faturas com Pix pela porta dos parceiros (Mercado Pago, PagBank) com a conta do Bipaê ou simulador, confirmação só por consulta, troca de plano pelo cliente (sobe pagando a diferença proporcional, desce no fim do período), tolerância, bloqueio gentil e e-mails; tela em Minha assinatura; migração 0084
+  - [ ] F6-04.b · Homologar o Pix da cobrança com a conta do Bipaê no parceiro (token BILLING_TOKEN) e ligar em produção — externo: E9, E8
+  - [ ] F6-04.c · Cartão de crédito recorrente (cartão salvo no parceiro) e boleto — externo: E9
+  - [ ] F6-04.d · Cobrança por cliente no painel super admin (situação, faturas, perdoar fatura)
 - [ ] F6-05 · iFood — depende: F5-07 · externo: E14
 - [ ] F6-06 · Marketplaces — depende: F6-01 · externo: E14
 - [~] F6-07 · Assistente de IA com confirmação humana (ADR-0011) — externo: E13
