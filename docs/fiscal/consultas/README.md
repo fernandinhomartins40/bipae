@@ -4,7 +4,7 @@ Perguntas que nenhuma norma publicada responde e que só a própria SEFAZ pode e
 
 | Arquivo | SEFAZ | Destrava |
 |---|---|---|
-| `ce-ajuste-proporcional-e-ret.md` | Ceará | F3-26.d.CE.g: fórmula do ajuste proporcional, RET do vestuário e dúvidas da IN 74/2025 |
+| `ce-ajuste-proporcional-e-ret.md` | Ceará | F3-26.d.CE.g: fórmula do ajuste proporcional, limite da carga efetiva, RET do vestuário e dúvidas da IN 74/2025 |
 | `am-registro-1601.md` | Amazonas | Registro 1601 do AM no gerador da EFD |
 | `ap-registro-1601.md` | Amapá | Registro 1601 do AP no gerador da EFD |
 | `rr-registro-1601.md` | Roraima | Registro 1601 de RR no gerador da EFD |
