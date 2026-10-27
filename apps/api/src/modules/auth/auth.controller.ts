@@ -90,6 +90,9 @@ export class AuthController {
     @Body() body: unknown,
     @Headers('user-agent') userAgent?: string,
   ) {
+    // Sessão de suporte não vira sessão comum: trocar de empresa emitiria um token sem a marca do
+    // suporte e sem o modo somente leitura (F7-02.c).
+    this.ownerOnly(ctx, 'O suporte Bipaê não pode trocar de empresa na sessão do cliente.');
     const { tenantId } = parse(z.object({ tenantId: z.string().uuid() }), body);
     return this.auth.switchTenant(ctx.userId, tenantId, userAgent);
   }
@@ -173,13 +176,12 @@ export class AuthController {
   }
 
   /** Only the person themselves changes their 2FA, never Bipaê support acting as them. */
-  private ownerOnly(ctx: RequestContext) {
+  private ownerOnly(
+    ctx: RequestContext,
+    message = 'O suporte Bipaê não pode mudar a verificação em duas etapas do cliente.',
+  ) {
     if (ctx.impersonatedBy) {
-      throw new AppError(
-        403,
-        'forbidden',
-        'O suporte Bipaê não pode mudar a verificação em duas etapas do cliente.',
-      );
+      throw new AppError(403, 'forbidden', message);
     }
   }
 

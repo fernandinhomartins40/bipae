@@ -153,7 +153,8 @@ export class AuthGuard implements CanActivate {
       tenantId: claims.tid,
       userId: claims.sub,
       permissions,
-      terminalId: typeof terminal === 'string' ? terminal : null,
+      terminalId:
+        typeof terminal === 'string' && /^[0-9a-f-]{36}$/i.test(terminal) ? terminal : null,
       storeIds: found.storeIds,
       ...(claims.imp && { impersonatedBy: claims.imp }),
       ...(claims.ro && { readOnly: true }),

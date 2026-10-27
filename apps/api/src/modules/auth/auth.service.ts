@@ -229,7 +229,10 @@ export class AuthService {
     if (!user.totpSecret) {
       throw new AppError(409, 'totp_not_started', 'Comece pela leitura do código QR.');
     }
+    const key = `totp:${userId}`;
+    this.checkFailures(key);
     if (!verifyTotp(this.box.open(user.totpSecret), code)) {
+      this.recordFailure(key);
       throw new AppError(
         422,
         'totp_invalid',
@@ -258,7 +261,10 @@ export class AuthService {
   async totpDisable(tenantId: string, userId: string, code: string) {
     const user = await this.ownUser(tenantId, userId);
     if (!user.totpEnabled || !user.totpSecret) return { enabled: false };
+    const key = `totp:${userId}`;
+    this.checkFailures(key);
     if (!verifyTotp(this.box.open(user.totpSecret), code)) {
+      this.recordFailure(key);
       throw new AppError(
         422,
         'totp_invalid',
@@ -462,6 +468,24 @@ export class AuthService {
     }
   }
 
+  /**
+   * Confere e-mail e senha de OUTRA pessoa no caixa (autorização de supervisor e troca de
+   * operador), com o mesmo travamento por e-mail do login (F7-02.c, ASVS 2.2.1): sem isso, uma
+   * sessão de caixa roubada servia para adivinhar a senha dos colegas.
+   */
+  private async checkCredentials(email: string, password: string) {
+    this.checkFailures(email);
+    const found = await this.findUserByEmail(email);
+    const valid = await verify(found?.password_hash ?? (await this.dummyHash), password);
+    // 422, não 401: a senha errada é de outra pessoa; quem está logado continua logado.
+    if (!found || !valid) {
+      this.recordFailure(email);
+      throw new AppError(422, 'invalid_login', INVALID_LOGIN);
+    }
+    this.failures.delete(email.toLowerCase());
+    return found;
+  }
+
   async login(input: LoginInput, userAgent?: string): Promise<AuthResult> {
     this.checkFailures(input.email);
     const found = await this.findUserByEmail(input.email);
@@ -568,10 +592,7 @@ export class AuthService {
    * cash withdrawal) by typing their own credentials on the operator's screen.
    */
   async authorize(tenantId: string, email: string, password: string, permission: string) {
-    const found = await this.findUserByEmail(email);
-    const valid = await verify(found?.password_hash ?? (await this.dummyHash), password);
-    // 422, não 401: a senha errada é de outra pessoa; quem está logado continua logado.
-    if (!found || !valid) throw new AppError(422, 'invalid_login', INVALID_LOGIN);
+    const found = await this.checkCredentials(email, password);
     const granted = await withTenant(this.db, { tenantId, userId: found.id }, async (tx) => {
       const [row] = await tx
         .select({ permissions: roles.permissions, active: memberships.active })
@@ -588,10 +609,7 @@ export class AuthService {
 
   /** Operador que entra no caixa (F2-03): senha certa, membro ativo e com permissão de vender. */
   async operator(tenantId: string, email: string, password: string) {
-    const found = await this.findUserByEmail(email);
-    const valid = await verify(found?.password_hash ?? (await this.dummyHash), password);
-    // 422, não 401: a senha errada é de outra pessoa; quem está logado continua logado.
-    if (!found || !valid) throw new AppError(422, 'invalid_login', INVALID_LOGIN);
+    const found = await this.checkCredentials(email, password);
     const permissions = await withTenant(this.db, { tenantId, userId: found.id }, async (tx) => {
       const [row] = await tx
         .select({ permissions: roles.permissions, active: memberships.active })
