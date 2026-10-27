@@ -247,6 +247,17 @@ export const EFD_SIMPLES_BY_UF: readonly EfdUfRule[] = [
     act: 'RICMS-RR (Decreto 4.335-E/2001), art. 289-I, parágrafo único (Decreto 16.362-E/2013)',
     url: 'https://www.sefaz.rr.gov.br/downloads/legislacao?file=02%20-%20LEGISLACAO%20ESTADUAL%2F03%20-%20REGULAMENTO%20DE%20ICMS%20-%20ATUALIZADO%20-%20DECRETO%204.335%202001%2FREGULAMENTO%20DE%20ICMS%20-%20DECRETO%204.335%20DE%2003.08.01%20-%20ATUALIZADO%20ATE%20OUTUBRO%202026.pdf',
   },
+  {
+    // Sexta rodada (26/10/2026): Guia Prático Estadual v1.6 (item 3.a.I) cita o art. 404 do
+    // RICMS-PI: EFD obrigatória a todos os contribuintes de ICMS e/ou IPI, com dispensa só do MEI
+    // (SIMEI, § 1º); o item 3.b diz que os optantes do Simples entregam desde janeiro de 2021.
+    uf: 'PI',
+    status: 'required',
+    from: '2021-01-01',
+    note: 'No Piauí, desde 01/01/2021, as ME e EPP do Simples Nacional entregam a EFD (perfil C); o MEI (SIMEI) é dispensado.',
+    act: 'RICMS-PI (Decreto 21.866/2023), art. 404, e Guia Prático da EFD do Piauí v1.6, itens 3.a.I, 3.b e 3.h',
+    url: 'https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6',
+  },
 ];
 
 /**
@@ -472,6 +483,37 @@ export const EFD_1601_BY_UF: readonly EfdUfRule[] = [
     note: 'O Maranhão exige o 1601 desde 01/01/2023 de quem recebe por cartão de crédito, débito, Pix ou outro meio eletrônico.',
     act: 'Solução de Consulta SEFAZ-MA 12/2024, item II (DOE-MA de 07/06/2024)',
     url: 'https://diariooficial.ma.gov.br/download.php?arq=EX20240607',
+  },
+  {
+    // Sexta rodada (27/10/2026): a Portaria SEFAZ-AC 565/2016 (PDF da SEFAZ-AC, atualizado até a
+    // 268/2024), art. 3º, VI, redação da Portaria 377/2023: a EFD leva o registro 1601 no lugar do 1600.
+    uf: 'AC',
+    status: 'required',
+    from: '2023-03-29',
+    note: 'O Acre exige o 1601 na EFD desde 29/03/2023 (no lugar do registro 1600).',
+    act: 'Portaria SEFAZ-AC 565/2016, art. 3º, VI (redação da Portaria 377/2023)',
+    url: 'https://sefaz.ac.gov.br/2021/?p=11663',
+  },
+  {
+    // Resposta à Consulta SEFAZ-TO 41/2023: a Portaria SEFAZ 93/2023 (altera a 733/2017) torna o
+    // 1601 obrigatório "sempre que houver informação a ser prestada", com efeitos desde 01/01/2023.
+    uf: 'TO',
+    status: 'required',
+    from: '2023-01-01',
+    note: 'O Tocantins exige o 1601 desde 01/01/2023 sempre que houver informação a prestar (vendas por cartão, Pix e meios eletrônicos).',
+    act: 'Portaria SEFAZ-TO 93/2023 (altera a 733/2017) e Resposta à Consulta SEFAZ-TO 41/2023',
+    url: 'https://www.to.gov.br/sefaz/sped-fiscal/6g809qx2c8wf',
+  },
+  {
+    // Portaria SEFAZ-PI 22/2020, arts. 1º e 2º: os registros fora da lista de dispensa são
+    // obrigatórios; o 1601 não está na lista (nem na Portaria 06/2022, segundo a auditoria do dono).
+    // Parecer SEFAZ-PI 202/2023 conclui o mesmo.
+    uf: 'PI',
+    status: 'required',
+    from: '2023-01-01',
+    note: 'O Piauí exige o 1601: ele não está na lista de registros dispensados e os não listados são obrigatórios.',
+    act: 'Portaria SEFAZ-PI 22/2020, arts. 1º e 2º, e Parecer SEFAZ-PI/GETRI 202/2023',
+    url: 'https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6',
   },
 ];
 

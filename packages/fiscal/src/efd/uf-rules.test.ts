@@ -147,10 +147,22 @@ describe('EFD por UF', () => {
       expect(rule?.note, uf).toMatch(/MEI/);
       expect(efdUfRule(EFD_SIMPLES_BY_UF, uf, '2015-12-31'), uf).toBeNull();
     }
-    // Seguem sem fonte oficial lida: PI e RJ.
-    for (const uf of ['PI', 'RJ']) {
-      expect(efdUfRule(EFD_SIMPLES_BY_UF, uf, '2026-10-31'), uf).toBeNull();
-    }
+    // Segue sem fonte oficial lida: RJ.
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'RJ', '2026-10-31')).toBeNull();
+  });
+
+  it('sexta rodada: PI obriga o Simples desde 2021 e o 1601 vale em PI, AC e TO; RJ segue em dúvida', () => {
+    const pi = efdUfRule(EFD_SIMPLES_BY_UF, 'PI', '2026-10-31');
+    expect(pi?.status).toBe('required');
+    expect(pi?.note).toMatch(/MEI/);
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'PI', '2020-12-31')).toBeNull();
+    expect(efdUfRule(EFD_1601_BY_UF, 'AC', '2023-03-28')).toBeNull();
+    expect(efdUfRule(EFD_1601_BY_UF, 'AC', '2023-03-29')?.status).toBe('required');
+    expect(efdUfRule(EFD_1601_BY_UF, 'TO', '2022-12-31')).toBeNull();
+    expect(efdUfRule(EFD_1601_BY_UF, 'TO', '2023-01-01')?.status).toBe('required');
+    expect(efdUfRule(EFD_1601_BY_UF, 'PI', '2026-10-31')?.status).toBe('required');
+    // RJ: a Resolução 625/2024 não lista o 1601 e a 551/2023 listava; sem leitura consolidada, não afirmo.
+    expect(efdUfRule(EFD_1601_BY_UF, 'RJ', '2026-10-31')).toBeNull();
   });
 
   it('quinta rodada: 1601 exigido no MA desde 2023 (Solução de Consulta 12/2024); AP segue em dúvida', () => {

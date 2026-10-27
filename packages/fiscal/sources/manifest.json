@@ -1078,7 +1078,7 @@
   "title": "RICMS-PI, Decreto 21.866/2023 (consolidado até o Decreto 24.715/2026)",
   "publisher": "SEFAZ-PI",
   "page": "https://portal.sefaz.pi.gov.br/",
-  "publishedAt": "2026",
+  "publishedAt": "2026-10-26",
   "downloadedAt": "2026-10-26"
  },
  "acEfdPortaria565": {
@@ -1086,7 +1086,7 @@
   "title": "Portaria SEFAZ-AC 565/2016, códigos de ajustes e informações obrigatórias da EFD (atualizada até a Portaria 268/2024; art. 3º, VI, registro 1601, redação da Portaria 377/2023)",
   "publisher": "Secretaria de Estado da Fazenda do Acre",
   "page": "https://sefaz.ac.gov.br/2021/?p=11663",
-  "publishedAt": "2024",
+  "publishedAt": "2024-01-01",
   "downloadedAt": "2026-10-27"
  },
  "piEfdGuia": {
@@ -1094,7 +1094,7 @@
   "title": "Guia Prático da EFD ICMS IPI do Estado do Piauí, versão 1.6 (válido a partir de novembro de 2025)",
   "publisher": "SEFAZ-PI",
   "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
-  "publishedAt": "2025-11",
+  "publishedAt": "2025-11-01",
   "downloadedAt": "2026-10-26"
  },
  "piEfdPosValidacao": {
@@ -1102,7 +1102,7 @@
   "title": "Regras de Pós-validação da EFD ICMS IPI do Estado do Piauí, versão 2.0 (válido a partir de junho de 2026)",
   "publisher": "SEFAZ-PI",
   "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
-  "publishedAt": "2026-06",
+  "publishedAt": "2026-06-01",
   "downloadedAt": "2026-10-26"
  },
  "piEfdSaldoCredor": {
@@ -1110,7 +1110,7 @@
   "title": "Esclarecimentos sobre Regras de Saldo Credor da EFD, versão 1.0 (maio de 2025)",
   "publisher": "SEFAZ-PI",
   "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
-  "publishedAt": "2025-05",
+  "publishedAt": "2025-05-01",
   "downloadedAt": "2026-10-26"
  },
  "efdLeiaute020": {

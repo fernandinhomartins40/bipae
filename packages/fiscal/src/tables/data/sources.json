@@ -1212,7 +1212,7 @@
   "title": "RICMS-PI, Decreto 21.866/2023 (consolidado até o Decreto 24.715/2026)",
   "publisher": "SEFAZ-PI",
   "page": "https://portal.sefaz.pi.gov.br/",
-  "publishedAt": "2026",
+  "publishedAt": "2026-10-26",
   "downloadedAt": "2026-10-26",
   "sha256": "96901d482c97752caf1b80cc3073b65ae6c9fab8a28ae5fa65f8e73005b97c7f"
  },
@@ -1221,7 +1221,7 @@
   "title": "Portaria SEFAZ-AC 565/2016, códigos de ajustes e informações obrigatórias da EFD (atualizada até a Portaria 268/2024; art. 3º, VI, registro 1601, redação da Portaria 377/2023)",
   "publisher": "Secretaria de Estado da Fazenda do Acre",
   "page": "https://sefaz.ac.gov.br/2021/?p=11663",
-  "publishedAt": "2024",
+  "publishedAt": "2024-01-01",
   "downloadedAt": "2026-10-27",
   "sha256": "b5e7ccfc21859ecf8329da804a4e5292d34f18f877176a1351c8519030ac1cb6"
  },
@@ -1230,7 +1230,7 @@
   "title": "Guia Prático da EFD ICMS IPI do Estado do Piauí, versão 1.6 (válido a partir de novembro de 2025)",
   "publisher": "SEFAZ-PI",
   "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
-  "publishedAt": "2025-11",
+  "publishedAt": "2025-11-01",
   "downloadedAt": "2026-10-26",
   "sha256": "4e3b5e09441c1417d166921a2ce1fb9fa534e61a3f8e90284847438d15a4ce73"
  },
@@ -1239,7 +1239,7 @@
   "title": "Regras de Pós-validação da EFD ICMS IPI do Estado do Piauí, versão 2.0 (válido a partir de junho de 2026)",
   "publisher": "SEFAZ-PI",
   "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
-  "publishedAt": "2026-06",
+  "publishedAt": "2026-06-01",
   "downloadedAt": "2026-10-26",
   "sha256": "6547f22400ea553032d94283a529167927bd622c5d2e91d57dcd2b80b402fcbf"
  },
@@ -1248,7 +1248,7 @@
   "title": "Esclarecimentos sobre Regras de Saldo Credor da EFD, versão 1.0 (maio de 2025)",
   "publisher": "SEFAZ-PI",
   "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
-  "publishedAt": "2025-05",
+  "publishedAt": "2025-05-01",
   "downloadedAt": "2026-10-26",
   "sha256": "f54fe8a4c133c467d1d819adf8e155ad154c56ffe02089c36c46ae6fa37b085c"
  },
