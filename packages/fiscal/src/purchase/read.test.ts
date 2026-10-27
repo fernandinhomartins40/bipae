@@ -9,6 +9,7 @@ import {
   purchaseLotMilli,
   purchaseStockMilli,
   purchaseUnitCostCents,
+  weightedAverageCostCents,
   readPurchaseNfe,
   PurchaseXmlError,
 } from './read';
@@ -255,5 +256,23 @@ describe('unidade do lote pela própria nota (D-028)', () => {
     expect(purchaseLotMilli(item.lots[0]!, '12', item)).toBe(12_000);
     // Sem o item, vale a unidade comercial.
     expect(purchaseLotMilli(lote('1'), '12')).toBe(12_000);
+  });
+});
+
+describe('weightedAverageCostCents', () => {
+  it('sem estoque ou sem custo anterior vale o custo da entrada', () => {
+    expect(weightedAverageCostCents(0, 500, 10_000, 300)).toBe(300);
+    expect(weightedAverageCostCents(-5_000, 500, 10_000, 300)).toBe(300);
+    expect(weightedAverageCostCents(5_000, null, 10_000, 300)).toBe(300);
+  });
+
+  it('pondera pelo estoque que já havia', () => {
+    // 10 un a R$ 5,00 e entram 30 un a R$ 3,00: (50 + 90) / 40 = R$ 3,50.
+    expect(weightedAverageCostCents(10_000, 500, 30_000, 300)).toBe(350);
+  });
+
+  it('arredonda a metade para cima', () => {
+    // (1 un a 1,00 + 1 un a 1,01) / 2 = 1,005 → 1,01.
+    expect(weightedAverageCostCents(1_000, 100, 1_000, 101)).toBe(101);
   });
 });

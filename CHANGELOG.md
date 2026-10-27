@@ -9,6 +9,20 @@
 ### Falta configurar
 - Aprovar o volume ou bucket em produção (E12) e ligar o driver; mover as fotos já gravadas no banco; apagar os arquivos na exclusão definitiva da conta (F1-08.b).
 
+## [F4-14.b.5 e b.7 Inventário e CIAP, o que faltava] — 27/10/2026
+
+### Adicionado
+- **Custo médio ponderado** nas compras: o custo do produto passa a ser a média do estoque que já havia (pelo custo de então) com o que entrou, meio para cima nos centavos; sem saldo, vale o custo da nota. O inventário da EFD usa esse custo.
+- **H030 no gerador da EFD** (inventário motivo 06, Guia 3.2.4): valores médios unitários de ICMS ST por item. A API não pede o motivo 06 porque o Bipaê não tem esses valores por produto (D-040).
+- **Baixa do bem do CIAP** pela tela e pela API (`/fiscal/efd/ciap-assets`): perecimento, outras saídas e **alienação ou transferência**, que agora gera o G125 "AT" com o **G130 da NF-e de saída** (emissão própria, adquirente no COD_PART). Desfazer a saída também é possível.
+- **Bens anteriores ao Bipaê** e **ICMS do frete (CT-e) e DIFAL** digitados no bem, na tela "Arquivos para o contador" (migração 0083). O crédito só muda enquanto nenhuma parcela foi para um arquivo baixado. Tudo com auditoria.
+
+### Corrigido
+- O aviso de **nota com uso denegado** dizia que o Bipaê "ainda não gera" o registro; na verdade a EFD não pede mais notas denegadas desde 01/12/2021 (Ajustes SINIEF 34/2021 e 38/2021), e o código 04 foi descontinuado em 2023. O texto agora explica isso.
+
+### Falta configurar
+- G126 (outros créditos do CIAP) e o G130 do primeiro "SI" dos bens anteriores ao Bipaê; validação do arquivo no PVA (F4-14.b.6, do dono).
+
 ## [F3-21.b.1 Certificado A3 pelo Conector, parte sem o token] — 27/10/2026
 
 ### Adicionado

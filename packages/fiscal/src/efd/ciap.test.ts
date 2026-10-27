@@ -209,7 +209,7 @@ describe('conta do CIAP (LC 87/1996, art. 20, § 5º)', () => {
     expect(month('2026-02').movements).toEqual([]);
   });
 
-  it('saída do bem por perecimento: SI sem parcela e PE; a AT ainda não é gerada', () => {
+  it('saída do bem por perecimento: SI sem parcela e PE; a AT pede a NF-e de saída', () => {
     const lost = ciapConfig({ assets: [freezer({ disposal: { on: '2026-06-20', type: 'PE' } })] });
     const june = planCiap(lost, '2026-06', '2026-06-01', '2026-06-30', []);
     expect(june.movements.map((m) => [m.type, m.date, m.installment ?? null])).toEqual([
@@ -220,7 +220,7 @@ describe('conta do CIAP (LC 87/1996, art. 20, § 5º)', () => {
     expect(planCiap(lost, '2026-07', '2026-07-01', '2026-07-31', []).movements).toEqual([]);
     const sold = ciapConfig({ assets: [freezer({ disposal: { on: '2026-06-20', type: 'AT' } })] });
     expect(() => planCiap(sold, '2026-06', '2026-06-01', '2026-06-30', [])).toThrow(
-      'ainda não é gerada',
+      'informe a NF-e de saída',
     );
   });
 
@@ -384,6 +384,55 @@ describe('bloco G no arquivo da EFD (F4-14.b.7)', () => {
     ]);
     expect(april.some((l) => l[0] === 'G130')).toBe(false);
     expect(april.find((l) => l[0] === 'E111')![3]).toBe('10,00');
+  });
+
+  it('venda do bem (AT): SI e AT no G125 e o G130 com a NF-e de saída e o adquirente', () => {
+    const out = sale('2026-06', [{ cst: '00', cents: 150_000, icms: 27_000 }]);
+    const nfe: EfdEntry = {
+      ...out,
+      document: {
+        ...out.document,
+        model: '55',
+        issuedOn: '2026-06-20',
+        recipient: {
+          cnpj: '11444777000161',
+          name: 'Comprador SA',
+          countryCode: '1058',
+          cityCode: '3550308',
+        },
+      },
+    };
+    const sold = (accessKey?: string) =>
+      base({
+        month: '2026-06',
+        purchases: [],
+        entries: [nfe],
+        ciap: ciapConfig({
+          assets: [
+            freezer({
+              disposal: { on: '2026-06-20', type: 'AT', ...(accessKey && { accessKey }) },
+            }),
+          ],
+        }),
+      });
+    const june = rows(buildEfdIcmsIpi(sold(nfe.document.accessKey)).text);
+    const g125 = june.filter((l) => l[0] === 'G125');
+    expect(g125.map((l) => l[3])).toEqual(['SI', 'AT']);
+    expect(g125[1]!.slice(5, 11)).toEqual(['', '', '', '', '']);
+    const g130 = june.find((l) => l[0] === 'G130')!;
+    expect(g130.slice(1, 8)).toEqual([
+      '0',
+      '11444777000161',
+      '55',
+      '001',
+      String(nfe.document.number),
+      nfe.document.accessKey,
+      '20062026',
+    ]);
+    expect(june.some((l) => l[0] === '0150' && l[1] === '11444777000161')).toBe(true);
+    // Sem a nota, ou com uma nota que não é do mês, o arquivo não sai pela metade.
+    expect(() => buildEfdIcmsIpi(sold())).toThrow('informe a NF-e de saída');
+    expect(() => buildEfdIcmsIpi(sold('9'.repeat(44)))).toThrow('NF-e de saída do bem');
   });
 
   it('sem conta contábil, sem código de ajuste ou no Simples: avisa e não inventa', () => {

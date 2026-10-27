@@ -114,7 +114,7 @@ describe('inventário no bloco H (F4-14.b.5)', () => {
     expect(byReg(r.text, 'H010')[0]!.slice(3, 6)).toEqual(['3,000', '3,333333', '10,00']);
   });
 
-  it('motivos 02 a 05 pedem o H020; o 06 ainda não é gerado', () => {
+  it('motivos 02 a 05 pedem o H020; o 06 pede o H030', () => {
     const comIcms = inventario().items.map((i) => ({
       ...i,
       icms: { cst: '000', baseCents: 1999, icmsCents: 360 },
@@ -123,7 +123,21 @@ describe('inventário no bloco H (F4-14.b.5)', () => {
     const r = fev(inventario({ reason: '02', items: comIcms }));
     expect(byReg(r.text, 'H020')[0]).toEqual(['H020', '000', '19,99', '3,60']);
     expect(byReg(r.text, 'H005')[0]![3]).toBe('02');
-    expect(() => fev(inventario({ reason: '06' }))).toThrow(/ainda não é gerado/);
+    expect(() => fev(inventario({ reason: '06' }))).toThrow(/H030/);
+    const comSt = inventario().items.map((i) => ({
+      ...i,
+      st: { icmsOpCents: '120.5', bcStCents: '1500', icmsStCents: '270.123456', fcpCents: '0' },
+    }));
+    const r6 = fev(inventario({ reason: '06', items: comSt }));
+    expect(byReg(r6.text, 'H005')[0]![3]).toBe('06');
+    expect(byReg(r6.text, 'H030')[0]).toEqual([
+      'H030',
+      '1,205000',
+      '15,000000',
+      '2,701235',
+      '0,000000',
+    ]);
+    expect(byReg(r6.text, 'H020')).toHaveLength(0);
   });
 
   it('propriedade de terceiros exige o participante e entra no 0150', () => {

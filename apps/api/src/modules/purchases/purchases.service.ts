@@ -14,6 +14,7 @@ import {
   purchaseNetLoad,
   purchaseStockMilli,
   purchaseUnitCostCents,
+  weightedAverageCostCents,
   readEfdDocument,
   readPurchaseNfe,
   PurchaseXmlError,
@@ -23,7 +24,7 @@ import {
 import { ICP_BRASIL_CERTIFICATES } from '@bipae/fiscal/icp-brasil';
 import { recoverableTaxes } from '@bipae/fiscal/tables';
 import { DOMParser } from '@xmldom/xmldom';
-import { and, desc, eq, gt, inArray } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, sql } from 'drizzle-orm';
 import { SignedXml } from 'xml-crypto';
 import type { z } from 'zod';
 import type { RequestContext } from '../../common/auth';
@@ -390,13 +391,27 @@ export class PurchasesService {
         let created = false;
         if (productId) {
           const [product] = await tx
-            .select({ id: products.id })
+            .select({ id: products.id, costCents: products.costCents })
             .from(products)
             .where(eq(products.id, productId));
           if (!product) throw notFound(`Produto do item ${item.line}`);
+          // Custo médio ponderado (F4-14.b.5): o que já estava no estoque pesa pelo custo de
+          // então. Saldo zerado ou negativo, ou produto sem custo, vale o custo da entrada.
+          const [onHand] = await tx
+            .select({ milli: sql<string>`coalesce(sum(${stockMovements.deltaMilli}), 0)` })
+            .from(stockMovements)
+            .where(eq(stockMovements.productId, productId));
+          const averageCostCents = weightedAverageCostCents(
+            Number(onHand?.milli ?? 0),
+            product.costCents === null || product.costCents === undefined
+              ? null
+              : Number(product.costCents),
+            quantityMilli,
+            unitCostCents,
+          );
           await tx
             .update(products)
-            .set({ costCents: unitCostCents, updatedAt: now })
+            .set({ costCents: averageCostCents, updatedAt: now })
             .where(eq(products.id, productId));
         } else {
           const unit = (decision.unit ?? item.unit).toUpperCase();

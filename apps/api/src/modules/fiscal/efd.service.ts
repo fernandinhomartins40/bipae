@@ -1,15 +1,29 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Injectable,
+  Param,
+  Patch,
+  Post,
   Put,
   Query,
   Res,
   StreamableFile,
 } from '@nestjs/common';
-import { efdRequest, efdSettingsInput, type EfdSettings, type EfdSummaryView } from '@bipae/domain';
+import {
+  ciapAssetCreate,
+  ciapAssetUpdate,
+  ciapAssetWriteOff,
+  efdRequest,
+  efdSettingsInput,
+  uuidv7,
+  type CiapAssetView,
+  type EfdSettings,
+  type EfdSummaryView,
+} from '@bipae/domain';
 import {
   buildEfdIcmsIpi,
   EfdError,
@@ -228,10 +242,15 @@ export class EfdService {
       .from(ciapAssets)
       .where(and(eq(ciapAssets.companyId, companyId), lte(ciapAssets.enteredOn, lastDay)));
     if (rows.length === 0) return undefined;
-    const keys = await tx
-      .select({ id: purchaseInvoices.id, accessKey: purchaseInvoices.accessKey })
-      .from(purchaseInvoices)
-      .where(inArray(purchaseInvoices.id, [...new Set(rows.map((r) => r.purchaseInvoiceId))]));
+    const invoiceIds = [
+      ...new Set(rows.flatMap((r) => (r.purchaseInvoiceId ? [r.purchaseInvoiceId] : []))),
+    ];
+    const keys = invoiceIds.length
+      ? await tx
+          .select({ id: purchaseInvoices.id, accessKey: purchaseInvoices.accessKey })
+          .from(purchaseInvoices)
+          .where(inArray(purchaseInvoices.id, invoiceIds))
+      : [];
     const keyOf = new Map(keys.map((k) => [k.id, k.accessKey]));
     return {
       assets: rows.map((r) => ({
@@ -248,8 +267,17 @@ export class EfdService {
         costCenter: r.costCenter,
         ...(r.usage && { usage: r.usage }),
         ...(r.writtenOffOn &&
-          r.writeOffType && { disposal: { on: r.writtenOffOn, type: r.writeOffType } }),
-        source: { accessKey: keyOf.get(r.purchaseInvoiceId) ?? '', line: r.itemLine },
+          r.writeOffType && {
+            disposal: {
+              on: r.writtenOffOn,
+              type: r.writeOffType,
+              ...(r.disposalAccessKey && { accessKey: r.disposalAccessKey }),
+            },
+          }),
+        ...(r.purchaseInvoiceId &&
+          r.itemLine !== null && {
+            source: { accessKey: keyOf.get(r.purchaseInvoiceId) ?? '', line: r.itemLine },
+          }),
       })),
       ...(settings.ciapAccountCode &&
         settings.ciapAccountName &&
@@ -263,6 +291,217 @@ export class EfdService {
       ...(settings.ciapAdjustmentCode && { adjustmentCode: settings.ciapAdjustmentCode }),
       stOutputsTaxed: settings.ciapStOutputsTaxed,
     };
+  }
+
+  private view(r: typeof ciapAssets.$inferSelect): CiapAssetView {
+    return {
+      id: r.id,
+      code: r.code,
+      description: r.description,
+      origin: r.origin,
+      enteredOn: r.enteredOn,
+      icmsOwnCents: r.icmsOwnCents,
+      icmsStCents: r.icmsStCents,
+      icmsFreightCents: r.icmsFreightCents,
+      icmsDifalCents: r.icmsDifalCents,
+      installments: r.installments,
+      appropriatedInstallments: r.appropriatedInstallments,
+      costCenter: r.costCenter,
+      usage: r.usage,
+      writtenOffOn: r.writtenOffOn,
+      writeOffType: r.writeOffType,
+      disposalAccessKey: r.disposalAccessKey,
+    };
+  }
+
+  /** Bens do ativo no CIAP da empresa (F4-14.b.7), do mais antigo ao mais novo. */
+  listAssets(ctx: RequestContext, raw: unknown): Promise<CiapAssetView[]> {
+    const { companyId } = parse(companyQuery, raw);
+    return withTenant(this.db, ctx, async (tx) => {
+      const rows = await tx
+        .select()
+        .from(ciapAssets)
+        .where(eq(ciapAssets.companyId, companyId))
+        .orderBy(asc(ciapAssets.enteredOn), asc(ciapAssets.code));
+      return rows.map((r) => this.view(r));
+    });
+  }
+
+  private async loadAsset(tx: Tx, id: string) {
+    const [row] = await tx.select().from(ciapAssets).where(eq(ciapAssets.id, id));
+    if (!row) throw notFound('Bem do CIAP');
+    return row;
+  }
+
+  /**
+   * Bem que existia antes do Bipaê (sem compra no sistema). Entra como saldo inicial; o que entrou
+   * neste mês ou depois vem pela compra, com a nota (G130).
+   */
+  createAsset(ctx: RequestContext, raw: unknown): Promise<CiapAssetView> {
+    const input = parse(ciapAssetCreate, raw);
+    return withTenant(this.db, ctx, async (tx) => {
+      const [company] = await tx.select().from(companies).where(eq(companies.id, input.companyId));
+      if (!company) throw notFound('Empresa');
+      if (input.enteredOn >= `${brasiliaDay(new Date()).slice(0, 7)}-01`) {
+        throw new AppError(
+          422,
+          'validation',
+          'Só entram aqui os bens que chegaram antes deste mês. O que entra de agora em diante vem pela compra, marcada como ativo imobilizado.',
+        );
+      }
+      if (
+        input.icmsOwnCents + input.icmsStCents + input.icmsFreightCents + input.icmsDifalCents ===
+        0
+      ) {
+        throw new AppError(422, 'validation', 'Informe o ICMS que dá crédito ao bem.');
+      }
+      const id = uuidv7();
+      const [row] = await tx
+        .insert(ciapAssets)
+        .values({
+          id,
+          tenantId: ctx.tenantId,
+          companyId: input.companyId,
+          origin: 'manual',
+          code: `ANT-${id.slice(-12)}`,
+          description: input.description,
+          enteredOn: input.enteredOn,
+          icmsOwnCents: input.icmsOwnCents,
+          icmsStCents: input.icmsStCents,
+          icmsFreightCents: input.icmsFreightCents,
+          icmsDifalCents: input.icmsDifalCents,
+          installments: input.installments,
+          costCenter: input.costCenter,
+          usage: input.usage ?? null,
+        })
+        .returning();
+      await this.audit.record(tx, ctx, {
+        action: 'fiscal.ciap_asset_create',
+        entity: 'ciap_asset',
+        entityId: id,
+        data: { enteredOn: input.enteredOn, description: input.description },
+      });
+      return this.view(row!);
+    });
+  }
+
+  /** ICMS do frete (CT-e) e DIFAL do bem, centro de custo e função. Crédito só antes de baixar parcela. */
+  updateAsset(ctx: RequestContext, id: string, raw: unknown): Promise<CiapAssetView> {
+    const input = parse(ciapAssetUpdate, raw);
+    return withTenant(this.db, ctx, async (tx) => {
+      const row = await this.loadAsset(tx, id);
+      const changesCredit =
+        input.icmsFreightCents !== undefined || input.icmsDifalCents !== undefined;
+      if (changesCredit && row.appropriatedInstallments > 0) {
+        throw new AppError(
+          409,
+          'conflict',
+          'Este bem já teve parcela num arquivo baixado: o crédito não muda mais por aqui, para não desfazer o que já foi declarado.',
+        );
+      }
+      const [saved] = await tx
+        .update(ciapAssets)
+        .set({
+          ...(input.icmsFreightCents !== undefined && { icmsFreightCents: input.icmsFreightCents }),
+          ...(input.icmsDifalCents !== undefined && { icmsDifalCents: input.icmsDifalCents }),
+          ...(input.costCenter && { costCenter: input.costCenter }),
+          ...(input.usage !== undefined && { usage: input.usage || null }),
+        })
+        .where(eq(ciapAssets.id, id))
+        .returning();
+      await this.audit.record(tx, ctx, {
+        action: 'fiscal.ciap_asset_update',
+        entity: 'ciap_asset',
+        entityId: id,
+        data: {
+          from: { freight: row.icmsFreightCents, difal: row.icmsDifalCents },
+          to: { freight: saved!.icmsFreightCents, difal: saved!.icmsDifalCents },
+        },
+      });
+      return this.view(saved!);
+    });
+  }
+
+  /**
+   * Baixa do bem antes do fim das 48 parcelas (G125, regra 1.6). Alienação ou transferência vale
+   * pela NF-e de saída autorizada da empresa (G130): a data é a da nota.
+   */
+  writeOffAsset(ctx: RequestContext, id: string, raw: unknown): Promise<CiapAssetView> {
+    const input = parse(ciapAssetWriteOff, raw);
+    return withTenant(this.db, ctx, async (tx) => {
+      const row = await this.loadAsset(tx, id);
+      if (row.writtenOffOn) {
+        throw new AppError(409, 'conflict', 'Este bem já tem a saída registrada.');
+      }
+      let on = input.on ?? '';
+      let accessKey: string | null = null;
+      if (input.type === 'AT') {
+        const [doc] = await tx
+          .select()
+          .from(fiscalDocuments)
+          .where(
+            and(
+              eq(fiscalDocuments.companyId, row.companyId),
+              eq(fiscalDocuments.accessKey, input.accessKey!),
+              eq(fiscalDocuments.status, 'authorized'),
+            ),
+          );
+        if (!doc?.nfeProc) {
+          throw new AppError(
+            422,
+            'validation',
+            'Não achei essa NF-e autorizada nesta empresa. Emita a nota de saída do bem e use a chave dela.',
+          );
+        }
+        const document = readEfdDocument(doc.nfeProc);
+        if (document.model !== '55' || document.direction !== 'out' || !document.recipient) {
+          throw new AppError(
+            422,
+            'validation',
+            'A nota da saída do bem precisa ser uma NF-e de saída com o destinatário.',
+          );
+        }
+        on = document.issuedOn;
+        accessKey = document.accessKey;
+      }
+      if (on < row.enteredOn) {
+        throw new AppError(422, 'validation', 'A saída não pode ser antes da entrada do bem.');
+      }
+      const [saved] = await tx
+        .update(ciapAssets)
+        .set({ writtenOffOn: on, writeOffType: input.type, disposalAccessKey: accessKey })
+        .where(eq(ciapAssets.id, id))
+        .returning();
+      await this.audit.record(tx, ctx, {
+        action: 'fiscal.ciap_asset_write_off',
+        entity: 'ciap_asset',
+        entityId: id,
+        data: { type: input.type, on, accessKey },
+      });
+      return this.view(saved!);
+    });
+  }
+
+  /** Desfaz a saída do bem (engano). */
+  undoWriteOff(ctx: RequestContext, id: string): Promise<CiapAssetView> {
+    return withTenant(this.db, ctx, async (tx) => {
+      const row = await this.loadAsset(tx, id);
+      if (!row.writtenOffOn) {
+        throw new AppError(409, 'conflict', 'Este bem não tem saída registrada.');
+      }
+      const [saved] = await tx
+        .update(ciapAssets)
+        .set({ writtenOffOn: null, writeOffType: null, disposalAccessKey: null })
+        .where(eq(ciapAssets.id, id))
+        .returning();
+      await this.audit.record(tx, ctx, {
+        action: 'fiscal.ciap_asset_write_off_undo',
+        entity: 'ciap_asset',
+        entityId: id,
+        data: { type: row.writeOffType, on: row.writtenOffOn },
+      });
+      return this.view(saved!);
+    });
   }
 
   /** Monta o arquivo do mês; a tela usa o resumo e o download usa o texto. */
@@ -359,7 +598,7 @@ export class EfdService {
       });
       if (denied > 0) {
         warnings.push(
-          `${denied} nota(s) com uso denegado não entram no arquivo: o Bipaê ainda não gera o registro delas (situação 04).`,
+          `${denied} nota(s) com uso denegado não entram no arquivo, de propósito: desde 01/12/2021 (Ajustes SINIEF 34/2021 e 38/2021) a EFD não pede mais os documentos denegados, e o código de situação 04 deixou de existir em 2023 (Guia Prático 3.2.4, registro C100). Denegada não gera crédito nem débito.`,
         );
       }
       if (outside > 0) {
@@ -516,6 +755,36 @@ export class EfdController {
   @RequirePermission('fiscal.profile.write')
   saveSettings(@Ctx() ctx: RequestContext, @Body() body: unknown) {
     return this.efd.saveSettings(ctx, body);
+  }
+
+  @Get('ciap-assets')
+  @RequirePermission('finance.read')
+  listAssets(@Ctx() ctx: RequestContext, @Query() raw: unknown) {
+    return this.efd.listAssets(ctx, raw);
+  }
+
+  @Post('ciap-assets')
+  @RequirePermission('fiscal.profile.write')
+  createAsset(@Ctx() ctx: RequestContext, @Body() body: unknown) {
+    return this.efd.createAsset(ctx, body);
+  }
+
+  @Patch('ciap-assets/:id')
+  @RequirePermission('fiscal.profile.write')
+  updateAsset(@Ctx() ctx: RequestContext, @Param('id') id: string, @Body() body: unknown) {
+    return this.efd.updateAsset(ctx, id, body);
+  }
+
+  @Post('ciap-assets/:id/write-off')
+  @RequirePermission('fiscal.profile.write')
+  writeOffAsset(@Ctx() ctx: RequestContext, @Param('id') id: string, @Body() body: unknown) {
+    return this.efd.writeOffAsset(ctx, id, body);
+  }
+
+  @Delete('ciap-assets/:id/write-off')
+  @RequirePermission('fiscal.profile.write')
+  undoWriteOff(@Ctx() ctx: RequestContext, @Param('id') id: string) {
+    return this.efd.undoWriteOff(ctx, id);
   }
 
   /** ?companyId=...&month=AAAA-MM&previousCreditCents=0: apuração e avisos, antes de baixar. */

@@ -305,3 +305,22 @@ export function purchaseUnitCostCents(
   if (units.lte(0)) throw new PurchaseXmlError(`Quantidade inválida no item ${item.line}.`);
   return toCents(total.div(units));
 }
+
+/**
+ * Custo médio ponderado móvel (F4-14.b.5): o custo do produto depois de uma entrada é a média do
+ * que já estava no estoque (pelo custo de então) e do que acabou de entrar. Sem estoque positivo
+ * ou sem custo anterior, vale o custo da entrada. A quantidade vai em milésimos e o resultado em
+ * centavos, arredondado para cima na metade (NBC TG 16, itens 25 a 27; dúvida D-040).
+ */
+export function weightedAverageCostCents(
+  stockMilli: number,
+  currentCostCents: number | null,
+  entryMilli: number,
+  entryCostCents: number,
+): number {
+  if (entryMilli <= 0 || stockMilli <= 0 || currentCostCents === null) return entryCostCents;
+  const value =
+    BigInt(stockMilli) * BigInt(currentCostCents) + BigInt(entryMilli) * BigInt(entryCostCents);
+  const total = BigInt(stockMilli) + BigInt(entryMilli);
+  return Number((value * 2n + total) / (total * 2n));
+}

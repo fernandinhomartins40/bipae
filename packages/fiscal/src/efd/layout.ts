@@ -349,6 +349,12 @@ export const EFD_REGISTERS = {
     ['BC_ICMS', 'money'],
     ['VL_ICMS', 'money'],
   ],
+  H030: [
+    ['VL_ICMS_OP', 'factor'],
+    ['VL_BC_ICMS_ST', 'factor'],
+    ['VL_ICMS_ST', 'factor'],
+    ['VL_FCP', 'factor'],
+  ],
   H990: closing('QTD_LIN_H'),
   K001: movement,
   K990: closing('QTD_LIN_K'),
@@ -482,18 +488,24 @@ export const EFD_EMPTY_BLOCKS: readonly EfdBlock[] = ['B', 'D', 'K'];
 
 /**
  * Bloco H, H005 campo 04 (MOT_INV): `h020` diz se o motivo exige o H020 em cada item (motivos 02
- * a 05, Guia 3.2.2); `supported` é falso onde o Bipaê ainda não gera os registros do motivo (o 06
- * pede o H030, valores médios de ICMS ST por item).
+ * a 05, Guia 3.2.2); `h030` diz se o motivo exige o H030 em cada item (motivo 06, valores médios
+ * unitários de ICMS ST, Guia 3.2.4); `supported` é falso onde o Bipaê ainda não gera os registros
+ * do motivo.
  */
 export const EFD_INVENTORY_REASONS: Readonly<
-  Record<string, { label: string; h020: boolean; supported: boolean }>
+  Record<string, { label: string; h020: boolean; h030: boolean; supported: boolean }>
 > = {
-  '01': { label: 'no final do período', h020: false, supported: true },
-  '02': { label: 'na mudança de forma de tributação da mercadoria', h020: true, supported: true },
-  '03': { label: 'na baixa cadastral ou paralisação', h020: true, supported: true },
-  '04': { label: 'na alteração de regime de pagamento', h020: true, supported: true },
-  '05': { label: 'por determinação do fisco', h020: true, supported: true },
-  '06': { label: 'controle da substituição tributária', h020: false, supported: false },
+  '01': { label: 'no final do período', h020: false, h030: false, supported: true },
+  '02': {
+    label: 'na mudança de forma de tributação da mercadoria',
+    h020: true,
+    h030: false,
+    supported: true,
+  },
+  '03': { label: 'na baixa cadastral ou paralisação', h020: true, h030: false, supported: true },
+  '04': { label: 'na alteração de regime de pagamento', h020: true, h030: false, supported: true },
+  '05': { label: 'por determinação do fisco', h020: true, h030: false, supported: true },
+  '06': { label: 'controle da substituição tributária', h020: false, h030: true, supported: true },
 };
 
 /** Motivo do inventário de 31/12 que o arquivo de fevereiro deve trazer (Guia, H001 e H005). */

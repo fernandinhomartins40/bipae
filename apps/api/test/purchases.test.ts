@@ -659,3 +659,161 @@ describe('carnes do Maranhão por carga fixa na compra (F3-26.d.MA.d)', () => {
     expect(entrada.json()).toMatchObject({ stNetLoadCents: 135 });
   });
 });
+
+describe('custo médio ponderado na compra (F4-14.b.5)', () => {
+  it('o custo do produto vira a média do que havia no estoque com o que entrou', async () => {
+    const { admin, loja } = await mercado();
+    const dono = await admin.get('/companies');
+    expect(dono.statusCode).toBe(200);
+    const agua = (
+      await admin.post('/products', {
+        name: 'Água 500 ml',
+        priceCents: 300,
+        barcodes: ['7891000100103'],
+      })
+    ).json();
+    const itens = [
+      { line: 1, productId: null, factor: '6', unit: 'UN', priceCents: 899 },
+      { line: 2, productId: agua.id, factor: 1 },
+    ];
+    const primeira = await admin.post('/purchases', {
+      xml: await notaDoFornecedor(4001),
+      storeId: loja.id,
+      items: itens,
+    });
+    expect(primeira.statusCode).toBe(201);
+    // Sem estoque antes, vale o custo da nota: R$ 1,65 e 24 unidades.
+    expect((await admin.get(`/products/${agua.id}`)).json().costCents).toBe(165);
+
+    // O dono corrige o custo para R$ 3,00; entram mais 24 a R$ 1,65: (24 × 300 + 24 × 165) / 48.
+    expect((await admin.put(`/products/${agua.id}`, { ...agua, costCents: 300 })).statusCode).toBe(
+      200,
+    );
+    const segunda = await admin.post('/purchases', {
+      xml: await notaDoFornecedor(4002),
+      storeId: loja.id,
+      items: itens,
+    });
+    expect(segunda.statusCode).toBe(201);
+    expect((await admin.get(`/products/${agua.id}`)).json().costCents).toBe(233);
+  });
+});
+
+describe('bens do CIAP à mão, frete, DIFAL e baixa (F4-14.b.7)', () => {
+  it('bem anterior ao Bipaê entra como saldo inicial; PE e AT dão baixa pela API e saem no arquivo', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const [empresa] = (await admin.get('/companies')).json();
+    await admin.patch(`/companies/${empresa.id}`, {
+      legalName: empresa.legalName,
+      taxId: '11.222.333/0001-81',
+      uf: 'SP',
+      taxRegime: 'presumido',
+      ie: '110042490114',
+      cityCode: '3550308',
+    });
+    await admin.put('/fiscal/efd/settings', {
+      companyId: empresa.id,
+      ciapAccountCode: '1.2.3.01',
+      ciapAccountName: 'Máquinas e equipamentos',
+      ciapAccountLevel: 4,
+      ciapAdjustmentCode: 'SP020001',
+    });
+
+    // Bem que entrou neste mês ou depois não é lançado à mão.
+    const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(
+      new Date(),
+    );
+    const recente = await admin.post('/fiscal/efd/ciap-assets', {
+      companyId: empresa.id,
+      description: 'Balcão',
+      enteredOn: hoje,
+      icmsOwnCents: 4800,
+    });
+    expect(recente.statusCode).toBe(422);
+    const vazio = await admin.post('/fiscal/efd/ciap-assets', {
+      companyId: empresa.id,
+      description: 'Balcão',
+      enteredOn: '2026-01-15',
+    });
+    expect(vazio.statusCode).toBe(422);
+
+    const criado = await admin.post('/fiscal/efd/ciap-assets', {
+      companyId: empresa.id,
+      description: 'Balcão refrigerado',
+      enteredOn: '2026-01-15',
+      icmsOwnCents: 4000,
+    });
+    expect(criado.statusCode, criado.body).toBe(201);
+    const bem = criado.json();
+    expect(bem).toMatchObject({ origin: 'manual', installments: 48, appropriatedInstallments: 0 });
+
+    // Frete do CT-e e DIFAL entram no crédito: (40,00 + 5,00 + 3,00) / 48 = 1,00 por mês.
+    const credito = await admin.patch(`/fiscal/efd/ciap-assets/${bem.id}`, {
+      icmsFreightCents: 500,
+      icmsDifalCents: 300,
+    });
+    expect(credito.statusCode).toBe(200);
+
+    const arquivo = async (mes: string) => {
+      const res = await admin.get(`/fiscal/efd/file?companyId=${empresa.id}&month=${mes}`);
+      expect(res.statusCode, res.body).toBe(200);
+      const linhas = res.rawPayload
+        .toString('latin1')
+        .split('\r\n')
+        .filter(Boolean)
+        .map((l) => l.slice(1, -1).split('|'));
+      return (reg: string) => linhas.filter((l) => l[0] === reg);
+    };
+    const abril = await arquivo('2026-04');
+    expect(abril('G125').map((l) => [l[3], l[4], l[5], l[6], l[7], l[8], l[9]])).toEqual([
+      ['SI', '40,00', '0,00', '5,00', '3,00', '4', '1,00'],
+    ]);
+    expect(abril('0300')).toHaveLength(1);
+    expect(abril('G130')).toHaveLength(0);
+
+    // Depois de uma parcela em arquivo baixado o crédito não muda mais.
+    const trava = await admin.patch(`/fiscal/efd/ciap-assets/${bem.id}`, { icmsDifalCents: 0 });
+    expect(trava.statusCode).toBe(409);
+
+    // Venda do bem (AT) pede uma NF-e de saída autorizada: chave inventada é recusada.
+    const venda = await admin.post(`/fiscal/efd/ciap-assets/${bem.id}/write-off`, {
+      type: 'AT',
+      accessKey: '3'.repeat(44),
+    });
+    expect(venda.statusCode).toBe(422);
+    expect(
+      (await admin.post(`/fiscal/efd/ciap-assets/${bem.id}/write-off`, { type: 'AT' })).statusCode,
+    ).toBe(400);
+
+    // Perecimento: SI sem parcela e PE.
+    const perda = await admin.post(`/fiscal/efd/ciap-assets/${bem.id}/write-off`, {
+      type: 'PE',
+      on: '2026-05-10',
+    });
+    expect(perda.statusCode, perda.body).toBe(201);
+    const maio = await arquivo('2026-05');
+    expect(maio('G125').map((l) => [l[3], l[2]])).toEqual([
+      ['SI', '01052026'],
+      ['PE', '10052026'],
+    ]);
+    expect(
+      (
+        await admin.post(`/fiscal/efd/ciap-assets/${bem.id}/write-off`, {
+          type: 'OT',
+          on: '2026-05-11',
+        })
+      ).statusCode,
+    ).toBe(409);
+
+    const lista = (await admin.get(`/fiscal/efd/ciap-assets?companyId=${empresa.id}`)).json();
+    expect(lista).toHaveLength(1);
+    expect(lista[0]).toMatchObject({ writeOffType: 'PE', writtenOffOn: '2026-05-10' });
+
+    // Engano desfeito: a saída some do arquivo de maio.
+    expect((await admin.delete(`/fiscal/efd/ciap-assets/${bem.id}/write-off`)).statusCode).toBe(
+      200,
+    );
+    expect((await arquivo('2026-05'))('G125').map((l) => l[3])).toEqual(['SI']);
+  });
+});

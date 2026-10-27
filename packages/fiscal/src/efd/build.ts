@@ -141,6 +141,11 @@ export interface EfdInventoryItem {
   accountCode?: string;
   /** H020 (motivos 02 a 05): CST, base e ICMS unitários, em centavos. */
   icms?: { cst: string; baseCents: number; icmsCents: number };
+  /**
+   * H030 (motivo 06, ressarcimento da ST): valores médios unitários, em centavos e como texto
+   * decimal ("123.456789"), do ICMS da operação própria, da base e do ICMS ST e do FCP.
+   */
+  st?: { icmsOpCents: string; bcStCents: string; icmsStCents: string; fcpCents: string };
 }
 
 /** Inventário do bloco H: uma data, o motivo (MOT_INV) e os itens contados. */
@@ -485,6 +490,18 @@ function prepareInventory(inventory: EfdInventory, month: string, end: string): 
         `O inventário ${rule.label} pede o CST, a base e o ICMS do item ${item.code} (H020).`,
       );
     }
+    if (rule.h030) {
+      if (!item.st) {
+        throw new EfdError(
+          `O inventário ${rule.label} pede os valores médios de ICMS ST do item ${item.code} (H030).`,
+        );
+      }
+      for (const value of Object.values(item.st)) {
+        if (!/^\d+(\.\d+)?$/.test(value)) {
+          throw new EfdError(`Valor médio de ICMS ST inválido no item ${item.code}: ${value}.`);
+        }
+      }
+    }
     items.push({ item, valueCents, unitValue: unitValue.toFixed(6) });
   }
   const totalCents = items.reduce((total, p) => total + p.valueCents, 0);
@@ -529,6 +546,16 @@ function inventoryBlock(inventory: PreparedInventory): Line[] {
               }),
             ]
           : []),
+        ...(rule.h030 && item.st
+          ? [
+              record('H030', {
+                VL_ICMS_OP: dec(item.st.icmsOpCents).div(100).toFixed(6),
+                VL_BC_ICMS_ST: dec(item.st.bcStCents).div(100).toFixed(6),
+                VL_ICMS_ST: dec(item.st.icmsStCents).div(100).toFixed(6),
+                VL_FCP: dec(item.st.fcpCents).div(100).toFixed(6),
+              }),
+            ]
+          : []),
       ];
     }),
   ];
@@ -550,6 +577,7 @@ function ciapLines(
   plan: CiapPlan,
   ciap: EfdCiap,
   purchasesByKey: Map<string, { purchase: EfdPurchase; lines: PurchaseLine[] }>,
+  ownEntries: EfdEntry[],
   start: string,
   end: string,
 ): CiapLines {
@@ -631,6 +659,30 @@ function ciapLines(
         VL_PARC_PASS: m.parcelCents,
       }),
     );
+    if (m.type === 'AT') {
+      // AT: o G130 é obrigatório (Guia, G130) e traz a NF-e de saída, emissão própria, com o
+      // adquirente no COD_PART. Os valores do G125 vão vazios nesse movimento.
+      const out = ownEntries.find(
+        (e) => e.status === 'authorized' && e.document.accessKey === m.asset.disposal?.accessKey,
+      )?.document;
+      if (!out || out.direction !== 'out' || !out.recipient) {
+        throw new EfdError(
+          `A NF-e de saída do bem ${m.asset.description} (G130) não está entre as notas autorizadas do mês ou não tem destinatário.`,
+        );
+      }
+      block.push(
+        record('G130', {
+          IND_EMIT: '0',
+          COD_PART: partyCode(out.recipient),
+          COD_MOD: out.model,
+          SERIE: String(out.series).padStart(3, '0'),
+          NUM_DOC: out.number,
+          CHV_NFE_CTE: out.accessKey,
+          DT_DOC: out.issuedOn,
+        }),
+      );
+      continue;
+    }
     if (m.type !== 'IM') continue;
     // IM: o G130 é obrigatório (Guia, G130), com a nota de compra que trouxe o bem.
     const source = m.asset.source;
@@ -927,7 +979,7 @@ export function buildEfdIcmsIpi(input: EfdInput): EfdResult {
           'Há bens do ativo no CIAP, mas falta a conta contábil do ativo imobilizado (registros 0300 e 0500). Cadastre em Arquivos para o contador: sem ela o bloco G e o crédito do ativo não entram no arquivo.',
         );
       } else {
-        ciap = ciapLines(plan, input.ciap, purchasesByKey, start, end);
+        ciap = ciapLines(plan, input.ciap, purchasesByKey, entries, start, end);
         if (plan.appropriationCents > 0 && !input.ciap.adjustmentCode) {
           warnings.push(
             'Falta o código de ajuste do crédito do ativo (E111, tabela 5.1.1 da sua UF). O bloco G foi gerado, mas o crédito do CIAP não entrou na apuração do ICMS. Cadastre em Arquivos para o contador.',

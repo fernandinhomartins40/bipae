@@ -1,6 +1,8 @@
 import {
   formatBRL,
   type Cents,
+  type CiapAssetView,
+  type CiapDisposalType,
   type EfdSettings,
   type EfdSettingsInput,
   type EfdSummaryView,
@@ -98,6 +100,7 @@ export function AccountantPage() {
         </p>
       </Card>
       {company && <EfdCard companyId={company} month={month} monthOk={monthOk} />}
+      {company && <CiapAssetsCard companyId={company} />}
     </>
   );
 }
@@ -347,6 +350,263 @@ function EfdForm({
           )}
         </div>
       )}
+    </Card>
+  );
+}
+
+const DISPOSAL_LABELS: Record<CiapDisposalType, string> = {
+  AT: 'Venda ou transferência',
+  PE: 'Perda, extravio ou deterioração',
+  OT: 'Outra saída',
+};
+
+const totalOf = (a: CiapAssetView) =>
+  a.icmsOwnCents + a.icmsStCents + a.icmsFreightCents + a.icmsDifalCents;
+
+const brDate = (iso: string) => iso.split('-').reverse().join('/');
+
+/**
+ * Bens do ativo no CIAP (F4-14.b.7): os que vieram de compras marcadas como ativo imobilizado e os
+ * que já existiam antes do Bipaê, com o frete do CT-e, o DIFAL e a baixa do bem.
+ */
+function CiapAssetsCard({ companyId }: { companyId: string }) {
+  const { api } = useApp();
+  const queryClient = useQueryClient();
+  const key = ['ciap-assets', companyId];
+  const assets = useQuery({
+    queryKey: key,
+    queryFn: () => api.get<CiapAssetView[]>(`/fiscal/efd/ciap-assets?companyId=${companyId}`),
+  });
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [adding, setAdding] = useState({
+    description: '',
+    enteredOn: '',
+    own: 0 as number | null,
+    st: 0 as number | null,
+    freight: 0 as number | null,
+    difal: 0 as number | null,
+  });
+  // Uma baixa por vez: o bem aberto, o tipo, a data ou a chave da NF-e de saída.
+  const [closing, setClosing] = useState<{
+    id: string;
+    type: CiapDisposalType;
+    on: string;
+    accessKey: string;
+  } | null>(null);
+  const [credit, setCredit] = useState<{
+    id: string;
+    freight: number | null;
+    difal: number | null;
+  } | null>(null);
+
+  const run = async (job: () => Promise<void>, done: string) => {
+    setMessage(null);
+    setBusy(true);
+    try {
+      await job();
+      await queryClient.invalidateQueries({ queryKey: key });
+      setMessage({ ok: true, text: done });
+    } catch (e) {
+      setMessage({ ok: false, text: (e as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+  const create = () =>
+    run(async () => {
+      await api.post('/fiscal/efd/ciap-assets', {
+        companyId,
+        description: adding.description,
+        enteredOn: adding.enteredOn,
+        icmsOwnCents: adding.own ?? 0,
+        icmsStCents: adding.st ?? 0,
+        icmsFreightCents: adding.freight ?? 0,
+        icmsDifalCents: adding.difal ?? 0,
+      });
+      setAdding({ description: '', enteredOn: '', own: 0, st: 0, freight: 0, difal: 0 });
+    }, 'Bem anotado no CIAP.');
+  const saveCredit = () =>
+    run(async () => {
+      if (!credit) return;
+      await api.patch(`/fiscal/efd/ciap-assets/${credit.id}`, {
+        icmsFreightCents: credit.freight ?? 0,
+        icmsDifalCents: credit.difal ?? 0,
+      });
+      setCredit(null);
+    }, 'Crédito do bem atualizado.');
+  const writeOff = () =>
+    run(async () => {
+      if (!closing) return;
+      await api.post(`/fiscal/efd/ciap-assets/${closing.id}/write-off`, {
+        type: closing.type,
+        ...(closing.type === 'AT'
+          ? { accessKey: closing.accessKey.replace(/\D/g, '') }
+          : { on: closing.on }),
+      });
+      setClosing(null);
+    }, 'Saída do bem registrada. Ela vai no arquivo do mês dela.');
+  const undo = (id: string) =>
+    run(async () => {
+      await api.delete(`/fiscal/efd/ciap-assets/${id}/write-off`);
+    }, 'Saída desfeita.');
+
+  const list = assets.data ?? [];
+  return (
+    <Card className="mt-4 flex max-w-xl flex-col gap-3" data-testid="ciap-assets">
+      <h2 className="text-lg font-semibold">Bens do ativo (CIAP)</h2>
+      <p className="text-sm text-muted">
+        O ICMS do ativo imobilizado vira crédito em 48 parcelas. Compras marcadas como ativo entram
+        sozinhas; aqui você anota o que já existia antes do Bipaê, o ICMS do frete (CT-e) e o DIFAL,
+        e dá baixa no bem que foi vendido, perdido ou saiu.
+      </p>
+      {list.length === 0 && <p className="text-sm text-muted">Nenhum bem no CIAP ainda.</p>}
+      {list.map((a) => (
+        <div key={a.id} className="flex flex-col gap-2 rounded-md border border-border p-3 text-sm">
+          <div className="flex flex-wrap justify-between gap-2">
+            <strong>{a.description}</strong>
+            <span>
+              Crédito total {brl(totalOf(a))} em {a.installments} parcelas
+            </span>
+          </div>
+          <p className="text-muted">
+            Entrada em {brDate(a.enteredOn)}
+            {a.origin === 'manual' ? ' (anterior ao Bipaê)' : ''}. Parcelas em arquivo baixado:{' '}
+            {a.appropriatedInstallments}.
+            {a.writeOffType &&
+              a.writtenOffOn &&
+              ` Saída: ${DISPOSAL_LABELS[a.writeOffType]} em ${brDate(a.writtenOffOn)}.`}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {a.writeOffType ? (
+              <Button variant="secondary" disabled={busy} onClick={() => void undo(a.id)}>
+                Desfazer a saída
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="secondary"
+                  disabled={busy || a.appropriatedInstallments > 0}
+                  onClick={() =>
+                    setCredit({ id: a.id, freight: a.icmsFreightCents, difal: a.icmsDifalCents })
+                  }
+                >
+                  Frete e DIFAL
+                </Button>
+                <Button
+                  variant="secondary"
+                  disabled={busy}
+                  onClick={() => setClosing({ id: a.id, type: 'AT', on: '', accessKey: '' })}
+                >
+                  Dar baixa
+                </Button>
+              </>
+            )}
+          </div>
+          {credit?.id === a.id && (
+            <div className="flex flex-col gap-2">
+              <MoneyField
+                label="ICMS do frete (CT-e)"
+                value={credit.freight}
+                onChange={(freight) => setCredit({ ...credit, freight })}
+              />
+              <MoneyField
+                label="DIFAL pago na guia"
+                value={credit.difal}
+                onChange={(difal) => setCredit({ ...credit, difal })}
+              />
+              <div className="flex gap-2">
+                <Button loading={busy} onClick={() => void saveCredit()}>
+                  Salvar
+                </Button>
+                <Button variant="secondary" onClick={() => setCredit(null)}>
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          )}
+          {closing?.id === a.id && (
+            <div className="flex flex-col gap-2">
+              <SelectField
+                label="O que aconteceu com o bem"
+                value={closing.type}
+                onChange={(e) =>
+                  setClosing({ ...closing, type: e.target.value as CiapDisposalType })
+                }
+                options={(Object.keys(DISPOSAL_LABELS) as CiapDisposalType[]).map((value) => ({
+                  value,
+                  label: DISPOSAL_LABELS[value],
+                }))}
+              />
+              {closing.type === 'AT' ? (
+                <TextField
+                  label="Chave da NF-e de saída"
+                  hint="A NF-e autorizada da venda ou da transferência; a data da baixa é a da nota."
+                  value={closing.accessKey}
+                  onChange={(e) => setClosing({ ...closing, accessKey: e.target.value })}
+                />
+              ) : (
+                <TextField
+                  label="Data da saída"
+                  type="date"
+                  value={closing.on}
+                  onChange={(e) => setClosing({ ...closing, on: e.target.value })}
+                />
+              )}
+              <div className="flex gap-2">
+                <Button loading={busy} onClick={() => void writeOff()}>
+                  Registrar a saída
+                </Button>
+                <Button variant="secondary" onClick={() => setClosing(null)}>
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+      <h3 className="font-semibold">Bem de antes do Bipaê</h3>
+      <TextField
+        label="Descrição"
+        value={adding.description}
+        onChange={(e) => setAdding({ ...adding, description: e.target.value })}
+      />
+      <TextField
+        label="Data da entrada"
+        type="date"
+        value={adding.enteredOn}
+        onChange={(e) => setAdding({ ...adding, enteredOn: e.target.value })}
+      />
+      <MoneyField
+        label="ICMS da operação própria"
+        value={adding.own}
+        onChange={(own) => setAdding({ ...adding, own })}
+      />
+      <MoneyField
+        label="ICMS da substituição tributária"
+        value={adding.st}
+        onChange={(st) => setAdding({ ...adding, st })}
+      />
+      <MoneyField
+        label="ICMS do frete (CT-e)"
+        value={adding.freight}
+        onChange={(freight) => setAdding({ ...adding, freight })}
+      />
+      <MoneyField
+        label="DIFAL pago na guia"
+        value={adding.difal}
+        onChange={(difal) => setAdding({ ...adding, difal })}
+      />
+      {message && <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>}
+      <div>
+        <Button
+          loading={busy}
+          disabled={!adding.description.trim() || !adding.enteredOn}
+          onClick={() => void create()}
+        >
+          Anotar o bem
+        </Button>
+      </div>
     </Card>
   );
 }

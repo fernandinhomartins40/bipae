@@ -125,3 +125,84 @@ export interface EfdSummaryView {
   };
   warnings: string[];
 }
+
+/** Tipos de saída do bem do CIAP (G125): alienação ou transferência, perecimento e outras. */
+export const ciapDisposalType = z.enum(['AT', 'PE', 'OT']);
+export type CiapDisposalType = z.infer<typeof ciapDisposalType>;
+
+const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida (use AAAA-MM-DD)');
+const cents = z.number().int('Valor em centavos').min(0, 'O valor não pode ser negativo');
+
+/** Bem do CIAP como a tela mostra (F4-14.b.7). */
+export interface CiapAssetView {
+  id: string;
+  code: string;
+  description: string;
+  origin: 'purchase' | 'manual';
+  enteredOn: string;
+  icmsOwnCents: number;
+  icmsStCents: number;
+  icmsFreightCents: number;
+  icmsDifalCents: number;
+  installments: number;
+  appropriatedInstallments: number;
+  costCenter: '1' | '2';
+  usage: string | null;
+  writtenOffOn: string | null;
+  writeOffType: CiapDisposalType | null;
+  disposalAccessKey: string | null;
+}
+
+/**
+ * Bem que já existia antes do Bipaê (sem nota de compra no sistema): entra no CIAP como saldo
+ * inicial, com o ICMS que deu crédito na época. Bem que entrou neste mês ou depois vem pela compra.
+ */
+export const ciapAssetCreate = z.object({
+  companyId: z.string().uuid('Escolha a empresa'),
+  description: z.string().trim().min(2, 'Descreva o bem').max(100),
+  enteredOn: isoDay,
+  icmsOwnCents: cents.default(0),
+  icmsStCents: cents.default(0),
+  icmsFreightCents: cents.default(0),
+  icmsDifalCents: cents.default(0),
+  installments: z.number().int().min(1).max(999).default(48),
+  costCenter: z.enum(['1', '2']).default('1'),
+  usage: z.string().trim().max(60).nullish(),
+});
+export type CiapAssetCreate = z.infer<typeof ciapAssetCreate>;
+
+/** ICMS do frete (CT-e) e DIFAL pago na guia entram no crédito do bem; só antes da primeira parcela baixada. */
+export const ciapAssetUpdate = z.object({
+  icmsFreightCents: cents.optional(),
+  icmsDifalCents: cents.optional(),
+  costCenter: z.enum(['1', '2']).optional(),
+  usage: z.string().trim().max(60).nullish(),
+});
+export type CiapAssetUpdate = z.infer<typeof ciapAssetUpdate>;
+
+/**
+ * Saída do bem. Na alienação ou transferência (AT) vale a NF-e de saída autorizada da empresa
+ * (G130): a data é a da nota. Perecimento e outras saídas pedem a data.
+ */
+export const ciapAssetWriteOff = z
+  .object({
+    type: ciapDisposalType,
+    on: isoDay.optional(),
+    accessKey: z
+      .string()
+      .regex(/^\d{44}$/, 'A chave da NF-e tem 44 números')
+      .optional(),
+  })
+  .superRefine((v, ctx) => {
+    if (v.type === 'AT' && !v.accessKey) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['accessKey'],
+        message: 'Informe a NF-e de saída do bem',
+      });
+    }
+    if (v.type !== 'AT' && !v.on) {
+      ctx.addIssue({ code: 'custom', path: ['on'], message: 'Informe a data da saída' });
+    }
+  });
+export type CiapAssetWriteOff = z.infer<typeof ciapAssetWriteOff>;

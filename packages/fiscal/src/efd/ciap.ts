@@ -51,7 +51,7 @@ export const EFD_CIAP_MOVEMENTS = {
  * (AT) pede o G130 da nota de saída, que o Bipaê ainda não liga ao bem.
  */
 export const EFD_CIAP_DISPOSALS: Readonly<Record<string, { label: string; supported: boolean }>> = {
-  AT: { label: 'alienação ou transferência', supported: false },
+  AT: { label: 'alienação ou transferência', supported: true },
   PE: { label: 'perecimento, extravio ou deterioração', supported: true },
   OT: { label: 'outras saídas do imobilizado', supported: true },
 };
@@ -155,7 +155,7 @@ export interface EfdFixedAsset {
   costCenter?: string;
   usage?: string;
   /** Saída do bem antes do fim das parcelas. */
-  disposal?: { on: string; type: string };
+  disposal?: { on: string; type: string; accessKey?: string };
   /** A nota de compra e o item (G130 e G140, no mês da entrada). */
   source?: { accessKey: string; line: number };
 }
@@ -307,6 +307,11 @@ export function planCiap(
     if (disposedNow) {
       const rule = EFD_CIAP_DISPOSALS[disposal.type];
       if (!rule) throw new EfdError(`Tipo de saída do bem inválido: ${disposal.type}.`);
+      if (disposal.type === 'AT' && !disposal.accessKey) {
+        throw new EfdError(
+          `O bem ${asset.description} saiu por alienação ou transferência: informe a NF-e de saída (G130).`,
+        );
+      }
       if (!rule.supported) {
         throw new EfdError(
           `A saída do bem por ${rule.label} (${disposal.type}) ainda não é gerada pelo Bipaê.`,
