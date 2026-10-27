@@ -169,6 +169,12 @@
   font-size: 118.75%;
 }
 
+/*
+ * Tela baixa (notebook de 768 px, monitor deitado com zoom, janela que não ocupa a tela toda): o caixa
+ * aperta espaçamentos e cartões para o botão de receber nunca sumir (PIE, responsividade do PDV).
+ */
+@custom-variant baixa (@media (max-height: 820px));
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);

@@ -322,7 +322,11 @@ export function ModeSwitch({
             )}
           >
             <Icon className="size-4" aria-hidden />
-            {REGISTER_MODES[m]}
+            {/* Nome inteiro só em tela larga; o leitor de tela sempre ouve o nome inteiro. */}
+            <span className="max-2xl:sr-only">{REGISTER_MODES[m]}</span>
+            <span aria-hidden className="2xl:hidden">
+              {m === 'grid' ? 'Grade' : 'Destaque'}
+            </span>
           </button>
         );
       })}
@@ -380,7 +384,7 @@ export function ActionTile({
         'relative flex min-w-0 items-center rounded-2xl border border-transparent font-semibold transition hover:border-border hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none [[data-contrast=high]_&]:border-border',
         compact
           ? 'min-h-14 flex-col justify-center gap-0.5 px-1 py-1 text-center text-xs leading-tight'
-          : 'min-h-[4.5rem] flex-col items-start justify-between gap-1 px-3 py-2 text-left text-sm leading-tight',
+          : 'min-h-[4.5rem] flex-col items-start justify-between gap-1 px-3 py-2 text-left text-sm leading-tight baixa:min-h-14 baixa:gap-0.5 baixa:py-1.5',
         colors.tile,
       )}
     >
@@ -388,7 +392,7 @@ export function ActionTile({
         aria-hidden
         className={cx(
           'flex shrink-0 items-center justify-center rounded-full text-tile-icon',
-          compact ? 'size-7' : 'size-8',
+          compact ? 'size-7' : 'size-8 baixa:size-6',
           colors.circle,
         )}
       >
@@ -431,7 +435,9 @@ export function PayButton({
       data-testid="pdv-pay"
       className={cx(
         'flex shrink-0 items-center justify-center gap-3 rounded-2xl bg-accent font-extrabold text-accent-contrast shadow-md transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none',
-        big ? 'min-h-20 w-full px-6 text-3xl' : 'min-h-14 min-w-32 px-6 text-xl',
+        big
+          ? 'min-h-20 w-full px-6 text-3xl baixa:min-h-14 baixa:text-2xl'
+          : 'min-h-14 min-w-32 px-6 text-xl',
       )}
     >
       {label}

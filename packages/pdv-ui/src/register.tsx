@@ -1401,7 +1401,9 @@ export function Register({
         placeholder={big ? 'Bipe ou digite o produto (ex.: 3*arroz)' : 'Bipe ou digite o produto'}
         className={cx(
           'w-full rounded-2xl border-2 border-primary bg-surface shadow-sm',
-          big ? 'min-h-16 pl-14 pr-16 text-2xl' : 'min-h-12 pl-10 pr-3 text-lg',
+          big
+            ? 'min-h-16 pl-14 pr-16 text-2xl baixa:min-h-12 baixa:text-xl'
+            : 'min-h-12 pl-10 pr-3 text-lg',
         )}
       />
       {big && (
@@ -1740,12 +1742,12 @@ export function Register({
 
   const viewMode: RegisterMode = selfMode ? 'spotlight' : mode;
   const totalCard = (big: boolean) => (
-    <div className="shrink-0 rounded-3xl bg-primary p-5 text-primary-contrast shadow-md">
+    <div className="shrink-0 rounded-3xl bg-primary p-5 text-primary-contrast shadow-md baixa:p-3">
       <p className="text-sm font-bold uppercase tracking-widest opacity-90">Total</p>
       <p
         className={cx(
           'font-black leading-tight tabular-nums',
-          big ? 'text-6xl xl:text-7xl' : 'text-5xl',
+          big ? 'text-6xl xl:text-7xl baixa:text-5xl' : 'text-5xl baixa:text-4xl',
         )}
         aria-live="polite"
         data-testid="pdv-total"
@@ -1767,7 +1769,7 @@ export function Register({
   return (
     // Do notebook para cima (lg), tudo cabe numa tela só. Abaixo disso, o layout compacto (F8-14).
     <div className="flex h-screen flex-col bg-bg" data-layout="desktop" data-mode={viewMode}>
-      <header className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1 border-b border-border bg-surface px-4 py-2 [&_button]:whitespace-nowrap">
+      <header className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1 border-b border-border bg-surface px-4 py-2 baixa:py-1 [&_button]:whitespace-nowrap">
         <Logo className="text-2xl" />
         <span aria-hidden className="h-8 w-px bg-border" />
         <div className="leading-tight">
@@ -1802,7 +1804,7 @@ export function Register({
       </header>
       {hasNotices && <div className="flex shrink-0 flex-col gap-2 px-4 pt-3">{notices}</div>}
 
-      <div className="flex shrink-0 flex-col gap-2 px-4 pt-3">
+      <div className="flex shrink-0 flex-col gap-2 px-4 pt-3 baixa:pt-2">
         <div className="flex items-center gap-3">
           {scanField(true)}
           {/* No celular, a câmera faz de leitor (F8-05); cada leitura vira uma bipada. */}
@@ -1813,7 +1815,7 @@ export function Register({
         <SearchResults results={results} onPick={pick} />
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] gap-4 p-4">
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] gap-4 p-4 baixa:gap-3 baixa:p-3">
         {success ? (
           <div className="col-span-2 min-h-0 rounded-3xl border border-border bg-surface shadow-sm">
             {success}
@@ -1851,13 +1853,14 @@ export function Register({
                   lines={lineViews}
                   selected={selected}
                   onSelect={setSelected}
-                  className="min-h-24 flex-1 rounded-2xl border border-border"
+                  dense
+                  className="min-h-0 flex-1 rounded-2xl border border-border"
                 />
               )}
               <div
                 className={cx(
                   'flex min-h-0 flex-col gap-3 overflow-y-auto',
-                  viewMode === 'spotlight' ? 'flex-1' : 'max-h-48 shrink-0',
+                  viewMode === 'spotlight' ? 'flex-1' : 'max-h-48 shrink',
                 )}
               >
                 {saleDetails}

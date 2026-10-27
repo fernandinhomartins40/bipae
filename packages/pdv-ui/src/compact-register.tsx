@@ -295,11 +295,14 @@ export function SaleList({
   selected,
   onSelect,
   className,
+  dense = false,
 }: {
   lines: CompactLine[];
   selected: number | null;
   onSelect: (line: number | null) => void;
   className?: string;
+  /** Ao lado da grade de produtos: vazia, é só uma linha, para sobrar espaço para a grade. */
+  dense?: boolean;
 }) {
   // O item recém-bipado (selecionado) fica sempre à vista na lista.
   const listRef = useRef<HTMLDivElement>(null);
@@ -315,7 +318,14 @@ export function SaleList({
       ref={listRef}
     >
       {lines.length === 0 ? (
-        <EmptySale compact />
+        dense ? (
+          <p className="p-3 text-center text-sm text-muted">
+            <span className="font-bold text-text">Caixa livre</span>: toque num produto ou bipe o
+            código.
+          </p>
+        ) : (
+          <EmptySale compact />
+        )
       ) : (
         <ul>
           {lines.map((item) => (
