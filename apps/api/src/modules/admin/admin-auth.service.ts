@@ -51,6 +51,9 @@ export class AdminAuthService {
     totp: string | undefined,
     meta: { ip: string; userAgent?: string },
   ) {
+    // Travamento por e-mail além do limite por IP: quem erra 10 vezes em 15 minutos espera.
+    const throttleKey = `admin:${email}`;
+    this.auth.throttle.check(throttleKey);
     const found = await this.auth.findUserByEmail(email);
     const valid = await verify(
       found?.password_hash ?? (await this.auth.hashPassword('dummy-for-timing')),
@@ -65,6 +68,7 @@ export class AdminAuthService {
       : undefined;
 
     const fail = async (code: string, message = INVALID) => {
+      this.auth.throttle.fail(throttleKey);
       await asPlatform(this.db, (tx) =>
         this.audit.record(
           tx,
@@ -89,6 +93,7 @@ export class AdminAuthService {
       if (!verifyTotp(this.box.open(staff.totpSecret!), totp))
         return fail('totp_invalid', 'Código de verificação incorreto.');
     }
+    this.auth.throttle.reset(throttleKey);
     await asPlatform(this.db, (tx) =>
       this.audit.record(
         tx,

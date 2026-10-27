@@ -469,6 +469,16 @@ export class AuthService {
   }
 
   /**
+   * Travamento por chave para quem usa o mesmo controle fora do login comum (painel do Bipaê,
+   * F7-02.c). A chave leva um prefixo para não se misturar com o e-mail do login do cliente.
+   */
+  throttle = {
+    check: (key: string) => this.checkFailures(key),
+    fail: (key: string) => this.recordFailure(key),
+    reset: (key: string) => void this.failures.delete(key.toLowerCase()),
+  };
+
+  /**
    * Confere e-mail e senha de OUTRA pessoa no caixa (autorização de supervisor e troca de
    * operador), com o mesmo travamento por e-mail do login (F7-02.c, ASVS 2.2.1): sem isso, uma
    * sessão de caixa roubada servia para adivinhar a senha dos colegas.

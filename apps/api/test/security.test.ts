@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { sql } from 'drizzle-orm';
 import { loadConfig } from '../src/config';
+import { asPlatform } from '../src/db/client';
 import { TokenService } from '../src/common/tokens';
 import { isPrivateAddress } from '../src/modules/public-api/webhooks.service';
 import { api, createTestApp, signup, type TestApp } from './helpers';
@@ -265,5 +267,25 @@ describe('exportação em CSV (F7-02.c)', () => {
       rows: [['=1+1']],
     }).toString('utf8');
     expect(csv).toContain("\r\n'=1+1\r\n");
+  });
+});
+
+describe('painel do Bipaê (F7-02.c)', () => {
+  it('10 erros no login da equipe travam o e-mail, mesmo com a senha certa', async () => {
+    const pessoa = await signup(t.app, { plan: null });
+    await asPlatform(t.database.db, (tx) =>
+      tx.execute(
+        sql`insert into platform_admins (user_id, role) values (${pessoa.me.user.id}, 'owner')`,
+      ),
+    );
+    const anon = api(t.app, {});
+    const email = pessoa.me.user.email as string;
+    for (let i = 0; i < 10; i++) {
+      expect(
+        (await anon.post('/admin/auth/login', { email, password: 'errada-123' })).statusCode,
+      ).toBe(401);
+    }
+    const travado = await anon.post('/admin/auth/login', { email, password: 'senha-forte-123' });
+    expect(travado.statusCode).toBe(429);
   });
 });
