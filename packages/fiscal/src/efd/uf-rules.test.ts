@@ -11,8 +11,9 @@ describe('EFD por UF', () => {
         expect(r.to).toMatch(/^\d{4}-\d{2}-\d{2}$/);
         expect(r.from <= r.to, r.act).toBe(true);
       }
-      // Só site de governo (SEFAZ, legislação estadual).
-      expect(r.url).toMatch(/^https?:\/\/[a-z0-9.-]+\.gov\.br\//);
+      // Site de governo (SEFAZ, legislação estadual) ou o LegisWeb, que o dono aceitou como fonte
+      // de texto de norma (27/10/2026) quando o site da SEFAZ não abre.
+      expect(r.url).toMatch(/^https?:\/\/([a-z0-9.-]+\.gov\.br|www\.legisweb\.com\.br)\//);
       expect(r.note.length).toBeGreaterThan(20);
     }
   });
@@ -35,7 +36,6 @@ describe('EFD por UF', () => {
     expect(efdUfRule(EFD_SIMPLES_BY_UF, 'PB', '2019-12-31')).toBeNull();
     expect(efdUfRule(EFD_SIMPLES_BY_UF, 'AM', '2026-10-31')?.status).toBe('exempt');
     expect(efdUfRule(EFD_SIMPLES_BY_UF, 'MS', '2026-10-31')?.status).toBe('partial');
-    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'RJ', '2026-10-31')).toBeNull();
   });
 
   it('Simples: SP, BA, PE, PA, MG, ES, SC e MT dispensam, cada um desde a data da sua norma', () => {
@@ -54,7 +54,6 @@ describe('EFD por UF', () => {
     expect(efdUfRule(EFD_1601_BY_UF, 'MS', '2026-10-31')?.status).toBe('required');
     expect(efdUfRule(EFD_1601_BY_UF, 'SC', '2026-10-31')?.note).toMatch(/perfil A/);
     expect(efdUfRule(EFD_1601_BY_UF, 'BA', '2026-10-31')?.status).toBe('exempt');
-    expect(efdUfRule(EFD_1601_BY_UF, 'RJ', '2026-10-31')).toBeNull();
   });
 
   it('registro 1601: CE, PE, GO, DF e PB exigem; SP, PR, MG, PA e MT dispensam', () => {
@@ -147,11 +146,9 @@ describe('EFD por UF', () => {
       expect(rule?.note, uf).toMatch(/MEI/);
       expect(efdUfRule(EFD_SIMPLES_BY_UF, uf, '2015-12-31'), uf).toBeNull();
     }
-    // Segue sem fonte oficial lida: RJ.
-    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'RJ', '2026-10-31')).toBeNull();
   });
 
-  it('sexta rodada: PI obriga o Simples desde 2021 e o 1601 vale em PI, AC e TO; RJ segue em dúvida', () => {
+  it('sexta rodada: PI obriga o Simples desde 2021 , o 1601 vale em PI, AC e TO e o RJ tem Simples parcial e 1601 dispensado', () => {
     const pi = efdUfRule(EFD_SIMPLES_BY_UF, 'PI', '2026-10-31');
     expect(pi?.status).toBe('required');
     expect(pi?.note).toMatch(/MEI/);
@@ -161,8 +158,12 @@ describe('EFD por UF', () => {
     expect(efdUfRule(EFD_1601_BY_UF, 'TO', '2022-12-31')).toBeNull();
     expect(efdUfRule(EFD_1601_BY_UF, 'TO', '2023-01-01')?.status).toBe('required');
     expect(efdUfRule(EFD_1601_BY_UF, 'PI', '2026-10-31')?.status).toBe('required');
-    // RJ: a Resolução 625/2024 não lista o 1601 e a 551/2023 listava; sem leitura consolidada, não afirmo.
-    expect(efdUfRule(EFD_1601_BY_UF, 'RJ', '2026-10-31')).toBeNull();
+    // RJ: o texto republicado da Resolução 625/2024 lista o 1601 entre os dispensados (LegisWeb).
+    expect(efdUfRule(EFD_1601_BY_UF, 'RJ', '2023-07-18')).toBeNull();
+    expect(efdUfRule(EFD_1601_BY_UF, 'RJ', '2026-10-31')?.status).toBe('exempt');
+    // RJ obriga o Simples só acima do sublimite: regra parcial.
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'RJ', '2026-10-31')?.status).toBe('partial');
+    expect(efdUfRule(EFD_SIMPLES_BY_UF, 'RJ', '2014-02-09')).toBeNull();
   });
 
   it('quinta rodada: 1601 exigido no MA desde 2023 (Solução de Consulta 12/2024); AP segue em dúvida', () => {

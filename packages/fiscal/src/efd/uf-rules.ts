@@ -248,6 +248,18 @@ export const EFD_SIMPLES_BY_UF: readonly EfdUfRule[] = [
     url: 'https://www.sefaz.rr.gov.br/downloads/legislacao?file=02%20-%20LEGISLACAO%20ESTADUAL%2F03%20-%20REGULAMENTO%20DE%20ICMS%20-%20ATUALIZADO%20-%20DECRETO%204.335%202001%2FREGULAMENTO%20DE%20ICMS%20-%20DECRETO%204.335%20DE%2003.08.01%20-%20ATUALIZADO%20ATE%20OUTUBRO%202026.pdf',
   },
   {
+    // Sexta rodada (27/10/2026): Resolução SEFAZ 720/2014, Anexo VII da Parte II, art. 1º, § 1º, I
+    // (LegisWeb id=265403): a EFD é obrigatória aos contribuintes do Estado, menos "aos contribuintes
+    // optantes pelo regime do Simples Nacional, desde que não estejam impedidos de recolher o ICMS"
+    // por terem ultrapassado o sublimite estadual. Confirmado pelo Manual da EFD da SEFAZ-RJ (2019).
+    uf: 'RJ',
+    status: 'partial',
+    from: '2014-02-10',
+    note: 'No Rio de Janeiro, o Simples Nacional é dispensado da EFD enquanto estiver dentro do sublimite estadual; passou do sublimite e ficou impedido de recolher o ICMS pelo Simples, entrega.',
+    act: 'Resolução SEFAZ 720/2014, Anexo VII da Parte II, art. 1º, § 1º, I',
+    url: 'https://www.legisweb.com.br/legislacao/?id=265403',
+  },
+  {
     // Sexta rodada (26/10/2026): Guia Prático Estadual v1.6 (item 3.a.I) cita o art. 404 do
     // RICMS-PI: EFD obrigatória a todos os contribuintes de ICMS e/ou IPI, com dispensa só do MEI
     // (SIMEI, § 1º); o item 3.b diz que os optantes do Simples entregam desde janeiro de 2021.
@@ -493,6 +505,17 @@ export const EFD_1601_BY_UF: readonly EfdUfRule[] = [
     note: 'O Acre exige o 1601 na EFD desde 29/03/2023 (no lugar do registro 1600).',
     act: 'Portaria SEFAZ-AC 565/2016, art. 3º, VI (redação da Portaria 377/2023)',
     url: 'https://sefaz.ac.gov.br/2021/?p=11663',
+  },
+  {
+    // Resolução SEFAZ-RJ 551/2023 (DOE-RJ de 19/07/2023) e 625/2024 republicada (DOE-RJ de 12/03/2024):
+    // o § 2º do art. 6º-A do Anexo VII dispensa "os registros 0210, C191, C495, C591, 1601, 1700,
+    // 1900, 1960, 1970 e 1980" (texto literal lido no LegisWeb id=456517).
+    uf: 'RJ',
+    status: 'exempt',
+    from: '2023-07-19',
+    note: 'O Rio de Janeiro dispensa o registro 1601 de todos os contribuintes desde 19/07/2023.',
+    act: 'Resolução SEFAZ 551/2023 e Resolução SEFAZ 625/2024, que dão redação ao § 2º do art. 6º-A do Anexo VII da Parte II da Resolução 720/2014',
+    url: 'https://www.legisweb.com.br/legislacao/?id=456517',
   },
   {
     // Resposta à Consulta SEFAZ-TO 41/2023: a Portaria SEFAZ 93/2023 (altera a 733/2017) torna o
