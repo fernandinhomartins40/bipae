@@ -174,6 +174,8 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [ ] F3-21 · Desktop: assinatura A1 local e A3 pelo Conector — depende: F3-09
 - [x] F3-21.a · Certificado A1 instalado no aparelho (web e desktop): chave não exportável no armazenamento local, assinatura da nota sem internet e tela em Periféricos, com E2E nas duas cascas — depende: F3-09
 - [ ] F3-21.b · Certificado A3 (token ou cartão) pelo desktop e pelo Conector, via PKCS#11 — depende: F3-21.a · externo: E18
+  - [x] F3-21.b.1 · Protocolo do Conector para o A3 (`cert-info`, `cert-certificate`, `cert-sign`), `ConnectorClient` como `CertificatePort`, token A3 simulado e espelho no Rust respondendo "falta configurar" — depende: F3-21.a
+  - [ ] F3-21.b.2 · Backend PKCS#11 no Rust (biblioteca do fabricante, PIN pedido pelo próprio Conector, nunca guardado), liga `certificateA3` nas capacidades e mostra o A3 em Periféricos — depende: F3-21.b.1 · externo: E18
 - [ ] F3-22 · Validação com contador e teste de emissão com pessoas leigas — depende: F3-14 · externo: E3, E15
 - [x] F3-23 · Matriz de cobertura UF × regime: teste que falha se alguma das 27 UFs ou dos 5 regimes ficar sem regra ou sem "falta configurar" explícito, e mapa no painel — depende: F3-06.c
   - Pronto quando: as 135 combinações (27 UFs × MEI, Simples, Simples acima do sublimite, Presumido e Real) estão no teste.

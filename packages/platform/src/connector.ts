@@ -26,7 +26,15 @@ export const CONNECTOR_DEV_ORIGINS = [
   'http://localhost:4173',
 ];
 
-export const CONNECTOR_COMMANDS = ['print', 'drawer', 'scale', 'ports'] as const;
+export const CONNECTOR_COMMANDS = [
+  'print',
+  'drawer',
+  'scale',
+  'ports',
+  'cert-info',
+  'cert-certificate',
+  'cert-sign',
+] as const;
 export type ConnectorCommand = (typeof CONNECTOR_COMMANDS)[number];
 
 export type ConnectorRequest =
@@ -35,7 +43,16 @@ export type ConnectorRequest =
   | { id: number; type: 'print'; data: string /* base64 ESC/POS */ }
   | { id: number; type: 'drawer' }
   | { id: number; type: 'scale' }
-  | { id: number; type: 'ports' };
+  | { id: number; type: 'ports' }
+  /** Certificado A3 (token ou cartão) ligado ao computador do Conector (F3-21.b). */
+  | { id: number; type: 'cert-info' }
+  | { id: number; type: 'cert-certificate' }
+  | {
+      id: number;
+      type: 'cert-sign';
+      data: string /* base64 do que será assinado */;
+      algorithm: 'RSA-SHA1' | 'RSA-SHA256';
+    };
 
 export type ConnectorResponse =
   | { id: number; ok: true; result?: unknown }
@@ -53,7 +70,25 @@ export interface ConnectorDevices {
   /** Weight in grams; throws with a pt-BR message when the scale is not ready. */
   readScale(): Promise<number>;
   listPorts(): Promise<string[]>;
+  /**
+   * Certificado A3 do computador (PKCS#11). Ausente quando o token não está configurado.
+   * A chave nunca sai do token e o PIN é pedido pelo próprio Conector/sistema: ele não
+   * trafega pelo protocolo, nem é guardado ou registrado em log.
+   */
+  token?: A3Token;
 }
+
+export interface A3Token {
+  /** Dados do certificado do token, ou null quando não há token inserido. */
+  info(): Promise<{ subject: string; taxId: string; notAfter: string } | null>;
+  /** Certificado do titular em base64 (DER). */
+  certificate(): Promise<string | null>;
+  /** Assina dentro do token e devolve a assinatura em base64. */
+  sign(data: Uint8Array, algorithm: 'RSA-SHA1' | 'RSA-SHA256'): Promise<string>;
+}
+
+export const A3_NOT_CONFIGURED =
+  'O certificado A3 ainda não foi configurado no Bipaê Conector. Falta configurar o leitor ou o token.';
 
 export function isAllowedOrigin(origin: string | undefined, dev: boolean): boolean {
   if (!origin) return false;
@@ -95,6 +130,11 @@ export class ConnectorCore {
 
   revoke(token: string) {
     this.tokens.delete(token);
+  }
+
+  private token(): A3Token {
+    if (!this.devices.token) throw new Error(A3_NOT_CONFIGURED);
+    return this.devices.token;
   }
 
   /** Handles one request; `session.authed` is per WebSocket connection. */
@@ -161,6 +201,24 @@ export class ConnectorCore {
           return { id, ok: true, result: { grams: await this.devices.readScale() } };
         case 'ports':
           return { id, ok: true, result: { ports: await this.devices.listPorts() } };
+        case 'cert-info': {
+          const info = await this.token().info();
+          return { id, ok: true, result: { info } };
+        }
+        case 'cert-certificate':
+          return { id, ok: true, result: { certificate: await this.token().certificate() } };
+        case 'cert-sign': {
+          if (request.algorithm !== 'RSA-SHA1' && request.algorithm !== 'RSA-SHA256') {
+            return {
+              id,
+              ok: false,
+              code: 'device',
+              error: 'Algoritmo de assinatura não permitido.',
+            };
+          }
+          const signature = await this.token().sign(fromBase64(request.data), request.algorithm);
+          return { id, ok: true, result: { signature } };
+        }
         default:
           return { id, ok: false, code: 'unknown_command', error: 'Comando não permitido.' };
       }

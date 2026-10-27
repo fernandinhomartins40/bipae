@@ -3,7 +3,10 @@
 //! - only official origins (dev origins in debug builds) pass the handshake;
 //! - a browser pairs once with the 6-digit code shown in the app (5 wrong tries lock it);
 //! - tokens are stored in the app data folder and can be revoked;
-//! - only print / drawer / scale / ports exist.
+//! - only print / drawer / scale / ports and the A3 certificate commands (cert-*) exist.
+//! - A3 (F3-21.b): the key never leaves the token and the PIN never travels in the protocol.
+//!   The PKCS#11 backend depends on a physical token (E18); until then the cert-* commands
+//!   answer "falta configurar", exactly like `ConnectorCore` without `devices.token`.
 
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -134,9 +137,24 @@ impl ConnectorState {
                     Err(error) => fail("device", &error),
                 }
             }
+            "cert-info" | "cert-certificate" => fail("device", A3_NOT_CONFIGURED),
+            "cert-sign" => {
+                let algorithm = request.get("algorithm").and_then(Value::as_str).unwrap_or("");
+                if !sign_algorithm_allowed(algorithm) {
+                    return fail("device", "Algoritmo de assinatura não permitido.");
+                }
+                fail("device", A3_NOT_CONFIGURED)
+            }
             _ => fail("unknown_command", "Comando não permitido."),
         }
     }
+}
+
+/// Same message as `A3_NOT_CONFIGURED` in `@bipae/platform`.
+const A3_NOT_CONFIGURED: &str = "O certificado A3 ainda não foi configurado no Bipaê Conector. Falta configurar o leitor ou o token.";
+
+pub fn sign_algorithm_allowed(algorithm: &str) -> bool {
+    matches!(algorithm, "RSA-SHA1" | "RSA-SHA256")
 }
 
 /// Starts the server once per app run. If the port is taken (another Bipaê is the Conector),
@@ -258,6 +276,14 @@ mod tests {
         assert!(!origin_allowed(Some("http://localhost:5173"), false));
         assert!(origin_allowed(Some("http://localhost:5173"), true));
         assert!(!origin_allowed(None, true));
+    }
+
+    #[test]
+    fn only_the_two_fiscal_signature_algorithms_are_allowed() {
+        assert!(sign_algorithm_allowed("RSA-SHA1"));
+        assert!(sign_algorithm_allowed("RSA-SHA256"));
+        assert!(!sign_algorithm_allowed("MD5"));
+        assert!(!sign_algorithm_allowed(""));
     }
 
     #[test]

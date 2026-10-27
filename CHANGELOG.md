@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-21.b.1 Certificado A3 pelo Conector, parte sem o token] — 27/10/2026
+
+### Adicionado
+- **Protocolo do Bipaê Conector para o A3** (`cert-info`, `cert-certificate`, `cert-sign`): a assinatura é feita dentro do token, a chave nunca sai dele e o PIN não trafega pelo protocolo nem é guardado ou registrado. Só `RSA-SHA1` e `RSA-SHA256` são aceitos e a assinatura espera até 60 s (tempo de digitar o PIN).
+- `ConnectorClient` passou a ser também um `CertificatePort` (A3), e há um **token A3 simulado** (`SimulatedA3Token`) para o Conector simulado e para os testes.
+- O Conector em Rust espelha os comandos e responde "falta configurar" enquanto não há o backend PKCS#11.
+
+### Falta configurar
+- F3-21.b.2: backend PKCS#11 no Rust e liberação de `certificateA3` na interface dependem do token físico (E18). Até lá a tela segue mostrando "chega em breve".
+
 ## [F4-14.b.4 EFD ICMS/IPI por UF, quinta rodada] — 24/10/2026
 
 ### Adicionado

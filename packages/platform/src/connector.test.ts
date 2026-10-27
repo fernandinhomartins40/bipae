@@ -11,7 +11,7 @@ import {
   type ConnectorRequest,
   type ConnectorSocket,
 } from './index';
-import { MemoryPreferences } from './simulators';
+import { MemoryPreferences, SimulatedA3Token } from './simulators';
 
 /** Simulated hardware behind the Conector (Adendo 01 §8: printer and scale simulated). */
 function simulatedDevices() {
@@ -149,6 +149,50 @@ describe('Bipaê Conector', () => {
     await expect(client.open()).rejects.toMatchObject({ code: 'timeout' });
     await client.unpair();
     expect(await client.isPaired()).toBe(false);
+  });
+
+  it('A3 pelo Conector: dados, certificado e assinatura feita dentro do token simulado', async () => {
+    const token = new SimulatedA3Token();
+    const { devices } = simulatedDevices();
+    const core = new ConnectorCore('123456', { ...devices, token });
+    const client = new ConnectorClient(new MemoryPreferences(), socketTo(core));
+    await client.pair('123456', 'Chrome');
+
+    expect(await client.info()).toMatchObject({ kind: 'A3', taxId: '00000000000191' });
+    expect(await client.certificate()).toBeTruthy();
+    const data = new TextEncoder().encode('<infNFe/>');
+    const signature = await client.sign(data, 'RSA-SHA256');
+    const { publicKey } = await token.keyPair('SHA-256');
+    const ok = await crypto.subtle.verify(
+      'RSASSA-PKCS1-v1_5',
+      publicKey,
+      fromBase64(signature) as BufferSource,
+      data,
+    );
+    expect(ok).toBe(true);
+    expect(token.signed).toBe(1);
+
+    token.inserted = false;
+    expect(await client.info()).toBeNull();
+    await expect(client.sign(data, 'RSA-SHA1')).rejects.toThrow('Insira o token');
+  });
+
+  it('A3 sem token configurado diz "falta configurar" e exige pareamento', async () => {
+    const { devices } = simulatedDevices();
+    const core = new ConnectorCore('1', devices);
+    const semPareamento = await core.handle(
+      { authed: false },
+      { id: 1, type: 'cert-sign', data: 'AA==', algorithm: 'RSA-SHA256' },
+    );
+    expect(semPareamento).toMatchObject({ ok: false, code: 'unpaired' });
+    const client = new ConnectorClient(new MemoryPreferences(), socketTo(core));
+    await client.pair('1', 'Chrome');
+    await expect(client.info()).rejects.toThrow('Falta configurar');
+    const ruim = await core.handle(
+      { authed: true },
+      { id: 2, type: 'cert-sign', data: 'AA==', algorithm: 'MD5' as never },
+    );
+    expect(ruim).toMatchObject({ ok: false, code: 'device' });
   });
 
   it('helpers', () => {

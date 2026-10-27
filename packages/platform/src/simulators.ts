@@ -1,4 +1,5 @@
 import { baselineCapabilities } from './capabilities';
+import { toBase64, type A3Token } from './connector';
 import {
   SaleInProgressError,
   type BarcodeCameraPort,
@@ -31,6 +32,65 @@ export class MemoryPreferences implements PreferencesPort {
   }
   async remove(key: string) {
     this.values.delete(key);
+  }
+}
+
+/**
+ * Token A3 de teste (F3-21.b): chave RSA gerada na memória, que assina de verdade mas nunca
+ * sai daqui, como num token. Não vale como certificado: serve ao Conector simulado e aos testes.
+ */
+export class SimulatedA3Token implements A3Token {
+  inserted = true;
+  /** Quantas assinaturas foram feitas (a chave de verdade nunca é exposta). */
+  signed = 0;
+
+  constructor(
+    private readonly holder = {
+      subject: 'EMPRESA SIMULADA LTDA:00000000000191',
+      taxId: '00000000000191',
+    },
+    private readonly notAfter = '2099-12-31T23:59:59Z',
+  ) {}
+
+  private pair(hash: 'SHA-1' | 'SHA-256') {
+    // uma chave por hash: no WebCrypto o hash faz parte da chave
+    return crypto.subtle.generateKey(
+      {
+        name: 'RSASSA-PKCS1-v1_5',
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash,
+      },
+      false,
+      ['sign', 'verify'],
+    );
+  }
+  private readonly byHash = new Map<string, Promise<CryptoKeyPair>>();
+  keyPair(hash: 'SHA-1' | 'SHA-256') {
+    let pair = this.byHash.get(hash);
+    if (!pair) {
+      pair = this.pair(hash) as Promise<CryptoKeyPair>;
+      this.byHash.set(hash, pair);
+    }
+    return pair;
+  }
+
+  async info() {
+    return this.inserted ? { ...this.holder, notAfter: this.notAfter } : null;
+  }
+  async certificate() {
+    return this.inserted ? toBase64(new TextEncoder().encode('certificado-simulado')) : null;
+  }
+  async sign(data: Uint8Array, algorithm: 'RSA-SHA1' | 'RSA-SHA256') {
+    if (!this.inserted) throw new Error('Insira o token ou o cartão A3 no leitor.');
+    const { privateKey } = await this.keyPair(algorithm === 'RSA-SHA1' ? 'SHA-1' : 'SHA-256');
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      privateKey,
+      data as BufferSource,
+    );
+    this.signed++;
+    return toBase64(new Uint8Array(signature));
   }
 }
 

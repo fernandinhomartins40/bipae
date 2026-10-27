@@ -4,7 +4,15 @@ import {
   type ConnectorRequest,
   type ConnectorResponse,
 } from './connector';
-import type { CashDrawerPort, PreferencesPort, PrinterPort, PrintJob, ScalePort } from './ports';
+import type {
+  CashDrawerPort,
+  CertificateInfo,
+  CertificatePort,
+  PreferencesPort,
+  PrinterPort,
+  PrintJob,
+  ScalePort,
+} from './ports';
 
 /** Minimal socket surface (browser WebSocket or a test double). */
 export interface ConnectorSocket {
@@ -45,7 +53,7 @@ export class ConnectorError extends Error {
  * Talks to the Bipaê Conector from the web register. Reconnects on demand and
  * authenticates with the stored pairing token.
  */
-export class ConnectorClient implements PrinterPort, CashDrawerPort, ScalePort {
+export class ConnectorClient implements PrinterPort, CashDrawerPort, ScalePort, CertificatePort {
   private socket: ConnectorSocket | null = null;
   private nextId = 0;
   private readonly pending = new Map<number, (r: ConnectorResponse) => void>();
@@ -90,6 +98,30 @@ export class ConnectorClient implements PrinterPort, CashDrawerPort, ScalePort {
     return ((await this.call({ type: 'ports' })) as { ports: string[] }).ports;
   }
 
+  /** Certificado A3 do computador do Conector (F3-21.b); null quando não há token inserido. */
+  async info(): Promise<CertificateInfo | null> {
+    const { info } = (await this.call({ type: 'cert-info' })) as {
+      info: Omit<CertificateInfo, 'kind'> | null;
+    };
+    return info ? { ...info, kind: 'A3' } : null;
+  }
+
+  async certificate(): Promise<string | null> {
+    const { certificate } = (await this.call({ type: 'cert-certificate' })) as {
+      certificate: string | null;
+    };
+    return certificate;
+  }
+
+  async sign(data: Uint8Array, algorithm: 'RSA-SHA1' | 'RSA-SHA256'): Promise<string> {
+    const { signature } = (await this.call({
+      type: 'cert-sign',
+      data: toBase64(data),
+      algorithm,
+    })) as { signature: string };
+    return signature;
+  }
+
   private async ensureSocket(authenticate: boolean): Promise<ConnectorSocket> {
     if (this.socket) return this.socket;
     const socket = await this.connect(this.url);
@@ -127,10 +159,13 @@ export class ConnectorClient implements PrinterPort, CashDrawerPort, ScalePort {
     const socket = this.socket!;
     const id = ++this.nextId;
     return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
-        this.pending.delete(id);
-        reject(new ConnectorError('O Bipaê Conector não respondeu.', 'timeout'));
-      }, this.timeoutMs);
+      const timer = setTimeout(
+        () => {
+          this.pending.delete(id);
+          reject(new ConnectorError('O Bipaê Conector não respondeu.', 'timeout'));
+        },
+        request.type === 'cert-sign' ? Math.max(this.timeoutMs, 60_000) : this.timeoutMs,
+      ); // dá tempo de digitar o PIN
       this.pending.set(id, (response) => {
         clearTimeout(timer);
         if (response.ok) resolve(response.result);
