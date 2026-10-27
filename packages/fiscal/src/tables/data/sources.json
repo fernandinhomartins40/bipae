@@ -1260,5 +1260,32 @@
   "publishedAt": "2025-05-01",
   "downloadedAt": "2026-10-21",
   "sha256": "e8ea61282ae502089539020ed2066ae5ad036d163e0b96e8f6358e6df5d4e6d7"
+ },
+ "legisWebCe31270": {
+  "file": "LegisWeb_CE_Decreto_31270-2013_construcao_ajuste_proporcional_2026-10-27.html.gz",
+  "title": "Decreto 31.270/2013 (CE), material de construção, texto com as alterações até o Decreto 35.807 (art. 1º, §§ 5º a 7º; arts. 2º-A e 2º-B; Anexo III)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=257221",
+  "publishedAt": "2023-12-29",
+  "downloadedAt": "2026-10-27",
+  "sha256": "b3f75da1224504d545cd6ea005ccabeba04f80f0dac8d22c0241f70d159edfbf"
+ },
+ "legisWebCe32900": {
+  "file": "LegisWeb_CE_Decreto_32900-2018_moveis_ajuste_proporcional_2026-10-27.html.gz",
+  "title": "Decreto 32.900/2018 (CE), móveis, eletro e ar-condicionado, texto com as alterações até o Decreto 36.812 (art. 2º, § 5º; art. 3º; art. 4º; Anexo III)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=373109",
+  "publishedAt": "2025-08-29",
+  "downloadedAt": "2026-10-27",
+  "sha256": "ef542413fa2351ef1eda5b7f6dfb9425cf1fcd66cc0bd67c5729736c7657831e"
+ },
+ "legisWebCe34256": {
+  "file": "LegisWeb_CE_Decreto_34256-2021_vestuario_2026-10-27.html.gz",
+  "title": "Decreto 34.256/2021 (CE), vestuário e confecções, texto com as alterações até o Decreto 35.958 (arts. 3º a 5º; Anexo III)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=421661",
+  "publishedAt": "2024-04-17",
+  "downloadedAt": "2026-10-27",
+  "sha256": "1c42fd6e772a632cc43a5122530e40110cff55b4e89f9015ea21f4d391dca288"
  }
 }

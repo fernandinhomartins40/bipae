@@ -182,7 +182,7 @@
 - **Monitor semanal da lista de informática do Ceará:** lê os cadernos do Diário Oficial dos últimos 8 dias (endereço fixo pela data, sem captcha) e avisa quando um ato cita a IN SEFAZ 148/2024. A primeira passada, de 29/10/2025 a 18/10/2026, achou a **IN SEFAZ 20/2026** (DOE de 12/02/2026): os alto-falantes 8518.21.00 e 8518.22.00 passam a valer até 180 W. A lista ganhou essa versão.
 
 ### Falta configurar
-- Ceará (D-042, F3-26.d.CE.g): "ajuste proporcional" da indústria de construção e de móveis fora de 20%, carga do RET do vestuário, entrada interna do RET dos farmacêuticos, canal da venda a empresa no RET dos farmacêuticos e a carga líquida nos campos da ST do XML. Não há parecer, nota ou manual da SEFAZ-CE que explique.
+- Ceará (D-042, F3-26.d.CE.g): "ajuste proporcional" da indústria de construção e de móveis fora de 20%, carga do RET do vestuário, entrada interna do RET dos farmacêuticos, canal da venda a empresa no RET dos farmacêuticos e a carga líquida nos campos da ST do XML. Não há parecer, nota ou manual da SEFAZ-CE que explique. Atualização de 27/10/2026: os Decretos 31.270, 32.900 e 34.256 foram lidos por inteiro no LegisWeb (fonte aprovada) e guardados; o Anexo III confere, mas o texto não traz a conta do ajuste proporcional nem o limite da Lei 13.025/2000, e o vestuário não tem RET com carga. Nada foi suposto.
 - Maranhão (D-045): a lista de segmentos continua desligada. Carnes por carga fixa (Anexo 4.4) cabem no modelo da carga líquida, mas o anexo não tem NCM nem CEST e depende de credenciamento: nova tarefa F3-26.d.MA.d.
 
 ## [F4-14.b.4 EFD ICMS/IPI por UF, quarta rodada] — 24/10/2026
