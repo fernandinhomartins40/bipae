@@ -1,11 +1,11 @@
 import { Inject, Injectable, Logger, type OnModuleInit } from '@nestjs/common';
-import { and, eq, inArray, lt } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, lt, or, isNull } from 'drizzle-orm';
 import type { Config } from '../../config';
 import { CONFIG, DB, QUEUE } from '../../common/di';
 import type { JobQueue } from '../../common/queue';
 import { asPlatform, type Db } from '../../db/client';
 import { boletoCharges, channelActions, channelIntegrations } from '../../db/schema-channels';
-import { ChannelsService } from '../channels/channels.service';
+import { CATALOG_SYNC_EVERY_MS, ChannelsService } from '../channels/channels.service';
 import { BoletoService } from '../payments/boleto.service';
 
 export const CHANNELS_SWEEP = 'canais.varrer';
@@ -60,6 +60,24 @@ export class ChannelsSweep implements OnModuleInit {
           ),
         )
         .limit(500),
+      catalogs: await tx
+        .select({ id: channelIntegrations.id, tenantId: channelIntegrations.tenantId })
+        .from(channelIntegrations)
+        .where(
+          and(
+            eq(channelIntegrations.active, true),
+            eq(channelIntegrations.provider, 'generic'),
+            isNotNull(channelIntegrations.outboundUrl),
+            or(
+              isNull(channelIntegrations.lastCatalogSyncAt),
+              lt(
+                channelIntegrations.lastCatalogSyncAt,
+                new Date(now.getTime() - CATALOG_SYNC_EVERY_MS),
+              ),
+            ),
+          ),
+        )
+        .limit(200),
       actions: await tx
         .selectDistinct({ tenantId: channelActions.tenantId })
         .from(channelActions)
@@ -74,6 +92,8 @@ export class ChannelsSweep implements OnModuleInit {
     for (const i of work.integrations) {
       await this.channels.poll(i.tenantId, i.id).catch((e: Error) => this.logger.warn(e.message));
     }
+    // Cardápio e estoque: a fila repete se o conector falhar; o que não mudou nem é reenviado.
+    for (const c of work.catalogs) await this.channels.scheduleCatalogSync(c.tenantId, c.id);
     for (const a of work.actions) {
       await this.channels
         .requeueDue(a.tenantId, now)
@@ -84,6 +104,7 @@ export class ChannelsSweep implements OnModuleInit {
     }
     return {
       integrations: work.integrations.length,
+      catalogs: work.catalogs.length,
       actions: work.actions.length,
       boletos: work.boletos.length,
     };

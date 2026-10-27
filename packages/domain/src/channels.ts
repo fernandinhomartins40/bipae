@@ -6,7 +6,14 @@ import { z } from 'zod';
  * abaixo, sempre com dinheiro em centavos inteiros.
  */
 
-export const CHANNEL_PROVIDERS = ['ifood', 'generic', 'simulator'] as const;
+export const CHANNEL_PROVIDERS = [
+  'ifood',
+  'generic',
+  'simulator',
+  'mercadolivre',
+  'shopee',
+  'amazon',
+] as const;
 export type ChannelProvider = (typeof CHANNEL_PROVIDERS)[number];
 
 export const CHANNEL_PROVIDER_INFO: Record<
@@ -24,6 +31,24 @@ export const CHANNEL_PROVIDER_INFO: Record<
     description:
       'Qualquer marketplace ou loja virtual: um conector manda o pedido ao Bipaê, assinado com o segredo da integração.',
     needsCredentials: false,
+  },
+  mercadolivre: {
+    name: 'Mercado Livre',
+    description:
+      'Estoque e preço no Mercado Livre. Falta confirmar a API oficial e liberar o acesso de integrador: fica como "falta configurar" até lá.',
+    needsCredentials: true,
+  },
+  shopee: {
+    name: 'Shopee',
+    description:
+      'Estoque e preço na Shopee. Falta confirmar a API oficial e liberar o acesso de parceiro: fica como "falta configurar" até lá.',
+    needsCredentials: true,
+  },
+  amazon: {
+    name: 'Amazon',
+    description:
+      'Estoque e preço na Amazon. Falta confirmar a API oficial e liberar o acesso de vendedor: fica como "falta configurar" até lá.',
+    needsCredentials: true,
   },
   simulator: {
     name: 'Simulador (teste)',
@@ -176,6 +201,17 @@ export const channelIntegrationInput = z.object({
   merchantId: z.string().trim().max(80).optional(),
   clientId: z.string().trim().max(200).optional(),
   clientSecret: z.string().trim().max(500).optional(),
+  /**
+   * Endereço (https) para onde o Bipaê manda cardápio e estoque: o conector genérico recebe aqui,
+   * e nos marketplaces é a base da API. Nenhum endereço de marketplace é suposto no código.
+   */
+  outboundUrl: z
+    .string()
+    .trim()
+    .url('Endereço inválido')
+    .startsWith('https://', 'Use um endereço https')
+    .max(500)
+    .optional(),
   autoAccept: z.boolean().default(false),
   /** Dias até o repasse do canal cair, para a conta a receber (padrão do contrato, não da lei). */
   settlementDays: z.number().int().min(0).max(120).default(30),
@@ -191,6 +227,7 @@ export interface ChannelIntegrationView {
   name: string;
   storeId: string;
   merchantId: string | null;
+  outboundUrl: string | null;
   autoAccept: boolean;
   settlementDays: number;
   commissionBps: number;

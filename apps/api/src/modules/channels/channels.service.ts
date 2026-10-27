@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { Inject, Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import {
   availableChannelActions,
@@ -36,6 +36,7 @@ import {
 } from '../../db/schema';
 import {
   channelActions,
+  channelCatalogState,
   channelEvents,
   channelIntegrations,
   channelOrders,
@@ -51,9 +52,14 @@ import {
   type OrderChannel,
 } from './channel.port';
 import { IFOOD_DEFAULT_URL, IfoodChannel } from './ifood.channel';
+import { isMarketplace, marketplaceMissing } from './marketplace.channel';
 import { GenericChannel, SimulatorHub } from './simulator.channel';
 
 export const CHANNEL_SEND = 'canais.enviar';
+/** Envio de cardápio e estoque (fila com nova tentativa; só vai o que mudou). */
+export const CHANNEL_CATALOG = 'canais.cardapio';
+/** Intervalo mínimo entre envios automáticos de cardápio e estoque de uma integração. */
+export const CATALOG_SYNC_EVERY_MS = 10 * 60_000;
 /** Espera antes de cada nova tentativa de ação no canal; passou disso, desiste e avisa na tela. */
 export const CHANNEL_RETRY_MS = [30_000, 2 * 60_000, 10 * 60_000, 30 * 60_000, 2 * 3_600_000];
 /** Quanto o relógio do conector pode divergir do nosso na assinatura (contra reenvio antigo). */
@@ -113,6 +119,9 @@ export class ChannelsService implements OnModuleInit {
     this.queue.process(CHANNEL_SEND, (data) =>
       this.sendAction(data as { tenantId: string; actionId: string }),
     );
+    this.queue.process(CHANNEL_CATALOG, (data) =>
+      this.runCatalogJob(data as { tenantId: string; integrationId: string }),
+    );
   }
 
   private get production() {
@@ -138,6 +147,12 @@ export class ChannelsService implements OnModuleInit {
     if (row.provider === 'simulator' && this.production) {
       return 'O simulador só existe em teste, não em produção.';
     }
+    if (isMarketplace(row.provider)) {
+      return marketplaceMissing(row.provider, {
+        outboundUrl: row.outboundUrl,
+        hasCredentials: !!row.credentialsSealed,
+      });
+    }
     if (row.provider === 'ifood') {
       if (!row.merchantId) return 'Falta o código da loja no iFood.';
       if (!this.creds(row)) {
@@ -150,6 +165,7 @@ export class ChannelsService implements OnModuleInit {
   channelFor(row: IntegrationRow): OrderChannel {
     const reason = this.missing(row);
     if (reason) throw new ChannelNotReadyError(reason);
+    if (isMarketplace(row.provider)) throw new ChannelNotReadyError('Marketplace não configurado.');
     switch (row.provider) {
       case 'ifood': {
         const c = this.creds(row)!;
@@ -162,7 +178,14 @@ export class ChannelsService implements OnModuleInit {
       case 'simulator':
         return this.hub.channel(row.id);
       case 'generic':
-        return new GenericChannel();
+        return new GenericChannel({
+          url: row.outboundUrl,
+          secret: row.inboundSecretSealed ? this.box.open(row.inboundSecretSealed) : null,
+          transport: this.transport,
+          sign: signInbound,
+        });
+      default:
+        throw new ChannelNotReadyError('Canal não configurado.');
     }
   }
 
@@ -190,6 +213,7 @@ export class ChannelsService implements OnModuleInit {
       name: row.name,
       storeId: row.storeId,
       merchantId: row.merchantId,
+      outboundUrl: row.outboundUrl,
       autoAccept: row.autoAccept,
       settlementDays: row.settlementDays,
       commissionBps: row.commissionBps,
@@ -240,6 +264,7 @@ export class ChannelsService implements OnModuleInit {
           name: input.name,
           storeId: input.storeId,
           merchantId: input.merchantId ?? null,
+          outboundUrl: input.outboundUrl ?? null,
           credentialsSealed:
             input.clientId && input.clientSecret
               ? this.box.seal(
@@ -285,6 +310,7 @@ export class ChannelsService implements OnModuleInit {
           name: input.name,
           storeId: input.storeId,
           merchantId: input.merchantId ?? cur.merchantId,
+          outboundUrl: input.outboundUrl ?? cur.outboundUrl,
           // Credencial em branco mantém a guardada; o valor guardado nunca volta para a tela.
           ...(input.clientId &&
             input.clientSecret && {
@@ -310,6 +336,7 @@ export class ChannelsService implements OnModuleInit {
           active: input.active,
           autoAccept: input.autoAccept,
           commissionBps: input.commissionBps,
+          outboundUrlChanged: input.outboundUrl !== undefined,
           credentialsChanged: !!(input.clientId && input.clientSecret),
         },
       });
@@ -1070,8 +1097,24 @@ export class ChannelsService implements OnModuleInit {
 
   // ------------------------------------------------------------------ cardápio e estoque
 
-  async syncCatalog(ctx: RequestContext, integrationId: string): Promise<ChannelCatalogSyncResult> {
-    const { integ, items } = await withTenant(this.db, ctx, async (tx) => {
+  /** Resumo do que o canal precisa saber de um item: igual ao último enviado = nada a mandar. */
+  private catalogHash(i: AvailabilityItem): string {
+    return createHash('sha256')
+      .update(`${i.sku}|${i.priceCents}|${i.available ? 1 : 0}|${i.stockUnits}`)
+      .digest('hex');
+  }
+
+  /**
+   * Manda ao canal só o que mudou desde o último envio (idempotente: repetir não reenvia). O
+   * resumo de cada item só é gravado depois que o canal aceitou o lote inteiro; se falhar,
+   * a próxima tentativa manda tudo de novo. `force` reenvia tudo.
+   */
+  async syncCatalog(
+    ctx: RequestContext,
+    integrationId: string,
+    opts: { force?: boolean; now?: Date } = {},
+  ): Promise<ChannelCatalogSyncResult> {
+    const { integ, items, state } = await withTenant(this.db, ctx, async (tx) => {
       const integ = await this.require(tx, ctx, integrationId);
       const rows = await tx
         .select({
@@ -1092,25 +1135,85 @@ export class ChannelsService implements OnModuleInit {
           stockUnits: units,
         };
       });
-      return { integ, items };
+      const known = await tx
+        .select({ sku: channelCatalogState.sku, hash: channelCatalogState.contentHash })
+        .from(channelCatalogState)
+        .where(eq(channelCatalogState.integrationId, integrationId));
+      return { integ, items, state: new Map(known.map((k) => [k.sku, k.hash])) };
     });
+    const changed = opts.force
+      ? items
+      : items.filter((i) => state.get(i.sku) !== this.catalogHash(i));
+    const skipped = items.length - changed.length;
     try {
-      await this.channelFor(integ).pushAvailability(items);
-      await withTenant(this.db, ctx, (tx) =>
-        this.audit.record(tx, ctx, {
-          action: 'channel.catalog_synced',
-          entity: 'channel_integration',
-          entityId: integrationId,
-          data: { items: items.length },
-        }),
-      );
-      return { sent: items.length, skipped: 0, unavailable: null };
+      // Confere a configuração mesmo sem nada a enviar: "falta configurar" tem de aparecer.
+      const channel = this.channelFor(integ);
+      channel.assertCatalogReady?.();
+      if (changed.length > 0) await channel.pushAvailability(changed);
+      const now = opts.now ?? new Date();
+      await withTenant(this.db, ctx, async (tx) => {
+        for (const i of changed) {
+          await tx
+            .insert(channelCatalogState)
+            .values({
+              id: uuidv7(),
+              tenantId: ctx.tenantId,
+              integrationId,
+              sku: i.sku,
+              contentHash: this.catalogHash(i),
+              pushedAt: now,
+            })
+            .onConflictDoUpdate({
+              target: [
+                channelCatalogState.tenantId,
+                channelCatalogState.integrationId,
+                channelCatalogState.sku,
+              ],
+              set: { contentHash: this.catalogHash(i), pushedAt: now },
+            });
+        }
+        await tx
+          .update(channelIntegrations)
+          .set({ lastCatalogSyncAt: now })
+          .where(eq(channelIntegrations.id, integrationId));
+        if (changed.length > 0) {
+          await this.audit.record(tx, ctx, {
+            action: 'channel.catalog_synced',
+            entity: 'channel_integration',
+            entityId: integrationId,
+            data: { sent: changed.length, skipped },
+          });
+        }
+      });
+      return { sent: changed.length, skipped, unavailable: null };
     } catch (e) {
       if (e instanceof ChannelNotReadyError) {
         return { sent: 0, skipped: items.length, unavailable: e.message };
       }
       throw new AppError(502, 'channel_unavailable', (e as Error).message);
     }
+  }
+
+  /** Põe o envio de cardápio e estoque na fila (nova tentativa automática se o canal falhar). */
+  async scheduleCatalogSync(tenantId: string, integrationId: string) {
+    await this.queue
+      .add(CHANNEL_CATALOG, { tenantId, integrationId }, { attempts: 3, backoffMs: 5000 })
+      .catch((e: Error) =>
+        this.logger.warn(`Cardápio ${integrationId} fora da fila: ${e.message}`),
+      );
+  }
+
+  /** Tarefa da fila: falha temporária lança (a fila tenta de novo); "falta configurar" não. */
+  async runCatalogJob(job: { tenantId: string; integrationId: string }) {
+    const integ = await withTenant(this.db, { tenantId: job.tenantId }, async (tx) => {
+      const [r] = await tx
+        .select()
+        .from(channelIntegrations)
+        .where(eq(channelIntegrations.id, job.integrationId));
+      return r ?? null;
+    });
+    if (!integ || !integ.active) return;
+    await this.syncCatalog(this.system(integ), integ.id);
   }
 
   // ------------------------------------------------------------------ simulador (só teste)

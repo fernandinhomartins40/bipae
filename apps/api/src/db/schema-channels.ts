@@ -46,6 +46,10 @@ export const channelIntegrations = pgTable('channel_integrations', {
   inboundSecretSealed: text('inbound_secret_sealed'),
   /** Identificador público do endereço de entrada (não é segredo, só localiza). */
   inboundKey: text('inbound_key'),
+  /** Para onde vão cardápio e estoque (conector genérico) ou base da API do marketplace. */
+  outboundUrl: text('outbound_url'),
+  settings: jsonb('settings').$type<Record<string, string>>().notNull().default({}),
+  lastCatalogSyncAt: ts('last_catalog_sync_at'),
   autoAccept: boolean('auto_accept').notNull().default(false),
   settlementDays: integer('settlement_days').notNull().default(30),
   commissionBps: integer('commission_bps').notNull().default(0),
@@ -118,6 +122,16 @@ export const channelProductLinks = pgTable('channel_product_links', {
   sku: text('sku').notNull(),
   productId: uuid('product_id').notNull(),
   createdAt: ts('created_at').notNull().defaultNow(),
+});
+
+/** O que já foi enviado a cada canal (cardápio e estoque): só o que mudou é reenviado. */
+export const channelCatalogState = pgTable('channel_catalog_state', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  integrationId: uuid('integration_id').notNull(),
+  sku: text('sku').notNull(),
+  contentHash: text('content_hash').notNull(),
+  pushedAt: ts('pushed_at').notNull().defaultNow(),
 });
 
 export const boletoCharges = pgTable('boleto_charges', {

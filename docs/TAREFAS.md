@@ -494,10 +494,12 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [ ] F6-04.d · Cobrança por cliente no painel super admin (situação, faturas, perdoar fatura)
 - [~] F6-05 · iFood — depende: F5-07 · externo: E14
   - [x] F6-05.a · Porta de canais, adaptador do iFood (eventos, confirmação, status; testado contra iFood simulado), pedido aceito vira pedido do caixa e repasse a receber com comissão, ações pela fila, tela Pedidos de canais. Os caminhos da API do iFood não foram conferidos (portal devolveu 403): endereço configurável por IFOOD_API_URL
-  - [ ] F6-05.b · Conferir a API do iFood com credenciais de integrador, enviar cardápio e estoque (hoje "chega em breve") — externo: E14
+  - [x] F6-05.b · Envio idempotente de cardápio e estoque pela porta (fila, só o que mudou, simulador e conector genérico assinado; migração 0087); no iFood continua "chega em breve"
+  - [ ] F6-05.c · Conferir a API do iFood (inclusive catálogo) com credenciais de integrador e ligar o envio de cardápio e estoque — externo: E14
 - [~] F6-06 · Marketplaces — depende: F6-01 · externo: E14
   - [x] F6-06.a · Conector genérico: pedido empurrado com assinatura HMAC, uma vez só, ligação de produtos por SKU, mesmo fluxo do iFood
-  - [ ] F6-06.b · Adaptadores de marketplaces específicos, cardápio e estoque — externo: E14
+  - [x] F6-06.b · Mercado Livre, Shopee e Amazon por porta como "falta configurar" (endereço e acesso configuráveis, nenhum endereço suposto), mapeamento de pedido configurável para o formato único (docs/canais-e-boletos.md)
+  - [ ] F6-06.c · Confirmar as APIs oficiais, autenticação, estoque, preço e pedidos de cada marketplace; ligar o mapeamento à entrada de pedidos — externo: E14
 - [~] F6-07 · Assistente de IA com confirmação humana (ADR-0011) — externo: E13
   - [x] F6-07.a · Base: interface própria do provedor (modelos Claude pela API de mensagens, trocável), chave e modelo por variável (`AI_API_KEY`, `AI_MODEL`), liga e desliga por conta com auditoria, limite de uso por dia e medição de cada chamada (tokens) para o custo caber no plano
   - [x] F6-07.b · Sugestão fiscal no cadastro do produto: NCM, CEST e cClassTrib com justificativa e confiança, a partir de candidatos da tabela oficial; o que não existe ou não vale hoje sai com aviso; só grava com aprovação, que registra quem aprovou, a sugestão original, o modelo e o antes e depois — depende: F6-07.a

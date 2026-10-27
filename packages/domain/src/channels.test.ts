@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  CHANNEL_PROVIDER_INFO,
   availableChannelActions,
   boletoDueFactor,
   boletoInput,
@@ -63,6 +64,19 @@ describe('pedidos de canais (F6-05)', () => {
     expect(ok.settlementDays).toBe(30);
     expect(ok.commissionBps).toBe(0);
     expect(channelIntegrationInput.safeParse({ provider: 'ifood', name: 'x' }).success).toBe(false);
+  });
+
+  it('marketplaces existem como canais e o endereço de envio exige https', () => {
+    const base = { name: 'Canal', storeId: '0197f0e0-0000-7000-8000-000000000001' };
+    for (const provider of ['mercadolivre', 'shopee', 'amazon'] as const) {
+      expect(CHANNEL_PROVIDER_INFO[provider].needsCredentials).toBe(true);
+      expect(channelIntegrationInput.safeParse({ ...base, provider }).success).toBe(true);
+    }
+    const url = (outboundUrl: string) =>
+      channelIntegrationInput.safeParse({ ...base, provider: 'generic', outboundUrl }).success;
+    expect(url('https://conector.example.com/x')).toBe(true);
+    expect(url('http://conector.example.com/x')).toBe(false);
+    expect(url('nao-e-url')).toBe(false);
   });
 
   it('ligação de produto e recusa pedem os campos certos', () => {

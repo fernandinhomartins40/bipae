@@ -162,7 +162,7 @@ export function ChannelsPage() {
                       <Button variant="ghost" onClick={() => setLinking(i)}>
                         Produtos ligados
                       </Button>
-                      {canConfigure && i.provider !== 'generic' && (
+                      {canConfigure && (i.provider === 'ifood' || i.provider === 'simulator') && (
                         <Button
                           variant="ghost"
                           onClick={() =>
@@ -186,8 +186,8 @@ export function ChannelsPage() {
                               );
                               setNotice(
                                 r.unavailable
-                                  ? `Chega em breve: ${r.unavailable}`
-                                  : `${r.sent} produto(s) enviados ao canal.`,
+                                  ? r.unavailable
+                                  : `${r.sent} produto(s) enviados ao canal (${r.skipped} sem mudança).`,
                               );
                             })
                           }
@@ -403,6 +403,7 @@ function IntegrationDrawer({
   const [name, setName] = useState('');
   const [storeId, setStoreId] = useState('');
   const [merchantId, setMerchantId] = useState('');
+  const [outboundUrl, setOutboundUrl] = useState('');
   const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
   const [autoAccept, setAutoAccept] = useState(false);
@@ -429,6 +430,7 @@ function IntegrationDrawer({
           settlementDays: Number(days) || 30,
           // Pontos-base inteiros: 12,5% = 1250.
           commissionBps: Math.round(percent * 100),
+          ...(outboundUrl.trim() && { outboundUrl: outboundUrl.trim() }),
           ...(provider === 'ifood' && {
             merchantId: merchantId.trim(),
             ...(clientId.trim() && { clientId: clientId.trim() }),
@@ -490,6 +492,20 @@ function IntegrationDrawer({
               onChange={(e) => setClientSecret(e.target.value)}
             />
           </>
+        )}
+        {(provider === 'generic' ||
+          provider === 'mercadolivre' ||
+          provider === 'shopee' ||
+          provider === 'amazon') && (
+          <TextField
+            label={
+              provider === 'generic'
+                ? 'Endereço (https) que recebe cardápio e estoque'
+                : 'Endereço da API do marketplace (https)'
+            }
+            value={outboundUrl}
+            onChange={(e) => setOutboundUrl(e.target.value)}
+          />
         )}
         <Checkbox
           label="Aceitar os pedidos sozinho"

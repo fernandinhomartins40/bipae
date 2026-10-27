@@ -1,5 +1,14 @@
 # Changelog
 
+## [F6-05.b e F6-06.b Cardápio, estoque e marketplaces] — 27/10/2026
+
+### Adicionado
+- **Cardápio e estoque nos canais:** envio idempotente (só o que mudou desde o último envio), pela fila com nova tentativa, para o simulador e para o conector genérico (corpo assinado, endereço https configurável, lotes de 200). Migração 0087.
+- **Marketplaces:** Mercado Livre, Shopee e Amazon cadastráveis como canais, com "falta configurar" na ordem do que falta; mapeamento de pedido configurável para o formato único, em centavos.
+
+### Falta configurar
+- iFood: continua "chega em breve" no envio de cardápio e estoque (API não conferida, E14). Marketplaces: as APIs oficiais não puderam ser lidas (HTTP 403); nenhum endereço foi suposto. Detalhes em docs/canais-e-boletos.md.
+
 ## [F8-07.b F8-07.d F8-12.a App Android: abertura por permissão, AAB e maquininhas] — 27/10/2026
 
 ### Adicionado

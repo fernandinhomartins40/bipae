@@ -2,10 +2,12 @@ import { uuidv7, type ChannelAction, type NormalizedOrder } from '@bipae/domain'
 import {
   ChannelNotReadyError,
   ChannelRejectedError,
+  ChannelUnavailableError,
   type AvailabilityItem,
   type ChannelEvent,
   type OrderChannel,
 } from './channel.port';
+import { PixUnavailableError, type PixTransport } from '../payments/pix-api';
 
 /**
  * Canal de mentira para treinar e testar o fluxo inteiro sem credencial (E14). Guarda tudo em
@@ -99,9 +101,26 @@ export class SimulatorHub {
   }
 }
 
-/** Canal de conector genérico: o pedido chega por empurrão; não há o que buscar no canal. */
+/** Itens por envio ao conector: lotes pequenos evitam corpo grande e permitem repetir só o lote. */
+export const PUSH_BATCH = 200;
+
+/**
+ * Canal de conector genérico: o pedido chega por empurrão. Cardápio e estoque saem para o
+ * endereço configurado (https), em lotes, com o mesmo tipo de assinatura que o conector usa para
+ * nos mandar pedidos (cabeçalho x-bipae-signature, "t=<segundos>,v1=<hmac>"); o contrato do
+ * corpo é do Bipaê, não de um marketplace específico.
+ */
 export class GenericChannel implements OrderChannel {
   readonly polling = false;
+  constructor(
+    private readonly push: {
+      url: string | null;
+      secret: string | null;
+      transport: PixTransport;
+      sign: (secret: string, body: string, seconds: number) => string;
+      now?: () => number;
+    } | null = null,
+  ) {}
   pollEvents() {
     return Promise.resolve([]);
   }
@@ -115,9 +134,45 @@ export class GenericChannel implements OrderChannel {
   act() {
     return Promise.resolve();
   }
-  pushAvailability(): Promise<void> {
-    return Promise.reject(
-      new ChannelNotReadyError('Cardápio e estoque no marketplace chegam em breve.'),
-    );
+  assertCatalogReady(): void {
+    if (!this.push?.url || !this.push.secret) {
+      throw new ChannelNotReadyError(
+        'Falta o endereço para onde o Bipaê manda cardápio e estoque (configure na integração).',
+      );
+    }
+  }
+  async pushAvailability(items: AvailabilityItem[]): Promise<void> {
+    this.assertCatalogReady();
+    const p = this.push!;
+    const url = p.url!;
+    const secret = p.secret!;
+    for (let i = 0; i < items.length; i += PUSH_BATCH) {
+      const body = JSON.stringify({ type: 'availability', items: items.slice(i, i + PUSH_BATCH) });
+      const seconds = Math.floor((p.now?.() ?? Date.now()) / 1000);
+      let res;
+      try {
+        res = await p.transport.send(
+          {
+            method: 'POST',
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'x-bipae-signature': p.sign(secret, body, seconds),
+            },
+            body,
+          },
+          null,
+        );
+      } catch (e) {
+        if (e instanceof PixUnavailableError) throw new ChannelUnavailableError(e.message);
+        throw e;
+      }
+      if (res.status >= 500 || res.status === 429) {
+        throw new ChannelUnavailableError('O conector respondeu ' + res.status + '.');
+      }
+      if (res.status >= 400) {
+        throw new ChannelRejectedError('O conector recusou o envio (' + res.status + ').');
+      }
+    }
   }
 }

@@ -37,6 +37,8 @@ export interface OrderChannel {
   act(orderId: string, action: ChannelAction, reason?: string): Promise<void>;
   /** Cardápio e estoque no canal; lança ChannelNotReadyError quando o canal ainda não aceita. */
   pushAvailability(items: AvailabilityItem[]): Promise<void>;
+  /** Lança ChannelNotReadyError se faltar configuração para o envio (mesmo sem itens a enviar). */
+  assertCatalogReady?(): void;
 }
 
 /** Reais em número decimal (o que o iFood manda) para centavos inteiros, sem acumular erro. */
