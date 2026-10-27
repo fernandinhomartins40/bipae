@@ -48,6 +48,8 @@ export interface AiAnswer {
   /** Relatórios consultados para responder. */
   tools: string[];
   model: string;
+  /** Mudanças que o assistente propôs nesta resposta; só valem depois da confirmação. */
+  proposals?: AiActionView[];
 }
 
 export const AI_TOOL_LABELS: Record<string, string> = {
@@ -55,4 +57,21 @@ export const AI_TOOL_LABELS: Record<string, string> = {
   resultado_mensal: 'Resultado do mês (DRE)',
   contas: 'Contas a pagar e a receber',
   perdas: 'Perdas',
+  buscar_produto: 'Cadastro de produtos',
+  propor_preco: 'Proposta de novo preço',
 };
+
+/** Ação que a IA propôs (F6-07.f): nada acontece até uma pessoa confirmar. */
+export interface AiActionView {
+  id: string;
+  kind: 'price_change';
+  status: 'pending' | 'approved' | 'rejected';
+  productId: string;
+  productName: string;
+  /** Texto pronto para a pessoa conferir. */
+  summary: string;
+  payload: { currentCents: number; newCents: number; reason: string };
+  model: string;
+  createdAt: string;
+  decidedAt: string | null;
+}

@@ -10,8 +10,11 @@ import {
   Put,
 } from '@nestjs/common';
 import {
+  cents,
+  formatBRL,
   hasPermission,
   uuidv7,
+  type AiActionView,
   type AiAnswer,
   type AiFiscalSuggestion,
   type AiStatus,
@@ -26,7 +29,7 @@ import { CONFIG, DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import type { Config } from '../../config';
 import { withTenant, type Db, type Tx } from '../../db/client';
-import { aiRequests, aiSettings, aiSuggestions, fiscalProfiles } from '../../db/schema';
+import { aiActions, aiRequests, aiSettings, aiSuggestions, fiscalProfiles } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
 import { CatalogService } from '../catalog/catalog.service';
 import { productInput } from '@bipae/domain';
@@ -136,6 +139,43 @@ const REPORT_TOOLS: AiTool[] = [
     input_schema: { type: 'object', properties: period, required: ['from', 'to'] },
   },
 ];
+
+/**
+ * Ferramentas de proposta (ADR-0011): só PROPÕEM. A proposta fica pendente na conta e uma pessoa
+ * com permissão confirma ou recusa na tela; o assistente nunca grava no cadastro.
+ */
+const PROPOSAL_TOOLS: AiTool[] = [
+  {
+    name: 'buscar_produto',
+    description:
+      'Procura produtos pelo nome, SKU ou código de barras e devolve id, nome e preço atual (centavos). Use antes de propor um preço.',
+    input_schema: {
+      type: 'object',
+      properties: { query: { type: 'string', description: 'Parte do nome, SKU ou código.' } },
+      required: ['query'],
+    },
+  },
+  {
+    name: 'propor_preco',
+    description:
+      'Propõe um novo preço de venda para um produto. Não altera nada: registra a proposta para uma pessoa confirmar.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        productId: { type: 'string', description: 'Id do produto, vindo de buscar_produto.' },
+        newPriceCents: { type: 'integer', description: 'Novo preço em centavos.' },
+        reason: { type: 'string', description: 'Por que, em português, em até 2 frases.' },
+      },
+      required: ['productId', 'newPriceCents', 'reason'],
+    },
+  },
+];
+
+const proposeInput = z.object({
+  productId: z.string().uuid(),
+  newPriceCents: z.number().int().positive().max(100_000_000_00),
+  reason: z.string().trim().min(1).max(500),
+});
 
 const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const isoMonth = z.string().regex(/^\d{4}-\d{2}$/);
@@ -497,13 +537,164 @@ export class AiService {
 
   // ---------------------------------------------------------------- perguntas sobre o negócio
 
+  // ---------------------------------------------------------------- ações propostas
+
+  private async propose(
+    ctx: RequestContext,
+    model: string,
+    input: Record<string, unknown>,
+  ): Promise<AiActionView> {
+    const data = proposeInput.parse(input);
+    const product = await this.catalog.getProduct(ctx, data.productId);
+    if (product.priceCents === data.newPriceCents) {
+      throw new AppError(400, 'ai_same_price', 'O preço proposto é igual ao atual.');
+    }
+    const id = uuidv7();
+    const payload = {
+      currentCents: product.priceCents,
+      newCents: data.newPriceCents,
+      reason: data.reason,
+    };
+    const summary = `Preço de ${product.name}: de ${formatBRL(cents(product.priceCents))} para ${formatBRL(cents(data.newPriceCents))}.`;
+    await withTenant(this.db, ctx, async (tx) => {
+      await tx.insert(aiActions).values({
+        id,
+        tenantId: ctx.tenantId,
+        kind: 'price_change',
+        productId: product.id,
+        summary,
+        payload,
+        model,
+        createdBy: ctx.userId,
+      });
+      await this.audit.record(tx, ctx, {
+        action: 'ai.action_proposed',
+        entity: 'product',
+        entityId: product.id,
+        data: { actionId: id, kind: 'price_change', model, ...payload },
+      });
+    });
+    return this.actionView(ctx, id);
+  }
+
+  private async actionView(ctx: RequestContext, id: string): Promise<AiActionView> {
+    return withTenant(this.db, ctx, async (tx) => {
+      const [row] = await tx
+        .select({
+          a: aiActions,
+          productName: sql<string>`(select name from products p where p.id = ${aiActions.productId})`,
+        })
+        .from(aiActions)
+        .where(eq(aiActions.id, id));
+      if (!row) throw notFound('Proposta');
+      return {
+        id: row.a.id,
+        kind: row.a.kind,
+        status: row.a.status,
+        productId: row.a.productId,
+        productName: row.productName,
+        summary: row.a.summary,
+        payload: row.a.payload,
+        model: row.a.model,
+        createdAt: row.a.createdAt.toISOString(),
+        decidedAt: row.a.decidedAt?.toISOString() ?? null,
+      };
+    });
+  }
+
+  async listActions(ctx: RequestContext): Promise<AiActionView[]> {
+    const ids = await withTenant(this.db, ctx, (tx) =>
+      tx
+        .select({ id: aiActions.id })
+        .from(aiActions)
+        .where(eq(aiActions.status, 'pending'))
+        .orderBy(desc(aiActions.createdAt))
+        .limit(20),
+    );
+    return Promise.all(ids.map((r) => this.actionView(ctx, r.id)));
+  }
+
+  /** Confirmar aplica pela atualização normal do cadastro (que confere a permissão de preço). */
+  async approveAction(ctx: RequestContext, id: string): Promise<AiActionView> {
+    const current = await this.actionView(ctx, id);
+    if (current.status !== 'pending') {
+      throw new AppError(409, 'ai_decided', 'Esta proposta já foi confirmada ou recusada.');
+    }
+    const product = await this.catalog.getProduct(ctx, current.productId);
+    if (product.priceCents !== current.payload.currentCents) {
+      throw new AppError(
+        409,
+        'ai_stale',
+        'O preço do produto mudou depois da proposta. Recuse e peça de novo.',
+      );
+    }
+    await this.catalog.updateProduct(
+      ctx,
+      product.id,
+      parse(productInput, { ...product, priceCents: current.payload.newCents }),
+    );
+    await withTenant(this.db, ctx, async (tx) => {
+      const [done] = await tx
+        .update(aiActions)
+        .set({ status: 'approved', decidedBy: ctx.userId, decidedAt: new Date() })
+        .where(and(eq(aiActions.id, id), eq(aiActions.status, 'pending')))
+        .returning({ id: aiActions.id });
+      if (!done)
+        throw new AppError(409, 'ai_decided', 'Esta proposta já foi confirmada ou recusada.');
+      await this.audit.record(tx, ctx, {
+        action: 'ai.action_approved',
+        entity: 'product',
+        entityId: product.id,
+        data: { actionId: id, model: current.model, ...current.payload },
+      });
+    });
+    return this.actionView(ctx, id);
+  }
+
+  async rejectAction(ctx: RequestContext, id: string): Promise<AiActionView> {
+    await withTenant(this.db, ctx, async (tx) => {
+      const [done] = await tx
+        .update(aiActions)
+        .set({ status: 'rejected', decidedBy: ctx.userId, decidedAt: new Date() })
+        .where(and(eq(aiActions.id, id), eq(aiActions.status, 'pending')))
+        .returning({ productId: aiActions.productId, model: aiActions.model });
+      if (!done)
+        throw new AppError(409, 'ai_decided', 'Esta proposta já foi confirmada ou recusada.');
+      await this.audit.record(tx, ctx, {
+        action: 'ai.action_rejected',
+        entity: 'product',
+        entityId: done.productId,
+        data: { actionId: id, model: done.model },
+      });
+    });
+    return this.actionView(ctx, id);
+  }
+
   private async runTool(
     ctx: RequestContext,
     name: string,
     input: Record<string, unknown>,
+    model: string,
+    proposals: AiActionView[],
   ): Promise<unknown> {
     const day = (v: unknown) => isoDay.parse(v);
+    const canPropose = hasPermission(ctx.permissions, 'catalog.price.write');
     switch (name) {
+      case 'buscar_produto': {
+        if (!canPropose) throw new Error('sem permissão');
+        const page = await this.catalog.listProducts(ctx, {
+          q: z.string().min(1).max(100).parse(input.query),
+          limit: 8,
+          offset: 0,
+        });
+        return page.items.map((p) => ({ id: p.id, name: p.name, priceCents: p.priceCents }));
+      }
+      case 'propor_preco': {
+        if (!canPropose) throw new Error('sem permissão');
+        const view = await this.propose(ctx, model, input);
+        proposals.push(view);
+        return { ok: true, message: 'Proposta registrada. Uma pessoa precisa confirmar na tela.' };
+      }
       case 'vendas': {
         const group = z.enum(['product', 'payment', 'day', 'store', 'operator']).parse(input.group);
         const report = await this.reports.sales(ctx, {
@@ -548,11 +739,14 @@ export class AiService {
       { role: 'user', content: [{ type: 'text', text: input.question }] },
     ];
     const used: string[] = [];
+    const proposals: AiActionView[] = [];
     for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
       const response = await this.call(ctx, 'question', provider, {
-        system: `Você é o assistente do Bipaê, sistema de caixa e gestão de uma loja brasileira. Hoje é ${today} (horário de Brasília). Responda em português do Brasil, curto e direto, com valores em reais (R$ 1.234,56) e datas dd/mm/aaaa. Os valores das ferramentas vêm em centavos. Use só os números das ferramentas; se elas não respondem a pergunta, diga o que dá para responder. Não invente números.`,
+        system: `Você é o assistente do Bipaê, sistema de caixa e gestão de uma loja brasileira. Hoje é ${today} (horário de Brasília). Responda em português do Brasil, curto e direto, com valores em reais (R$ 1.234,56) e datas dd/mm/aaaa. Os valores das ferramentas vêm em centavos. Use só os números das ferramentas; se elas não respondem a pergunta, diga o que dá para responder. Não invente números. Você nunca altera o cadastro: para mudar um preço, use propor_preco e avise que a pessoa precisa confirmar na tela.`,
         messages,
-        tools: REPORT_TOOLS,
+        tools: hasPermission(ctx.permissions, 'catalog.price.write')
+          ? [...REPORT_TOOLS, ...PROPOSAL_TOOLS]
+          : REPORT_TOOLS,
         maxTokens: 1000,
       });
       const calls = response.content.filter(
@@ -570,6 +764,7 @@ export class AiService {
             'Não consegui responder com os relatórios da conta. Tente perguntar de outro jeito.',
           tools: used,
           model: provider.model,
+          proposals,
         };
       }
       messages.push({ role: 'assistant', content: response.content });
@@ -577,7 +772,7 @@ export class AiService {
       for (const call of calls) {
         used.push(call.name);
         try {
-          const result = await this.runTool(ctx, call.name, call.input);
+          const result = await this.runTool(ctx, call.name, call.input, provider.model, proposals);
           results.push({
             type: 'tool_result',
             tool_use_id: call.id,
@@ -641,6 +836,24 @@ export class AiController {
   @RequirePermission('catalog.write')
   reject(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.ai.reject(ctx, id);
+  }
+
+  @Get('actions')
+  @RequirePermission('catalog.read')
+  actions(@Ctx() ctx: RequestContext) {
+    return this.ai.listActions(ctx);
+  }
+
+  @Post('actions/:id/approve')
+  @RequirePermission('catalog.price.write')
+  approveAction(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.ai.approveAction(ctx, id);
+  }
+
+  @Post('actions/:id/reject')
+  @RequirePermission('catalog.price.write')
+  rejectAction(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.ai.rejectAction(ctx, id);
   }
 
   @Post('ask')

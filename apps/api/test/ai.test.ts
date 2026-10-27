@@ -181,6 +181,7 @@ describe('assistente de IA (F6-07)', () => {
     expect(r.json()).toEqual({
       answer: 'Nesta semana você ainda não vendeu nada.',
       tools: ['vendas', 'vendas'],
+      proposals: [],
       model: 'claude-teste',
     });
     // A segunda chamada recebeu o resultado do relatório; a terceira, o erro do parâmetro ruim.
@@ -226,6 +227,70 @@ describe('assistente de IA (F6-07)', () => {
 });
 
 describe('cliente dos modelos Claude (F6-07)', () => {
+  it('a IA só propõe o novo preço: o cadastro só muda quando uma pessoa confirma, com auditoria', async () => {
+    const { admin } = await loja();
+    const item = (
+      await admin.post('/products', { name: 'Suco de uva 1 L', priceCents: 1000 })
+    ).json();
+    useProvider(
+      new FakeProvider([
+        toolReply('buscar_produto', { query: 'suco' }),
+        toolReply('propor_preco', {
+          productId: item.id,
+          newPriceCents: 1190,
+          reason: 'Custo subiu.',
+        }),
+        textReply('Propus R$ 11,90. Confirme na tela.'),
+      ]),
+    );
+    await admin.put('/ai/settings', { enabled: true });
+    const r = (await admin.post('/ai/ask', { question: 'Sugira reajuste do suco de uva' })).json();
+    expect(r.tools).toEqual(['buscar_produto', 'propor_preco']);
+    expect(r.proposals).toHaveLength(1);
+    expect(r.proposals[0]).toMatchObject({ status: 'pending', productName: 'Suco de uva 1 L' });
+    // Nada mudou no cadastro.
+    expect((await admin.get(`/products/${item.id}`)).json().priceCents).toBe(1000);
+    const pendentes = (await admin.get('/ai/actions')).json();
+    expect(pendentes).toHaveLength(1);
+
+    const id = r.proposals[0].id;
+    expect((await admin.post(`/ai/actions/${id}/approve`)).json().status).toBe('approved');
+    expect((await admin.get(`/products/${item.id}`)).json().priceCents).toBe(1190);
+    expect((await admin.post(`/ai/actions/${id}/approve`)).statusCode).toBe(409);
+    expect((await admin.get('/ai/actions')).json()).toHaveLength(0);
+    const audit = JSON.stringify((await admin.get('/audit?limit=50')).json());
+    expect(audit).toContain('ai.action_proposed');
+    expect(audit).toContain('ai.action_approved');
+  });
+
+  it('proposta recusada não muda nada; preço que mudou antes da confirmação barra', async () => {
+    const { admin } = await loja();
+    const item = (await admin.post('/products', { name: 'Água 500 ml', priceCents: 300 })).json();
+    const propor = (cents: number) =>
+      new FakeProvider([
+        toolReply('propor_preco', { productId: item.id, newPriceCents: cents, reason: 'Teste.' }),
+        textReply('Feito.'),
+      ]);
+    await admin.put('/ai/settings', { enabled: true });
+    useProvider(propor(350));
+    const a = (await admin.post('/ai/ask', { question: 'Reajuste a água' })).json().proposals[0];
+    expect((await admin.post(`/ai/actions/${a.id}/reject`)).json().status).toBe('rejected');
+    expect((await admin.get(`/products/${item.id}`)).json().priceCents).toBe(300);
+
+    useProvider(propor(400));
+    const b = (await admin.post('/ai/ask', { question: 'Reajuste a água de novo' })).json()
+      .proposals[0];
+    const produto = (await admin.get(`/products/${item.id}`)).json();
+    await admin.put(`/products/${item.id}`, { ...produto, priceCents: 320 });
+    const stale = await admin.post(`/ai/actions/${b.id}/approve`);
+    expect(stale.statusCode).toBe(409);
+    expect(stale.json().message).toContain('mudou');
+    // Preço igual ao atual não vira proposta.
+    useProvider(propor(320));
+    const c = (await admin.post('/ai/ask', { question: 'Reajuste a água outra vez' })).json();
+    expect(c.proposals).toEqual([]);
+  });
+
   it('monta o pedido da API de mensagens e traduz a resposta; erro vira AiProviderError', async () => {
     const { ClaudeProvider, AiProviderError } = await import('../src/modules/ai/ai.provider');
     const calls: { url: string; init: RequestInit }[] = [];

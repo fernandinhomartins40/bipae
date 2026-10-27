@@ -1753,3 +1753,23 @@ export const ciapAssets = pgTable('ciap_assets', {
   writeOffType: text('write_off_type', { enum: ['PE', 'OT'] }),
   createdAt: ts('created_at').notNull().defaultNow(),
 });
+
+/** Ação que a IA propôs; só vale com a confirmação de uma pessoa (F6-07.f). */
+export const aiActions = pgTable('ai_actions', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  kind: text('kind', { enum: ['price_change'] }).notNull(),
+  status: text('status', { enum: ['pending', 'approved', 'rejected'] })
+    .notNull()
+    .default('pending'),
+  productId: uuid('product_id').notNull(),
+  summary: text('summary').notNull(),
+  payload: jsonb('payload')
+    .$type<{ currentCents: number; newCents: number; reason: string }>()
+    .notNull(),
+  model: text('model').notNull(),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: ts('created_at').notNull().defaultNow(),
+  decidedBy: uuid('decided_by'),
+  decidedAt: ts('decided_at'),
+});

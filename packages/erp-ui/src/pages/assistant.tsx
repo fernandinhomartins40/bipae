@@ -1,6 +1,7 @@
 import {
   AI_CONFIDENCE_LABELS,
   AI_TOOL_LABELS,
+  type AiActionView,
   type AiAnswer,
   type AiStatus,
   type AiSuggestionView,
@@ -34,7 +35,7 @@ export function AssistantPage() {
   const canAsk = useCan('finance.read');
   const [question, setQuestion] = useState('');
   const [chat, setChat] = useState<
-    { role: 'user' | 'assistant'; text: string; tools?: string[] }[]
+    { role: 'user' | 'assistant'; text: string; tools?: string[]; proposals?: AiActionView[] }[]
   >([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +62,7 @@ export function AssistantPage() {
       setChat([
         ...chat,
         { role: 'user', text: q },
-        { role: 'assistant', text: r.answer, tools: r.tools },
+        { role: 'assistant', text: r.answer, tools: r.tools, proposals: r.proposals ?? [] },
       ]);
       setQuestion('');
       await queryClient.invalidateQueries({ queryKey: ['ai', 'status'] });
@@ -139,6 +140,9 @@ export function AssistantPage() {
               >
                 <span className="sr-only">{m.role === 'user' ? 'Você: ' : 'Assistente: '}</span>
                 <p className="whitespace-pre-line">{m.text}</p>
+                {m.proposals?.map((p) => (
+                  <ProposalCard key={p.id} proposal={p} />
+                ))}
                 {m.tools && m.tools.length > 0 && (
                   <p className="mt-1 text-sm text-muted">
                     Consultado:{' '}
@@ -281,5 +285,59 @@ export function AiFiscalSuggestionPanel({
         </Button>
       )}
     </section>
+  );
+}
+
+/**
+ * Proposta do assistente (ADR-0011): ele só propõe; o preço só muda quando uma pessoa com
+ * permissão confirma aqui. Recusar não muda nada.
+ */
+function ProposalCard({ proposal }: { proposal: AiActionView }) {
+  const { api } = useApp();
+  const canDecide = useCan('catalog.price.write');
+  const [current, setCurrent] = useState(proposal);
+  const [busy, setBusy] = useState<'approve' | 'reject' | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const decide = async (kind: 'approve' | 'reject') => {
+    setBusy(kind);
+    setError(null);
+    try {
+      setCurrent(await api.post<AiActionView>(`/ai/actions/${current.id}/${kind}`));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+  return (
+    <div className="mt-2 rounded-ui border border-border bg-surface p-3">
+      <p className="font-semibold">Proposta: {current.summary}</p>
+      <p className="text-sm text-muted">{current.payload.reason}</p>
+      {error && <Alert>{error}</Alert>}
+      {current.status === 'pending' ? (
+        canDecide ? (
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button loading={busy === 'approve'} onClick={() => void decide('approve')}>
+              Confirmar e mudar o preço
+            </Button>
+            <Button
+              variant="ghost"
+              loading={busy === 'reject'}
+              onClick={() => void decide('reject')}
+            >
+              Recusar
+            </Button>
+          </div>
+        ) : (
+          <p className="mt-2 text-sm">Quem tem permissão de preço precisa confirmar.</p>
+        )
+      ) : (
+        <p className="mt-2 text-sm">
+          {current.status === 'approved'
+            ? 'Confirmada: o preço foi alterado.'
+            : 'Recusada: nada mudou.'}
+        </p>
+      )}
+    </div>
   );
 }
