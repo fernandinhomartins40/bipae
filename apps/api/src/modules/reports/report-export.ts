@@ -9,10 +9,23 @@ export interface ReportTable {
   rows: string[][];
 }
 
+/**
+ * Texto que o Excel leria como fórmula (um nome de cliente "=HYPERLINK(...)", por exemplo) ganha
+ * uma aspa simples na frente (F7-02.c, injeção de CSV). Número, mesmo negativo ("-5,00" ou
+ * "-R$ 3,00"), continua como está.
+ */
+export function neutralizeFormula(value: string): string {
+  if (!/^[=+\-@\t\r]/.test(value)) return value;
+  if (/^[-+]\s?(R\$\s?)?[\d.,]+%?$/.test(value)) return value;
+  return `'${value}`;
+}
+
 /** CSV para o Excel brasileiro: separador ";", BOM UTF-8 e aspas quando preciso. */
 export function toCsv(table: ReportTable): Buffer {
-  const cell = (value: string) =>
-    /[;"\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+  const cell = (raw: string) => {
+    const value = neutralizeFormula(raw);
+    return /[;"\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+  };
   const lines = [
     table.columns.map((c) => cell(c.label)),
     ...table.rows.map((r) => r.map(cell)),

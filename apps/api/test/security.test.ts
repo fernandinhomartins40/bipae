@@ -245,3 +245,25 @@ describe('freio na API pública (F7-02.c)', () => {
     expect(ultimo).toBe(429);
   });
 });
+
+describe('exportação em CSV (F7-02.c)', () => {
+  it('texto que o Excel leria como fórmula ganha aspa; número negativo fica como está', async () => {
+    const { neutralizeFormula, toCsv } = await import('../src/modules/reports/report-export');
+    expect(neutralizeFormula('=HYPERLINK("http://x","clique")')).toBe(
+      `'=HYPERLINK("http://x","clique")`,
+    );
+    for (const perigoso of ['+1+1', '@SOMA(A1)', '-2+3', '\t=1', '-cmd|calc']) {
+      expect(neutralizeFormula(perigoso), perigoso).toBe(`'${perigoso}`);
+    }
+    for (const seguro of ['-5,00', '-R$ 3,00', '+10', 'Maria', '12,50', '-12%', '']) {
+      expect(neutralizeFormula(seguro), seguro).toBe(seguro);
+    }
+    const csv = toCsv({
+      title: 't',
+      subtitle: 's',
+      columns: [{ label: 'Cliente' }],
+      rows: [['=1+1']],
+    }).toString('utf8');
+    expect(csv).toContain("\r\n'=1+1\r\n");
+  });
+});
