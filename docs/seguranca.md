@@ -2,6 +2,8 @@
 
 Revisão interna feita em 18/10/2026 (tarefa F7-02.a), com base no OWASP Application Security Verification Standard 4.0.3, nível 2.
 
+A segunda passada (F7-02.c) está em [seguranca/asvs-n2.md](seguranca/asvs-n2.md).
+
 O pentest externo e o teste com pessoas de fora são a tarefa F7-02.b, que depende do item E15.
 
 **Como ler:**
