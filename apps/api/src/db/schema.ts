@@ -1777,3 +1777,36 @@ export const aiActions = pgTable('ai_actions', {
   decidedBy: uuid('decided_by'),
   decidedAt: ts('decided_at'),
 });
+
+// ---------------------------------------------------------------- cobrança dos planos (0084, F6-04)
+
+export const tenantBilling = pgTable('tenant_billing', {
+  tenantId: uuid('tenant_id').primaryKey(),
+  paidUntil: ts('paid_until'),
+  pendingPlanId: text('pending_plan_id'),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+export const planInvoices = pgTable('plan_invoices', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  planId: text('plan_id').notNull(),
+  kind: text('kind', { enum: ['subscription', 'upgrade'] }).notNull(),
+  amountCents: money('amount_cents').notNull(),
+  periodStart: ts('period_start'),
+  periodEnd: ts('period_end'),
+  dueAt: ts('due_at').notNull(),
+  status: text('status', { enum: ['open', 'paid', 'canceled'] })
+    .notNull()
+    .default('open'),
+  provider: text('provider'),
+  chargeId: text('charge_id'),
+  copyPaste: text('copy_paste'),
+  checkedAt: ts('checked_at'),
+  paidAt: ts('paid_at'),
+  noticeOpenAt: ts('notice_open_at'),
+  noticeOverdueAt: ts('notice_overdue_at'),
+  noticeBlockedAt: ts('notice_blocked_at'),
+  noticePaidAt: ts('notice_paid_at'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});

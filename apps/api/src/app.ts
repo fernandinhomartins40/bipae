@@ -20,6 +20,9 @@ import { TokenService } from './common/tokens';
 import type { Config } from './config';
 import type { Database } from './db/client';
 import { AccountController } from './modules/account/account.controller';
+import { BillingController } from './modules/billing/billing.controller';
+import { BillingGatewayHolder } from './modules/billing/billing-gateway';
+import { BillingService } from './modules/billing/billing.service';
 import { AdminAuthController } from './modules/admin/admin-auth.controller';
 import { AdminAuthService } from './modules/admin/admin-auth.service';
 import { AdminController } from './modules/admin/admin.controller';
@@ -255,6 +258,7 @@ class AppModule {
         MercadoflowConfereController,
         SupplierIssuesController,
       ],
+        BillingController,
       providers: [
         { provide: CONFIG, useValue: config },
         { provide: DB, useValue: database.db },
@@ -365,6 +369,8 @@ export async function createApp(config: Config, database: Database) {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule.forRoot(config, database),
     new FastifyAdapter({ trustProxy: true, bodyLimit: 2 * 1024 * 1024 }),
+        BillingGatewayHolder,
+        BillingService,
     // rawBody: o aviso do MercadoFlow é conferido pela assinatura do corpo como chegou.
     { logger: config.NODE_ENV === 'test' ? false : ['error', 'warn', 'log'], rawBody: true },
   );

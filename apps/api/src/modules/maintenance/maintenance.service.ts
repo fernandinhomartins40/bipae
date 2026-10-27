@@ -32,6 +32,10 @@ import { NfseService } from '../fiscal/nfse.service';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
 import { NfceEmissionService } from '../fiscal/nfce-emission.service';
 import { NfeInvoicesService } from '../fiscal/nfe-invoices.service';
+import { BILLING_SUSPENSION_REASON } from '@bipae/domain';
+import { BILLING_SWEEP } from '../billing/billing.controller';
+import { billingMail, type BillingNoticeKind } from '../billing/billing-mail';
+import { BillingService } from '../billing/billing.service';
 import { mailBody, MailService } from '../mail/mail.service';
 import { WebhooksService } from '../public-api/webhooks.service';
 
@@ -70,6 +74,7 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
     @Inject(NfseReceivedService) private readonly nfseReceived: NfseReceivedService,
     @Inject(NfseService) private readonly nfse: NfseService,
     @Inject(MailService) private readonly mail: MailService,
+    @Inject(BillingService) private readonly billing: BillingService,
   ) {}
 
   async onModuleInit() {
@@ -91,6 +96,11 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
       });
       this.queue.process(ACCOUNT_NOTICES, async () => {
         await this.accountNotices();
+      });
+      this.queue.process(BILLING_SWEEP, async (data) => {
+        const tenantId = (data as { tenantId?: string } | undefined)?.tenantId;
+        await this.billingSweep(new Date(), tenantId);
+        await this.billingNotices();
       });
       this.queue.process(ACCOUNT_PURGE, async () => {
         const purged = await this.purgeCancelledAccounts();
@@ -128,6 +138,11 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
         .add(DFE_SWEEP, {}, { repeatEveryMs: UMA_HORA })
         .catch((error: Error) =>
           this.logger.warn(`Não foi possível agendar a busca de notas: ${error.message}`),
+        );
+      void this.queue
+        .add(BILLING_SWEEP, {}, { repeatEveryMs: CINCO_MINUTOS })
+        .catch((error: Error) =>
+          this.logger.warn('Não foi possível agendar a cobrança dos planos: ' + error.message),
         );
       void this.queue
         .add(ACCOUNT_PURGE, {}, { repeatEveryMs: UM_DIA })
@@ -235,6 +250,109 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
           .update(tenants)
           .set({ suspensionNoticeSentAt: sql`coalesce(${tenants.statusChangedAt}, now())` })
           .where(eq(tenants.id, t.id)),
+      );
+    }
+    return sent;
+  }
+
+  /**
+   * Cobrança dos planos (F6-04): confirma pagamentos por consulta ao meio de pagamento, gera as
+   * faturas da próxima mensalidade, aplica as trocas de plano e faz o bloqueio gentil de quem
+   * passou da tolerância. Pode rodar de novo sem estrago.
+   */
+  async billingSweep(now: Date = new Date(), tenantId?: string) {
+    return asPlatform(this.db, (tx) => this.billing.runCycle(tx, now, tenantId));
+  }
+
+  /**
+   * E-mails da cobrança (fatura disponível, vencida, conta pausada, pagamento recebido), para os
+   * donos, cada um uma vez por fatura. Sem o e-mail ligado, nada é marcado como enviado.
+   */
+  async billingNotices(now: Date = new Date()): Promise<number> {
+    if (!this.mail.enabled) return 0;
+    const rows = await asPlatform(this.db, (tx) =>
+      tx.execute(sql`
+        select i.id, i.tenant_id, i.amount_cents, i.due_at, i.status, i.kind,
+               i.notice_open_at, i.notice_overdue_at, i.notice_blocked_at, i.notice_paid_at,
+               t.name as tenant_name, t.status as tenant_status, t.status_reason,
+               p.name as plan_name
+        from plan_invoices i
+        join tenants t on t.id = i.tenant_id
+        join plans p on p.id = i.plan_id
+        where (i.status = 'open' and (i.notice_open_at is null
+                or (i.notice_overdue_at is null and i.due_at < ${now})
+                or (i.notice_blocked_at is null and t.status = 'suspended')))
+           or (i.status = 'paid' and i.notice_paid_at is null and i.paid_at > ${new Date(now.getTime() - 3 * UM_DIA)})
+        limit 500`),
+    );
+    type Row = {
+      id: string;
+      tenant_id: string;
+      amount_cents: string | number;
+      due_at: string | Date;
+      status: 'open' | 'paid';
+      notice_open_at: unknown;
+      notice_overdue_at: unknown;
+      notice_blocked_at: unknown;
+      notice_paid_at: unknown;
+      tenant_name: string;
+      tenant_status: string;
+      status_reason: string | null;
+      plan_name: string;
+    };
+    let sent = 0;
+    for (const row of rowsOf<Row>(rows)) {
+      const kinds: { kind: BillingNoticeKind; column: string }[] = [];
+      if (row.status === 'paid') kinds.push({ kind: 'paid', column: 'notice_paid_at' });
+      else {
+        const due = new Date(row.due_at);
+        if (!row.notice_open_at) kinds.push({ kind: 'open', column: 'notice_open_at' });
+        if (!row.notice_overdue_at && due.getTime() < now.getTime()) {
+          kinds.push({ kind: 'overdue', column: 'notice_overdue_at' });
+        }
+        if (
+          !row.notice_blocked_at &&
+          row.tenant_status === 'suspended' &&
+          row.status_reason === BILLING_SUSPENSION_REASON
+        ) {
+          kinds.push({ kind: 'blocked', column: 'notice_blocked_at' });
+        }
+      }
+      // Fatura que já nasceu vencida não manda "disponível" e "vencida" juntos: só o último vale.
+      const last = kinds.length > 1 && kinds[0]!.kind === 'open' ? kinds.slice(1) : kinds;
+      const owners = await asPlatform(this.db, (tx) =>
+        tx
+          .select({ name: users.name, email: users.email })
+          .from(memberships)
+          .innerJoin(roles, eq(roles.id, memberships.roleId))
+          .innerJoin(users, eq(users.id, memberships.userId))
+          .where(
+            and(
+              eq(memberships.tenantId, row.tenant_id),
+              eq(memberships.active, true),
+              eq(roles.systemKey, 'owner'),
+            ),
+          ),
+      );
+      for (const { kind } of last) {
+        for (const o of owners) {
+          const message = billingMail(kind, {
+            firstName: o.name.split(' ')[0]!,
+            tenantName: row.tenant_name,
+            planName: row.plan_name,
+            amountCents: Number(row.amount_cents),
+            dueAt: new Date(row.due_at),
+            graceDays: this.config.BILLING_GRACE_DAYS,
+            link: this.mail.link('/assinatura'),
+          });
+          await this.mail.send({ to: o.email, ...message });
+          sent++;
+        }
+      }
+      await asPlatform(this.db, (tx) =>
+        tx.execute(
+          sql`update plan_invoices set ${sql.raw(kinds.map((k) => `${k.column} = now()`).join(', '))} where id = ${row.id}`,
+        ),
       );
     }
     return sent;

@@ -70,6 +70,22 @@ const envSchema = z.object({
   /** Chamadas ao provedor por conta por dia, para o custo caber no plano. */
   AI_DAILY_LIMIT: z.coerce.number().int().min(0).default(200),
   /**
+   * Cobrança dos planos (F6-04): quem recebe a mensalidade. `simulator` só em desenvolvimento e
+   * testes (recusado em produção); `mercadopago` ou `pagbank` usam o token da conta do Bipaê.
+   * Sem isso, a tela mostra "falta configurar" e nenhuma fatura gera QR. Os preços dos planos
+   * ficam na tabela de planos (painel), nunca aqui.
+   */
+  BILLING_PROVIDER: z.enum(['simulator', 'mercadopago', 'pagbank']).optional(),
+  BILLING_TOKEN: z.string().optional(),
+  BILLING_SANDBOX: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+  /** Dias de tolerância depois do vencimento, antes do bloqueio gentil. */
+  BILLING_GRACE_DAYS: z.coerce.number().int().min(0).max(60).default(5),
+  /** Quantos dias antes do fim do período a próxima fatura sai. */
+  BILLING_ADVANCE_DAYS: z.coerce.number().int().min(1).max(30).default(7),
+  /**
    * Armazenamento das fotos de produto (F1-08). `db` (padrão) guarda no PostgreSQL; `disk` usa a
    * pasta STORAGE_DIR (em produção, um volume aprovado em E12); `s3` usa um serviço compatível
    * com S3. Segredos do S3 só por variável de ambiente.

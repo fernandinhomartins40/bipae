@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { UsageBar } from '../admin/charts';
 import { useState } from 'react';
 import { useApp, useCan } from '../context';
+import { BillingSection } from './billing';
 
 const dateOnly = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' });
 
@@ -24,6 +25,9 @@ const EVENT_LABELS: Record<string, string> = {
   cancelled: 'Conta cancelada',
   limits_changed: 'Limites ajustados',
   support_session: 'Acesso do suporte Bipaê',
+  billing_paid: 'Pagamento do plano confirmado',
+  billing_blocked: 'Acesso pausado por falta de pagamento',
+  plan_change_scheduled: 'Troca de plano agendada',
 };
 
 /** "Minha assinatura": plan, usage against limits and the account history. */
@@ -82,10 +86,6 @@ export function AccountPage() {
                 />
               ))}
             </div>
-            <p className="mt-5 text-sm text-muted">
-              Para mudar de plano ou ampliar limites, fale com a equipe Bipaê. Em breve dá para
-              fazer isso direto por aqui.
-            </p>
           </Card>
 
           <Card>
@@ -112,6 +112,8 @@ export function AccountPage() {
               ))}
             </ul>
           </Card>
+
+          <BillingSection plans={a.plans} currentPlanId={a.plan.id} />
 
           <DataCard purgeAt={a.tenant.purgeAt} />
 
