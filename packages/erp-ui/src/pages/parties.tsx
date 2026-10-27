@@ -26,6 +26,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, SearchX, Truck, UserRound } from 'lucide-react';
 import { useDeferredValue, useState, type FormEvent, type ReactNode } from 'react';
+import { useSearchParams } from 'react-router';
 import { useApp, useCan } from '../context';
 import { CustomerSummaryPanel, LoyaltyPanel } from './crm';
 import { useForm } from '../forms';
@@ -77,13 +78,23 @@ export function PartiesPage({ kind }: { kind: Kind }) {
   const { api } = useApp();
   const text = TEXT[kind];
   const canWrite = useCan('parties.write');
-  const [query, setQuery] = useState('');
+  // ?abrir=<CPF/CNPJ>: quem vem da Inadimplência cai direto na ficha do cliente (PIE OP-05).
+  const [params, setParams] = useSearchParams();
+  const toOpen = params.get('abrir');
+  const [query, setQuery] = useState(toOpen ?? '');
   const deferred = useDeferredValue(query.trim());
   const [editing, setEditing] = useState<Party | 'new' | null>(null);
   const list = useQuery({
     queryKey: [kind, deferred],
     queryFn: () => api.get<Page<Party>>(`${text.path}?limit=100&q=${encodeURIComponent(deferred)}`),
   });
+  // A ficha pedida pelo endereço abre sozinha; ao fechar, o endereço volta ao normal.
+  const linked = toOpen && canWrite ? list.data?.items.find((p) => p.taxId === toOpen) : undefined;
+  const current = editing ?? linked ?? null;
+  const closeForm = () => {
+    setEditing(null);
+    if (toOpen) setParams({}, { replace: true });
+  };
 
   const newButton = (label: string) => (
     <Button
@@ -175,12 +186,8 @@ export function PartiesPage({ kind }: { kind: Kind }) {
           {total > list.data.items.length && ` (mostrando os ${list.data.items.length} primeiros)`}
         </p>
       )}
-      {editing && (
-        <PartyForm
-          kind={kind}
-          party={editing === 'new' ? null : editing}
-          onClose={() => setEditing(null)}
-        />
+      {current && (
+        <PartyForm kind={kind} party={current === 'new' ? null : current} onClose={closeForm} />
       )}
     </>
   );

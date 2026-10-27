@@ -804,3 +804,17 @@ describe('pedido do vendedor pelo celular (F8-03)', () => {
     expect(items.map((i) => i.sellerId)).toEqual([ANA, BETO]);
   });
 });
+
+describe('venda em andamento (PIE R2-02)', () => {
+  it('guarda a venda que está sendo passada e devolve depois de recarregar', async () => {
+    const p = product({ name: 'Água 500ml', priceCents: 250 });
+    const cart = addItem(EMPTY_CART, p);
+    await pdv.saveDraft(cart);
+    // Outro PdvService no mesmo banco = a página recarregada.
+    const depois = new PdvService(storage, { terminalId: TERMINAL, operatorId: OPERATOR });
+    expect((await depois.loadDraft())?.lines.map((l) => l.name)).toEqual(['Água 500ml']);
+    // Venda concluída ou carrinho limpo: o rascunho some.
+    await depois.saveDraft(EMPTY_CART);
+    expect(await depois.loadDraft()).toBeNull();
+  });
+});

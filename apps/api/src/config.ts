@@ -25,6 +25,12 @@ const envSchema = z.object({
   /** Redis da fila de tarefas (F1-07). Sem ele, a fila roda em memória (desenvolvimento e testes). */
   REDIS_URL: z.string().url().optional(),
   LOGIN_RATE_LIMIT_PER_MINUTE: z.coerce.number().int().positive().default(10),
+  /**
+   * Quantos proxies na frente da API são confiáveis para dizer o IP do cliente. Na produção são
+   * dois: o nginx do host e o nginx do contêiner web. Com `true` a API acreditava no primeiro IP
+   * do X-Forwarded-For, que o próprio cliente escreve, e os limites por IP caíam (PIE R1-01).
+   */
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(2),
   /** Encryption key for secrets at rest (2FA seeds). Defaults to a key derived from JWT_SECRET. */
   SECRETS_KEY: z.string().min(32).optional(),
   ADMIN_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),

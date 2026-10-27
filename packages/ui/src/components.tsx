@@ -189,7 +189,36 @@ export function MoneyField({
       required={required}
       placeholder="0,00"
       error={localError ?? error}
-      onChange={(e) => setText(e.target.value)}
+      onChange={(e) => {
+        const next = e.target.value;
+        setText(next);
+        // Texto que não é valor deixa o campo inválido para o navegador: o formulário não envia
+        // um valor pela metade (PIE R2-01, revisão adversarial).
+        const parsed = next.trim() === '' ? 0 : parseBRL(next);
+        e.currentTarget.setCustomValidity(
+          parsed === null || parsed < 0 ? 'Valor inválido. Use o formato 1.234,56' : '',
+        );
+        // Avisa o valor a cada tecla: com Enter o formulário era enviado antes de sair do campo e
+        // gravava o valor antigo (PIE R2-01). Texto inválido só é apontado ao sair do campo.
+        if (next.trim() === '') {
+          onChange(null);
+          return;
+        }
+        const cents = parseBRL(next);
+        if (cents !== null && cents >= 0) {
+          setLocalError(null);
+          onChange(cents);
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== 'Enter') return;
+        const cents = text.trim() === '' ? null : parseBRL(text);
+        if (text.trim() !== '' && (cents === null || cents < 0)) {
+          // Não deixa o Enter enviar o formulário com um valor que não foi entendido.
+          e.preventDefault();
+          setLocalError('Valor inválido. Use o formato 1.234,56');
+        }
+      }}
       onBlur={() => {
         if (text.trim() === '') {
           setLocalError(required ? 'Informe um valor' : null);

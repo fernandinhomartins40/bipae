@@ -1,8 +1,10 @@
 import { createHash } from 'node:crypto';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
+  hasPermission,
   terminalEvent,
   uuidv7,
+  type Permission,
   type FiscalSnapshot,
   type PricingSnapshot,
   type SaleItem,
@@ -15,7 +17,7 @@ import { and, asc, eq, gt, inArray, isNotNull, or, sql } from 'drizzle-orm';
 import type { RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { assertStore } from '../../common/stores';
-import { AppError } from '../../common/errors';
+import { AppError, errorSummary } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
 import {
   cashMovements,
@@ -33,6 +35,7 @@ import {
   sellers,
   promotions,
   productBarcodes,
+  roles,
   products,
   saleItems,
   salePayments,
@@ -43,7 +46,7 @@ import {
   tabs,
   terminals,
 } from '../../db/schema';
-import { AuditService } from '../audit/audit.service';
+import { AuditService, type AuditInput } from '../audit/audit.service';
 import { LotsService } from '../stock/lots.service';
 import { findMunicipio } from '@bipae/fiscal/tables/municipios';
 import { FiscalEventsService } from '../fiscal/fiscal-events.service';
@@ -161,12 +164,36 @@ export class SyncService {
         } else {
           // Stop here: later events may depend on this one (order matters), so the terminal
           // retries from this point instead of getting false rejections.
-          this.logger.warn(`Falha temporária no evento ${event.id}: ${(error as Error).message}`);
+          // Erro de banco que se repete (ex.: número de venda repetido) mantém o evento na fila: recusar
+          // perderia uma venda já paga (regra 6). O log diz qual caixa travou, sem dados pessoais;
+          // a quarentena com "reenviar" no caixa está no plano da auditoria (PIE R3-01).
+          this.logger.error(
+            `Evento ${event.id} do caixa ${terminalId} não aplicado: ${errorSummary(error)}`,
+          );
           break;
         }
       }
     }
     return result;
+  }
+
+  /**
+   * O operador ou quem autorizou tem a permissão da ação? O caixa já conferiu offline; aqui só se
+   * marca na trilha quando não confere, sem recusar o evento (a venda nunca é perdida, ADR-0004).
+   */
+  private async permitted(
+    tx: Tx,
+    permission: Permission,
+    operatorId: string,
+    authorizedBy: string | null | undefined,
+  ) {
+    const people = authorizedBy ? [operatorId, authorizedBy] : [operatorId];
+    const rows = await tx
+      .select({ active: memberships.active, permissions: roles.permissions })
+      .from(memberships)
+      .innerJoin(roles, eq(roles.id, memberships.roleId))
+      .where(inArray(memberships.userId, people));
+    return rows.some((r) => r.active && hasPermission(r.permissions as Permission[], permission));
   }
 
   private async requireMember(tx: Tx, userId: string) {
@@ -186,6 +213,13 @@ export class SyncService {
   ) {
     const at = new Date(event.occurredAt);
     const actor = { tenantId: ctx.tenantId, userId: event.operatorId };
+    // O operador vem dentro do evento; quem enviou é a sessão que fez o push. A trilha guarda os
+    // dois, para um evento forjado não ficar atribuído só a outra pessoa (PIE R1-03, ASVS A-02).
+    const record = (input: AuditInput) =>
+      this.audit.record(tx, actor, {
+        ...input,
+        data: { ...(input.data as object | undefined), sentBy: ctx.userId },
+      });
     switch (event.type) {
       case 'cash_session.opened': {
         await tx.insert(cashSessions).values({
@@ -252,7 +286,7 @@ export class SyncService {
           .where(eq(tabs.id, tab.id));
         if (!paid) {
           await this.kitchen.onTabCancelled(tx, tab.id);
-          await this.audit.record(tx, actor, {
+          await record({
             action: 'tab.cancelled',
             entity: 'tab',
             entityId: tab.id,
@@ -269,7 +303,7 @@ export class SyncService {
           );
         }
         await this.requireMember(tx, event.payload.fromOperatorId);
-        await this.audit.record(tx, actor, {
+        await record({
           action: 'pos.operator_changed',
           entity: 'cash_session',
           entityId: event.payload.sessionId,
@@ -295,12 +329,18 @@ export class SyncService {
           occurredAt: at,
         });
         if (event.payload.kind === 'withdrawal') {
-          await this.audit.record(tx, actor, {
+          await record({
             action: 'cash.withdrawal',
             entity: 'cash_session',
             entityId: event.payload.sessionId,
             authorizedBy: event.payload.authorizedBy ?? null,
             data: {
+              permissionVerified: await this.permitted(
+                tx,
+                'pos.cash.withdrawal',
+                event.operatorId,
+                event.payload.authorizedBy,
+              ),
               amountCents: event.payload.amountCents,
               reason: event.payload.reason,
               terminal: terminal.name,
@@ -321,7 +361,7 @@ export class SyncService {
           })
           .where(eq(cashSessions.id, event.payload.sessionId));
         if (event.payload.differenceCents !== 0) {
-          await this.audit.record(tx, actor, {
+          await record({
             action: 'cash.closed_with_difference',
             entity: 'cash_session',
             entityId: event.payload.sessionId,
@@ -434,7 +474,7 @@ export class SyncService {
           }
         }
         if (p.discountAuthorizedBy) {
-          await this.audit.record(tx, actor, {
+          await record({
             action: 'sale.discount_authorized',
             entity: 'sale',
             entityId: p.saleId,
@@ -460,6 +500,12 @@ export class SyncService {
       case 'sale.cancelled': {
         const [sale] = await tx.select().from(sales).where(eq(sales.id, event.payload.saleId));
         if (!sale || sale.kind !== 'sale') throw new Rejection('Venda a cancelar não encontrada.');
+        // Um caixa só cancela venda da própria loja: o id da venda vem no evento (PIE R1-03).
+        if (sale.storeId !== terminal.storeId) {
+          throw new Rejection(
+            'Esta venda é de outra loja. Cancele pelo caixa da loja onde ela foi feita.',
+          );
+        }
         if (sale.status === 'cancelled') return;
         await tx
           .update(sales)
@@ -493,12 +539,18 @@ export class SyncService {
           sale.id,
           items.map((i) => [i.productId, i.quantityMilli]),
         );
-        await this.audit.record(tx, actor, {
+        await record({
           action: 'sale.cancelled',
           entity: 'sale',
           entityId: sale.id,
           authorizedBy: event.payload.authorizedBy ?? null,
           data: {
+            permissionVerified: await this.permitted(
+              tx,
+              'pos.sale.cancel',
+              event.operatorId,
+              event.payload.authorizedBy,
+            ),
             reason: event.payload.reason,
             totalCents: sale.totalCents,
             terminalSeq: sale.terminalSeq,
@@ -561,7 +613,7 @@ export class SyncService {
           );
           await reduceCreditReceivable(tx, p.originalSaleId, p.refundCents);
         }
-        await this.audit.record(tx, actor, {
+        await record({
           action: 'sale.returned',
           entity: 'sale',
           entityId: p.originalSaleId,
@@ -609,51 +661,55 @@ export class SyncService {
   ): Promise<'ok' | 'divergente' | null> {
     if (!items.some((item) => item.taxes)) return null;
     try {
-      const [company] = await tx
-        .select({ uf: companies.uf, taxRegime: companies.taxRegime })
-        .from(companies)
-        .where(eq(companies.id, companyId));
-      const rules = (
-        await tx.select().from(companyIcmsRules).where(eq(companyIcmsRules.companyId, companyId))
-      ).map(toMotorRule);
-      const sold = await tx
-        .select({ id: products.id, fiscalProfileId: products.fiscalProfileId, ncm: products.ncm })
-        .from(products)
-        .where(inArray(products.id, [...new Set(items.map((item) => item.productId))]));
-      const profileIds = [
-        ...new Set(sold.flatMap((p) => (p.fiscalProfileId ? [p.fiscalProfileId] : []))),
-      ];
-      const profiles = profileIds.length
-        ? await tx
-            .select({ id: fiscalProfiles.id, data: fiscalProfiles.data })
-            .from(fiscalProfiles)
-            .where(inArray(fiscalProfiles.id, profileIds))
-        : [];
-      const profileOf = (productId: string) => {
-        const id = sold.find((p) => p.id === productId)?.fiscalProfileId;
-        return (
-          (profiles.find((profile) => profile.id === id)?.data as SaleFiscalProfile | undefined) ??
-          null
-        );
-      };
-      const expected = saleTaxSummaries({
-        company: { uf: company?.uf ?? null, taxRegime: company?.taxRegime ?? null },
-        items: items.map((item) => ({
-          operationCents: item.totalCents,
-          profile: profileOf(item.productId),
-          ncm: sold.find((p) => p.id === item.productId)?.ncm ?? null,
-        })),
-        rules,
-        // A data do fato gerador é a do dia da venda no Brasil, não a do fuso do servidor.
-        date: new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(at),
+      // Savepoint: um erro de SQL aqui aborta só a conferência, não a transação da venda (PIE R3-01).
+      return await tx.transaction(async (tx): Promise<'ok' | 'divergente'> => {
+        const [company] = await tx
+          .select({ uf: companies.uf, taxRegime: companies.taxRegime })
+          .from(companies)
+          .where(eq(companies.id, companyId));
+        const rules = (
+          await tx.select().from(companyIcmsRules).where(eq(companyIcmsRules.companyId, companyId))
+        ).map(toMotorRule);
+        const sold = await tx
+          .select({ id: products.id, fiscalProfileId: products.fiscalProfileId, ncm: products.ncm })
+          .from(products)
+          .where(inArray(products.id, [...new Set(items.map((item) => item.productId))]));
+        const profileIds = [
+          ...new Set(sold.flatMap((p) => (p.fiscalProfileId ? [p.fiscalProfileId] : []))),
+        ];
+        const profiles = profileIds.length
+          ? await tx
+              .select({ id: fiscalProfiles.id, data: fiscalProfiles.data })
+              .from(fiscalProfiles)
+              .where(inArray(fiscalProfiles.id, profileIds))
+          : [];
+        const profileOf = (productId: string) => {
+          const id = sold.find((p) => p.id === productId)?.fiscalProfileId;
+          return (
+            (profiles.find((profile) => profile.id === id)?.data as
+              SaleFiscalProfile | undefined) ?? null
+          );
+        };
+        const expected = saleTaxSummaries({
+          company: { uf: company?.uf ?? null, taxRegime: company?.taxRegime ?? null },
+          items: items.map((item) => ({
+            operationCents: item.totalCents,
+            profile: profileOf(item.productId),
+            ncm: sold.find((p) => p.id === item.productId)?.ncm ?? null,
+          })),
+          rules,
+          // A data do fato gerador é a do dia da venda no Brasil, não a do fuso do servidor.
+          date: new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(at),
+        });
+        const same =
+          expected !== null &&
+          items.every(
+            (item, index) =>
+              item.taxes !== undefined && sameTaxSummary(item.taxes, expected[index]!),
+          );
+        if (!same) this.logger.warn('Impostos da venda diferentes entre o caixa e o servidor');
+        return same ? 'ok' : 'divergente';
       });
-      const same =
-        expected !== null &&
-        items.every(
-          (item, index) => item.taxes !== undefined && sameTaxSummary(item.taxes, expected[index]!),
-        );
-      if (!same) this.logger.warn('Impostos da venda diferentes entre o caixa e o servidor');
-      return same ? 'ok' : 'divergente';
     } catch (error) {
       // A conferência é um extra: falha nela não pode impedir a venda de entrar.
       this.logger.warn(

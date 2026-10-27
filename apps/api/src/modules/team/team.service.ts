@@ -103,6 +103,22 @@ export class TeamService {
       await this.limits.assertCanAdd(tx, 'users');
       const [role] = await tx.select().from(roles).where(eq(roles.id, input.roleId));
       if (!role) throw notFound('Papel');
+      // Só um Dono cadastra outro Dono: quem só gerencia a equipe criava alguém já como Dono e,
+      // com essa conta, tirava o Dono de verdade (PIE R1-05, revisão adversarial).
+      if (role.systemKey === 'owner') {
+        const [caller] = await tx
+          .select({ systemKey: roles.systemKey })
+          .from(memberships)
+          .innerJoin(roles, eq(roles.id, memberships.roleId))
+          .where(eq(memberships.userId, ctx.userId));
+        if (caller?.systemKey !== 'owner') {
+          throw new AppError(
+            403,
+            'owner_only',
+            'Só o Dono pode mudar o acesso de um Dono ou dar esse papel.',
+          );
+        }
+      }
       await tx.insert(users).values({
         id: userId,
         name: input.name,
@@ -226,6 +242,47 @@ export class TeamService {
           throw new AppError(422, 'invalid_store', 'Uma das lojas escolhidas não existe.');
         }
       }
+      // Papel e situação de hoje, para proteger o Dono e o limite do plano (PIE R1-04, R1-05, R1-13).
+      const roleKey = async (memberId: string) => {
+        const [m] = await tx
+          .select({ active: memberships.active, systemKey: roles.systemKey })
+          .from(memberships)
+          .innerJoin(roles, eq(roles.id, memberships.roleId))
+          .where(eq(memberships.userId, memberId));
+        return m;
+      };
+      const target = await roleKey(userId);
+      if (!target) throw notFound('Membro da equipe');
+      const callerIsOwner = (await roleKey(ctx.userId))?.systemKey === 'owner';
+      let newRoleKey = target.systemKey;
+      if (input.roleId) {
+        // Com RLS, papel de outra empresa não aparece aqui.
+        const [role] = await tx.select().from(roles).where(eq(roles.id, input.roleId));
+        if (!role) throw notFound('Papel');
+        newRoleKey = role.systemKey;
+      }
+      if ((target.systemKey === 'owner' || newRoleKey === 'owner') && !callerIsOwner) {
+        throw new AppError(
+          403,
+          'owner_only',
+          'Só o Dono pode mudar o acesso de um Dono ou dar esse papel.',
+        );
+      }
+      const losesOwner =
+        target.systemKey === 'owner' &&
+        target.active &&
+        (input.active === false || newRoleKey !== 'owner');
+      if (losesOwner) {
+        const owners = await tx
+          .select({ userId: memberships.userId })
+          .from(memberships)
+          .innerJoin(roles, eq(roles.id, memberships.roleId))
+          .where(and(eq(roles.systemKey, 'owner'), eq(memberships.active, true)));
+        if (owners.filter((o) => o.userId !== userId).length === 0) {
+          throw new AppError(422, 'last_owner', 'A empresa precisa de pelo menos um Dono ativo.');
+        }
+      }
+      if (input.active === true && !target.active) await this.limits.assertCanAdd(tx, 'users');
       const [row] = await tx
         .update(memberships)
         .set(input)

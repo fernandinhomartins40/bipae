@@ -7,7 +7,10 @@ import {
 } from '@nestjs/common';
 import type { ApiErrorBody } from '@bipae/domain';
 import type { FastifyReply } from 'fastify';
-import { ZodError, type ZodType } from 'zod';
+import { z, ZodError, type ZodType } from 'zod';
+
+// Regras sem mensagem própria chegavam ao usuário em inglês (PIE R2-06).
+z.config(z.locales.pt());
 
 /** Error with a user-facing pt-BR message (UX rule: errors explain cause and fix). */
 export class AppError extends Error {
@@ -70,6 +73,16 @@ function pgError(error: unknown): { code: string; constraint?: string } | null {
     current = e.cause;
   }
   return null;
+}
+
+/**
+ * Resumo de um erro para o log sem os parâmetros da consulta (CPF, valores): o texto do erro do
+ * driver traz a consulta inteira (PIE R1-14).
+ */
+export function errorSummary(error: unknown): string {
+  const pg = pgError(error);
+  if (pg) return `erro do banco ${pg.code}${pg.constraint ? ` (${pg.constraint})` : ''}`;
+  return (error as Error)?.message ?? String(error);
 }
 
 export function toApiError(error: unknown): ApiErrorBody {

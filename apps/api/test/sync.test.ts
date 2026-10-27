@@ -1,4 +1,9 @@
-import type { SyncPullResult, SyncPushResult, TerminalEvent } from '@bipae/domain';
+import {
+  uuidv7,
+  type SyncPullResult,
+  type SyncPushResult,
+  type TerminalEvent,
+} from '@bipae/domain';
 import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { addItem, EMPTY_CART, PdvService } from '@bipae/pdv-core';
@@ -1089,5 +1094,124 @@ describe('foto no caixa (F2-14)', () => {
     await admin.delete(`/products/${pao.id}/image`);
     expect((await device.sync.sync()).lastError).toBeNull();
     expect((await device.pdv.search('queijo'))[0]?.imageHash).toBeNull();
+  });
+});
+
+describe('eventos do caixa: loja, autoria e erro permanente (PIE R1-03, R3-01)', () => {
+  const cancelamento = (
+    terminalId: string,
+    operatorId: string,
+    saleId: string,
+    deviceSeq: number,
+  ): TerminalEvent =>
+    ({
+      id: uuidv7(),
+      occurredAt: new Date().toISOString(),
+      terminalId,
+      operatorId,
+      deviceSeq,
+      type: 'sale.cancelled',
+      payload: { saleId, reason: 'Teste da auditoria' },
+    }) as TerminalEvent;
+
+  it('caixa de outra loja não cancela a venda; o cancelamento grava quem enviou e se a permissão confere', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    await admin.post('/products', { name: 'Água', priceCents: 300, barcodes: ['78912342'] });
+    const lojaA = await terminalDevice(dono, 'Caixa A', 'web');
+    await lojaA.sync.sync();
+    await lojaA.pdv.openSession(0);
+    const venda = await lojaA.pdv.completeSale(
+      addItem(EMPTY_CART, (await lojaA.pdv.findByCode('78912342'))!),
+      [{ method: 'cash', receivedCents: 300 }],
+      { discountLimitPercent: 10 },
+    );
+    await lojaA.sync.sync();
+
+    const empresa = (await admin.get('/companies')).json()[0];
+    const lojaB = (await admin.post('/stores', { companyId: empresa.id, name: 'Loja B' })).json();
+    const caixaB = (
+      await admin.post('/terminals', { storeId: lojaB.id, name: 'Caixa B', platform: 'web' })
+    ).json();
+    const deB = await api(t.app, { ...dono.auth, 'x-bipae-terminal': caixaB.id }).post(
+      '/sync/events',
+      { terminalId: caixaB.id, events: [cancelamento(caixaB.id, dono.me.user.id, venda.id, 1)] },
+    );
+    expect(deB.json().rejected[0].reason).toContain('outra loja');
+
+    // Um operador de caixa sem a permissão de cancelar: o evento entra, mas a trilha marca.
+    const papeis = (await admin.get('/roles')).json() as { id: string; systemKey: string }[];
+    const caixa = (
+      await admin.post('/members', {
+        name: 'Bia Caixa',
+        email: `bia-${Date.now()}@exemplo.com.br`,
+        password: 'senha-forte-123',
+        roleId: papeis.find((p) => p.systemKey === 'cashier')!.id,
+      })
+    ).json();
+    const deA = await api(t.app, { ...dono.auth, 'x-bipae-terminal': lojaA.terminal.id }).post(
+      '/sync/events',
+      {
+        terminalId: lojaA.terminal.id,
+        events: [cancelamento(lojaA.terminal.id, caixa.userId, venda.id, 999)],
+      },
+    );
+    expect(deA.json().accepted).toHaveLength(1);
+    const registro = (
+      (await admin.get('/audit?limit=100')).json().items as {
+        action: string;
+        actorId: string;
+        data: Record<string, unknown>;
+      }[]
+    ).find((e) => e.action === 'sale.cancelled')!;
+    expect(registro.actorId).toBe(caixa.userId);
+    expect(registro.data).toMatchObject({
+      sentBy: dono.me.user.id,
+      permissionVerified: false,
+    });
+  });
+
+  it('erro de dados que se repete não perde a venda, e o caixa continua recebendo o catálogo', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    await admin.post('/products', { name: 'Água', priceCents: 300, barcodes: ['78912342'] });
+    const primeiro = await terminalDevice(dono, 'Caixa 1', 'web');
+    await primeiro.sync.sync();
+    await primeiro.pdv.openSession(0);
+    const vender = async (pdv: PdvService) =>
+      pdv.completeSale(
+        addItem(EMPTY_CART, (await pdv.findByCode('78912342'))!),
+        [{ method: 'cash', receivedCents: 300 }],
+        { discountLimitPercent: 10 },
+      );
+    await vender(primeiro.pdv);
+    await primeiro.sync.sync();
+
+    // Aparelho novo do mesmo caixa SEM alinhar a numeração: repete a venda nº 1 (unique no banco).
+    const storage = createStorage(nodeSqliteDriver());
+    await migrateLocal(storage);
+    const novo = new PdvService(storage, {
+      terminalId: primeiro.terminal.id,
+      operatorId: dono.me.user.id,
+    });
+    const sync = new SyncClient(
+      storage,
+      novo,
+      transport(dono.auth, primeiro.terminal.id).impl,
+      primeiro.terminal.id,
+    );
+    await sync.sync();
+    await novo.openSession(0);
+    const repetida = await vender(novo);
+    expect(repetida.terminalSeq).toBe(1);
+    await novo.addMovement('supply', 500, 'Troco');
+    // Produto novo cadastrado depois: precisa chegar ao caixa mesmo com o envio travado.
+    await admin.post('/products', { name: 'Suco', priceCents: 500, barcodes: ['96385074'] });
+    const estado = await sync.sync();
+    // A venda já paga não é descartada: fica na fila do caixa (regra 6) e o motivo vai ao log.
+    expect(estado.rejected).toBe(0);
+    expect(estado.pending).toBeGreaterThan(0);
+    expect(estado.lastError).toContain('Tentaremos de novo');
+    expect(await novo.findByCode('96385074')).toBeTruthy();
   });
 });

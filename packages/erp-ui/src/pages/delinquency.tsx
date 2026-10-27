@@ -11,7 +11,7 @@ import {
 } from '@bipae/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Ban, HandCoins, PartyPopper, TriangleAlert, Users } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useApp, useCan } from '../context';
 
 const brl = (value: number) => formatBRL(cents(value));
@@ -35,6 +35,7 @@ export function DelinquencyPage() {
   const canCredit = useCan('parties.credit');
   const canEdit = useCan('parties.write');
   const canReceive = canCredit && canEdit;
+  const navigate = useNavigate();
   const list = useQuery({
     queryKey: ['finance', 'delinquency'],
     queryFn: () => api.get<DelinquentCustomer[]>('/finance/entries/delinquency'),
@@ -46,7 +47,7 @@ export function DelinquencyPage() {
     <>
       <PageHeader
         title="Inadimplência do crediário"
-        description="Clientes com parcela vencida. O recebimento é feito na ficha do cliente."
+        description="Clientes com parcela vencida. Toque no cliente para abrir a ficha e receber."
         icon={<TriangleAlert />}
         tone="red"
         actions={
@@ -92,6 +93,15 @@ export function DelinquencyPage() {
             <DataTable
               caption="Clientes com parcela vencida"
               rows={rows}
+              // Um clique abre a ficha deste cliente, já pronta para receber (PIE OP-05): antes era
+              // preciso ir a Clientes e procurar o nome de novo.
+              onRowClick={
+                canReceive
+                  ? (r) =>
+                      // "Cliente sem cadastro" não tem ficha para abrir.
+                      r.customerId && navigate(`/clientes?abrir=${encodeURIComponent(r.taxId)}`)
+                  : undefined
+              }
               card={(r) => (
                 <>
                   <span className="flex min-w-0 flex-1 flex-col gap-1">

@@ -32,6 +32,9 @@ const FISCAL_KEY = 'fiscal_version';
 const LAST_SYNC_KEY = 'last_sync_at';
 const BATCH = 100;
 
+/** O servidor recebeu o lote mas parou num evento: a conexão está boa, o problema é o dado. */
+class PartialPushError extends Error {}
+
 export class SyncClient {
   private running: Promise<SyncStatus> | null = null;
   private lastError: string | null = null;
@@ -65,8 +68,22 @@ export class SyncClient {
     this.running ??= (async () => {
       this.emit(await this.status());
       try {
-        await this.pushAll();
-        await this.pullAll();
+        // Um envio que o servidor processou só em parte (evento travado) não pode deixar o caixa
+        // sem preços e catálogo novos (PIE R3-01): recebe mesmo assim e depois avisa. Sem rede, o
+        // envio falha antes de chegar ao servidor e nada muda: sai na hora, como sempre.
+        let pushError: unknown = null;
+        try {
+          await this.pushAll();
+        } catch (error) {
+          if (!(error instanceof PartialPushError)) throw error;
+          pushError = error;
+        }
+        try {
+          await this.pullAll();
+        } catch (error) {
+          throw pushError ?? error;
+        }
+        if (pushError) throw pushError;
         this.lastError = null;
         await setMeta(this.storage, LAST_SYNC_KEY, this.now().toISOString());
       } catch (error) {
@@ -95,7 +112,7 @@ export class SyncClient {
       const handled = result.accepted.length + result.rejected.length;
       // The server stops at the first transient failure; retry later instead of looping.
       if (handled < events.length) {
-        throw new Error(
+        throw new PartialPushError(
           'O servidor não conseguiu processar todas as vendas agora. Tentaremos de novo.',
         );
       }

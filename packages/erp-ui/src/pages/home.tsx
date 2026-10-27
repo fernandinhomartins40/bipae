@@ -363,6 +363,11 @@ function TodayCard() {
   });
   if (!canSee || report.isError) return null;
   const r = report.data;
+  // Sem o custo de algum item, a margem não existe: melhor dizer o que falta do que mostrar errado.
+  const margin =
+    r && r.rows.length > 0 && r.rows.every((row) => row.marginCents !== null)
+      ? r.rows.reduce((sum, row) => sum + row.marginCents!, 0)
+      : null;
 
   return (
     <Card>
@@ -374,7 +379,7 @@ function TodayCard() {
       ) : r.salesCount === 0 ? (
         <p className="text-muted">Nenhuma venda hoje ainda. A primeira bipada aparece aqui.</p>
       ) : (
-        <dl className="grid grid-cols-3 gap-3">
+        <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div>
             <dt className="text-sm text-muted">Vendas</dt>
             <dd className="text-2xl font-bold tabular-nums">{r.salesCount}</dd>
@@ -386,6 +391,19 @@ function TodayCard() {
           <div>
             <dt className="text-sm text-muted">Ticket médio</dt>
             <dd className="text-2xl font-bold tabular-nums">{brl(r.avgTicketCents)}</dd>
+          </div>
+          {/* A pergunta do dono é "quanto lucrei hoje?": o relatório do dia já traz a margem (PIE OP-03). */}
+          <div>
+            <dt className="text-sm text-muted">Margem (venda − custo)</dt>
+            {margin === null ? (
+              <dd className="text-sm">
+                <Link to="/produtos" className="text-primary underline">
+                  Cadastre o custo dos produtos para ver
+                </Link>
+              </dd>
+            ) : (
+              <dd className="text-2xl font-bold tabular-nums">{brl(margin)}</dd>
+            )}
           </div>
         </dl>
       )}
@@ -415,10 +433,37 @@ function FirstStepsCard() {
     enabled: canCatalog,
     retry: false,
   });
+  // Os mesmos dados que a tela de empresas e o aviso de certificado já usam (PIE OP-01): o
+  // passo só aparece quando a resposta veio; sem permissão, ele simplesmente não entra na lista.
+  const companies = useQuery({
+    queryKey: ['home', 'companies'],
+    queryFn: () =>
+      api.get<{ taxId: string | null; uf: string | null; taxRegime: string | null }[]>(
+        '/companies',
+      ),
+    enabled: canCatalog,
+    retry: false,
+  });
+  const certificates = useQuery({
+    queryKey: ['home', 'certificates'],
+    queryFn: () => api.get<CertificateStatus[]>('/fiscal/certificates'),
+    enabled: canCatalog,
+    retry: false,
+  });
   if (!canCatalog || !products.data) return null;
 
+  const company = companies.data?.[0];
   const steps = [
     { done: true, label: 'Criar sua conta', to: null },
+    ...(company
+      ? [
+          {
+            done: Boolean(company.taxId && company.uf && company.taxRegime),
+            label: 'Completar os dados da empresa (CNPJ, estado e regime de impostos)',
+            to: '/empresas',
+          },
+        ]
+      : []),
     {
       done: products.data.total > 0,
       label: 'Cadastrar seus primeiros produtos',
@@ -426,7 +471,16 @@ function FirstStepsCard() {
     },
     { done: (sales.data?.total ?? 0) > 0, label: 'Fazer uma venda de teste', to: '/caixa' },
   ];
+  // O certificado só importa para quem vai emitir nota (e o A3 do desktop nem aparece aqui): é um
+  // passo a mais enquanto o cartão está na tela, mas não segura o cartão para sempre.
   if (steps.every((s) => s.done)) return null;
+  if (certificates.data) {
+    steps.push({
+      done: certificates.data.some((c) => c.status !== 'vencido'),
+      label: 'Instalar o certificado digital para emitir nota fiscal (opcional)',
+      to: '/empresas',
+    });
+  }
 
   return (
     <Card>

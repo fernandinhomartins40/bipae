@@ -204,6 +204,29 @@ export function Register({
     tone: 'danger' | 'success' | 'warning';
     text: string;
   } | null>(null);
+  // Venda em andamento guardada no aparelho (PIE R2-02): recarregar a página, fechar a aba ou
+  // faltar luz não perde os itens; ao voltar, a venda reaparece sozinha.
+  const [draftLoaded, setDraftLoaded] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void pdv
+      .loadDraft()
+      .then((draft) => {
+        if (!alive) return;
+        if (draft && cartRef.current.lines.length === 0) {
+          setCart(draft);
+          setMessage({ tone: 'success', text: 'A venda que estava em andamento foi recuperada.' });
+        }
+      })
+      .catch(() => undefined)
+      .finally(() => alive && setDraftLoaded(true));
+    return () => {
+      alive = false;
+    };
+  }, [pdv, setCart]);
+  useEffect(() => {
+    if (draftLoaded) void pdv.saveDraft(cart).catch(() => undefined);
+  }, [cart, draftLoaded, pdv]);
   const [dialog, setDialog] = useState<Dialog>({ kind: 'none' });
   // Celular e tablet em pé (F8-14): tela inteira, sem rolar a página, ações numa folha.
   const compact = useCompactLayout();

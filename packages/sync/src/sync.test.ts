@@ -121,9 +121,13 @@ describe('sync client', () => {
   });
 
   it('reports a partial push as an error so it retries later', async () => {
+    let pulls = 0;
     const server: SyncTransport = {
       push: async (_t, events) => ({ accepted: [events[0]!.id], rejected: [] }),
-      pull: async () => ({ cursor: '', products: [], hasMore: false }),
+      pull: async () => {
+        pulls++;
+        return { cursor: '', products: [], hasMore: false };
+      },
     };
     const { pdv, client } = await setup(server);
     await pdv.openSession(0);
@@ -131,6 +135,8 @@ describe('sync client', () => {
     const status = await client.sync();
     expect(status.pending).toBe(1);
     expect(status.lastError).toContain('Tentaremos de novo');
+    // Envio parcial não impede o caixa de receber preços e catálogo (PIE R3-01).
+    expect(pulls).toBe(1);
   });
 
   it('concurrent sync calls share one run and notify listeners', async () => {

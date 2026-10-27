@@ -1,7 +1,7 @@
 import { uuidv7 } from '@bipae/domain';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { withTenant } from '../src/db/client';
+import { asPlatform, withTenant } from '../src/db/client';
 import { rowsOf } from '../src/db/migrate';
 import { api, createTestApp, signup, type TestApp } from './helpers';
 
@@ -250,5 +250,58 @@ describe('permissions', () => {
       permissions: ['catalog.read'],
     });
     expect(res.statusCode).toBe(400);
+  });
+});
+
+describe('isolamento em TODAS as tabelas com tenant_id (PIE R4-01)', () => {
+  it('cada tabela com tenant_id tem RLS forçado, política pelo tenant e não mostra linha de outra empresa', async () => {
+    const a = await signup(t.app);
+    const b = await signup(t.app);
+    await api(t.app, a.auth).post('/products', { name: 'Arroz de A', priceCents: 990 });
+    const tables = await asPlatform(t.database.db, async (tx) =>
+      rowsOf<{ table_name: string; rls: boolean; forced: boolean; policies: string | null }>(
+        await tx.execute(sql`
+          select c.table_name,
+                 k.relrowsecurity as rls,
+                 k.relforcerowsecurity as forced,
+                 (select string_agg(coalesce(p.qual, '') || ' ' || coalesce(p.with_check, ''), ' ')
+                    from pg_policies p
+                   where p.schemaname = 'public' and p.tablename = c.table_name) as policies
+            from information_schema.columns c
+            join pg_class k on k.relname = c.table_name and k.relnamespace = 'public'::regnamespace
+           where c.table_schema = 'public' and c.column_name = 'tenant_id' and k.relkind = 'r'
+           order by c.table_name`),
+      ),
+    );
+    // A lista sai do banco: tabela nova entra no teste sozinha.
+    expect(tables.length).toBeGreaterThan(TENANT_TABLES.length);
+    // Sem FORCE só pesa para a dona da tabela; a API usa bipae_app, que nunca é dona. Mesmo assim
+    // cada exceção precisa de motivo.
+    const NOT_FORCED: Record<string, string> = {
+      memberships: 'lida pelas funções security definer do login antes de haver sessão',
+      invites: 'lida por invite_lookup (security definer) quem abre o link ainda sem sessão',
+      company_certificates: 'sem motivo conhecido: forçar numa migração nova (plano PIE)',
+      company_icms_rules: 'sem motivo conhecido: forçar numa migração nova (plano PIE)',
+    };
+    const problems: string[] = [];
+    for (const table of tables) {
+      if (PLATFORM_TABLES.includes(table.table_name)) continue;
+      if (!table.rls) problems.push(`${table.table_name}: sem RLS`);
+      if (!table.forced && !NOT_FORCED[table.table_name])
+        problems.push(`${table.table_name}: RLS não forçado`);
+      if (!/app_tenant\(\)|app\.tenant_id/.test(table.policies ?? ''))
+        problems.push(`${table.table_name}: sem política pelo tenant`);
+      const leaked = await withTenant(t.database.db, { tenantId: b.me.tenant.id }, async (tx) =>
+        rowsOf<{ n: number }>(
+          await tx.execute(
+            sql.raw(
+              `select count(*)::int as n from ${table.table_name} where tenant_id <> '${b.me.tenant.id}'`,
+            ),
+          ),
+        ),
+      );
+      if (leaked[0]!.n > 0) problems.push(`${table.table_name}: mostra linhas de outra empresa`);
+    }
+    expect(problems).toEqual([]);
   });
 });

@@ -99,6 +99,8 @@ export class BillingController {
 
   /** Pede a conferência do pagamento já; a confirmação (e a troca do plano) vem da manutenção. */
   @Post('invoices/:id/check')
+  // Como as outras ações da assinatura; antes passava para qualquer membro (PIE R4-03).
+  @RequirePermission('admin.users')
   async check(@Ctx() ctx: RequestContext, @Param('id') id: string): Promise<BillingView> {
     const view = await withTenant(this.db, ctx, async (tx) => {
       const [row] = await tx.select().from(planInvoices).where(eq(planInvoices.id, id));

@@ -442,6 +442,8 @@ function EntryDrawer({
             </p>
             <Button
               loading={busy}
+              // Sem valor, a baixa registrava R$ 0,00 (PIE R2-08).
+              disabled={paid === null}
               onClick={() =>
                 void run(() =>
                   api.post(`/finance/entries/${entry.id}/pay`, {

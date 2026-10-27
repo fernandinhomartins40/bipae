@@ -356,12 +356,24 @@ export class AuthService {
       throw new AppError(403, 'invite_email', 'Este convite é para outro e-mail.');
     }
 
+    // Mesmo travamento por e-mail do login: sem ele, um convite sem e-mail fixo servia para
+    // adivinhar a senha (e o código de 2 etapas) de qualquer pessoa sem limite (PIE R1-02).
+    this.checkFailures(input.email);
     const found = await this.findUserByEmail(input.email);
     let userId: string;
     if (found) {
       const valid = await verify(found.password_hash, input.password);
-      if (!valid) throw new AppError(401, 'invalid_login', INVALID_LOGIN);
-      this.checkSecondFactor(found, input.totp);
+      if (!valid) {
+        this.recordFailure(input.email);
+        throw new AppError(401, 'invalid_login', INVALID_LOGIN);
+      }
+      try {
+        this.checkSecondFactor(found, input.totp);
+      } catch (e) {
+        if (input.totp) this.recordFailure(input.email);
+        throw e;
+      }
+      this.failures.delete(input.email.toLowerCase());
       userId = found.id;
     } else {
       if (!input.name)

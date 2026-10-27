@@ -627,16 +627,18 @@ function StockCount({ product }: { product: Product }) {
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const save = async (e: FormEvent) => {
     e.preventDefault();
-    const value = Number(text.replace(',', '.'));
-    if (!Number.isFinite(value) || value < 0)
-      return setMessage({ ok: false, text: 'Quantidade inválida.' });
+    // Campo vazio virava 0 e zerava o saldo (PIE R2-04): agora precisa de um número de verdade.
+    // Zero é uma contagem válida (o produto acabou); parseQuantity só aceita quantidade positiva.
+    const milli = /^0+([.,]0+)?$/.test(text.trim()) ? 0 : parseQuantity(text);
+    if (milli === null)
+      return setMessage({ ok: false, text: 'Informe a quantidade contada. Ex.: 12 ou 1,5' });
     try {
       const [store] = await api.get<{ id: string }[]>('/stores');
       await api.post('/stock/adjustments', {
         productId: product.id,
         storeId: store!.id,
         mode: 'count',
-        quantityMilli: Math.round(value * 1000),
+        quantityMilli: milli,
         note: 'Contagem pelo cadastro',
       });
       await queryClient.invalidateQueries({ queryKey: ['stock'] });

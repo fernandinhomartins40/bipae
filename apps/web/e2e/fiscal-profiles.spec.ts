@@ -14,7 +14,7 @@ test('criar um perfil fiscal e escolher no cadastro do produto', async ({ page }
   await expect(page.getByRole('heading', { name: 'Olá, Paulo!' })).toBeVisible();
 
   await abrirNoMenu(page, 'Perfis fiscais');
-  await expect(page.getByText('A emissão de NFC-e chega em breve')).toBeVisible();
+  await expect(page.getByText('Para que serve o perfil fiscal')).toBeVisible();
   // The signup already creates a default profile.
   await expect(page.getByRole('cell', { name: 'Revenda — Simples Nacional' })).toBeVisible();
 

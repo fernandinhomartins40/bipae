@@ -149,6 +149,9 @@ function toProduct(row: Row): CatalogProduct {
   };
 }
 
+/** Chave do rascunho da venda em andamento na tabela meta do banco local. */
+const DRAFT_KEY = 'draft_cart';
+
 /**
  * The register. Everything is written to the terminal's local database first; each action
  * appends an event to the outbox in the same transaction (ADR-0004), so a sale either
@@ -1107,6 +1110,28 @@ export class PdvService {
       ...(JSON.parse(r.data as string) as StoredSale),
       status: r.status as StoredSale['status'],
     }));
+  }
+
+  // ---------------------------------------------------------------- venda em andamento
+
+  /**
+   * Guarda no aparelho a venda que está sendo passada: recarregar a página, fechar a aba ou faltar
+   * luz não perde os itens já bipados (PIE R2-02). Carrinho vazio apaga o rascunho.
+   */
+  async saveDraft(cart: Cart): Promise<void> {
+    await setMeta(this.storage, DRAFT_KEY, cart.lines.length > 0 ? JSON.stringify(cart) : '');
+  }
+
+  /** A venda em andamento guardada, ou null se não houver (ou se o que estava guardado não serve). */
+  async loadDraft(): Promise<Cart | null> {
+    const raw = await getMeta(this.storage, DRAFT_KEY);
+    if (!raw) return null;
+    try {
+      const cart = JSON.parse(raw) as Cart;
+      return Array.isArray(cart.lines) && cart.lines.length > 0 ? cart : null;
+    } catch {
+      return null;
+    }
   }
 
   // ---------------------------------------------------------------- quotes

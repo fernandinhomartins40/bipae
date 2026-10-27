@@ -4,6 +4,7 @@ import type { AccountView, AnnouncementView, PlanLimits } from '@bipae/domain';
 import { asc, desc, eq, sql } from 'drizzle-orm';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { CONFIG, DB } from '../../common/di';
+import { AppError } from '../../common/errors';
 import type { Config } from '../../config';
 import { withTenant, type Db } from '../../db/client';
 import { rowsOf } from '../../db/migrate';
@@ -28,6 +29,14 @@ export class AccountController {
   @Get('account/export')
   @RequirePermission('admin.users')
   async export(@Ctx() ctx: RequestContext, @Res({ passthrough: true }) reply: FastifyReply) {
+    // O acesso de suporte é para ajudar na tela, não para levar a base inteira do cliente (PIE R1-06).
+    if (ctx.impersonatedBy) {
+      throw new AppError(
+        403,
+        'support_export',
+        'No acesso de suporte não dá para baixar os dados da conta. Peça ao dono da empresa.',
+      );
+    }
     const { fileName, zip } = await this.dataExport.export(ctx);
     reply.header('content-type', 'application/zip');
     reply.header('content-disposition', `attachment; filename="${fileName}"`);

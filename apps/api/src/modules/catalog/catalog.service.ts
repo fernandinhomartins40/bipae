@@ -163,6 +163,8 @@ export class CatalogService {
       const priceChanged = current.priceCents !== input.priceCents || wholesaleChanged;
       assertWholesale(input);
       if (priceChanged && !hasPermission(ctx.permissions, 'catalog.price.write')) throw forbidden();
+      // Reativar conta no limite do plano, como cadastrar um novo (PIE R1-04).
+      if (input.active && !current.active) await this.limits.assertCanAdd(tx, 'products');
 
       await tx
         .update(products)

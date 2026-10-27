@@ -1,6 +1,7 @@
 import {
   formatBRL,
   formatTaxId,
+  parseBRL,
   LIMIT_LABELS,
   LIMIT_RESOURCES,
   PLATFORM_ROLE_LABELS,
@@ -1179,14 +1180,23 @@ function PlanForm({ plan, onClose }: { plan: Plan | null; onClose: () => void })
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
+    // "49.90" virava R$ 4.990,00 e "10 lojas" virava ilimitado (PIE R2-05): agora o texto é
+    // conferido e, se não for entendido, o plano não é salvo.
+    const priceCents = v.price.trim() === '' ? null : parseBRL(v.price);
+    if (v.price.trim() !== '' && (priceCents === null || priceCents < 0)) {
+      setError('Preço inválido. Use o formato 49,90.');
+      return;
+    }
+    const badLimit = LIMIT_RESOURCES.find((r) => !/^\d*$/.test(v.limits[r]!.trim()));
+    if (badLimit) {
+      setError('Nos limites, use só números (ou deixe vazio para ilimitado).');
+      return;
+    }
     const body = {
       id: v.id,
       name: v.name,
       description: v.description || null,
-      priceCents:
-        v.price.trim() === ''
-          ? null
-          : Math.round(Number(v.price.replace(/\./g, '').replace(',', '.')) * 100),
+      priceCents,
       limits: Object.fromEntries(
         LIMIT_RESOURCES.map((r) => [r, v.limits[r]!.trim() === '' ? null : Number(v.limits[r])]),
       ),

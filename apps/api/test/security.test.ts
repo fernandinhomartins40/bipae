@@ -289,3 +289,26 @@ describe('painel do Bipaê (F7-02.c)', () => {
     expect(travado.statusCode).toBe(429);
   });
 });
+
+describe('IP do cliente atrás dos proxies (PIE R1-01)', () => {
+  it('trocar o X-Forwarded-For não escapa do limite de login por IP', async () => {
+    const app = await createTestApp({ LOGIN_RATE_LIMIT_PER_MINUTE: '3' });
+    try {
+      const status: number[] = [];
+      for (let i = 0; i < 5; i++) {
+        const res = await app.app.inject({
+          method: 'POST',
+          url: '/v1/auth/login',
+          // O cliente inventa o primeiro IP; os dois últimos são os nossos nginx.
+          headers: { 'x-forwarded-for': `10.9.9.${i}, 203.0.113.7, 172.18.0.5` },
+          payload: { email: `ninguem-${i}@exemplo.com.br`, password: 'errada-123' },
+        });
+        status.push(res.statusCode);
+      }
+      expect(status.slice(0, 3)).toEqual([401, 401, 401]);
+      expect(status.slice(3)).toEqual([429, 429]);
+    } finally {
+      await app.close();
+    }
+  });
+});

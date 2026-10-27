@@ -788,11 +788,60 @@ export function PaymentDialog({
     e.preventDefault();
     setMethod(hit.method);
   };
+  // Sair com Pix ou maquininha aguardando: cancela a cobrança antes, para o cliente não pagar uma
+  // venda que não existe (PIE R2-03). Se ela já tinha sido paga, o pagamento entra e a janela fica.
+  const [leaving, setLeaving] = useState(false);
+  const leave = async () => {
+    setLeaving(true);
+    try {
+      if (charge?.status === 'pending' && pixApi?.cancel) {
+        const next = await pixApi.cancel(charge.txid);
+        if (next.status === 'paid') {
+          setTenders((t) => [
+            ...t,
+            {
+              method: 'pix',
+              receivedCents: next.amountCents,
+              provider: next.providerName,
+              nsu: next.endToEndId,
+            },
+          ]);
+          setCharge(null);
+          setError('O Pix já tinha sido pago e entrou na venda. Finalize a venda.');
+          return;
+        }
+      }
+      if (cardCharge?.status === 'pending' && cardApi) {
+        const next = await cardApi.cancel(cardCharge.id);
+        if (next.status === 'paid') {
+          setTenders((t) => [
+            ...t,
+            {
+              method: next.method,
+              receivedCents: next.amountCents,
+              provider: 'Mercado Pago Point',
+              nsu: next.paymentId,
+            },
+          ]);
+          setCardCharge(null);
+          setError('O cartão já tinha sido aprovado e entrou na venda. Finalize a venda.');
+          return;
+        }
+      }
+      onClose();
+    } catch (err) {
+      setError(
+        `Não deu para cancelar a cobrança que está aguardando: ${errorMessage(err)} Tente de novo antes de sair.`,
+      );
+    } finally {
+      setLeaving(false);
+    }
+  };
   return (
     <Modal
       mobileFullscreen
       open
-      onOpenChange={(o) => !o && !busy && onClose()}
+      onOpenChange={(o) => !o && !busy && !leaving && void leave()}
       title="Pagamento"
       wide
     >

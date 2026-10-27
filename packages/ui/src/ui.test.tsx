@@ -36,6 +36,31 @@ describe('fields', () => {
     expect(input).toHaveValue('1.234,50');
   });
 
+  it('money field: Enter no formulário envia o valor novo, nunca o antigo (PIE R2-01)', async () => {
+    let saved: number | null = 1000;
+    let current: number | null = 1000;
+    render(
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          saved = current;
+        }}
+      >
+        <MoneyField label="Preço" value={1000} onChange={(c) => (current = c)} />
+      </form>,
+    );
+    const input = screen.getByLabelText('Preço');
+    await userEvent.clear(input);
+    await userEvent.type(input, '12,90{Enter}');
+    expect(saved).toBe(1290);
+    // Texto que não é valor: o Enter não envia e o campo explica.
+    saved = null;
+    await userEvent.clear(input);
+    await userEvent.type(input, '12,9x{Enter}');
+    expect(saved).toBeNull();
+    expect(screen.getByRole('alert')).toHaveTextContent('Valor inválido');
+  });
+
   it('money field explains invalid input', async () => {
     render(<MoneyField label="Preço" value={null} onChange={() => {}} />);
     await userEvent.type(screen.getByLabelText('Preço'), 'abc');

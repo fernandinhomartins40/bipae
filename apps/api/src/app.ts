@@ -15,7 +15,7 @@ import {
 import { AuthGuard, Public } from './common/auth';
 import { CONFIG, DB, QUEUE } from './common/di';
 import { createQueue } from './common/queue';
-import { ApiExceptionFilter } from './common/errors';
+import { ApiExceptionFilter, AppError } from './common/errors';
 import { TokenService } from './common/tokens';
 import type { Config } from './config';
 import type { Database } from './db/client';
@@ -392,7 +392,11 @@ class AppModule {
 export async function createApp(config: Config, database: Database) {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule.forRoot(config, database),
-    new FastifyAdapter({ trustProxy: true, bodyLimit: 2 * 1024 * 1024 }),
+    new FastifyAdapter({
+      // Mesmo efeito de `trustProxy: N` do Fastify (o tipo do adaptador não aceita número).
+      trustProxy: (_address: string, hop: number) => hop < config.TRUST_PROXY_HOPS,
+      bodyLimit: 2 * 1024 * 1024,
+    }),
     // rawBody: o aviso do MercadoFlow é conferido pela assinatura do corpo como chegou.
     { logger: config.NODE_ENV === 'test' ? false : ['error', 'warn', 'log'], rawBody: true },
   );
@@ -407,7 +411,17 @@ export async function createApp(config: Config, database: Database) {
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['content-type', 'authorization', CLIENT_HEADER, TERMINAL_HEADER],
   });
-  await app.register(rateLimit, { global: false, max: config.LOGIN_RATE_LIMIT_PER_MINUTE });
+  await app.register(rateLimit, {
+    global: false,
+    max: config.LOGIN_RATE_LIMIT_PER_MINUTE,
+    // Sem isto o excesso chegava ao filtro como erro desconhecido e saía 500 (PIE R1-01).
+    errorResponseBuilder: () =>
+      new AppError(
+        429,
+        'too_many_requests',
+        'Muitas tentativas em pouco tempo. Espere um minuto e tente de novo.',
+      ),
+  });
   // Respostas da API trazem dados da conta: nada de guardar em cache do navegador ou de
   // proxy (F7-02, OWASP ASVS 8.2.1). Quem quiser cache diz o seu próprio Cache-Control.
   app

@@ -47,10 +47,12 @@ export function FiscalProfilesPage() {
         }
       />
       <div className="mb-4">
-        <Alert tone="warning" title="A emissão de NFC-e chega em breve">
-          O Bipaê confere cada código na tabela oficial e já calcula os impostos de cada venda, para
-          você conferir em Vendas. A nota fiscal ainda não é emitida. Na dúvida sobre CFOP, CSOSN ou
-          cClassTrib, confirme com o seu contador.
+        {/* O aviso antigo dizia que a NFC-e não era emitida, o que já não é verdade (PIE R2-P). */}
+        <Alert tone="warning" title="Para que serve o perfil fiscal">
+          O perfil diz como cada produto paga imposto. O Bipaê confere cada código na tabela oficial
+          e usa o perfil para calcular os impostos de cada venda e para preencher a nota fiscal. Por
+          enquanto a nota sai no ambiente de homologação da SEFAZ (teste, sem valor fiscal). Na
+          dúvida sobre CFOP, CSOSN ou cClassTrib, confirme com o seu contador.
         </Alert>
       </div>
       {list.error && <Alert>{(list.error as Error).message}</Alert>}
@@ -117,7 +119,8 @@ function FiscalProfileForm({
   });
   const digits =
     (
-      key: 'cfopInterna' | 'cfopInterestadual' | 'csosn' | 'cstIcms' | 'cstPisCofins' | 'cClassTrib',
+      key:
+        'cfopInterna' | 'cfopInterestadual' | 'csosn' | 'cstIcms' | 'cstPisCofins' | 'cClassTrib',
       max: number,
     ) =>
     (e: { target: { value: string } }) =>
@@ -167,8 +170,14 @@ function FiscalProfileForm({
           options={
             // Lista oficial quando já carregou; a lista curta do domínio enquanto isso.
             options
-              ? options.origins.map((o) => ({ value: o.code, label: `${o.code} — ${o.description}` }))
-              : ICMS_ORIGINS.map((o) => ({ value: String(o.code), label: `${o.code} — ${o.label}` }))
+              ? options.origins.map((o) => ({
+                  value: o.code,
+                  label: `${o.code} — ${o.description}`,
+                }))
+              : ICMS_ORIGINS.map((o) => ({
+                  value: String(o.code),
+                  label: `${o.code} — ${o.label}`,
+                }))
           }
         />
         <div className="grid gap-4 sm:grid-cols-2">
@@ -179,7 +188,12 @@ function FiscalProfileForm({
             onChange={digits('cfopInterna', 4)}
             error={form.errors.cfopInterna}
             list="cfop-interna-opcoes"
-            hint={codeHint(options?.cfopInterna, form.values.cfopInterna, 4, 'Começa com 5. Ex.: 5102 (revenda).')}
+            hint={codeHint(
+              options?.cfopInterna,
+              form.values.cfopInterna,
+              4,
+              'Começa com 5. Ex.: 5102 (revenda).',
+            )}
           />
           <TextField
             label="CFOP para outro estado"

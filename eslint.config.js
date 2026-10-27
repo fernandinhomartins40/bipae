@@ -28,6 +28,8 @@ export default tseslint.config(
       '**/test-results/**',
       'apps/desktop/src-tauri/**',
       '.data/**',
+      // Cópias de trabalho dos agentes: o lint local varria o repositório várias vezes (PIE R4-14).
+      '.claude/**',
     ],
   },
   js.configs.recommended,

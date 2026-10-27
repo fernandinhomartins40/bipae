@@ -138,4 +138,19 @@ describe('convite por link (F1-06)', () => {
     expect(res.statusCode).toBe(422);
     expect(res.json().message).toBe('O papel de Dono não pode ser dado por convite.');
   });
+
+  it('o convite não serve para adivinhar a senha de outra pessoa: trava como o login (PIE R1-02)', async () => {
+    const vitima = await signup(t.app);
+    const email = vitima.me.user.email;
+    const { convite } = await empresaComConvite();
+    for (let i = 0; i < 10; i++) {
+      expect((await aceitar(convite.token, { email, password: `chute-${i}-abc` })).statusCode).toBe(
+        401,
+      );
+    }
+    // A 11ª tentativa é barrada antes de conferir a senha, mesmo com a senha certa.
+    const travado = await aceitar(convite.token, { email, password: SENHA });
+    expect(travado.statusCode).toBe(429);
+    expect((await info(convite.token)).json().status).toBe('valid');
+  });
 });

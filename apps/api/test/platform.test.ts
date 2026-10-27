@@ -314,6 +314,10 @@ describe('managing clients', () => {
     expect(write.statusCode).toBe(403);
     expect(write.json().code).toBe('read_only');
     expect((await support.get('/auth/me')).json().support).toMatchObject({ readOnly: true });
+    // Suporte não leva a base inteira do cliente pela exportação LGPD (PIE R1-06).
+    const exportacao = await support.get('/account/export');
+    expect(exportacao.statusCode).toBe(403);
+    expect(exportacao.json().code).toBe('support_export');
 
     const clientAudit = (await api(t.app, client.auth).get('/audit')).json().items;
     expect(clientAudit[0]).toMatchObject({
@@ -458,5 +462,81 @@ describe('platform settings', () => {
     const cobertura = (await admin.get('/admin/fiscal-coverage')).json();
     expect(cobertura.total).toBe(135);
     expect(cobertura.rows).toHaveLength(27);
+  });
+});
+
+describe('limites e Dono não se contornam pela edição (PIE R1-04, R1-05)', () => {
+  const SENHA = 'senha-forte-123';
+  const pessoa = async (own: ReturnType<typeof api>, roleId: string) => {
+    const email = `p-${Date.now()}-${Math.random().toString(36).slice(2)}@exemplo.com.br`;
+    const res = await own.post('/members', {
+      name: 'Pessoa Teste',
+      email,
+      password: SENHA,
+      roleId,
+    });
+    expect(res.statusCode).toBe(201);
+    return { userId: res.json().userId as string, email };
+  };
+
+  it('reativar produto ou pessoa respeita o limite do plano', async () => {
+    const { admin } = await staff();
+    const client = await signup(t.app);
+    const own = api(t.app, client.auth);
+    await admin.post(`/admin/tenants/${client.me.tenant.id}/limits`, {
+      overrides: { products: 1, users: 2 },
+      reason: 'Teste do limite',
+    });
+    const a = (await own.post('/products', { name: 'Produto A', priceCents: 100 })).json();
+    expect(
+      (await own.put(`/products/${a.id}`, { ...a, active: false, barcodes: [] })).statusCode,
+    ).toBe(200);
+    expect((await own.post('/products', { name: 'Produto B', priceCents: 100 })).statusCode).toBe(
+      201,
+    );
+    const volta = await own.put(`/products/${a.id}`, { ...a, active: true, barcodes: [] });
+    expect(volta.statusCode).toBe(403);
+
+    const papeis = (await own.get('/roles')).json() as { id: string; systemKey: string }[];
+    const caixa = papeis.find((p) => p.systemKey === 'cashier')!.id;
+    const x = await pessoa(own, caixa);
+    expect((await own.patch(`/members/${x.userId}`, { active: false })).statusCode).toBe(200);
+    await pessoa(own, caixa);
+    expect((await own.patch(`/members/${x.userId}`, { active: true })).statusCode).toBe(403);
+  });
+
+  it('quem gerencia a equipe sem ser Dono não mexe no Dono nem dá o papel de Dono', async () => {
+    const client = await signup(t.app);
+    const own = api(t.app, client.auth);
+    const papeis = (await own.get('/roles')).json() as { id: string; systemKey: string }[];
+    const dono = papeis.find((p) => p.systemKey === 'owner')!.id;
+    const rh = (
+      await own.post('/roles', { name: 'RH', permissions: ['admin.users', 'catalog.read'] })
+    ).json();
+    const gestor = await pessoa(own, rh.id);
+    const outro = await pessoa(own, papeis.find((p) => p.systemKey === 'cashier')!.id);
+    const login = await t.app.inject({
+      method: 'POST',
+      url: '/v1/auth/login',
+      payload: { email: gestor.email, password: SENHA },
+    });
+    const g = api(t.app, { authorization: `Bearer ${login.json().accessToken}` });
+
+    const desligar = await g.patch(`/members/${client.me.user.id}`, { active: false });
+    expect(desligar.statusCode).toBe(403);
+    expect(desligar.json().code).toBe('owner_only');
+    expect((await g.patch(`/members/${outro.userId}`, { roleId: dono })).statusCode).toBe(403);
+    // Nem cadastrando uma pessoa nova já como Dono.
+    const novoDono = await g.post('/members', {
+      name: 'Falso Dono',
+      email: `falso-${Date.now()}@exemplo.com.br`,
+      password: SENHA,
+      roleId: dono,
+    });
+    expect(novoDono.statusCode).toBe(403);
+    // O que não envolve Dono continua funcionando.
+    expect((await g.patch(`/members/${outro.userId}`, { active: false })).statusCode).toBe(200);
+    // O Dono pode promover outra pessoa a Dono.
+    expect((await own.patch(`/members/${outro.userId}`, { roleId: dono })).statusCode).toBe(200);
   });
 });
