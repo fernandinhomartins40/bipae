@@ -131,6 +131,16 @@ import { CommissionController, CommissionService } from './modules/sales/commiss
 import { PixChargesController, PixChargesService } from './modules/payments/pix-charges.service';
 import { CardChargesController, CardChargesService } from './modules/payments/card-charges.service';
 import {
+  BoletoController,
+  BoletoService,
+  BoletoWebhookController,
+} from './modules/payments/boleto.service';
+import { SimulatedBoletoHub } from './modules/payments/boleto.psp';
+import { ChannelsController } from './modules/channels/channels.controller';
+import { ChannelsService } from './modules/channels/channels.service';
+import { SimulatorHub } from './modules/channels/simulator.channel';
+import { ChannelsSweep } from './modules/maintenance/channels-sweep';
+import {
   PaymentWebhooksController,
   PaymentWebhooksService,
 } from './modules/payments/payment-webhooks';
@@ -224,6 +234,9 @@ class AppModule {
         PixChargesController,
         CardChargesController,
         PaymentWebhooksController,
+        ChannelsController,
+        BoletoController,
+        BoletoWebhookController,
         InventoryController,
         TransferController,
         NfceEmissionController,
@@ -303,6 +316,11 @@ class AppModule {
         PixChargesService,
         CardChargesService,
         PaymentWebhooksService,
+        SimulatorHub,
+        ChannelsService,
+        SimulatedBoletoHub,
+        BoletoService,
+        ChannelsSweep,
         InventoryService,
         TransferService,
         LotsService,
