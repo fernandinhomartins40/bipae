@@ -3,6 +3,13 @@ import {
   CliSiTefDriver,
   DriverTefPort,
   MissingCliSiTefLib,
+  SITEF_CANCELLED_BY_CUSTOMER,
+  SITEF_CANCELLED_BY_OPERATOR,
+  SITEF_COMMAND,
+  SITEF_CONTINUE,
+  SITEF_FIELD,
+  type CliSiTefContinue,
+  type CliSiTefLib,
   parseSitefMenu,
   runTef,
   sitefAmount,
@@ -141,6 +148,153 @@ describe('TEF com pinpad: SiTef pelo protocolo em TypeScript (F8-11)', () => {
       abort: async () => undefined,
     };
     await expect(runTef(infinito, ui().screen)).rejects.toThrow('não terminou');
+  });
+
+  it('trata todos os comandos do laço do SiTef (roteiro de biblioteca)', async () => {
+    const cmd = (command: number, buffer = '', extra: Partial<CliSiTefContinue> = {}) => ({
+      ret: SITEF_CONTINUE,
+      command,
+      fieldType: 0,
+      minLength: 0,
+      maxLength: 0,
+      buffer,
+      ...extra,
+    });
+    const fim = (ret: number) => ({ ...cmd(0), ret });
+    const respostas: string[] = [];
+    let abortou = false;
+    const roteiro = [
+      cmd(SITEF_COMMAND.menuTitle, 'Forma de pagamento'),
+      cmd(SITEF_COMMAND.header, 'cabeçalho'),
+      cmd(SITEF_COMMAND.clearHeader),
+      cmd(SITEF_COMMAND.clearOperator),
+      cmd(SITEF_COMMAND.clearCustomer),
+      cmd(SITEF_COMMAND.clearBoth),
+      cmd(SITEF_COMMAND.clearMenuTitle),
+      cmd(SITEF_COMMAND.checkInterrupt),
+      cmd(SITEF_COMMAND.messageOperator, 'Para o operador'),
+      cmd(SITEF_COMMAND.messageCustomer, 'Para o cliente'),
+      cmd(SITEF_COMMAND.pause, 'Aguarde'),
+      cmd(SITEF_COMMAND.menu, '1:Crédito;2:Débito;'),
+      cmd(SITEF_COMMAND.collectField, 'Número de parcelas', { minLength: 1, maxLength: 2 }),
+      cmd(SITEF_COMMAND.collectMoney, 'Valor', { minLength: 1, maxLength: 9 }),
+      cmd(SITEF_COMMAND.collectSensitive, 'Código de segurança', { minLength: 3, maxLength: 4 }),
+      cmd(SITEF_COMMAND.confirm, 'Confirma?'),
+      cmd(SITEF_COMMAND.fieldResult, 'AUT123', { fieldType: SITEF_FIELD.authorizationCode }),
+      cmd(SITEF_COMMAND.fieldResult, 'H77', { fieldType: SITEF_FIELD.nsuHost }),
+      fim(0),
+    ];
+    let i = 0;
+    const lib: CliSiTefLib = {
+      configure: async () => 0,
+      start: async () => SITEF_CONTINUE,
+      continue: async ({ buffer, abort }) => {
+        if (abort) {
+          abortou = true;
+          return fim(SITEF_CANCELLED_BY_OPERATOR);
+        }
+        respostas.push(buffer);
+        return roteiro[i++]!;
+      },
+      finish: async () => undefined,
+    };
+    const driver = new CliSiTefDriver(lib, {
+      ...CONFIG,
+      modalities: { credit: 3, cancel: 200 },
+      extra: '[ParmsClient=1]',
+    });
+    const vistas: string[] = [];
+    const tela: TefUi = {
+      show: (step) => void vistas.push(step.text),
+      menu: async (step) => step.options[1]!.value,
+      input: async (step) => (step.secret ? '123' : step.format === 'money' ? '10,00' : '2'),
+      confirm: async () => false,
+    };
+    const result = await new DriverTefPort(driver, tela).pay({
+      amountCents: 1000,
+      method: 'credit',
+      saleId: 'venda-roteiro',
+    });
+    expect(result).toMatchObject({ approved: true, authorizationCode: 'AUT123' });
+    expect(vistas).toEqual(['Para o operador', 'Para o cliente', 'Aguarde']);
+    expect(respostas).toContain('2'); // menu: débito
+    expect(respostas).toContain('1'); // confirmação recusada: "1" = não
+    expect(abortou).toBe(false);
+  });
+
+  it('cancelamento no pinpad, comando desconhecido e passo sem fim viram resultado claro', async () => {
+    const base = {
+      fieldType: 0,
+      minLength: 0,
+      maxLength: 0,
+      buffer: '',
+    };
+    const libCom = (
+      start: number,
+      depois: (n: number) => { ret: number; command: number } & typeof base,
+    ): CliSiTefLib & { abortos: number } => {
+      let n = 0;
+      const l = {
+        abortos: 0,
+        configure: async () => 0,
+        start: async () => start,
+        continue: async ({ abort }: { abort: boolean }) => {
+          if (abort) {
+            l.abortos++;
+            return { ...base, ret: SITEF_CANCELLED_BY_OPERATOR, command: 0 };
+          }
+          return depois(n++);
+        },
+        finish: async () => undefined,
+      };
+      return l;
+    };
+    const pagar = (lib: CliSiTefLib, tela = ui().screen) =>
+      new DriverTefPort(new CliSiTefDriver(lib, CONFIG), tela).pay({
+        amountCents: 1000,
+        method: 'credit',
+        saleId: 'v9',
+      });
+
+    // O cliente cancela no pinpad.
+    const cliente = await pagar(
+      libCom(SITEF_CONTINUE, () => ({ ...base, ret: SITEF_CANCELLED_BY_CUSTOMER, command: 0 })),
+    );
+    expect(cliente.message).toContain('cliente no pinpad');
+
+    // O SiTef recusa já na abertura.
+    const abertura = await pagar(
+      libCom(SITEF_CANCELLED_BY_OPERATOR, () => ({ ...base, ret: 0, command: 0 })),
+    );
+    expect(abertura.approved).toBe(false);
+
+    // Comando que o Bipaê não conhece: cancela e avisa.
+    const desconhecido = libCom(SITEF_CONTINUE, () => ({
+      ...base,
+      ret: SITEF_CONTINUE,
+      command: 999,
+    }));
+    expect((await pagar(desconhecido)).message).toContain('ainda não trata (999)');
+    expect(desconhecido.abortos).toBe(1);
+
+    // Só comandos silenciosos, para sempre: desiste depois de 500 voltas.
+    const mudo = libCom(SITEF_CONTINUE, () => ({
+      ...base,
+      ret: SITEF_CONTINUE,
+      command: SITEF_COMMAND.clearBoth,
+    }));
+    expect((await pagar(mudo)).message).toContain('não terminou');
+    expect(mudo.abortos).toBe(1);
+
+    // Resposta "cancelar" da tela: manda abortar o laço.
+    const cancelaNaTela = libCom(SITEF_CONTINUE, () => ({
+      ...base,
+      ret: SITEF_CONTINUE,
+      command: SITEF_COMMAND.menu,
+      buffer: '1:Crédito;',
+    }));
+    const r = await pagar(cancelaNaTela, ui({ menu: null }).screen);
+    expect(r.approved).toBe(false);
   });
 
   it('diz o que falta configurar, sem prometer o que não existe', () => {

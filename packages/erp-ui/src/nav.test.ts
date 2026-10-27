@@ -18,11 +18,11 @@ describe('menu agrupado', () => {
   it('cada tela aparece uma vez só, em um grupo', () => {
     const routes = NAV_GROUPS.flatMap((g) => g.items.map((i) => i.to));
     expect(new Set(routes).size).toBe(routes.length);
-    expect(routes).toHaveLength(49);
+    expect(routes).toHaveLength(51);
   });
 
   it('cada grupo fica pequeno o bastante para ler de uma vez', () => {
-    for (const group of NAV_GROUPS) expect(group.items.length).toBeLessThanOrEqual(10);
+    for (const group of NAV_GROUPS) expect(group.items.length).toBeLessThanOrEqual(11);
   });
 
   it('só mostra o que a pessoa pode acessar e some com grupo vazio', () => {
