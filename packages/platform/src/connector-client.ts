@@ -1,9 +1,15 @@
 import {
   CONNECTOR_URL,
+  TEF_CALLS,
   toBase64,
+  type TefLibName,
   type ConnectorRequest,
   type ConnectorResponse,
 } from './connector';
+import type { CliSiTefLib } from './tef/cli-sitef';
+import { TefError } from './tef/protocol';
+import type { TefLibs } from './tef/factory';
+import type { PayGoLib } from './tef/paygo';
 import type {
   CashDrawerPort,
   CertificateInfo,
@@ -122,6 +128,41 @@ export class ConnectorClient implements PrinterPort, CashDrawerPort, ScalePort, 
     return signature;
   }
 
+  /** Quais bibliotecas de TEF (SiTef, PayGo) o Conector tem neste computador (F8-11). */
+  async tefStatus(): Promise<Record<TefLibName, boolean>> {
+    const { libs } = (await this.call({ type: 'tef-status' })) as {
+      libs: Record<TefLibName, boolean>;
+    };
+    return libs;
+  }
+
+  /**
+   * As bibliotecas de TEF do Conector como objetos locais: cada chamada vira um `tef-call`. O fluxo
+   * (CliSiTefDriver, PayGoDriver) roda aqui; o Conector só repassa os argumentos.
+   */
+  tefLibs(): Required<TefLibs> {
+    const remote = <T extends object>(lib: TefLibName): T =>
+      Object.fromEntries(
+        TEF_CALLS[lib].map((method) => [
+          method,
+          async (...args: unknown[]) => {
+            try {
+              const { value } = (await this.call({ type: 'tef-call', lib, method, args })) as {
+                value: unknown;
+              };
+              return value;
+            } catch (error) {
+              // Falha do Conector vira erro de TEF: o caixa mostra a mensagem e segue sem cartão.
+              throw error instanceof TefError
+                ? error
+                : new TefError((error as Error).message, 'unavailable');
+            }
+          },
+        ]),
+      ) as T;
+    return { sitef: remote<CliSiTefLib>('sitef'), paygo: remote<PayGoLib>('paygo') };
+  }
+
   private async ensureSocket(authenticate: boolean): Promise<ConnectorSocket> {
     if (this.socket) return this.socket;
     const socket = await this.connect(this.url);
@@ -164,8 +205,12 @@ export class ConnectorClient implements PrinterPort, CashDrawerPort, ScalePort, 
           this.pending.delete(id);
           reject(new ConnectorError('O Bipaê Conector não respondeu.', 'timeout'));
         },
-        request.type === 'cert-sign' ? Math.max(this.timeoutMs, 60_000) : this.timeoutMs,
-      ); // dá tempo de digitar o PIN
+        request.type === 'cert-sign'
+          ? Math.max(this.timeoutMs, 60_000)
+          : request.type === 'tef-call'
+            ? Math.max(this.timeoutMs, 120_000)
+            : this.timeoutMs,
+      ); // dá tempo de digitar o PIN ou passar o cartão
       this.pending.set(id, (response) => {
         clearTimeout(timer);
         if (response.ok) resolve(response.result);

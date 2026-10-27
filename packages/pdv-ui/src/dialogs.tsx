@@ -22,6 +22,7 @@ import {
   type StoredSale,
   type TenderInput,
 } from '@bipae/pdv-core';
+import { DriverTefPort, type TefDriver } from '@bipae/platform';
 import { SimulatedTef } from '@bipae/platform/simulators';
 import { Alert, Badge, Button, cx, Modal, TextField } from '@bipae/ui';
 import {
@@ -36,6 +37,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import type { AuthorizablePermission, PosBackend } from './backend';
+import { useTefScreen } from './tef-screen';
 
 export const brl = (c: number) => formatBRL(c as Cents);
 
@@ -514,6 +516,7 @@ export function PaymentDialog({
   payments = { card: 'manual', pix: 'manual' },
   pixApi,
   cardApi,
+  tef,
   onPaid,
   onClose,
 }: {
@@ -535,10 +538,36 @@ export function PaymentDialog({
     get(txid: string): Promise<PixChargeView>;
     cancel?(txid: string): Promise<PixChargeView>;
   };
+  /**
+   * TEF com pinpad (F8-11): o cartão passa pelo driver, com os passos na tela do caixa. A transação
+   * aprovada fica pendente até a venda ser gravada; se o caixa desistir, ela é desfeita.
+   */
+  tef?: { driver: TefDriver; onReceipts?: (lines: string[]) => void };
   onPaid: (tenders: TenderInput[]) => Promise<void>;
   onClose: () => void;
 }) {
   const [tenders, setTenders] = useState<TenderInput[]>([]);
+  const tefScreen = useTefScreen();
+  const tefPort = useMemo(
+    () => (tef ? new DriverTefPort(tef.driver, tefScreen.ui) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [tef?.driver, tefScreen.ui],
+  );
+  const tefPending = useRef<string[]>([]);
+  const paidRef = useRef(false);
+  const undoTef = () => {
+    const ids = tefPending.current;
+    tefPending.current = [];
+    for (const id of ids) void tefPort?.finish?.(id, false).catch(() => undefined);
+  };
+  // Fechou sem pagar: o que o pinpad aprovou e a venda não gravou é desfeito.
+  useEffect(
+    () => () => {
+      if (!paidRef.current) undoTef();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
   const allowed = METHOD_KEYS.filter((m) => !methods || methods.includes(m.method));
   const [method, setMethod] = useState<PaymentMethod>(allowed[0]?.method ?? 'cash');
   const summary = useMemo(() => {
@@ -615,7 +644,7 @@ export function PaymentDialog({
     }, 3000);
     return () => clearInterval(timer);
   }, [charge, pixApi]);
-  const tef = useMemo(() => new SimulatedTef(), []);
+  const simulatedTef = useMemo(() => new SimulatedTef(), []);
   // O QR do Pix com a chave da loja e o valor (F8-08); sem chave configurada, Pix manual.
   const pixPayload = useMemo(() => {
     // QR da loja: no modo QR estático e como reserva da API Pix ou do parceiro quando não respondem.
@@ -660,6 +689,32 @@ export function PaymentDialog({
       if (!credit) return setError(creditHint(credit));
       if (used + received > credit.availableCents) return setError(creditHint(credit));
     }
+    if (tefPort && (method === 'credit' || method === 'debit' || method === 'voucher')) {
+      setBusy(true);
+      try {
+        const result = await tefPort.pay({ amountCents: received, method, saleId: 'pending' });
+        if (!result.approved) return setError(result.message);
+        if (result.transactionId) tefPending.current.push(result.transactionId);
+        if (result.receipts && tef?.onReceipts) {
+          tef.onReceipts([...result.receipts.merchant, '', ...result.receipts.customer]);
+        }
+        return setTenders((t) => [
+          ...t,
+          {
+            method,
+            receivedCents: received,
+            nsu: result.nsu ?? null,
+            authorizationCode: result.authorizationCode ?? null,
+            provider: result.acquirer ?? 'TEF',
+          },
+        ]);
+      } catch (err) {
+        return setError(errorMessage(err));
+      } finally {
+        tefScreen.close();
+        setBusy(false);
+      }
+    }
     if ((method === 'credit' || method === 'debit') && payments.card === 'mp_point' && cardApi) {
       setBusy(true);
       try {
@@ -684,7 +739,7 @@ export function PaymentDialog({
     }
     if (method === 'credit' || method === 'debit' || method === 'voucher') {
       setBusy(true);
-      const result = await tef.pay({ amountCents: received, method, saleId: 'pending' });
+      const result = await simulatedTef.pay({ amountCents: received, method, saleId: 'pending' });
       setBusy(false);
       if (!result.approved) return setError(result.message);
       return setTenders((t) => [
@@ -706,6 +761,11 @@ export function PaymentDialog({
     setError(null);
     try {
       await onPaid(tenders);
+      // Venda gravada: confirma no pinpad (segunda fase do TEF).
+      paidRef.current = true;
+      const ids = tefPending.current;
+      tefPending.current = [];
+      for (const id of ids) void tefPort?.finish?.(id, true).catch(() => undefined);
     } catch (err) {
       setError(errorMessage(err));
       setBusy(false);
@@ -824,11 +884,13 @@ export function PaymentDialog({
                 <p className="text-sm text-muted">
                   {method === 'pix'
                     ? PIX_HINT[payments.pix]
-                    : payments.card === 'simulator'
-                      ? 'Simulador: aprova sozinho, para treinar. Ninguém é cobrado.'
-                      : payments.card === 'mp_point' && method !== 'voucher' && cardApi
-                        ? 'O valor vai sozinho para a maquininha Point.'
-                        : 'Cobre na maquininha e confirme aqui.'}
+                    : tefPort
+                      ? 'O valor vai para o pinpad: siga os passos que aparecem na tela.'
+                      : payments.card === 'simulator'
+                        ? 'Simulador: aprova sozinho, para treinar. Ninguém é cobrado.'
+                        : payments.card === 'mp_point' && method !== 'voucher' && cardApi
+                          ? 'O valor vai sozinho para a maquininha Point.'
+                          : 'Cobre na maquininha e confirme aqui.'}
                 </p>
               )}
               <Button type="submit" loading={busy}>
@@ -1012,6 +1074,7 @@ export function PaymentDialog({
             </Alert>
           )}
           {error && <Alert>{error}</Alert>}
+          {tefScreen.dialog}
         </div>
         <div className="flex flex-col gap-3 rounded-2xl bg-surface-2 p-4 max-sm:gap-1.5 max-sm:p-3">
           <Row label="Total da venda" value={brl(totalCents)} strong />
@@ -1048,7 +1111,14 @@ export function PaymentDialog({
             </div>
           ) : null}
           {tenders.length > 0 && (
-            <Button variant="ghost" onClick={() => setTenders([])} disabled={busy}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                undoTef();
+                setTenders([]);
+              }}
+              disabled={busy}
+            >
               Refazer pagamentos
             </Button>
           )}

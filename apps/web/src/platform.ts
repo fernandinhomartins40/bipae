@@ -169,6 +169,12 @@ export function createWebPlatform(updates: {
     scale,
     serialScale,
     connector,
+    // TEF: as bibliotecas ficam no Conector pareado; sem ele, só o simulador.
+    tefLibs: {
+      status: async () =>
+        (await connector.isPaired()) ? connector.tefStatus() : { sitef: false, paygo: false },
+      libs: async () => ((await connector.isPaired()) ? connector.tefLibs() : {}),
+    },
     notifications: new BrowserNotifications(),
     barcodeCamera: browserBarcodeCamera(),
     updater: new ServiceWorkerUpdater(updates.applyUpdate, updates.waiting),

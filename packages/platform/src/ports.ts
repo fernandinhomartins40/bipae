@@ -4,6 +4,7 @@
  */
 
 import type { DeviceManager } from './devices';
+import type { TefLibs } from './tef/factory';
 
 export type PlatformKind = 'web' | 'desktop';
 
@@ -200,6 +201,14 @@ export interface Platform {
     isPaired(): Promise<boolean>;
     pair(baudRate: number): Promise<void>;
     forget(): Promise<void>;
+  };
+  /**
+   * Bibliotecas de TEF deste computador (F8-11): no navegador, as do Bipaê Conector pareado. Ausente
+   * quando não há como falar com nenhuma (o simulador de TEF continua funcionando).
+   */
+  tefLibs?: {
+    status(): Promise<{ sitef: boolean; paygo: boolean }>;
+    libs(): Promise<TefLibs>;
   };
   /** Web: pair this browser with the Bipaê Conector. */
   connector?: {

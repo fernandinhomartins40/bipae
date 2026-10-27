@@ -36,6 +36,9 @@ pub struct DeviceConfig {
     pub scale: Option<ScaleConfig>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub drawer_via_printer: Option<bool>,
+    /// Configuração do TEF (F8-11): o Rust só guarda; quem interpreta é o TypeScript.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tef: Option<serde_json::Value>,
 }
 
 /// Cash drawer kick through the printer (ESC p 0 25 250), same as DRAWER_PULSE in pdv-core.

@@ -35,6 +35,7 @@ import {
   type PdvService,
 } from '@bipae/pdv-core';
 import type { Platform, UpdateInfo } from '@bipae/platform';
+import { useTefDriver } from './tef-screen';
 import { describeLastSync, type SyncStatus } from '@bipae/sync';
 import { Alert, Button, cx, Logo, parseDisplayPreferences, playBeep } from '@bipae/ui';
 import {
@@ -323,6 +324,7 @@ export function Register({
     return map;
   }, [cart.lines]);
 
+  const tefDriver = useTefDriver(platform);
   const [caps, setCaps] = useState<Awaited<ReturnType<Platform['capabilities']>> | null>(null);
   useEffect(() => {
     void platform.preferences
@@ -1500,6 +1502,20 @@ export function Register({
           totalCents={t.totalCents}
           credit={cart.customerTaxId ? creditInfo : undefined}
           {...(selfMode && { methods: ['pix', 'debit', 'credit'] as const })}
+          {...(tefDriver && {
+            tef: {
+              driver: tefDriver,
+              onReceipts: (text: string[]) => {
+                // Os recibos do TEF saem na impressora térmica, se houver; senão ficam só no pinpad.
+                void platform.printer
+                  ?.print({
+                    kind: 'escpos',
+                    data: encodeReceipt(text.map((t) => ({ kind: 'text' as const, text: t }))),
+                  })
+                  .catch(() => undefined);
+              },
+            },
+          })}
           {...(payments && { payments })}
           {...(payments?.card === 'mp_point' &&
             backend.cardCharge && {

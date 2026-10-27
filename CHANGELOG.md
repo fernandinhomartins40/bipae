@@ -1,5 +1,16 @@
 # Changelog
 
+## [F8-11.b TEF no caixa, no Conector e PayGo] — 27/10/2026
+
+### Adicionado
+- **Tela dos passos do pinpad no caixa:** mensagens, menus, campos e confirmações do TEF aparecem num diálogo; a transação aprovada fica pendente e só é confirmada depois da venda gravada (desfeita se o caixa desistir ou refizer os pagamentos); recibos saem na impressora térmica.
+- **Configuração do TEF** em Periféricos (SiTef, PayGo, simulador), com a lista do que falta configurar.
+- **Conector:** comandos `tef-status` e `tef-call` (lista fechada) repassam as chamadas às bibliotecas; o fluxo roda em TypeScript. Espelho em Rust (`connector.rs`), escrito sem compilar neste computador (sem cargo): revisar no primeiro build.
+- **Driver PayGo** em TypeScript puro, com simulador de PGWebLib e pinpad.
+
+### Falta configurar
+- Bibliotecas CliSiTef e PGWebLib nativas no Desktop e no Conector, pinpad e contratos (E10, F8-11.c); cancelar no pinpad durante a espera.
+
 ## [F4-15.b Multa, juros e CNAB] — 27/10/2026
 
 ### Adicionado

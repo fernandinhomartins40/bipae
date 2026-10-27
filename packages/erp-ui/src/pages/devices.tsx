@@ -1,5 +1,16 @@
 import { encodeReceipt, type ReceiptBlock } from '@bipae/pdv-core';
-import type { CertificateInfo, DeviceConfig, PrinterConfig } from '@bipae/platform';
+import {
+  loadTefConfig,
+  saveTefConfig,
+  TEF_PROVIDER_INFO,
+  TEF_PROVIDERS,
+  tefMissing,
+  type CertificateInfo,
+  type DeviceConfig,
+  type PrinterConfig,
+  type TefConfig,
+  type TefProvider,
+} from '@bipae/platform';
 import {
   Alert,
   Badge,
@@ -37,6 +48,7 @@ export function DevicesPage() {
         {platform.serialScale?.supported && <SerialScale />}
         {platform.connector && <ConnectorPairing />}
         {platform.certificate?.install && <LocalCertificate />}
+        <TefSettings />
         <DeviceTests />
       </div>
     </>
@@ -593,6 +605,123 @@ function SerialScale() {
         )}
       </div>
       {paired && <p className="mt-3 text-sm text-success">Balança configurada neste navegador.</p>}
+    </Card>
+  );
+}
+
+/**
+ * TEF com pinpad (F8-11): escolhe o provedor e guarda os dados do contrato da loja neste
+ * computador. Nada aqui é segredo. O que ainda falta (biblioteca, pinpad) aparece como
+ * "falta configurar"; o caixa nunca promete o que não existe.
+ */
+function TefSettings() {
+  const { platform } = useApp();
+  const [config, setConfig] = useState<TefConfig | null>(null);
+  const [libs, setLibs] = useState<{ sitef: boolean; paygo: boolean }>({
+    sitef: false,
+    paygo: false,
+  });
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+
+  useEffect(() => {
+    void loadTefConfig(platform.preferences).then(setConfig);
+    void platform.tefLibs
+      ?.status()
+      .then(setLibs)
+      .catch(() => undefined);
+  }, [platform]);
+  if (!config) return null;
+
+  const provider = config.provider;
+  const installed = provider === 'paygo' ? libs.paygo : libs.sitef;
+  const missing = tefMissing(config, installed);
+  const sitef = config.sitef ?? { host: '', storeCode: '', terminalId: '' };
+  const paygo = config.paygo ?? { automationName: '', automationVersion: '', captureTerminal: '' };
+
+  const save = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      await saveTefConfig(platform.preferences, config);
+      setMessage({ ok: true, text: 'Configuração do TEF salva neste computador.' });
+    } catch (error) {
+      setMessage({ ok: false, text: (error as Error).message });
+    }
+  };
+
+  return (
+    <Card>
+      <form onSubmit={save} className="flex flex-col gap-4">
+        <h2 className="text-lg font-bold">TEF com pinpad</h2>
+        {message && <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>}
+        <SelectField
+          label="Como o cartão é cobrado neste caixa"
+          value={provider}
+          onChange={(e) => setConfig({ ...config, provider: e.target.value as TefProvider })}
+          options={TEF_PROVIDERS.map((p) => ({ value: p, label: TEF_PROVIDER_INFO[p].name }))}
+        />
+        <p className="text-sm text-muted">{TEF_PROVIDER_INFO[provider].note}</p>
+        {provider === 'sitef' && (
+          <div className="grid gap-4 sm:grid-cols-3">
+            <TextField
+              label="Servidor do SiTef"
+              value={sitef.host}
+              onChange={(e) => setConfig({ ...config, sitef: { ...sitef, host: e.target.value } })}
+            />
+            <TextField
+              label="Código da loja"
+              value={sitef.storeCode}
+              onChange={(e) =>
+                setConfig({ ...config, sitef: { ...sitef, storeCode: e.target.value } })
+              }
+            />
+            <TextField
+              label="Número do terminal"
+              value={sitef.terminalId}
+              onChange={(e) =>
+                setConfig({ ...config, sitef: { ...sitef, terminalId: e.target.value } })
+              }
+            />
+          </div>
+        )}
+        {provider === 'paygo' && (
+          <div className="grid gap-4 sm:grid-cols-3">
+            <TextField
+              label="Nome da automação"
+              value={paygo.automationName}
+              onChange={(e) =>
+                setConfig({ ...config, paygo: { ...paygo, automationName: e.target.value } })
+              }
+            />
+            <TextField
+              label="Versão da automação"
+              value={paygo.automationVersion}
+              onChange={(e) =>
+                setConfig({ ...config, paygo: { ...paygo, automationVersion: e.target.value } })
+              }
+            />
+            <TextField
+              label="Ponto de captura"
+              value={paygo.captureTerminal}
+              onChange={(e) =>
+                setConfig({ ...config, paygo: { ...paygo, captureTerminal: e.target.value } })
+              }
+            />
+          </div>
+        )}
+        {(provider === 'sitef' || provider === 'paygo') &&
+          (missing.length > 0 ? (
+            <Alert tone="warning" title="Falta configurar">
+              <ul className="list-disc pl-5">
+                {missing.map((m) => (
+                  <li key={m}>{m}</li>
+                ))}
+              </ul>
+            </Alert>
+          ) : (
+            <Badge tone="success">Pronto para usar</Badge>
+          ))}
+        <Button type="submit">Salvar TEF</Button>
+      </form>
     </Card>
   );
 }

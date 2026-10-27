@@ -579,6 +579,6 @@ Pedido do dono em 20/10/2026: um app Android para o caixa e para vendas (vendedo
   - [ ] F8-10.c · Stone Connect 2.0 pela API Pagar.me (exige o Bipaê no Programa de Parcerias da Stone) — externo: E26
 - [~] F8-11 · TEF com pinpad no desktop e no Conector: SiTef (CliSiTef) e PayGo; Auttar e Linx depois — depende: F8-08 · externo: E10
   - [x] F8-11.a · Protocolo do TEF em TypeScript puro (passos, duas fases confirmar/desfazer, cancelamento), máquina de estados do CliSiTef, simulador de SiTef/pinpad, adaptador para a porta TefPort e configuração (DeviceConfig.tef) com "falta configurar"
-  - [ ] F8-11.b · Tela de configuração do TEF e tela de passos do pinpad no caixa; comandos do Conector e espelho no Rust
+  - [x] F8-11.b · Tela de configuração do TEF e tela de passos do pinpad no caixa; comandos do Conector (tef-status, tef-call) e espelho no Rust (sem compilar, sem cargo aqui); driver PayGo em TypeScript com simulador
   - [ ] F8-11.c · Homologar com a biblioteca CliSiTef e um pinpad reais; PayGo — externo: E10
 - [ ] F8-12 · Maquininhas smart e TEF no Android por plugin Kotlin: PagBank PlugPag, Stone, Cielo LIO, Getnet, m-SiTef e PayGo — depende: F8-07, F8-08 · externo: E26

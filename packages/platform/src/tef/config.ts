@@ -1,3 +1,4 @@
+import type { PayGoConfig } from './paygo';
 import type { TefMethod } from './protocol';
 
 /**
@@ -17,6 +18,7 @@ export interface TefConfig {
     modalities?: Partial<Record<TefMethod | 'cancel', number>>;
     extra?: string;
   };
+  paygo?: PayGoConfig;
 }
 
 export const TEF_PROVIDER_INFO: Record<
@@ -40,8 +42,8 @@ export const TEF_PROVIDER_INFO: Record<
   },
   paygo: {
     name: 'PayGo (PGWebLib)',
-    status: 'coming-soon',
-    note: 'Chega em breve: depende da biblioteca e de um pinpad homologado (item E10).',
+    status: 'needs-library',
+    note: 'O protocolo está pronto e testado com simulador. Falta configurar a biblioteca PGWebLib, o pinpad homologado e o contrato da loja com a PayGo (item E10).',
   },
 };
 
@@ -51,8 +53,15 @@ export const TEF_PROVIDERS = Object.keys(TEF_PROVIDER_INFO) as TefProvider[];
 export function tefMissing(config: TefConfig | undefined, libraryInstalled: boolean): string[] {
   const provider = config?.provider ?? 'none';
   if (provider === 'none' || provider === 'simulator') return [];
-  if (provider === 'paygo') return ['PayGo ainda não está disponível no Bipaê.'];
   const missing: string[] = [];
+  if (provider === 'paygo') {
+    const g = config?.paygo;
+    if (!g?.automationName?.trim()) missing.push('Nome da automação na PayGo');
+    if (!g?.automationVersion?.trim()) missing.push('Versão da automação na PayGo');
+    if (!g?.captureTerminal?.trim()) missing.push('Ponto de captura da PayGo');
+    if (!libraryInstalled) missing.push('Biblioteca PGWebLib neste computador');
+    return missing;
+  }
   const s = config?.sitef;
   if (!s?.host?.trim()) missing.push('Servidor do SiTef');
   if (!s?.storeCode?.trim()) missing.push('Código da loja no SiTef');

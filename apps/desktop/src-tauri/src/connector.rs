@@ -3,7 +3,10 @@
 //! - only official origins (dev origins in debug builds) pass the handshake;
 //! - a browser pairs once with the 6-digit code shown in the app (5 wrong tries lock it);
 //! - tokens are stored in the app data folder and can be revoked;
-//! - only print / drawer / scale / ports and the A3 certificate commands (cert-*) exist.
+//! - only print / drawer / scale / ports, the A3 certificate commands (cert-*) and the TEF relay (tef-*) exist.
+//! - TEF (F8-11.b): tef-status e tef-call repassam chamadas às bibliotecas CliSiTef/PGWebLib. O fluxo
+//!   (máquina de estados) roda em TypeScript, no navegador; o Rust só move os argumentos. Sem a
+//!   biblioteca instalada (E10) respondem "falta configurar", como `ConnectorCore` sem `devices.tef`.
 //! - A3 (F3-21.b): the key never leaves the token and the PIN never travels in the protocol.
 //!   The PKCS#11 backend depends on a physical token (E18); until then the cert-* commands
 //!   answer "falta configurar", exactly like `ConnectorCore` without `devices.token`.
@@ -137,6 +140,15 @@ impl ConnectorState {
                     Err(error) => fail("device", &error),
                 }
             }
+            "tef-status" => json!({ "id": id, "ok": true, "result": { "libs": { "sitef": false, "paygo": false } } }),
+            "tef-call" => {
+                let lib = request.get("lib").and_then(Value::as_str).unwrap_or("");
+                let method = request.get("method").and_then(Value::as_str).unwrap_or("");
+                if !tef_call_allowed(lib, method) {
+                    return fail("device", "Chamada de TEF não permitida.");
+                }
+                fail("device", TEF_NOT_CONFIGURED)
+            }
             "cert-info" | "cert-certificate" => fail("device", A3_NOT_CONFIGURED),
             "cert-sign" => {
                 let algorithm = request.get("algorithm").and_then(Value::as_str).unwrap_or("");
@@ -152,6 +164,18 @@ impl ConnectorState {
 
 /// Same message as `A3_NOT_CONFIGURED` in `@bipae/platform`.
 const A3_NOT_CONFIGURED: &str = "O certificado A3 ainda não foi configurado no Bipaê Conector. Falta configurar o leitor ou o token.";
+
+/// Mesma mensagem de `TEF_NOT_CONFIGURED` em `@bipae/platform`.
+const TEF_NOT_CONFIGURED: &str = "O TEF ainda não foi configurado no Bipaê Conector. Falta instalar a biblioteca do SiTef ou da PayGo.";
+
+/// Mesma lista fechada de `TEF_CALLS` em `@bipae/platform`.
+pub fn tef_call_allowed(lib: &str, method: &str) -> bool {
+    match lib {
+        "sitef" => matches!(method, "configure" | "start" | "continue" | "finish"),
+        "paygo" => matches!(method, "init" | "begin" | "addParam" | "exec" | "result" | "confirm" | "abort"),
+        _ => false,
+    }
+}
 
 pub fn sign_algorithm_allowed(algorithm: &str) -> bool {
     matches!(algorithm, "RSA-SHA1" | "RSA-SHA256")

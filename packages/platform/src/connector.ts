@@ -34,6 +34,8 @@ export const CONNECTOR_COMMANDS = [
   'cert-info',
   'cert-certificate',
   'cert-sign',
+  'tef-status',
+  'tef-call',
 ] as const;
 export type ConnectorCommand = (typeof CONNECTOR_COMMANDS)[number];
 
@@ -52,7 +54,10 @@ export type ConnectorRequest =
       type: 'cert-sign';
       data: string /* base64 do que será assinado */;
       algorithm: 'RSA-SHA1' | 'RSA-SHA256';
-    };
+    }
+  /** TEF (F8-11): quais bibliotecas existem neste computador e repasse de chamadas a elas. */
+  | { id: number; type: 'tef-status' }
+  | { id: number; type: 'tef-call'; lib: TefLibName; method: string; args: unknown };
 
 export type ConnectorResponse =
   | { id: number; ok: true; result?: unknown }
@@ -76,7 +81,29 @@ export interface ConnectorDevices {
    * trafega pelo protocolo, nem é guardado ou registrado em log.
    */
   token?: A3Token;
+  /** Bibliotecas de TEF (CliSiTef, PGWebLib) deste computador. Ausente quando não há nenhuma. */
+  tef?: TefHost;
 }
+
+export type TefLibName = 'sitef' | 'paygo';
+
+/**
+ * Lista fechada de chamadas que o Conector repassa às bibliotecas de TEF. O Conector só move os
+ * argumentos: a regra do fluxo mora em `CliSiTefDriver`/`PayGoDriver`, no navegador ou no Desktop.
+ */
+export const TEF_CALLS: Record<TefLibName, readonly string[]> = {
+  sitef: ['configure', 'start', 'continue', 'finish'],
+  paygo: ['init', 'begin', 'addParam', 'exec', 'result', 'confirm', 'abort'],
+};
+
+export interface TefHost {
+  /** Quais bibliotecas estão instaladas neste computador. */
+  status(): Promise<Record<TefLibName, boolean>>;
+  call(lib: TefLibName, method: string, args: unknown): Promise<unknown>;
+}
+
+export const TEF_NOT_CONFIGURED =
+  'O TEF ainda não foi configurado no Bipaê Conector. Falta instalar a biblioteca do SiTef ou da PayGo.';
 
 export interface A3Token {
   /** Dados do certificado do token, ou null quando não há token inserido. */
@@ -218,6 +245,21 @@ export class ConnectorCore {
           }
           const signature = await this.token().sign(fromBase64(request.data), request.algorithm);
           return { id, ok: true, result: { signature } };
+        }
+        case 'tef-status': {
+          const libs = this.devices.tef
+            ? await this.devices.tef.status()
+            : { sitef: false, paygo: false };
+          return { id, ok: true, result: { libs } };
+        }
+        case 'tef-call': {
+          const allowed = TEF_CALLS[request.lib];
+          if (!allowed || !allowed.includes(request.method)) {
+            return { id, ok: false, code: 'device', error: 'Chamada de TEF não permitida.' };
+          }
+          if (!this.devices.tef) throw new Error(TEF_NOT_CONFIGURED);
+          const result = await this.devices.tef.call(request.lib, request.method, request.args);
+          return { id, ok: true, result: { value: result ?? null } };
         }
         default:
           return { id, ok: false, code: 'unknown_command', error: 'Comando não permitido.' };
