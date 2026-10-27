@@ -51,6 +51,16 @@ Para virar **APROVADO PARA DEPLOY**:
 - um backup do banco de produção copiado para fora da VPS antes do push;
 - o ok do dono para o push (que leva também os 2 commits fiscais da outra sessão).
 
+## Atualização de 27/10/2026, 20h07
+
+As correções desta auditoria já estão em produção. A CI vinha falhando desde `728df79` só nos testes de
+cobrança contra PostgreSQL real, por defeito do helper de testes: todos os apps de teste dividiam o
+mesmo banco. Isso foi corrigido em `65cbb57`, e um teste com espera frágil foi corrigido em `311d687`.
+A CI ficou toda verde, inclusive a API contra PostgreSQL 16 e Redis reais, o deploy passou e
+`/v1/health` e `/app/` respondem 200.
+
+Ainda falta, para APROVADO PARA DEPLOY sem ressalvas: backup externo verificado (ACH-10).
+
 ## Pendências por dono da decisão
 
 | Quem | O quê |
