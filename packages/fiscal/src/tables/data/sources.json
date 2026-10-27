@@ -1198,6 +1198,51 @@
   "downloadedAt": "2026-10-21",
   "sha256": "49d940a5f7cb209f0ddc8be094ea2e753ed0e2b1219200f4a3266e9b6972d22f"
  },
+ "efdGuia324": {
+  "file": "SPED_Guia_Pratico_EFD_ICMS_IPI_v3.2.4_2026-07-30.pdf",
+  "title": "Guia Prático da EFD ICMS/IPI, versão 3.2.4 (atualização de 30/07/2026)",
+  "publisher": "Portal SPED (Receita Federal)",
+  "page": "http://sped.rfb.gov.br/item/show/8112",
+  "publishedAt": "2026-07-30",
+  "downloadedAt": "2026-10-26",
+  "sha256": "01e76f177996cb11b1454cbf39f19ad8ce9577876cd8c222ddf3e4aa45b6f164"
+ },
+ "piRicms": {
+  "file": "SEFAZ-PI_RICMS_Decreto_21866-2023_consolidado_ate_24715-2026_2026-10-26.pdf",
+  "title": "RICMS-PI, Decreto 21.866/2023 (consolidado até o Decreto 24.715/2026)",
+  "publisher": "SEFAZ-PI",
+  "page": "https://portal.sefaz.pi.gov.br/",
+  "publishedAt": "2026",
+  "downloadedAt": "2026-10-26",
+  "sha256": "96901d482c97752caf1b80cc3073b65ae6c9fab8a28ae5fa65f8e73005b97c7f"
+ },
+ "piEfdGuia": {
+  "file": "SEFAZ-PI_Guia_Pratico_EFD_ICMS_IPI_v1.6_2025-11.pdf",
+  "title": "Guia Prático da EFD ICMS IPI do Estado do Piauí, versão 1.6 (válido a partir de novembro de 2025)",
+  "publisher": "SEFAZ-PI",
+  "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
+  "publishedAt": "2025-11",
+  "downloadedAt": "2026-10-26",
+  "sha256": "4e3b5e09441c1417d166921a2ce1fb9fa534e61a3f8e90284847438d15a4ce73"
+ },
+ "piEfdPosValidacao": {
+  "file": "SEFAZ-PI_Regras_Pos-validacao_EFD_v2.0_2026-06.pdf",
+  "title": "Regras de Pós-validação da EFD ICMS IPI do Estado do Piauí, versão 2.0 (válido a partir de junho de 2026)",
+  "publisher": "SEFAZ-PI",
+  "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
+  "publishedAt": "2026-06",
+  "downloadedAt": "2026-10-26",
+  "sha256": "6547f22400ea553032d94283a529167927bd622c5d2e91d57dcd2b80b402fcbf"
+ },
+ "piEfdSaldoCredor": {
+  "file": "SEFAZ-PI_Esclarecimentos_Saldo_Credor_EFD_v1.0_2025-05.pdf",
+  "title": "Esclarecimentos sobre Regras de Saldo Credor da EFD, versão 1.0 (maio de 2025)",
+  "publisher": "SEFAZ-PI",
+  "page": "https://portal.sefaz.pi.gov.br/documentos?folderId=69d900afcd07d979b43efee6",
+  "publishedAt": "2025-05",
+  "downloadedAt": "2026-10-26",
+  "sha256": "f54fe8a4c133c467d1d819adf8e155ad154c56ffe02089c36c46ae6fa37b085c"
+ },
  "efdLeiaute020": {
   "file": "SPED_EFD_ICMS_IPI_NT_2025.001_v1.0_leiaute_020.pdf",
   "title": "EFD ICMS/IPI: Nota Técnica 2025.001 v1.0 (leiaute versão 020, válido de 01/01/2026 a 31/12/2026, Ato COTEPE 79/2025)",
