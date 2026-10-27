@@ -229,9 +229,15 @@ describe('cobrança automática dos planos (F6-04)', () => {
     const esperar = async (n: number) => {
       for (let i = 0; i < 60 && sent.length < n; i++) await new Promise((ok) => setTimeout(ok, 50));
     };
+    // Com a fila no Redis real (CI) o recibo chega depois do aviso de fatura: espera pelo assunto,
+    // não pela quantidade de e-mails.
+    const esperarAssunto = async (trecho: string) => {
+      for (let i = 0; i < 200 && !sent.some((m) => m.subject.includes(trecho)); i++)
+        await new Promise((ok) => setTimeout(ok, 50));
+    };
 
     // A própria tarefa de cobrança (disparada pelo pagamento) já mandou o recibo.
-    await esperar(1);
+    await esperarAssunto('pagamento recebido');
     expect(sent.some((m) => m.subject.includes('pagamento recebido'))).toBe(true);
     expect(await maintenance().billingNotices()).toBe(0);
 
