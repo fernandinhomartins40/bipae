@@ -1,5 +1,14 @@
 # Changelog
 
+## [F6-04.a e F8-11.a Cobrança dos planos e protocolo do TEF] — 27/10/2026
+
+### Adicionado
+- **Cobrança automática dos planos (F6-04.a):** faturas mensais com Pix pela conta do Bipaê (Mercado Pago, PagBank ou simulador), confirmação só por consulta, troca de plano pelo cliente (sobe pagando a diferença proporcional, desce no fim do período), tolerância de dias, bloqueio gentil e e-mails. Preços vêm da tabela de planos; plano sem preço não é vendido. Migração 0084.
+- **TEF com pinpad (F8-11.a):** protocolo em TypeScript puro, máquina de estados do CliSiTef, simulador de SiTef e pinpad, adaptador para a porta TefPort e configuração com "falta configurar".
+
+### Falta configurar
+- Token da conta do Bipaê no parceiro (E9) e preços dos planos (E8); biblioteca CliSiTef, pinpad e contrato da loja (E10); tela do caixa para os passos do TEF; PayGo; cartão recorrente.
+
 ## [F7-02.c Segunda passada de segurança (ASVS nível 2)] — 27/10/2026
 
 ### Corrigido

@@ -6,3 +6,4 @@ export * from './connector-client';
 export * from './certificate-store';
 export * from './web-serial';
 export * from './barcode-camera';
+export * from './tef';

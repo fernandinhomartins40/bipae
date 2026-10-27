@@ -1,3 +1,5 @@
+import type { TefConfig } from './tef/config';
+
 /**
  * Peripheral configuration for a register, stored per device in preferences.
  * Thermal printers are reached by serial port or network (raw TCP, usually port 9100);
@@ -17,6 +19,8 @@ export interface ScaleConfig {
 export interface DeviceConfig {
   printer?: PrinterConfig;
   scale?: ScaleConfig;
+  /** TEF com pinpad neste computador (F8-11). */
+  tef?: TefConfig;
   /** Kick the cash drawer through the printer after cash sales. */
   drawerViaPrinter?: boolean;
 }

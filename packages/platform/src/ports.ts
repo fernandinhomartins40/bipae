@@ -101,11 +101,23 @@ export interface TefResult {
   authorizationCode?: string;
   acquirer?: string;
   message: string;
+  /** TEF real (F8-11): identifica a transação pendente, que o caixa confirma ou desfaz. */
+  transactionId?: string;
+  brand?: string;
+  /** Recibos em linhas de texto para a impressora térmica. */
+  receipts?: { customer: string[]; merchant: string[] };
 }
 
 export interface TefPort {
   pay(request: TefRequest): Promise<TefResult>;
-  cancel(nsu: string): Promise<TefResult>;
+  /** O TEF real precisa do valor e da data da venda original para cancelar. */
+  cancel(nsu: string, original?: { amountCents: number; originalDate: string }): Promise<TefResult>;
+  /**
+   * Segunda fase do TEF real: confirma a transação depois de a venda ser gravada, ou desfaz
+   * (confirmed false) se a venda não foi gravada. Ausente no simulador e nas maquininhas
+   * que confirmam sozinhas.
+   */
+  finish?(transactionId: string, confirmed: boolean): Promise<void>;
 }
 
 export interface CertificateInfo {
