@@ -225,13 +225,47 @@ export interface InformaticsList {
   }[];
 }
 
+/**
+ * Canal da venda no RET dos farmacêuticos (IN SEFAZ 74/2025, cláusula segunda e art. 4º): o canal
+ * Hospitalar é a venda a estabelecimento cuja CNAE-Fiscal principal está nas divisões listadas; o
+ * Canal Farma é qualquer outra hipótese (e a pessoa física do Estado). Dado gerado do texto.
+ */
+export interface PharmaChannelRule {
+  act: string;
+  validFrom: string;
+  hospitalCnaeDivisions: string[];
+  cnaeBasis: 'principal';
+  individualGoesToPharma: boolean;
+  /** Mais de X% das operações no exercício com o grupo enquadra o contribuinte no Hospitalar. */
+  hospitalShareOver: string;
+  url: string;
+}
+
 const table = data as unknown as {
+  pharmaChannelRule: PharmaChannelRule;
   origins: NetLoadOrigin[];
   regimes: NetLoadRegime[];
   informaticsList: InformaticsList;
   /** Regimes por produto (carnes do Maranhão, F3-26.d.MA.d), lidos em `st-product-loads.ts`. */
   productRegimes: { classes: { goodsClass: string }[] }[];
 };
+
+export const CE_PHARMA_CHANNEL_RULE: Readonly<PharmaChannelRule> = table.pharmaChannelRule;
+
+/**
+ * Canal da venda pela CNAE-Fiscal principal do destinatário (IN SEFAZ 74/2025, art. 4º): divisão
+ * 84, 86, 87 ou 88 é Hospitalar; outra CNAE é Farma. Null sem CNAE ou antes de 01/06/2025.
+ */
+export function pharmaChannelOf(
+  recipientCnae: string | null | undefined,
+  date: string,
+): 'hospital' | 'pharma' | null {
+  const digits = (recipientCnae ?? '').replace(/D/g, '');
+  if (digits.length < 2 || date < CE_PHARMA_CHANNEL_RULE.validFrom) return null;
+  return CE_PHARMA_CHANNEL_RULE.hospitalCnaeDivisions.includes(digits.slice(0, 2))
+    ? 'hospital'
+    : 'pharma';
+}
 
 export const CE_INFORMATICS_LIST: Readonly<InformaticsList> = table.informaticsList;
 
@@ -709,6 +743,17 @@ export interface NetLoadExitOption {
   mva: string | null;
   baseCents: number;
   stCents: number;
+  /**
+   * Campos da ST do XML, quando a IN SEFAZ 74/2025 (art. 2º) diz como lançar: Canal Farma e
+   * centro de distribuição, CST 30 com pICMSST igual à carga líquida e modBC 3 (valor da operação);
+   * Canal Hospitalar, CST 60 com o valor em vICMSSTRet. Null onde o texto não diz.
+   */
+  stFields?: {
+    cst: '30' | '60';
+    modBC: '3';
+    pICMSST: string | null;
+    vICMSSTRetCents: number | null;
+  } | null;
 }
 
 export type StNetLoadExitResult =
@@ -745,6 +790,8 @@ export function stNetLoadExit(input: {
   transfer?: boolean;
   /** O destinatário é pessoa física (CPF): no RET dos farmacêuticos, Canal Farma (§ 4º-A). */
   recipientIndividual?: boolean;
+  /** CNAE-Fiscal principal do destinatário: define o canal do RET dos farmacêuticos (IN 74/2025). */
+  recipientCnae?: string | null;
   /** Escolhas da empresa onde o texto deixa margem (D-042). */
   options?: StNetLoadOptions | null;
 }): StNetLoadExitResult | null {
@@ -866,8 +913,12 @@ export function stNetLoadExit(input: {
   };
   // Venda direta a pessoa física deste Estado: Canal Farma (art. 4º, § 4º-A), sem escolha.
   const individual = input.recipientIndividual === true && !input.transfer;
+  // Canal pela CNAE principal do destinatário (IN SEFAZ 74/2025, art. 4º), quando se sabe.
+  const byCnae =
+    individual || input.transfer ? null : pharmaChannelOf(input.recipientCnae, input.date);
+  const wanted = individual ? 'pharma' : byCnae;
   const options: NetLoadExitOption[] = [];
-  for (const t of individual ? tables.filter((x) => x.channel === 'pharma') : tables) {
+  for (const t of wanted ? tables.filter((x) => x.channel === wanted) : tables) {
     const rows = input.transfer ? (t.transfer ?? t.sale) : t.sale;
     const row = rows.find((r) => r.goodsClass === input.goodsClass);
     if (!row) {
@@ -875,9 +926,28 @@ export function stNetLoadExit(input: {
         `Falta configurar: escolha no produto a classe da mercadoria (${rows.map((r) => r.label).join(', ')}) para a saída do RET do ${regime.act}.`,
       );
     }
-    options.push(
-      option(`${names[t.channel]}${input.transfer ? ', transferência' : ''}`, row.percent, null),
+    const built = option(
+      `${names[t.channel]}${input.transfer ? ', transferência' : ''}`,
+      row.percent,
+      null,
     );
+    if (!input.transfer && t.channel !== 'distribution-center') {
+      built.stFields =
+        t.channel === 'pharma'
+          ? { cst: '30', modBC: '3', pICMSST: row.percent, vICMSSTRetCents: null }
+          : { cst: '60', modBC: '3', pICMSST: null, vICMSSTRetCents: built.stCents };
+    }
+    options.push(built);
+  }
+  if (byCnae && options.length === 1) {
+    return {
+      status: 'retains',
+      regime,
+      option: options[0]!,
+      warnings: [
+        `Canal ${byCnae === 'hospital' ? 'Hospitalar' : 'Farma'} pela CNAE-Fiscal principal do destinatário (${CE_PHARMA_CHANNEL_RULE.act}, art. 4º; divisões ${CE_PHARMA_CHANNEL_RULE.hospitalCnaeDivisions.join(', ')} são Hospitalar). Fica nas observações e nos campos da ST conforme o art. 2º da IN; confira com o contador.`,
+      ],
+    };
   }
   if (individual && options.length === 1) {
     return {

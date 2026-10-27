@@ -1144,5 +1144,37 @@
   "page": "https://www.legisweb.com.br/legislacao/?id=421661",
   "publishedAt": "2024-04-17",
   "downloadedAt": "2026-10-27"
+ },
+ "legisWebCeIn74": {
+  "file": "LegisWeb_CE_IN_SEFAZ_74-2025_RET_medicamentos_atacadista_ate_IN_106-2025_2026-10-27.html.gz",
+  "title": "IN SEFAZ 74/2025 (CE), RET do atacadista de medicamentos (Decreto 36.617/2025), com as alterações das INs 88/2025, 106/2025 e 13/2026: definição dos canais Hospitalar e Farma, campos da NF-e e Anexo Único",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=480090",
+  "publishedAt": "2025-06-25",
+  "downloadedAt": "2026-10-27"
+ },
+ "legisWebCeMoveis2018": {
+  "file": "LegisWeb_CE_Decreto_32900-2018_moveis_ate_Decreto_32904-2018_2026-10-27.html.gz",
+  "title": "Decreto 32.900/2018 (CE), móveis, texto original com alterações só até o Decreto 32.904/2018 (art. 2º, § 5º com referência de 18%)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=372360",
+  "publishedAt": "2018-12-17",
+  "downloadedAt": "2026-10-27"
+ },
+ "legisWebCeLei13025": {
+  "file": "LegisWeb_CE_Lei_13025-2000_2026-10-27.html.gz",
+  "title": "Lei 13.025/2000 (CE), redução da base do ICMS do atacadista em até 41,18% (carga efetiva mínima de 10,59%), art. 1º na redação da Lei 16.258/2017",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=122172",
+  "publishedAt": "2000-06-20",
+  "downloadedAt": "2026-10-27"
+ },
+ "legisWebCeParecer771": {
+  "file": "LegisWeb_CE_Parecer_CECON_771-2024_2026-10-27.html.gz",
+  "title": "Parecer CECON 771/2024 (CE), natureza do benefício do art. 4º do Decreto 29.560/2008 (carga líquida do atacadista com RET)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=473268",
+  "publishedAt": "2024-06-10",
+  "downloadedAt": "2026-10-27"
  }
 }

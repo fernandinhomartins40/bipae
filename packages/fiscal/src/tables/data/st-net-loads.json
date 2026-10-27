@@ -2468,6 +2468,20 @@
    ]
   }
  ],
+ "pharmaChannelRule": {
+  "act": "Instrução Normativa SEFAZ 74/2025 (CE)",
+  "validFrom": "2025-06-01",
+  "hospitalCnaeDivisions": [
+   "84",
+   "86",
+   "87",
+   "88"
+  ],
+  "cnaeBasis": "principal",
+  "individualGoesToPharma": true,
+  "hospitalShareOver": "50",
+  "url": "https://www.legisweb.com.br/legislacao/?id=480090"
+ },
  "informaticsList": {
   "act": "Instrução Normativa SEFAZ 148/2024 (CE), alterada pelas INs 135/2025 e 20/2026",
   "decree": "Decreto 31.066/2012 (CE)",

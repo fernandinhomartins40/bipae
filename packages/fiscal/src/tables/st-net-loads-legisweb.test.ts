@@ -3,7 +3,14 @@ import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
 import { dec } from '../decimal';
-import { ST_NET_LOAD_REGIMES, stNetLoadAmount, stNetLoadExit, stNetLoadFor } from './st-net-loads';
+import {
+  CE_PHARMA_CHANNEL_RULE,
+  ST_NET_LOAD_REGIMES,
+  pharmaChannelOf,
+  stNetLoadAmount,
+  stNetLoadExit,
+  stNetLoadFor,
+} from './st-net-loads';
 
 /**
  * F3-26.d.CE.g: o texto do LegisWeb (fonte de texto de norma aprovada pelo dono em 27/10/2026) dos
@@ -168,5 +175,124 @@ describe('o que os decretos dizem com número (LegisWeb)', () => {
         /3% \(três por cento\), nas operações internas.*4% \(quatro por cento\).*6% \(seis por cento\)/,
       );
     }
+  });
+});
+
+describe('RET dos farmacêuticos: canal pela CNAE do destinatário (IN SEFAZ 74/2025)', () => {
+  const venda = (over: Partial<Parameters<typeof stNetLoadExit>[0]> = {}) =>
+    stNetLoadExit({
+      uf: 'CE',
+      sellerCnae: '4644301',
+      specialRegime: true,
+      destinationUf: 'CE',
+      date: '2026-10-27',
+      goodsClass: 'rate-20',
+      cest: '1300100',
+      operationCents: 1_000_000,
+      ...over,
+    });
+
+  it('o dado gerado traz as divisões 84, 86, 87 e 88, CNAE principal e vigência de 01/06/2025', () => {
+    expect(CE_PHARMA_CHANNEL_RULE).toMatchObject({
+      validFrom: '2025-06-01',
+      hospitalCnaeDivisions: ['84', '86', '87', '88'],
+      cnaeBasis: 'principal',
+      individualGoesToPharma: true,
+      hospitalShareOver: '50',
+    });
+    expect(pharmaChannelOf('8610-1/01', '2026-10-27')).toBe('hospital');
+    expect(pharmaChannelOf('8411600', '2026-10-27')).toBe('hospital');
+    expect(pharmaChannelOf('4771-7/01', '2026-10-27')).toBe('pharma');
+    expect(pharmaChannelOf('8610101', '2025-05-31')).toBeNull();
+    expect(pharmaChannelOf(null, '2026-10-27')).toBeNull();
+  });
+
+  it('hospital: carga de 7,08% (CST 60, valor em vICMSSTRet); farma: 9,30% (CST 30, pICMSST)', () => {
+    const hospital = venda({ recipientCnae: '8610101' });
+    expect(hospital).toMatchObject({
+      status: 'retains',
+      option: {
+        loadPercent: '7.08',
+        stCents: 70_800,
+        stFields: { cst: '60', modBC: '3', pICMSST: null, vICMSSTRetCents: 70_800 },
+      },
+    });
+    const farma = venda({ recipientCnae: '4771701' });
+    expect(farma).toMatchObject({
+      status: 'retains',
+      option: {
+        loadPercent: '9.30',
+        stCents: 93_000,
+        stFields: { cst: '30', modBC: '3', pICMSST: '9.30', vICMSSTRetCents: null },
+      },
+    });
+  });
+
+  it('sem CNAE do destinatário continua a escolha entre canais; pessoa física vai no Farma', () => {
+    expect(venda()).toMatchObject({ status: 'channels' });
+    expect(venda({ recipientIndividual: true, recipientCnae: '8610101' })).toMatchObject({
+      status: 'retains',
+      option: { loadPercent: '9.30' },
+    });
+    // Antes de 01/06/2025 a IN não vale: sem canal pela CNAE.
+    expect(venda({ recipientCnae: '8610101', date: '2025-05-31' })).toMatchObject({
+      status: 'missing',
+    });
+  });
+
+  it('transferência não usa o canal pela CNAE nem leva campos da ST', () => {
+    const t = venda({ transfer: true, recipientCnae: '8610101' });
+    expect(t?.status).toBe('channels');
+    if (t?.status === 'channels') expect(t.options.every((o) => !o.stFields)).toBe(true);
+  });
+});
+
+describe('móveis: referência do "ajuste proporcional" por data', () => {
+  it('o texto de 2018/2019 diz 18%; o do Decreto 35.807 (efeitos de 01/01/2024) diz 20%', () => {
+    const antigo = pagina(
+      'LegisWeb_CE_Decreto_32900-2018_moveis_ate_Decreto_32904-2018_2026-10-27.html.gz',
+    );
+    const atual = pagina(
+      'LegisWeb_CE_Decreto_32900-2018_moveis_ajuste_proporcional_2026-10-27.html.gz',
+    );
+    expect(antigo).toMatch(
+      /for diferente de 18% \(dezoito por cento\), será feito o ajuste proporcional/,
+    );
+    expect(atual).toMatch(
+      /for diferente de 20% \(vinte por cento\), será feito o ajuste proporcional/,
+    );
+    expect(atual).toMatch(
+      /diferente de 20%.*\(Redação do parágrafo dada pelo Decreto Nº 35807 DE 29\/12\/2023\)/,
+    );
+    const moveis = ST_NET_LOAD_REGIMES.find((r) => r.id === 'stCeCargaMoveis')!;
+    expect(moveis.industry).toMatchObject({ referenceRate: '20', validFrom: '2024-01-01' });
+    // Antes de 2024 o Bipaê não tem a regra do art. 2º: "falta configurar", não a de 20%.
+    const antes = stNetLoadExit({
+      uf: 'CE',
+      sellerCnae: '3101200',
+      destinationUf: 'CE',
+      date: '2023-12-31',
+      goodsClass: 'rate-20',
+      operationCents: 100_000,
+    });
+    expect(antes?.status).toBe('missing');
+  });
+});
+
+describe('Lei 13.025/2000 e Parecer CECON 771/2024: só registro, sem fórmula', () => {
+  it('a lei fala em redução de até 41,18% e carga efetiva mínima de 10,59%', () => {
+    const lei = pagina('LegisWeb_CE_Lei_13025-2000_2026-10-27.html.gz');
+    expect(lei).toMatch(/reduzida em até 41,18%.*no mínimo 10,59%/);
+    expect(lei).toMatch(/alíquota seja 17%/);
+    expect(lei).toMatch(
+      /não se aplica às operações:.*mercadorias submetidas ao regime de substituição tributária/,
+    );
+  });
+
+  it('o parecer descreve a carga líquida como multiplicador direto, sem dar a conta do ajuste', () => {
+    const parecer = pagina('LegisWeb_CE_Parecer_CECON_771-2024_2026-10-27.html.gz');
+    expect(parecer).toMatch(/aplicação de multiplicadores diretos sobre o valor da operação/);
+    expect(parecer).toMatch(/até 41,18%/);
+    expect(parecer).not.toMatch(/ajuste proporcional.{0,200}\d,\d{2}%/);
   });
 });

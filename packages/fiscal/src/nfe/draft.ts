@@ -53,6 +53,8 @@ export interface NfeDraftRecipient {
   /** 1 contribuinte do ICMS, 2 contribuinte isento de inscrição, 9 não contribuinte. */
   ieIndicator: 1 | 2 | 9 | null;
   ie?: string | null;
+  /** CNAE-Fiscal principal do destinatário: define o canal do RET dos farmacêuticos (IN 74/2025). */
+  cnae?: string | null;
   email?: string | null;
   address: {
     street: string | null;
@@ -388,6 +390,7 @@ export function buildDraftNfe(input: NfeDraftInput): NfeDraftResult {
         operationCents,
         transfer: netLoadTransfer,
         recipientIndividual,
+        recipientCnae: r.cnae ?? null,
         options: c.stNetLoadOptions ?? null,
       });
       if (exit) notes.push(`${label}: ${stNetLoadExitMessage(exit)}`);

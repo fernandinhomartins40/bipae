@@ -1129,3 +1129,58 @@ export function ceNetLoadRegimes(decrees, { ufRegions }) {
   }));
   return { origins, regimes };
 }
+
+/** Linhas de texto de uma página do LegisWeb (HTML), com as entidades comuns decodificadas. */
+export function legisWebLines(html) {
+  const ENTITIES = { nbsp: ' ', amp: '&', quot: '"', lt: '<', gt: '>', ordm: 'º', ordf: 'ª' };
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<\/(p|div|tr|h\d|li|table)>|<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&([a-z]+);/gi, (m, name) => ENTITIES[name.toLowerCase()] ?? m)
+    .split('\n')
+    .map((l) => l.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+}
+
+/**
+ * Canal da venda no RET dos farmacêuticos (F3-26.d.CE.g), da IN SEFAZ 74/2025 (texto do LegisWeb,
+ * com as alterações da IN 88/2025): o canal Hospitalar é a venda a estabelecimento cuja CNAE-Fiscal
+ * principal está nas divisões listadas; o Canal Farma é qualquer outra hipótese, e a venda direta a
+ * pessoa física do Estado também vai no Farma. Efeitos desde 01/06/2025 (art. 6º da IN).
+ */
+export function parseCePharmaChannelRule(lines) {
+  const label = 'IN SEFAZ 74/2025';
+  const text = joinLines(lines);
+  const start = lines.findIndex((l) => /^I [–-] ICMS Canal Hospitalar:/.test(l));
+  const end = lines.findIndex((l, i) => i > start && /^II [–-] ICMS Canal Farma:/.test(l));
+  if (start < 0 || end < 0) throw new Error(`${label}: definição dos canais não encontrada`);
+  const divisions = lines
+    .slice(start, end)
+    .map((l) => /^[a-d]\) (\d{2}) \(/.exec(l)?.[1])
+    .filter(Boolean);
+  if (divisions.length !== 4) throw new Error(`${label}: ${divisions.length} divisões da CNAE`);
+  const effects = /produzindo efeitos a partir de 1\.º de junho de 2025/.test(text);
+  const principal = /será considerada apenas a Classificação Nacional de Atividade Econômico-Fiscal \(CNAE-Fiscal\) principal do estabelecimento/.test(
+    text,
+  );
+  const individual =
+    /venda direta a pessoa física deste Estado deve-se aplicar a carga tributária estabelecida para o Canal Farma/.test(
+      text,
+    );
+  const share = /mais de (\d{2})% de suas operações, no exercício/.exec(text);
+  if (!effects || !principal || !individual || !share) {
+    throw new Error(`${label}: art. 4º, cláusula segunda ou vigência fora do formato`);
+  }
+  return {
+    act: 'Instrução Normativa SEFAZ 74/2025 (CE)',
+    validFrom: '2025-06-01',
+    hospitalCnaeDivisions: divisions,
+    cnaeBasis: 'principal',
+    individualGoesToPharma: true,
+    // Enquadramento do contribuinte (não muda a carga da venda: cláusula segunda, § 3º).
+    hospitalShareOver: share[1],
+  };
+}

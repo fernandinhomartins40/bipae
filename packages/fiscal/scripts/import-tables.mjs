@@ -50,6 +50,8 @@ import { ceStReferences, parseCeVeiculos } from './st-ce.mjs';
 import { dfStReferences, parseDfAnexoIV } from './st-df.mjs';
 import {
   CE_NET_LOAD_SOURCES,
+  legisWebLines,
+  parseCePharmaChannelRule,
   ceNetLoadRegimes,
   parseCeInformaticsList,
   parseCeNetLoadSource,
@@ -949,6 +951,15 @@ tables['st-references.json'] = await importStReferences(tables['cest.json']);
   tables['st-net-loads.json'] = {
     ...ceNetLoadRegimes(decrees, { ufRegions }),
     productRegimes: [maMeat],
+    // Canal da venda no RET dos farmacêuticos (F3-26.d.CE.g), da IN SEFAZ 74/2025 no LegisWeb.
+    pharmaChannelRule: {
+      ...parseCePharmaChannelRule(
+        legisWebLines(
+          gunzipSync(readFileSync(join(sourcesDir, manifest.legisWebCeIn74.file))).toString('utf8'),
+        ),
+      ),
+      url: manifest.legisWebCeIn74.page,
+    },
     // Lista dos produtos de informática do ato do Secretário (F3-26.d.CE.d), do Diário Oficial.
     // As alterações em ordem de publicação: IN 135/2025 e IN 20/2026 (F3-26.d.CE.f).
     informaticsList: parseCeInformaticsList(
