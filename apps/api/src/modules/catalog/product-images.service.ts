@@ -25,16 +25,18 @@ import type { FastifyReply } from 'fastify';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
-import { withTenant, type Db } from '../../db/client';
+import { withTenant, type Db, type Tx } from '../../db/client';
 import { productImages, products } from '../../db/schema';
+import { FILE_STORAGE, type FileStorage } from '../../common/storage';
 import { AuditService } from '../audit/audit.service';
 
 /** A foto muda de endereço quando muda de conteúdo: pode ficar no cache do navegador por um ano. */
 const IMAGE_CACHE = 'private, max-age=31536000, immutable';
 
 /**
- * Foto do produto (F2-14). Uma por produto, guardada no PostgreSQL (a API não tem armazenamento
- * de arquivos à parte). Trocar ou tirar a foto muda o `updated_at` do produto, então a próxima
+ * Foto do produto (F2-14). Uma por produto. Sem driver de armazenamento (padrão), os bytes ficam no
+ * PostgreSQL; com `STORAGE_DRIVER=disk|s3` (F1-08) ficam no armazenamento de arquivos e a linha
+ * guarda só a chave. O banco segue como fonte do hash e do tipo nos dois casos. Trocar ou tirar a foto muda o `updated_at` do produto, então a próxima
  * sincronização leva o hash novo ao caixa.
  */
 @Injectable()
@@ -42,6 +44,7 @@ export class ProductImagesService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(AuditService) private readonly audit: AuditService,
+    @Inject(FILE_STORAGE) private readonly storage: FileStorage | null,
   ) {}
 
   async save(ctx: RequestContext, productId: string, input: ProductImageInput) {
@@ -58,18 +61,64 @@ export class ProductImagesService {
       );
     }
     const sha256 = createHash('sha256').update(bytes).digest('hex');
-    return withTenant(this.db, ctx, async (tx) => {
-      const [product] = await tx
-        .select({ id: products.id, name: products.name, previous: products.imageSha256 })
-        .from(products)
-        .where(eq(products.id, productId));
-      if (!product) throw notFound('Produto');
+    const storageKey = this.storage ? `${ctx.tenantId}/products/${productId}.${sha256}` : null;
+    let previousKey: string | null = null;
+    try {
+      const result = await withTenant(this.db, ctx, async (tx) => {
+        const [product] = await tx
+          .select({ id: products.id, name: products.name, previous: products.imageSha256 })
+          .from(products)
+          .where(eq(products.id, productId));
+        if (!product) throw notFound('Produto');
+        const [old] = await tx
+          .select({ key: productImages.storageKey })
+          .from(productImages)
+          .where(eq(productImages.productId, productId));
+        previousKey = old?.key ?? null;
+        // O arquivo vai antes da linha: se o banco falhar, sobra um arquivo solto, nunca uma
+        // linha apontando para o nada.
+        if (this.storage && storageKey) await this.storage.put(storageKey, bytes, kind);
+        return this.persist(tx, ctx, productId, product, {
+          kind,
+          bytes: storageKey ? null : bytes,
+          storageKey,
+          sha256,
+          size: bytes.length,
+        });
+      });
+      if (this.storage && previousKey && previousKey !== storageKey) {
+        await this.storage.delete(previousKey).catch(() => undefined);
+      }
+      return result;
+    } catch (e) {
+      if (this.storage && storageKey && storageKey !== previousKey) {
+        await this.storage.delete(storageKey).catch(() => undefined);
+      }
+      throw e;
+    }
+  }
+
+  private async persist(
+    tx: Tx,
+    ctx: RequestContext,
+    productId: string,
+    product: { name: string; previous: string | null },
+    image: {
+      kind: string;
+      bytes: Uint8Array | null;
+      storageKey: string | null;
+      sha256: string;
+      size: number;
+    },
+  ) {
+    const { kind, bytes, storageKey, sha256 } = image;
+    {
       await tx
         .insert(productImages)
-        .values({ productId, tenantId: ctx.tenantId, contentType: kind, bytes, sha256 })
+        .values({ productId, tenantId: ctx.tenantId, contentType: kind, bytes, storageKey, sha256 })
         .onConflictDoUpdate({
           target: productImages.productId,
-          set: { contentType: kind, bytes, sha256, updatedAt: sql`now()` },
+          set: { contentType: kind, bytes, storageKey, sha256, updatedAt: sql`now()` },
         });
       await tx
         .update(products)
@@ -82,16 +131,18 @@ export class ProductImagesService {
         data: {
           name: product.name,
           contentType: kind,
-          bytes: bytes.length,
+          bytes: image.size,
+          storage: storageKey ? this.storage?.driver : 'db',
           sha256,
           previous: product.previous,
         },
       });
       return { imageHash: sha256 };
-    });
+    }
   }
 
   async remove(ctx: RequestContext, productId: string) {
+    let key: string | null = null;
     await withTenant(this.db, ctx, async (tx) => {
       const [product] = await tx
         .select({ name: products.name, previous: products.imageSha256 })
@@ -99,6 +150,11 @@ export class ProductImagesService {
         .where(eq(products.id, productId));
       if (!product) throw notFound('Produto');
       if (!product.previous) return;
+      const [old] = await tx
+        .select({ key: productImages.storageKey })
+        .from(productImages)
+        .where(eq(productImages.productId, productId));
+      key = old?.key ?? null;
       await tx.delete(productImages).where(eq(productImages.productId, productId));
       await tx
         .update(products)
@@ -111,6 +167,7 @@ export class ProductImagesService {
         data: { name: product.name, previous: product.previous },
       });
     });
+    if (this.storage && key) await this.storage.delete(key).catch(() => undefined);
   }
 
   async read(ctx: RequestContext, productId: string) {
@@ -119,12 +176,17 @@ export class ProductImagesService {
         .select({
           contentType: productImages.contentType,
           bytes: productImages.bytes,
+          storageKey: productImages.storageKey,
           sha256: productImages.sha256,
         })
         .from(productImages)
         .where(eq(productImages.productId, productId));
       if (!row) throw new AppError(404, 'not_found', 'Este produto não tem foto.');
-      return row;
+      const bytes =
+        row.bytes ??
+        (row.storageKey && this.storage ? await this.storage.get(row.storageKey) : null);
+      if (!bytes) throw new AppError(404, 'not_found', 'Este produto não tem foto.');
+      return { contentType: row.contentType, sha256: row.sha256, bytes };
     });
   }
 }

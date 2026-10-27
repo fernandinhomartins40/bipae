@@ -1736,8 +1736,11 @@ export const ciapAssets = pgTable('ciap_assets', {
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),
   companyId: uuid('company_id').notNull(),
-  purchaseInvoiceId: uuid('purchase_invoice_id').notNull(),
-  itemLine: integer('item_line').notNull(),
+  purchaseInvoiceId: uuid('purchase_invoice_id'),
+  itemLine: integer('item_line'),
+  origin: text('origin', { enum: ['purchase', 'manual'] })
+    .notNull()
+    .default('purchase'),
   code: text('code').notNull(),
   description: text('description').notNull(),
   enteredOn: date('entered_on', { mode: 'string' }).notNull(),
@@ -1750,7 +1753,8 @@ export const ciapAssets = pgTable('ciap_assets', {
   costCenter: text('cost_center', { enum: ['1', '2'] }).notNull().default('1'),
   usage: text('usage'),
   writtenOffOn: date('written_off_on', { mode: 'string' }),
-  writeOffType: text('write_off_type', { enum: ['PE', 'OT'] }),
+  writeOffType: text('write_off_type', { enum: ['PE', 'OT', 'AT'] }),
+  disposalAccessKey: char('disposal_access_key', { length: 44 }),
   createdAt: ts('created_at').notNull().defaultNow(),
 });
 

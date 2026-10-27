@@ -69,6 +69,23 @@ const envSchema = z.object({
   AI_MODEL: z.string().default('claude-sonnet-5-5'),
   /** Chamadas ao provedor por conta por dia, para o custo caber no plano. */
   AI_DAILY_LIMIT: z.coerce.number().int().min(0).default(200),
+  /**
+   * Armazenamento das fotos de produto (F1-08). `db` (padrão) guarda no PostgreSQL; `disk` usa a
+   * pasta STORAGE_DIR (em produção, um volume aprovado em E12); `s3` usa um serviço compatível
+   * com S3. Segredos do S3 só por variável de ambiente.
+   */
+  STORAGE_DRIVER: z.enum(['db', 'disk', 's3']).default('db'),
+  STORAGE_DIR: z.string().default('.data/files'),
+  S3_ENDPOINT: z.string().optional(),
+  S3_BUCKET: z.string().optional(),
+  S3_REGION: z.string().default('us-east-1'),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
+  /** `false` para endereço bucket.host (AWS); `true` (padrão) para /bucket/chave (MinIO). */
+  S3_PATH_STYLE: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
   /** GitHub "owner/repo" whose public Releases carry the desktop installers ('' disables). */
   DESKTOP_RELEASES_REPO: z.string().default('fernandinhomartins40/bipae'),
   /** Bipaê staff must enable 2FA before using the admin panel (always true in production). */

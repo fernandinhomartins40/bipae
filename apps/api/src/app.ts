@@ -117,6 +117,7 @@ import { WebhooksController, WebhooksService } from './modules/public-api/webhoo
 import { CrmController, CrmService } from './modules/crm/crm.service';
 import { CampaignsController, CampaignsService } from './modules/crm/campaigns.service';
 import { ClaudeProvider } from './modules/ai/ai.provider';
+import { createStorage, FILE_STORAGE } from './common/storage';
 import { AI_PROVIDER, AiController, AiService } from './modules/ai/ai.service';
 import { LoyaltyController, LoyaltyService } from './modules/crm/loyalty.service';
 import { PublicApiController, PublicDataService } from './modules/public-api/public-api.controller';
@@ -303,6 +304,7 @@ class AppModule {
         LotsService,
         LabelsService,
         ProductImagesService,
+        { provide: FILE_STORAGE, useValue: createStorage(config) },
         PromotionsService,
         IbsCbsSettlementService,
         IcmsRulesService,

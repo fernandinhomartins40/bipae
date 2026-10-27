@@ -76,7 +76,9 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] F1-06.b · Telas: convidar por link na Equipe e página de aceite do convite, com E2E — depende: F1-06.a
 - [x] F1-07 · Fila de tarefas (Redis + BullMQ) na API e no deploy
   - Pronto quando: um job de exemplo roda com nova tentativa, o Redis está no compose da VPS e há teste.
-- [ ] F1-08 · Fotos de produto — externo: E12
+- [~] F1-08 · Fotos de produto — externo: E12
+  - [x] F1-08.a · Porta de armazenamento de arquivos (`FileStorage`): driver em disco (`STORAGE_DRIVER=disk`), driver S3 compatível com assinatura SigV4 e fotos de produto fora do banco quando um driver está ligado; sem driver, continua no PostgreSQL (F2-14). Envio, redução na tela, exibição no cadastro e no caixa já existiam (F2-14)
+  - [ ] F1-08.b · Aprovar o volume (ou bucket) em produção, ligar `STORAGE_DRIVER`, mover as fotos já gravadas no banco e apagar os arquivos da conta na exclusão definitiva (LGPD) — depende: F1-08.a · externo: E12
   - Pronto quando: enviar, redimensionar e mostrar na busca do caixa, com limite de tamanho e tipo.
 
 ## Fase 3 — Fiscal
@@ -489,6 +491,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F6-07.b · Sugestão fiscal no cadastro do produto: NCM, CEST e cClassTrib com justificativa e confiança, a partir de candidatos da tabela oficial; o que não existe ou não vale hoje sai com aviso; só grava com aprovação, que registra quem aprovou, a sugestão original, o modelo e o antes e depois — depende: F6-07.a
   - [x] F6-07.c · Perguntas sobre o negócio pelas ferramentas de relatório (vendas, DRE, contas, perdas), com o escopo da conta e sem dado pessoal de cliente; nunca SQL livre — depende: F6-07.a
   - [x] F6-07.d · Tela Assistente (liga e desliga, exemplos, conversa) e "Sugerir com IA" no produto; sem a chave, "Falta configurar" — depende: F6-07.b, F6-07.c
+  - [x] F6-07.f · Ferramentas que só propõem: o assistente busca produtos e propõe novo preço; a proposta fica pendente (`ai_actions`, migração 0082) e só muda o cadastro quando uma pessoa com permissão de preço confirma na conversa; recusar não muda nada; auditoria de proposta, confirmação e recusa; barra se o preço mudou no meio — depende: F6-07.d
   - [ ] F6-07.e · Ligar a chave na VPS, conferir com o modelo de verdade e medir o custo por conta; aviso do envio ao provedor de IA no termo de uso (P-01) — depende: F6-07.d · externo: E13, E7
 - [x] F6-08 · CRM, fidelidade e campanhas com consentimento (LGPD)
   - [x] F6-08.a · CRM: ficha do cliente com o histórico de compras pelo CPF (total, ticket médio, frequência, última compra, mais comprados), segmentos (novos, frequentes, sumidos) e lista de quem aceitou ofertas, exportada com auditoria

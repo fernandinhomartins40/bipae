@@ -1,5 +1,14 @@
 # Changelog
 
+## [F6-07.f e F1-08.a Assistente que propõe e fotos em armazenamento de arquivos] — 27/10/2026
+
+### Adicionado
+- **Assistente que só propõe (F6-07.f):** além de responder com os relatórios, o assistente busca produtos e propõe um novo preço. A proposta aparece na conversa com "Confirmar e mudar o preço" e "Recusar"; nada muda no cadastro até uma pessoa com permissão de preço confirmar. Se o preço mudou depois da proposta, a confirmação é barrada. Proposta, confirmação e recusa ficam na auditoria com o modelo e o antes e depois (migração 0082, com RLS).
+- **Porta de armazenamento de arquivos (F1-08.a):** STORAGE_DRIVER=db (padrão, como antes), disk (pasta STORAGE_DIR) ou s3 (qualquer serviço compatível, com S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY_ID e S3_SECRET_ACCESS_KEY por variável de ambiente). Com driver ligado, a foto do produto vai para o arquivo e o banco guarda só a chave (migração 0085); trocar ou tirar a foto limpa o arquivo antigo. O caixa continua recebendo só o hash e baixando a foto com cache longo, sem mudar o offline.
+
+### Falta configurar
+- Aprovar o volume ou bucket em produção (E12) e ligar o driver; mover as fotos já gravadas no banco; apagar os arquivos na exclusão definitiva da conta (F1-08.b).
+
 ## [F3-21.b.1 Certificado A3 pelo Conector, parte sem o token] — 27/10/2026
 
 ### Adicionado
