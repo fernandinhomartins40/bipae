@@ -10,3 +10,8 @@ overrides:
   "fast-uri@>=3 <3.1.9": "3.1.9"
   "fast-uri@>=4 <4.2.3": "4.2.3"
   "fastify@<5.12.6": "5.12.7"
+# node-forge só lê o PKCS#12 do certificado (nunca confere assinatura RSA PKCS#1 v1.5), que é onde
+# está a falha; sem versão corrigida ainda. Reavaliar a cada auditoria (docs/seguranca/asvs-n2.md, A-01).
+auditConfig:
+  ignoreGhsas:
+    - GHSA-86w9-cpqp-85rv
