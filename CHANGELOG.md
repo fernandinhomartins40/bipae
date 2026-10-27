@@ -1,5 +1,16 @@
 # Changelog
 
+## [F3-26.d.RR e F3-26.d.MA.c ST de Roraima e conferência do Maranhão] — 27/10/2026
+
+### Adicionado
+- **Roraima (F3-26.d.RR):** ST por seção e NCM do RICMS/RR (Decreto 4.335-E/2001, consolidado até o Decreto 41.572-E de 01/10/2026): 20 seções e 392 linhas com o percentual do próprio artigo e a vigência pelo decreto de cada dispositivo (cigarros, água, refrigerante, cerveja e chope por produto e embalagem, veículos, motos, pneus, cimento, farinha de trigo e derivados, farmacêuticos, perfumes, tintas, lâminas, lâmpadas, telhas, autopeças com 36,56% e 71,78%, rações, materiais de construção, sorvetes e celulares). Sem CEST: Roraima não adota a lista do Convênio ICMS 142/18, e ligar a NBM de 1996 a um CEST seria escolha à mão. O leitor `scripts/st-rr.mjs` para a geração se o texto do PDF mudar; o monitor semanal compara as linhas.
+- **Exceções por NCM:** o item da tabela de ST pode trazer `exceptNcms` ("3917, exceto 3917.32.21"); o produto com esse NCM não casa com a linha (`stReferencesFor`).
+- **Maranhão (F3-26.d.MA.c):** os anexos com CEST (4.5, 4.13, 4.16, 4.17, 4.19, 4.38, 4.45 e 4.46) foram conferidos contra o texto do RICMS/MA no LegisWeb, por teste automatizado; a tabela continua gerada do portal da SEFAZ-MA. O LegisWeb (fonte aprovada pelo dono em 27/10/2026) está registrado no manifest.
+
+### Falta configurar
+- RR (D-057): frango e óleo comestível, venda porta a porta e bebidas alcoólicas (sem NCM no texto), comerciantes de produtos farmacêuticos (por CNAE), combustíveis (PMPF e monofásico), trigo em grão e farinha de trigo (sem NCM) e o gelo (sem percentual no art. 768). MA (D-058): nafta (Anexo 4.47), com MVA por fórmula da alíquota "ad rem" da gasolina.
+
+
 ## [F3-26.d.TO e F3-26.d.AP ST do Tocantins e do Amapá] — 27/10/2026
 
 ### Adicionado

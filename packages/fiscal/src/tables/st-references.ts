@@ -12,6 +12,11 @@ export interface StReferenceItem {
   /** Posições de NCM do item (2 a 8 dígitos; o produto entra se o NCM dele começar por uma). */
   ncms: string[];
   ncmText: string;
+  /**
+   * NCM que o ato tira das posições acima ("3917, exceto 3917.32.21"): o produto cujo NCM começa
+   * por um deles não entra no item.
+   */
+  exceptNcms?: string[];
   description: string;
   /** IVA-ST (MVA original) em percentual, como texto decimal ("72.41"). */
   mva: string;
@@ -54,6 +59,7 @@ export function stReferencesFor(uf: string, ncm: string, date: string): StRefere
     if (ref.validTo && date > ref.validTo) continue;
     for (const item of ref.items) {
       if (!item.ncms.some((n) => code.startsWith(n))) continue;
+      if (item.exceptNcms?.some((n) => code.startsWith(n))) continue;
       found.push({
         ...item,
         uf: ref.uf,

@@ -63,6 +63,7 @@ import { parseToRicms, toStReferences } from './st-to.mjs';
 import { parseRnAnexo007, rnStReferences } from './st-rn.mjs';
 import { MA_ANNEX_SOURCES, maStReferences, parseMaAnnex } from './st-ma.mjs';
 import { MA_MEAT_SOURCES, maMeatRegime, parseMaMeatAnnex } from './st-ma-carnes.mjs';
+import { parseRrRicms, rrStReferences } from './st-rr.mjs';
 import { docText } from './doc-text.mjs';
 import { parseSimplesAnnexes } from './simples-annexes.mjs';
 import { readXlsx, unzip } from './xlsx.mjs';
@@ -820,6 +821,12 @@ async function importStReferences(cest) {
     sourceOf: (annex) => maKey.get(annex),
     segmentName: (code) => acNames.get(code),
   });
+  // Roraima (F3-26.d.RR): RICMS/RR consolidado até outubro de 2026. Não usa a lista de CEST do
+  // Convênio ICMS 142/2018: a ST está por seção, com a lista por NCM e o percentual no artigo.
+  const rr = rrStReferences(
+    parseRrRicms(await pdfLines(readFileSync(join(sourcesDir, manifest.stRrRicms.file)))),
+    { url: manifest.stRrRicms.page, source: 'stRrRicms' },
+  );
   const sp = gunzipSync(readFileSync(join(sourcesDir, manifest.stSpAlimenticios.file))).toString(
     'utf8',
   );
@@ -894,6 +901,7 @@ async function importStReferences(cest) {
       ...ap.references,
       ...rn.references,
       ...ma,
+      ...rr,
       ...confaz.flatMap((c) => c.references),
     ],
   };

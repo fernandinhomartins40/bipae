@@ -66,6 +66,7 @@ import {
   parseMaAnnex,
 } from './st-ma.mjs';
 import { MA_MEAT_SOURCES, parseMaMeatAnnex } from './st-ma-carnes.mjs';
+import { parseRrRicms } from './st-rr.mjs';
 import { docText } from './doc-text.mjs';
 import { parseNfceEndpoints } from './nfce-endpoints.mjs';
 import { parseNfeEndpoints } from './nfe-endpoints.mjs';
@@ -1306,6 +1307,40 @@ async function checkRn() {
 }
 
 /**
+ * Roraima: o PDF do RICMS/RR consolidado que a SEFAZ-RR publica na pasta do regulamento. O nome do
+ * arquivo traz o mês da última atualização; se ele sair do ar, a diferença aparece como "mudou" e
+ * a pasta (downloads/legislacao, "REGULAMENTO DE ICMS - ATUALIZADO") mostra o arquivo novo.
+ */
+async function checkRr() {
+  const rowsOf = async (bytes) =>
+    parseRrRicms(await pdfLines(bytes)).sections.flatMap((s) =>
+      s.items.map((i) => [s.segmentName, s.validFrom, i.item, i.ncms.join(' '), i.mva]),
+    );
+  const old = await rowsOf(readFileSync(join(sourcesDir, manifest.stRrRicms.file)));
+  const title = 'ST em Roraima (RICMS/RR, Título III do Livro Segundo)';
+  let now;
+  try {
+    now = await rowsOf((await download(manifest.stRrRicms.page)).body);
+  } catch (error) {
+    return {
+      title,
+      page: manifest.stRrRicms.page,
+      status: 'mudou',
+      details: [`o arquivo novo não passa no leitor do Bipaê: ${error.message}`],
+    };
+  }
+  const diff = diffRows(old, now);
+  return {
+    title,
+    page: manifest.stRrRicms.page,
+    status: diff.changed ? 'mudou' : 'igual',
+    details: diff.changed
+      ? [`${diff.added} linha(s) nova(s) ou alterada(s), ${diff.removed} saíram`, ...diff.examples]
+      : [],
+  };
+}
+
+/**
  * Maranhão: os Anexos 4.x do RICMS/MA de hoje, pela API do portal da SEFAZ-MA (repositório
  * "Anexos do RICMS"). Arquivo trocado no portal ganha outro identificador: o novo é baixado e
  * passa pelo leitor do Bipaê para mostrar o que mudou.
@@ -1822,6 +1857,7 @@ if (process.argv.includes('--save-listings')) {
     ),
     await safe('ST no Rio Grande do Norte', manifest.stRnAnexo007.page, checkRn),
     await safe('ST no Maranhão', manifest.stMaAnexo4_2.page, checkMa),
+    await safe('ST em Roraima', manifest.stRrRicms.page, checkRr),
     await safe('ST no Ceará (carga líquida)', manifest.stCeCargaAutopecas.page, checkCeNetLoads),
     await safe(
       'Lista de informática do Ceará (IN SEFAZ 148/2024)',
