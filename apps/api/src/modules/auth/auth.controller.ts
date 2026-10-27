@@ -72,6 +72,7 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(200)
+  @RouteConfig({ rateLimit: { max: 120, timeWindow: '1 minute' } })
   refresh(@Body() body: unknown, @Headers('user-agent') userAgent?: string) {
     return this.auth.refresh(parse(refreshInput, body).refreshToken, userAgent);
   }
@@ -130,6 +131,7 @@ export class AuthController {
   // Convite por link (F1-06): quem abre o link ainda não tem sessão.
   @Public()
   @Get('invites/:token')
+  @RouteConfig(LOGIN_RATE_LIMIT)
   inviteInfo(@Param('token') token: string) {
     return this.auth.inviteInfo(token);
   }

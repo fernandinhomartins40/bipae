@@ -213,3 +213,35 @@ describe('chamadas a endereços cadastrados pelo cliente (F7-02.c)', () => {
     expect(erro?.code).toBe('EBLOCKED');
   });
 });
+
+describe('freio na API pública (F7-02.c)', () => {
+  it('RateWindow conta por janela e libera depois dela', async () => {
+    const { RateWindow } = await import('../src/common/rate-window');
+    const w = new RateWindow(3, 1000);
+    expect([1, 2, 3, 4].map(() => w.allow('a', 0))).toEqual([true, true, true, false]);
+    expect(w.allow('b', 0)).toBe(true);
+    expect(w.allow('a', 1000)).toBe(true);
+  });
+
+  it('chave errada em excesso e chave boa demais são freadas com 429', async () => {
+    const { API_KEY_FAILURES_PER_MINUTE, API_KEY_REQUESTS_PER_MINUTE } =
+      await import('../src/common/auth');
+    const dono = await signup(t.app);
+    const chave = (
+      await api(t.app, dono.auth).post('/api-keys', { name: 'BI', scopes: ['catalog.read'] })
+    ).json().key as string;
+    const comChave = (k: string) => api(t.app, { authorization: `Bearer ${k}` });
+    const falsa = chave.slice(0, -4) + 'AAAA';
+    let status = 0;
+    for (let i = 0; i <= API_KEY_FAILURES_PER_MINUTE; i++) {
+      status = (await comChave(falsa).get('/public/me')).statusCode;
+    }
+    expect(status).toBe(429);
+    // A chave boa ainda passa o limite dela só depois de muitos pedidos.
+    let ultimo = 0;
+    for (let i = 0; i <= API_KEY_REQUESTS_PER_MINUTE; i++) {
+      ultimo = (await comChave(chave).get('/public/me')).statusCode;
+    }
+    expect(ultimo).toBe(429);
+  });
+});

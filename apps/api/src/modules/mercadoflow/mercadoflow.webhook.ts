@@ -10,6 +10,7 @@ import {
   Req,
 } from '@nestjs/common';
 import type { RawBodyRequest } from '@nestjs/common';
+import { RouteConfig } from '@nestjs/platform-fastify';
 import { eq, or } from 'drizzle-orm';
 import type { FastifyRequest } from 'fastify';
 import type { Config } from '../../config';
@@ -166,6 +167,7 @@ export class MercadoflowWebhookController {
   @Public()
   @Post('webhook')
   @HttpCode(200)
+  @RouteConfig({ rateLimit: { max: 600, timeWindow: '1 minute' } })
   async webhook(
     @Req() request: RawBodyRequest<FastifyRequest>,
     @Headers('x-mercadoflow-signature') signature: string | undefined,

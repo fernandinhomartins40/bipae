@@ -14,6 +14,7 @@ import { withTenant, type Db } from '../db/client';
 import { apiKeys, memberships, roles, tenants, terminals } from '../db/schema';
 import { apiKeyTenant, hashApiKey, isApiKey } from './api-keys';
 import { DB } from './di';
+import { RateWindow } from './rate-window';
 import { AppError, forbidden } from './errors';
 import { TokenService } from './tokens';
 
@@ -58,6 +59,10 @@ export const Ctx = createParamDecorator((_: unknown, host: ExecutionContext): Re
   return ctx;
 });
 
+/** Pedidos por minuto de cada chave da API pública, e de um mesmo IP com chave errada. */
+export const API_KEY_REQUESTS_PER_MINUTE = 600;
+export const API_KEY_FAILURES_PER_MINUTE = 30;
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -65,6 +70,9 @@ export class AuthGuard implements CanActivate {
     @Inject(TokenService) private readonly tokens: TokenService,
     @Inject(DB) private readonly db: Db,
   ) {}
+
+  private readonly keyRate = new RateWindow(API_KEY_REQUESTS_PER_MINUTE);
+  private readonly keyFailureRate = new RateWindow(API_KEY_FAILURES_PER_MINUTE);
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const targets = [context.getHandler(), context.getClass()];
@@ -184,8 +192,17 @@ export class AuthGuard implements CanActivate {
         'Esta rota não faz parte da API pública do Bipaê. As rotas estão em /v1/public/openapi.json.',
       );
     }
-    const invalid = () =>
-      new AppError(401, 'invalid_api_key', 'Chave de API inválida ou revogada.');
+    const invalid = () => {
+      // Chave errada em excesso vinda do mesmo endereço: freia a tentativa e erro.
+      if (!this.keyFailureRate.allow(request.ip)) return tooMany();
+      return new AppError(401, 'invalid_api_key', 'Chave de API inválida ou revogada.');
+    };
+    const tooMany = () =>
+      new AppError(
+        429,
+        'rate_limited',
+        'Muitos pedidos em pouco tempo. Espere um minuto e tente de novo.',
+      );
     const tenantId = apiKeyTenant(key);
     if (!tenantId) throw invalid();
     const found = await withTenant(this.db, { tenantId }, async (tx) => {
@@ -217,6 +234,7 @@ export class AuthGuard implements CanActivate {
     const access = accountAccess(found.tenant.status, found.tenant.trialEndsAt);
     if (!access.allowed) throw new AppError(403, `account_${access.code}`, access.message!);
     const permissions = found.k.scopes.filter((s) => found.member!.permissions.includes(s));
+    if (!this.keyRate.allow(found.k.id)) throw tooMany();
     request.ctx = {
       tenantId,
       userId: found.k.createdBy,
