@@ -254,6 +254,8 @@ export const channelLinkInput = z.object({
 export type ChannelLinkInput = z.input<typeof channelLinkInput>;
 
 export interface ChannelLinkView {
+  /** O mesmo código do canal (a tabela da tela pede um id). */
+  id: string;
   sku: string;
   productId: string;
   productName: string;

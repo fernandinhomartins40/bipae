@@ -359,7 +359,12 @@ export class ChannelsService implements OnModuleInit {
         .innerJoin(products, eq(products.id, channelProductLinks.productId))
         .where(eq(channelProductLinks.integrationId, integrationId))
         .orderBy(asc(channelProductLinks.sku));
-      return rows.map((r) => ({ sku: r.sku, productId: r.productId, productName: r.name }));
+      return rows.map((r) => ({
+        id: r.sku,
+        sku: r.sku,
+        productId: r.productId,
+        productName: r.name,
+      }));
     });
   }
 

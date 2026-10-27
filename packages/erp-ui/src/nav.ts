@@ -20,6 +20,8 @@ import {
   HandPlatter,
   HeartHandshake,
   Landmark,
+  Barcode,
+  ShoppingBag,
   ListChecks,
   Monitor,
   Package,
@@ -113,6 +115,13 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: ChefHat,
         permission: 'pos.sell',
         keywords: 'pedido preparo restaurante',
+      },
+      {
+        to: '/canais',
+        label: 'Pedidos de canais',
+        icon: ShoppingBag,
+        permission: 'pos.order',
+        keywords: 'ifood marketplace pedido online delivery loja virtual',
       },
       {
         to: '/delivery',
@@ -270,6 +279,13 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: Wallet,
         permission: 'finance.read',
         keywords: 'boleto despesa conta pagar receber vencimento',
+      },
+      {
+        to: '/boletos',
+        label: 'Boletos',
+        icon: Barcode,
+        permission: 'finance.read',
+        keywords: 'boleto cobrança cobrar asaas linha digitável',
       },
       {
         to: '/fluxo-de-caixa',

@@ -43,6 +43,8 @@ import { NfePage } from './pages/nfe';
 import { ServiceOrdersPage } from './pages/service-orders';
 import { ServicesPage } from './pages/services';
 import { IntegrationsPage } from './pages/integrations';
+import { ChannelsPage } from './pages/channels';
+import { BoletosPage } from './pages/boletos';
 import { CrmPage } from './pages/crm';
 import { HelpPage } from './pages/help';
 import { IbsCbsPage } from './pages/ibs-cbs';
@@ -208,6 +210,8 @@ export function BipaeApp({ platform, apiUrl, router, basename }: BipaeAppProps) 
               <Route path="transferencias" element={<TransfersPage />} />
               <Route path="condicional" element={<ConditionalsPage />} />
               <Route path="integracoes" element={<IntegrationsPage />} />
+              <Route path="canais" element={<ChannelsPage />} />
+              <Route path="boletos" element={<BoletosPage />} />
               <Route path="relacionamento" element={<CrmPage />} />
               <Route path="assistente" element={<AssistantPage />} />
               <Route path="ajuda" element={<HelpPage />} />

@@ -414,7 +414,9 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
     - [ ] F4-14.b.6 · Validar um arquivo real no PVA da Receita — externo: dono
     - [x] F4-14.b.7 · CIAP (bloco G): crédito do ICMS do ativo em 1/48 por mês vezes o índice das saídas tributadas e exportações (LC 87/1996, art. 20, § 5º), com G110, G125, G130, G140, 0300, 0305, 0500, 0600 e o ajuste no E111 — depende: F4-14.b.2
       - 23/10/2026: regras e conta em packages/fiscal/src/efd/ciap.ts (parcela truncada nos centavos, índice com 8 casas truncadas, crédito meio para cima); bens em `ciap_assets` (migração 0078), criados quando a compra vira "ativo imobilizado" e com a última parcela já baixada em arquivo. Configuração em Arquivos para o contador: conta do ativo, código do E111 e saídas com CST 60 no índice (dúvida D-041). 27/10/2026: baixa do bem pela tela e pela API (PE, OT e AT, esta com o G130 da NF-e de saída, adquirente no COD_PART), ICMS do frete (CT-e) e DIFAL digitados no bem, bens anteriores ao Bipaê como saldo inicial (migração 0083) e aviso de nota denegada corrigido (a EFD não pede mais, D-041). Falta só o G126 (outros créditos, sem regra de UF lida) e o G130 do primeiro SI dos bens antigos; validação no PVA em F4-14.b.6.
-- [ ] F4-15 · Boletos via PSP — depende: F4-04 · externo: E9
+- [~] F4-15 · Boletos via PSP — depende: F4-04 · externo: E9
+  - [x] F4-15.a · Boleto pelo Asaas (e simulador): emissão idempotente, registro, aviso que só aponta a consulta, baixa da conta a receber, conciliação e tela Boletos; migração 0086
+  - [ ] F4-15.b · Homologar com conta real do Asaas, conferir os caminhos da API; arquivo de retorno CNAB, multa e juros — externo: E9
 - [ ] F4-16 · Crédito de IBS/CBS pela extinção do débito do fornecedor, quando o split payment estiver em funcionamento (LC 214/2025, arts. 47 e 48; dúvida D-027) — depende: F4-13 · externo: E22
 
 ## Fase 5 — Verticais
@@ -488,8 +490,12 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [ ] F6-04.b · Homologar o Pix da cobrança com a conta do Bipaê no parceiro (token BILLING_TOKEN) e ligar em produção — externo: E9, E8
   - [ ] F6-04.c · Cartão de crédito recorrente (cartão salvo no parceiro) e boleto — externo: E9
   - [ ] F6-04.d · Cobrança por cliente no painel super admin (situação, faturas, perdoar fatura)
-- [ ] F6-05 · iFood — depende: F5-07 · externo: E14
-- [ ] F6-06 · Marketplaces — depende: F6-01 · externo: E14
+- [~] F6-05 · iFood — depende: F5-07 · externo: E14
+  - [x] F6-05.a · Porta de canais, adaptador do iFood (eventos, confirmação, status; testado contra iFood simulado), pedido aceito vira pedido do caixa e repasse a receber com comissão, ações pela fila, tela Pedidos de canais. Os caminhos da API do iFood não foram conferidos (portal devolveu 403): endereço configurável por IFOOD_API_URL
+  - [ ] F6-05.b · Conferir a API do iFood com credenciais de integrador, enviar cardápio e estoque (hoje "chega em breve") — externo: E14
+- [~] F6-06 · Marketplaces — depende: F6-01 · externo: E14
+  - [x] F6-06.a · Conector genérico: pedido empurrado com assinatura HMAC, uma vez só, ligação de produtos por SKU, mesmo fluxo do iFood
+  - [ ] F6-06.b · Adaptadores de marketplaces específicos, cardápio e estoque — externo: E14
 - [~] F6-07 · Assistente de IA com confirmação humana (ADR-0011) — externo: E13
   - [x] F6-07.a · Base: interface própria do provedor (modelos Claude pela API de mensagens, trocável), chave e modelo por variável (`AI_API_KEY`, `AI_MODEL`), liga e desliga por conta com auditoria, limite de uso por dia e medição de cada chamada (tokens) para o custo caber no plano
   - [x] F6-07.b · Sugestão fiscal no cadastro do produto: NCM, CEST e cClassTrib com justificativa e confiança, a partir de candidatos da tabela oficial; o que não existe ou não vale hoje sai com aviso; só grava com aprovação, que registra quem aprovou, a sugestão original, o modelo e o antes e depois — depende: F6-07.a
@@ -508,7 +514,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - Feito em 16/10/2026: medições no Node e no navegador com 100 mil produtos, nas metas; a gravação do catálogo passou a ser em blocos (ver `docs/desempenho.md`).
 - [~] F7-02 · Revisão de segurança OWASP ASVS nível 2 e correções — externo: E15
   - [x] F7-02.a · Revisão interna capítulo a capítulo (`docs/seguranca.md`) e correções: senha comum ou igual ao e-mail ou nome recusada; limite de tentativas por e-mail no login; aviso por e-mail quando a senha ou a verificação em duas etapas mudam; respostas da API sem cache; limite no descadastro de campanha
-  - [ ] F7-02.b · Pentest externo, `pnpm audit` na CI, decisão sobre conferir senhas vazadas e limite de tentativas no Redis com mais de uma instância — depende: F7-02.a · externo: E15
+  - [x] F7-02.c · Segunda passada (27/10/2026): SSRF, travamento de tentativas no caixa, 2FA e painel, limites da API pública, CSV, dependências e `pnpm audit` na CI; relatório em `docs/seguranca/asvs-n2.md`
+  - [ ] F7-02.b · Pentest externo, decisão sobre conferir senhas vazadas e limite de tentativas no Redis com mais de uma instância — depende: F7-02.a · externo: E15
 - [x] F7-03 · Auditoria de acessibilidade WCAG 2.2 AA e correções
   - Feito em 16/10/2026: axe-core nas telas principais (tema claro, escuro e celular) e teste de teclado na CI; corrigidos o link "Pular para o conteúdo" e a volta do foco ao fechar gavetas e janelas (ver `docs/acessibilidade.md`).
 - [x] F7-04 · Central de ajuda (documentação do usuário)

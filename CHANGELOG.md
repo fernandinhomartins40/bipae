@@ -1,5 +1,27 @@
 # Changelog
 
+## [F7-02.c Segunda passada de segurança (ASVS nível 2)] — 27/10/2026
+
+### Corrigido
+- **SSRF:** webhooks e API Pix do banco recusam endereço de rede interna, inclusive IPv4 escrito em IPv6, NAT64 e 6to4; a chamada ao banco resolve o DNS de novo na conexão.
+- **Tentativas de senha e código:** autorização de supervisor, troca de operador, código do 2FA e login da equipe do painel travam o e-mail depois de 10 erros em 15 minutos.
+- **Suporte Bipaê** não troca de empresa na sessão do cliente; produção recusa subir com o 2FA da equipe desligado.
+- **API pública:** limite de pedidos por chave e freio para chave errada; limites em renovar sessão, convite e aviso do MercadoFlow.
+- **Exportação CSV** não vira fórmula no Excel.
+- **Dependências:** nodemailer 10.1.4, fastify 5.12.7 e fast-uri corrigidos; `pnpm audit --prod --audit-level=high` na CI.
+
+### Documentação
+- `docs/seguranca/asvs-n2.md`: achados, correções e pendências com gravidade.
+
+## [F6-05, F6-06 e F4-15 Canais de pedidos e boletos] — 27/10/2026
+
+### Adicionado
+- **Pedidos de canais:** porta com adaptadores do iFood, de conector genérico assinado (HMAC) e simulador. O pedido entra uma vez só, vira pedido do caixa ao ser aceito, gera o repasse a receber (comissão em pontos-base) e avisa o canal por fila com nova tentativa. Tela Pedidos de canais e ligação de produtos por código.
+- **Boletos pelo Asaas** (e simulador): emissão idempotente, aviso que só aponta a consulta, baixa da conta a receber, conciliação e tela Boletos. Migração 0086 com RLS; segredos selados e auditoria.
+
+### Falta configurar
+- Acesso de integrador do iFood (E14) e conta do Asaas (E9); caminhos das APIs não conferidos com os parceiros. Cardápio e estoque no canal, CNAB, multa e juros: chega em breve.
+
 ## [F6-07.f e F1-08.a Assistente que propõe e fotos em armazenamento de arquivos] — 27/10/2026
 
 ### Adicionado
