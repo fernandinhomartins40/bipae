@@ -87,6 +87,10 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
   if (parsed.NODE_ENV === 'production' && parsed.JWT_SECRET === DEV_JWT_SECRET) {
     throw new Error('JWT_SECRET precisa ser definido em produção');
   }
+  // A equipe do Bipaê entra no painel com 2FA em produção, sem exceção por variável (F7-02.c).
+  if (parsed.NODE_ENV === 'production' && !parsed.PLATFORM_REQUIRE_TOTP) {
+    throw new Error('PLATFORM_REQUIRE_TOTP não pode ser desligado em produção');
+  }
   return {
     ...parsed,
     minimumClientVersions: {

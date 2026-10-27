@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { loadConfig } from '../src/config';
 import { TokenService } from '../src/common/tokens';
 import { isPrivateAddress } from '../src/modules/public-api/webhooks.service';
 import { api, createTestApp, signup, type TestApp } from './helpers';
@@ -160,5 +161,17 @@ describe('revisão de segurança (F7-02.c)', () => {
     for (const ip of ['::ffff:808:808', '2001:4860:4860::8888', '64:ff9b::808:808', '8.8.8.8']) {
       expect(isPrivateAddress(ip), ip).toBe(false);
     }
+  });
+});
+
+describe('configuração em produção (F7-02.c)', () => {
+  it('não deixa desligar o 2FA da equipe nem usar o segredo de desenvolvimento', () => {
+    const base = { NODE_ENV: 'production', JWT_SECRET: 'x'.repeat(40) };
+    expect(() => loadConfig({ ...base, PLATFORM_REQUIRE_TOTP: 'false' })).toThrow(/2FA|TOTP/);
+    expect(() => loadConfig({ NODE_ENV: 'production' })).toThrow(/JWT_SECRET/);
+    expect(loadConfig(base).PLATFORM_REQUIRE_TOTP).toBe(true);
+    expect(
+      loadConfig({ NODE_ENV: 'test', PLATFORM_REQUIRE_TOTP: 'false' }).PLATFORM_REQUIRE_TOTP,
+    ).toBe(false);
   });
 });
