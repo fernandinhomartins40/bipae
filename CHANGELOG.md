@@ -1,5 +1,15 @@
 # Changelog
 
+## [F8-07.b F8-07.d F8-12.a App Android: abertura por permissão, AAB e maquininhas] — 27/10/2026
+
+### Adicionado
+- **App Android abre onde a pessoa trabalha:** direto no Caixa (`pos.sell`) ou em Vendas (`pos.order`); com as duas permissões, uma tela para escolher. Só no Android: computador e navegador seguem iguais.
+- **AAB na CI:** workflow `release-android.yml`. Sem os secrets do E24 sai sem assinatura e avisa "falta configurar"; com eles assina (`scripts/android-signing.mjs`, com testes) e envia à faixa de teste interno como rascunho.
+- **Maquininhas no Android (contrato):** ponte TypeScript sobre o protocolo do TEF (PagBank PlugPag, Stone, Cielo LIO, Getnet, m-SiTef, PayGo), simulador de maquininha, tela "Maquininha neste aparelho" em Periféricos e esqueletos Kotlin do plugin `bipae-terminal`. Segredos da adquirente ficam só no plugin (Keystore), nunca nas preferências.
+
+### Falta configurar
+- Play Console e secrets (E24); SDKs, contas e aparelhos das adquirentes (E25, E26). O plugin Kotlin e o `release-android.yml` foram escritos sem Android SDK nem cargo e nunca compilaram: revisar na primeira execução. O caixa ainda não usa a porta das maquininhas (F8-12.b).
+
 ## [F8-11.b TEF no caixa, no Conector e PayGo] — 27/10/2026
 
 ### Adicionado

@@ -20,6 +20,7 @@ import {
 } from '@bipae/platform';
 import { indexedDbStore } from '@bipae/platform/indexeddb';
 import { openNativeDatabase } from './sqlite';
+import { tauriSmartTerminalBridge } from './terminal';
 
 /**
  * Bipaê Desktop: implementations of the platform ports for the Tauri shell (ADR-0012).
@@ -136,6 +137,8 @@ export async function createDesktopPlatform(): Promise<Platform> {
     certificate,
     notifications: new WebViewNotifications(),
     barcodeCamera: browserBarcodeCamera(),
+    // Maquininhas do Android pelo plugin Kotlin (F8-12); sem o plugin, tudo aparece como falta configurar.
+    ...(native && mobile && { smartTerminal: tauriSmartTerminalBridge }),
     ...(native && {
       // Abre no navegador do sistema (plugin opener do Tauri, liberado só para https).
       openExternal: async (url: string) => {

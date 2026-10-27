@@ -4,6 +4,7 @@
  */
 
 import type { DeviceManager } from './devices';
+import type { SmartTerminalBridge } from './smart-terminal/bridge';
 import type { TefLibs } from './tef/factory';
 
 export type PlatformKind = 'web' | 'desktop';
@@ -187,6 +188,8 @@ export interface Platform {
   cashDrawer?: CashDrawerPort;
   scale?: ScalePort;
   tef?: TefPort;
+  /** Ponte para o plugin Kotlin das maquininhas (Android, F8-12); ausente fora do app Android. */
+  smartTerminal?: SmartTerminalBridge;
   barcodeCamera?: BarcodeCameraPort;
   certificate?: CertificatePort;
   /** Abre um endereço no navegador do sistema (o vínculo com o MercadoFlow, por exemplo). */

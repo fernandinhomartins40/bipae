@@ -24,6 +24,7 @@ import {
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { useApp } from '../context';
+import { SmartTerminalSettings } from './smart-terminal';
 
 const TEST_PAGE: ReceiptBlock[] = [
   { kind: 'text', text: 'Bipaê', align: 'center', bold: true },
@@ -49,6 +50,7 @@ export function DevicesPage() {
         {platform.connector && <ConnectorPairing />}
         {platform.certificate?.install && <LocalCertificate />}
         <TefSettings />
+        {platform.smartTerminal && <SmartTerminalSettings />}
         <DeviceTests />
       </div>
     </>
