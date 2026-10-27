@@ -1,4 +1,5 @@
 import { request } from 'node:https';
+import { safeLookup, unsafeUrlReason } from '../../common/ssrf';
 
 /**
  * Cliente da API Pix no padrão do Banco Central (F8-09, ADR-0018): cobrança imediata
@@ -36,6 +37,9 @@ export class HttpsPixTransport implements PixTransport {
 
   send(req: PixHttpRequest, tls: PixTls | null): Promise<PixHttpResponse> {
     const body = req.body ? Buffer.from(req.body, 'utf8') : null;
+    // O endereço do banco é digitado pelo cliente: nunca pode apontar para a rede interna (SSRF).
+    const unsafe = unsafeUrlReason(req.url);
+    if (unsafe) return Promise.reject(new PixUnavailableError(unsafe));
     return new Promise((resolve, reject) => {
       const r = request(
         req.url,
@@ -43,12 +47,19 @@ export class HttpsPixTransport implements PixTransport {
           method: req.method,
           ...(tls && { pfx: tls.pfx, passphrase: tls.passphrase }),
           minVersion: 'TLSv1.2',
+          lookup: safeLookup,
           timeout: this.timeoutMs,
           headers: { ...req.headers, ...(body && { 'Content-Length': String(body.length) }) },
         },
         (res) => {
           const chunks: Buffer[] = [];
-          res.on('data', (c: Buffer) => chunks.push(c));
+          let size = 0;
+          res.on('data', (c: Buffer) => {
+            size += c.length;
+            // Resposta de banco é pequena; passou de 1 MB, corta.
+            if (size > 1_000_000) return r.destroy(new Error('resposta grande demais'));
+            chunks.push(c);
+          });
           res.on('end', () =>
             resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }),
           );

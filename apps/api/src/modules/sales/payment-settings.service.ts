@@ -21,6 +21,7 @@ import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { CONFIG, DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
 import { SecretBox } from '../../common/secrets';
+import { unsafeUrlReason } from '../../common/ssrf';
 import type { Config } from '../../config';
 import { parsePfx } from '../fiscal/certificates.service';
 import { assertStore } from '../../common/stores';
@@ -122,6 +123,11 @@ export class PaymentSettingsService {
       const api = input.pixApi;
       let apiValues = {};
       if (api) {
+        // O banco é chamado pela API: o endereço não pode apontar para a rede interna (SSRF).
+        for (const url of [api.baseUrl, api.tokenUrl]) {
+          const reason = unsafeUrlReason(url);
+          if (reason) throw new AppError(400, 'invalid_pix_url', reason);
+        }
         const password =
           api.certificatePassword ??
           (current?.pixApiCertPasswordSealed

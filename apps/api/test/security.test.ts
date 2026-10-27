@@ -175,3 +175,41 @@ describe('configuração em produção (F7-02.c)', () => {
     ).toBe(false);
   });
 });
+
+describe('chamadas a endereços cadastrados pelo cliente (F7-02.c)', () => {
+  it('a API Pix do banco não aceita endereço de rede interna', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const store = (await admin.get('/stores')).json()[0];
+    for (const baseUrl of [
+      'https://127.0.0.1/pix',
+      'https://localhost/pix',
+      'https://[::ffff:7f00:1]/pix',
+      'https://10.0.0.5/pix',
+      'https://banco.internal/pix',
+      'https://usuario:senha@banco.exemplo.com.br/pix',
+    ]) {
+      const res = await admin.put(`/stores/${store.id}/payment-settings`, {
+        pix: 'api',
+        pixKey: 'loja@exemplo.com.br',
+        pixApi: {
+          baseUrl,
+          tokenUrl: 'https://banco.exemplo.com.br/oauth/token',
+          clientId: 'c',
+          clientSecret: 's',
+        },
+      });
+      expect(res.statusCode, baseUrl).toBe(400);
+    }
+  });
+
+  it('a resolução de DNS da chamada recusa nome que aponta para a rede interna', async () => {
+    const { safeLookup, unsafeUrlReason } = await import('../src/common/ssrf');
+    expect(unsafeUrlReason('http://banco.exemplo.com.br')).toContain('https');
+    expect(unsafeUrlReason('https://banco.exemplo.com.br/x')).toBeNull();
+    const erro = await new Promise<NodeJS.ErrnoException | null>((resolve) =>
+      safeLookup('localhost', {}, (e) => resolve(e)),
+    );
+    expect(erro?.code).toBe('EBLOCKED');
+  });
+});

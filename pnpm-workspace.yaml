@@ -9,3 +9,4 @@ onlyBuiltDependencies:
 overrides:
   "fast-uri@>=3 <3.1.9": "3.1.9"
   "fast-uri@>=4 <4.2.3": "4.2.3"
+  "fastify@<5.12.6": "5.12.7"
