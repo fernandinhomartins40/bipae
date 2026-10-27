@@ -1,5 +1,14 @@
 # Changelog
 
+## [F4-15.b Multa, juros e CNAB] — 27/10/2026
+
+### Adicionado
+- **Multa e juros de boleto:** cálculo em centavos, com juros pro rata por dia, carência e vencimento empurrado para o dia útil; taxas e feriados vêm de configuração.
+- **CNAB 240 e 400:** geração de remessa (P, Q e R no 240; detalhe e multa no 400) e leitura de retorno, em TypeScript puro com testes de formato.
+
+### Falta configurar
+- Conferir posições e códigos com o manual do banco e homologar com conta real (E9); rota e tela de remessa e retorno. Detalhes em docs/canais-e-boletos.md.
+
 ## [F1-08.b Fotos no armazenamento e exclusão da conta] — 27/10/2026
 
 ### Adicionado

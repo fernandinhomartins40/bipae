@@ -417,7 +417,8 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
       - 23/10/2026: regras e conta em packages/fiscal/src/efd/ciap.ts (parcela truncada nos centavos, índice com 8 casas truncadas, crédito meio para cima); bens em `ciap_assets` (migração 0078), criados quando a compra vira "ativo imobilizado" e com a última parcela já baixada em arquivo. Configuração em Arquivos para o contador: conta do ativo, código do E111 e saídas com CST 60 no índice (dúvida D-041). 27/10/2026: baixa do bem pela tela e pela API (PE, OT e AT, esta com o G130 da NF-e de saída, adquirente no COD_PART), ICMS do frete (CT-e) e DIFAL digitados no bem, bens anteriores ao Bipaê como saldo inicial (migração 0083) e aviso de nota denegada corrigido (a EFD não pede mais, D-041). Falta só o G126 (outros créditos, sem regra de UF lida) e o G130 do primeiro SI dos bens antigos; validação no PVA em F4-14.b.6.
 - [~] F4-15 · Boletos via PSP — depende: F4-04 · externo: E9
   - [x] F4-15.a · Boleto pelo Asaas (e simulador): emissão idempotente, registro, aviso que só aponta a consulta, baixa da conta a receber, conciliação e tela Boletos; migração 0086
-  - [ ] F4-15.b · Homologar com conta real do Asaas, conferir os caminhos da API; arquivo de retorno CNAB, multa e juros — externo: E9
+  - [x] F4-15.b · Multa e juros de boleto (inteiros, pro rata, dia útil) e CNAB 240 e 400 de remessa e retorno em TypeScript puro, testados no formato; posições não conferidas com manual de banco (docs/canais-e-boletos.md)
+  - [ ] F4-15.c · Homologar com conta real do Asaas, conferir os caminhos da API e as posições do CNAB com o manual do banco; rota e tela de remessa e retorno — externo: E9
 - [ ] F4-16 · Crédito de IBS/CBS pela extinção do débito do fornecedor, quando o split payment estiver em funcionamento (LC 214/2025, arts. 47 e 48; dúvida D-027) — depende: F4-13 · externo: E22
 
 ## Fase 5 — Verticais
