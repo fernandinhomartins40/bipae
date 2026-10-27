@@ -1,6 +1,16 @@
-import { Body, Controller, Get, Inject, Injectable, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Injectable,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { PIX_PSP_INFO, pixChargeInput, uuidv7, type PixChargeView } from '@bipae/domain';
 import { and, eq } from 'drizzle-orm';
+import { z } from 'zod';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { CONFIG, DB } from '../../common/di';
 import { AppError, notFound, parse } from '../../common/errors';
@@ -8,7 +18,8 @@ import { SecretBox } from '../../common/secrets';
 import { assertStore } from '../../common/stores';
 import type { Config } from '../../config';
 import { withTenant, type Db, type Tx } from '../../db/client';
-import { paymentSettings, pixCharges, stores } from '../../db/schema';
+import { financialEntries, paymentSettings, pixCharges, stores } from '../../db/schema';
+import { settleReceivableByPix } from '../finance/pix-reconciliation';
 import {
   HttpsPixTransport,
   PixApiClient,
@@ -153,7 +164,16 @@ export class PixChargesService {
     throw error;
   }
 
-  create(ctx: RequestContext, body: unknown, now = new Date()): Promise<PixChargeView> {
+  /**
+   * `options.entryId`: a cobrança quita uma conta a receber (F6-02); quando o banco ou o parceiro
+   * confirma, a conta recebe baixa na mesma transação (ver `update`).
+   */
+  create(
+    ctx: RequestContext,
+    body: unknown,
+    now = new Date(),
+    options: { entryId?: string; description?: string } = {},
+  ): Promise<PixChargeView> {
     const input = parse(pixChargeInput, body);
     assertStore(ctx, input.storeId);
     return withTenant(this.db, ctx, async (tx) => {
@@ -165,7 +185,7 @@ export class PixChargesService {
       const s = await this.settings(tx, input.storeId);
       // txid de 32 letras e números, gerado aqui: o mesmo pedido nunca vira duas cobranças.
       const txid = uuidv7().replace(/-/g, '');
-      const description = `Compra em ${store.name}`;
+      const description = options.description ?? `Compra em ${store.name}`;
       let copyPaste: string | null;
       let provider: Row['provider'] = 'pix_api';
       let externalId: string | null = null;
@@ -223,10 +243,36 @@ export class PixChargesService {
           expiresAt,
           amountCents: input.amountCents,
           copyPaste,
+          entryId: options.entryId ?? null,
           createdBy: ctx.userId,
         })
         .returning();
       return this.view(row!);
+    });
+  }
+
+  /** Cobra por Pix uma conta a receber em aberto, no valor dela (F6-02). */
+  async createForEntry(
+    ctx: RequestContext,
+    entryId: string,
+    body: unknown,
+    now = new Date(),
+  ): Promise<PixChargeView> {
+    const { storeId } = parse(entryChargeInput, body);
+    const entry = await withTenant(this.db, ctx, async (tx) => {
+      const [e] = await tx.select().from(financialEntries).where(eq(financialEntries.id, entryId));
+      return e;
+    });
+    if (!entry) throw notFound('Conta');
+    if (entry.kind !== 'receivable') {
+      throw new AppError(422, 'not_receivable', 'Só conta a receber pode ser cobrada por Pix.');
+    }
+    if (entry.status !== 'open') {
+      throw new AppError(409, 'entry_closed', 'Esta conta já foi paga ou cancelada.');
+    }
+    return this.create(ctx, { storeId, amountCents: entry.amountCents }, now, {
+      entryId,
+      description: entry.description.slice(0, 120),
     });
   }
 
@@ -243,6 +289,13 @@ export class PixChargesService {
       .set(values)
       .where(and(eq(pixCharges.id, row.id), eq(pixCharges.status, 'pending')))
       .returning();
+    // Pix confirmado de uma cobrança que quita uma conta a receber: baixa na mesma transação.
+    if (updated?.status === 'paid' && updated.entryId) {
+      const paidOn = new Date((updated.paidAt ?? new Date()).getTime() - 3 * 3_600_000)
+        .toISOString()
+        .slice(0, 10);
+      await settleReceivableByPix(tx, updated.entryId, paidOn, updated.amountCents);
+    }
     return this.view(updated ?? row);
   }
 
@@ -380,6 +433,7 @@ export class PixChargesService {
 }
 
 const TXID = /^[A-Za-z0-9]{26,35}$/;
+const entryChargeInput = z.object({ storeId: z.string().uuid('Escolha a loja do Pix.') });
 
 @Controller('payments/pix/charges')
 export class PixChargesController {
@@ -389,6 +443,17 @@ export class PixChargesController {
   @RequirePermission('pos.sell')
   create(@Ctx() ctx: RequestContext, @Body() body: unknown) {
     return this.charges.create(ctx, body);
+  }
+
+  /** Cobra uma conta a receber por Pix; o pagamento dá baixa nela sozinho (F6-02). */
+  @Post('entries/:entryId')
+  @RequirePermission('finance.write')
+  forEntry(
+    @Ctx() ctx: RequestContext,
+    @Param('entryId', new ParseUUIDPipe()) entryId: string,
+    @Body() body: unknown,
+  ) {
+    return this.charges.createForEntry(ctx, entryId, body);
   }
 
   @Get(':txid')

@@ -46,6 +46,7 @@ describe('conciliação bancária (F4-07)', () => {
       account: 'Banco 0341 · Conta 12345-6',
       imported: 2,
       repeated: 0,
+      pixAutoMatched: 0,
     });
     expect((await admin.post('/finance/bank/import', { content: extrato })).json()).toMatchObject({
       imported: 0,

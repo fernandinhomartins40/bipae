@@ -1271,6 +1271,9 @@ export interface BankTransactionView {
   memo: string;
   status: 'pending' | 'matched' | 'ignored';
   entryId: string | null;
+  /** Conciliado sozinho pelo Bipaê (Pix), e o motivo em português. */
+  autoMatched?: boolean;
+  matchReason?: string | null;
   /** Contas em aberto de mesmo valor e sentido com vencimento até 10 dias de distância. */
   suggestions: { id: string; description: string; dueDate: string; partyName: string | null }[];
 }
@@ -1279,6 +1282,8 @@ export interface BankImportResult {
   account: string;
   imported: number;
   repeated: number;
+  /** Entradas de Pix conciliadas sozinhas nesta importação (F6-02). */
+  pixAutoMatched: number;
 }
 
 // ---------- Recebíveis de cartão e Pix (F4-08) ----------

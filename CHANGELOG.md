@@ -1,5 +1,15 @@
 # Changelog
 
+## [F6-02 Conciliação automática do Pix recebido] — 27/10/2026
+
+### Adicionado
+- **Extrato contra Pix e contas a receber:** ao importar o OFX (ou pelo botão "Conciliar Pix automaticamente"), cada entrada de Pix é conciliada sozinha em dois casos: o código fim a fim do histórico é o de uma cobrança Pix paga, com o mesmo valor; ou valor, vencimento (até 10 dias) e nome do pagador batem com uma única conta a receber, que recebe baixa com a data do banco. Valor igual sem o nome do pagador, duas contas parecidas ou valor diferente ficam pendentes com as sugestões de sempre. Cada conciliação grava auditoria na mesma transação; rodar de novo não muda nada. Regras puras em `@bipae/domain` (`decidePixMatch`).
+- **Cobrar uma conta a receber por Pix:** `POST /payments/pix/charges/entries/:id` gera o QR pelo meio da loja (banco ou parceiro) no valor da conta; quando o banco ou o parceiro confirma (consulta ou aviso), a conta recebe baixa na mesma transação, uma vez só.
+- **Simulador de extrato:** `buildSimulatedPixStatement` gera um OFX de Pix para treinar e testar sem banco. Migração 0089.
+
+### Falta configurar
+- Homologar com banco e parceiros reais (E9); botão de cobrar por Pix na tela de contas a receber (a rota já existe). A regra automática é conservadora de propósito: sem o nome do pagador no histórico, concilia à mão.
+
 ## [F6-04.c F6-04.d Boleto, cartão recorrente e cobrança por cliente no painel] — 27/10/2026
 
 ### Adicionado

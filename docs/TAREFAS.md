@@ -485,7 +485,9 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [x] F6-01.a · Chaves de API: criar (mostrada uma vez), listar e revogar na retaguarda; autenticação por chave com escopos, só em rotas marcadas como públicas; auditoria
   - [x] F6-01.b · Contrato OpenAPI 3.1 em /v1/public/openapi.json e rotas públicas de leitura: produtos, estoque, clientes e vendas; teste de conformidade — depende: F6-01.a
   - [x] F6-01.c · Webhooks: URL, eventos e segredo selado; envio pela fila com assinatura HMAC, novas tentativas e histórico na tela — depende: F6-01.a
-- [ ] F6-02 · Pix real com conciliação automática (detalhado em F8-08) — depende: F8-08 · externo: E9
+- [~] F6-02 · Pix real com conciliação automática (detalhado em F8-08) — depende: F8-08 · externo: E9
+  - [x] F6-02.a · Conciliação automática do Pix do extrato (código fim a fim, nome do pagador, valor e vencimento) contra cobranças e contas a receber, cobrança Pix de conta a receber com baixa ao confirmar, simulador de extrato e auditoria (migração 0089)
+  - [ ] F6-02.b · Homologar com banco e parceiro reais e botão de cobrar por Pix nas contas a receber — externo: E9
 - [ ] F6-03 · TEF real (maquininha integrada; detalhado em F8-09 a F8-11) — depende: F8-10 · externo: E10
 - [~] F6-04 · Cobrança automática dos planos e troca de plano pelo cliente — depende: F6-02, P-02
   - [x] F6-04.a · Ciclo mensal sem preço fixo (vem da tabela de planos, E8 em aberto): faturas com Pix pela porta dos parceiros (Mercado Pago, PagBank) com a conta do Bipaê ou simulador, confirmação só por consulta, troca de plano pelo cliente (sobe pagando a diferença proporcional, desce no fim do período), tolerância, bloqueio gentil e e-mails; tela em Minha assinatura; migração 0084

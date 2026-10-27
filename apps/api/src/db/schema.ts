@@ -283,6 +283,8 @@ export const productImages = pgTable('product_images', {
   tenantId: uuid('tenant_id').notNull(),
   contentType: text('content_type').notNull(),
   bytes: bytea('bytes').notNull(),
+  /** Chave do arquivo no armazenamento (F1-08); nula quando os bytes ficam no banco. */
+  storageKey: text('storage_key'),
   sha256: char('sha256', { length: 64 }).notNull(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });
@@ -938,6 +940,9 @@ export const bankTransactions = pgTable('bank_transactions', {
     .notNull()
     .default('pending'),
   entryId: uuid('entry_id'),
+  pixChargeId: uuid('pix_charge_id'),
+  autoMatched: boolean('auto_matched').notNull().default(false),
+  matchReason: text('match_reason'),
   resolvedBy: uuid('resolved_by'),
   resolvedAt: ts('resolved_at'),
   importedAt: ts('imported_at').notNull().defaultNow(),
@@ -1437,6 +1442,8 @@ export const pixCharges = pgTable('pix_charges', {
     .default('pending'),
   endToEndId: text('end_to_end_id'),
   message: text('message'),
+  /** Conta a receber que esta cobrança quita (F6-02). */
+  entryId: uuid('entry_id'),
   createdBy: uuid('created_by').notNull(),
   createdAt: ts('created_at').notNull().defaultNow(),
   checkedAt: ts('checked_at'),
@@ -1784,16 +1791,16 @@ export const tenantBilling = pgTable('tenant_billing', {
   tenantId: uuid('tenant_id').primaryKey(),
   paidUntil: ts('paid_until'),
   pendingPlanId: text('pending_plan_id'),
-  updatedAt: ts('updated_at').notNull().defaultNow(),
-});
-
-export const planInvoices = pgTable('plan_invoices', {
   pausedAt: ts('paused_at'),
   pausedReason: text('paused_reason'),
   cardTokenSealed: text('card_token_sealed'),
   cardBrand: text('card_brand'),
   cardLast4: text('card_last4'),
   cardProvider: text('card_provider'),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+export const planInvoices = pgTable('plan_invoices', {
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),
   planId: text('plan_id').notNull(),
@@ -1814,8 +1821,6 @@ export const planInvoices = pgTable('plan_invoices', {
   noticeOverdueAt: ts('notice_overdue_at'),
   noticeBlockedAt: ts('notice_blocked_at'),
   noticePaidAt: ts('notice_paid_at'),
-  createdAt: ts('created_at').notNull().defaultNow(),
-});
   method: text('method', { enum: ['pix', 'boleto', 'card'] }),
   boletoLine: text('boleto_line'),
   boletoUrl: text('boleto_url'),
@@ -1823,3 +1828,5 @@ export const planInvoices = pgTable('plan_invoices', {
   cardError: text('card_error'),
   waivedAt: ts('waived_at'),
   waivedReason: text('waived_reason'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});

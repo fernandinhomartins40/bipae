@@ -50,7 +50,7 @@ export function BankPage() {
       const r = await api.post<BankImportResult>('/finance/bank/import', {
         content: await readOfx(file),
       });
-      return `${r.account}: ${r.imported} lançamento(s) novo(s)${r.repeated ? `, ${r.repeated} já importado(s)` : ''}.`;
+      return `${r.account}: ${r.imported} lançamento(s) novo(s)${r.repeated ? `, ${r.repeated} já importado(s)` : ''}${r.pixAutoMatched ? `; ${r.pixAutoMatched} Pix conciliado(s) sozinho(s)` : ''}.`;
     });
   };
   return (
@@ -70,6 +70,26 @@ export function BankPage() {
             disabled={busy}
           />
         </label>
+      )}
+      {canWrite && (
+        <Button
+          className="mb-4 ml-2"
+          variant="secondary"
+          disabled={busy}
+          onClick={() =>
+            void run(async () => {
+              const r = await api.post<{ pixAutoMatched: number }>(
+                '/finance/bank/reconcile-pix',
+                {},
+              );
+              return r.pixAutoMatched
+                ? `${r.pixAutoMatched} Pix conciliado(s) sozinho(s).`
+                : 'Nenhum Pix novo para conciliar sozinho. Só concilio quando o código do Pix ou o nome do pagador batem.';
+            })
+          }
+        >
+          Conciliar Pix automaticamente
+        </Button>
       )}
       {message && <Alert tone={message.ok ? 'success' : 'danger'}>{message.text}</Alert>}
       {list.data && list.data.length === 0 ? (

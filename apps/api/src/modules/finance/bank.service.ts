@@ -31,6 +31,7 @@ import {
   suppliers,
 } from '../../db/schema';
 import { AuditService } from '../audit/audit.service';
+import { reconcilePix } from './pix-reconciliation';
 
 /** Até quantos dias de distância do vencimento um lançamento do banco vira sugestão. */
 const WINDOW_DAYS = 10;
@@ -101,10 +102,13 @@ export class BankService {
           .returning({ id: bankTransactions.id });
         imported += inserted.length;
       }
+      // As entradas de Pix que o Bipaê reconhece já saem conciliadas (F6-02).
+      const pixAutoMatched = await reconcilePix(tx, ctx, this.audit);
       return {
         account: existing?.name ?? name,
         imported,
         repeated: statement.transactions.filter((t) => t.amountCents !== 0).length - imported,
+        pixAutoMatched,
       };
     });
   }
@@ -146,6 +150,8 @@ export class BankService {
         memo: t.memo,
         status: t.status,
         entryId: t.entryId,
+        autoMatched: t.autoMatched,
+        matchReason: t.matchReason,
         suggestions:
           t.status !== 'pending'
             ? []
@@ -219,6 +225,13 @@ export class BankService {
     return { ok: true };
   }
 
+  /** Roda a conciliação automática do Pix sobre o que está pendente (ex.: depois de cadastrar o cliente). */
+  async reconcilePix(ctx: RequestContext) {
+    return withTenant(this.db, ctx, async (tx) => ({
+      pixAutoMatched: await reconcilePix(tx, ctx, this.audit),
+    }));
+  }
+
   async ignore(ctx: RequestContext, id: string) {
     await withTenant(this.db, ctx, async (tx) => {
       await this.pending(tx, id);
@@ -255,6 +268,12 @@ export class BankController {
     @Body() body: unknown,
   ) {
     return this.bank.match(ctx, id, parse(z.object({ entryId: z.string().uuid() }), body).entryId);
+  }
+
+  @Post('reconcile-pix')
+  @RequirePermission('finance.write')
+  reconcilePix(@Ctx() ctx: RequestContext) {
+    return this.bank.reconcilePix(ctx);
   }
 
   @Post('transactions/:id/ignore')

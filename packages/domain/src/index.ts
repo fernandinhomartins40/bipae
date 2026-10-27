@@ -12,6 +12,7 @@ export * from './downloads';
 export * from './variants';
 export * from './pricing';
 export * from './ofx';
+export * from './pix-reconciliation';
 export * from './crm';
 export * from './loyalty';
 export * from './ai';
