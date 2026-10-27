@@ -282,7 +282,7 @@ export const productImages = pgTable('product_images', {
   productId: uuid('product_id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),
   contentType: text('content_type').notNull(),
-  bytes: bytea('bytes').notNull(),
+  bytes: bytea('bytes'),
   /** Chave do arquivo no armazenamento (F1-08); nula quando os bytes ficam no banco. */
   storageKey: text('storage_key'),
   sha256: char('sha256', { length: 64 }).notNull(),
@@ -1757,7 +1757,9 @@ export const ciapAssets = pgTable('ciap_assets', {
   icmsDifalCents: money('icms_difal_cents').notNull().default(0),
   installments: smallint('installments').notNull().default(48),
   appropriatedInstallments: smallint('appropriated_installments').notNull().default(0),
-  costCenter: text('cost_center', { enum: ['1', '2'] }).notNull().default('1'),
+  costCenter: text('cost_center', { enum: ['1', '2'] })
+    .notNull()
+    .default('1'),
   usage: text('usage'),
   writtenOffOn: date('written_off_on', { mode: 'string' }),
   writeOffType: text('write_off_type', { enum: ['PE', 'OT', 'AT'] }),

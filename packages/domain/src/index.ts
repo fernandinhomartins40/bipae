@@ -21,5 +21,5 @@ export * from './pix';
 export * from './payments';
 export * from './efd';
 export * from './product-images';
-export * from './billing';
 export * from './channels';
+export * from './billing';

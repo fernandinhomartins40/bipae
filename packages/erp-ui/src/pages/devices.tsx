@@ -49,8 +49,8 @@ export function DevicesPage() {
         {platform.serialScale?.supported && <SerialScale />}
         {platform.connector && <ConnectorPairing />}
         {platform.certificate?.install && <LocalCertificate />}
-        <TefSettings />
         {platform.smartTerminal && <SmartTerminalSettings />}
+        <TefSettings />
         <DeviceTests />
       </div>
     </>
