@@ -510,3 +510,19 @@ export function groupOf(pathname: string): string | null {
   }
   return null;
 }
+
+/** Onde o app Android abre (ADR-0017), conforme o que a pessoa pode fazer. */
+export type MobileLanding = 'caixa' | 'vendas' | 'escolher' | 'inicio';
+
+/**
+ * Caixa (`pos.sell`) e Vendas/comanda (`pos.order`): quem tem só uma abre direto nela, quem tem
+ * as duas escolhe, e quem não tem nenhuma cai na tela inicial de sempre.
+ */
+export function mobileLanding(permissions: readonly string[]): MobileLanding {
+  const caixa = permissions.includes('pos.sell');
+  const vendas = permissions.includes('pos.order');
+  if (caixa && vendas) return 'escolher';
+  if (caixa) return 'caixa';
+  if (vendas) return 'vendas';
+  return 'inicio';
+}

@@ -1,0 +1,91 @@
+name: Release Android
+
+# AAB do app Android (F8-07.b, ADR-0017). Roda numa tag `android-v1.2.3` ou à mão.
+#
+# Sem os secrets do E24 o AAB sai SEM assinatura (artefato de conferência) e o envio à Play
+# Store é pulado, com o aviso "falta configurar" no resumo. Secrets (o dono cria no GitHub):
+#   ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
+#     → chave de upload (a assinatura final é a do Play App Signing)
+#   PLAY_SERVICE_ACCOUNT_JSON → conta de serviço da Play Console, para a faixa de teste interno
+# Este fluxo ainda não rodou de verdade: a primeira execução depende do E24.
+
+on:
+  push:
+    tags: ['android-v*']
+  workflow_dispatch:
+
+jobs:
+  aab:
+    name: AAB (Android)
+    runs-on: ubuntu-latest
+    env:
+      HAS_SIGNING: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+      HAS_PLAY: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+      - name: NDK do Android
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.1.12297006" > /dev/null
+          echo "NDK_HOME=$ANDROID_HOME/ndk/27.1.12297006" >> "$GITHUB_ENV"
+      - run: pnpm install --frozen-lockfile
+      - name: Projeto Android
+        run: pnpm --filter @bipae/desktop tauri android init --ci
+      - name: Ícone do app Android
+        run: cp -r apps/desktop/src-tauri/icons/android/. apps/desktop/src-tauri/gen/android/app/src/main/res/
+      - name: Permissões no manifesto (câmera e Bluetooth)
+        run: |
+          manifest=apps/desktop/src-tauri/gen/android/app/src/main/AndroidManifest.xml
+          for p in CAMERA BLUETOOTH_CONNECT BLUETOOTH_SCAN; do
+            grep -q "android.permission.$p" "$manifest" || sed -i "s#<application#<uses-permission android:name=\"android.permission.$p\" /><application#" "$manifest"
+          done
+      - name: Chave de upload
+        if: env.HAS_SIGNING == 'true'
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          app=apps/desktop/src-tauri/gen/android/app
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$app/upload-keystore.jks"
+          node scripts/android-signing.mjs "$app"
+      - name: Build do AAB
+        env:
+          VITE_API_URL: https://www.bipae.com.br
+        run: pnpm --filter @bipae/desktop tauri android build --aab
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.HAS_SIGNING == 'true' && 'bipae-android-aab-assinado' || 'bipae-android-aab-sem-assinatura' }}
+          path: apps/desktop/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
+      - name: Envio à faixa de teste interno
+        if: env.HAS_SIGNING == 'true' && env.HAS_PLAY == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: br.com.bipae.app
+          releaseFiles: apps/desktop/src-tauri/gen/android/app/build/outputs/bundle/universalRelease/*.aab
+          track: internal
+          status: draft
+      - name: Resumo
+        run: |
+          {
+            echo "### Android"
+            if [ "$HAS_SIGNING" != "true" ]; then echo "- Falta configurar: chave de upload (E24). O AAB saiu sem assinatura e não serve para a Play Store."; fi
+            if [ "$HAS_PLAY" != "true" ]; then echo "- Falta configurar: conta de serviço da Play (PLAY_SERVICE_ACCOUNT_JSON). Nada foi enviado."; fi
+            if [ "$HAS_SIGNING" = "true" ] && [ "$HAS_PLAY" = "true" ]; then echo "- AAB assinado e enviado à faixa de teste interno (rascunho)."; fi
+          } >> "$GITHUB_STEP_SUMMARY"

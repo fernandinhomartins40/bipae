@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { groupOf, NAV_GROUPS, searchNav, visibleGroups } from './nav';
+import { groupOf, mobileLanding, NAV_GROUPS, searchNav, visibleGroups } from './nav';
 
 const ALL = [
   'catalog.read',
@@ -79,5 +79,14 @@ describe('grupo da tela aberta', () => {
     expect(groupOf('/ajuda/crediario')).toBeNull();
     expect(groupOf('/')).toBeNull();
     expect(groupOf('/nfe')).toBe('fiscal');
+  });
+});
+
+describe('onde o app Android abre (F8-07)', () => {
+  it('abre direto na tela que a permissão deixa, escolhe com as duas e cai no início sem nenhuma', () => {
+    expect(mobileLanding(['pos.sell', 'catalog.read'])).toBe('caixa');
+    expect(mobileLanding(['pos.order'])).toBe('vendas');
+    expect(mobileLanding(['pos.sell', 'pos.order'])).toBe('escolher');
+    expect(mobileLanding(['finance.read'])).toBe('inicio');
   });
 });
