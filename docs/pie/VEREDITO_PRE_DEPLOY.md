@@ -40,20 +40,20 @@ Ressalvas:
 
 Falta prova obrigatória e há decisão pendente do dono:
 
-1. **36 commits locais nunca enviados**, com 8 migrações (0082–0089), vão junto no próximo push. O rollback automático roda código antigo sobre schema novo (ACH-24). Precisa do ok do dono.
+1. **Envio pendente**: os 36 commits antigos (com as migrações 0082–0089) foram enviados pela outra sessão às 15:39 de 27/10 (`origin/main` = `d936c55`), então o deploy deles já não depende desta auditoria. Depois disso faltam 3 commits locais: 2 do motor fiscal, da outra sessão, e o desta auditoria (`0a43b63`, sem migração). Um push leva os 3 juntos.
 2. **API contra PostgreSQL 16 real** e testes Rust só rodam na CI; não foram executados aqui.
-3. **Backup** só no deploy, no mesmo disco e nunca restaurado (ACH-10). Um deploy com 8 migrações sem um backup externo verificado é risco de perda de dados.
+3. **Backup** só no deploy, no mesmo disco e nunca restaurado (ACH-10). O commit desta auditoria não tem migração, mas sem backup externo verificado qualquer falha de disco perde os dados dos clientes.
 4. Outra sessão está mudando o motor fiscal agora, e o teste de tabelas dela está vermelho na árvore de trabalho. O commit desta auditoria não leva esses arquivos, mas a CI do próximo push vai rodar sobre o que estiver na `main`.
 
 Para virar **APROVADO PARA DEPLOY**:
 
 - CI verde (lint, typecheck, testes com PostgreSQL real e E2E essencial);
 - um backup do banco de produção copiado para fora da VPS antes do push;
-- o ok do dono para enviar os 36 commits.
+- o ok do dono para o push (que leva também os 2 commits fiscais da outra sessão).
 
 ## Pendências por dono da decisão
 
 | Quem | O quê |
 |---|---|
-| Dono | Enviar os 36 commits; backup externo e teste de restauração (custo); swap e limites das outras aplicações na VPS; usuário de deploy sem root; política de funcionalidades por plano; devolução em outra loja (R3/P10); grupo B de produto |
+| Dono | Autorizar o push; backup externo e teste de restauração (custo); swap e limites das outras aplicações na VPS; usuário de deploy sem root; política de funcionalidades por plano; devolução em outra loja (R3/P10); grupo B de produto |
 | Próxima rodada técnica | Lote 2 do `PLANO_MESTRE_AUDITORIA.md` (quarentena de eventos, prova do gerente, NFC-e com reserva, fila com `jobId`, outbox com versão, health de prontidão, imagem enxuta, migração ACH-30, menu em abas OP-08) |
