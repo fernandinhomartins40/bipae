@@ -102,13 +102,35 @@ export function billingState(input: {
   return input.hasPaidPlan ? 'ok' : 'none';
 }
 
+export const INVOICE_METHODS = ['pix', 'boleto', 'card'] as const;
+export type InvoiceMethod = (typeof INVOICE_METHODS)[number];
+export const INVOICE_METHOD_LABELS: Record<InvoiceMethod, string> = {
+  pix: 'Pix',
+  boleto: 'Boleto',
+  card: 'Cartão de crédito',
+};
+
+export const payMethodInput = z.object({ method: z.enum(INVOICE_METHODS) });
+
+/** Cartão salvo: o identificador vem da tela do parceiro (tokenização), nunca o número do cartão. */
+export const saveCardInput = z.object({
+  token: z.string().trim().min(3, 'Informe o cartão pela tela do parceiro.').max(200),
+});
+
+/** Pausar a cobrança ou perdoar uma fatura exige o motivo (fica na trilha de auditoria). */
+export const billingReasonInput = z.object({
+  reason: z.string().trim().min(3, 'Explique o motivo em poucas palavras.').max(300),
+});
+
 export const subscribeInput = z.object({ planId: z.string().trim().min(1).max(60) });
 
 /** Meio de cobrança do Bipaê (conta da plataforma, não da loja). */
 export interface BillingGatewayView {
   mode: 'simulator' | 'pix' | 'off';
-  /** Pix recorrente com cartão salvo ainda não existe: aparece como "chega em breve". */
-  cardAvailable: false;
+  /** Cartão recorrente (cartão salvo no parceiro): só liga com a conta do parceiro (E9); senão, "chega em breve". */
+  cardAvailable: boolean;
+  /** Boleto da fatura: só liga com a conta do parceiro (E9) ou no simulador. */
+  boletoAvailable?: boolean;
   message: string | null;
 }
 
@@ -125,7 +147,18 @@ export interface InvoiceView {
   paidAt: string | null;
   /** Pix copia e cola da cobrança, quando já foi gerada. */
   copyPaste: string | null;
+  /** Forma de pagamento escolhida para esta fatura, quando já houve cobrança. */
+  method?: InvoiceMethod | null;
+  /** Linha digitável e link do boleto, quando a fatura foi para boleto. */
+  boletoLine?: string | null;
+  boletoUrl?: string | null;
   createdAt: string;
+}
+
+/** Cartão salvo no parceiro; o número nunca passa pelo Bipaê, só o identificador do parceiro. */
+export interface SavedCardView {
+  brand: string | null;
+  last4: string | null;
 }
 
 export interface BillingView {
@@ -136,6 +169,10 @@ export interface BillingView {
   paidUntil: string | null;
   /** Troca para um plano mais barato, aplicada quando o período pago acabar. */
   pendingPlan: { id: string; name: string } | null;
+  /** Cartão recorrente salvo, quando houver. */
+  card?: SavedCardView | null;
+  /** Cobrança pausada pelo suporte do Bipaê: sem faturas novas nem bloqueio por atraso. */
+  paused?: boolean;
   openInvoice: InvoiceView | null;
   invoices: InvoiceView[];
 }
@@ -146,4 +183,35 @@ export interface TenantBillingSummary {
   paidUntil: string | null;
   openInvoiceAmountCents: number | null;
   openInvoiceDueAt: string | null;
+}
+
+/** Um cliente na lista de cobrança do painel da plataforma. */
+export interface AdminBillingRow {
+  tenantId: string;
+  name: string;
+  planId: string;
+  planName: string;
+  tenantStatus: string;
+  state: BillingState;
+  paidUntil: string | null;
+  paused: boolean;
+  openInvoiceAmountCents: number | null;
+  openInvoiceDueAt: string | null;
+  /** Dias de atraso da fatura em aberto (0 quando não venceu). */
+  daysLate: number;
+}
+
+export interface AdminInvoiceView extends InvoiceView {
+  waivedAt: string | null;
+  waivedReason: string | null;
+  cardError: string | null;
+}
+
+/** Cobrança de um cliente, como o painel da plataforma enxerga. */
+export interface AdminBillingDetail extends AdminBillingRow {
+  pausedAt: string | null;
+  pausedReason: string | null;
+  pendingPlan: { id: string; name: string } | null;
+  card: SavedCardView | null;
+  invoices: AdminInvoiceView[];
 }

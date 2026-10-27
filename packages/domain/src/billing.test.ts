@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { addMonths, billingState, prorateUpgradeCents } from './billing';
+import {
+  addMonths,
+  billingReasonInput,
+  billingState,
+  INVOICE_METHOD_LABELS,
+  payMethodInput,
+  prorateUpgradeCents,
+  saveCardInput,
+} from './billing';
 
 const d = (s: string) => new Date(s);
 
@@ -48,5 +56,20 @@ describe('ciclo de cobrança dos planos (F6-04)', () => {
     expect(billingState({ ...base, openInvoiceDueAt: d('2026-10-15T00:00:00Z') })).toBe('due_soon');
     expect(billingState({ ...base, openInvoiceDueAt: d('2026-10-08T00:00:00Z') })).toBe('grace');
     expect(billingState({ ...base, openInvoiceDueAt: d('2026-10-04T00:00:00Z') })).toBe('blocked');
+  });
+});
+
+describe('forma de pagamento da fatura e motivos do painel (F6-04.c e F6-04.d)', () => {
+  it('aceita só pix, boleto e cartão', () => {
+    expect(payMethodInput.parse({ method: 'boleto' }).method).toBe('boleto');
+    expect(() => payMethodInput.parse({ method: 'cheque' })).toThrow();
+    expect(INVOICE_METHOD_LABELS.card).toBe('Cartão de crédito');
+  });
+
+  it('cartão salvo exige o código do parceiro e o motivo precisa ser explicado', () => {
+    expect(() => saveCardInput.parse({ token: 'ab' })).toThrow('tela do parceiro');
+    expect(saveCardInput.parse({ token: '  tok_abc ' }).token).toBe('tok_abc');
+    expect(() => billingReasonInput.parse({ reason: ' ' })).toThrow('motivo');
+    expect(billingReasonInput.parse({ reason: 'Acordo fechado' }).reason).toBe('Acordo fechado');
   });
 });

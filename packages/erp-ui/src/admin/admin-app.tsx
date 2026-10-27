@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Tags,
   Users,
+  Wallet,
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import {
@@ -36,6 +37,7 @@ import {
   TenantDetailPage,
   TenantsPage,
 } from './admin-pages';
+import { BillingAdminPage } from './billing-pages';
 import { FiscalCoveragePage } from './coverage-page';
 
 export interface AdminMe {
@@ -133,6 +135,7 @@ export function AdminApp({
             <Route index element={<DashboardPage />} />
             <Route path="clientes" element={<TenantsPage />} />
             <Route path="clientes/:id" element={<TenantDetailPage />} />
+            <Route path="cobranca" element={<BillingAdminPage />} />
             <Route path="pessoas" element={<PeoplePage />} />
             <Route path="planos" element={<PlansPage />} />
             <Route path="avisos" element={<AnnouncementsPage />} />
@@ -151,6 +154,7 @@ export function AdminApp({
 const NAV = [
   { to: '/admin', label: 'Visão geral', icon: BarChart3, end: true },
   { to: '/admin/clientes', label: 'Clientes', icon: Building2 },
+  { to: '/admin/cobranca', label: 'Cobrança', icon: Wallet },
   { to: '/admin/pessoas', label: 'Pessoas', icon: Users },
   { to: '/admin/planos', label: 'Planos', icon: Tags },
   { to: '/admin/avisos', label: 'Avisos', icon: Megaphone },

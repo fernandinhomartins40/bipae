@@ -8,7 +8,7 @@ import {
   type Cents,
   type InvoiceView,
 } from '@bipae/domain';
-import { Alert, Badge, Button, Card } from '@bipae/ui';
+import { Alert, Badge, Button, Card, TextField } from '@bipae/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApp, useCan } from '../context';
@@ -119,10 +119,14 @@ export function BillingSection({
         <OpenInvoice
           invoice={open}
           gatewayMode={b.gateway.mode}
+          boletoAvailable={b.gateway.boletoAvailable === true}
           canManage={canManage}
           busy={busy}
           onPix={() =>
             void run('pix', () => api.post(`/account/billing/invoices/${open.id}/pix`, {}))
+          }
+          onBoleto={() =>
+            void run('boleto', () => api.post(`/account/billing/invoices/${open.id}/boleto`, {}))
           }
           onCheck={() =>
             void run('check', () => api.post(`/account/billing/invoices/${open.id}/check`, {}))
@@ -132,6 +136,14 @@ export function BillingSection({
           }
         />
       )}
+
+      <SavedCard
+        billing={b}
+        canManage={canManage}
+        busy={busy}
+        onSave={(token) => void run('card', () => api.put('/account/billing/card', { token }))}
+        onRemove={() => void run('card-remove', () => api.delete('/account/billing/card'))}
+      />
 
       <h3 className="mb-2 mt-5 font-semibold">Trocar de plano</h3>
       <ul className="divide-y divide-border">
@@ -174,8 +186,7 @@ export function BillingSection({
       </ul>
       <p className="mt-2 text-sm text-muted">
         Ao subir de plano no meio do período, você paga só a diferença do que falta. Ao descer, a
-        troca vale quando o período pago acabar. Cartão de crédito recorrente chega em breve; por
-        enquanto o pagamento é por Pix.
+        troca vale quando o período pago acabar.
       </p>
 
       {b.invoices.length > 0 && (
@@ -209,17 +220,21 @@ export function BillingSection({
 function OpenInvoice({
   invoice,
   gatewayMode,
+  boletoAvailable,
   canManage,
   busy,
   onPix,
+  onBoleto,
   onCheck,
   onSimulate,
 }: {
   invoice: InvoiceView;
   gatewayMode: BillingView['gateway']['mode'];
+  boletoAvailable: boolean;
   canManage: boolean;
   busy: string | null;
   onPix: () => void;
+  onBoleto: () => void;
   onCheck: () => void;
   onSimulate: () => void;
 }) {
@@ -266,13 +281,113 @@ function OpenInvoice({
             A confirmação é automática, em poucos minutos depois de pagar.
           </p>
         </>
+      ) : invoice.boletoLine ? (
+        <>
+          <p className="mt-3 text-sm">Linha digitável do boleto:</p>
+          <p className="mt-1 break-all rounded-lg border border-border bg-surface p-2 font-mono text-sm">
+            {invoice.boletoLine}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {invoice.boletoUrl && (
+              <a
+                className="font-semibold text-primary underline"
+                href={invoice.boletoUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Abrir o boleto
+              </a>
+            )}
+            <Button variant="secondary" loading={busy === 'check'} onClick={onCheck}>
+              Já paguei
+            </Button>
+            {gatewayMode === 'simulator' && canManage && (
+              <Button variant="secondary" loading={busy === 'sim'} onClick={onSimulate}>
+                Simular pagamento
+              </Button>
+            )}
+          </div>
+          <p className="mt-2 text-sm text-muted">
+            O boleto leva até um dia útil para compensar; a confirmação é automática.
+          </p>
+        </>
       ) : (
-        canManage &&
-        gatewayMode !== 'off' && (
-          <Button className="mt-3" loading={busy === 'pix'} onClick={onPix}>
-            Gerar Pix
-          </Button>
+        canManage && (
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {gatewayMode !== 'off' && (
+              <Button loading={busy === 'pix'} onClick={onPix}>
+                Pagar com Pix
+              </Button>
+            )}
+            {boletoAvailable ? (
+              <Button variant="secondary" loading={busy === 'boleto'} onClick={onBoleto}>
+                Pagar com boleto
+              </Button>
+            ) : (
+              <span className="text-sm text-muted">Boleto: falta configurar.</span>
+            )}
+          </div>
         )
+      )}
+    </div>
+  );
+}
+
+/**
+ * Cartão de crédito recorrente (F6-04.c): o cartão é digitado na tela segura do parceiro, que devolve
+ * um código; o Bipaê guarda só esse código, nunca o número do cartão. Sem a conta do parceiro, a
+ * opção aparece como "chega em breve".
+ */
+function SavedCard({
+  billing,
+  canManage,
+  busy,
+  onSave,
+  onRemove,
+}: {
+  billing: BillingView;
+  canManage: boolean;
+  busy: string | null;
+  onSave: (token: string) => void;
+  onRemove: () => void;
+}) {
+  const [token, setToken] = useState('');
+  return (
+    <div className="mt-5">
+      <h3 className="mb-2 font-semibold">Cartão de crédito recorrente</h3>
+      {billing.card ? (
+        <p className="flex flex-wrap items-center gap-2 text-sm">
+          <Badge tone="success">Cartão salvo</Badge>
+          {billing.card.brand ?? 'Cartão'} final {billing.card.last4 ?? '----'}: as próximas
+          mensalidades são cobradas sozinhas no vencimento.
+          {canManage && (
+            <Button variant="ghost" loading={busy === 'card-remove'} onClick={onRemove}>
+              Remover cartão
+            </Button>
+          )}
+        </p>
+      ) : billing.gateway.cardAvailable ? (
+        canManage && (
+          <form
+            className="flex flex-wrap items-end gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (token.trim()) onSave(token.trim());
+            }}
+          >
+            <TextField
+              label="Código do cartão (gerado na tela segura do parceiro)"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              autoComplete="off"
+            />
+            <Button type="submit" loading={busy === 'card'}>
+              Salvar cartão
+            </Button>
+          </form>
+        )
+      ) : (
+        <p className="text-sm text-muted">Chega em breve. Por enquanto, pague por Pix ou boleto.</p>
       )}
     </div>
   );

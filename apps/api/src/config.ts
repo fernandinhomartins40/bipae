@@ -81,6 +81,13 @@ const envSchema = z.object({
     .enum(['true', 'false'])
     .default('true')
     .transform((v) => v === 'true'),
+  /**
+   * Boleto da fatura (F6-04.c): `asaas` usa o token da conta do Bipaê no Asaas; `simulator` só fora da
+   * produção. Cartão recorrente: só `simulator` por enquanto; o parceiro real depende da conta (E9).
+   */
+  BILLING_BOLETO_PROVIDER: z.enum(['simulator', 'asaas']).optional(),
+  BILLING_BOLETO_TOKEN: z.string().optional(),
+  BILLING_CARD_PROVIDER: z.enum(['simulator']).optional(),
   /** Dias de tolerância depois do vencimento, antes do bloqueio gentil. */
   BILLING_GRACE_DAYS: z.coerce.number().int().min(0).max(60).default(5),
   /** Quantos dias antes do fim do período a próxima fatura sai. */

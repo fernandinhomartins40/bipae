@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
-import { subscribeInput, type BillingView, type InvoiceView } from '@bipae/domain';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
+import { saveCardInput, subscribeInput, type BillingView, type InvoiceView } from '@bipae/domain';
 import { eq } from 'drizzle-orm';
 import { Ctx, RequirePermission, type RequestContext } from '../../common/auth';
 import { DB, QUEUE } from '../../common/di';
@@ -66,6 +66,35 @@ export class BillingController {
   @RequirePermission('admin.users')
   pix(@Ctx() ctx: RequestContext, @Param('id') id: string): Promise<InvoiceView> {
     return withTenant(this.db, ctx, (tx) => this.billing.ensureCharge(tx, ctx.userId, id));
+  }
+
+  /** Gera o boleto da fatura em aberto (conta do Bipaê no parceiro de cobrança). */
+  @Post('invoices/:id/boleto')
+  @RequirePermission('admin.users')
+  boleto(@Ctx() ctx: RequestContext, @Param('id') id: string): Promise<InvoiceView> {
+    return withTenant(this.db, ctx, (tx) => this.billing.ensureBoleto(tx, ctx.userId, id));
+  }
+
+  /** Salva o cartão para cobrar as próximas mensalidades sozinho (o número nunca passa pelo Bipaê). */
+  @Put('card')
+  @RequirePermission('admin.users')
+  async saveCard(@Ctx() ctx: RequestContext, @Body() body: unknown): Promise<BillingView> {
+    const input = parse(saveCardInput, body);
+    return withTenant(this.db, ctx, async (tx) => {
+      await this.billing.saveCard(tx, ctx.tenantId, ctx.userId, input.token);
+      await this.audit.record(tx, ctx, { action: 'billing.card_saved', entity: 'billing' });
+      return this.billing.view(tx);
+    });
+  }
+
+  @Delete('card')
+  @RequirePermission('admin.users')
+  async removeCard(@Ctx() ctx: RequestContext): Promise<BillingView> {
+    return withTenant(this.db, ctx, async (tx) => {
+      await this.billing.removeCard(tx);
+      await this.audit.record(tx, ctx, { action: 'billing.card_removed', entity: 'billing' });
+      return this.billing.view(tx);
+    });
   }
 
   /** Pede a conferência do pagamento já; a confirmação (e a troca do plano) vem da manutenção. */

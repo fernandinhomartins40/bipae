@@ -31,6 +31,7 @@ import { useDeferredValue, useState, type FormEvent, type ReactNode } from 'reac
 import { Link, useNavigate, useParams } from 'react-router';
 import { DailyBars, lastDays, StatTile, UsageBar } from './charts';
 import { useAdmin } from './admin-app';
+import { TenantBillingPanel } from './billing-pages';
 
 const brl = (c: number | null | undefined) =>
   c === null || c === undefined ? '—' : formatBRL(c as Cents);
@@ -558,6 +559,9 @@ export function TenantDetailPage() {
           {d.tenant.limitOverrides && (
             <p className="mt-1 text-sm text-muted">Tem limites especiais negociados.</p>
           )}
+        </Section>
+        <Section title="Cobrança">
+          <TenantBillingPanel tenantId={id} />
         </Section>
         <Section title="Movimento (30 dias)">
           <div className="grid gap-4 sm:grid-cols-2">

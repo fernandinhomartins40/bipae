@@ -1788,6 +1788,12 @@ export const tenantBilling = pgTable('tenant_billing', {
 });
 
 export const planInvoices = pgTable('plan_invoices', {
+  pausedAt: ts('paused_at'),
+  pausedReason: text('paused_reason'),
+  cardTokenSealed: text('card_token_sealed'),
+  cardBrand: text('card_brand'),
+  cardLast4: text('card_last4'),
+  cardProvider: text('card_provider'),
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),
   planId: text('plan_id').notNull(),
@@ -1810,3 +1816,10 @@ export const planInvoices = pgTable('plan_invoices', {
   noticePaidAt: ts('notice_paid_at'),
   createdAt: ts('created_at').notNull().defaultNow(),
 });
+  method: text('method', { enum: ['pix', 'boleto', 'card'] }),
+  boletoLine: text('boleto_line'),
+  boletoUrl: text('boleto_url'),
+  cardAttemptAt: ts('card_attempt_at'),
+  cardError: text('card_error'),
+  waivedAt: ts('waived_at'),
+  waivedReason: text('waived_reason'),

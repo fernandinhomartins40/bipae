@@ -22,10 +22,12 @@ import type { Database } from './db/client';
 import { AccountController } from './modules/account/account.controller';
 import { BillingController } from './modules/billing/billing.controller';
 import { BillingGatewayHolder } from './modules/billing/billing-gateway';
+import { BillingMethodsHolder } from './modules/billing/billing-methods';
 import { BillingService } from './modules/billing/billing.service';
 import { AdminAuthController } from './modules/admin/admin-auth.controller';
 import { AdminAuthService } from './modules/admin/admin-auth.service';
 import { AdminController } from './modules/admin/admin.controller';
+import { AdminBillingService } from './modules/admin/admin-billing.service';
 import { AdminPlatformService } from './modules/admin/admin-platform.service';
 import { AdminTenantsService } from './modules/admin/admin-tenants.service';
 import { PlatformAuditService } from './modules/admin/platform-audit.service';
@@ -258,6 +260,7 @@ class AppModule {
         SyncController,
         SalesController,
         AccountController,
+        BillingController,
         AdminAuthController,
         AdminController,
         DownloadsController,
@@ -271,7 +274,6 @@ class AppModule {
         MercadoflowConfereController,
         SupplierIssuesController,
       ],
-        BillingController,
       providers: [
         { provide: CONFIG, useValue: config },
         { provide: DB, useValue: database.db },
@@ -369,12 +371,16 @@ class AppModule {
         SyncService,
         SalesService,
         LimitsService,
+        BillingGatewayHolder,
+        BillingMethodsHolder,
+        BillingService,
         DataExportService,
         PlatformAuditService,
         PlatformGuard,
         AdminAuthService,
         AdminTenantsService,
         AdminPlatformService,
+        AdminBillingService,
         DownloadsService,
         { provide: APP_GUARD, useClass: AuthGuard },
         { provide: APP_FILTER, useClass: ApiExceptionFilter },
@@ -387,8 +393,6 @@ export async function createApp(config: Config, database: Database) {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule.forRoot(config, database),
     new FastifyAdapter({ trustProxy: true, bodyLimit: 2 * 1024 * 1024 }),
-        BillingGatewayHolder,
-        BillingService,
     // rawBody: o aviso do MercadoFlow é conferido pela assinatura do corpo como chegou.
     { logger: config.NODE_ENV === 'test' ? false : ['error', 'warn', 'log'], rawBody: true },
   );

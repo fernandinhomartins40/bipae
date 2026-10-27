@@ -11,7 +11,7 @@ import {
   type InvoiceView,
   type PlanLimits,
 } from '@bipae/domain';
-import { and, desc, eq, isNotNull, lt, sql } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, isNull, lt, lte, or, sql } from 'drizzle-orm';
 import { CONFIG } from '../../common/di';
 import { AppError, notFound } from '../../common/errors';
 import type { Config } from '../../config';
@@ -27,6 +27,7 @@ import {
 } from '../../db/schema';
 import { LimitsService } from '../account/limits.service';
 import { BillingGatewayHolder, type BillingPayer } from './billing-gateway';
+import { BillingMethodsHolder } from './billing-methods';
 
 const DAY_MS = 86_400_000;
 /** A primeira fatura de quem assina vale por alguns dias; depois disso é só aviso, sem bloqueio. */
@@ -49,6 +50,7 @@ export class BillingService {
   constructor(
     @Inject(CONFIG) private readonly config: Config,
     @Inject(BillingGatewayHolder) private readonly holder: BillingGatewayHolder,
+    @Inject(BillingMethodsHolder) private readonly methods: BillingMethodsHolder,
     @Inject(LimitsService) private readonly limits: LimitsService,
   ) {}
 
@@ -72,8 +74,19 @@ export class BillingService {
       periodEnd: row.periodEnd?.toISOString() ?? null,
       paidAt: row.paidAt?.toISOString() ?? null,
       copyPaste: row.status === 'open' ? row.copyPaste : null,
+      method: row.method ?? null,
+      boletoLine: row.status === 'open' ? row.boletoLine : null,
+      boletoUrl: row.status === 'open' ? row.boletoUrl : null,
       createdAt: row.createdAt.toISOString(),
     };
+  }
+
+  /** O que a tela pode oferecer: cada forma de pagamento só aparece se estiver ligada. */
+  gatewayView(): BillingView['gateway'] {
+    const base = this.holder.view;
+    const cardAvailable = !!this.methods.card;
+    const boletoAvailable = !!this.methods.boleto;
+    return { ...base, cardAvailable, boletoAvailable };
   }
 
   async view(tx: Tx, now: Date = new Date()): Promise<BillingView> {
@@ -90,7 +103,11 @@ export class BillingService {
       ? { id: billing.pendingPlanId, name: await this.planName(tx, billing.pendingPlanId) }
       : null;
     return {
-      gateway: this.holder.view,
+      gateway: this.gatewayView(),
+      card: billing?.cardTokenSealed
+        ? { brand: billing.cardBrand ?? null, last4: billing.cardLast4 ?? null }
+        : null,
+      paused: !!billing?.pausedAt,
       state: billingState({
         hasPaidPlan: !!billing?.paidUntil && (plan?.priceCents ?? 0) > 0,
         openInvoiceDueAt: open?.dueAt ?? null,
@@ -335,6 +352,7 @@ export class BillingService {
     if (invoice.status !== 'open')
       throw new AppError(422, 'invoice_closed', 'Esta fatura não está em aberto.');
     if (invoice.chargeId && invoice.copyPaste) return this.toView(tx, invoice);
+    this.assertCanSwitchMethod(invoice, 'pix');
     const charge = await gateway.create({
       reference: invoice.id,
       amountCents: invoice.amountCents,
@@ -344,14 +362,117 @@ export class BillingService {
     });
     const [row] = await tx
       .update(planInvoices)
-      .set({ provider: gateway.mode, chargeId: charge.id, copyPaste: charge.copyPaste })
+      .set({
+        provider: gateway.mode,
+        method: 'pix',
+        chargeId: charge.id,
+        copyPaste: charge.copyPaste,
+      })
       .where(eq(planInvoices.id, invoiceId))
       .returning();
     return this.toView(tx, row!);
   }
 
+  /** Uma cobrança já gerada em outra forma de pagamento precisa vencer ou ser paga antes de trocar. */
+  private assertCanSwitchMethod(invoice: InvoiceRow, wanted: 'pix' | 'boleto') {
+    if (invoice.chargeId && invoice.method && invoice.method !== wanted) {
+      throw new AppError(
+        422,
+        'invoice_method_locked',
+        `Esta fatura já tem ${invoice.method === 'pix' ? 'um Pix' : 'um boleto'} gerado. Pague por ele ou espere vencer para escolher outra forma.`,
+      );
+    }
+  }
+
+  /** Gera (ou devolve) o boleto da fatura em aberto, com a conta do Bipaê no parceiro. */
+  async ensureBoleto(
+    tx: Tx,
+    userId: string,
+    invoiceId: string,
+    now: Date = new Date(),
+  ): Promise<InvoiceView> {
+    const gateway = this.methods.boleto;
+    if (!gateway) {
+      throw new AppError(
+        422,
+        'billing_not_configured',
+        'O boleto ainda não está ligado. Falta configurar a conta do Bipaê no parceiro de cobrança.',
+      );
+    }
+    const [invoice] = await tx.select().from(planInvoices).where(eq(planInvoices.id, invoiceId));
+    if (!invoice) throw notFound('Fatura');
+    if (invoice.status !== 'open')
+      throw new AppError(422, 'invoice_closed', 'Esta fatura não está em aberto.');
+    if (invoice.method === 'boleto' && invoice.chargeId) return this.toView(tx, invoice);
+    this.assertCanSwitchMethod(invoice, 'boleto');
+    // O boleto vence na data da fatura, ou amanhã se ela já passou.
+    const due =
+      invoice.dueAt.getTime() > now.getTime() ? invoice.dueAt : new Date(now.getTime() + DAY_MS);
+    const boleto = await gateway.register({
+      reference: invoice.id,
+      amountCents: invoice.amountCents,
+      dueDate: due.toISOString().slice(0, 10),
+      description: `Bipaê - ${await this.planName(tx, invoice.planId)}`,
+      payer: await this.payerOf(tx, userId),
+    });
+    const [row] = await tx
+      .update(planInvoices)
+      .set({
+        provider: gateway.mode,
+        method: 'boleto',
+        chargeId: boleto.id,
+        boletoLine: boleto.line,
+        boletoUrl: boleto.url,
+        copyPaste: null,
+      })
+      .where(eq(planInvoices.id, invoiceId))
+      .returning();
+    return this.toView(tx, row!);
+  }
+
+  /**
+   * Cartão recorrente: o cliente informa o código gerado pela tela do parceiro (o número do cartão
+   * nunca passa pelo Bipaê). Só o identificador do parceiro é guardado, cifrado.
+   */
+  async saveCard(tx: Tx, tenantId: string, userId: string, token: string): Promise<void> {
+    const gateway = this.methods.card;
+    if (!gateway) {
+      throw new AppError(
+        422,
+        'billing_card_not_available',
+        'O cartão recorrente chega em breve: falta configurar a conta do Bipaê no parceiro de cobrança.',
+      );
+    }
+    const saved = await gateway.save({ token, payer: await this.payerOf(tx, userId) });
+    const values = {
+      cardTokenSealed: this.methods.seal(saved.cardRef),
+      cardBrand: saved.brand,
+      cardLast4: saved.last4,
+      cardProvider: gateway.mode,
+      updatedAt: new Date(),
+    };
+    await tx
+      .insert(tenantBilling)
+      .values({ tenantId, ...values })
+      .onConflictDoUpdate({ target: tenantBilling.tenantId, set: values });
+  }
+
+  async removeCard(tx: Tx) {
+    await tx.update(tenantBilling).set({
+      cardTokenSealed: null,
+      cardBrand: null,
+      cardLast4: null,
+      cardProvider: null,
+      updatedAt: new Date(),
+    });
+  }
+
   /** Simulador: faz de conta que pagou. Recusado fora do modo de teste. */
   simulatePay(invoice: InvoiceRow): void {
+    if (invoice.method === 'boleto' && invoice.chargeId && this.methods.boleto?.simulatePay) {
+      this.methods.boleto.simulatePay(invoice.chargeId, invoice.amountCents);
+      return;
+    }
     const gateway = this.holder.gateway;
     if (!gateway?.simulatePay || !invoice.chargeId || !gateway.simulatePay(invoice.chargeId)) {
       throw new AppError(
@@ -366,8 +487,6 @@ export class BillingService {
 
   /** Consulta o meio de pagamento das faturas em aberto e aplica as pagas. */
   async settle(tx: Tx, now: Date, tenantId?: string): Promise<number> {
-    const gateway = this.holder.gateway;
-    if (!gateway) return 0;
     const rows = await tx
       .select()
       .from(planInvoices)
@@ -383,9 +502,22 @@ export class BillingService {
     for (const invoice of rows) {
       if (invoice.checkedAt && now.getTime() - invoice.checkedAt.getTime() < CHECK_EVERY_MS)
         continue;
-      let charge;
+      let charge: { status: string };
       try {
-        charge = await gateway.get(invoice.chargeId!);
+        if (invoice.method === 'boleto') {
+          const boleto = this.methods.boleto;
+          if (!boleto) continue;
+          const slip = await boleto.get(invoice.chargeId!);
+          // Boleto vencido segue valendo no parceiro por um tempo: só um cancelamento o descarta.
+          charge = {
+            status:
+              slip.status === 'registered' || slip.status === 'overdue' ? 'pending' : slip.status,
+          };
+        } else {
+          const gateway = this.holder.gateway;
+          if (!gateway) continue;
+          charge = await gateway.get(invoice.chargeId!);
+        }
       } catch {
         continue; // meio fora do ar: a próxima rodada tenta de novo
       }
@@ -396,7 +528,14 @@ export class BillingService {
         // O QR venceu: o cliente pede outro.
         await tx
           .update(planInvoices)
-          .set({ chargeId: null, copyPaste: null, checkedAt: now })
+          .set({
+            chargeId: null,
+            copyPaste: null,
+            boletoLine: null,
+            boletoUrl: null,
+            method: null,
+            checkedAt: now,
+          })
           .where(eq(planInvoices.id, invoice.id));
       } else {
         await tx
@@ -467,6 +606,7 @@ export class BillingService {
       .where(
         and(
           isNotNull(tenantBilling.paidUntil),
+          isNull(tenantBilling.pausedAt),
           lt(tenantBilling.paidUntil, limit),
           eq(tenants.status, 'active'),
           sql`not exists (select 1 from plan_invoices i where i.tenant_id = ${tenantBilling.tenantId} and i.status = 'open')`,
@@ -527,6 +667,7 @@ export class BillingService {
           lt(planInvoices.dueAt, limit),
           eq(tenants.status, 'active'),
           isNotNull(tenantBilling.paidUntil),
+          isNull(tenantBilling.pausedAt),
           ...(tenantId ? [eq(tenants.id, tenantId)] : []),
         ),
       )
@@ -546,9 +687,75 @@ export class BillingService {
     return overdue.map((o) => o.tenant.id);
   }
 
+  /**
+   * Cobra no cartão salvo as faturas que venceram, uma tentativa por dia. Aprovada, a fatura é
+   * paga como qualquer outra; negada, a mensagem fica na fatura e a tolerância segue valendo.
+   * Cliente com a cobrança pausada nunca é cobrado.
+   */
+  async chargeSavedCards(tx: Tx, now: Date, tenantId?: string): Promise<number> {
+    const gateway = this.methods.card;
+    if (!gateway) return 0;
+    const retryBefore = new Date(now.getTime() - DAY_MS);
+    const rows = await tx
+      .select({ invoice: planInvoices, billing: tenantBilling })
+      .from(planInvoices)
+      .innerJoin(tenantBilling, eq(tenantBilling.tenantId, planInvoices.tenantId))
+      .where(
+        and(
+          eq(planInvoices.status, 'open'),
+          isNull(planInvoices.chargeId),
+          lte(planInvoices.dueAt, now),
+          isNotNull(tenantBilling.cardTokenSealed),
+          isNull(tenantBilling.pausedAt),
+          or(isNull(planInvoices.cardAttemptAt), lt(planInvoices.cardAttemptAt, retryBefore)),
+          ...(tenantId ? [eq(planInvoices.tenantId, tenantId)] : []),
+        ),
+      )
+      .limit(200);
+    let paid = 0;
+    for (const { invoice, billing } of rows) {
+      let result;
+      try {
+        result = await gateway.charge({
+          cardRef: this.methods.open(billing.cardTokenSealed!),
+          amountCents: invoice.amountCents,
+          reference: invoice.id,
+          description: `Bipaê - ${await this.planName(tx, invoice.planId)}`,
+        });
+      } catch (error) {
+        await tx
+          .update(planInvoices)
+          .set({ cardAttemptAt: now, cardError: (error as Error).message.slice(0, 300) })
+          .where(eq(planInvoices.id, invoice.id));
+        continue;
+      }
+      if (result.approved) {
+        await tx
+          .update(planInvoices)
+          .set({
+            method: 'card',
+            provider: gateway.mode,
+            chargeId: result.id,
+            cardAttemptAt: now,
+            cardError: null,
+          })
+          .where(eq(planInvoices.id, invoice.id));
+        await this.applyPaid(tx, invoice, now);
+        paid++;
+      } else {
+        await tx
+          .update(planInvoices)
+          .set({ cardAttemptAt: now, cardError: result.message ?? 'Cartão recusado.' })
+          .where(eq(planInvoices.id, invoice.id));
+      }
+    }
+    return paid;
+  }
+
   /** Rodada completa do ciclo, dentro da transação da plataforma. */
   async runCycle(tx: Tx, now: Date, tenantId?: string) {
-    const paid = await this.settle(tx, now, tenantId);
+    const paidByCard = await this.chargeSavedCards(tx, now, tenantId);
+    const paid = (await this.settle(tx, now, tenantId)) + paidByCard;
     const created = await this.generateRenewals(tx, now, tenantId);
     const blocked = await this.blockOverdue(tx, now, tenantId);
     return { paid, created, blocked: blocked.length };

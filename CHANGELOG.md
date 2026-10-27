@@ -1,5 +1,15 @@
 # Changelog
 
+## [F6-04.c F6-04.d Boleto, cartão recorrente e cobrança por cliente no painel] — 27/10/2026
+
+### Adicionado
+- **Boleto e cartão recorrente como formas de pagar a fatura (F6-04.c):** o boleto usa a porta `BoletoPsp` da base de cobrança (Asaas com o token da conta do Bipaê, ou simulador); o cartão é uma porta nova (cartão salvo no parceiro: só o identificador volta, cifrado, nunca o número). A rodada do ciclo cobra o cartão salvo no vencimento, uma tentativa por dia; recusado, a mensagem fica na fatura e a tolerância segue valendo. Uma fatura com cobrança viva em uma forma não troca para outra até vencer ou ser paga. Migração 0088.
+- **Cobrança por cliente no painel (F6-04.d):** em /app/admin, a tela Cobrança lista inadimplência com dias de atraso e totais, e a página do cliente mostra faturas, forma de pagamento e cartão. Ações: pausar e retomar a cobrança (sem faturas novas nem bloqueio por atraso; retomar dá nova tolerância) e perdoar fatura (cancela e vale o período). Cada ação pede o motivo e grava a trilha de auditoria da plataforma e o histórico do cliente.
+- **Minha assinatura:** botões Pix e boleto na fatura em aberto e cartão salvo; cada forma que não está ligada aparece como "falta configurar" ou "chega em breve". Preços continuam só na tabela de planos.
+
+### Falta configurar
+- Conta do Bipaê no Asaas (`BILLING_BOLETO_PROVIDER=asaas`, `BILLING_BOLETO_TOKEN`) e adaptador real de cartão recorrente no parceiro, com a tela segura de tokenização (E9); preços dos planos (E8).
+
 ## [F6-05.b e F6-06.b Cardápio, estoque e marketplaces] — 27/10/2026
 
 ### Adicionado

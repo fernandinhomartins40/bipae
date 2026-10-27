@@ -15,6 +15,7 @@ import {
 import {
   adminCreateTenantInput,
   announcementInput,
+  billingReasonInput,
   changePlanInput,
   impersonateInput,
   limitOverridesInput,
@@ -29,6 +30,7 @@ import { coverageMatrix } from '@bipae/fiscal';
 import { z } from 'zod';
 import { Public } from '../../common/auth';
 import { parse } from '../../common/errors';
+import { AdminBillingService } from './admin-billing.service';
 import { AdminPlatformService } from './admin-platform.service';
 import { AdminTenantsService } from './admin-tenants.service';
 import { PlatformAuditService } from './platform-audit.service';
@@ -49,6 +51,11 @@ const auditQuery = z.object({
   actorId: z.string().uuid().optional(),
   ...page,
 });
+const billingQuery = z.object({
+  filter: z.enum(['all', 'overdue', 'open', 'paused']).default('all'),
+  q: z.string().trim().max(120).optional(),
+  ...page,
+});
 const adminUpdate = z
   .object({ role: z.enum(PLATFORM_ROLES).optional(), active: z.boolean().optional() })
   .refine((v) => v.role !== undefined || v.active !== undefined, 'Nada para alterar.');
@@ -61,6 +68,7 @@ export class AdminController {
   constructor(
     @Inject(AdminTenantsService) private readonly tenants: AdminTenantsService,
     @Inject(AdminPlatformService) private readonly platform: AdminPlatformService,
+    @Inject(AdminBillingService) private readonly billing: AdminBillingService,
     @Inject(PlatformAuditService) private readonly audit: PlatformAuditService,
   ) {}
 
@@ -176,6 +184,50 @@ export class AdminController {
     @Param('userId', new ParseUUIDPipe()) userId: string,
   ) {
     return this.tenants.revokeUserSessions(admin, id, userId);
+  }
+
+  // ---------------------------------------------------------------- billing (F6-04.d)
+
+  @Get('billing')
+  @PlatformPermission('platform.read')
+  listBilling(@Query() query: unknown) {
+    return this.billing.list(parse(billingQuery, query));
+  }
+
+  @Get('tenants/:id/billing')
+  @PlatformPermission('platform.read')
+  tenantBilling(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.billing.detail(id);
+  }
+
+  @Post('tenants/:id/billing/pause')
+  @HttpCode(200)
+  @PlatformPermission('platform.tenants.manage')
+  pauseBilling(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.billing.pause(admin, id, parse(billingReasonInput, body).reason);
+  }
+
+  @Post('tenants/:id/billing/resume')
+  @HttpCode(200)
+  @PlatformPermission('platform.tenants.manage')
+  resumeBilling(@Admin() admin: AdminContext, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.billing.resume(admin, id);
+  }
+
+  @Post('tenants/:id/billing/invoices/:invoiceId/waive')
+  @HttpCode(200)
+  @PlatformPermission('platform.tenants.manage')
+  waiveInvoice(
+    @Admin() admin: AdminContext,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('invoiceId', new ParseUUIDPipe()) invoiceId: string,
+    @Body() body: unknown,
+  ) {
+    return this.billing.waive(admin, id, invoiceId, parse(billingReasonInput, body).reason);
   }
 
   // ---------------------------------------------------------------- people
@@ -313,6 +365,8 @@ export class AdminController {
   @Get('fiscal-coverage')
   @PlatformPermission('platform.read')
   fiscalCoverage() {
-    return coverageMatrix(new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date()));
+    return coverageMatrix(
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date()),
+    );
   }
 }
