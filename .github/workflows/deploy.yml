@@ -96,8 +96,32 @@ jobs:
         env:
           REDIS_URL: redis://localhost:6379
 
+  # E2E essencial (PIE ACH-28): entrar, vender no caixa (destaque e grade) e vender sem internet.
+  # Vermelho aqui, nada é publicado. A suíte completa continua na CI.
+  e2e:
+    needs: validate-migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @bipae/web exec playwright install --with-deps chromium
+      - run: >-
+          pnpm --filter @bipae/web exec playwright test --project=web
+          e2e/foundation.spec.ts e2e/pos.spec.ts e2e/pos-modes.spec.ts e2e/nfce-contingency.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-deploy
+          path: apps/web/playwright-report
+
   build:
-    needs: test
+    needs: [test, e2e]
     runs-on: ubuntu-latest
     permissions:
       contents: read

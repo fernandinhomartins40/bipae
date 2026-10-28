@@ -91,8 +91,14 @@ test('super admin: 2FA, overview, suspend/reactivate a client and support access
     adminCtx.waitForEvent('page'),
     admin.getByRole('button', { name: 'Abrir como o cliente' }).click(),
   ]);
-  await expect(supportTab.getByText('Modo suporte Bipaê · somente leitura')).toBeVisible();
-  await expect(supportTab.getByRole('heading', { name: 'Olá, Carlos!' })).toBeVisible();
+  // A aba nova carrega o app inteiro e troca a sessão: sob carga passava dos 5 s padrão (PIE ACH-28).
+  await supportTab.waitForLoadState();
+  await expect(supportTab.getByText('Modo suporte Bipaê · somente leitura')).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(supportTab.getByRole('heading', { name: 'Olá, Carlos!' })).toBeVisible({
+    timeout: 20_000,
+  });
   expect(supportTab.url()).not.toContain('token=');
 
   // Everything is in the platform audit.
