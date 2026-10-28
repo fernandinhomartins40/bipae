@@ -21,6 +21,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
 - [x] E1 · Certificado digital A1 de homologação de um CNPJ real (o CSC deixou de ser necessário com o QR Code versão 3)
   - Entregue pelo dono em 20/10/2026: A1 de FUSE AGENCIA LTDA (CNPJ 42.761.086/0001-15, UF PR), cadastrado no usuário fuseagencia10@gmail.com, válido até 20/10/2027. Já respondeu 107 nas 27 UFs (F3-11.b.1 e F3-11.b.3). Conferido em 28/10/2026 na produção (somente leitura).
 - [ ] E27 · Inscrição estadual (ICMS) do CNPJ do certificado, para a primeira NFC-e e NF-e autorizadas em homologação. A empresa FUSE AGENCIA LTDA está cadastrada no Bipaê sem inscrição estadual e sem inscrição municipal; sem IE a SEFAZ não a reconhece como emitente. Alternativa: um segundo CNPJ com IE e certificado A1.
+  - Conferido em 28/10/2026 pela tela NF-e (busca de cadastro na SEFAZ-PR de homologação, cStat 259): o CNPJ 42.761.086/0001-15 **não é contribuinte do ICMS no PR**. Para a primeira NFC-e e NF-e, é preciso uma inscrição estadual nova nesse CNPJ ou outro CNPJ contribuinte com certificado A1. A NFS-e (F5-13.f) não depende disso.
 - [x] E2 · UF prioritária para começar a emissão
   - Decidido em 13/10/2026: o Bipaê cobre **as 27 UFs e todos os regimes** (ver `docs/fiscal/cobertura-ufs-regimes.md`). A primeira emissão em homologação será na UF do CNPJ do certificado do item E1.
 - [ ] E3 · Contador parceiro para validar `docs/fiscal/duvidas.md`
