@@ -264,3 +264,24 @@ describe('sair do pagamento com cobrança aguardando (PIE ACH-09)', () => {
     expect(screen.getByRole('button', { name: 'Finalizar venda' })).toBeEnabled();
   });
 });
+
+describe('pagamento coberto (OP-07)', () => {
+  it('o foco vai para "Finalizar venda" e o Enter conclui', async () => {
+    const onPaid = vi.fn(async () => {});
+    render(
+      <PaymentDialog
+        totalCents={1000}
+        payments={{ card: 'manual', pix: 'manual' }}
+        onPaid={onPaid}
+        onClose={() => {}}
+      />,
+    );
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: 'R$ 10,00' }));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Finalizar venda' })).toHaveFocus(),
+    );
+    await user.keyboard('{Enter}');
+    await waitFor(() => expect(onPaid).toHaveBeenCalledTimes(1));
+  });
+});

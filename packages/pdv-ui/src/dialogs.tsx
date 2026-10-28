@@ -774,6 +774,12 @@ export function PaymentDialog({
   };
 
   const done = remaining === 0 && tenders.length > 0;
+  // OP-07: o pagamento cobriu o total, o próximo passo é finalizar; o foco vai para lá e o Enter
+  // conclui, sem procurar o botão.
+  const finishRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (done) finishRef.current?.focus();
+  }, [done]);
   // Troco antes de confirmar (F8-15): conforme o operador digita o valor recebido.
   const changePreview =
     !done && method === 'cash' && amount.cents !== null && amount.cents > remaining
@@ -1173,6 +1179,7 @@ export function PaymentDialog({
             </Button>
           )}
           <Button
+            ref={finishRef}
             size="lg"
             onClick={() => void finish()}
             disabled={!done}
