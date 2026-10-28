@@ -249,6 +249,10 @@ export class ServiceOrdersService {
         .from(customers)
         .where(eq(customers.id, input.customerId));
       if (!customer) throw notFound('Cliente');
+      // Número em sequência por loja, sem repetir com criações simultâneas (PIE R3-07).
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(hashtextextended(${`service-order:${input.storeId}`}, 0))`,
+      );
       const [last] = await tx
         .select({ n: sql<number>`coalesce(max(${serviceOrders.number}), 0)` })
         .from(serviceOrders)

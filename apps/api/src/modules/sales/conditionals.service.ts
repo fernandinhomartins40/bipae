@@ -260,6 +260,11 @@ export class ConditionalsService {
           throw new AppError(422, 'invalid_quantity', `${p.name} vai por unidade inteira.`);
         }
       }
+      // Número em sequência por loja: o advisory lock evita duas condicionais com o mesmo número
+      // quando duas pessoas criam ao mesmo tempo (PIE R3-07), como no pedido de compra.
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(hashtextextended(${`conditional:${input.storeId}`}, 0))`,
+      );
       const [last] = await tx
         .select({ n: sql<number>`coalesce(max(${conditionals.number}), 0)` })
         .from(conditionals)
