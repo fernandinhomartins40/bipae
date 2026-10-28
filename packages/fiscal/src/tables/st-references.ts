@@ -1,4 +1,5 @@
 import data from './data/st-references.json';
+import { stOriginRetentionFor, type StOriginRetention } from './st-origin-retention';
 
 /**
  * Substituição tributária por UF (F3-26): a MVA (IVA-ST) que cada SEFAZ publica, por CEST e NCM,
@@ -48,6 +49,17 @@ export interface StReferenceMatch extends StReferenceItem {
   validFrom: string;
   validTo: string | null;
   note: string;
+  /** Presente quando um protocolo diz que o remetente de outra UF não retém a ST deste CEST. */
+  originRetention?: StOriginRetention;
+}
+
+function originRetention(
+  uf: string,
+  cest: string,
+  date: string,
+): { originRetention?: StOriginRetention } {
+  const r = stOriginRetentionFor(uf, cest, date);
+  return r ? { originRetention: r } : {};
 }
 
 /** Itens da tabela oficial da UF que valem para o NCM na data (o mais específico primeiro). */
@@ -69,6 +81,7 @@ export function stReferencesFor(uf: string, ncm: string, date: string): StRefere
         validFrom: ref.validFrom,
         validTo: ref.validTo,
         note: ref.note,
+        ...originRetention(ref.uf, item.cest, date),
       });
     }
   }

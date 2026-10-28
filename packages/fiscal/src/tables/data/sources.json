@@ -730,6 +730,15 @@
   "downloadedAt": "2026-10-27",
   "sha256": "8dba81d5763562e013138f656f3c2f4074fa3fc3bd70b793b103d1751687d59e"
  },
+ "confazPt11Ap": {
+  "file": "CONFAZ_Protocolo_ICMS_11-2026_AP_SP_2026-10-28.html.gz",
+  "title": "Protocolo ICMS 11/2026 (Amapá e São Paulo): nova redação da cláusula primeira do Protocolo ICMS 114/2011, com os CEST do Anexo XVII do Convênio ICMS 142/2018 em que o remetente não retém a ST nas operações destinadas ao Amapá",
+  "publisher": "CONFAZ",
+  "page": "https://www.confaz.fazenda.gov.br/legislacao/protocolos/2026/pt011_26",
+  "publishedAt": "2026-02-24",
+  "downloadedAt": "2026-10-28",
+  "sha256": "2eb8fc30279e5f4b414d669019b4c07ee2b1c44432439e32d25ed12c1cadd748"
+ },
  "legisWebMaRicms": {
   "file": "LegisWeb_MA_RICMS_Decreto_19714-2003_Anexos_4_2026-10-27.html.gz",
   "title": "RICMS/MA (Decreto 19.714/2003) consolidado, anexos 4.1 a 4.48 da substituição tributária (conferência dos anexos lidos no portal da SEFAZ-MA)",
@@ -1306,6 +1315,24 @@
   "downloadedAt": "2026-10-27",
   "sha256": "1c42fd6e772a632cc43a5122530e40110cff55b4e89f9015ea21f4d391dca288"
  },
+ "stToRicms": {
+  "file": "LegisWeb_TO_RICMS_Decreto_2912-2006_Anexos_XXI_e_XXII_ate_Decreto_7219-2026_2026-10-27.html.gz",
+  "title": "RICMS/TO (Decreto 2.912/2006), Anexos XXI (produtos sujeitos à substituição tributária, NCM/SH, CEST e MVA por seção) e XXII (veículos), texto consolidado até o Decreto 7.219, de 14/08/2026 (cópia de terceiros: o portal da SEFAZ-TO não publica o RICMS consolidado)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=171145",
+  "publishedAt": "2026-08-14",
+  "downloadedAt": "2026-10-27",
+  "sha256": "b12ec8239736cb06c56659052dfaeda464665a30f895093e8fed78f713efd966"
+ },
+ "stApRicms": {
+  "file": "LegisWeb_AP_RICMS_Decreto_2269-1998_Anexo_III_ate_Decreto_5888-2026_2026-10-27.html.gz",
+  "title": "RICMS/AP (Decreto 2.269/1998), Anexo III (substituição tributária), Apêndices II a XXVI por segmento com CEST, NCM/SH e MVA original, texto consolidado até o Decreto 5.888, de 11/08/2026 (cópia de terceiros: a SEFAZ-AP só publica o RICMS de 13/07/2021)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=244693",
+  "publishedAt": "2026-08-11",
+  "downloadedAt": "2026-10-27",
+  "sha256": "4596f6af80e3bb48bdb8b8a9ac3731163c3ce83ce633a8e023e487b78b272c5b"
+ },
  "legisWebCeIn74": {
   "file": "LegisWeb_CE_IN_SEFAZ_74-2025_RET_medicamentos_atacadista_ate_IN_106-2025_2026-10-27.html.gz",
   "title": "IN SEFAZ 74/2025 (CE), RET do atacadista de medicamentos (Decreto 36.617/2025), com as alterações das INs 88/2025, 106/2025 e 13/2026: definição dos canais Hospitalar e Farma, campos da NF-e e Anexo Único",
@@ -1341,23 +1368,5 @@
   "publishedAt": "2024-06-10",
   "downloadedAt": "2026-10-27",
   "sha256": "b3730f725448b74a15a9333d4126f3eab9cba7f39704953a0ff33e30fa595574"
- },
- "stToRicms": {
-  "file": "LegisWeb_TO_RICMS_Decreto_2912-2006_Anexos_XXI_e_XXII_ate_Decreto_7219-2026_2026-10-27.html.gz",
-  "title": "RICMS/TO (Decreto 2.912/2006), Anexos XXI (produtos sujeitos à substituição tributária, NCM/SH, CEST e MVA por seção) e XXII (veículos), texto consolidado até o Decreto 7.219, de 14/08/2026 (cópia de terceiros: o portal da SEFAZ-TO não publica o RICMS consolidado)",
-  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
-  "page": "https://www.legisweb.com.br/legislacao/?id=171145",
-  "publishedAt": "2026-08-14",
-  "downloadedAt": "2026-10-27",
-  "sha256": "b12ec8239736cb06c56659052dfaeda464665a30f895093e8fed78f713efd966"
- },
- "stApRicms": {
-  "file": "LegisWeb_AP_RICMS_Decreto_2269-1998_Anexo_III_ate_Decreto_5888-2026_2026-10-27.html.gz",
-  "title": "RICMS/AP (Decreto 2.269/1998), Anexo III (substituição tributária), Apêndices II a XXVI por segmento com CEST, NCM/SH e MVA original, texto consolidado até o Decreto 5.888, de 11/08/2026 (cópia de terceiros: a SEFAZ-AP só publica o RICMS de 13/07/2021)",
-  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
-  "page": "https://www.legisweb.com.br/legislacao/?id=244693",
-  "publishedAt": "2026-08-11",
-  "downloadedAt": "2026-10-27",
-  "sha256": "4596f6af80e3bb48bdb8b8a9ac3731163c3ce83ce633a8e023e487b78b272c5b"
  }
 }

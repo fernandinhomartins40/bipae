@@ -21,6 +21,7 @@ export * from './ibs-cbs-scope';
 export * from './sefaz-rejections';
 export * from './purchase-cost-credits';
 export * from './st-references';
+export * from './st-origin-retention';
 export * from './cbenef';
 export * from './demonstration';
 export * from './nfse-services';

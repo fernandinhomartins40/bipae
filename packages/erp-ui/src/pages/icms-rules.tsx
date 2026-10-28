@@ -466,6 +466,8 @@ interface StMatch {
   act: string;
   url: string;
   note: string;
+  /** O remetente de outra UF não retém a ST deste CEST (protocolo entre UFs). */
+  originRetention?: { note: string; act: string };
 }
 
 /**
@@ -547,6 +549,11 @@ function StSuggestion({
             <span>
               <span className="font-semibold">MVA {m.mva.replace('.', ',')}%</span> · CEST{' '}
               {cestText(m.cest)} · {m.description}
+              {m.originRetention && (
+                <span className="mt-1 block rounded-ui bg-warning-soft px-2 py-1">
+                  {m.originRetention.note} ({m.originRetention.act})
+                </span>
+              )}
             </span>
             <Button variant="secondary" onClick={() => onUse(m)}>
               {`Usar ${m.mva.replace('.', ',')}%`}
