@@ -18,7 +18,9 @@ Lista executável de tudo o que falta no plano (PRD §5), na ordem de execução
 
 Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde está, por exemplo o nome do secret, sem nunca colar o segredo aqui.
 
-- [ ] E1 · Certificado digital A1 de homologação de um CNPJ real (o CSC deixou de ser necessário com o QR Code versão 3)
+- [x] E1 · Certificado digital A1 de homologação de um CNPJ real (o CSC deixou de ser necessário com o QR Code versão 3)
+  - Entregue pelo dono em 20/10/2026: A1 de FUSE AGENCIA LTDA (CNPJ 42.761.086/0001-15, UF PR), cadastrado no usuário fuseagencia10@gmail.com, válido até 20/10/2027. Já respondeu 107 nas 27 UFs (F3-11.b.1 e F3-11.b.3). Conferido em 28/10/2026 na produção (somente leitura).
+- [ ] E27 · Inscrição estadual (ICMS) do CNPJ do certificado, para a primeira NFC-e e NF-e autorizadas em homologação. A empresa FUSE AGENCIA LTDA está cadastrada no Bipaê sem inscrição estadual e sem inscrição municipal; sem IE a SEFAZ não a reconhece como emitente. Alternativa: um segundo CNPJ com IE e certificado A1.
 - [x] E2 · UF prioritária para começar a emissão
   - Decidido em 13/10/2026: o Bipaê cobre **as 27 UFs e todos os regimes** (ver `docs/fiscal/cobertura-ufs-regimes.md`). A primeira emissão em homologação será na UF do CNPJ do certificado do item E1.
 - [ ] E3 · Contador parceiro para validar `docs/fiscal/duvidas.md`
@@ -120,10 +122,10 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - `signNfe` (WebCrypto, roda no servidor e no desktop), conferida pela biblioteca independente xml-crypto e pelo schema.
   - Pronto quando: os testes passam com certificado de teste gerado na hora, e o certificado real fica para F3-11.
 - [x] F3-10 · Cadastro do certificado A1 com assistente (cifrado, aviso de vencimento) — depende: F3-09
-- [ ] F3-11 · Webservices da SEFAZ em homologação: status, autorização e consulta — depende: F3-10, F1-07 · externo: E1, E2
+- [ ] F3-11 · Webservices da SEFAZ em homologação: status, autorização e consulta — depende: F3-10, F1-07 · externo: E27
 - [x] F3-11.a · Cliente dos webservices: mensagens validadas nos schemas oficiais, SOAP 1.2 com o certificado A1 (mTLS) e a cadeia ICP-Brasil, leitura dos retornos, XML autorizado (nfeProc) e "Testar conexão com a SEFAZ" na tela da empresa, tudo testado contra uma SEFAZ simulada — depende: F3-10
   - Feito em 13/10/2026: `packages/fiscal/src/sefaz` e `apps/api/src/modules/fiscal/sefaz.*`.
-- [ ] F3-11.b · Primeira conversa real com a SEFAZ de homologação (status e uma NFC-e autorizada) com o certificado da empresa — depende: F3-11.a · externo: E1
+- [ ] F3-11.b · Primeira conversa real com a SEFAZ de homologação (status e uma NFC-e autorizada) com o certificado da empresa — depende: F3-11.a · externo: E27
   - [x] F3-11.b.1 · Status do serviço na SEFAZ-PR de homologação com o certificado A1 real da empresa: respondeu 107 (Serviço em Operação) em 20/10/2026, pela tela "Testar conexão com a SEFAZ"
   - [x] F3-11.b.3 · Status do serviço nas SEFAZ de homologação das 27 UFs, NFC-e e NF-e, com o certificado A1 real: 54 de 54 responderam 107 em 20/10/2026 (MG leva cerca de 11 s)
   - [ ] F3-11.b.2 · Primeira NFC-e autorizada em homologação — depende: F3-11.b.1; a empresa precisa da inscrição estadual (emitente de NFC-e)
@@ -154,7 +156,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [x] F3-16.b · API e tela: "Emitir em contingência (SVC)" quando a SEFAZ da UF não responde, com o motivo e auditoria; a chave da tentativa normal fica guardada e, com a UF de volta, a manutenção confere se ela também foi autorizada (a nota avisa para cancelar uma das duas); testada contra a SEFAZ simulada com a UF fora e a SVC no ar — depende: F3-16.a, F3-33.b
   - [x] F3-16.c.1 · Status da contingência SVC (SVC-AN e SVC-RS) para as 27 UFs com o certificado A1 real: todas responderam 107 em 20/10/2026; o teste de conexão da tela mostra NFC-e, NF-e e a contingência
   - [x] F3-11.b.4 · Consulta da nota pela chave (NFeConsultaProtocolo, usada na recuperação de nota perdida) nas SEFAZ de homologação das 27 UFs, NFC-e e NF-e, com o certificado A1 real e uma chave inexistente: 54 de 54 responderam 217 (não consta na base) em 20/10/2026
-  - [ ] F3-16.c · Primeira NF-e autorizada na SVC de homologação com o certificado da empresa — depende: F3-16.b · externo: E1
+  - [ ] F3-16.c · Primeira NF-e autorizada na SVC de homologação com o certificado da empresa — depende: F3-16.b · externo: E27
 - [x] F3-17 · Eventos: cancelamento, carta de correção e inutilização — depende: F3-11
   - Regras (MOC 7.0, pesquisadas em 15/10/2026): cancelamento 110111 até 24 horas da autorização e cancelamento por substituição 110112 (só NFC-e) até 168 horas, rejeição 501 fora do prazo (com exceção por lei estadual); métodos nfeRecepcaoEvento e nfeInutilizacaoNF; schemas nos pacotes Evento_Canc e Evento_CancSubst (NT 2018.004) e no PL_009q. A carta de correção (110110) é só da NF-e: entra com a F3-33.
   - [x] F3-17.a · Motor: pedidos de cancelamento, cancelamento por substituição e inutilização, assinados e validados nos schemas oficiais, e leitura dos retornos
@@ -305,7 +307,7 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [x] F3-33.f · Cancelamento da NF-e autorizada (110111) em até 24 horas, com a justificativa da pessoa; pela fila; quando a SEFAZ registra, o estoque volta (motivo nfe_cancelled) e as parcelas abertas são canceladas; recusa (501) não muda nada; auditoria; tela — depende: F3-33.e, F3-17.a
   - [x] F3-33.g · Carta de correção da NF-e (110110), de 1 a 20 por nota, uma por vez, com o texto fixo das condições de uso do schema oficial (pacote Evento CCe v1.01, validado no XSD); cartas no pacote do contador; tela com a lista — depende: F3-33.f
   - [x] F3-33.j · Consulta do cadastro de contribuintes do ICMS na SEFAZ da UF do destinatário (CadConsultaCadastro4, ConsCad 2.00 do pacote 010d_v1.01): botão "Buscar a inscrição estadual na SEFAZ" na NF-e, que preenche a inscrição, o nome e o endereço; conferida com o certificado real em 20/10/2026 (PR responde; SP e SVRS só para quem emite NF-e, cStat 257; 12 UFs sem o webservice na tabela oficial) — depende: F3-33.b
-  - [ ] F3-33.d · Primeira NF-e autorizada na SEFAZ de homologação com o certificado da empresa — depende: F3-33.c · externo: E1
+  - [ ] F3-33.d · Primeira NF-e autorizada na SEFAZ de homologação com o certificado da empresa — depende: F3-33.c · externo: E27
   - [x] F3-33.i · Devolução de compra referenciada item a item (grupo DFeReferenciado, NT 2025.002-RTC v1.52, regra VC02-14, em produção a partir de 03/11/2026): sem refNFe no cabeçalho; motor confere VC02-10/14/30/50, VC03-20 e a rejeição 1194; contrato, API e tela pedem o item da nota do fornecedor — depende: F3-33.b
   - [x] F3-33.h · NF-e de devolução de venda (entrada do cliente, CFOP 1.202/2.202, finNFe 4) ligada à nota original: estoque volta e a conta a receber é estornada — depende: F3-33.f
     - Feito em 21/10/2026: dúvida D-037 resolvida em fonte oficial (LC 214/2025, arts. 12, § 7º, 17 e 47, § 8º; RICMS-SP, art. 452, e RC 30429/2024). A nota de entrada espelha os impostos da venda autorizada (NF-e ou NFC-e) na proporção devolvida, com CFOP pela tabela oficial; não deixa devolver mais do que foi vendido; o estoque entra, o crediário da venda é abatido e, se a devolução for cancelada, tudo volta. Validada no XSD; teste da API com a SEFAZ simulada.
@@ -476,7 +478,7 @@ Contrato em `BIPAE-INSTRUCOES-PARA-IA.md` (o lado do MercadoFlow já está pront
   - [ ] F5-13.m · Quando a produção receber a NT 009, ou quando a produção restrita receber o item 2.11 (indDest e dest no infDPS) ou exigir o grupo IBSCBS, colocar uma linha nova em `NFSE_DPS_LAYOUTS` com a data oficial e o pacote de esquemas novo. O aviso vem do monitor das fontes — depende: F5-13.j
   - [x] F5-13.k · Alíquota do ISS do serviço buscada na prefeitura pelo Sistema Nacional (ADN Parâmetros Municipais, com o certificado da empresa): botão "Buscar a alíquota na prefeitura" no cadastro do serviço; código com pontos ("17.06.01.000"), conferido em Guarapuava (5%) em 20/10/2026 — depende: F5-13.c
   - [x] F5-13.l · NFS-e em que a empresa aparece (prestadora, tomadora ou intermediária) pelo ADN Contribuinte (`GET /contribuintes/DFe/{NSU}?lote=true`, com o certificado): busca de hora em hora e a pedido, cancelamento do emitente marcado, XML para baixar, seção em Compras; conferida com o certificado real em 20/10/2026 (E2220, sem documentos) — depende: F5-13.d
-  - [ ] F5-13.f · Primeira NFS-e autorizada na produção restrita com o certificado da empresa; confirmar os pontos da dúvida D-036 — depende: F5-13.e · externo: E1
+  - [ ] F5-13.f · Primeira NFS-e autorizada na produção restrita com o certificado da empresa; confirmar os pontos da dúvida D-036 — depende: F5-13.e · o município pode exigir a inscrição municipal (D-036)
 
 ## Fase 6 — Integrações e IA
 
