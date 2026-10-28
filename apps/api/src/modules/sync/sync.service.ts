@@ -404,6 +404,15 @@ export class SyncService {
       : { authorizationProven: false, needsReview: true };
   }
 
+  /** Quanto da venda já foi devolvido, somando as devoluções registradas. */
+  private async returnedCents(tx: Tx, saleId: string) {
+    const [row] = await tx
+      .select({ total: sql<number>`coalesce(sum(${sales.totalCents}), 0)` })
+      .from(sales)
+      .where(and(eq(sales.originalSaleId, saleId), eq(sales.kind, 'return')));
+    return Number(row?.total ?? 0);
+  }
+
   private async requireMember(tx: Tx, userId: string) {
     const [m] = await tx
       .select({ userId: memberships.userId })
@@ -720,7 +729,13 @@ export class SyncService {
         return;
       }
       case 'sale.cancelled': {
-        const [sale] = await tx.select().from(sales).where(eq(sales.id, event.payload.saleId));
+        // Trava a venda: dois cancelamentos (ou cancelamento e devolução) vindos de caixas
+        // diferentes ao mesmo tempo não devolvem o estoque duas vezes (PIE R3-08).
+        const [sale] = await tx
+          .select()
+          .from(sales)
+          .where(eq(sales.id, event.payload.saleId))
+          .for('update');
         if (!sale || sale.kind !== 'sale') throw new Rejection('Venda a cancelar não encontrada.');
         // Um caixa só cancela venda da própria loja: o id da venda vem no evento (PIE R1-03).
         if (sale.storeId !== terminal.storeId) {
@@ -729,6 +744,11 @@ export class SyncService {
           );
         }
         if (sale.status === 'cancelled') return;
+        if ((await this.returnedCents(tx, sale.id)) > 0) {
+          throw new Rejection(
+            'Esta venda já teve devolução. Faça a devolução dos itens restantes em vez de cancelar.',
+          );
+        }
         await tx
           .update(sales)
           .set({ status: 'cancelled', cancelledAt: at, cancelReason: event.payload.reason })
@@ -799,9 +819,19 @@ export class SyncService {
       case 'sale.returned': {
         const p = event.payload;
         await this.requireSession(tx, p.sessionId);
-        const [original] = await tx.select().from(sales).where(eq(sales.id, p.originalSaleId));
+        const [original] = await tx
+          .select()
+          .from(sales)
+          .where(eq(sales.id, p.originalSaleId))
+          .for('update');
         if (!original || original.kind !== 'sale')
           throw new Rejection('Venda original da devolução não encontrada.');
+        // O caixa já confere isso; o servidor confere de novo (PIE R3-08).
+        if (original.status === 'cancelled')
+          throw new Rejection('A venda original foi cancelada: não há o que devolver.');
+        if ((await this.returnedCents(tx, original.id)) + p.refundCents > original.totalCents) {
+          throw new Rejection('A devolução passa do valor da venda original.');
+        }
         await tx.insert(sales).values({
           id: p.returnId,
           tenantId: ctx.tenantId,

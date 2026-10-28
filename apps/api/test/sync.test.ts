@@ -1228,6 +1228,56 @@ describe('eventos do caixa: loja, autoria e erro permanente (PIE R1-03, R3-01)',
     expect(de('cash.withdrawal')).toMatchObject({ authorizationProven: false, needsReview: true });
   });
 
+  it('o servidor confere cancelamento e devolução, mesmo que o caixa não confira (PIE R3-08)', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    await admin.post('/products', { name: 'Água', priceCents: 300, barcodes: ['78912342'] });
+    const caixa = await terminalDevice(dono, 'Caixa A', 'web');
+    await caixa.sync.sync();
+    const sessao = await caixa.pdv.openSession(0);
+    const produto = (await caixa.pdv.findByCode('78912342'))!;
+    const venda = await caixa.pdv.completeSale(
+      addItem(EMPTY_CART, produto, 2000),
+      [{ method: 'cash', receivedCents: 600 }],
+      { discountLimitPercent: 10 },
+    );
+    await caixa.pdv.returnItems(venda.id, [{ line: 1, quantityMilli: 1000 }], 'cash', 'Defeito');
+    expect((await caixa.sync.sync()).rejected).toBe(0);
+
+    const enviar = (events: TerminalEvent[]) =>
+      api(t.app, { ...dono.auth, 'x-bipae-terminal': caixa.terminal.id })
+        .post('/sync/events', { terminalId: caixa.terminal.id, events })
+        .then((r) => r.json() as SyncPushResult);
+    const devolucao = (refundCents: number, seq: number): TerminalEvent =>
+      ({
+        id: uuidv7(),
+        occurredAt: new Date().toISOString(),
+        terminalId: caixa.terminal.id,
+        operatorId: dono.me.user.id,
+        deviceSeq: 900 + seq,
+        type: 'sale.returned',
+        payload: {
+          returnId: uuidv7(),
+          originalSaleId: venda.id,
+          terminalSeq: 900 + seq,
+          sessionId: sessao.id,
+          items: [{ line: 1, productId: produto.id, quantityMilli: 1000, refundCents }],
+          refundCents,
+          refundMethod: 'cash',
+          reason: 'Teste',
+        },
+      }) as TerminalEvent;
+
+    // Devolver mais do que o que sobrou da venda (já teve R$ 3,00 devolvidos de R$ 6,00).
+    const demais = await enviar([devolucao(400, 1)]);
+    expect(demais.rejected[0]?.reason).toContain('passa do valor');
+    // Cancelar uma venda que já teve devolução devolveria o estoque de novo.
+    const cancelar = await enviar([
+      cancelamento(caixa.terminal.id, dono.me.user.id, venda.id, 950),
+    ]);
+    expect(cancelar.rejected[0]?.reason).toContain('já teve devolução');
+  });
+
   it('erro de dados que se repete não perde a venda, e o caixa continua recebendo o catálogo', async () => {
     const dono = await signup(t.app);
     const admin = api(t.app, dono.auth);
