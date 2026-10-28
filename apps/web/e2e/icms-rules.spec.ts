@@ -46,6 +46,9 @@ test('cadastrar, conferir conflito, editar e excluir uma regra de ICMS', async (
   await expect(linha).toContainText('Alíquota 27,5%');
   await linha.click();
   await page.getByRole('button', { name: 'Excluir regra' }).click();
+  // Alteração fiscal sem volta: confirma antes (PIE R2-12).
+  const confirmacao = page.getByRole('dialog', { name: 'Excluir esta regra de ICMS?' });
+  await confirmacao.getByRole('button', { name: 'Excluir regra' }).click();
   await expect(page.getByText('Nenhuma regra de ICMS ainda')).toBeVisible();
 
   // Só o código de benefício fiscal (cBenef, F3-27): a isenção vem do CST do produto.

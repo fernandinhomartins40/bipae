@@ -1217,12 +1217,18 @@ export function CashDialog({
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [declared, setDeclared] = useState<Record<string, string>>({});
+  // Trava de duplo envio (PIE R2-11): dois Enter ou dois toques registravam duas sangrias.
+  const [busy, setBusy] = useState(false);
+  // Fechamento em duas etapas: primeiro a revisão do que foi contado, depois a confirmação.
+  const [review, setReview] = useState<Partial<ByMethod> | null>(null);
 
   const saveMovement = async (e: FormEvent) => {
     e.preventDefault();
+    if (busy) return;
     setError(null);
     if (amount.cents === null || amount.cents <= 0)
       return setError('Informe um valor maior que zero.');
+    setBusy(true);
     try {
       let authorizedBy: string | null = null;
       if (view === 'withdrawal' && !canWithdraw) {
@@ -1243,10 +1249,12 @@ export function CashDialog({
       setView('menu');
     } catch (err) {
       setError(errorMessage(err));
+    } finally {
+      setBusy(false);
     }
   };
 
-  const close = async (e: FormEvent) => {
+  const close = (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     const values: Partial<ByMethod> = {};
@@ -1257,10 +1265,22 @@ export function CashDialog({
         return setError(`Valor inválido em ${PAYMENT_LABELS[m as PaymentMethod]}.`);
       values[m as PaymentMethod] = cents;
     }
+    // O dinheiro da gaveta é o que mais importa conferir: sem ele o fechamento não diz nada.
+    if (values.cash === undefined) {
+      return setError('Informe quanto há em dinheiro na gaveta (pode ser 0).');
+    }
+    setReview(values);
+  };
+
+  const confirmClose = async () => {
+    if (busy || !review) return;
+    setBusy(true);
+    setError(null);
     try {
-      onClosed(await pdv.closeSession(values));
+      onClosed(await pdv.closeSession(review));
     } catch (err) {
       setError(errorMessage(err));
+      setBusy(false);
     }
   };
 
@@ -1296,7 +1316,7 @@ export function CashDialog({
             onChange={(e) => setReason(e.target.value)}
           />
           <div className="flex gap-2">
-            <Button type="submit">
+            <Button type="submit" loading={busy}>
               Registrar {view === 'withdrawal' ? 'sangria' : 'suprimento'}
             </Button>
             <Button variant="secondary" onClick={() => setView('menu')}>
@@ -1305,7 +1325,31 @@ export function CashDialog({
           </div>
         </form>
       )}
-      {view === 'close' && (
+      {view === 'close' && review && (
+        <div className="mt-4 flex flex-col gap-4">
+          <p className="font-semibold">Confira antes de fechar:</p>
+          <ul className="flex flex-col gap-1" aria-label="Valores contados">
+            {(['cash', 'pix', 'debit', 'credit', 'voucher'] as PaymentMethod[]).map((m) => (
+              <li key={m} className="flex justify-between gap-4">
+                <span>{PAYMENT_LABELS[m]}</span>
+                <span className={review[m] === undefined ? 'text-muted' : 'font-semibold'}>
+                  {review[m] === undefined ? 'não informado' : brl(review[m])}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-sm text-muted">Depois de fechar, o caixa não aceita mais vendas.</p>
+          <div className="flex gap-2">
+            <Button variant="danger" loading={busy} onClick={() => void confirmClose()}>
+              Fechar o caixa agora
+            </Button>
+            <Button variant="secondary" disabled={busy} onClick={() => setReview(null)}>
+              Corrigir
+            </Button>
+          </div>
+        </div>
+      )}
+      {view === 'close' && !review && (
         <form onSubmit={close} className="mt-4 flex flex-col gap-4">
           <p className="text-muted">
             Conte o que está no caixa e informe abaixo. O sistema só mostra se sobrou ou faltou

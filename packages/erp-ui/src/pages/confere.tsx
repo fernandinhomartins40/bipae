@@ -9,6 +9,7 @@ import {
   Drawer,
   EmptyState,
   PageHeader,
+  QuantityField,
   SelectField,
   TextField,
 } from '@bipae/ui';
@@ -694,15 +695,15 @@ function CheckDrawer({
                     {!blind && ` · Nota: ${i.invoiceQuantity ?? '—'} ${i.invoiceUnit ?? ''}`}
                   </p>
                   <div className="mt-1 flex flex-wrap items-end gap-2">
-                    <TextField
+                    {/* Texto com vírgula fica no campo; grava uma vez, ao sair (PIE R2-09).
+                        A chave refaz o campo quando os botões + e − mudam a contagem. */}
+                    <QuantityField
+                      key={`${i.item}:${c?.counted ?? ''}`}
                       label={`Contei (item ${i.item})`}
-                      inputMode="decimal"
-                      value={c ? String(c.counted) : ''}
-                      onChange={(e) => {
-                        const counted = Number(e.target.value.replace(',', '.'));
-                        if (Number.isFinite(counted))
-                          void save({ ...counts, [String(i.item)]: { ...c, counted } });
-                      }}
+                      valueMilli={c ? Math.round(c.counted * 1000) : null}
+                      onCommit={(milli) =>
+                        void save({ ...counts, [String(i.item)]: { ...c, counted: milli / 1000 } })
+                      }
                     />
                     {(['AVARIA', 'VALIDADE', 'TROCADO'] as const).map((issue) => (
                       <Button

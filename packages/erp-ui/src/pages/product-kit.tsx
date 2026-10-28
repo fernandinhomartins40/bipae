@@ -1,5 +1,5 @@
 import { formatBRL, type Cents, type Page, type Product } from '@bipae/domain';
-import { Button, Checkbox, TextField } from '@bipae/ui';
+import { Button, Checkbox, QuantityField, TextField } from '@bipae/ui';
 import { useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
@@ -113,20 +113,17 @@ export function KitEditor({
               {value.map((c, index) => (
                 <li key={c.productId} className="flex items-end gap-2">
                   <div className="flex-1">
-                    <TextField
+                    {/* "0,250" fica como foi digitado (PIE R2-10). */}
+                    <QuantityField
                       label={`Quantidade de ${c.name} no kit${c.unit ? ` (${c.unit})` : ''}`}
-                      inputMode="decimal"
-                      value={String(c.quantity).replace('.', ',')}
-                      onChange={(e) => {
-                        const quantity = Number(e.target.value.replace(',', '.'));
+                      valueMilli={Math.round(c.quantity * 1000)}
+                      onChange={(milli) =>
                         onChange(
                           value.map((it, i) =>
-                            i === index
-                              ? { ...it, quantity: Number.isFinite(quantity) ? quantity : 0 }
-                              : it,
+                            i === index ? { ...it, quantity: (milli ?? 0) / 1000 } : it,
                           ),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <Button

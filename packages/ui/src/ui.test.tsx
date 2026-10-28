@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   applyDisplayPreferences,
   Button,
+  ConfirmDialog,
   DataTable,
   DEFAULT_DISPLAY,
   EmptyState,
@@ -13,6 +14,8 @@ import {
   StatCard,
   StatGrid,
   parseDisplayPreferences,
+  parseQuantityMilli,
+  QuantityField,
   SearchBox,
   TaxIdField,
   TextField,
@@ -216,5 +219,54 @@ describe('display preferences', () => {
     expect(parseDisplayPreferences(null)).toEqual(DEFAULT_DISPLAY);
     expect(parseDisplayPreferences('{broken')).toEqual(DEFAULT_DISPLAY);
     expect(parseDisplayPreferences('{"largeFont":true}').largeFont).toBe(true);
+  });
+});
+
+describe('quantidade com vírgula (PIE R2-09, R2-10)', () => {
+  it('converte em milésimos inteiros e aceita zero', () => {
+    expect(parseQuantityMilli('2,5')).toBe(2500);
+    expect(parseQuantityMilli('0,250')).toBe(250);
+    expect(parseQuantityMilli('0')).toBe(0);
+    expect(parseQuantityMilli('2,')).toBeNull();
+    expect(parseQuantityMilli('1,2345')).toBeNull();
+  });
+
+  it('a vírgula fica no campo enquanto digita e grava uma vez só, ao sair', async () => {
+    const onCommit = vi.fn();
+    const onChange = vi.fn();
+    render(
+      <QuantityField label="Contei" valueMilli={null} onChange={onChange} onCommit={onCommit} />,
+    );
+    const input = screen.getByLabelText('Contei');
+    await userEvent.type(input, '2,5');
+    expect(input).toHaveValue('2,5');
+    expect(onCommit).not.toHaveBeenCalled();
+    expect(onChange).toHaveBeenLastCalledWith(2500);
+    await userEvent.tab();
+    expect(onCommit).toHaveBeenCalledTimes(1);
+    expect(onCommit).toHaveBeenCalledWith(2500);
+  });
+});
+
+describe('confirmação de ação sem volta (PIE R2-12)', () => {
+  it('só confirma no botão com o verbo; cancelar não faz nada', async () => {
+    const onConfirm = vi.fn();
+    const onCancel = vi.fn();
+    render(
+      <ConfirmDialog
+        open
+        title="Descartar este rascunho?"
+        confirmLabel="Descartar rascunho"
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+      >
+        Tudo o que foi preenchido se perde.
+      </ConfirmDialog>,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onConfirm).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole('button', { name: 'Descartar rascunho' }));
+    expect(onConfirm).toHaveBeenCalledTimes(1);
   });
 });

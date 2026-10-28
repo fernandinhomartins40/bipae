@@ -13,6 +13,7 @@ import {
   Alert,
   Badge,
   Button,
+  ConfirmDialog,
   DataTable,
   Drawer,
   EmptyState,
@@ -900,6 +901,8 @@ function DraftForm({
   const { api } = useApp();
   const queryClient = useQueryClient();
   const [d, setD] = useState<Draft>(n ? fromView(n) : EMPTY);
+  // Descartar apaga o rascunho de vez: pede confirmação (PIE R2-12).
+  const [discarding, setDiscarding] = useState(false);
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
     setD((x) => ({ ...x, [key]: value }));
   const companies = useQuery({
@@ -1418,18 +1421,23 @@ function DraftForm({
               >
                 Emitir NF-e
               </Button>
-              <Button
-                variant="ghost"
-                loading={busy}
-                onClick={() =>
-                  void run(async () => {
-                    await api.delete(`/fiscal/nfe/${n.id}`);
-                    onDiscarded();
-                  })
-                }
-              >
+              <Button variant="ghost" disabled={busy} onClick={() => setDiscarding(true)}>
                 Descartar rascunho
               </Button>
+              <ConfirmDialog
+                open={discarding}
+                title="Descartar este rascunho?"
+                confirmLabel="Descartar rascunho"
+                onCancel={() => setDiscarding(false)}
+                onConfirm={async () => {
+                  await api.delete(`/fiscal/nfe/${n.id}`);
+                  setDiscarding(false);
+                  onDiscarded();
+                }}
+              >
+                Tudo o que foi preenchido nesta NF-e se perde. Nenhuma nota foi emitida, então nada
+                muda na SEFAZ.
+              </ConfirmDialog>
             </>
           )}
         </div>

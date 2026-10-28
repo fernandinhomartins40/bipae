@@ -238,6 +238,78 @@ export function MoneyField({
   );
 }
 
+/** "2,5" → 2500 milésimos, só com inteiros; aceita zero; null se não for quantidade. */
+export function parseQuantityMilli(text: string): number | null {
+  const match = /^(\d{1,9})(?:[.,](\d{1,3}))?$/.exec(text.trim());
+  if (!match) return null;
+  return Number(match[1]) * 1000 + Number((match[2] ?? '').padEnd(3, '0'));
+}
+
+/** 2500 → "2,5"; 250 → "0,25"; 3000 → "3". */
+export function formatQuantityMilli(milli: number): string {
+  const whole = Math.trunc(milli / 1000);
+  const fraction = String(Math.abs(milli % 1000))
+    .padStart(3, '0')
+    .replace(/0+$/, '');
+  return fraction ? `${whole},${fraction}` : String(whole);
+}
+
+/**
+ * Quantidade com vírgula (PIE R2-09, R2-10). O texto digitado fica no campo (antes "2," virava
+ * "2" e a vírgula sumia); o valor sai em milésimos inteiros. `onChange` avisa a cada tecla válida;
+ * `onCommit` só ao sair do campo ou no Enter, para quem grava na API uma vez só.
+ */
+export function QuantityField({
+  label,
+  valueMilli,
+  onChange,
+  onCommit,
+}: {
+  label: string;
+  valueMilli: number | null;
+  onChange?: (milli: number | null) => void;
+  onCommit?: (milli: number) => void;
+}) {
+  const [text, setText] = useState(valueMilli === null ? '' : formatQuantityMilli(valueMilli));
+  const [error, setError] = useState<string | null>(null);
+  const commit = () => {
+    if (text.trim() === '') return;
+    const milli = parseQuantityMilli(text);
+    if (milli === null) {
+      setError('Quantidade inválida. Use, por exemplo, 2,5');
+      return;
+    }
+    setError(null);
+    setText(formatQuantityMilli(milli));
+    if (milli !== valueMilli) onCommit?.(milli);
+  };
+  return (
+    <TextField
+      label={label}
+      inputMode="decimal"
+      value={text}
+      error={error}
+      onChange={(e) => {
+        const next = e.target.value;
+        setText(next);
+        if (next.trim() === '') return onChange?.(null);
+        const milli = parseQuantityMilli(next);
+        e.currentTarget.setCustomValidity(milli === null ? 'Quantidade inválida' : '');
+        if (milli !== null) {
+          setError(null);
+          onChange?.(milli);
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== 'Enter') return;
+        if (text.trim() !== '' && parseQuantityMilli(text) === null) e.preventDefault();
+        commit();
+      }}
+      onBlur={commit}
+    />
+  );
+}
+
 /** CPF/CNPJ input with live mask. */
 export function TaxIdField({
   label = 'CPF ou CNPJ',
@@ -923,6 +995,58 @@ export function Modal({
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
+  );
+}
+
+/**
+ * Confirmação antes de uma ação que não tem volta (PIE R2-12): diz o que vai acontecer e o botão
+ * perigoso leva o verbo da ação ("Descartar rascunho"), nunca um "Ok" genérico.
+ */
+export function ConfirmDialog({
+  open,
+  title,
+  children,
+  confirmLabel,
+  onConfirm,
+  onCancel,
+}: {
+  open: boolean;
+  title: string;
+  /** A consequência, em uma ou duas frases. */
+  children: ReactNode;
+  confirmLabel: string;
+  onConfirm: () => void | Promise<void>;
+  onCancel: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const confirm = async () => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await onConfirm();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Modal open={open} onOpenChange={(o) => !o && !busy && onCancel()} title={title}>
+      <div className="flex flex-col gap-4">
+        {error && <Alert>{error}</Alert>}
+        <div className="text-muted">{children}</div>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button variant="secondary" disabled={busy} onClick={onCancel}>
+            Cancelar
+          </Button>
+          <Button variant="danger" loading={busy} onClick={() => void confirm()}>
+            {confirmLabel}
+          </Button>
+        </div>
+      </div>
+    </Modal>
   );
 }
 

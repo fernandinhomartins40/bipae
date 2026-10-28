@@ -103,6 +103,9 @@ test('sell online, keep selling offline, sync on reconnect, close blind', async 
   await page.getByLabel('Dinheiro (R$)').fill('117,71');
   await page.getByLabel('Pix (R$)').fill('2,99');
   await page.getByRole('button', { name: 'Confirmar fechamento' }).click();
+  // Revisão antes de fechar (PIE R2-11): o que foi contado e o que ficou sem informar.
+  await expect(page.getByRole('list', { name: 'Valores contados' })).toContainText('não informado');
+  await page.getByRole('button', { name: 'Fechar o caixa agora' }).click();
   await expect(page.getByText('Bateu certinho. Bipaê!')).toBeVisible();
   await page.getByRole('button', { name: 'Ok' }).click();
   // A primeira preparação baixa o catálogo e as tabelas de preço: numa máquina carregada passa de 5 s.

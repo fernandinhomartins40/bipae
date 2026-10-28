@@ -212,3 +212,55 @@ describe('pagamento no caixa', () => {
     expect(await screen.findByRole('button', { name: 'Aprovado na maquininha' })).toBeVisible();
   });
 });
+
+describe('sair do pagamento com cobrança aguardando (PIE ACH-09)', () => {
+  it('Pix pendente é cancelado no parceiro antes de fechar', async () => {
+    const onClose = vi.fn();
+    const cancel = vi.fn(async () => charge('canceled'));
+    render(
+      <PaymentDialog
+        totalCents={1890}
+        payments={{ card: 'manual', pix: 'api' }}
+        pixApi={{
+          create: async () => charge('pending'),
+          get: async () => charge('pending'),
+          cancel,
+        }}
+        onPaid={async () => {}}
+        onClose={onClose}
+      />,
+    );
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('radio', { name: 'Pix' }));
+    await user.click(screen.getByRole('button', { name: 'Adicionar pix' }));
+    await screen.findByRole('img', { name: 'QR Code do Pix de R$ 18,90' });
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(cancel).toHaveBeenCalledWith('0192abcd0000700080000000000000aa');
+  });
+
+  it('Pix que já foi pago entra na venda em vez de sumir', async () => {
+    const onClose = vi.fn();
+    render(
+      <PaymentDialog
+        totalCents={1890}
+        payments={{ card: 'manual', pix: 'api' }}
+        pixApi={{
+          create: async () => charge('pending'),
+          get: async () => charge('pending'),
+          cancel: async () => charge('paid'),
+        }}
+        onPaid={async () => {}}
+        onClose={onClose}
+      />,
+    );
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('radio', { name: 'Pix' }));
+    await user.click(screen.getByRole('button', { name: 'Adicionar pix' }));
+    await screen.findByRole('img', { name: 'QR Code do Pix de R$ 18,90' });
+    await user.keyboard('{Escape}');
+    expect(await screen.findByText(/já tinha sido pago e entrou na venda/)).toBeVisible();
+    expect(onClose).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: 'Finalizar venda' })).toBeEnabled();
+  });
+});

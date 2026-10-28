@@ -3,6 +3,7 @@ import {
   Alert,
   Badge,
   Button,
+  ConfirmDialog,
   DataTable,
   Drawer,
   EmptyState,
@@ -149,6 +150,8 @@ function RuleForm({
   const { api } = useApp();
   const queryClient = useQueryClient();
   const e = rule?.effect;
+  // Excluir regra fiscal pede confirmação (PIE R2-12).
+  const [removing, setRemoving] = useState(false);
   const form = useForm({
     name: rule?.name ?? '',
     ncm: rule?.ncm.join(', ') ?? '',
@@ -320,12 +323,25 @@ function RuleForm({
             Cancelar
           </Button>
           {rule && (
-            <Button variant="ghost" onClick={remove}>
+            <Button variant="ghost" onClick={() => setRemoving(true)}>
               Excluir regra
             </Button>
           )}
         </div>
       </form>
+      <ConfirmDialog
+        open={removing}
+        title="Excluir esta regra de ICMS?"
+        confirmLabel="Excluir regra"
+        onCancel={() => setRemoving(false)}
+        onConfirm={() => {
+          setRemoving(false);
+          remove();
+        }}
+      >
+        As próximas vendas e notas deixam de usar esta regra. As notas já emitidas não mudam, e a
+        exclusão fica na trilha de auditoria.
+      </ConfirmDialog>
     </Drawer>
   );
 }
