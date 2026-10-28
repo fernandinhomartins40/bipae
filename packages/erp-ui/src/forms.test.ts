@@ -17,6 +17,18 @@ describe('erros do servidor no formulário (PIE R2-07)', () => {
     expect(result.current.formError).toBeNull();
   });
 
+  it('erro num item de um campo da tela (barcodes.0) fica só no campo', async () => {
+    const { result } = renderHook(() => useForm({ barcodes: '7891000315508' }));
+    await act(() =>
+      result.current.submit(async () => {
+        throw new ApiError(400, 'invalid', 'Dados inválidos', [
+          { path: 'barcodes.0', message: 'Dígito verificador do código de barras inválido' },
+        ]);
+      }),
+    );
+    expect(result.current.formError).toBeNull();
+  });
+
   it('erro de um campo que a tela não tem aparece no aviso geral', async () => {
     const { result } = renderHook(() => useForm({ name: 'Kit café' }));
     await act(() =>

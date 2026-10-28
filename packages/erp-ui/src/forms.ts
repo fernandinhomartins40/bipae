@@ -28,7 +28,10 @@ export function useForm<T extends Record<string, unknown>>(initial: T) {
         setErrors(fields);
         // Erro preso a um campo que este formulário não tem (ex.: components.0.quantity) não
         // aparecia em lugar nenhum e o botão só parava de girar (PIE R2-07): vai para o aviso geral.
-        const hidden = Object.entries(fields).filter(([path]) => !(path in values));
+        // Conta como visível o campo do formulário e o que começa por ele (barcodes.0 → barcodes).
+        const shown = (path: string) =>
+          Object.keys(values).some((key) => path === key || path.startsWith(`${key}.`));
+        const hidden = Object.entries(fields).filter(([path]) => !shown(path));
         if (Object.keys(fields).length === 0) setFormError(error.message);
         else if (hidden.length > 0) setFormError(hidden.map(([, message]) => message).join(' '));
       } else {
