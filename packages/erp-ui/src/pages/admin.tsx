@@ -4,6 +4,7 @@ import {
   Badge,
   Button,
   Card,
+  ConfirmDialog,
   DataTable,
   Drawer,
   PageHeader,
@@ -26,6 +27,8 @@ export function TerminalsPage() {
   const { api } = useApp();
   const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
+  // Desativar é sem volta (a série não é reutilizada): confirma no visual do app (OP-13).
+  const [revoking, setRevoking] = useState<Terminal | null>(null);
   const terminals = useQuery({
     queryKey: ['terminals'],
     queryFn: () => api.get<Terminal[]>('/terminals'),
@@ -73,16 +76,9 @@ export function TerminalsPage() {
                 t.status === 'active' && (
                   <Button
                     variant="ghost"
-                    onClick={async (e) => {
+                    onClick={(e) => {
                       e.stopPropagation();
-                      if (
-                        !confirm(
-                          `Desativar "${t.name}"? A série ${t.nfceSeries} não será reutilizada.`,
-                        )
-                      )
-                        return;
-                      await api.post(`/terminals/${t.id}/revoke`);
-                      await queryClient.invalidateQueries({ queryKey: ['terminals'] });
+                      setRevoking(t);
                     }}
                   >
                     Desativar
@@ -95,6 +91,20 @@ export function TerminalsPage() {
       {creating && stores.data && (
         <TerminalForm stores={stores.data} onClose={() => setCreating(false)} />
       )}
+      <ConfirmDialog
+        open={revoking !== null}
+        title={`Desativar o ${revoking?.name ?? 'caixa'}?`}
+        confirmLabel="Desativar caixa"
+        onCancel={() => setRevoking(null)}
+        onConfirm={async () => {
+          await api.post(`/terminals/${revoking!.id}/revoke`);
+          await queryClient.invalidateQueries({ queryKey: ['terminals'] });
+          setRevoking(null);
+        }}
+      >
+        O aparelho envia o que falta e deixa de vender. A série de NFC-e {revoking?.nfceSeries} não
+        será usada de novo.
+      </ConfirmDialog>
     </>
   );
 }

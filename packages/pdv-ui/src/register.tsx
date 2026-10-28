@@ -37,7 +37,15 @@ import {
 import type { Platform, UpdateInfo } from '@bipae/platform';
 import { useTefDriver } from './tef-screen';
 import { describeLastSync, type SyncStatus } from '@bipae/sync';
-import { Alert, Button, cx, Logo, parseDisplayPreferences, playBeep } from '@bipae/ui';
+import {
+  Alert,
+  Button,
+  ConfirmDialog,
+  cx,
+  Logo,
+  parseDisplayPreferences,
+  playBeep,
+} from '@bipae/ui';
 import {
   CloudOff,
   Ellipsis,
@@ -236,6 +244,8 @@ export function Register({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [discountAuthorizedBy, setDiscountAuthorizedBy] = useState<string | null>(null);
   const [lastSale, setLastSale] = useState<StoredSale | null>(null);
+  // Limpar a venda pede confirmação no visual do caixa, não no confirm() do navegador (OP-13).
+  const [confirmClear, setConfirmClear] = useState(false);
   const [auth, setAuth] = useState<{
     permission: AuthorizablePermission;
     resolve: (id: string | null) => void;
@@ -860,8 +870,7 @@ export function Register({
       F10: () => cart.lines.length > 0 && setDialog({ kind: 'payment' }),
       F11: () => setDialog({ kind: 'history' }),
       F12: () => {
-        if (cart.lines.length > 0 && confirm('Limpar todos os itens desta venda?'))
-          setCart(EMPTY_CART);
+        if (cart.lines.length > 0) setConfirmClear(true);
       },
       ArrowUp: () => {
         const i = cart.lines.findIndex((l) => l.line === selected);
@@ -940,10 +949,7 @@ export function Register({
       })
       .catch(fail);
   const clearSale = () => {
-    if (cartRef.current.lines.length > 0 && confirm('Limpar todos os itens desta venda?')) {
-      setCart(EMPTY_CART);
-      setSelected(null);
-    }
+    if (cartRef.current.lines.length > 0) setConfirmClear(true);
   };
   const changeMode = (next: RegisterMode) => {
     modePref.set(next);
@@ -1648,6 +1654,23 @@ export function Register({
           }}
         />
       )}
+      <ConfirmDialog
+        open={confirmClear}
+        title="Limpar esta venda?"
+        confirmLabel="Limpar venda"
+        onCancel={() => {
+          setConfirmClear(false);
+          focusInput();
+        }}
+        onConfirm={() => {
+          setCart(EMPTY_CART);
+          setSelected(null);
+          setConfirmClear(false);
+          focusInput();
+        }}
+      >
+        Todos os itens saem do carrinho. Nada foi cobrado ainda.
+      </ConfirmDialog>
       {auth && (
         <AuthorizeDialog
           permission={auth.permission}

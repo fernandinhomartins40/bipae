@@ -315,11 +315,11 @@ test('caixa desativado: envia o que falta, apaga os dados do aparelho e pede out
 
   // O dono desativa o caixa na retaguarda.
   await abrirNoMenu(page, 'Caixas');
-  page.once('dialog', (d) => void d.accept());
   await page
     .getByRole('row', { name: /Caixa velho/ })
     .getByRole('button', { name: 'Desativar' })
     .click();
+  await page.getByRole('button', { name: 'Desativar caixa' }).click();
   await expect(page.getByRole('row', { name: /Caixa velho/ })).toContainText('Desativado');
 
   // Ao abrir o caixa de novo, a venda pendente sobe, os dados são apagados e o aparelho pede um caixa.

@@ -221,9 +221,9 @@ describe('atualização entre vendas (F2-09)', () => {
       '78912342{Enter}',
     );
     expect(screen.queryByText('Nova versão do Bipaê pronta')).not.toBeInTheDocument();
-    vi.stubGlobal('confirm', () => true);
+    // Limpar a venda pede confirmação no próprio caixa (OP-13).
     await userEvent.keyboard('{F12}');
-    vi.unstubAllGlobals();
+    await userEvent.click(await screen.findByRole('button', { name: 'Limpar venda' }));
     await userEvent.click(await screen.findByRole('button', { name: 'Atualizar agora' }));
     expect(install).toHaveBeenCalledWith({ saleInProgress: false });
   });
