@@ -1132,6 +1132,8 @@ export const fiscalDocuments = pgTable('fiscal_documents', {
   contingencyReason: text('contingency_reason'),
   replacedAccessKey: char('replaced_access_key', { length: 44 }),
   replacedCheckedAt: ts('replaced_checked_at'),
+  /** Reserva do envio à SEFAZ (PIE ACH-20): até quando a nota é de quem está mandando. */
+  sendingUntil: ts('sending_until'),
   createdAt: ts('created_at').notNull().defaultNow(),
   updatedAt: ts('updated_at').notNull().defaultNow(),
 });

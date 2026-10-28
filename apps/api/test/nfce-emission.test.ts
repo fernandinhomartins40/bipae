@@ -1,5 +1,10 @@
 import { inflateRawSync } from 'node:zlib';
-import { uuidv7, type SyncPullResult, type SyncPushResult, type TerminalEvent } from '@bipae/domain';
+import {
+  uuidv7,
+  type SyncPullResult,
+  type SyncPushResult,
+  type TerminalEvent,
+} from '@bipae/domain';
 import { createStorage, migrateLocal } from '@bipae/local-db';
 import { nodeSqliteDriver } from '@bipae/local-db/node';
 import { addItem, EMPTY_CART, PdvService } from '@bipae/pdv-core';
@@ -11,6 +16,7 @@ import { withTenant } from '../src/db/client';
 import { stockMovements } from '../src/db/schema';
 import { SefazService } from '../src/modules/fiscal/sefaz.service';
 import { MaintenanceService } from '../src/modules/maintenance/maintenance.service';
+import { NfceEmissionService } from '../src/modules/fiscal/nfce-emission.service';
 import { api, createTestApp, signup, type TestApp } from './helpers';
 import { SefazSimulator, SENHA_A1, testPfx } from './support/sefaz-simulator';
 
@@ -211,6 +217,50 @@ describe('emissão da NFC-e no servidor (F3-14.b)', () => {
     );
     expect(await t.app.get(MaintenanceService).sweepNfce()).toBeGreaterThanOrEqual(1);
     expect((await nota(admin, venda.id, (s) => s === 'authorized')).status).toBe('authorized');
+  });
+
+  it('duas emissões ao mesmo tempo mandam a nota uma vez só (PIE ACH-20)', async () => {
+    sefaz.mode = 'fora';
+    const { admin, vender, ctx } = await loja();
+    const venda = await vender();
+    const erro = await nota(admin, venda.id, (s) => s === 'error');
+    sefaz.mode = 'normal';
+    const emission = t.app.get(NfceEmissionService);
+    const antes = sefaz.calls.length;
+    // Fila, varredura e "tentar de novo" ao mesmo tempo.
+    await Promise.all([
+      emission.emit(ctx as never, erro.id),
+      emission.emit(ctx as never, erro.id),
+      emission.emit(ctx as never, erro.id),
+    ]);
+    const doc = await nota(admin, venda.id, (s) => s === 'authorized');
+    // Só uma das três conversa com a SEFAZ: consulta a chave (já houve tentativa) e envia.
+    const daChave = sefaz.calls.slice(antes).filter((c) => c.body.includes(doc.accessKey));
+    expect(daChave.filter((c) => c.service === 'consulta')).toHaveLength(1);
+    expect(daChave.filter((c) => c.service === 'autorizacao')).toHaveLength(1);
+    expect(doc.status).toBe('authorized');
+  });
+
+  it('nota reservada por outra emissão: "tentar de novo" espera; reserva vencida é retomada', async () => {
+    sefaz.mode = 'fora';
+    const { admin, vender, ctx } = await loja();
+    const venda = await vender();
+    const erro = await nota(admin, venda.id, (s) => s === 'error');
+    sefaz.mode = 'normal';
+    const reservar = (intervalo: string) =>
+      withTenant(t.database.db, ctx as never, (tx) =>
+        tx.execute(
+          sql`update fiscal_documents set sending_until = now() + ${intervalo}::interval where id = ${erro.id}`,
+        ),
+      );
+    await reservar('1 minute');
+    const ocupada = await admin.post(`/fiscal/documents/${erro.id}/retry`);
+    expect(ocupada.statusCode).toBe(409);
+    expect(ocupada.json().message).toContain('sendo enviada');
+    // O processo que reservou caiu: a reserva vence e a nota sai normalmente.
+    await reservar('-1 minute');
+    const depois = (await admin.post(`/fiscal/documents/${erro.id}/retry`)).json();
+    expect(depois.status).toBe('authorized');
   });
 
   it('recusada pela SEFAZ mostra o motivo e pode ser enviada de novo', async () => {
@@ -775,8 +825,12 @@ describe('inventário no arquivo da EFD ICMS/IPI (F4-14.b.5)', () => {
     ]);
     expect(fev.find((l) => l[0] === '0200' && l[1] === 'ARZ-INV')![7]).toBe('10063021');
     expect(fev.find((l) => l[0] === 'H990')).toEqual(['H990', '4']);
-    const resumo = (await admin.get(`/fiscal/efd/summary?companyId=${empresa.id}&month=2026-02`)).json();
-    expect(resumo.warnings.join(' ')).toMatch(/1 produto\(s\) com estoque em 31\/12\/2025 estão sem custo/);
+    const resumo = (
+      await admin.get(`/fiscal/efd/summary?companyId=${empresa.id}&month=2026-02`)
+    ).json();
+    expect(resumo.warnings.join(' ')).toMatch(
+      /1 produto\(s\) com estoque em 31\/12\/2025 estão sem custo/,
+    );
     expect(resumo.warnings.join(' ')).not.toMatch(/Fevereiro pede o inventário/);
 
     // Outro mês: sem pedido, o bloco H fica sem movimento.

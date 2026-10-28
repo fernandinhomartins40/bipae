@@ -61,6 +61,7 @@ import {
   saleItems,
   stockMovements,
 } from '../../db/schema';
+import { beingSent, claimSending, lockDocument } from './sending-lease';
 import { AuditService } from '../audit/audit.service';
 import { CertificatesService } from './certificates.service';
 import { toMotorRule } from './icms-rules.service';
@@ -1086,13 +1087,13 @@ export class NfeInvoicesService implements OnModuleInit {
   async emit(ctx: RequestContext, documentId: string): Promise<void> {
     // 1. Monta e assina dentro do tenant; a conversa com a SEFAZ fica fora da transação.
     const prepared = await withTenant(this.db, ctx, async (tx) => {
-      const [doc] = await tx
-        .select()
-        .from(fiscalDocuments)
-        .where(eq(fiscalDocuments.id, documentId));
+      const doc = await lockDocument(tx, documentId);
       if (!doc) throw new Error('Documento fiscal ainda não disponível.');
       if (!doc.invoiceId || doc.model !== '55') return null;
       if (!['pending', 'error', 'not_configured', 'rejected'].includes(doc.status)) return null;
+      // Outra emissão está mandando esta nota agora (PIE ACH-20): ela termina.
+      if (beingSent(doc)) return null;
+      await claimSending(tx, doc.id);
       const [invoice] = await tx
         .select()
         .from(nfeInvoices)
@@ -1140,6 +1141,7 @@ export class NfeInvoicesService implements OnModuleInit {
         status: 'not_configured',
         pendingItems: prepared.pending,
         lastError: null,
+        sendingUntil: null,
       });
       return;
     }
@@ -1177,13 +1179,18 @@ export class NfeInvoicesService implements OnModuleInit {
           status: 'rejected',
           cStat: result.cStat,
           xMotivo: result.xMotivo,
+          sendingUntil: null,
         });
         return;
       }
       throw new Error(`Lote sem protocolo: ${result.cStat} ${result.xMotivo}`);
     } catch (error) {
       // Falha temporária (rede, SEFAZ fora): fica marcada e a fila tenta de novo.
-      await this.patch(ctx, doc.id, { status: 'error', lastError: (error as Error).message });
+      await this.patch(ctx, doc.id, {
+        status: 'error',
+        lastError: (error as Error).message,
+        sendingUntil: null,
+      });
       this.logger.warn(`NF-e ${accessKey}: ${(error as Error).message}`);
       throw error;
     }
@@ -1204,6 +1211,7 @@ export class NfeInvoicesService implements OnModuleInit {
         nfeProc: buildNfeProc(signedXml, protocol),
         authorizedAt: protocol.outcome === 'authorized' ? new Date() : null,
         lastError: null,
+        sendingUntil: null,
       });
       return;
     }
@@ -1214,6 +1222,7 @@ export class NfeInvoicesService implements OnModuleInit {
       xMotivo: protocol.xMotivo,
       signedXml: null,
       lastError: null,
+      sendingUntil: null,
     });
   }
 

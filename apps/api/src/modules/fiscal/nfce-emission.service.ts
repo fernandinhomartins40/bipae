@@ -46,6 +46,7 @@ import {
   sales,
   terminals,
 } from '../../db/schema';
+import { beingSent, claimSending, lockDocument } from './sending-lease';
 import { MercadoflowSales } from '../mercadoflow/mercadoflow.sales';
 import { CertificatesService } from './certificates.service';
 import { toMotorRule } from './icms-rules.service';
@@ -304,10 +305,7 @@ export class NfceEmissionService implements OnModuleInit {
   async emit(ctx: RequestContext, documentId: string): Promise<void> {
     // 1. Monta e assina dentro do tenant; a conversa com a SEFAZ fica fora da transação.
     const prepared = await withTenant(this.db, ctx, async (tx) => {
-      const [doc] = await tx
-        .select()
-        .from(fiscalDocuments)
-        .where(eq(fiscalDocuments.id, documentId));
+      const doc = await lockDocument(tx, documentId);
       // Ainda não visível: a transação da venda não terminou. A fila tenta de novo.
       if (!doc) throw new Error('Documento fiscal ainda não disponível.');
       // NF-e da retaguarda (F3-33.b) tem a própria emissão.
@@ -315,6 +313,9 @@ export class NfceEmissionService implements OnModuleInit {
       if (!['pending', 'error', 'not_configured', 'rejected'].includes(doc.status)) return null;
       // Venda cancelada antes de a nota sair: quem decide é o cancelamento (F3-17).
       if (doc.cancelRequestedAt && doc.origin === 'server') return null;
+      // Outra emissão (fila, varredura ou "tentar de novo") está mandando esta nota: ela termina.
+      if (beingSent(doc)) return null;
+      await claimSending(tx, doc.id);
       // O certificado da empresa no servidor é a conexão com a SEFAZ, mesmo para a nota que o
       // caixa assinou: sem ele, a nota fica em "falta configurar".
       let key;
@@ -366,6 +367,7 @@ export class NfceEmissionService implements OnModuleInit {
         status: 'not_configured',
         pendingItems: prepared.pending,
         lastError: null,
+        sendingUntil: null,
       });
       return;
     }
@@ -406,13 +408,18 @@ export class NfceEmissionService implements OnModuleInit {
           status: 'rejected',
           cStat: result.cStat,
           xMotivo: result.xMotivo,
+          sendingUntil: null,
         });
         return;
       }
       throw new Error(`Lote sem protocolo: ${result.cStat} ${result.xMotivo}`);
     } catch (error) {
       // Falha temporária (rede, SEFAZ fora): fica marcada e a fila tenta de novo.
-      await this.update(ctx, doc.id, { status: 'error', lastError: (error as Error).message });
+      await this.update(ctx, doc.id, {
+        status: 'error',
+        lastError: (error as Error).message,
+        sendingUntil: null,
+      });
       this.logger.warn(`NFC-e ${accessKey}: ${(error as Error).message}`);
       throw error;
     }
@@ -445,6 +452,7 @@ export class NfceEmissionService implements OnModuleInit {
             nfeProc,
             authorizedAt: protocol.outcome === 'authorized' ? new Date() : null,
             lastError: null,
+            sendingUntil: null,
             updatedAt: new Date(),
           })
           .where(eq(fiscalDocuments.id, id))
@@ -464,6 +472,7 @@ export class NfceEmissionService implements OnModuleInit {
       cStat: protocol.cStat,
       xMotivo: protocol.xMotivo,
       lastError: null,
+      sendingUntil: null,
     });
   }
 
@@ -532,6 +541,13 @@ export class NfceEmissionService implements OnModuleInit {
       }
       if (['authorized', 'denied', 'cancelled', 'voided'].includes(row.status)) {
         throw new AppError(409, 'already_final', 'Esta nota já tem resposta final da SEFAZ.');
+      }
+      if (beingSent(row)) {
+        throw new AppError(
+          409,
+          'sending',
+          'Esta nota está sendo enviada à SEFAZ agora. Espere um instante e confira de novo.',
+        );
       }
       if (row.cancelRequestedAt && row.origin === 'server') {
         throw new AppError(
