@@ -2,9 +2,11 @@ import 'reflect-metadata';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
-import { Controller, Get, Inject, Module, type DynamicModule } from '@nestjs/common';
+import { Controller, Get, Inject, Module, Res, type DynamicModule } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
+import { sql } from 'drizzle-orm';
+import type { FastifyReply } from 'fastify';
 import {
   CLIENT_HEADER,
   parseClientHeader,
@@ -14,11 +16,11 @@ import {
 } from '@bipae/domain';
 import { AuthGuard, Public } from './common/auth';
 import { CONFIG, DB, QUEUE } from './common/di';
-import { createQueue } from './common/queue';
+import { createQueue, type JobQueue } from './common/queue';
 import { ApiExceptionFilter, AppError } from './common/errors';
 import { TokenService } from './common/tokens';
 import type { Config } from './config';
-import type { Database } from './db/client';
+import type { Database, Db } from './db/client';
 import { AccountController } from './modules/account/account.controller';
 import { BillingController } from './modules/billing/billing.controller';
 import { BillingGatewayHolder } from './modules/billing/billing-gateway';
@@ -184,6 +186,8 @@ class HealthController {
   constructor(
     @Inject(CONFIG) private readonly config: Config,
     @Inject(MailService) private readonly mail: MailService,
+    @Inject(DB) private readonly db: Db,
+    @Inject(QUEUE) private readonly queue: JobQueue,
   ) {}
 
   @Public()
@@ -195,6 +199,27 @@ class HealthController {
       minimumClientVersions: this.config.minimumClientVersions,
       /** O que depende de configuração externa (P-04): as telas só oferecem o que está ligado. */
       features: { email: this.mail.enabled },
+    };
+  }
+
+  /**
+   * Prontidão (PIE ACH-25): o /health só diz que o processo está de pé; este confere o banco e a
+   * fila. Sem banco a API não atende (503). Fila fora deixa notas e e-mails para depois, mas o
+   * caixa continua vendendo, então só aparece como "degradado".
+   */
+  @Public()
+  @Get('ready')
+  async ready(@Res({ passthrough: true }) reply: FastifyReply) {
+    const database = await Promise.race([
+      this.db.execute(sql`select 1`).then(() => true),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000).unref()),
+    ]).catch(() => false);
+    const queue = this.queue.ready();
+    if (!database) reply.status(503);
+    return {
+      status: !database ? 'unavailable' : queue ? 'ok' : 'degraded',
+      version: API_VERSION,
+      checks: { database, queue },
     };
   }
 }

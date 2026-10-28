@@ -26,6 +26,8 @@ export interface JobQueue {
   readonly kind: 'memory' | 'redis';
   add(name: string, data?: unknown, options?: JobOptions): Promise<void>;
   process(name: string, handler: JobHandler): void;
+  /** A fila consegue receber tarefas agora? (verificação de prontidão, PIE ACH-25) */
+  ready(): boolean;
   close(): Promise<void>;
 }
 
@@ -49,6 +51,10 @@ export class MemoryQueue implements JobQueue {
 
   process(name: string, handler: JobHandler) {
     this.handlers.set(name, handler);
+  }
+
+  ready() {
+    return !this.closed;
   }
 
   async add(name: string, data?: unknown, options: JobOptions = {}) {
@@ -167,6 +173,10 @@ export class RedisQueue implements JobQueue {
   process(name: string, handler: JobHandler) {
     this.handlers.set(name, handler);
     this.worker ??= this.start();
+  }
+
+  ready() {
+    return this.client.status === 'ready';
   }
 
   private start() {

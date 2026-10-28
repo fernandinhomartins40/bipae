@@ -208,6 +208,8 @@ jobs:
             [ "$code" = "200" ] || { echo "ERRO: $path não respondeu 200."; exit 1; }
           done
           curl -fsS https://www.bipae.com.br/v1/health
+          # Prontidão (PIE ACH-25): a API alcança o banco; fila fora aparece como "degraded".
+          curl -fsS --max-time 20 https://www.bipae.com.br/v1/health/ready
           # PDV Embed (P-06): o componente responde e libera CORS para outros sites.
           cors=$(curl -fsS -D - -o /dev/null --max-time 20 https://www.bipae.com.br/pdv/1/bipae-pdv.js | tr -d '\r' | grep -i '^access-control-allow-origin:' || true)
           echo "pdv/1/bipae-pdv.js -> $cors"
