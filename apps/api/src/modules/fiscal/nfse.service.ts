@@ -180,7 +180,7 @@ export class NfseService implements OnModuleInit {
     await this.queue.add(
       NFSE_CANCEL_JOB,
       { tenantId: ctx.tenantId, documentId: id, userId: ctx.userId },
-      { attempts: 6, backoffMs: 2000 },
+      { attempts: 6, backoffMs: 2000, dedupeId: `${NFSE_CANCEL_JOB}:${id}` },
     );
     return (await this.forOrder(ctx, orderId))!;
   }
@@ -343,7 +343,7 @@ export class NfseService implements OnModuleInit {
     await this.queue.add(
       NFSE_EMIT_JOB,
       { tenantId, documentId, userId },
-      { attempts: 6, backoffMs: 2000 },
+      { attempts: 6, backoffMs: 2000, dedupeId: `${NFSE_EMIT_JOB}:${documentId}` },
     );
   }
 

@@ -279,7 +279,11 @@ class AppModule {
         { provide: DB, useValue: database.db },
         {
           provide: QUEUE,
-          useValue: createQueue(config.REDIS_URL, (m) => console.warn(`[fila] ${m}`)),
+          useValue: createQueue(
+            config.REDIS_URL,
+            (m) => console.warn(`[fila] ${m}`),
+            config.QUEUE_CONCURRENCY,
+          ),
         },
         MaintenanceService,
         TokenService,

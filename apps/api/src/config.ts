@@ -35,6 +35,8 @@ const envSchema = z.object({
   // e de tantos minutos desde a primeira falha (PIE ACH-04). Antes disso pode ser só instabilidade.
   SYNC_QUARANTINE_ATTEMPTS: z.coerce.number().int().positive().default(5),
   SYNC_QUARANTINE_MINUTES: z.coerce.number().min(0).default(10),
+  /** Tarefas em segundo plano rodando ao mesmo tempo na fila em Redis (PIE ACH-21). */
+  QUEUE_CONCURRENCY: z.coerce.number().int().min(1).max(32).default(4),
   /** Encryption key for secrets at rest (2FA seeds). Defaults to a key derived from JWT_SECRET. */
   SECRETS_KEY: z.string().min(32).optional(),
   ADMIN_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),

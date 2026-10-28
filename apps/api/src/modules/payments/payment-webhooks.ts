@@ -261,7 +261,11 @@ export class PaymentWebhooksService implements OnModuleInit {
     let queued = 0;
     for (const f of found) {
       if (!(await this.trusted(f, proof))) continue;
-      await this.queue.add(PAYMENT_WEBHOOK_JOB, { kind: f.kind, tenantId: f.tenantId, ref: f.ref });
+      await this.queue.add(
+        PAYMENT_WEBHOOK_JOB,
+        { kind: f.kind, tenantId: f.tenantId, ref: f.ref },
+        { dedupeId: `${PAYMENT_WEBHOOK_JOB}:${f.kind}:${f.ref}` },
+      );
       queued++;
     }
     return queued;

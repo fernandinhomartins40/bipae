@@ -189,7 +189,7 @@ export class NfceEmissionService implements OnModuleInit {
       NFCE_EMIT_JOB,
       { tenantId, documentId, userId },
       // A tarefa pode chegar antes de a transação da venda terminar: tenta de novo em seguida.
-      { attempts: 6, backoffMs: 2000 },
+      { attempts: 6, backoffMs: 2000, dedupeId: `${NFCE_EMIT_JOB}:${documentId}` },
     );
   }
 

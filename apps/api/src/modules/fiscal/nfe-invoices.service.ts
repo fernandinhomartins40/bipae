@@ -1071,7 +1071,7 @@ export class NfeInvoicesService implements OnModuleInit {
     await this.queue.add(
       NFE_EMIT_JOB,
       { tenantId, documentId, userId },
-      { attempts: 6, backoffMs: 2000 },
+      { attempts: 6, backoffMs: 2000, dedupeId: `${NFE_EMIT_JOB}:${documentId}` },
     );
   }
 

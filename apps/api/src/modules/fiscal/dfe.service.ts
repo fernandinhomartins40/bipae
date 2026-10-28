@@ -89,7 +89,11 @@ export class DfeService implements OnModuleInit {
   }
 
   async schedule(tenantId: string, companyId: string) {
-    await this.queue.add(DFE_SYNC_JOB, { tenantId, companyId }, { attempts: 3, backoffMs: 60_000 });
+    await this.queue.add(
+      DFE_SYNC_JOB,
+      { tenantId, companyId },
+      { attempts: 3, backoffMs: 60_000, dedupeId: `${DFE_SYNC_JOB}:${companyId}` },
+    );
   }
 
   /** Guarda (ou completa) um documento recebido. */

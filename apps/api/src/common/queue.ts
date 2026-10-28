@@ -13,6 +13,11 @@ export interface JobOptions {
   backoffMs?: number;
   /** Repete a tarefa neste intervalo (tarefas de manutenção). */
   repeatEveryMs?: number;
+  /**
+   * Tarefa com o mesmo id ainda na fila (esperando, rodando ou aguardando nova tentativa) faz esta
+   * ser ignorada (PIE ACH-21): a varredura e o "tentar de novo" não empilham a mesma nota.
+   */
+  dedupeId?: string;
 }
 
 export type JobHandler = (data: unknown) => Promise<void>;
@@ -35,6 +40,8 @@ export class MemoryQueue implements JobQueue {
   private running = 0;
   private waiters: (() => void)[] = [];
   private closed = false;
+  /** Ids de tarefas ainda na fila, para ignorar as repetidas. */
+  private readonly queued = new Set<string>();
   /** Tarefas que esgotaram as tentativas (para testes e diagnóstico). */
   readonly failed: { name: string; error: string }[] = [];
 
@@ -52,19 +59,31 @@ export class MemoryQueue implements JobQueue {
       this.timers.add(timer);
       return;
     }
+    if (options.dedupeId) {
+      if (this.queued.has(options.dedupeId)) return;
+      this.queued.add(options.dedupeId);
+    }
     this.run(name, data, options, 1);
+  }
+
+  private release(options: JobOptions) {
+    if (options.dedupeId) this.queued.delete(options.dedupeId);
   }
 
   private run(name: string, data: unknown, options: JobOptions, attempt: number) {
     const handler = this.handlers.get(name);
-    if (!handler || this.closed) return;
+    if (!handler || this.closed) {
+      this.release(options);
+      return;
+    }
     this.running++;
     void handler(data)
       .then(
-        () => undefined,
+        () => this.release(options),
         (error: Error) => {
           const attempts = options.attempts ?? DEFAULT_ATTEMPTS;
           if (attempt >= attempts) {
+            this.release(options);
             this.failed.push({ name, error: error.message });
             this.log(`Tarefa ${name} falhou ${attempts} vezes: ${error.message}`);
             return;
@@ -116,6 +135,11 @@ export class RedisQueue implements JobQueue {
     redisUrl: string,
     private readonly log: (message: string) => void = () => undefined,
     queueName = 'bipae',
+    /**
+     * Tarefas rodando ao mesmo tempo (PIE ACH-21). Com uma só, uma SEFAZ lenta segurava e-mails,
+     * cobranças e limpezas; toda tarefa já precisa aguentar rodar duas vezes.
+     */
+    private readonly concurrency = 4,
   ) {
     // O cliente é criado aqui e entregue pronto ao BullMQ: no pacote de produção (ESM) ele não
     // consegue carregar o `ioredis` sozinho, e a API não subia.
@@ -153,7 +177,7 @@ export class RedisQueue implements JobQueue {
         if (!handler) throw new Error(`Nenhum tratador para a tarefa ${job.name}`);
         await handler(job.data);
       },
-      { connection: this.connection },
+      { connection: this.connection, concurrency: this.concurrency },
     );
     worker.on('error', (error) => this.warn(error.message));
     worker.on('failed', (job, error) => {
@@ -170,6 +194,8 @@ export class RedisQueue implements JobQueue {
       backoff: { type: 'exponential' as const, delay: options.backoffMs ?? DEFAULT_BACKOFF_MS },
       removeOnComplete: 100,
       removeOnFail: 500,
+      // Ignora a repetida enquanto a primeira não termina (sucesso ou última falha).
+      ...(options.dedupeId && { deduplication: { id: options.dedupeId } }),
     };
     if (options.repeatEveryMs) {
       // Tarefa repetida é um "agendador" do BullMQ com id fixo: reiniciar a API atualiza o mesmo
@@ -199,10 +225,11 @@ export class RedisQueue implements JobQueue {
 export function createQueue(
   redisUrl: string | undefined,
   log: (message: string) => void = () => undefined,
+  concurrency = 4,
 ): JobQueue {
   if (!redisUrl) return new MemoryQueue(log);
   try {
-    return new RedisQueue(redisUrl, log);
+    return new RedisQueue(redisUrl, log, 'bipae', concurrency);
   } catch (error) {
     log(`Fila em Redis indisponível, usando a fila em memória: ${(error as Error).message}`);
     return new MemoryQueue(log);

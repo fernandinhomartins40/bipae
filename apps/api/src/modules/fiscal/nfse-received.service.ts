@@ -85,7 +85,7 @@ export class NfseReceivedService implements OnModuleInit {
     await this.queue.add(
       NFSE_RECEIVED_SYNC_JOB,
       { tenantId, companyId },
-      { attempts: 3, backoffMs: 60_000 },
+      { attempts: 3, backoffMs: 60_000, dedupeId: `${NFSE_RECEIVED_SYNC_JOB}:${companyId}` },
     );
   }
 

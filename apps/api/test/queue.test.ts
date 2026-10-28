@@ -46,6 +46,49 @@ function roteiroDaFila(
       await fila.close();
     });
 
+    it('ignora a tarefa repetida enquanto a primeira não termina (PIE ACH-21)', async () => {
+      const fila = criar();
+      let vezes = 0;
+      let soltar = () => undefined as void;
+      const presa = new Promise<void>((r) => (soltar = r));
+      fila.process('emitir', async () => {
+        vezes++;
+        if (vezes === 1) await presa;
+      });
+      const opcoes = { dedupeId: 'emitir:nota-1' };
+      await fila.add('emitir', {}, opcoes);
+      await ate(() => vezes === 1);
+      // A varredura e o "tentar de novo" pedem a mesma nota enquanto ela ainda está rodando.
+      await fila.add('emitir', {}, opcoes);
+      await fila.add('emitir', {}, opcoes);
+      soltar();
+      await new Promise((r) => setTimeout(r, 300));
+      expect(vezes).toBe(1);
+      // Terminou: um novo pedido roda de novo.
+      await fila.add('emitir', {}, opcoes);
+      await esperar(fila, () => vezes === 2);
+      await fila.close();
+    });
+
+    it('uma tarefa lenta não segura as outras (PIE ACH-21)', async () => {
+      const fila = criar();
+      let soltar = () => undefined as void;
+      const presa = new Promise<void>((r) => (soltar = r));
+      let rapida = false;
+      fila.process('sefaz-lenta', async () => {
+        await presa;
+      });
+      fila.process('email', async () => {
+        rapida = true;
+      });
+      await fila.add('sefaz-lenta', {});
+      await new Promise((r) => setTimeout(r, 100));
+      await fila.add('email', {});
+      await ate(() => rapida);
+      soltar();
+      await fila.close();
+    });
+
     it('repete a tarefa no intervalo pedido', async () => {
       const fila = criar();
       let vezes = 0;

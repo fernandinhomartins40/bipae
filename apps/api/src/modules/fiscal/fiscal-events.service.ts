@@ -189,7 +189,7 @@ export class FiscalEventsService implements OnModuleInit {
     await this.queue.add(
       NFE_CORRECTION_JOB,
       { tenantId: ctx.tenantId, eventId, userId: ctx.userId },
-      { attempts: 6, backoffMs: 2000 },
+      { attempts: 6, backoffMs: 2000, dedupeId: `${NFE_CORRECTION_JOB}:${eventId}` },
     );
   }
 
@@ -275,7 +275,7 @@ export class FiscalEventsService implements OnModuleInit {
     await this.queue.add(
       NFCE_CANCEL_JOB,
       { tenantId, documentId, userId },
-      { attempts: 6, backoffMs: 2000 },
+      { attempts: 6, backoffMs: 2000, dedupeId: `${NFCE_CANCEL_JOB}:${documentId}` },
     );
   }
 
