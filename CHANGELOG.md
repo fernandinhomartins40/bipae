@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.d.AP Aviso de retenção da ST na origem para o Amapá] — 28/10/2026
+
+### Adicionado
+- **Protocolo ICMS 11/2026 como dado:** a lista de CEST em que o remetente de outra UF não retém a ST nas compras destinadas ao Amapá (desde 01/03/2026) entra em `st-origin-retention.ts`. Cada item de `stReferencesFor` do Amapá ganha `originRetention` quando vale, e a tela de regras de ICMS mostra o aviso. A lista do Anexo III do RICMS-AP não muda. Fonte guardada em `sources` (`confazPt11Ap`) e conferida por teste, código a código.
+
+### Falta configurar
+- D-059: "17.019.03 17.020.01" aparece sem vírgula no ato; lido como dois códigos, e o 17.020.00 fica sem aviso até conferir no DOU.
+
 ## [F3-26.d.RR e F3-26.d.MA.c ST de Roraima e conferência do Maranhão] — 27/10/2026
 
 ### Adicionado
