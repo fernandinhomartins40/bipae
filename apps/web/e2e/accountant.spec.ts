@@ -19,7 +19,7 @@ test('baixa o pacote do mês para o contador', async ({ page }) => {
 
   await abrirNoMenu(page, 'Arquivos para o contador');
   await expect(page.getByRole('heading', { name: 'Arquivos para o contador' })).toBeVisible();
-  await page.getByLabel('Mês').fill('2026-09');
+  await page.getByLabel('Mês', { exact: true }).fill('2026-09');
   const [arquivo] = await Promise.all([
     page.waitForEvent('download'),
     page.getByRole('button', { name: 'Baixar pacote do mês' }).click(),
