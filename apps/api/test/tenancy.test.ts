@@ -280,8 +280,6 @@ describe('isolamento em TODAS as tabelas com tenant_id (PIE R4-01)', () => {
     const NOT_FORCED: Record<string, string> = {
       memberships: 'lida pelas funções security definer do login antes de haver sessão',
       invites: 'lida por invite_lookup (security definer) quem abre o link ainda sem sessão',
-      company_certificates: 'sem motivo conhecido: forçar numa migração nova (plano PIE)',
-      company_icms_rules: 'sem motivo conhecido: forçar numa migração nova (plano PIE)',
     };
     const problems: string[] = [];
     for (const table of tables) {
