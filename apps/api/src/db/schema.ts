@@ -690,6 +690,8 @@ export const mercadoflowOutbox = pgTable('mercadoflow_outbox', {
   lastError: text('last_error'),
   createdAt: ts('created_at').notNull().defaultNow(),
   sentAt: ts('sent_at'),
+  /** Sobe a cada atualização: o envio só marca o item que não mudou enquanto ia (PIE ACH-22). */
+  version: integer('version').notNull().default(0),
 });
 
 export const productPacks = pgTable(

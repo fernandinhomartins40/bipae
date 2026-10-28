@@ -273,6 +273,48 @@ describe('outbox do MercadoFlow', () => {
     expect(recebidos.at(-1)).toEqual({ path: '/api/v1/partner/fora', body: [{ venda: 1 }] });
   });
 
+  it('item alterado durante o envio não é marcado como enviado: o conteúdo novo sai depois (PIE ACH-22)', async () => {
+    const { ctx } = await loja();
+    const outbox = t.app.get(MercadoflowOutbox);
+    const enviados: unknown[] = [];
+    let alterarNoMeio = true;
+    outbox.register('corrida', 10, async (rows) => {
+      enviados.push(...rows.map((r) => r.payload));
+      // O preço muda enquanto o lote está indo.
+      if (alterarNoMeio) {
+        alterarNoMeio = false;
+        await withTenant(t.database.db, ctx as never, (tx) =>
+          outbox.enqueue(tx, {
+            tenantId: ctx.tenantId,
+            kind: 'corrida',
+            dedupeKey: 'p1',
+            payload: { preco: 200 },
+          }),
+        );
+      }
+      return rows.map((r) => ({ id: r.id, outcome: 'sent' as const }));
+    });
+    await withTenant(t.database.db, ctx as never, (tx) =>
+      outbox.enqueue(tx, {
+        tenantId: ctx.tenantId,
+        kind: 'corrida',
+        dedupeKey: 'p1',
+        payload: { preco: 100 },
+      }),
+    );
+    await outbox.flush();
+    const [linha] = await withTenant(t.database.db, ctx as never, (tx) =>
+      tx.select().from(mercadoflowOutbox).where(eq(mercadoflowOutbox.kind, 'corrida')),
+    );
+    expect(linha).toMatchObject({ status: 'pending', payload: { preco: 200 } });
+    await outbox.flush();
+    expect(enviados).toEqual([{ preco: 100 }, { preco: 200 }]);
+    const [depois] = await withTenant(t.database.db, ctx as never, (tx) =>
+      tx.select().from(mercadoflowOutbox).where(eq(mercadoflowOutbox.kind, 'corrida')),
+    );
+    expect(depois!.status).toBe('sent');
+  });
+
   it('lote recusado inteiro por dado inválido vira recusa, sem repetir', async () => {
     const { ctx } = await loja();
     const outbox = t.app.get(MercadoflowOutbox);

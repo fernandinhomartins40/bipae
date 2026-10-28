@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { uuidv7 } from '@bipae/domain';
-import { and, asc, eq, inArray, lte, sql } from 'drizzle-orm';
+import { and, asc, eq, lte, sql } from 'drizzle-orm';
 import type { Config } from '../../config';
 import { CONFIG, DB, QUEUE } from '../../common/di';
 import type { JobQueue } from '../../common/queue';
@@ -112,6 +112,7 @@ export class MercadoflowOutbox implements OnModuleInit {
           attempts: 0,
           nextAttemptAt: new Date(),
           lastError: null,
+          version: sql`${mercadoflowOutbox.version} + 1`,
         },
       });
   }
@@ -158,18 +159,22 @@ export class MercadoflowOutbox implements OnModuleInit {
       const rejected = results.filter(
         (r): r is Extract<OutboxResult, { outcome: 'rejected' }> => r.outcome === 'rejected',
       );
+      // Só marca o que não mudou enquanto ia: item atualizado no meio do envio continua pendente.
+      const versions = new Map(rows.map((r) => [r.id, r.version]));
+      const unchanged = (id: string) =>
+        and(eq(mercadoflowOutbox.id, id), eq(mercadoflowOutbox.version, versions.get(id) ?? -1));
       await asPlatform(this.db, async (tx) => {
-        if (sent.length) {
+        for (const id of sent) {
           await tx
             .update(mercadoflowOutbox)
             .set({ status: 'sent', sentAt: now, lastError: null })
-            .where(inArray(mercadoflowOutbox.id, sent));
+            .where(unchanged(id));
         }
         for (const item of rejected) {
           await tx
             .update(mercadoflowOutbox)
             .set({ status: 'rejected', lastError: item.error.slice(0, 500) })
-            .where(eq(mercadoflowOutbox.id, item.id));
+            .where(unchanged(item.id));
         }
       });
       const later = results.filter(
@@ -181,7 +186,7 @@ export class MercadoflowOutbox implements OnModuleInit {
             await tx
               .update(mercadoflowOutbox)
               .set({ nextAttemptAt: item.until, lastError: item.error.slice(0, 500) })
-              .where(eq(mercadoflowOutbox.id, item.id));
+              .where(unchanged(item.id));
           }
         });
       }
@@ -204,7 +209,8 @@ export class MercadoflowOutbox implements OnModuleInit {
             nextAttemptAt: new Date(now.getTime() + wait),
             lastError: error.slice(0, 500),
           })
-          .where(eq(mercadoflowOutbox.id, row.id));
+          // Conteúdo novo no meio do envio: sai na próxima rodada, sem esperar.
+          .where(and(eq(mercadoflowOutbox.id, row.id), eq(mercadoflowOutbox.version, row.version)));
       }
     });
   }
