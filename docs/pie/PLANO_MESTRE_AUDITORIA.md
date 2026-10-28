@@ -52,7 +52,7 @@
 | OP-08 | Menu em abas | Mexe em 51 rotas e nos seletores de dezenas de specs E2E: rodada própria com o E2E inteiro como rede |
 | OP-02 | Compras + Notas de entrada numa tela | Junta duas telas grandes; depende da OP-08 |
 | OP-06, OP-09, OP-10, OP-12, OP-13 | Produto (busca no XML, convite por WhatsApp, "Como funciona?", estados vazios, `alert()` restantes) | Próxima rodada de produto |
-| R3-07, R3-12, R3-13 | Numeração com lock, chave de `sync_events`, boleto idempotente | Baixos; próxima rodada técnica |
+| R3-12, R3-13 | Chave de `sync_events`, boleto idempotente (R3-07 feito em `5937607`) | Baixos; próxima rodada técnica |
 
 ## Precisa do dono
 
