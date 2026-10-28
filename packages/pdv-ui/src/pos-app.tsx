@@ -121,15 +121,24 @@ function TerminalPicker({
     if (canCreate) backend.listStores().then(setStores).catch(() => undefined);
   }, [backend, canCreate]);
 
-  const create = async (e: FormEvent) => {
-    e.preventDefault();
+  const [busy, setBusy] = useState(false);
+  const createNamed = async (terminalName: string) => {
+    if (busy) return;
+    setBusy(true);
     try {
-      const terminal = await backend.createTerminal({ storeId: stores[0]!.id, name: name || 'Caixa', platform: platform.kind });
+      const terminal = await backend.createTerminal({ storeId: stores[0]!.id, name: terminalName, platform: platform.kind });
       onLinked(terminal.id);
     } catch (err) {
       setError((err as Error).message);
+      setBusy(false);
     }
   };
+  const create = (e: FormEvent) => {
+    e.preventDefault();
+    void createNamed(name || 'Caixa');
+  };
+  // Primeira vez (OP-04): sem caixa nenhum, um toque cria o "Caixa 1" e já abre.
+  const firstTime = canCreate && terminals?.length === 0 && stores.length > 0;
 
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
@@ -150,10 +159,17 @@ function TerminalPicker({
             <p className="text-muted">Nenhum caixa cadastrado. Peça ao gerente para criar um em Caixas.</p>
           )}
         </div>
+        {firstTime && (
+          <Button size="lg" loading={busy} onClick={() => void createNamed('Caixa 1')}>
+            Começar com o Caixa 1
+          </Button>
+        )}
         {canCreate && stores.length > 0 && (
           <form onSubmit={create} className="mt-6 flex flex-col gap-3 border-t border-border pt-4">
             <TextField label="Novo caixa" placeholder="Ex.: Caixa 1" value={name} onChange={(e) => setName(e.target.value)} />
-            <Button type="submit">Criar e usar este caixa</Button>
+            <Button type="submit" variant={firstTime ? 'secondary' : 'primary'} loading={busy}>
+              Criar e usar este caixa
+            </Button>
           </form>
         )}
         <Button variant="ghost" className="mt-4" onClick={onExit}>

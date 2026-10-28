@@ -98,6 +98,23 @@ describe('PosApp', () => {
     expect(screen.getByTestId('sync-status')).not.toHaveTextContent('para enviar');
   });
 
+  it('primeira vez, sem caixa: um toque cria o "Caixa 1" e já abre (OP-04)', async () => {
+    const createTerminal = vi.fn(async () => terminal);
+    const { platform } = setup(['pos.sell', 'admin.terminals'], {
+      listTerminals: async () => [],
+      listStores: async () => [{ id: terminal.storeId, name: 'Loja' }],
+      createTerminal,
+    });
+    await userEvent.click(await screen.findByRole('button', { name: 'Começar com o Caixa 1' }));
+    expect(createTerminal).toHaveBeenCalledWith({
+      storeId: terminal.storeId,
+      name: 'Caixa 1',
+      platform: 'web',
+    });
+    expect(await screen.findByRole('heading', { name: 'Abrir o caixa' })).toBeVisible();
+    expect(await platform.preferences.get('bipae.terminalId')).toBe(terminal.id);
+  });
+
   it('explains unknown codes and keeps the register usable', async () => {
     setup();
     await userEvent.click(await screen.findByRole('button', { name: /Caixa 1/ }));
