@@ -239,7 +239,15 @@ describe('cobrança automática dos planos (F6-04)', () => {
     // A própria tarefa de cobrança (disparada pelo pagamento) já mandou o recibo.
     await esperarAssunto('pagamento recebido');
     expect(sent.some((m) => m.subject.includes('pagamento recebido'))).toBe(true);
+    // O banco da CI é compartilhado: faturas abertas de outros testes também têm aviso pendente.
+    // Esvazia esses avisos e confere que a varredura seguinte não acha mais nenhum, e que a conta
+    // deste teste recebeu o recibo uma vez só.
+    await maintenance().billingNotices();
     expect(await maintenance().billingNotices()).toBe(0);
+    const recibos = sent.filter(
+      (m) => m.to === dono.me.user.email && m.subject.includes('pagamento recebido'),
+    );
+    expect(recibos).toHaveLength(1);
 
     const paidUntil = new Date((await billingOf(client)).paidUntil!);
     const antes = new Date(paidUntil.getTime() - 3 * DAY);

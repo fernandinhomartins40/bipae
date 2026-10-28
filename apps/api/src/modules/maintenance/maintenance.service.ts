@@ -335,6 +335,20 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
       }
       // Fatura que já nasceu vencida não manda "disponível" e "vencida" juntos: só o último vale.
       const last = kinds.length > 1 && kinds[0]!.kind === 'open' ? kinds.slice(1) : kinds;
+      // Reserva os avisos antes de mandar: duas varreduras ao mesmo tempo (a tarefa na fila e esta)
+      // não mandam o mesmo e-mail duas vezes. Só quem conseguiu marcar envia.
+      if (kinds.length === 0) continue;
+      const columns = kinds.map((k) => k.column);
+      const claimed = rowsOf<{ id: string }>(
+        await asPlatform(this.db, (tx) =>
+          tx.execute(
+            sql`update plan_invoices set ${sql.raw(columns.map((c) => `${c} = now()`).join(', '))}
+                where id = ${row.id} and ${sql.raw(columns.map((c) => `${c} is null`).join(' and '))}
+                returning id`,
+          ),
+        ),
+      );
+      if (claimed.length === 0) continue;
       const owners = await asPlatform(this.db, (tx) =>
         tx
           .select({ name: users.name, email: users.email })
@@ -364,11 +378,6 @@ export class MaintenanceService implements OnModuleInit, OnModuleDestroy {
           sent++;
         }
       }
-      await asPlatform(this.db, (tx) =>
-        tx.execute(
-          sql`update plan_invoices set ${sql.raw(kinds.map((k) => `${k.column} = now()`).join(', '))} where id = ${row.id}`,
-        ),
-      );
     }
     return sent;
   }
