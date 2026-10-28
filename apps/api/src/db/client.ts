@@ -39,7 +39,19 @@ export async function openDatabase(url: string): Promise<Database> {
       close: () => client.close(),
     };
   }
-  const pool = new pg.Pool({ connectionString: url, max: 10 });
+  // Tempos máximos (PIE R5-09): sem eles, uma consulta presa ou uma transação esquecida aberta
+  // segurava uma das 10 conexões para sempre, e com 10 presas a API inteira parava. Os limites são
+  // folgados para relatórios e exportações longos; quem precisar de mais sobe com `set local`.
+  const pool = new pg.Pool({
+    connectionString: url,
+    max: 10,
+    connectionTimeoutMillis: 10_000,
+    idleTimeoutMillis: 30_000,
+    statement_timeout: 120_000,
+    idle_in_transaction_session_timeout: 120_000,
+  });
+  // Erro numa conexão parada (banco reiniciou) sem ouvinte derruba o processo no node-postgres.
+  pool.on('error', (error) => console.error(`[banco] conexão perdida: ${error.message}`));
   // bigint columns come back as numbers; amounts are validated as safe integers on input.
   pg.types.setTypeParser(20, (v) => Number(v));
   return {

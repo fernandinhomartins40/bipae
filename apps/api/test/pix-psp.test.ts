@@ -290,4 +290,59 @@ describe('Pix pelo parceiro no caixa (F8-09.c)', () => {
       .get(ctx, charge.txid, new Date(Date.now() + 3000));
     expect(pago).toMatchObject({ status: 'paid', providerName: 'Pix (Mercado Pago)' });
   });
+
+  it('parceiro lento não prende o banco: o resto da API segue respondendo (PIE ACH-23)', async () => {
+    let soltar = () => undefined as void;
+    const lenta = new Promise<void>((r) => (soltar = r));
+    const transport: PixTransport = {
+      async send(req) {
+        if (req.method === 'POST') {
+          return {
+            status: 201,
+            body: JSON.stringify({
+              id: 888,
+              status: 'pending',
+              point_of_interaction: { transaction_data: { qr_code: '00020101mp888' } },
+            }),
+          };
+        }
+        await lenta;
+        return { status: 200, body: JSON.stringify({ id: 888, status: 'approved' }) };
+      },
+    };
+    Object.assign(t.app.get(PixChargesService), { transport });
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    const store = (await admin.get('/stores')).json()[0];
+    await admin.put(`/stores/${store.id}/payment-settings`, {
+      pix: 'psp',
+      pixPsp: {
+        provider: 'mercadopago',
+        accessToken: 'APP_USR-segredo-mp',
+        payerEmail: 'caixa@loja.com.br',
+      },
+    });
+    const charge = (
+      await admin.post('/payments/pix/charges', { storeId: store.id, amountCents: 1000 })
+    ).json() as PixChargeView;
+    const ctx = {
+      tenantId: dono.me.tenant.id,
+      userId: dono.me.user.id,
+      permissions: [],
+      storeIds: null,
+    } as never;
+    // O caixa pergunta e o parceiro não responde...
+    const consulta = t.app
+      .get(PixChargesService)
+      .get(ctx, charge.txid, new Date(Date.now() + 3000));
+    await new Promise((r) => setTimeout(r, 50));
+    // ...e mesmo assim o resto da API, que usa o banco, responde na hora.
+    const produtos = await Promise.race([
+      admin.get('/products?limit=1').then((r) => r.statusCode),
+      new Promise((r) => setTimeout(() => r('travou'), 3000)),
+    ]);
+    expect(produtos).toBe(200);
+    soltar();
+    expect(await consulta).toMatchObject({ status: 'paid' });
+  });
 });

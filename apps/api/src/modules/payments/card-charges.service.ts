@@ -16,7 +16,7 @@ import { AppError, notFound, parse } from '../../common/errors';
 import { SecretBox } from '../../common/secrets';
 import { assertStore } from '../../common/stores';
 import type { Config } from '../../config';
-import { withTenant, type Db, type Tx } from '../../db/client';
+import { withTenant, type Db, type TenantScope, type Tx } from '../../db/client';
 import { cardCharges, paymentSettings, stores } from '../../db/schema';
 import { MercadoPagoPointClient, orderOutcome, type MpOrder } from './mp-point';
 import {
@@ -93,16 +93,19 @@ export class CardChargesService {
     throw error;
   }
 
-  create(ctx: RequestContext, body: unknown): Promise<CardChargeView> {
+  async create(ctx: RequestContext, body: unknown): Promise<CardChargeView> {
     const input = parse(cardChargeInput, body);
     assertStore(ctx, input.storeId);
-    return withTenant(this.db, ctx, async (tx) => {
-      const [store] = await tx
+    // A maquininha é chamada fora da transação (PIE ACH-23): parceiro lento não prende conexão.
+    const { store, client, terminalId } = await withTenant(this.db, ctx, async (tx) => {
+      const [found] = await tx
         .select({ name: stores.name })
         .from(stores)
         .where(eq(stores.id, input.storeId));
-      if (!store) throw notFound('Loja');
-      const { client, terminalId } = await this.point(tx, input.storeId);
+      if (!found) throw notFound('Loja');
+      return { store: found, ...(await this.point(tx, input.storeId)) };
+    });
+    {
       const id = uuidv7();
       let order: MpOrder;
       try {
@@ -116,21 +119,31 @@ export class CardChargesService {
       } catch (error) {
         this.failure(error);
       }
-      const [row] = await tx
-        .insert(cardCharges)
-        .values({
-          id,
-          tenantId: ctx.tenantId,
-          storeId: input.storeId,
-          provider: 'mp_point',
-          orderId: order.id,
-          amountCents: input.amountCents,
-          method: input.method,
-          createdBy: ctx.userId,
-        })
-        .returning();
+      let row: typeof cardCharges.$inferSelect | undefined;
+      try {
+        [row] = await withTenant(this.db, ctx, (tx) =>
+          tx
+            .insert(cardCharges)
+            .values({
+              id,
+              tenantId: ctx.tenantId,
+              storeId: input.storeId,
+              provider: 'mp_point',
+              orderId: order.id,
+              amountCents: input.amountCents,
+              method: input.method,
+              createdBy: ctx.userId,
+            })
+            .returning(),
+        );
+      } catch (error) {
+        // Sem registro aqui, ninguém acompanharia a cobrança: ela sai da maquininha antes que
+        // alguém pague por uma venda que não existe.
+        await client.cancelOrder(order.id).catch(() => undefined);
+        throw error;
+      }
       return this.view(row!);
-    });
+    }
   }
 
   private async apply(tx: Tx, row: typeof cardCharges.$inferSelect, order: MpOrder, now: Date) {
@@ -150,24 +163,44 @@ export class CardChargesService {
     return this.view(updated ?? row);
   }
 
-  get(ctx: RequestContext, id: string, now = new Date()): Promise<CardChargeView> {
-    return withTenant(this.db, ctx, async (tx) => {
+  /** Lê a cobrança e o cliente da maquininha numa transação curta. */
+  private load(scope: TenantScope, id: string, ctx?: RequestContext) {
+    return withTenant(this.db, scope, async (tx) => {
       const [row] = await tx.select().from(cardCharges).where(eq(cardCharges.id, id));
-      if (!row) throw notFound('Cobrança no cartão');
-      assertStore(ctx, row.storeId);
-      if (row.status !== 'pending') return this.view(row);
-      if (row.checkedAt && now.getTime() - row.checkedAt.getTime() < CHECK_EVERY_MS) {
-        return this.view(row);
-      }
-      const { client } = await this.point(tx, row.storeId);
-      try {
-        return await this.apply(tx, row, await client.getOrder(row.orderId), now);
-      } catch (error) {
-        // Parceiro fora do ar: segue pendente, o caixa pergunta de novo.
-        if (error instanceof PixUnavailableError) return this.view(row);
-        this.failure(error);
-      }
+      if (!row) return null;
+      if (ctx) assertStore(ctx, row.storeId);
+      if (row.status !== 'pending') return { row, client: null };
+      return { row, client: (await this.point(tx, row.storeId)).client };
     });
+  }
+
+  /** Grava a resposta do parceiro numa transação curta, só se a cobrança ainda está pendente. */
+  private save(
+    scope: TenantScope,
+    row: typeof cardCharges.$inferSelect,
+    order: MpOrder,
+    now: Date,
+  ) {
+    return withTenant(this.db, scope, (tx) => this.apply(tx, row, order, now));
+  }
+
+  async get(ctx: RequestContext, id: string, now = new Date()): Promise<CardChargeView> {
+    const found = await this.load(ctx, id, ctx);
+    if (!found) throw notFound('Cobrança no cartão');
+    const { row, client } = found;
+    if (!client) return this.view(row);
+    if (row.checkedAt && now.getTime() - row.checkedAt.getTime() < CHECK_EVERY_MS) {
+      return this.view(row);
+    }
+    let order: MpOrder;
+    try {
+      order = await client.getOrder(row.orderId);
+    } catch (error) {
+      // Parceiro fora do ar: segue pendente, o caixa pergunta de novo.
+      if (error instanceof PixUnavailableError) return this.view(row);
+      this.failure(error);
+    }
+    return this.save(ctx, row, order, now);
   }
 
   /**
@@ -175,32 +208,29 @@ export class CardChargesService {
    * cobrança. O aviso não confirma nada: só a consulta. Cobrança resolvida fica como está.
    * Parceiro fora do ar vira erro, para a fila tentar de novo.
    */
-  confirmFromWebhook(
+  async confirmFromWebhook(
     tenantId: string,
     id: string,
     now = new Date(),
   ): Promise<CardChargeView | null> {
-    return withTenant(this.db, { tenantId }, async (tx) => {
-      const [row] = await tx.select().from(cardCharges).where(eq(cardCharges.id, id));
-      if (!row || row.status !== 'pending') return null;
-      const { client } = await this.point(tx, row.storeId);
-      return this.apply(tx, row, await client.getOrder(row.orderId), now);
-    });
+    const found = await this.load({ tenantId }, id);
+    if (!found?.client) return null;
+    const order = await found.client.getOrder(found.row.orderId);
+    return this.save({ tenantId }, found.row, order, now);
   }
 
-  cancel(ctx: RequestContext, id: string): Promise<CardChargeView> {
-    return withTenant(this.db, ctx, async (tx) => {
-      const [row] = await tx.select().from(cardCharges).where(eq(cardCharges.id, id));
-      if (!row) throw notFound('Cobrança no cartão');
-      assertStore(ctx, row.storeId);
-      if (row.status !== 'pending') return this.view(row);
-      const { client } = await this.point(tx, row.storeId);
-      try {
-        return await this.apply(tx, row, await client.cancelOrder(row.orderId), new Date());
-      } catch (error) {
-        this.failure(error);
-      }
-    });
+  async cancel(ctx: RequestContext, id: string): Promise<CardChargeView> {
+    const found = await this.load(ctx, id, ctx);
+    if (!found) throw notFound('Cobrança no cartão');
+    const { row, client } = found;
+    if (!client) return this.view(row);
+    let order: MpOrder;
+    try {
+      order = await client.cancelOrder(row.orderId);
+    } catch (error) {
+      this.failure(error);
+    }
+    return this.save(ctx, row, order, new Date());
   }
 }
 
