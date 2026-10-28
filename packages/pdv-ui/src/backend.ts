@@ -58,7 +58,7 @@ export interface PosBackend extends SyncTransport {
     email: string,
     password: string,
     permission: AuthorizablePermission,
-  ): Promise<{ userId: string; name: string }>;
+  ): Promise<{ userId: string; name: string; proof?: string }>;
   /** Confere quem entra na troca de operador (F2-03). Precisa de internet. */
   operator?(
     email: string,

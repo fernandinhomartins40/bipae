@@ -298,7 +298,11 @@ describe('supervisor authorization', () => {
       password: 'senha-forte-123',
       permission: 'pos.sale.cancel',
     });
-    expect(ok.json()).toEqual({ userId: owner.me.user.id, name: expect.any(String) });
+    expect(ok.json()).toEqual({
+      userId: owner.me.user.id,
+      name: expect.any(String),
+      proof: expect.stringMatching(/^v1\./),
+    });
     const cashier = await admin.post('/auth/authorize', {
       email: cashierEmail,
       password: 'senha-forte-123',
@@ -1169,6 +1173,59 @@ describe('eventos do caixa: loja, autoria e erro permanente (PIE R1-03, R3-01)',
       sentBy: dono.me.user.id,
       permissionVerified: false,
     });
+  });
+
+  it('autorização do gerente só conta com a prova assinada pelo servidor (PIE ACH-03)', async () => {
+    const dono = await signup(t.app);
+    const admin = api(t.app, dono.auth);
+    await admin.post('/products', { name: 'Água', priceCents: 300, barcodes: ['78912342'] });
+    const caixa = await terminalDevice(dono, 'Caixa A', 'web');
+    await caixa.sync.sync();
+    await caixa.pdv.openSession(1000);
+    const vender = async () =>
+      caixa.pdv.completeSale(
+        addItem(EMPTY_CART, (await caixa.pdv.findByCode('78912342'))!),
+        [{ method: 'cash', receivedCents: 300 }],
+        { discountLimitPercent: 10 },
+      );
+    const primeira = await vender();
+    const segunda = await vender();
+
+    // O gerente digita a senha: o servidor devolve a prova, e o caixa a manda junto no evento.
+    const autorizado = await api(t.app, {
+      ...dono.auth,
+      'x-bipae-terminal': caixa.terminal.id,
+    }).post('/auth/authorize', {
+      email: dono.me.user.email,
+      password: 'senha-forte-123',
+      permission: 'pos.sale.cancel',
+    });
+    expect(autorizado.statusCode).toBe(200);
+    const { userId, proof } = autorizado.json() as { userId: string; proof: string };
+    expect(proof).toMatch(/^v1\./);
+    caixa.pdv.rememberAuthorization('pos.sale.cancel', userId, proof);
+    await caixa.pdv.cancelSale(primeira.id, 'Cliente desistiu', userId);
+    // Sem passar pelo servidor: alguém escreve o id do gerente no evento.
+    await caixa.pdv.cancelSale(segunda.id, 'Cliente desistiu', userId);
+    // Prova de outra permissão não serve para a sangria.
+    caixa.pdv.rememberAuthorization('pos.cash.withdrawal', userId, proof);
+    await caixa.pdv.addMovement('withdrawal', 100, 'Banco', userId);
+    expect((await caixa.sync.sync()).pending).toBe(0);
+
+    const trilha = (await admin.get('/audit?limit=100')).json().items as {
+      action: string;
+      entityId: string;
+      data: Record<string, unknown>;
+    }[];
+    const de = (action: string, entityId?: string) =>
+      trilha.find((e) => e.action === action && (!entityId || e.entityId === entityId))!.data;
+    expect(de('sale.cancelled', primeira.id)).toMatchObject({ authorizationProven: true });
+    expect(de('sale.cancelled', primeira.id).needsReview).toBeUndefined();
+    expect(de('sale.cancelled', segunda.id)).toMatchObject({
+      authorizationProven: false,
+      needsReview: true,
+    });
+    expect(de('cash.withdrawal')).toMatchObject({ authorizationProven: false, needsReview: true });
   });
 
   it('erro de dados que se repete não perde a venda, e o caixa continua recebendo o catálogo', async () => {

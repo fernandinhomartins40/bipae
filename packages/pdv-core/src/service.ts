@@ -169,6 +169,24 @@ export class PdvService {
     this.newId = ctx.newId ?? (() => uuidv7());
   }
 
+  /**
+   * Provas de autorização do gerente recebidas do servidor (PIE ACH-03), por permissão e gerente.
+   * Ficam só na memória: valem para a próxima ação e o servidor recusa as velhas.
+   */
+  private readonly proofs = new Map<string, string>();
+
+  rememberAuthorization(permission: string, userId: string, proof: string | null | undefined) {
+    if (proof) this.proofs.set(`${permission}:${userId}`, proof);
+  }
+
+  private takeProof(permission: string, userId: string | null | undefined) {
+    if (!userId) return null;
+    const key = `${permission}:${userId}`;
+    const proof = this.proofs.get(key) ?? null;
+    this.proofs.delete(key);
+    return proof;
+  }
+
   setOperator(operatorId: string) {
     this.ctx = { ...this.ctx, operatorId };
   }
@@ -704,6 +722,8 @@ export class PdvService {
         amountCents,
         reason,
         authorizedBy,
+        authorizationProof:
+          kind === 'withdrawal' ? this.takeProof('pos.cash.withdrawal', authorizedBy) : null,
       });
     });
     return movementId;
@@ -819,6 +839,10 @@ export class PdvService {
         payments: sale.payments,
         customerTaxId: sale.customerTaxId,
         discountAuthorizedBy: t.discountCents > 0 ? (options.discountAuthorizedBy ?? null) : null,
+        discountAuthorizationProof:
+          t.discountCents > 0
+            ? this.takeProof('pos.discount.above_limit', options.discountAuthorizedBy)
+            : null,
         ...(cart.appliedPromotions?.length && { promotions: cart.appliedPromotions }),
         ...(nfce && { nfce }),
         ...(cart.delivery && { delivery: cart.delivery }),
@@ -974,7 +998,12 @@ export class PdvService {
     if (reason.trim().length < 3) throw new PdvError('Informe o motivo do cancelamento.');
     await this.storage.transaction(async (tx) => {
       await tx.execute("UPDATE sales SET status = 'cancelled' WHERE id = ?", [saleId]);
-      await this.enqueue(tx, 'sale.cancelled', { saleId, reason: reason.trim(), authorizedBy });
+      await this.enqueue(tx, 'sale.cancelled', {
+        saleId,
+        reason: reason.trim(),
+        authorizedBy,
+        authorizationProof: this.takeProof('pos.sale.cancel', authorizedBy),
+      });
     });
   }
 

@@ -94,6 +94,8 @@ export const saleCompletedEvent = z.object({
       .regex(/^[0-9A-Z]{11,14}$/)
       .nullish(),
     discountAuthorizedBy: uuid.nullish(),
+    /** Prova assinada pelo servidor de que o gerente autorizou o desconto (PIE ACH-03). */
+    discountAuthorizationProof: z.string().max(200).nullish(),
     quoteId: uuid.nullish(),
     /** Vendedor da venda (F8-01); cada item pode ter o seu em items[].sellerId. */
     sellerId: uuid.nullish(),
@@ -152,6 +154,7 @@ export const saleCancelledEvent = z.object({
     saleId: uuid,
     reason: z.string().min(3).max(200),
     authorizedBy: uuid.nullish(),
+    authorizationProof: z.string().max(200).nullish(),
   }),
 });
 
@@ -195,6 +198,7 @@ export const cashMovementEvent = z.object({
     amountCents: cents.refine((v) => v > 0, 'Valor deve ser maior que zero'),
     reason: z.string().max(200).nullish(),
     authorizedBy: uuid.nullish(),
+    authorizationProof: z.string().max(200).nullish(),
   }),
 });
 

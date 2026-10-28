@@ -51,6 +51,20 @@ export class SyncController {
     return this.sync.pull(ctx, cursor, limit, pricingVersion, fiscalVersion);
   }
 
+  /** Eventos de caixa que não entraram (PIE ACH-04): o dono vê e manda processar de novo. */
+  @Get('quarantine')
+  @RequirePermission('admin.terminals')
+  quarantine(@Ctx() ctx: RequestContext) {
+    return this.sync.quarantine(ctx);
+  }
+
+  @Post('quarantine/:id/retry')
+  @HttpCode(200)
+  @RequirePermission('admin.terminals')
+  retry(@Ctx() ctx: RequestContext, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.sync.retryQuarantined(ctx, id);
+  }
+
   @Get('status/:terminalId')
   @RequirePermission('pos.sell')
   status(@Ctx() ctx: RequestContext, @Param('terminalId', new ParseUUIDPipe()) terminalId: string) {

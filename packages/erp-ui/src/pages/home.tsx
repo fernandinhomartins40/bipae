@@ -30,6 +30,7 @@ import {
 import type { MouseEvent } from 'react';
 import { Link } from 'react-router';
 import { CONFERE_NOTICES_KEY } from '../confere-notices';
+import { STUCK_EVENTS_KEY, type StuckEvent } from './admin';
 import { useApp, useCan, useMe } from '../context';
 
 const CAPABILITY_LABELS: Record<CapabilityName, string> = {
@@ -223,7 +224,13 @@ function AttentionCard() {
     enabled: canCatalog,
     retry: false,
   });
-  if (!canFinance && !canCatalog) return null;
+  const stuck = useQuery({
+    queryKey: STUCK_EVENTS_KEY,
+    queryFn: () => api.get<StuckEvent[]>('/sync/quarantine'),
+    enabled: canCompanies,
+    retry: false,
+  });
+  if (!canFinance && !canCatalog && !canCompanies) return null;
 
   const items: Attention[] = [];
   const f = finance.data;
@@ -296,6 +303,17 @@ function AttentionCard() {
       text: `${plural(unseen, 'nota nova', 'notas novas')} de fornecedor para conferir`,
       to: '/notas-de-entrada',
       action: 'Conferir',
+    });
+  }
+
+  const stuckCount = stuck.data?.length ?? 0;
+  if (stuckCount > 0) {
+    items.push({
+      key: 'caixa-travado',
+      tone: 'danger',
+      text: `${plural(stuckCount, 'registro do caixa não entrou', 'registros do caixa não entraram')} no sistema`,
+      to: '/caixas',
+      action: 'Ver e resolver',
     });
   }
 

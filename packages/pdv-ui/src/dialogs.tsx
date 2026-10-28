@@ -68,7 +68,8 @@ export function AuthorizeDialog({
 }: {
   permission: AuthorizablePermission;
   backend: PosBackend;
-  onAuthorized: (userId: string) => void;
+  /** `proof`: assinatura do servidor que vai junto no evento (PIE ACH-03). */
+  onAuthorized: (userId: string, proof?: string) => void;
   onClose: () => void;
 }) {
   const [email, setEmail] = useState('');
@@ -80,8 +81,8 @@ export function AuthorizeDialog({
     setBusy(true);
     setError(null);
     try {
-      const { userId } = await backend.authorize(email, password, permission);
-      onAuthorized(userId);
+      const { userId, proof } = await backend.authorize(email, password, permission);
+      onAuthorized(userId, proof);
     } catch (err) {
       setError(
         (err as { code?: string }).code === 'offline'

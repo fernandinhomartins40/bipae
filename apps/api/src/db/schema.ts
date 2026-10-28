@@ -412,6 +412,23 @@ export const syncEvents = pgTable('sync_events', {
   payload: jsonb('payload').notNull(),
 });
 
+/** Evento do caixa que falha sempre com erro de banco (PIE ACH-04): guardado inteiro, nunca perdido. */
+export const syncQuarantine = pgTable('sync_quarantine', {
+  id: uuid('id').primaryKey(),
+  tenantId: uuid('tenant_id').notNull(),
+  terminalId: uuid('terminal_id').notNull(),
+  type: text('type').notNull(),
+  deviceSeq: bigint('device_seq', { mode: 'number' }).notNull(),
+  payload: jsonb('payload').notNull(),
+  error: text('error').notNull(),
+  attempts: integer('attempts').notNull().default(1),
+  firstFailedAt: ts('first_failed_at').notNull().defaultNow(),
+  lastFailedAt: ts('last_failed_at').notNull().defaultNow(),
+  quarantinedAt: ts('quarantined_at'),
+  resolvedAt: ts('resolved_at'),
+  resolvedBy: uuid('resolved_by'),
+});
+
 export const cashSessions = pgTable('cash_sessions', {
   id: uuid('id').primaryKey(),
   tenantId: uuid('tenant_id').notNull(),

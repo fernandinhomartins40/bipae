@@ -18,6 +18,7 @@ import { and, count, eq, isNull, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 import type { Config } from '../../config';
 import { CONFIG, DB } from '../../common/di';
+import { AuthorizationProofs } from '../../common/authorization-proof';
 import { AppError } from '../../common/errors';
 import { SecretBox } from '../../common/secrets';
 import { TokenService } from '../../common/tokens';
@@ -626,7 +627,13 @@ export class AuthService {
     if (!granted) {
       throw new AppError(403, 'forbidden', 'Esta pessoa não tem permissão para autorizar isso.');
     }
-    return { userId: found.id, name: found.name };
+    // A prova vai junto no evento do caixa e o sync confere (PIE ACH-03).
+    const proof = new AuthorizationProofs(this.config.JWT_SECRET).issue(
+      tenantId,
+      found.id,
+      permission,
+    );
+    return { userId: found.id, name: found.name, proof };
   }
 
   /** Operador que entra no caixa (F2-03): senha certa, membro ativo e com permissão de vender. */

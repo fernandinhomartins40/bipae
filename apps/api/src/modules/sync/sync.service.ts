@@ -13,9 +13,11 @@ import {
   type TerminalEvent,
 } from '@bipae/domain';
 import { saleTaxSummaries, sameTaxSummary, type SaleFiscalProfile } from '@bipae/fiscal';
-import { and, asc, eq, gt, inArray, isNotNull, or, sql } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray, isNotNull, isNull, or, sql } from 'drizzle-orm';
 import type { RequestContext } from '../../common/auth';
-import { DB } from '../../common/di';
+import { AuthorizationProofs } from '../../common/authorization-proof';
+import { CONFIG, DB } from '../../common/di';
+import type { Config } from '../../config';
 import { assertStore } from '../../common/stores';
 import { AppError, errorSummary } from '../../common/errors';
 import { withTenant, type Db, type Tx } from '../../db/client';
@@ -43,6 +45,7 @@ import {
   stockMovements,
   stores,
   syncEvents,
+  syncQuarantine,
   tabs,
   terminals,
 } from '../../db/schema';
@@ -74,9 +77,11 @@ type Terminal = typeof terminals.$inferSelect;
 @Injectable()
 export class SyncService {
   private readonly logger = new Logger('Sync');
+  private readonly proofs: AuthorizationProofs;
 
   constructor(
     @Inject(DB) private readonly db: Db,
+    @Inject(CONFIG) private readonly config: Config,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(LotsService) private readonly lots: LotsService,
     @Inject(NfceEmissionService) private readonly emission: NfceEmissionService,
@@ -86,7 +91,9 @@ export class SyncService {
     @Inject(PaymentSettingsService) private readonly paymentSettings: PaymentSettingsService,
     @Inject(WebhooksService) private readonly webhooks: WebhooksService,
     @Inject(LoyaltyService) private readonly loyalty: LoyaltyService,
-  ) {}
+  ) {
+    this.proofs = new AuthorizationProofs(config.JWT_SECRET);
+  }
 
   /**
    * Applies terminal events in device order. Each event runs in its own transaction, so one
@@ -129,52 +136,235 @@ export class SyncService {
     }
     parsed.sort((a, b) => a.deviceSeq - b.deviceSeq);
 
+    // Eventos já guardados na quarentena: o servidor responde por eles, o caixa não reenvia mais.
+    const held = await this.heldIds(
+      ctx,
+      parsed.map((e) => e.id),
+    );
     for (const event of parsed) {
-      // Tarefas que só podem começar depois que a transação do evento terminar (ex.: emitir a NFC-e).
-      const afterCommit: (() => Promise<void>)[] = [];
-      try {
-        await withTenant(this.db, { tenantId: ctx.tenantId, userId: ctx.userId }, async (tx) => {
-          const [inserted] = await tx
-            .insert(syncEvents)
-            .values({
-              id: event.id,
-              tenantId: ctx.tenantId,
-              terminalId,
-              type: event.type,
-              deviceSeq: event.deviceSeq,
-              operatorId: event.operatorId,
-              occurredAt: new Date(event.occurredAt),
-              payload: event,
-            })
-            .onConflictDoNothing()
-            .returning({ id: syncEvents.id });
-          if (!inserted) return; // already applied
-          await this.requireMember(tx, event.operatorId);
-          await this.apply(tx, ctx, terminal, event, afterCommit);
-        });
+      if (held.has(event.id)) {
         result.accepted.push(event.id);
-        for (const run of afterCommit) {
-          await run().catch((error: Error) =>
-            this.logger.warn(`Tarefa depois da venda não agendada: ${error.message}`),
-          );
-        }
+        continue;
+      }
+      try {
+        await this.applyEvent(ctx, terminal, event);
+        result.accepted.push(event.id);
       } catch (error) {
         if (error instanceof Rejection) {
           result.rejected.push({ id: event.id, reason: error.message });
-        } else {
-          // Stop here: later events may depend on this one (order matters), so the terminal
-          // retries from this point instead of getting false rejections.
-          // Erro de banco que se repete (ex.: número de venda repetido) mantém o evento na fila: recusar
-          // perderia uma venda já paga (regra 6). O log diz qual caixa travou, sem dados pessoais;
-          // a quarentena com "reenviar" no caixa está no plano da auditoria (PIE R3-01).
-          this.logger.error(
-            `Evento ${event.id} do caixa ${terminalId} não aplicado: ${errorSummary(error)}`,
-          );
-          break;
+          continue;
         }
+        // Erro de banco: os próximos eventos podem depender deste (a ordem importa), então o caixa
+        // tenta de novo a partir daqui. Recusar perderia uma venda já paga (regra 6). Se o erro se
+        // repete além do limite, o evento vai inteiro para a quarentena e o caixa segue (ACH-04).
+        // O log diz qual caixa travou, sem dados pessoais.
+        this.logger.error(
+          `Evento ${event.id} do caixa ${terminalId} não aplicado: ${errorSummary(error)}`,
+        );
+        const quarantined = await this.recordFailure(ctx, terminalId, event, error).catch(
+          (failure: Error) => {
+            this.logger.error(`Falha ao registrar o evento travado: ${errorSummary(failure)}`);
+            return false;
+          },
+        );
+        if (!quarantined) break;
+        result.accepted.push(event.id);
       }
     }
     return result;
+  }
+
+  /**
+   * Aplica um evento na sua própria transação; `sync_events` garante que cada id entra uma vez.
+   * `extra` roda na mesma transação depois do evento (ex.: dar baixa na quarentena).
+   */
+  private async applyEvent(
+    ctx: RequestContext,
+    terminal: Terminal,
+    event: TerminalEvent,
+    extra?: (tx: Tx) => Promise<void>,
+  ) {
+    // Tarefas que só podem começar depois que a transação do evento terminar (ex.: emitir a NFC-e).
+    const afterCommit: (() => Promise<void>)[] = [];
+    await withTenant(this.db, { tenantId: ctx.tenantId, userId: ctx.userId }, async (tx) => {
+      const [inserted] = await tx
+        .insert(syncEvents)
+        .values({
+          id: event.id,
+          tenantId: ctx.tenantId,
+          terminalId: terminal.id,
+          type: event.type,
+          deviceSeq: event.deviceSeq,
+          operatorId: event.operatorId,
+          occurredAt: new Date(event.occurredAt),
+          payload: event,
+        })
+        .onConflictDoNothing()
+        .returning({ id: syncEvents.id });
+      if (inserted) {
+        await this.requireMember(tx, event.operatorId);
+        await this.apply(tx, ctx, terminal, event, afterCommit);
+      }
+      await extra?.(tx);
+    });
+    for (const run of afterCommit) {
+      await run().catch((error: Error) =>
+        this.logger.warn(`Tarefa depois da venda não agendada: ${error.message}`),
+      );
+    }
+  }
+
+  private async heldIds(ctx: RequestContext, ids: string[]) {
+    if (ids.length === 0) return new Set<string>();
+    const rows = await withTenant(this.db, ctx, (tx) =>
+      tx
+        .select({ id: syncQuarantine.id })
+        .from(syncQuarantine)
+        .where(
+          and(
+            inArray(syncQuarantine.id, ids),
+            isNotNull(syncQuarantine.quarantinedAt),
+            isNull(syncQuarantine.resolvedAt),
+          ),
+        ),
+    );
+    return new Set(rows.map((r) => r.id));
+  }
+
+  /**
+   * Conta mais uma falha do evento. Devolve `true` quando ele passou do limite e foi para a
+   * quarentena: daí em diante o servidor guarda o evento inteiro e o caixa não espera mais por ele.
+   */
+  private async recordFailure(
+    ctx: RequestContext,
+    terminalId: string,
+    event: TerminalEvent,
+    error: unknown,
+  ) {
+    const summary = errorSummary(error);
+    return withTenant(this.db, ctx, async (tx) => {
+      const [row] = await tx
+        .insert(syncQuarantine)
+        .values({
+          id: event.id,
+          tenantId: ctx.tenantId,
+          terminalId,
+          type: event.type,
+          deviceSeq: event.deviceSeq,
+          payload: event,
+          error: summary,
+        })
+        .onConflictDoUpdate({
+          target: syncQuarantine.id,
+          set: {
+            attempts: sql`${syncQuarantine.attempts} + 1`,
+            lastFailedAt: sql`now()`,
+            error: summary,
+          },
+        })
+        .returning();
+      if (!row) return false;
+      if (row.quarantinedAt) return true;
+      const minutes = (Date.now() - row.firstFailedAt.getTime()) / 60_000;
+      if (
+        row.attempts < this.config.SYNC_QUARANTINE_ATTEMPTS ||
+        minutes < this.config.SYNC_QUARANTINE_MINUTES
+      )
+        return false;
+      await tx
+        .update(syncQuarantine)
+        .set({ quarantinedAt: sql`now()` })
+        .where(eq(syncQuarantine.id, event.id));
+      await this.audit.record(
+        tx,
+        { tenantId: ctx.tenantId, userId: ctx.userId },
+        {
+          action: 'sync.event.quarantined',
+          entity: 'terminal',
+          entityId: terminalId,
+          data: { eventId: event.id, type: event.type, deviceSeq: event.deviceSeq, error: summary },
+        },
+      );
+      return true;
+    });
+  }
+
+  /** Eventos que não entraram: os que ainda estão sendo tentados e os que estão na quarentena. */
+  async quarantine(ctx: RequestContext) {
+    const rows = await withTenant(this.db, ctx, (tx) =>
+      tx
+        .select({
+          id: syncQuarantine.id,
+          terminalId: syncQuarantine.terminalId,
+          terminalName: terminals.name,
+          storeId: terminals.storeId,
+          type: syncQuarantine.type,
+          deviceSeq: syncQuarantine.deviceSeq,
+          error: syncQuarantine.error,
+          attempts: syncQuarantine.attempts,
+          firstFailedAt: syncQuarantine.firstFailedAt,
+          lastFailedAt: syncQuarantine.lastFailedAt,
+          quarantinedAt: syncQuarantine.quarantinedAt,
+        })
+        .from(syncQuarantine)
+        .innerJoin(terminals, eq(terminals.id, syncQuarantine.terminalId))
+        .where(isNull(syncQuarantine.resolvedAt))
+        .orderBy(asc(syncQuarantine.firstFailedAt)),
+    );
+    // Quem só enxerga algumas lojas vê só os caixas delas.
+    return rows.filter((r) => !ctx.storeIds || ctx.storeIds.includes(r.storeId));
+  }
+
+  /**
+   * Processa de novo um evento travado, depois que a causa foi resolvida. Dá certo: entra como se
+   * tivesse chegado do caixa e sai da lista. Não dá: continua guardado, com o motivo atualizado.
+   */
+  async retryQuarantined(ctx: RequestContext, id: string) {
+    const row = await withTenant(this.db, ctx, async (tx) => {
+      const [found] = await tx
+        .select({ q: syncQuarantine, terminal: terminals })
+        .from(syncQuarantine)
+        .innerJoin(terminals, eq(terminals.id, syncQuarantine.terminalId))
+        .where(and(eq(syncQuarantine.id, id), isNull(syncQuarantine.resolvedAt)));
+      return found;
+    });
+    if (!row) throw new AppError(404, 'not_found', 'Este evento já foi processado ou não existe.');
+    assertStore(ctx, row.terminal.storeId);
+    const event = terminalEvent.parse(row.q.payload);
+    try {
+      await this.applyEvent(ctx, row.terminal, event, async (tx) => {
+        await tx
+          .update(syncQuarantine)
+          .set({ resolvedAt: sql`now()`, resolvedBy: ctx.userId })
+          .where(eq(syncQuarantine.id, id));
+        await this.audit.record(tx, ctx, {
+          action: 'sync.event.reprocessed',
+          entity: 'terminal',
+          entityId: row.terminal.id,
+          data: { eventId: id, type: event.type, deviceSeq: event.deviceSeq },
+        });
+      });
+      return { ok: true };
+    } catch (error) {
+      const reason = error instanceof Rejection ? error.message : errorSummary(error);
+      await withTenant(this.db, ctx, (tx) =>
+        tx
+          .update(syncQuarantine)
+          .set({
+            attempts: sql`${syncQuarantine.attempts} + 1`,
+            lastFailedAt: sql`now()`,
+            error: reason,
+          })
+          .where(eq(syncQuarantine.id, id)),
+      );
+      throw new AppError(
+        409,
+        'still_failing',
+        error instanceof Rejection
+          ? `Não deu para processar: ${reason}`
+          : 'Ainda não deu para processar este evento: a causa continua. Fale com o suporte do Bipaê.',
+      );
+    }
   }
 
   /**
@@ -194,6 +384,24 @@ export class SyncService {
       .innerJoin(roles, eq(roles.id, memberships.roleId))
       .where(inArray(memberships.userId, people));
     return rows.some((r) => r.active && hasPermission(r.permissions as Permission[], permission));
+  }
+
+  /**
+   * Confere a prova da autorização do gerente (PIE ACH-03). Sem gerente no evento, nada a dizer.
+   * Prova ausente ou que não confere: o evento entra, mas a trilha pede revisão.
+   */
+  private proof(
+    ctx: RequestContext,
+    permission: Permission,
+    authorizedBy: string | null | undefined,
+    proof: string | null | undefined,
+    at: Date,
+  ) {
+    if (!authorizedBy) return {};
+    const proven = this.proofs.verify(ctx.tenantId, authorizedBy, permission, proof, at);
+    return proven
+      ? { authorizationProven: true }
+      : { authorizationProven: false, needsReview: true };
   }
 
   private async requireMember(tx: Tx, userId: string) {
@@ -341,6 +549,13 @@ export class SyncService {
                 event.operatorId,
                 event.payload.authorizedBy,
               ),
+              ...this.proof(
+                ctx,
+                'pos.cash.withdrawal',
+                event.payload.authorizedBy,
+                event.payload.authorizationProof,
+                at,
+              ),
               amountCents: event.payload.amountCents,
               reason: event.payload.reason,
               terminal: terminal.name,
@@ -480,6 +695,13 @@ export class SyncService {
             entityId: p.saleId,
             authorizedBy: p.discountAuthorizedBy,
             data: {
+              ...this.proof(
+                ctx,
+                'pos.discount.above_limit',
+                p.discountAuthorizedBy,
+                p.discountAuthorizationProof,
+                at,
+              ),
               discountCents: p.discountCents,
               subtotalCents: p.subtotalCents,
               terminalSeq: p.terminalSeq,
@@ -550,6 +772,13 @@ export class SyncService {
               'pos.sale.cancel',
               event.operatorId,
               event.payload.authorizedBy,
+            ),
+            ...this.proof(
+              ctx,
+              'pos.sale.cancel',
+              event.payload.authorizedBy,
+              event.payload.authorizationProof,
+              at,
             ),
             reason: event.payload.reason,
             totalCents: sale.totalCents,

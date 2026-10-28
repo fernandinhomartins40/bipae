@@ -42,7 +42,7 @@ export function createPosBackend(api: ApiClient): PosBackend {
         password,
       }),
     authorize: (email, password, permission) =>
-      api.post<{ userId: string; name: string }>('/auth/authorize', {
+      api.post<{ userId: string; name: string; proof?: string }>('/auth/authorize', {
         email,
         password,
         permission,

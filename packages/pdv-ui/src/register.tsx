@@ -1652,7 +1652,8 @@ export function Register({
         <AuthorizeDialog
           permission={auth.permission}
           backend={backend}
-          onAuthorized={(id) => {
+          onAuthorized={(id, proof) => {
+            pdv.rememberAuthorization(auth.permission, id, proof);
             auth.resolve(id);
             setAuth(null);
             focusInput();

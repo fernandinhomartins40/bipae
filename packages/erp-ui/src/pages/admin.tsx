@@ -46,6 +46,7 @@ export function TerminalsPage() {
           </Button>
         }
       />
+      <StuckEvents />
       {terminals.data && (
         <DataTable
           caption="Caixas cadastrados"
@@ -95,6 +96,106 @@ export function TerminalsPage() {
         <TerminalForm stores={stores.data} onClose={() => setCreating(false)} />
       )}
     </>
+  );
+}
+
+export interface StuckEvent {
+  id: string;
+  terminalName: string;
+  type: string;
+  deviceSeq: number;
+  error: string;
+  attempts: number;
+  firstFailedAt: string;
+  quarantinedAt: string | null;
+}
+
+export const STUCK_EVENTS_KEY = ['sync', 'quarantine'];
+
+const EVENT_LABELS: Record<string, string> = {
+  'sale.completed': 'Venda',
+  'sale.cancelled': 'Cancelamento de venda',
+  'sale.returned': 'Devolução',
+  'cash_session.opened': 'Abertura de caixa',
+  'cash_session.closed': 'Fechamento de caixa',
+  'cash_session.movement': 'Sangria ou suprimento',
+  'cash_session.operator_changed': 'Troca de operador',
+  'tab.opened': 'Comanda',
+  'tab.updated': 'Comanda',
+  'tab.closed': 'Fechamento de comanda',
+};
+
+/**
+ * Registros do caixa que o servidor não conseguiu gravar (PIE ACH-04). Nada se perde: ficam
+ * guardados aqui até alguém mandar processar de novo, depois de resolvida a causa.
+ */
+function StuckEvents() {
+  const { api } = useApp();
+  const queryClient = useQueryClient();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ tone: 'danger' | 'success'; text: string } | null>(null);
+  const stuck = useQuery({
+    queryKey: STUCK_EVENTS_KEY,
+    queryFn: () => api.get<StuckEvent[]>('/sync/quarantine'),
+    retry: false,
+  });
+  if (!stuck.data?.length && !message) return null;
+
+  const retry = async (event: StuckEvent) => {
+    setBusy(event.id);
+    setMessage(null);
+    try {
+      await api.post(`/sync/quarantine/${event.id}/retry`);
+      setMessage({ tone: 'success', text: 'Pronto! O registro entrou e saiu da lista.' });
+    } catch (e) {
+      setMessage({ tone: 'danger', text: (e as Error).message });
+    } finally {
+      setBusy(null);
+      await queryClient.invalidateQueries({ queryKey: STUCK_EVENTS_KEY });
+    }
+  };
+
+  return (
+    <div className="mb-6 flex flex-col gap-3">
+      {message && <Alert tone={message.tone}>{message.text}</Alert>}
+      {!!stuck.data?.length && (
+        <Alert tone="warning" title="Registros do caixa esperando para entrar">
+          <p className="mb-3">
+            O servidor não conseguiu gravar estes registros. Eles estão guardados e nada foi
+            perdido; o caixa continua vendendo normalmente. Quando a causa for resolvida (às vezes
+            com a ajuda do suporte), toque em "Tentar de novo".
+          </p>
+          <ul className="flex flex-col gap-2" aria-label="Registros travados">
+            {stuck.data.map((event) => (
+              <li
+                key={event.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-ui bg-surface p-3"
+              >
+                <span>
+                  <span className="font-semibold">
+                    {EVENT_LABELS[event.type] ?? 'Registro'} do {event.terminalName}
+                  </span>
+                  <span className="block text-sm text-muted">
+                    Desde {dateTime.format(new Date(event.firstFailedAt))} ·{' '}
+                    {event.quarantinedAt
+                      ? 'guardado à parte'
+                      : `tentando de novo (${event.attempts}x)`}
+                  </span>
+                </span>
+                <Button
+                  variant="secondary"
+                  loading={busy === event.id}
+                  disabled={busy !== null}
+                  onClick={() => void retry(event)}
+                >
+                  Tentar de novo
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </Alert>
+      )}
+    </div>
   );
 }
 

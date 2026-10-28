@@ -31,6 +31,10 @@ const envSchema = z.object({
    * do X-Forwarded-For, que o próprio cliente escreve, e os limites por IP caíam (PIE R1-01).
    */
   TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(2),
+  // Evento do caixa que falha com erro de banco vai para a quarentena depois de tantas tentativas
+  // e de tantos minutos desde a primeira falha (PIE ACH-04). Antes disso pode ser só instabilidade.
+  SYNC_QUARANTINE_ATTEMPTS: z.coerce.number().int().positive().default(5),
+  SYNC_QUARANTINE_MINUTES: z.coerce.number().min(0).default(10),
   /** Encryption key for secrets at rest (2FA seeds). Defaults to a key derived from JWT_SECRET. */
   SECRETS_KEY: z.string().min(32).optional(),
   ADMIN_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
