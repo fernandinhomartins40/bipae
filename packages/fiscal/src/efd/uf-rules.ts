@@ -256,7 +256,7 @@ export const EFD_SIMPLES_BY_UF: readonly EfdUfRule[] = [
     status: 'partial',
     from: '2014-02-10',
     note: 'No Rio de Janeiro, o Simples Nacional é dispensado da EFD enquanto estiver dentro do sublimite estadual; passou do sublimite e ficou impedido de recolher o ICMS pelo Simples, entrega.',
-    act: 'Resolução SEFAZ 720/2014, Anexo VII da Parte II, art. 1º, § 1º, I',
+    act: 'Resolução SEFAZ 720/2014, Anexo VII da Parte II, art. 1º, § 1º, I, e art. 8º (quem sai do Simples fica obrigado a partir da exclusão)',
     url: 'https://www.legisweb.com.br/legislacao/?id=265403',
   },
   {
@@ -514,8 +514,8 @@ export const EFD_1601_BY_UF: readonly EfdUfRule[] = [
     status: 'exempt',
     from: '2023-07-19',
     note: 'O Rio de Janeiro dispensa o registro 1601 de todos os contribuintes desde 19/07/2023.',
-    act: 'Resolução SEFAZ 551/2023 e Resolução SEFAZ 625/2024, que dão redação ao § 2º do art. 6º-A do Anexo VII da Parte II da Resolução 720/2014',
-    url: 'https://www.legisweb.com.br/legislacao/?id=456517',
+    act: 'Resolução SEFAZ 720/2014, Anexo VII da Parte II, art. 6º-A, § 2º (redação das Resoluções 551/2023 e 625/2024; texto consolidado lido em 28/10/2026)',
+    url: 'https://www.legisweb.com.br/legislacao/?id=265403',
   },
   {
     // Resposta à Consulta SEFAZ-TO 41/2023: a Portaria SEFAZ 93/2023 (altera a 733/2017) torna o
