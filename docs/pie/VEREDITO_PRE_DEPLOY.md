@@ -61,9 +61,39 @@ A CI ficou toda verde, inclusive a API contra PostgreSQL 16 e Redis reais, o dep
 
 Ainda falta, para APROVADO PARA DEPLOY sem ressalvas: backup externo verificado (ACH-10).
 
+## Atualização de 28/10/2026, 03h44: lote 2
+
+O lote 2 do `PLANO_MESTRE_AUDITORIA.md` foi implementado e publicado: 14 commits (`5fa4d8e` a
+`cfc9b29`), com as migrações 0090 a 0093, todas só de acréscimo. A CI ficou toda verde, inclusive
+a API contra PostgreSQL 16 e Redis reais, e o deploy passou. `/v1/health/ready` responde
+`{"status":"ok","checks":{"database":true,"queue":true}}` em produção.
+
+Ressalvas do veredito anterior que foram resolvidas:
+
+- **ACH-04:** quarentena com reprocessamento e aviso no painel;
+- **ACH-03:** prova HMAC da autorização do gerente;
+- **ACH-09:** teste de componente;
+- **ACH-28:** E2E essencial antes do deploy.
+
+Também entraram na mesma rodada:
+
+- **Notas fiscais:** reserva do envio da nota (ACH-20).
+- **Fila:** deduplicação e concorrência (ACH-21).
+- **MercadoFlow:** versão na outbox (ACH-22).
+- **Pagamentos:** parceiro de pagamento fora da transação, mais tempos máximos no pool (ACH-23, R5-09).
+- **Infraestrutura:** verificação de prontidão (ACH-25) e imagem enxuta (ACH-26).
+- **Telas:** confirmações, quantidade com vírgula, revisão do fechamento e erro sem campo (ACH-29).
+- **Produto:** OP-04, OP-07, OP-11 e parte da OP-13.
+- **Cancelamento e devolução:** invariantes conferidas no servidor (R3-08).
+
+Veredito do código: **APROVADO**, sem ressalva técnica aberta de prioridade P0 ou P1.
+
+Para o veredito de produção virar **APROVADO PARA DEPLOY** sem ressalvas, ainda falta o backup
+externo verificado (ACH-10). Isso depende da decisão do dono.
+
 ## Pendências por dono da decisão
 
 | Quem | O quê |
 |---|---|
 | Dono | Autorizar o push; backup externo e teste de restauração (custo); swap e limites das outras aplicações na VPS; usuário de deploy sem root; política de funcionalidades por plano; devolução em outra loja (R3/P10); grupo B de produto |
-| Próxima rodada técnica | Lote 2 do `PLANO_MESTRE_AUDITORIA.md` (quarentena de eventos, prova do gerente, NFC-e com reserva, fila com `jobId`, outbox com versão, health de prontidão, imagem enxuta, migração ACH-30, menu em abas OP-08) |
+| Próxima rodada técnica | Menu em abas (OP-08), Compras + Notas de entrada (OP-02), OP-06/09/10/12, diálogos nativos restantes (OP-13), R3-07, R3-12 e R3-13 |

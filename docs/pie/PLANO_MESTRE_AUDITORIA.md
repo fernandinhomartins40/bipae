@@ -27,21 +27,32 @@
 | ACH-19 | Segurança | Isolamento testado em 25 tabelas | `tenancy.test.ts` | Vazamento não detectado | Baixa | P1 | Lista do banco + políticas | `tenancy.test.ts` | Feito |
 | R4-14 | Qualidade | Lint varria `.claude/` | `eslint.config.js` | Lint de 336 s | — | P3 | Ignorar `.claude/**` | `pnpm lint` | Feito |
 
-## Lote 2 — próxima rodada (sem decisão pendente)
+## Lote 2 — executado em 28/10/2026
 
-| ID | Problema | Correção proposta | Teste de aceite |
-|---|---|---|---|
-| ACH-04 (resto) | Evento travado sem quarentena | Tabela de eventos recusados no servidor + "reenviar" no caixa + aviso no painel | Venda com número repetido não some e o dono vê o caixa travado |
-| ACH-30 | Duas tabelas sem FORCE RLS | Migração `alter table ... force row level security` | `tenancy.test.ts` sem exceções "sem motivo" |
-| ACH-03 (resto) | Autorização do gerente sem prova | HMAC emitido por `/auth/authorize` e conferido no `sync` | Prova falsa vira `needs_review` |
-| ACH-20 | Corrida na NFC-e | Reserva `status='sending'`; retry só enfileira | Duas emissões simultâneas = uma autorização |
-| ACH-21 | Fila em série sem dedupe | `jobId` determinístico; filas por tipo | Varredura não duplica tarefas |
-| ACH-22 | Outbox do MercadoFlow perde atualização | Coluna `version` (migração nova) | Alteração durante envio sai no próximo |
-| ACH-23 | PSP dentro da transação | Chamar fora, aplicar com compare-and-set | Pool não esgota com PSP lento |
-| ACH-25/26 | Health raso; imagem de 948 MB | `/v1/health/ready`; `pnpm deploy --prod` | Imagem < 300 MB |
-| ACH-28 | E2E não segura deploy | Deploy depende do E2E essencial; estabilizar `admin.spec` | Deploy para com E2E vermelho |
-| ACH-29 | UX do caixa e confirmações | `ConfirmDialog`, `QuantityField`, trava de duplo envio | Testes de componente |
-| OP-02/04/06/07/08–13 | Produto | Ver `OPORTUNIDADES_PRODUTO.md` | — |
+| ID | Problema | Correção | Teste de aceite | Estado |
+|---|---|---|---|---|
+| ACH-04 (resto) | Evento travado sem quarentena | Tabela `sync_quarantine` (migração 0091): depois de `SYNC_QUARANTINE_ATTEMPTS` falhas em `SYNC_QUARANTINE_MINUTES`, o evento é guardado inteiro e o caixa segue; aviso em Caixas e no Início; "Tentar de novo" reprocessa; trilha `sync.event.quarantined` e `sync.event.reprocessed` | `sync-quarantine.test.ts`: caixa segue, venda guardada, reprocesso falha enquanto a causa existe e entra depois | Feito |
+| ACH-30 | Duas tabelas sem FORCE RLS | Migração 0090 | `tenancy.test.ts` sem exceções "sem motivo" | Feito |
+| ACH-03 (resto) | Autorização do gerente sem prova | `/auth/authorize` devolve prova HMAC (empresa, gerente, permissão, hora); o caixa manda no evento; o sync marca `authorizationProven` e `needsReview` na trilha, sem recusar a venda | `authorization-proof.test.ts`; `sync.test.ts` (prova válida, ausente e de outra permissão) | Feito |
+| ACH-20 | Corrida na NFC-e | Reserva `sending_until` com `select … for update` (migração 0092) na NFC-e e na NF-e; "tentar de novo" com reserva ativa responde 409 | `nfce-emission.test.ts`: três emissões simultâneas = uma consulta e um envio (falha sem a correção) | Feito |
+| ACH-21 | Fila em série sem dedupe | `dedupeId` (deduplicação do BullMQ e da fila em memória) nas emissões, cancelamentos, buscas de documentos e avisos de pagamento; `QUEUE_CONCURRENCY` (padrão 4) | `queue.test.ts`: repetida ignorada enquanto roda; tarefa lenta não segura outra | Feito |
+| ACH-22 | Outbox do MercadoFlow perde atualização | Coluna `version` (migração 0093); o envio só marca o item que não mudou | `mercadoflow.test.ts`: alteração no meio do envio sai na rodada seguinte | Feito |
+| ACH-23 | PSP dentro da transação | Pix e maquininha: lê, chama fora da transação, grava com a cobrança ainda pendente; pedido da maquininha sem registro é cancelado. Pool com tempos máximos e ouvinte de erro (R5-09) | `pix-psp.test.ts`: com o parceiro parado, `/products` responde (trava sem a correção) | Feito |
+| ACH-25 | Health raso | `/v1/health/ready` confere banco (503 sem ele) e fila (degradado); o deploy confere no domínio | `health.test.ts` | Feito |
+| ACH-26 | Imagem de 948 MB | `pnpm deploy --prod`; a imagem leva só `dist` e dependências de produção (cerca de 125 MB + base) | API sobe e responde `/v1/health/ready` a partir dessa estrutura (Docker indisponível nesta máquina: tamanho final conferido no deploy) | Feito |
+| ACH-28 | E2E não segura deploy | Job `e2e` no deploy (foundation, pos, pos-modes, nfce-contingency) antes do build; `admin.spec` espera a aba de suporte | Deploy depende do job | Feito |
+| ACH-29 | UX do caixa e confirmações | `ConfirmDialog`, `QuantityField`, trava de duplo envio na sangria, revisão do fechamento, aviso geral para erro sem campo (R2-07, R2-09 a R2-12) | `ui.test.tsx`, `cash-dialog.test.tsx`, `forms.test.ts`, `payment-dialog.test.tsx` (ACH-09), E2E `pos` e `icms-rules` | Feito |
+| R3-08 | Cancelamento e devolução só conferidos no caixa | Venda travada; recusa cancelar com devolução e devolver acima do total ou de venda cancelada | `sync.test.ts` (PIE R3-08) | Feito |
+| OP-04, OP-07, OP-11, OP-13 (parte) | Produto | Primeiro caixa com um toque; limpar venda e desativar caixa com `ConfirmDialog`; foco em "Finalizar venda" quando o pagamento cobre o total; "N produtos sem estoque" no Início | `pos-app.test.tsx`, `payment-dialog.test.tsx`, typecheck | Feito |
+
+### Ainda no plano (sem decisão pendente)
+
+| ID | Problema | Por que ficou |
+|---|---|---|
+| OP-08 | Menu em abas | Mexe em 51 rotas e nos seletores de dezenas de specs E2E: rodada própria com o E2E inteiro como rede |
+| OP-02 | Compras + Notas de entrada numa tela | Junta duas telas grandes; depende da OP-08 |
+| OP-06, OP-09, OP-10, OP-12, OP-13 | Produto (busca no XML, convite por WhatsApp, "Como funciona?", estados vazios, `alert()` restantes) | Próxima rodada de produto |
+| R3-07, R3-12, R3-13 | Numeração com lock, chave de `sync_events`, boleto idempotente | Baixos; próxima rodada técnica |
 
 ## Precisa do dono
 
