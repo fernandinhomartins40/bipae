@@ -218,6 +218,13 @@ function AttentionCard() {
     enabled: canCatalog,
     retry: false,
   });
+  // Saldo por produto e loja; produto que nunca teve movimento (serviço, por exemplo) não entra.
+  const stock = useQuery({
+    queryKey: ['home', 'stock'],
+    queryFn: () => api.get<{ productId: string; quantityMilli: number }[]>('/stock'),
+    enabled: canCatalog,
+    retry: false,
+  });
   const notices = useQuery({
     queryKey: CONFERE_NOTICES_KEY,
     queryFn: () => api.get<ConfereNotices>('/mercadoflow/confere-notices'),
@@ -293,6 +300,21 @@ function AttentionCard() {
           : `O certificado digital de ${c.subject} vence em ${plural(c.daysLeft, 'dia', 'dias')}`,
       to: canCompanies ? '/empresas' : null,
       action: canCompanies ? 'Trocar certificado' : 'Avise quem cuida da empresa',
+    });
+  }
+  // OP-11: produto zerado ou negativo some da prateleira e do caixa sem ninguém perceber.
+  const totals = new Map<string, number>();
+  for (const b of stock.data ?? []) {
+    totals.set(b.productId, (totals.get(b.productId) ?? 0) + b.quantityMilli);
+  }
+  const outOfStock = [...totals.values()].filter((q) => q <= 0).length;
+  if (outOfStock > 0) {
+    items.push({
+      key: 'sem-estoque',
+      tone: 'warning',
+      text: `${plural(outOfStock, 'produto está', 'produtos estão')} sem estoque`,
+      to: '/produtos',
+      action: 'Ver produtos',
     });
   }
   const unseen = notices.data?.unseen ?? 0;
