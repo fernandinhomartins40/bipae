@@ -25,9 +25,11 @@ services:
     networks: [internal]
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U bipae -d bipae']
-      interval: 10s
+      interval: 60s
+      start_interval: 5s
+      start_period: 120s
       timeout: 5s
-      retries: 10
+      retries: 5
     deploy:
       resources:
         limits:
@@ -44,9 +46,11 @@ services:
     networks: [internal]
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
-      interval: 10s
+      interval: 60s
+      start_interval: 5s
+      start_period: 120s
       timeout: 5s
-      retries: 10
+      retries: 5
     deploy:
       resources:
         limits:
@@ -94,10 +98,11 @@ services:
         aliases: [bipae-api]
     healthcheck:
       test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3333/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
-      interval: 15s
+      interval: 60s
+      start_interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 5
+      start_period: 120s
     deploy:
       resources:
         limits:
@@ -114,9 +119,11 @@ services:
     networks: [internal]
     healthcheck:
       test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1/v1/health >/dev/null || exit 1']
-      interval: 15s
+      interval: 60s
+      start_interval: 5s
+      start_period: 120s
       timeout: 5s
-      retries: 10
+      retries: 5
     deploy:
       resources:
         limits:
