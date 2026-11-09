@@ -30,6 +30,11 @@ describe('consulta às tabelas fiscais', () => {
     expect(ma.items.length).toBeGreaterThan(0);
     expect(ma.items.some((i: { stale: boolean }) => i.stale)).toBe(true);
     expect(ma.source.page).toBe('https://dfe-portal.svrs.rs.gov.br/Difal/Aliquotas');
+    expect(ma.fcpLaw).toBeNull();
+    // F3-34: em SP o portal não lista o FCP; a lista vem da Lei 16.006/2015, com o link oficial.
+    const sp = (await cliente.get('/fiscal/icms-products?uf=sp')).json();
+    expect(sp.fcpLaw).toMatchObject({ rate: '2', law: 'Lei 16.006/2015, art. 2º, I' });
+    expect(sp.fcpLaw.sources[0].page).toBe('https://www.al.sp.gov.br/norma/176464');
     expect((await cliente.get('/fiscal/icms-products?uf=XX')).statusCode).toBe(404);
     expect((await cliente.get('/fiscal/icms-products')).json().message).toBe('Informe a UF');
   });

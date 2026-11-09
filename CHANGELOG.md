@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-34.a Produtos do FCP pela lei da UF] — 09/11/2026
+
+### Adicionado
+- **Acervo ctresb/leis como fonte de texto de lei** (aprovado pelo dono em 09/11/2026): cada lei usada fica guardada em `packages/fiscal/sources` (`ctresb-leis_*.md.gz`) e o manifest aponta para a página oficial da Assembleia.
+- **FCP por produto pela lei** (`fcp-products.json`): a lista de produtos que pagam o adicional do fundo de combate à pobreza em MG (FEM, Lei 6.763/1975, art. 12-A, até 31/12/2026), ES (Lei 7.000/2001, art. 20-A), SE (Lei 4.731/2002), SP (Lei 16.006/2015), RS (Ampara, art. 13-A da Lei 8.820/1989, sem data final desde a Lei 16.109/2024) e AM (Lei 4.454/2017 sem os incisos revogados pela Lei 4.519/2017; veículos e TV por assinatura com 1,1% em 2026). Um teste confere cada produto no texto da lei guardada. A rota `/v1/fiscal/icms-products` devolve a lista em `fcpLaw` e a tela Regras de ICMS a mostra abaixo do Portal da DIFAL, com o link oficial e aviso quando o texto é o original.
+- **RR:** a alíquota geral de 20% passa a citar a lei (Lei 59/1993, art. 32, I, "d", pela Lei 1.767/2022), e não mais só o Portal da DIFAL.
+
+### Falta configurar
+- FCP por produto de PB (alterações de 2015 a 2019, uma delas ilegível no acervo), PE, RN, RR e TO (F3-34.b e F3-34.c).
+
 ## [F3-26.d.AP Aviso de retenção da ST na origem para o Amapá] — 28/10/2026
 
 ### Adicionado

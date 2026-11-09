@@ -209,6 +209,13 @@ test('Minas Gerais: MVA do leite UHT pelo Anexo XV do RICMS/MG (F3-26.c.MG)', as
   await expect(page.getByText(/ · MG/)).toBeVisible();
 
   await abrirNoMenu(page, 'Regras de ICMS');
+  // F3-34: o portal não lista o FCP de MG; a lista vem da Lei 6.763/1975, art. 12-A.
+  await expect(
+    page.getByRole('heading', { name: 'FCP pela lei de MG: Fundo de Erradicação da Miséria (FEM)' }),
+  ).toBeVisible();
+  await expect(page.getByText('telefones celulares e smartphones')).toBeVisible();
+  await expect(page.getByText(/Vale até 31\/12\/2026/)).toBeVisible();
+
   await page.getByRole('button', { name: 'Nova regra' }).click();
   await page.getByLabel('Nome da regra').fill('Leite UHT');
   await page.getByLabel('Vale a partir de').fill('2026-10-17');

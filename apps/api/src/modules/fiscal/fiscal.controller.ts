@@ -25,6 +25,7 @@ import {
   cestsForNcm,
   cfopGroup,
   icmsProductRates,
+  fcpProductsByLaw,
   ST_REFERENCE_UFS,
   ST_SEGMENT_UFS,
   stReferencesFor,
@@ -499,9 +500,15 @@ export class FiscalController {
     );
     const found = icmsProductRates(uf);
     if (!found) throw notFound('UF');
+    const fcp = fcpProductsByLaw(uf);
     return {
       ...found,
       source: { page: TABLE_SOURCES.difal.page, downloadedAt: TABLE_SOURCES.difal.downloadedAt },
+      // F3-34: produtos do FCP pela lei da UF, com o link oficial de cada lei.
+      fcpLaw: fcp && {
+        ...fcp,
+        sources: fcp.sources.map((key) => ({ title: TABLE_SOURCES[key].title, page: TABLE_SOURCES[key].page })),
+      },
     };
   }
 

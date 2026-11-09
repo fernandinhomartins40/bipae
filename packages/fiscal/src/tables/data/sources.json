@@ -1368,5 +1368,86 @@
   "publishedAt": "2024-06-10",
   "downloadedAt": "2026-10-27",
   "sha256": "b3730f725448b74a15a9333d4126f3eab9cba7f39704953a0ff33e30fa595574"
+ },
+ "fcpLawMg": {
+  "file": "ctresb-leis_MG_Lei_6763-1975_2026-10-13.md.gz",
+  "title": "Lei 6.763/1975 de Minas Gerais, texto atualizado (art. 12-A: adicional do Fundo de Erradicação da Miséria)",
+  "publisher": "Assembleia Legislativa de Minas Gerais (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://dadosabertos.almg.gov.br/api/v2/legislacao/mineira/LEI/6763/1975/documento?tipoDoc=572",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-11-09",
+  "sha256": "37a8429860ce24d07a1260a9487387452718cb3bde05964e5c54d8afd12a001f"
+ },
+ "fcpLawSp": {
+  "file": "ctresb-leis_SP_Lei_16006-2015_2026-10-13.md.gz",
+  "title": "Lei 16.006/2015 de São Paulo (FECOEP), texto original",
+  "publisher": "Assembleia Legislativa de São Paulo (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://www.al.sp.gov.br/norma/176464",
+  "publishedAt": "2015-11-24",
+  "downloadedAt": "2026-11-09",
+  "sha256": "43f0e16c990583a5340e02b8780cea31a7f507759933c670d9aebe300d7cf40c"
+ },
+ "fcpLawEs": {
+  "file": "ctresb-leis_ES_Lei_7000-2001_2026-10-13.md.gz",
+  "title": "Lei 7.000/2001 do Espírito Santo, texto compilado (arts. 20, IV, e 20-A: adicional do Fundo Estadual de Combate à Pobreza)",
+  "publisher": "Assembleia Legislativa do Espírito Santo (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://www3.al.es.gov.br/legislacao/norma.aspx?id=13357",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-11-09",
+  "sha256": "af26d307e5d6a8f56fd3cf7cf08948cfd952cac3b1a2ae1a9162d2a038681d11"
+ },
+ "fcpLawRs": {
+  "file": "ctresb-leis_RS_Lei_14742-2015_2026-10-13.md.gz",
+  "title": "Lei 14.742/2015 do Rio Grande do Sul (Ampara/RS; art. 13-A da Lei 8.820/1989)",
+  "publisher": "Assembleia Legislativa do Rio Grande do Sul (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://www.al.rs.gov.br/legis/M010/M0100018.asp?Hid_IdNorma=62360&Texto=&Origem=1",
+  "publishedAt": "2015-09-24",
+  "downloadedAt": "2026-11-09",
+  "sha256": "ea564944cede3c43c8e0548debc66f60c06610dae12982409c74003cba93d388"
+ },
+ "fcpLawRs2024": {
+  "file": "ctresb-leis_RS_Lei_16109-2024_2026-10-13.md.gz",
+  "title": "Lei 16.109/2024 do Rio Grande do Sul (novo caput do art. 13-A da Lei 8.820/1989, sem data final)",
+  "publisher": "Assembleia Legislativa do Rio Grande do Sul (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://www.al.rs.gov.br/legis/M010/M0100018.asp?Hid_IdNorma=75198&Texto=&Origem=1",
+  "publishedAt": "2024-04-09",
+  "downloadedAt": "2026-11-09",
+  "sha256": "d9b7b63fdef2e15d574aebe38f56e8a61ad508bd9c9ca6573e2a3b615529511c"
+ },
+ "fcpLawSe": {
+  "file": "ctresb-leis_SE_Lei_4731-2002_2026-10-13.md.gz",
+  "title": "Lei 4.731/2002 de Sergipe (FECOEP), texto compilado",
+  "publisher": "Assembleia Legislativa de Sergipe (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://aleselegis.al.se.leg.br/legislacao/norma.aspx?id=808",
+  "publishedAt": "2026-10-13",
+  "downloadedAt": "2026-11-09",
+  "sha256": "1055607fccf57aec6c6378c1e4aaf1917f8fdee6abf78bf0863d0f8cf5f352a9"
+ },
+ "fcpLawAm": {
+  "file": "ctresb-leis_AM_Lei_4454-2017_2026-10-13.md.gz",
+  "title": "Lei 4.454/2017 do Amazonas (adicional do ICMS para o Fundo de Promoção Social e Erradicação da Pobreza), texto original",
+  "publisher": "Assembleia Legislativa do Amazonas (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://sapl.al.am.leg.br/norma/9755",
+  "publishedAt": "2017-03-31",
+  "downloadedAt": "2026-11-09",
+  "sha256": "07206ffebbb8781902f6d674f721301e6519f3771b23cc6abde2ef2372ceb329"
+ },
+ "icmsLawRr": {
+  "file": "ctresb-leis_RR_Lei_1767-2022_2026-10-13.md.gz",
+  "title": "Lei 1.767/2022 de Roraima (nova redação do art. 32, I, \"d\", da Lei 59/1993: alíquota geral de 20%)",
+  "publisher": "Assembleia Legislativa de Roraima (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://sapl.al.rr.leg.br/norma/4147",
+  "publishedAt": "2022-12-30",
+  "downloadedAt": "2026-11-09",
+  "sha256": "71ae58b59c6870b331a95149c3ca3d28ad00d7f42d74e2b92ae12df85bc773c0"
+ },
+ "fcpLawAm2017": {
+  "file": "ctresb-leis_AM_Lei_4519-2017_2026-10-13.md.gz",
+  "title": "Lei 4.519/2017 do Amazonas (revoga os incisos V, XI, XII e XIII do § 1º e o inciso II do § 2º do art. 1º da Lei 4.454/2017)",
+  "publisher": "Assembleia Legislativa do Amazonas (texto do acervo ctresb/leis, com link para a origem; fonte aprovada pelo dono em 09/11/2026)",
+  "page": "https://sapl.al.am.leg.br/norma/9952",
+  "publishedAt": "2017-10-02",
+  "downloadedAt": "2026-11-09",
+  "sha256": "ef00200ebe29185a369061c404cc4e124a57be1a960c3197a8f8ae0cfaec7b16"
  }
 }

@@ -191,6 +191,10 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - Feito em 13/10/2026: MA, PI, RS, SE e TO confirmadas. AL (divergente) e AP (sem fonte) ficam com o contador, dúvida D-021.
 - [x] F3-25 · Importar as alíquotas por produto das 27 UFs do Portal Nacional da DIFAL, com a data de cada linha e marcação do que está defasado — depende: F3-06.c
   - Feito em 13/10/2026: `icms-products.json` gerado da página oficial guardada, rota `/v1/fiscal/icms-products` e referência na tela Regras de ICMS. Referência, não regra do motor.
+- [~] F3-34 · Produtos do FCP pela lei de cada UF, lidos no acervo ctresb/leis (fonte aprovada pelo dono em 09/11/2026; cada texto guardado em `sources/` com o link oficial) — depende: F3-25
+  - [x] F3-34.a · Tabela `fcp-products.json` conferida por teste item a item, na rota `icms-products` (`fcpLaw`) e na tela Regras de ICMS: MG, ES, SE, SP, RS e AM. Alíquota geral do RR com a lei identificada (Lei 1.767/2022)
+  - [ ] F3-34.b · PB: montar a lista vigente do art. 2º, I, da Lei 7.611/2004 com as Leis 10.507/2015 (alíneas "i" a "l"; texto ilegível no acervo, buscar no SAPL da ALPB), 10.802/2016 (alínea "l"), 11.265/2018 ("b", "c", "m" a "r") e 11.326/2019 (revoga "n" e "o")
+  - [ ] F3-34.c · PE, RN, RR e TO: achar a lei do fundo (PE: Lei 12.523/2003 e Anexo 2 da Lei 15.730/2016) fora do acervo ou quando o acervo a publicar
 - [~] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
   - [x] F3-26.a · Base: tabela st-references.json gerada do ato oficial guardado em sources/, consulta por UF, NCM e data, rota /fiscal/st-references e sugestão "Usar" na regra de ICMS; SP alimentícios (Portaria SRE 12/2026, 69 itens)
   - [x] F3-26.b · SP: o que está e o que saiu da ST, por anexo e por item, gerado do texto consolidado da Portaria CAT 68/2019 (higiene saiu em 01/04/2026, limpeza e ração em 01/08/2026, bebidas alcoólicas e medicamentos em 01/01/2026, águas do Anexo III em 01/07/2026); aviso na regra de ICMS — depende: F3-26.a

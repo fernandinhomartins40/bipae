@@ -364,6 +364,62 @@ interface PortalRates {
   generalMatches: boolean | null;
   items: PortalLine[];
   source: { page: string; downloadedAt: string };
+  fcpLaw: FcpLaw | null;
+}
+
+/** F3-34: produtos do FCP como a lei da UF lista, com o link oficial de cada lei. */
+interface FcpLaw {
+  fund: string;
+  rate: string;
+  appliesTo: string;
+  validUntil?: string;
+  law: string;
+  textVersion: 'compilado' | 'atualizado' | 'original';
+  note?: string;
+  items: { description: string; ncms?: string[]; rate?: string; note?: string }[];
+  sources: { title: string; page: string }[];
+}
+
+function FcpLawReference({ uf, fcp }: { uf: string; fcp: FcpLaw }) {
+  return (
+    <div className="flex flex-col gap-2" aria-labelledby="fcp-lei">
+      <h3 id="fcp-lei" className="text-lg font-bold">
+        FCP pela lei de {uf}: {fcp.fund}
+      </h3>
+      <p className="text-sm text-muted">
+        Adicional de {formatRate(fcp.rate)} ({fcp.law}). {fcp.appliesTo}
+        {fcp.validUntil && ` Vale até ${toDate(fcp.validUntil)}.`}
+        {fcp.note && ` ${fcp.note}`}
+      </p>
+      {fcp.textVersion === 'original' && (
+        <Alert tone="warning" title="Texto da lei como foi publicada">
+          Conferimos as alterações que achamos, mas confira a redação vigente no link oficial antes de
+          cadastrar a regra.
+        </Alert>
+      )}
+      <ul className="list-disc pl-6 text-sm">
+        {fcp.items.map((item) => (
+          <li key={item.description}>
+            {item.description}
+            {item.ncms && ` (NCM ${item.ncms.join(', ')})`}
+            {item.rate && ` — ${formatRate(item.rate)}`}
+            {item.note && `. ${item.note}`}
+          </li>
+        ))}
+      </ul>
+      <p className="text-sm text-muted">
+        Fonte:{' '}
+        {fcp.sources.map((s, i) => (
+          <span key={s.page}>
+            {i > 0 && '; '}
+            <a href={s.page} target="_blank" rel="noreferrer" className="underline">
+              {s.title}
+            </a>
+          </span>
+        ))}
+      </p>
+    </div>
+  );
 }
 
 /**
@@ -438,6 +494,7 @@ function PortalReference({ uf }: { uf: string }) {
           },
         ]}
       />
+      {p.fcpLaw && <FcpLawReference uf={uf} fcp={p.fcpLaw} />}
     </section>
   );
 }

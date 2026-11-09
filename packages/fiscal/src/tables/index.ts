@@ -12,6 +12,7 @@ export * from './payment-means';
 export * from './nfce-endpoints';
 export * from './nfe-endpoints';
 export * from './icms-products';
+export * from './fcp-products';
 export * from './simples-limits';
 export * from './simples-annexes';
 export * from './mei';

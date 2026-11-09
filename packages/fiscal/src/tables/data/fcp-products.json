@@ -1,0 +1,154 @@
+{
+  "checkedAt": "2026-11-09",
+  "ufs": [
+    {
+      "uf": "AM",
+      "fund": "Fundo de Promoção Social e Erradicação da Pobreza",
+      "rate": "2",
+      "appliesTo": "Operações com os produtos abaixo: na entrada vinda de outra UF (antecipação, substituição tributária ou consumidor final), na importação e na primeira saída interna de produto em substituição tributária fabricado no Amazonas (art. 1º, § 3º).",
+      "law": "Lei 4.454/2017, art. 1º, § 1º, com os incisos V, XI, XII e XIII revogados pela Lei 4.519/2017",
+      "sources": ["fcpLawAm", "fcpLawAm2017"],
+      "textVersion": "original",
+      "items": [
+        { "description": "tabaco, charutos, cigarrilhas e cigarros" },
+        { "description": "bebidas alcoólicas, inclusive cerveja e chope" },
+        { "description": "armas e munições, suas partes e acessórios" },
+        { "description": "artefatos de joalheria e ourivesaria e suas partes" },
+        {
+          "description": "iates, barcos a remos, canoas, motos aquáticas e outros barcos e embarcações de recreio, esporte ou lazer"
+        },
+        { "description": "aeronaves de recreio, esporte ou lazer" },
+        {
+          "description": "veículos automotores terrestres importados do exterior",
+          "rate": "1.1",
+          "note": "Cai 0,10 ponto por ano desde 2018 (art. 1º, § 2º, I): 1,1% em 2026."
+        },
+        {
+          "description": "veículos automotores terrestres nacionais com capacidade superior a 2.000 c.c. (dois mil centímetros cúbicos), exceto utilitários",
+          "rate": "1.1",
+          "note": "Cai 0,10 ponto por ano desde 2018 (art. 1º, § 2º, I): 1,1% em 2026."
+        },
+        {
+          "description": "prestação de serviço de comunicação de televisão por assinatura",
+          "rate": "1.1",
+          "note": "Cai 0,10 ponto por ano desde 2018 (art. 1º, § 2º, I): 1,1% em 2026."
+        }
+      ]
+    },
+    {
+      "uf": "ES",
+      "fund": "Fundo Estadual de Combate à Pobreza e às Desigualdades Sociais",
+      "rate": "2",
+      "appliesTo": "Operações internas, inclusive de importação (art. 20-A).",
+      "law": "Lei 7.000/2001, art. 20-A, sobre as alíneas \"d\" e \"e\" do art. 20, IV",
+      "sources": ["fcpLawEs"],
+      "textVersion": "compilado",
+      "items": [
+        {
+          "description": "bebidas alcoólicas classificadas nas posições 2203 a 2206, 2207.20 e 2208",
+          "ncms": ["2203", "2204", "2205", "2206", "220720", "2208"]
+        },
+        {
+          "description": "fumo e seus sucedâneos manufaturados, classificados no Capítulo 24",
+          "ncms": ["24"]
+        }
+      ]
+    },
+    {
+      "uf": "MG",
+      "fund": "Fundo de Erradicação da Miséria (FEM)",
+      "rate": "2",
+      "appliesTo": "Operação interna para consumidor final, contribuinte ou não do imposto, também quando a alíquota é fixada no regulamento; vale ainda para a diferença de alíquota da venda de outra UF a consumidor final em Minas (art. 12-A, caput e § 5º).",
+      "validUntil": "2026-12-31",
+      "law": "Lei 6.763/1975, art. 12-A (caput e inciso VI com a redação da Lei 24.471/2023)",
+      "sources": ["fcpLawMg"],
+      "textVersion": "atualizado",
+      "note": "O regulamento (RICMS/MG) pode excluir operações do adicional (art. 12-A, § 2º).",
+      "items": [
+        { "description": "cervejas sem álcool e bebidas alcoólicas, exceto aguardentes de cana ou de melaço" },
+        { "description": "cigarros, exceto os embalados em maço, e produtos de tabacaria" },
+        { "description": "armas" },
+        { "description": "refrigerantes, bebidas isotônicas e bebidas energéticas" },
+        {
+          "description": "perfumes, águas-de-colônia, cosméticos e produtos de toucador, exceto xampus, preparados antissolares, sabões de toucador de uso pessoal, preparações para higiene bucal ou dentária e fios dentais"
+        },
+        { "description": "alimentos para atletas" },
+        { "description": "telefones celulares e smartphones" },
+        { "description": "câmeras fotográficas ou de filmagem e suas partes ou acessórios" },
+        { "description": "equipamentos para pesca esportiva, exceto os de segurança" },
+        {
+          "description": "equipamentos de som ou de vídeo para uso automotivo, inclusive alto-falantes, amplificadores e transformadores"
+        }
+      ]
+    },
+    {
+      "uf": "RS",
+      "fund": "Fundo de Proteção e Amparo Social (Ampara/RS)",
+      "rate": "2",
+      "appliesTo": "Sobre as alíquotas internas do inciso II do art. 12 da Lei 8.820/1989. Sem data final desde a Lei 16.109/2024.",
+      "law": "Lei 8.820/1989, art. 13-A, incluído pela Lei 14.742/2015, caput com a redação da Lei 16.109/2024",
+      "sources": ["fcpLawRs", "fcpLawRs2024"],
+      "textVersion": "original",
+      "items": [
+        { "description": "bebidas alcoólicas e cerveja sem álcool" },
+        {
+          "description": "cigarros, cigarrilhas, charutos, cachimbos, cigarreiras, fumos desfiados e encarteirados, fumos para cachimbos e fumos tipo crespo"
+        },
+        { "description": "perfumaria e cosméticos" },
+        { "description": "prestação de serviço de televisão por assinatura" }
+      ]
+    },
+    {
+      "uf": "SE",
+      "fund": "Fundo Estadual de Combate e Erradicação da Pobreza (FECOEP)",
+      "rate": "2",
+      "appliesTo": "Operações e prestações para consumidor final, diretamente ou por substituição tributária, e importação para consumidor final (art. 2º, § 1º).",
+      "law": "Lei 4.731/2002, art. 2º, § 2º",
+      "sources": ["fcpLawSe"],
+      "textVersion": "compilado",
+      "note": "Mercadorias e serviços supérfluos fora desta lista pagam adicional de 1%, nos termos do decreto regulamentador (art. 2º-A).",
+      "items": [
+        { "description": "Cigarros, cigarrilhas, charutos e fumos industrializados" },
+        { "description": "Bebidas alcoólicas, cervejas e chopes" },
+        { "description": "Ultraleves e suas partes e peças" },
+        { "description": "Embarcações de esporte e recreio, esquis aquáticos e jet-esquis" },
+        { "description": "Armas e munições, exceto as destinadas às Polícias Civil e Militar e às Forças Armadas" },
+        { "description": "Joias" },
+        { "description": "Perfumes" },
+        {
+          "description": "Pólvoras propulsivas, estopins ou rastilhos, cordéis detonantes, escorvas (cápsulas fulminantes), espoletas, bombas, petardos, busca-pés, estalos de salão e outros fogos semelhantes, foguetes, cartuchos, dinamites e explosivos para emprego na extração ou construção, foguetes de sinalização, foguetes e cartuchos contra granizo e semelhantes, fogos de artifício"
+        },
+        { "description": "Pranchas de surfe", "ncms": ["95062900"] },
+        { "description": "Pranchas a vela", "ncms": ["95062100"] },
+        {
+          "description": "Jogos eletrônicos de vídeo (NCM - 9504.10.10), e suas partes e acessórios",
+          "ncms": ["95041010", "9504109"]
+        },
+        { "description": "Cartas para jogar", "ncms": ["95044000"] },
+        { "description": "Artigos e alimentos para animais de estimação, exceto medicamentos e vacinas" },
+        {
+          "description": "Bola de tênis - NCM 9506.61.00 e raquetes de tênis mesmo não encordoados",
+          "ncms": ["95066100", "95065100"]
+        },
+        { "description": "Produtos eróticos" },
+        { "description": "Semijoias e artigos de bijuteria" },
+        { "description": "Isotônicos, energéticos, bebidas gaseificadas não alcoólicas e refrigerantes" },
+        { "description": "Aviões, helicópteros e demais aeronaves, para uso não comercial" },
+        { "description": "Aparelhos de sauna elétricos, banheiras de hidromassagem e ofurôs" }
+      ]
+    },
+    {
+      "uf": "SP",
+      "fund": "Fundo Estadual de Combate e Erradicação da Pobreza (FECOEP)",
+      "rate": "2",
+      "appliesTo": "Só nas operações destinadas ao consumo final, sujeitas ou não à substituição tributária (art. 2º, § 3º).",
+      "law": "Lei 16.006/2015, art. 2º, I",
+      "sources": ["fcpLawSp"],
+      "textVersion": "original",
+      "items": [
+        { "description": "bebidas alcoólicas classificadas na posição 22.03", "ncms": ["2203"] },
+        { "description": "fumo e seus sucedâneos manufaturados, classificados no capítulo 24", "ncms": ["24"] }
+      ]
+    }
+  ]
+}
