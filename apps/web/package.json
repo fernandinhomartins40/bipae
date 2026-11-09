@@ -30,7 +30,7 @@
     "@types/react-dom": "^19.0.0",
     "@types/ws": "^8.5.12",
     "@vitejs/plugin-react": "^6.1.2",
-    "node-forge": "^1.4.0",
+    "node-forge": "^1.4.2",
     "otpauth": "^9.5.2",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
