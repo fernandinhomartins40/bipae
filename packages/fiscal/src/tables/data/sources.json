@@ -1476,5 +1476,14 @@
   "publishedAt": "2003-12-19",
   "downloadedAt": "2026-11-09",
   "sha256": "c6f989221a812abaac3ad2eea24614a8f852a51f20206916a1ba59e505f6a763"
+ },
+ "fcpLawTo": {
+  "file": "ALETO_TO_Lei_1287-2001_compilada_2026-11-10.pdf",
+  "title": "Lei 1.287/2001 do Tocantins (Código Tributário) compilada: art. 27, I e § 11 (adicional do FECOEP-TO, Lei 3.019/2015)",
+  "publisher": "Assembleia Legislativa do Tocantins (texto compilado pela SEFAZ-TO)",
+  "page": "https://www.al.to.leg.br/arquivo/68306",
+  "publishedAt": "2001-12-28",
+  "downloadedAt": "2026-11-10",
+  "sha256": "ce709e32f0acb8b303bd3e0df15d14711530c725753e7c07780346561921731b"
  }
 }

@@ -88,14 +88,16 @@ function isStruck(item, bars) {
  * `withoutStruck`, o texto tachado (redação anterior que a SEFAZ deixa riscada no texto
  * consolidado) fica de fora.
  */
-export async function pdfLines(bytes, { withoutStruck = false } = {}) {
+export async function pdfLines(bytes, { withoutStruck = false, pages } = {}) {
   const doc = await getDocument({
     data: new Uint8Array(bytes),
     isEvalSupported: false,
     verbosity: 0,
   }).promise;
   const lines = [];
-  for (let p = 1; p <= doc.numPages; p++) {
+  // `pages` ([primeira, última]) lê só um trecho de um PDF grande (ex.: um artigo do código tributário).
+  const [first, last] = pages ?? [1, doc.numPages];
+  for (let p = first; p <= Math.min(last, doc.numPages); p++) {
     const page = await doc.getPage(p);
     const content = await page.getTextContent();
     const bars = withoutStruck ? await thinBars(page) : [];

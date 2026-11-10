@@ -1,5 +1,15 @@
 # Changelog
 
+## [F3-34.c FCP por produto do TO; RR sem FCP] — 10/11/2026
+
+### Adicionado
+- **TO** entra na tabela `fcp-products.json` (FECOEP-TO, 2 pontos sobre a alíquota de 27%, Lei 1.287/2001, art. 27, § 11): 8 itens pelo Código Tributário compilado pela SEFAZ-TO no site da Assembleia (PDF guardado em `sources/`). Comunicação, gasolina e etanol ficam de fora, e o teste confere no texto.
+- O teste das listas lê também PDF oficial, com o mesmo leitor da geração das tabelas.
+
+### Corrigido
+- Dúvida D-060 fechada: a Lei 4.174/2023 não mexeu no § 11 do art. 27; o parágrafo que ela redigiu é o da Lei 1.385/2003.
+- RR passa a "sem FCP": a lei e o regulamento compilados pela SEFAZ-RR não têm adicional.
+
 ## [F3-34.b FCP por produto de PB, PE e RN] — 09/11/2026
 
 ### Adicionado

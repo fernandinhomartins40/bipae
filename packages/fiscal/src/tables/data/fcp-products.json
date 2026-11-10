@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-09",
+  "checkedAt": "2026-11-10",
   "ufs": [
     {
       "uf": "AM",
@@ -498,6 +498,44 @@
           "ncms": [
             "24"
           ]
+        }
+      ]
+    },
+    {
+      "uf": "TO",
+      "fund": "Fundo Estadual de Combate e Erradicação da Pobreza (FECOEP-TO)",
+      "rate": "2",
+      "appliesTo": "Operações e prestações internas com as mercadorias do art. 27, I (alíquota de 27%), somando 2 pontos (§ 11).",
+      "law": "Lei 1.287/2001, art. 27, § 11 (Lei 3.019/2015); desde 01/01/2016",
+      "sources": [
+        "fcpLawTo"
+      ],
+      "textVersion": "compilado",
+      "note": "Fora da lista: comunicação (art. 27, I, a, inconstitucional pela ADI 7.113 desde 2024), gasolina e etanol (FECOEP suspenso pela Lei 4.017/2022; combustíveis hoje com alíquota ad rem, § 14). O § 12 deixa o governo excluir itens por decreto: confira o RICMS/TO.",
+      "items": [
+        {
+          "description": "jóias, excluídas as bijuterias"
+        },
+        {
+          "description": "perfumes e águas-de-colônia"
+        },
+        {
+          "description": "bebidas alcoólicas"
+        },
+        {
+          "description": "fumo"
+        },
+        {
+          "description": "cigarros"
+        },
+        {
+          "description": "armas e munições"
+        },
+        {
+          "description": "embarcações de esporte e recreio"
+        },
+        {
+          "description": "cervejas e chopes sem álcool"
         }
       ]
     }
