@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         # macOS (F7-06): aplicativo universal (Intel e Apple Silicon), .dmg sem assinatura da Apple.
-        os: [windows-latest, ubuntu-22.04, macos-14]
+        os: [windows-latest, ubuntu-22.04, macos-15]
     runs-on: ${{ matrix.os }}
     env:
       HAS_UPDATER_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY != '' }}
