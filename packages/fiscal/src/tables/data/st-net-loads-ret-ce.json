@@ -1,0 +1,191 @@
+{
+  "act": "IN SEFAZ 151/2023 com a IN SEFAZ 12/2024 (CE)",
+  "validFrom": "2024-01-01",
+  "sources": ["stCeRetIn151", "stCeRetIn12"],
+  "note": "Cargas líquidas \"ajustadas proporcionalmente até o limite da carga tributária efetiva\" (Lei 14.237/2008, art. 4º) do regime especial dos atacadistas. A IN 12/2024 deu nova redação às tabelas da IN 151/2023, com efeitos desde 01/01/2024; vale a redação nova. O Decreto 31.066/2012 (informática e demais, Tabelas I a IV) fica de fora: a IN separa entrada e saída por lista do Secretário e não fecha qual tabela de entrada vale (dúvida D-042).",
+  "regimes": [
+    {
+      "regime": "Decreto 30.519/2011 (CE)",
+      "clause": "tabela do inciso II da Cláusula Terceira do termo do regime especial",
+      "ref": "IN SEFAZ 151/2023, art. 5º, I, na redação da IN SEFAZ 12/2024, art. 4º",
+      "loads": [
+        {
+          "goodsClass": "basket-7",
+          "label": "7% - Cesta Básica",
+          "percents": {
+            "internal": "2.96",
+            "n-ne-co-es": "5.50",
+            "s-se-except-es": "5.50"
+          }
+        },
+        {
+          "goodsClass": "alcohol-gel-antiseptic",
+          "label": "9,72% álcool finalidade não combust. gel antisséptico, embalagem de até 1L",
+          "percents": {
+            "internal": "2.82",
+            "n-ne-co-es": "10.05",
+            "s-se-except-es": "12.83"
+          }
+        },
+        {
+          "goodsClass": "basket-12",
+          "label": "12% - Cesta Básica",
+          "percents": {
+            "internal": "5.08",
+            "n-ne-co-es": "8.12",
+            "s-se-except-es": "11.46"
+          }
+        },
+        {
+          "goodsClass": "rate-20",
+          "label": "20% - Demais mercadorias",
+          "percents": {
+            "internal": "8.00",
+            "n-ne-co-es": "13.13",
+            "s-se-except-es": "13.13"
+          }
+        },
+        {
+          "goodsClass": "rate-25",
+          "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem de até 1L",
+          "percents": {
+            "internal": "7.26",
+            "n-ne-co-es": "25.85",
+            "s-se-except-es": "33.00"
+          }
+        },
+        {
+          "goodsClass": "rate-28",
+          "label": "28% - Rodas esportivas para automóveis, partes e peças de ultraleves, asa-delta, embarcações e jet-skis",
+          "percents": {
+            "internal": "11.20",
+            "n-ne-co-es": "26.39",
+            "s-se-except-es": "32.82"
+          }
+        }
+      ]
+    },
+    {
+      "regime": "Decreto 31.270/2013 (CE)",
+      "clause": "tabela do inciso II da Cláusula Terceira do termo do regime especial",
+      "ref": "IN SEFAZ 151/2023, art. 7º, I, na redação da IN SEFAZ 12/2024, art. 6º",
+      "loads": [
+        {
+          "goodsClass": "basket-7",
+          "label": "7% - Cesta Básica",
+          "percents": {
+            "internal": "2.19",
+            "n-ne-co-es": "4.16",
+            "s-se-except-es": "5.12"
+          }
+        },
+        {
+          "goodsClass": "alcohol-gel-antiseptic",
+          "label": "9,72% álcool finalidade não combust. gel antisséptico, embalagem de até 1L",
+          "percents": {
+            "internal": "2.82",
+            "n-ne-co-es": "10.05",
+            "s-se-except-es": "12.83"
+          }
+        },
+        {
+          "goodsClass": "basket-12",
+          "label": "12% - Cesta Básica",
+          "percents": {
+            "internal": "2.99",
+            "n-ne-co-es": "5.63",
+            "s-se-except-es": "7.80"
+          }
+        },
+        {
+          "goodsClass": "rate-20",
+          "label": "20% - Demais mercadorias",
+          "percents": {
+            "internal": "4.53",
+            "n-ne-co-es": "10.84",
+            "s-se-except-es": "11.93"
+          }
+        },
+        {
+          "goodsClass": "rate-25",
+          "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem de até 1L",
+          "percents": {
+            "internal": "7.26",
+            "n-ne-co-es": "25.85",
+            "s-se-except-es": "33.00"
+          }
+        },
+        {
+          "goodsClass": "rate-28",
+          "label": "28% - Demais produtos",
+          "percents": {
+            "internal": "8.13",
+            "n-ne-co-es": "30.39",
+            "s-se-except-es": "37.80"
+          }
+        }
+      ]
+    },
+    {
+      "regime": "Decreto 32.900/2018 (CE)",
+      "clause": "tabela do inciso II da Cláusula Terceira do termo do regime especial",
+      "ref": "IN SEFAZ 151/2023, art. 9º, I, na redação da IN SEFAZ 12/2024, art. 7º",
+      "loads": [
+        {
+          "goodsClass": "basket-7",
+          "label": "7% - Cesta Básica",
+          "percents": {
+            "internal": "2.19",
+            "n-ne-co-es": "4.16",
+            "s-se-except-es": "5.12"
+          }
+        },
+        {
+          "goodsClass": "alcohol-gel-antiseptic",
+          "label": "9,72% álcool finalidade não combustível, gel antisséptico, embalagem até 1L",
+          "percents": {
+            "internal": "2.82",
+            "n-ne-co-es": "10.05",
+            "s-se-except-es": "12.83"
+          }
+        },
+        {
+          "goodsClass": "basket-12",
+          "label": "12% - Cesta Básica",
+          "percents": {
+            "internal": "2.99",
+            "n-ne-co-es": "5.63",
+            "s-se-except-es": "7.80"
+          }
+        },
+        {
+          "goodsClass": "rate-20",
+          "label": "20% - Demais produtos",
+          "percents": {
+            "internal": "4.53",
+            "n-ne-co-es": "10.84",
+            "s-se-except-es": "11.93"
+          }
+        },
+        {
+          "goodsClass": "rate-25",
+          "label": "25% álcool finalidade não combustível, líquido e em gel NÃO antisséptico, embalagem até 1L",
+          "percents": {
+            "internal": "7.26",
+            "n-ne-co-es": "25.85",
+            "s-se-except-es": "33.00"
+          }
+        },
+        {
+          "goodsClass": "rate-28",
+          "label": "28% - Demais produtos",
+          "percents": {
+            "internal": "8.13",
+            "n-ne-co-es": "30.39",
+            "s-se-except-es": "37.80"
+          }
+        }
+      ]
+    }
+  ]
+}

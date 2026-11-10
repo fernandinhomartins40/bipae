@@ -1,5 +1,6 @@
 import { dec, fromCents, percent, toCents, type RoundingMode } from '../decimal';
 import data from './data/st-net-loads.json';
+import retData from './data/st-net-loads-ret-ce.json';
 
 /**
  * Substituição tributária com carga líquida (F3-26.d.CE.b): no Ceará, o estabelecimento cuja
@@ -372,6 +373,38 @@ export interface StNetLoadInput {
   options?: StNetLoadOptions | null;
 }
 
+/**
+ * Cargas "ajustadas proporcionalmente" do regime especial (RET) do atacadista (F3-26.d.CE.h): a
+ * IN SEFAZ 151/2023, na redação da IN SEFAZ 12/2024, reescreve a tabela do inciso II da Cláusula
+ * Terceira do termo de cada decreto, por classe e origem, desde 01/01/2024. Tabela mantida à mão e
+ * conferida no Diário Oficial guardado em sources/ (st-net-loads-ret-ce.test.ts).
+ */
+export interface CeRetAdjustedLoads {
+  act: string;
+  validFrom: string;
+  sources: string[];
+  note: string;
+  regimes: {
+    regime: string;
+    clause: string;
+    ref: string;
+    loads: {
+      goodsClass: string;
+      label: string;
+      percents: Partial<Record<NetLoadOriginKey, string>>;
+    }[];
+  }[];
+}
+export const CE_RET_ADJUSTED_LOADS: CeRetAdjustedLoads = retData as CeRetAdjustedLoads;
+
+/** A linha da tabela ajustada do RET para o decreto e a classe, se houver na data. */
+export function ceRetAdjustedLoad(act: string, goodsClass: string, date: string) {
+  if (date < CE_RET_ADJUSTED_LOADS.validFrom) return null;
+  const regime = CE_RET_ADJUSTED_LOADS.regimes.find((r) => r.regime === act);
+  const load = regime?.loads.find((l) => l.goodsClass === goodsClass);
+  return regime && load ? { regime, load } : null;
+}
+
 /** Classe que a empresa escolhe quando o produto está fora do regime de carga líquida. */
 export const NET_LOAD_OUTSIDE = 'outside';
 
@@ -466,7 +499,16 @@ export function stNetLoadFor(input: StNetLoadInput): StNetLoadResult {
     warnings.push(
       `O RET do ${regime.act} (${ret.article}) é do atacadista do Anexo I: vale a carga do comprador.`,
     );
-  } else if (ret) {
+  }
+  const adjusted =
+    ret && buyer.group === 'wholesale' && input.goodsClass
+      ? ceRetAdjustedLoad(regime.act, input.goodsClass, input.date)
+      : null;
+  if (ret && adjusted) {
+    warnings.push(
+      `Regime especial (${ret.article} do ${regime.act}): carga ajustada da ${adjusted.regime.ref} ("${adjusted.load.label}"), ${adjusted.regime.clause}. Se o seu termo tiver outra carga ou outra forma de recolhimento (entrada, saída ou misto), vale o termo: confira.`,
+    );
+  } else if (ret && buyer.group === 'wholesale') {
     warnings.push(
       `Regime especial (${ret.article} do ${regime.act}): carga do Anexo III${ret.adjustable ? ', que o termo do RET pode ajustar até a carga tributária efetiva' : ''}. O termo diz se o recolhimento é na entrada, na saída ou misto (Lei 14.237/2008, art. 4º): confira.`,
     );
@@ -518,7 +560,7 @@ export function stNetLoadFor(input: StNetLoadInput): StNetLoadResult {
   if (!origin) return { status: 'unknown-origin', regime };
   const rows = version.loads.filter((l) => l.group === buyer.group);
   const row = rows.find((l) => l.goodsClass === input.goodsClass);
-  const loadPercent = row?.percents[origin.key];
+  const loadPercent = adjusted?.load.percents[origin.key] ?? row?.percents[origin.key];
   if (!row || loadPercent === undefined) {
     return {
       status: 'choose-class',

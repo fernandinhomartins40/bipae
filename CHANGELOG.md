@@ -1,5 +1,13 @@
 # Changelog
 
+## [F3-26.d.CE.h Carga ajustada do RET dos atacadistas do CE] — 10/11/2026
+
+### Adicionado
+- Ceará: o atacadista com Regime Especial de Tributação dos Decretos 30.519/2011, 31.270/2013 e 32.900/2018 passa a usar, desde 01/01/2024, a carga "ajustada proporcionalmente" da IN SEFAZ 151/2023 na redação da IN SEFAZ 12/2024 (por classe e origem), no lugar da do Anexo III. O aviso lembra que vale o termo do regime. Os dois Diários Oficiais estão guardados em `sources/`, e o teste confere cada linha na ordem do ato.
+
+### Falta configurar
+- Decreto 31.066/2012 (informática), Regime Misto da construção e o ajuste da indústria (dúvida D-042).
+
 ## [F3-34.c FCP por produto do TO; RR sem FCP] — 10/11/2026
 
 ### Adicionado

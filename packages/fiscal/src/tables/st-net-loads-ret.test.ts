@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   CE_INFORMATICS_LIST,
+  ceRetAdjustedLoad,
   ST_NET_LOAD_REGIMES,
   ceInformaticsListed,
   stNetLoadAmount,
@@ -162,16 +163,20 @@ describe('transferência na entrada', () => {
 });
 
 describe('RET na entrada', () => {
-  it('atacadista do Anexo I: carga do Anexo III, com aviso sobre o termo', () => {
+  it('atacadista do Anexo I: carga ajustada da IN SEFAZ 151/2023 (redação da IN 12/2024), com aviso sobre o termo', () => {
+    // Anexo III do 30.519 dá 21,00% a 20% vindo do Sul e Sudeste; o termo ajustado dá 13,13%.
     const r = calc({ buyerCnae: '2910701', originUf: 'SP', specialRegime: true });
-    expect(r).toMatchObject({ status: 'applies', totalPercent: '21.00' });
+    expect(r).toMatchObject({ status: 'applies', totalPercent: '13.13' });
     expect(r.status === 'applies' && r.warnings.join(' ')).toMatch(
-      /art\. 4º.*na entrada, na saída ou misto/,
+      /art\. 4º.*IN SEFAZ 12\/2024.*entrada, saída ou misto/,
     );
-    const construcao = calc({ buyerCnae: '4649406', originUf: 'SP', specialRegime: true });
-    expect(construcao.status === 'applies' && construcao.warnings.join(' ')).toMatch(
-      /pode ajustar até a carga tributária efetiva/,
-    );
+    // Antes de 01/01/2024 não há tabela ajustada: vale a carga do Anexo III.
+    expect(ceRetAdjustedLoad('Decreto 30.519/2011 (CE)', 'rate-20', '2023-12-31')).toBeNull();
+  });
+
+  it('atacadista com RET do 31.066 (informática): sem tabela ajustada, segue o Anexo III com aviso', () => {
+    const r = calc({ buyerCnae: '4651601', originUf: 'SP', specialRegime: true });
+    expect(r.status === 'applies' && r.warnings.join(' ')).toMatch(/carga do Anexo III/);
   });
 
   it('varejista com RET: o regime do decreto é do atacadista, vale a carga do varejista', () => {
