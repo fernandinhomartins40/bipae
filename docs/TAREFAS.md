@@ -195,6 +195,17 @@ Itens que só o dono resolve. Marque `[x]` quando estiver feito e anote onde est
   - [x] F3-34.a · Tabela `fcp-products.json` conferida por teste item a item, na rota `icms-products` (`fcpLaw`) e na tela Regras de ICMS: MG, ES, SE, SP, RS e AM. Alíquota geral do RR com a lei identificada (Lei 1.767/2022)
   - [x] F3-34.b · PB, PE e RN pelo texto consolidado: PB (Lei 7.611/2004 no LegisWeb, com as Leis 9.933/2012, 10.507/2015, 10.802/2016, 11.265/2018 e a MP 280/2019), PE (Lei 12.523/2003 no site da SEFAZ-PE, até a Lei 18.305/2023) e RN (LC 261/2003 no LegisWeb, até a LC 776/2024); as alíneas revogadas ficam fora e o teste confere a revogação
   - [x] F3-34.c · RR e TO: TO pelo Código Tributário compilado no site da Assembleia (art. 27, § 11, 8 itens; D-060 fechada: a Lei 4.174/2023 mexeu no § 11 de outra lei); RR sem FCP pelos textos compilados da SEFAZ-RR
+  - 10/11/2026: as 12 UFs que só têm a lista do Portal da DIFAL foram procuradas no acervo ctresb/leis. Nenhuma lista com texto vigente:
+    - **PR:** o acervo não tem leis.
+    - **AL, CE e RJ:** a lei do fundo não está no acervo.
+    - **BA:** a Lei 7.014/1996 está só no texto original, sem o art. 16-A.
+    - **GO:** a Lei 14.469/2003 está sem o texto dos incisos, e o Código Tributário (Lei 11.651/1991) está vazio.
+    - **MT:** a Lei 7.098/1998 do acervo para nas alterações de 2010 e não tem o inciso IX do art. 14.
+    - **DF:** a Lei 4.220/2008 manda o adicional para lei específica.
+    - **MA e PI:** só os textos originais de 2004 e de 2006, já alterados depois.
+    - **MS e RO:** a lei não foi identificada.
+
+    Segue valendo a lista do portal, e não se repete essa busca no acervo.
 - [~] F3-26 · Substituição tributária por UF: CEST adotados e MVA, começando por bebidas, alimentos, limpeza e higiene — depende: F3-25
   - [x] F3-26.a · Base: tabela st-references.json gerada do ato oficial guardado em sources/, consulta por UF, NCM e data, rota /fiscal/st-references e sugestão "Usar" na regra de ICMS; SP alimentícios (Portaria SRE 12/2026, 69 itens)
   - [x] F3-26.b · SP: o que está e o que saiu da ST, por anexo e por item, gerado do texto consolidado da Portaria CAT 68/2019 (higiene saiu em 01/04/2026, limpeza e ração em 01/08/2026, bebidas alcoólicas e medicamentos em 01/01/2026, águas do Anexo III em 01/07/2026); aviso na regra de ICMS — depende: F3-26.a
