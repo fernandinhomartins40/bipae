@@ -1449,5 +1449,32 @@
   "publishedAt": "2017-10-02",
   "downloadedAt": "2026-11-09",
   "sha256": "ef00200ebe29185a369061c404cc4e124a57be1a960c3197a8f8ae0cfaec7b16"
+ },
+ "fcpLawPb": {
+  "file": "LegisWeb_PB_Lei_7611-2004_FUNCEP_2026-11-09.html.gz",
+  "title": "Lei 7.611/2004 da Paraíba (FUNCEP/PB) consolidada: art. 2º, I, com as Leis 9.933/2012, 10.507/2015, 10.802/2016, 11.265/2018 e a MP 280/2019 (Lei 11.326/2019)",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=145431",
+  "publishedAt": "2004-06-30",
+  "downloadedAt": "2026-11-09",
+  "sha256": "b7ef85c0db4814a0bc6de3c82afa7d6dd8de32d0d0caaee7c897929e7cf53146"
+ },
+ "fcpLawPe": {
+  "file": "SEFAZ-PE_Lei_12523-2003_FECEP_2026-11-09.htm.gz",
+  "title": "Lei 12.523/2003 de Pernambuco (FECEP), texto consolidado da SEFAZ-PE com as Leis 15.599/2015, 15.922/2016, 16.489/2018 e 18.305/2023",
+  "publisher": "Secretaria da Fazenda de Pernambuco (SEFAZ-PE)",
+  "page": "https://www.sefaz.pe.gov.br/Legislacao/Tributaria/Documents/legislacao/Leis_Tributarias/2003/Lei12523_2003.htm",
+  "publishedAt": "2003-12-30",
+  "downloadedAt": "2026-11-09",
+  "sha256": "590211f0585717e6adbf733644ddc1a80e5a583a60678e5f040cc035305c9d7f"
+ },
+ "fcpLawRn": {
+  "file": "LegisWeb_RN_LC_261-2003_FECOP_2026-11-09.html.gz",
+  "title": "Lei Complementar 261/2003 do Rio Grande do Norte (FECOP) consolidada: art. 2º, I, com as LC 450/2010 e 776/2024",
+  "publisher": "LegisWeb (texto de norma; fonte aprovada pelo dono em 27/10/2026)",
+  "page": "https://www.legisweb.com.br/legislacao/?id=152727",
+  "publishedAt": "2003-12-19",
+  "downloadedAt": "2026-11-09",
+  "sha256": "c6f989221a812abaac3ad2eea24614a8f852a51f20206916a1ba59e505f6a763"
  }
 }

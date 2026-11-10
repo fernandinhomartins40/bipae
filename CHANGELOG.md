@@ -1,5 +1,14 @@
 # Changelog
 
+## [F3-34.b FCP por produto de PB, PE e RN] — 09/11/2026
+
+### Adicionado
+- **PB, PE e RN** entram na tabela `fcp-products.json` pelo texto consolidado: PB (FUNCEP, Lei 7.611/2004, 16 itens, LegisWeb), PE (FECEP, Lei 12.523/2003, 20 itens com NCM, site da SEFAZ-PE) e RN (FECOP, LC 261/2003, 9 itens, só no consumo final, LegisWeb). Alíneas revogadas ficam de fora, e o teste confere a revogação no texto guardado (automóveis e motos na PB, comunicação, gasolina e energia no RN).
+- O teste das listas lê também páginas HTML (sem tags, entidades e em windows-1252).
+
+### Falta configurar
+- TO (dúvida D-060) e RR: sem lista de produtos do FCP (F3-34.c).
+
 ## [F3-34.a Produtos do FCP pela lei da UF] — 09/11/2026
 
 ### Adicionado

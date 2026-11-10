@@ -11,15 +11,25 @@ import { TABLE_SOURCES } from './sources';
  * ctresb/leis). O teste prova que cada item está no texto da lei, sem depender da formatação
  * (Markdown, quebras de linha, OCR): compara só letras e números, em minúsculas.
  */
-const lei = (key: keyof typeof TABLE_SOURCES) =>
-  gunzipSync(
+const lei = (key: keyof typeof TABLE_SOURCES) => {
+  const bytes = gunzipSync(
     readFileSync(fileURLToPath(new URL(`../../sources/${TABLE_SOURCES[key].file}`, import.meta.url))),
-  ).toString('utf8');
+  );
+  let texto: string;
+  try {
+    texto = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch {
+    // Páginas antigas das SEFAZ (PE) vêm em windows-1252.
+    texto = new TextDecoder('windows-1252').decode(bytes);
+  }
+  // HTML: as tags (estilos do Word no meio das palavras) e as entidades saem antes de comparar.
+  return texto.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"');
+};
 const soLetras = (texto: string) => texto.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
 
 describe('FCP por produto pela lei da UF (F3-34)', () => {
   it('cobre as UFs lidas no acervo, com fonte guardada e link oficial', () => {
-    expect(FCP_PRODUCTS.map((u) => u.uf)).toEqual(['AM', 'ES', 'MG', 'RS', 'SE', 'SP']);
+    expect(FCP_PRODUCTS.map((u) => u.uf)).toEqual(['AM', 'ES', 'MG', 'PB', 'PE', 'RN', 'RS', 'SE', 'SP']);
     for (const uf of FCP_PRODUCTS) {
       expect(uf.items.length).toBeGreaterThan(0);
       for (const key of uf.sources) expect(TABLE_SOURCES[key].page).toMatch(/^https:\/\//);
@@ -45,7 +55,20 @@ describe('FCP por produto pela lei da UF (F3-34)', () => {
     const am = fcpProductsByLaw('AM')!;
     expect(am.items.some((i) => /perfume|diesel|combustíve/i.test(i.description))).toBe(false);
     expect(am.items.filter((i) => i.rate === '1.1')).toHaveLength(3);
-    expect(fcpProductsByLaw('PE')).toBeNull();
+    // PE: desde 01/04/2019 (Lei 16.489/2018) a alínea a é só bebidas alcoólicas; a exceção da
+    // aguardente ficou na redação anterior.
+    expect(soLetras(lei('fcpLawPe'))).toContain(
+      soLetras('a) bebidas alcoólicas; (Lei 16.489/2018 – efeitos a partir de 01.04.2019) Redação anterior'),
+    );
+    // RN: a LC 776/2024 revogou comunicação (f), gasolina (j) e energia (k).
+    expect(lei('fcpLawRn')).toMatch(
+      /Revogado pela Lei Complementar Nº 776 DE 27\/12\/2024\):\s*f\) serviços de comunicação/,
+    );
+    expect(fcpProductsByLaw('RN')!.items.some((i) => /gasolina|comunicação|energia/.test(i.description))).toBe(false);
+    // PB: as alíneas n e o (automóveis e motos) foram revogadas pela MP 280/2019.
+    const pb = lei('fcpLawPb');
+    expect(pb.indexOf('Revogado pela Medida Provisória Nº 280')).toBeLessThan(pb.indexOf('n) automóveis'));
+    expect(fcpProductsByLaw('PB')!.items.some((i) => /automóveis|motocicletas/.test(i.description))).toBe(false);
   });
 
   it('a alíquota geral do RR (20%) tem a lei identificada', () => {
